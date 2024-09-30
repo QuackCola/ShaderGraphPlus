@@ -119,18 +119,18 @@ public sealed partial class GraphCompiler
     {
         var result = ShaderResult;
 
-		(string, string) testup = (code, propertyName);
+		(string, string) func = (code, propertyName);
 
-        if (!result.Functions.ContainsKey(testup.Item2))
+        if (!result.Functions.ContainsKey(func.Item2))
         {
-            result.Functions.Add(testup.Item2, testup.Item1);
+            result.Functions.Add(func.Item2, func.Item1);
         }
         else
         {
-            result.Functions[testup.Item2] = testup.Item1;
+            result.Functions[func.Item2] = func.Item1;
         }
         
-        return $"{testup.Item2}( {string.Join(", ", args)} )";
+        return $"{func.Item2}( {string.Join(", ", args)} )";
   
     }
 
