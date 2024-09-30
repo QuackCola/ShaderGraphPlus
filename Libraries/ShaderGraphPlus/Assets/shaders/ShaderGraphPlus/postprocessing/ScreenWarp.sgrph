@@ -4,6 +4,9 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "PostProcess",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
   "nodes": [
     {
       "_class": "PostProcessingResult",
@@ -119,7 +122,7 @@
     {
       "_class": "SceneColorNode",
       "Identifier": "10",
-      "Position": "-348,12",
+      "Position": "-360,12",
       "ScreenUVs": {
         "Identifier": "8",
         "Output": "Result"
