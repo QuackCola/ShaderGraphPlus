@@ -1,6 +1,0 @@
-// THIS FILE IS AUTO-GENERATED
-
-Layer0
-{
-	shader "shaders/core/shadergraphplus/dummy_postprocessing.shader"
-}
