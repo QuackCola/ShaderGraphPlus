@@ -1,0 +1,76 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-48,36",
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "BoxShapeNode",
+      "DefaultWidth": 0.5,
+      "DefaultHeight": 0.5,
+      "Identifier": "1",
+      "Position": "-540,-48",
+      "Coords": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "2",
+      "Position": "-864,-48"
+    },
+    {
+      "_class": "ElipseShapeNode",
+      "DefaultWidth": 0.5,
+      "DefaultHeight": 0.5,
+      "Identifier": "3",
+      "Position": "-540,108",
+      "Coords": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "PolygonShapeNode",
+      "DefaultSides": 5,
+      "DefaultWidth": 0.5,
+      "DefaultHeight": 0.5,
+      "Identifier": "4",
+      "Position": "-540,276",
+      "Coords": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "224,624",
+      "Color": "Blue",
+      "Title": "Shapes",
+      "Description": "Various shapes that can be used for effects.",
+      "Layer": 1,
+      "Identifier": "5",
+      "Position": "-576,-156"
+    }
+  ]
+}

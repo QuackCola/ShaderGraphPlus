@@ -1,0 +1,14 @@
+{
+  "Model": null,
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "PostProcess",
+  "nodes": [
+    {
+      "_class": "PostProcessingResult",
+      "Identifier": "0",
+      "Position": "-224,32"
+    }
+  ]
+}

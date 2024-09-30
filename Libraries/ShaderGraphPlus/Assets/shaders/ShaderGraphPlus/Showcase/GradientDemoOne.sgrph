@@ -1,0 +1,116 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-108,-12",
+      "Albedo": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "1",
+      "Position": "-1092,36"
+    },
+    {
+      "_class": "SplitVector",
+      "Identifier": "2",
+      "Position": "-708,36",
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SampleGradientNode",
+      "Identifier": "3",
+      "Position": "-372,0",
+      "Gradient": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
+      "Time": {
+        "Identifier": "7",
+        "Output": "Out"
+      }
+    },
+    {
+      "_class": "TestGradient",
+      "Name": "DemoA",
+      "Gradient": {
+        "color": [
+          {
+            "c": "1,0.93333,0,1"
+          },
+          {
+            "t": 0.25,
+            "c": "1,0,0,1"
+          },
+          {
+            "t": 0.5,
+            "c": "1,0,1,1"
+          },
+          {
+            "t": 0.75,
+            "c": "0.00855,0.05812,1,1"
+          },
+          {
+            "t": 1,
+            "c": "0,0.46667,1,1"
+          }
+        ],
+        "alpha": []
+      },
+      "Identifier": "4",
+      "Position": "-708,-144"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Name": "GradientTime",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "5",
+      "Position": "-708,-60"
+    },
+    {
+      "_class": "TileAndOffset",
+      "DefaultTile": "1,1",
+      "DefaultOffset": "0,0.0000001043081",
+      "WrapTo01": false,
+      "Identifier": "6",
+      "Position": "-900,36",
+      "UV": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "7",
+      "Position": "-516,36",
+      "In": {
+        "Identifier": "2",
+        "Output": "Y"
+      }
+    }
+  ]
+}

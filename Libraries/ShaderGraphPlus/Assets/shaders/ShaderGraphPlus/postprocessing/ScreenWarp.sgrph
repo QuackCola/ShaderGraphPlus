@@ -1,0 +1,188 @@
+{
+  "Model": "models/citizen/citizen.vmdl",
+  "Description": "PostProcessing Shadergraph Material",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "PostProcess",
+  "nodes": [
+    {
+      "_class": "PostProcessingResult",
+      "Identifier": "0",
+      "Position": "-180,12",
+      "SceneColor": {
+        "Identifier": "10",
+        "Output": "SceneColor"
+      }
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "1",
+      "Position": "-1140,108"
+    },
+    {
+      "_class": "Time",
+      "Identifier": "2",
+      "Position": "-1308,-84"
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "3",
+      "Position": "-1056,0",
+      "A": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float2",
+      "Min": "0,0",
+      "Max": "1,1",
+      "Value": "0.85,0.03",
+      "Name": "WavyTime",
+      "IsAttribute": true,
+      "UI": {},
+      "Identifier": "4",
+      "Position": "-1308,0"
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "5",
+      "Position": "-924,60",
+      "A": {
+        "Identifier": "3",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/noise_01.psd",
+      "DefaultSampler": {
+        "Name": ""
+      },
+      "UI": {
+        "Name": "WarpTexture",
+        "IsAttribute": true,
+        "Default": "1,1,1,1",
+        "CustomExtension": "",
+        "SrgbRead": true
+      },
+      "Identifier": "6",
+      "Position": "-804,84",
+      "Coords": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 0.03,
+      "Identifier": "7",
+      "Position": "-612,84",
+      "A": {
+        "Identifier": "6",
+        "Output": "R"
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "-468,12",
+      "A": {
+        "Identifier": "9",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "9",
+      "Position": "-804,12"
+    },
+    {
+      "_class": "SceneColorNode",
+      "Identifier": "10",
+      "Position": "-348,12",
+      "ScreenUVs": {
+        "Identifier": "8",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ScreenUVNode",
+      "Identifier": "11",
+      "Position": "-1260,240"
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "12",
+      "Position": "-1068,240",
+      "A": {
+        "Identifier": "11",
+        "Output": "ScreenUV"
+      },
+      "B": {
+        "Identifier": "13",
+        "Output": "RenderTargetSize"
+      }
+    },
+    {
+      "_class": "RenderTargetSizeNode",
+      "Identifier": "13",
+      "Position": "-1260,300"
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "14",
+      "Position": "-612,-192",
+      "A": {
+        "Identifier": "16",
+        "Output": "ScreenUV"
+      },
+      "B": {
+        "Identifier": "15",
+        "Output": "RenderTargetSize"
+      }
+    },
+    {
+      "_class": "RenderTargetSizeNode",
+      "Identifier": "15",
+      "Position": "-804,-144"
+    },
+    {
+      "_class": "ScreenUVNode",
+      "Identifier": "16",
+      "Position": "-804,-204"
+    },
+    {
+      "_class": "SimplexNoise",
+      "Identifier": "17",
+      "Position": "-804,-48",
+      "Coords": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    }
+  ]
+}

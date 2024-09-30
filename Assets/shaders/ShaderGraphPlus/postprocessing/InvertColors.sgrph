@@ -1,0 +1,50 @@
+{
+  "Model": null,
+  "Description": "PostProcessing Shadergraph Material",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "PostProcess",
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-176,-64"
+    },
+    {
+      "_class": "PostProcessingResult",
+      "Identifier": "1",
+      "Position": "-448,-96",
+      "SceneColor": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SceneColorNode",
+      "Identifier": "2",
+      "Position": "-832,-96",
+      "ScreenUVs": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "InvertColorsNode",
+      "Identifier": "3",
+      "Position": "-640,-96",
+      "SceneColor": {
+        "Identifier": "2",
+        "Output": "SceneColor"
+      }
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "4",
+      "Position": "-1024,-96"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Model": null,
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-456,60",
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "MakeGreyscaleNode",
+      "Identifier": "1",
+      "Position": "-708,60",
+      "ColorInput": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "models/citizen_clothes/hat/balaclava/balaclava.clothing.jpg",
+      "DefaultSampler": {
+        "Name": ""
+      },
+      "UI": {
+        "Default": "1,1,1,1",
+        "SrgbRead": true
+      },
+      "Identifier": "2",
+      "Position": "-948,60",
+      "Sampler": {
+        "Identifier": "3",
+        "Output": "Sampler"
+      }
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "ShrimpleSampler"
+      },
+      "Identifier": "3",
+      "Position": "-1152,60"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "256,258",
+      "Color": "Green",
+      "Title": "",
+      "Description": "Makes use of ResultFunction in code which places the function MakeGreyscale in the generated shader.",
+      "Layer": 1,
+      "Identifier": "4",
+      "Position": "-732,-96"
+    }
+  ]
+}
