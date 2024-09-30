@@ -1,0 +1,29 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-112,-96",
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "OscillatorNode",
+      "DefaultFrequency": 1,
+      "DefaultPhase": 0,
+      "DefaultStrength": 10,
+      "Identifier": "1",
+      "Position": "-544,-80"
+    }
+  ]
+}

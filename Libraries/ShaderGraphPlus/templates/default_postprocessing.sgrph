@@ -1,0 +1,17 @@
+{
+  "Model": null,
+  "Description": null,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "PostProcess",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "PostProcessingResult",
+      "Identifier": "0",
+      "Position": "-240,84"
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "Flipbook Demo",
+  "BlendMode": "Masked",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "16,-144",
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "FlipBookNode",
+      "DefaultWidth": 1,
+      "DefaultHeight": 32,
+      "DefaultTileIndex": 1,
+      "Invertx": false,
+      "Inverty": false,
+      "Identifier": "1",
+      "Position": "-464,-144",
+      "Coords": {
+        "Identifier": "8",
+        "Output": "Result"
+      },
+      "Width": {
+        "Identifier": "10",
+        "Output": "Result"
+      },
+      "Height": {
+        "Identifier": "9",
+        "Output": "Result"
+      },
+      "TileIndex": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/dev/vgui/hud/gameinstructor_iconsheet1_color.tga",
+      "DefaultSampler": {
+        "Name": ""
+      },
+      "UI": {
+        "Name": "TexSheet",
+        "Default": "1,1,1,1",
+        "CustomExtension": "",
+        "SrgbRead": true
+      },
+      "Identifier": "2",
+      "Position": "-272,-144",
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 16,
+      "Value": 1,
+      "Name": "TileIndex",
+      "IsAttribute": false,
+      "UI": {
+        "Step": 1
+      },
+      "Identifier": "3",
+      "Position": "-816,-48"
+    },
+    {
+      "_class": "Time",
+      "Identifier": "4",
+      "Position": "-1056,32"
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "5",
+      "Position": "-864,32",
+      "A": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 16,
+      "Value": 1,
+      "Name": "Speed",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "6",
+      "Position": "-1056,96"
+    },
+    {
+      "_class": "Floor",
+      "Identifier": "7",
+      "Position": "-768,32",
+      "Input": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "8",
+      "Position": "-816,-288"
+    },
+    {
+      "_class": "Float",
+      "Min": 1,
+      "Max": 64,
+      "Value": 4,
+      "Name": "Column Amount",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "9",
+      "Position": "-816,-128"
+    },
+    {
+      "_class": "Float",
+      "Min": 1,
+      "Max": 64,
+      "Value": 4,
+      "Name": "Row Amount",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "10",
+      "Position": "-816,-208"
+    }
+  ]
+}

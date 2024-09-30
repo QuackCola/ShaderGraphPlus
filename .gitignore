@@ -1,0 +1,24 @@
+# Auto-generated code editor files
+
+.vs/*
+.vscode/*
+*.csproj
+obj/*
+Properties/*
+code/obj/*
+Libraries/ShaderGraphPlus/code/obj/*
+**/code/obj/*
+Libraries/ShaderGraphPlus/code/Properties/*
+**/code/Properties/*
+Libraries/ShaderGraphPlus/Editor/obj/*
+**/Editor/obj/*
+Libraries/ShaderGraphPlus/Editor/Properties/*
+**/Editor/Properties/*
+*.sln
+
+# Auto-generated asset related files
+
+*.generated.*
+*.*_c
+*.los
+*.vpk

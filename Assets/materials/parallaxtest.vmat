@@ -1,0 +1,11 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/shadergraphplus/parallaxtest.shader"
+
+	g_flSliceCount "25.000"
+	g_flSliceDistance "0.150"
+	g_vTexCoordScale "[1 1]"
+	Height "textures/sbox_logo.psd"
+}

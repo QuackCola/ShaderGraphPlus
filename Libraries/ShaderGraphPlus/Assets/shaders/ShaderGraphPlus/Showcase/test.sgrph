@@ -1,0 +1,124 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "",
+  "BlendMode": "Masked",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "720,-32",
+      "Albedo": {
+        "Identifier": "6",
+        "Output": "Result"
+      },
+      "Opacity": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 2,
+      "CellDensity": 83,
+      "Worley": true,
+      "Identifier": "1",
+      "Position": "-192,96",
+      "Coords": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.3,
+      "BlendMode": "Subtract",
+      "Clamp": false,
+      "Identifier": "2",
+      "Position": "48,-144",
+      "A": {
+        "Identifier": "3",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 2,
+      "CellDensity": 60,
+      "Worley": true,
+      "Identifier": "3",
+      "Position": "-192,-304",
+      "Coords": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "UVScrollNode",
+      "DefaultScrollSpeed": "-0.01,0",
+      "Identifier": "4",
+      "Position": "-624,112",
+      "Coords": {
+        "Identifier": "8",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "UVScrollNode",
+      "DefaultScrollSpeed": "-0.01,0",
+      "Identifier": "5",
+      "Position": "-592,-304",
+      "Coords": {
+        "Identifier": "8",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "PixelPlotNode",
+      "DefaultGridSize": "64,64",
+      "DefaultBoarderThickness": 0.5,
+      "Image": "textures/sbox_logo.psd",
+      "DefaultSampler": {
+        "Name": ""
+      },
+      "UI": {
+        "Default": "1,1,1,1",
+        "SrgbRead": true
+      },
+      "Identifier": "6",
+      "Position": "64,-464"
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/sbox_logo.psd",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "SrgbRead": true
+      },
+      "Identifier": "7",
+      "Position": "48,-16"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "8",
+      "Position": "-832,-80"
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "9",
+      "Position": "-848,208"
+    }
+  ]
+}

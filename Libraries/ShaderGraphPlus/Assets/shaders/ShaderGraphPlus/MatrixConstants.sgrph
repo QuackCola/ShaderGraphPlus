@@ -1,0 +1,74 @@
+{
+  "Model": null,
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-480,-228",
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float4x4Node",
+      "Name": "TestOne",
+      "Value": "12,3,12,12,12,12,12,12,12,12,12,12,12,12,12,12",
+      "Identifier": "1",
+      "Position": "-1080,-192"
+    },
+    {
+      "_class": "Float3x3Node",
+      "Name": "TestTwo",
+      "Value": "12,12,12,12,12,12,12,12,12",
+      "Identifier": "2",
+      "Position": "-1104,-96"
+    },
+    {
+      "_class": "Float2x2Node",
+      "Name": "TestThree",
+      "Value": "12,12,12,12",
+      "Identifier": "3",
+      "Position": "-1104,-12"
+    },
+    {
+      "_class": "TestMatrix4X4Node",
+      "Identifier": "4",
+      "Position": "-816,-204",
+      "Float4x4": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "Float3x3": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "Float2x2": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float2",
+      "Min": "0,0",
+      "Max": "1,1",
+      "Value": "0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "5",
+      "Position": "-1044,-468"
+    }
+  ]
+}

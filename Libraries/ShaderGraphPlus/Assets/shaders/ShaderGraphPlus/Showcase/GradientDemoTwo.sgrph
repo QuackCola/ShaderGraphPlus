@@ -1,0 +1,531 @@
+{
+  "Model": "models/dev/plane.vmdl",
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "256,-624",
+      "Albedo": {
+        "Identifier": "28",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SampleGradientNode",
+      "Identifier": "1",
+      "Position": "-368,-224",
+      "Gradient": {
+        "Identifier": "5",
+        "Output": "Result"
+      },
+      "Time": {
+        "Identifier": "18",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "2",
+      "Position": "-1280,-464"
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 10,
+      "Worley": false,
+      "Identifier": "3",
+      "Position": "-1264,-624"
+    },
+    {
+      "_class": "TestGradient",
+      "Name": "FiveKeys",
+      "Gradient": {
+        "color": [
+          {
+            "c": "0.03137,0.30137,0.98431,1"
+          },
+          {
+            "t": 0.25,
+            "c": "0.76994,0.33333,0.98824,1"
+          },
+          {
+            "t": 0.50427353,
+            "c": "0,0.54902,1,1"
+          },
+          {
+            "t": 0.75,
+            "c": "0.44706,0.80392,0.52438,1"
+          },
+          {
+            "t": 1,
+            "c": "0.67843,0.95033,0.99216,1"
+          }
+        ],
+        "alpha": []
+      },
+      "Identifier": "4",
+      "Position": "-560,-912"
+    },
+    {
+      "_class": "TestGradient",
+      "Name": "TwoKeys",
+      "Gradient": {
+        "color": [
+          {
+            "c": "0.06667,0,1,1"
+          },
+          {
+            "t": 1,
+            "c": "0.82791,0,0,1"
+          }
+        ],
+        "alpha": []
+      },
+      "Identifier": "5",
+      "Position": "-560,-224"
+    },
+    {
+      "_class": "RoundGradientNode",
+      "DefaultCenterPos": "0.6,0.5",
+      "DefaultRadius": 0.2500004,
+      "DefaultDensity": -0.3700094,
+      "DefaultInvert": true,
+      "Identifier": "6",
+      "Position": "-1264,-848"
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.6290958,
+      "BlendMode": "Difference",
+      "Clamp": false,
+      "Identifier": "7",
+      "Position": "-896,-656",
+      "A": {
+        "Identifier": "21",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "22",
+        "Output": "Result"
+      },
+      "C": {
+        "Identifier": "23",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SampleGradientNode",
+      "Identifier": "8",
+      "Position": "-384,-592",
+      "Gradient": {
+        "Identifier": "10",
+        "Output": "Result"
+      },
+      "Time": {
+        "Identifier": "17",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "300,92",
+      "Color": "Green",
+      "Title": "",
+      "Description": "You have a max of 8 color keys to use",
+      "Layer": 1,
+      "Identifier": "9",
+      "Position": "-560,-1072"
+    },
+    {
+      "_class": "TestGradient",
+      "Name": "ThreeKeys",
+      "Gradient": {
+        "color": [
+          {
+            "c": "0.06667,0,1,1"
+          },
+          {
+            "t": 0.50427353,
+            "c": "0,0.54902,1,1"
+          },
+          {
+            "t": 1,
+            "c": "0.82791,0,0,1"
+          }
+        ],
+        "alpha": []
+      },
+      "Identifier": "10",
+      "Position": "-576,-592"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "480,176",
+      "Color": "Green",
+      "Title": "Gradient With 3 Color Keys",
+      "Description": "",
+      "Layer": 3,
+      "Identifier": "11",
+      "Position": "-656,-656"
+    },
+    {
+      "_class": "SampleGradientNode",
+      "Identifier": "12",
+      "Position": "-368,-912",
+      "Gradient": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
+      "Time": {
+        "Identifier": "16",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SplitVector",
+      "Identifier": "13",
+      "Position": "-1008,-464",
+      "Input": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "480,160",
+      "Color": "Green",
+      "Title": "Gradient With 2 Color Keys",
+      "Description": "",
+      "Layer": 4,
+      "Identifier": "14",
+      "Position": "-656,-272"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "480,160",
+      "Color": "Green",
+      "Title": "Gradient With 5 Color Keys",
+      "Description": "",
+      "Layer": 2,
+      "Identifier": "15",
+      "Position": "-656,-960"
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "16",
+      "Position": "-672,-832",
+      "Input": {
+        "Identifier": "17",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "17",
+      "Position": "-672,-512",
+      "Input": {
+        "Identifier": "19",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "18",
+      "Position": "-672,-144",
+      "Input": {
+        "Identifier": "19",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "19",
+      "Position": "-672,-416",
+      "Input": {
+        "Identifier": "13",
+        "Output": "X"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "20",
+      "Position": "-992,-800",
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "21",
+      "Position": "-992,-608",
+      "Input": {
+        "Identifier": "20",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "22",
+      "Position": "-992,-576",
+      "Input": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "23",
+      "Position": "-992,-544",
+      "Input": {
+        "Identifier": "22",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "24",
+      "Position": "16,-480",
+      "Input": {
+        "Identifier": "31",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "25",
+      "Position": "16,-544",
+      "Input": {
+        "Identifier": "8",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "26",
+      "Position": "16,-864",
+      "Input": {
+        "Identifier": "12",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "27",
+      "Position": "16,-608",
+      "Input": {
+        "Identifier": "26",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "5 Keys",
+      "Identifier": "28",
+      "Position": "96,-608",
+      "Input": {
+        "Identifier": "27",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "3 Keys",
+      "Identifier": "29",
+      "Position": "96,-544",
+      "Input": {
+        "Identifier": "25",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "2 Keys",
+      "Identifier": "30",
+      "Position": "96,-480",
+      "Input": {
+        "Identifier": "24",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "31",
+      "Position": "-128,-480",
+      "Input": {
+        "Identifier": "32",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "32",
+      "Position": "-128,-176",
+      "Input": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TestGradient",
+      "Name": "Black \u0026 White",
+      "Gradient": {
+        "color": [
+          {
+            "c": "0,0,0,1"
+          },
+          {
+            "t": 1,
+            "c": "1,1,1,1"
+          }
+        ],
+        "alpha": []
+      },
+      "Identifier": "33",
+      "Position": "-576,-32"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "480,160",
+      "Color": "Green",
+      "Title": "Black \u0026 White Gradient",
+      "Description": "",
+      "Layer": 3,
+      "Identifier": "34",
+      "Position": "-656,-80"
+    },
+    {
+      "_class": "SampleGradientNode",
+      "Identifier": "35",
+      "Position": "-368,-32",
+      "Gradient": {
+        "Identifier": "33",
+        "Output": "Result"
+      },
+      "Time": {
+        "Identifier": "36",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "36",
+      "Position": "-672,48",
+      "Input": {
+        "Identifier": "18",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "37",
+      "Position": "-128,16",
+      "Input": {
+        "Identifier": "35",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "38",
+      "Position": "16,16",
+      "Input": {
+        "Identifier": "37",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "39",
+      "Position": "16,-416",
+      "Input": {
+        "Identifier": "38",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Black \u0026 White",
+      "Identifier": "40",
+      "Position": "96,-416",
+      "Input": {
+        "Identifier": "39",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "41",
+      "Position": "-704,-864",
+      "Input": {
+        "Identifier": "42",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "42",
+      "Position": "-704,-608",
+      "Input": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "UVScrollNode",
+      "DefaultScrollSpeed": "0,0.7",
+      "Identifier": "43",
+      "Position": "-1616,-848",
+      "Time": {
+        "Identifier": "44",
+        "Output": "Result"
+      },
+      "Coords": {
+        "Identifier": "45",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Time",
+      "Identifier": "44",
+      "Position": "-1872,-848"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "45",
+      "Position": "-1872,-768"
+    }
+  ]
+}
