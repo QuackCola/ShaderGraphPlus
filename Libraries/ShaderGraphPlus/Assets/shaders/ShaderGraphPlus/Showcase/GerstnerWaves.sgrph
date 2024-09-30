@@ -1,6 +1,6 @@
 {
   "Model": "models/dev/dev_hexgrid.vmdl",
-  "Description": "",
+  "Description": null,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
@@ -15,7 +15,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-516,-108",
+      "Position": "0,0",
       "Albedo": {
         "Identifier": "3",
         "Output": "Result"
@@ -35,7 +35,7 @@
       "DefaultNumWaves": 1,
       "DefaultGravityConstant": 385.827,
       "Identifier": "1",
-      "Position": "-840,-12",
+      "Position": "-576,-120",
       "WorldSpacePosition": {
         "Identifier": "2",
         "Output": "Result"
@@ -44,18 +44,18 @@
     {
       "_class": "WorldPosition",
       "Identifier": "2",
-      "Position": "-1092,-48"
+      "Position": "-792,-120"
     },
     {
       "_class": "Float4",
-      "Value": "0.22413,0.50989,0.58133,1",
-      "Name": "",
+      "Value": "0.23321,0.57136,0.71628,1",
+      "Name": "Water Base Color",
       "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
       "Identifier": "3",
-      "Position": "-816,-276"
+      "Position": "-252,-180"
     }
   ]
 }
