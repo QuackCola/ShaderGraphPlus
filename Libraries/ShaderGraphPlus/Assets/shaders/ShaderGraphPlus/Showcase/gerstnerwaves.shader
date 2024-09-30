@@ -95,7 +95,9 @@ VS
 PS
 {
 	#include "common/pixel.hlsl"
-
+	
+	float4 g_vWaterBaseColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.23, 0.57, 0.72, 1.00 ); >;
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
@@ -109,7 +111,7 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float4 l_0 = float4( 0.22413, 0.50989, 0.58133, 1 );
+		float4 l_0 = g_vWaterBaseColor;
 		
 		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
