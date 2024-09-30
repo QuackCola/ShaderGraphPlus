@@ -45,6 +45,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public Dictionary<string, string> Functions = new();
 		public Dictionary<string, Gradient> Gradients = new();
+		public Dictionary<string, ShaderFeature> ShaderFeatures = new();
 	}
 
 	public enum ShaderStage
@@ -159,6 +160,60 @@ public sealed partial class GraphCompiler
 		}
 
 		return gradient;
+	}
+
+		/// <summary>
+	/// Iterate through a list of Shader Features and register them.
+	/// </summary>
+	public void RegisterShaderFeatures( List<ShaderFeature> features )
+	{
+		var result = ShaderResult;
+
+		if ( features.Any() )
+		{
+			foreach ( var feature in features )
+			{
+				if ( feature.IsValid )
+				{
+					//Log.Info( $"Feature : {feature.Feature.ToUpper()} " );
+					//var feature_name = feature.Name.Replace( " ", "_" ); ;
+					if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
+					{
+						result.ShaderFeatures.Add( feature.FeatureName, feature );
+						Log.Info( $"Registerd Feature : {feature.FeatureName.ToUpper()} " );
+					}
+				}
+				else
+				{
+					Log.Warning( "invalid feature!" );
+				}
+			}
+		}
+		//return features;
+	}
+
+	/// <summary>
+	/// Register a Shader Feature.
+	/// </summary>
+	public void RegisterShaderFeature( ShaderFeature feature )
+	{
+		var result = ShaderResult;
+
+		if ( feature.IsValid )
+		{
+			var feature_name = feature.FeatureName.Replace( " ", "_" ); ;
+
+			// Add new dictionary key
+			if ( !result.ShaderFeatures.ContainsKey( feature_name ) )
+			{
+				result.ShaderFeatures.Add( feature_name, feature );
+			}
+		}
+		else
+		{
+			Log.Warning( "invalid feature!" );
+		}
+
 	}
 
 	/// <summary>
@@ -767,6 +822,20 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		// Static & Dynamic shader feature combos
+		foreach ( var feature in ShaderResult.ShaderFeatures )
+		{
+			if ( feature.Value.IsDynamicCombo is not true )
+			{
+				sb.Append( $"StaticCombo( S_{feature.Key.ToUpper()}, F_{feature.Key.ToUpper()}, Sys( ALL ) );" );
+			}
+			else
+			{
+				sb.Append( $"DynamicCombo( D_{feature.Key.ToUpper()}, 0..{feature.Value.Options.Count}, Sys( PC ) )" );
+			}
+
+			sb.AppendLine();
+		}
 
 		if ( Graph.MaterialDomain != MaterialDomain.Surface )
 		{
