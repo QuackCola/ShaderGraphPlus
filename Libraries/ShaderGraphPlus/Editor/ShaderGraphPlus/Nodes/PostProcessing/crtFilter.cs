@@ -268,27 +268,37 @@ float3 crtFilter(
 
 
 	public bool DefaultOverlay { get; set; } = false;
-	public float DefaultScanLineOpacity { get; set; } = 0.4f;
-	public float DefaultScanLineWidth { get; set; } = 0.25f;
+    [Group("Scanlines")]
+    public float DefaultScanLineOpacity { get; set; } = 0.4f;
+    [Group("Scanlines")]
+    public float DefaultScanLineWidth { get; set; } = 0.25f;
 	public float DefaultGrilleOpacity { get; set; } = 0.3f;
 	public Vector2 DefaultResolution { get; set; } = new Vector2( 640.0f, 480.0f );
 	public bool DefaultPixelate { get; set; } = true;
-	public bool DefaultRoll { get; set; } = true;
+    [Group("Roll")]
+    public bool DefaultRoll { get; set; } = true;
+	[Group("Roll")]
 	public float DefaultRollSpeed { get; set; } = 8.0f;
-	public float DefaultRollSize { get; set; } = 15.0f;
-	public float DefaultRollVariation { get; set; } = 1.8f;
+    [Group("Roll")]
+    public float DefaultRollSize { get; set; } = 15.0f;
+    [Group("Roll")]
+    public float DefaultRollVariation { get; set; } = 1.8f;
 	public float DefaultDistortIntensity { get; set; } = 0.05f;
-	public float DefaultNoiseOpacity { get; set; } = 0.4f;
-	public float DefaultNoiseSpeed { get; set; } = 5.0f;
-	public float DefaultStaticNoiseIntensity { get; set; } = 0.06f;
+    [Group("Noise")]
+    public float DefaultNoiseOpacity { get; set; } = 0.4f;
+    [Group("Noise")]
+    public float DefaultNoiseSpeed { get; set; } = 5.0f;
+    [Group("Noise")]
+    public float DefaultStaticNoiseIntensity { get; set; } = 0.06f;
 	public float DefaultAberration { get; set; } = 0.03f;
 	public float DefaultBrigtness { get; set; } = 1.4f;
 	public bool DefaultDiscolor { get; set; } = true;
 	public float DefaultWarpAmount { get; set; } = 1.0f;
 	public bool DefaultClipWarp { get; set; } = false;
-	public float DefaultVignetteIntensity { get; set; } = 0.4f;
-	public float DefaultVignetteOpacity { get; set; } = 0.5f;
-
+    [Group("Vignette")]
+    public float DefaultVignetteIntensity { get; set; } = 0.4f;
+    [Group("Vignette")]
+    public float DefaultVignetteOpacity { get; set; } = 0.5f;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
