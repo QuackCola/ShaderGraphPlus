@@ -65,7 +65,12 @@ public abstract class BaseNodePlus : INode
 		return new NodeUI( view, this );
 	}
 
-	public virtual Menu CreateContextMenu( NodeUI node )
+    public Color GetPrimaryColor(GraphView view)
+    {
+        return PrimaryColor;
+    }
+
+    public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;
 	}
