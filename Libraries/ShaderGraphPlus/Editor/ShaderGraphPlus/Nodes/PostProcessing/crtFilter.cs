@@ -6,7 +6,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 [Title( "CRT Filter" ), Category( "PostProcessing/Crt" )]
 [Description( "Crt Filter Ported from	" )]
-[PostProcessingCompatable]
 public class CrtFilterNode : ShaderNodePlus
 {
 [Hide]

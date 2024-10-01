@@ -5,7 +5,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// Color of the scene
 /// </summary>
 [Title( "Scene Color" ), Category( "PostProcessing/Variables" )]
-[PostProcessingCompatable]
 public sealed class SceneColorNode : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]

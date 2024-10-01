@@ -1,7 +1,6 @@
 ﻿using Editor.ShaderGraphPlus;
 
 [Title( "Curve Remap UV" ), Category( "PostProcessing/UV" )]
-[PostProcessingCompatable]
 public class curveRemapUVNode : ShaderNodePlus
 {
 
