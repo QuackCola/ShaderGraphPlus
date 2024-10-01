@@ -8,6 +8,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Description( "Crt Filter Ported from	" )]
 public class CrtFilterNode : ShaderNodePlus
 {
+
 [Hide]
 public static string crtFilter => @"
 //
