@@ -112,7 +112,7 @@
       "BlendMode": "Mix",
       "Clamp": false,
       "Identifier": "7",
-      "Position": "48,-240",
+      "Position": "36,-180",
       "A": {
         "Identifier": "4",
         "Output": "Result"
