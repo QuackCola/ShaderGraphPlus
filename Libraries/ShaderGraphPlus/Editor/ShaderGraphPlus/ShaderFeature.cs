@@ -20,8 +20,6 @@ public struct ShaderFeature : IValid
     [Hide]
     public bool Preview { get; set; }
 
-
-
     [Hide]
 	public readonly bool IsValid
 	{
@@ -68,10 +66,6 @@ public struct ShaderFeature : IValid
 			}
 		}
 	}
-
-
-	public void SetPreview( bool val)
-	{ Preview = val; }
 
 	public readonly string ToFeatureName()
 	{
