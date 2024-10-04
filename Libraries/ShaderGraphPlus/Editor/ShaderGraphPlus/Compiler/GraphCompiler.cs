@@ -983,7 +983,7 @@ public sealed partial class GraphCompiler
                 sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4({color.Value.r},{color.Value.g},{color.Value.b},{color.Time});");
             }
         
-            foreach (var alpha in gradient.Value.Alphas)
+            foreach ( var alpha in gradient.Value.Alphas )
             {
                 sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float({alpha.Value});");
             }
@@ -1035,9 +1035,9 @@ public sealed partial class GraphCompiler
                     }
                 }
 
-                foreach (var feature in ShaderResult.ShaderFeatures)
+                foreach ( var feature in ShaderResult.ShaderFeatures )
                 {
-                    if (result.Item1.Code == feature.Value.Item1.TrueResult)
+                    if ( result.Item1.Code == feature.Value.Item1.TrueResult )
                     {
                         sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, feature.Value.Item2 ? "0" : "1") );
                     }
