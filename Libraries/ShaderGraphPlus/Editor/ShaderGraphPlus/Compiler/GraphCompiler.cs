@@ -5,6 +5,7 @@ using Editor.NodeEditor;
 using Sandbox;
 using System.Text.RegularExpressions;
 using System.Numerics;
+using Microsoft.CodeAnalysis;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -45,7 +46,9 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public Dictionary<string, string> Functions = new();
 		public Dictionary<string, Gradient> Gradients = new();
-	}
+		public Dictionary<string, ShaderFeature> ShaderFeatures = new();
+        public Dictionary<(string,string), (ShaderFeature,bool)> ShaderFeaturesTest = new();
+    }
 
 	public enum ShaderStage
 	{
@@ -161,10 +164,95 @@ public sealed partial class GraphCompiler
 		return gradient;
 	}
 
-	/// <summary>
-	/// Register a gradient and return a generic name if gradient_name is empty.
+		/// <summary>
+	/// Iterate through a list of Shader Features and register them.
 	/// </summary>
-	public string RegisterGradient(Gradient gradient, string gradient_name)
+	public void RegisterShaderFeatures( List<ShaderFeature> features )
+	{
+		var result = ShaderResult;
+
+		if ( features.Any() )
+		{
+			foreach ( var feature in features )
+			{
+				if ( feature.IsValid )
+				{
+					//Log.Info( $"Feature : {feature.Feature.ToUpper()} " );
+					//var feature_name = feature.Name.Replace( " ", "_" ); ;
+					if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
+					{
+						result.ShaderFeatures.Add( feature.FeatureName, feature );
+						Log.Info( $"Registerd Feature : {feature.FeatureName.ToUpper()} " );
+					}
+				}
+				else
+				{
+					Log.Warning( "invalid feature!" );
+				}
+			}
+		}
+		//return features;
+	}
+
+	/// <summary>
+	/// Register a Shader Feature.
+	/// </summary>
+	public void RegisterShaderFeature( ShaderFeature feature )
+	{
+		var result = ShaderResult;
+
+		if ( feature.IsValid )
+		{
+			var feature_name = feature.FeatureName.Replace( " ", "_" ); ;
+
+
+
+            // Add new dictionary key
+            if ( !result.ShaderFeatures.ContainsKey( feature_name ) )
+			{
+				result.ShaderFeatures.Add( feature_name, feature );
+			}
+		}
+		else
+		{
+			Log.Warning( "invalid feature!" );
+		}
+
+	}
+
+    /// <summary>
+    /// Register & Build a Shader Feature.
+    /// </summary>
+    public void RegisterShaderFeatureTest( ShaderFeature feature, string resultDefault, string trueResult, bool previewToggle )
+    {
+        var result = ShaderResult;
+
+        if (feature.IsValid)
+        {
+            var feature_name = feature.FeatureName.Replace(" ", "_"); ;
+
+            // Add new dictionary key
+            if ( !result.ShaderFeaturesTest.ContainsKey( (resultDefault, trueResult) ) )
+            {
+                result.ShaderFeaturesTest.Add( new (resultDefault, trueResult) , new (feature,previewToggle));
+            }
+        }
+        else
+        {
+            Log.Warning("invalid feature!");
+        }
+
+    }
+
+
+
+
+
+
+    /// <summary>
+    /// Register a gradient and return a generic name if gradient_name is empty.
+    /// </summary>
+    public string RegisterGradient(Gradient gradient, string gradient_name)
 	{
 		var result = ShaderResult;
 
@@ -572,19 +660,57 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		Log.Info($"Count is : {count} , Options Count is : {options.Count}");
-		Log.Info($"Option String : {options_body}");
+		//Log.Info($"Feature Options Count is : {options.Count}");
+		//Log.Info($"Feature Option Option String : {options_body}");
+
 		return options_body;
 	}
 
-	private string GenerateFeatures()
-	{
-		var sb = new StringBuilder();
-		var result = ShaderResult;
+    private string GenerateFeatures()
+    {
+        var sb = new StringBuilder();
+        var result = ShaderResult;
 
-		return sb.ToString();
-	}
-	private string GenerateCommon()
+        // Register any Graph level Shader Features...
+        //RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
+
+        if (result.ShaderFeaturesTest.Any())
+        {
+            foreach (var feature in result.ShaderFeaturesTest)
+            {
+                if (feature.Value.Item1.IsDynamicCombo is not true)
+                {
+                    var feature_name = feature.Value.Item1.ToFeatureName();
+                    var feature_name2 = feature.Value.Item1.HeaderName;
+                    var feature_option_amount = feature.Value.Item1.Options.Count - 1;
+                    var options = BuildFeatureOptions(feature.Value.Item1.Options);
+
+                    if (!string.IsNullOrWhiteSpace(options))
+                    {
+                        var _feature = $"Feature({feature_name}, 0..{feature_option_amount}({options}), \"{feature_name2}\");";
+                        sb.AppendLine(_feature);
+                        //if ( DebugSpew )
+                        {
+                           // Log.Info($"Generated Static Combo Feature : {_feature}.");
+                        }
+
+                    }
+                    else // options was empty to we break out of the loop and not bother with generating the feature.
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Log.Info($"Generated Dynamic Combo Feature.");
+                }
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private string GenerateCommon()
 	{
 		var sb = new StringBuilder();
 
@@ -767,6 +893,20 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		// Static & Dynamic shader feature combos
+		foreach ( var feature in ShaderResult.ShaderFeaturesTest )
+		{
+			if ( feature.Value.Item1.IsDynamicCombo is not true )
+			{
+				sb.Append( $"StaticCombo( S_{feature.Value.Item1.FeatureName.ToUpper()}, F_{feature.Value.Item1.FeatureName.ToUpper()}, Sys( ALL ) );" );
+			}
+			else
+			{
+				sb.Append( $"DynamicCombo( D_{feature.Value.Item1.FeatureName.ToUpper()}, 0..{feature.Value.Item1.Options.Count}, Sys( PC ) )" );
+			}
+
+			sb.AppendLine();
+		}
 
 		if ( Graph.MaterialDomain != MaterialDomain.Surface )
 		{
@@ -868,6 +1008,41 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
+	private string StaticBranch(string localOne, string localTwo = "")
+	{
+		var sb = new StringBuilder();
+
+        foreach (var feature in ShaderResult.ShaderFeaturesTest)
+		{
+            // feature.Key.Item2  is the true result while feature.Key.Item1 is the default result
+            if (localOne == feature.Key.Item2 )
+			{
+
+                //var fb = $@"
+                //	[branch] switch ({feature.Value.Item1.ToStaticComboString()})
+                //	{{ 
+                //		case 0: {feature.Key.Item1} = {localOne};
+                //			break;
+                //		case 1: {feature.Key.Item1} = {localOne};
+                //			break;
+                //	}}
+                //
+                //";
+
+                sb.AppendLine();
+                sb.AppendLine( $"#if {feature.Value.Item1.ToStaticComboString()} == {( IsPreview ? ( feature.Value.Item2 ? 0 : 1 ) : 0 )}" );
+				sb.AppendLine( $"{feature.Key.Item1} = {localOne};" );
+                sb.AppendLine( "#endif" );
+
+				//sb.AppendLine(fb);
+					
+            }
+		}
+
+		return sb.ToString();	
+
+    }
+
 	private string GenerateLocals()
 	{
 		var sb = new StringBuilder();
@@ -891,7 +1066,6 @@ public sealed partial class GraphCompiler
             //Log.Info($"Found Gradient : {gradient.Key}");
             //Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
     
-
             sb.AppendLine($"Gradient {gradient.Key} = Gradient::Init();");
             sb.AppendLine();
   
@@ -922,27 +1096,29 @@ public sealed partial class GraphCompiler
 		{
 			int localId = 1;
 
-			foreach ( var result in ShaderResult.Results )
+            foreach (var result in ShaderResult.Results)
 			{
-                if ( result.Item2.ResultType is ResultType.TextureObject )
+                if (result.Item2.ResultType is ResultType.TextureObject)
 				{
-					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-					sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );" );
+					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
+					sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );");
+
+                }
+				else if (result.Item2.ResultType is ResultType.Float2x2)
+				{
+					sb.AppendLine($"float2x2 {result.Item1} = float2x2({result.Item2.Code});");
+					Log.Info($"Generated Local : float2x2({result.Item2.Code});");
+
 				}
-				else if ( result.Item2.ResultType is ResultType.Float2x2 )
+				else if (result.Item2.ResultType is ResultType.Float3x3)
 				{
-					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
-					Log.Info( $"Generated Local : float2x2({result.Item2.Code});" );
+					sb.AppendLine($"float3x3 {result.Item1} = float3x3({result.Item2.Code});");
+					Log.Info($"Generated Local : float3x3({result.Item2.Code});");
 				}
-				else if ( result.Item2.ResultType is ResultType.Float3x3 )
+				else if (result.Item2.ResultType is ResultType.Float4x4)
 				{
-					sb.AppendLine( $"float3x3 {result.Item1} = float3x3({result.Item2.Code});" );
-					Log.Info( $"Generated Local : float3x3({result.Item2.Code});" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float4x4 )
-				{
-					sb.AppendLine( $"float4x4 {result.Item1} = float4x4({result.Item2.Code});" );
-					Log.Info($"Generated Local : float4x4({result.Item2.Code});" );
+					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
+					Log.Info($"Generated Local : float4x4({result.Item2.Code});");
 				}
 				else
 				{
@@ -953,14 +1129,15 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
+
 						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-					}
+                    }
+                }
 
-				}
-
-			}
-		}
+                sb.AppendLine( StaticBranch( result.Item1.Code, result.Item2.Code ) );
+            }
+        }
 		else
 		{
 			foreach ( var result in ShaderResult.Results )
@@ -968,7 +1145,8 @@ public sealed partial class GraphCompiler
 				if ( result.Item2.ResultType is ResultType.TextureObject )
 				{
 					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-				}
+
+                }
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
 					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
@@ -988,9 +1166,11 @@ public sealed partial class GraphCompiler
 				{
 
 					sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-				}
+                }
 
-			}
+                sb.AppendLine( StaticBranch( result.Item1.Code , result.Item2.Code ) );
+
+            }
 		}
 
 		return sb.ToString();
