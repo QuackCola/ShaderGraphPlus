@@ -44,17 +44,14 @@ public static class Utils
     {
         var shaderPath = string.Empty;
 
+        var path = System.IO.Path.ChangeExtension(asset.AbsolutePath, ".shader");
+        var _asset = AssetSystem.FindByPath(path);
 
-            var path = System.IO.Path.ChangeExtension(asset.AbsolutePath, ".shader");
-            var _asset = AssetSystem.FindByPath(path);
-
-            Log.Info($"Shader Path : {asset.Path}");
-            shaderPath = asset.Path;
+        Log.Info($"Shader Path : {asset.Path}");
+        shaderPath = asset.Path;
         
-
         return shaderPath;
     }
-
 
     public static class Vectors
     {

@@ -123,14 +123,15 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 
 		// New 
 		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( GerstnerWaves, 
-		args:
-        $"{worldspaceposition}" + 
-        $",{direction}" +
-        $",{wavelength}" +
-        $",{speed}" +
-        $",{amplitude}" +
-        $",{steepness}" +
-        $",{numwaves}" +
-        $",{gravityconstant}" ) );
+			args:
+			$"{worldspaceposition}" + 
+			$",{direction}" +
+			$",{wavelength}" +
+			$",{speed}" +
+			$",{amplitude}" +
+			$",{steepness}" +
+			$",{numwaves}" +
+			$",{gravityconstant}" 
+		) );
     };
 }

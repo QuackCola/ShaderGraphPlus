@@ -53,30 +53,8 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 				//f.Preview = PreviewToggle;
 
 				// Register the shader feature with shadergraph. 
-				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code, PreviewToggle);
+				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code, PreviewToggle );
 
-
-
-
-
-
-
-
-				// put the if block into NodeResult CodeTwo.
-				//if ( compiler.IsNotPreview )
-				//{
-				//	sb.AppendLine();
-				//	sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == 1 )" );
-				//	sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
-				//	sb.AppendLine( $"#endif" );
-				//}
-				//else
-				//{
-				//	sb.AppendLine();
-				//	sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == {(PreviewToggle ? 0 : 1)} )" );
-				//	sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
-				//	sb.AppendLine( $"#endif" );
-				//}
 			}
 			else
 			{
@@ -93,7 +71,7 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 
 
         // Return the default result with a variable result type.
-        return new NodeResult( result_default.ResultType, $"{result_default}", constant: false);//codetwo: sb.ToString(), constant: false );
+        return new NodeResult( result_default.ResultType, $"{result_default}", constant: false);
     };
 
 }

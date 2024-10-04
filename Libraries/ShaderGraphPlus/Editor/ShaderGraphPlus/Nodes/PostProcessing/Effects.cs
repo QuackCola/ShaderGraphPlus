@@ -4,7 +4,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 [Title( "Warp" ), Category( "PostProcessing/Effects" )]
 [Description( "Takes in the Screen UV's and warps the edges, creating the spherized effect" )]
-[PostProcessingCompatable]
 public class WarpNode : ShaderNodePlus
 {
 
@@ -51,7 +50,6 @@ float2 Warp(float2 vUv , float flWarp_amount)
 
 [Title( "Vignette" ), Category( "PostProcessing/Effects" )]
 [Description( "Adds a vignette shadow to the edges of the image" )]
-[PostProcessingCompatable]
 public class VignetteNode : ShaderNodePlus
 {
 
@@ -100,7 +98,6 @@ float Vignette(float2 vUv , float flVignette_intensity, float flVignette_opacity
 
 [Title( "Border" ), Category( "PostProcessing/Effects" )]
 [Description( "Adds a black border surrounding the edges of the screen." )]
-[PostProcessingCompatable]
 public class BorderNode : ShaderNodePlus
 {
 

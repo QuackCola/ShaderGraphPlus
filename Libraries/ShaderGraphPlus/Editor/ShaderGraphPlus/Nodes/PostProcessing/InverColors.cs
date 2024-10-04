@@ -3,7 +3,6 @@
 namespace Editor.ShaderGraphPlus.Nodes;
 
 [Title( "Invert Colors" ), Category( "PostProcessing/Transform" )]
-[PostProcessingCompatable]
 public class InvertColorsNode : ShaderNodePlus
 {
 

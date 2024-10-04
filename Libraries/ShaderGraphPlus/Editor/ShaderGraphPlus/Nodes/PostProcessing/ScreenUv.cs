@@ -6,7 +6,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 ///  Return the current screen uvs.
 /// </summary>
 [Title( "ScreenUV" ), Category( "PostProcessing/Variables" )]
-[PostProcessingCompatable]
 public sealed class ScreenUVNode : ShaderNodePlus
 {
 	[Output( typeof( Vector2 ) )]

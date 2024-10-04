@@ -2,7 +2,6 @@
 
 
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]
-[PostProcessingCompatable]
 public class CRTBoarderNode : ShaderNodePlus
 {
 
