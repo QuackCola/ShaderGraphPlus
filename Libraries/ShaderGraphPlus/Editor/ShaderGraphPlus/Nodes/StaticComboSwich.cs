@@ -49,8 +49,11 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 		{
 			if ( Feature.IsOptionsValid )
 			{
+				//ShaderFeature f =  new ShaderFeature();
+				//f.Preview = PreviewToggle;
+
 				// Register the shader feature with shadergraph. 
-				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code );
+				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code, PreviewToggle);
 
 
 

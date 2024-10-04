@@ -17,7 +17,12 @@ public struct ShaderFeature : IValid
 	[Hide]
 	public bool IsDynamicCombo { get; set; }
 
-	[Hide]
+    [Hide]
+    public bool Preview { get; set; }
+
+
+
+    [Hide]
 	public readonly bool IsValid
 	{
 		get
@@ -64,7 +69,11 @@ public struct ShaderFeature : IValid
 		}
 	}
 
-	public readonly string ToCompleteFeatureName()
+
+	public void SetPreview( bool val)
+	{ Preview = val; }
+
+	public readonly string ToFeatureName()
 	{
 		return $"F_{FeatureName.ToUpper()}";
 	}

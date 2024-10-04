@@ -5,6 +5,7 @@ using Editor.NodeEditor;
 using Sandbox;
 using System.Text.RegularExpressions;
 using System.Numerics;
+using Microsoft.CodeAnalysis;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -46,7 +47,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Functions = new();
 		public Dictionary<string, Gradient> Gradients = new();
 		public Dictionary<string, ShaderFeature> ShaderFeatures = new();
-        public Dictionary<(string,string), ShaderFeature> ShaderFeaturesTest = new();
+        public Dictionary<(string,string), (ShaderFeature,bool)> ShaderFeaturesTest = new();
     }
 
 	public enum ShaderStage
@@ -222,7 +223,7 @@ public sealed partial class GraphCompiler
     /// <summary>
     /// Register & Build a Shader Feature.
     /// </summary>
-    public void RegisterShaderFeatureTest(ShaderFeature feature, string resultDefault, string trueResult)
+    public void RegisterShaderFeatureTest( ShaderFeature feature, string resultDefault, string trueResult, bool previewToggle )
     {
         var result = ShaderResult;
 
@@ -230,13 +231,10 @@ public sealed partial class GraphCompiler
         {
             var feature_name = feature.FeatureName.Replace(" ", "_"); ;
 
-            Log.Info($"Static Switch Test : [branch] switch (F_{feature.FeatureName.ToUpper()}){{ default: {resultDefault} = {resultDefault}; break; case 0: {resultDefault} = {trueResult}; break;}}\";");
-
-
             // Add new dictionary key
             if ( !result.ShaderFeaturesTest.ContainsKey( (resultDefault, trueResult) ) )
             {
-                result.ShaderFeaturesTest.Add( new (resultDefault, trueResult) , feature);
+                result.ShaderFeaturesTest.Add( new (resultDefault, trueResult) , new (feature,previewToggle));
             }
         }
         else
@@ -662,8 +660,9 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		Log.Info($"Count is : {count} , Options Count is : {options.Count}");
-		Log.Info($"Option String : {options_body}");
+		//Log.Info($"Feature Options Count is : {options.Count}");
+		//Log.Info($"Feature Option Option String : {options_body}");
+
 		return options_body;
 	}
 
@@ -679,20 +678,20 @@ public sealed partial class GraphCompiler
         {
             foreach (var feature in result.ShaderFeaturesTest)
             {
-                if (feature.Value.IsDynamicCombo is not true)
+                if (feature.Value.Item1.IsDynamicCombo is not true)
                 {
-                    var feature_name = $"F_{feature.Value.FeatureName.ToUpper()}";
-                    var feature_name2 = feature.Value.HeaderName;
-                    var feature_option_amount = feature.Value.Options.Count - 1;
-                    var options = BuildFeatureOptions(feature.Value.Options);
+                    var feature_name = feature.Value.Item1.ToFeatureName();
+                    var feature_name2 = feature.Value.Item1.HeaderName;
+                    var feature_option_amount = feature.Value.Item1.Options.Count - 1;
+                    var options = BuildFeatureOptions(feature.Value.Item1.Options);
 
                     if (!string.IsNullOrWhiteSpace(options))
                     {
                         var _feature = $"Feature({feature_name}, 0..{feature_option_amount}({options}), \"{feature_name2}\");";
                         sb.AppendLine(_feature);
-                        //if (DebugSpew)
+                        //if ( DebugSpew )
                         {
-                            Log.Info($"Generated Static Combo Feature : {_feature}.");
+                           // Log.Info($"Generated Static Combo Feature : {_feature}.");
                         }
 
                     }
@@ -897,13 +896,13 @@ public sealed partial class GraphCompiler
 		// Static & Dynamic shader feature combos
 		foreach ( var feature in ShaderResult.ShaderFeaturesTest )
 		{
-			if ( feature.Value.IsDynamicCombo is not true )
+			if ( feature.Value.Item1.IsDynamicCombo is not true )
 			{
-				sb.Append( $"StaticCombo( S_{feature.Value.FeatureName.ToUpper()}, F_{feature.Value.FeatureName.ToUpper()}, Sys( ALL ) );" );
+				sb.Append( $"StaticCombo( S_{feature.Value.Item1.FeatureName.ToUpper()}, F_{feature.Value.Item1.FeatureName.ToUpper()}, Sys( ALL ) );" );
 			}
 			else
 			{
-				sb.Append( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..{feature.Value.Options.Count}, Sys( PC ) )" );
+				sb.Append( $"DynamicCombo( D_{feature.Value.Item1.FeatureName.ToUpper()}, 0..{feature.Value.Item1.Options.Count}, Sys( PC ) )" );
 			}
 
 			sb.AppendLine();
@@ -1009,57 +1008,40 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	private string checkIfHasBranch(string varOne, string VarTwo = "")
+	private string StaticBranch(string localOne, string localTwo = "")
 	{
-		//Log.Info($"Static Switch Test : [branch] switch (F_{feature.FeatureName.ToUpper()}){{ default: {resultDefault} = {resultDefault}; break; case 0: {resultDefault} = {trueResult}; break;}}\";");
-
 		var sb = new StringBuilder();
 
-		var result = "";
-		var RevereMarchPreview = new StringBuilder();
-        //RevereMarchPreview.Append($" If Statement body Line : {(localId == 1 ? (localId - 1) : localId)} Code : {result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; #");
-        //string[] words = RevereMarchPreview.ToString().Split("#");
-        //
-        //foreach (var word in words)
-        //{
-        //    Log.Info(word);
-        //}
-
-
-        foreach (var f in ShaderResult.ShaderFeaturesTest)
+        foreach (var feature in ShaderResult.ShaderFeaturesTest)
 		{
-			
-			if (varOne == f.Key.Item2 )
+            // feature.Key.Item2  is the true result while feature.Key.Item1 is the default result
+            if (localOne == feature.Key.Item2 )
 			{
 
-				var fb = $@"
-					[branch] switch (S_{f.Value.FeatureName.ToUpper()})
-					{{ 
-						default: {f.Key.Item1} = {f.Key.Item1};
-							break; 
-						case 0: {f.Key.Item1} = {varOne};
-							break;
-					}}
+                //var fb = $@"
+                //	[branch] switch ({feature.Value.Item1.ToStaticComboString()})
+                //	{{ 
+                //		case 0: {feature.Key.Item1} = {localOne};
+                //			break;
+                //		case 1: {feature.Key.Item1} = {localOne};
+                //			break;
+                //	}}
+                //
+                //";
 
-				";
+                sb.AppendLine();
+                sb.AppendLine( $"#if {feature.Value.Item1.ToStaticComboString()} == {( IsPreview ? ( feature.Value.Item2 ? 0 : 1 ) : 0 )}" );
+				sb.AppendLine( $"{feature.Key.Item1} = {localOne};" );
+                sb.AppendLine( "#endif" );
 
-
-                Log.Info( "matched! : " + f.Key.Item2);
-				sb.AppendLine(fb);
+				//sb.AppendLine(fb);
 					
-					
-				
-
             }
 		}
 
 		return sb.ToString();	
 
     }
-
-
-
-
 
 	private string GenerateLocals()
 	{
@@ -1084,7 +1066,6 @@ public sealed partial class GraphCompiler
             //Log.Info($"Found Gradient : {gradient.Key}");
             //Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
     
-
             sb.AppendLine($"Gradient {gradient.Key} = Gradient::Init();");
             sb.AppendLine();
   
@@ -1114,20 +1095,13 @@ public sealed partial class GraphCompiler
         if ( IsPreview )
 		{
 			int localId = 1;
-            var RevereMarchPreview = new StringBuilder();
 
             foreach (var result in ShaderResult.Results)
 			{
-
-
-                
                 if (result.Item2.ResultType is ResultType.TextureObject)
 				{
 					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
 					sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );");
-
-                    sb.AppendLine(checkIfHasBranch(result.Item2.Code));
-
 
                 }
 				else if (result.Item2.ResultType is ResultType.Float2x2)
@@ -1146,10 +1120,6 @@ public sealed partial class GraphCompiler
 					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
 					Log.Info($"Generated Local : float4x4({result.Item2.Code});");
 				}
-				//else if (  result.Item2.ResultType is ResultType.String )
-				//{
-                //    Log.Info($"Static Switch Test : [branch] switch (int(%s)){{ default: %s = %s; break; case 0: %s = %s; break;}}\";");
-                //}
 				else
 				{
 					if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
@@ -1162,22 +1132,11 @@ public sealed partial class GraphCompiler
 
 						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-
-                        //Log.Info($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-
-                        sb.AppendLine(checkIfHasBranch(result.Item1.Code));
                     }
-
-					
-
-
                 }
-               
+
+                sb.AppendLine( StaticBranch( result.Item1.Code, result.Item2.Code ) );
             }
-
-
-           
-
         }
 		else
 		{
@@ -1187,7 +1146,6 @@ public sealed partial class GraphCompiler
 				{
 					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
 
-                    sb.AppendLine(checkIfHasBranch(result.Item2.Code));
                 }
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
@@ -1208,13 +1166,11 @@ public sealed partial class GraphCompiler
 				{
 
 					sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-
-					Log.Info($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-
-                    sb.AppendLine(checkIfHasBranch(result.Item1.Code));
                 }
 
-			}
+                sb.AppendLine( StaticBranch( result.Item1.Code , result.Item2.Code ) );
+
+            }
 		}
 
 		return sb.ToString();

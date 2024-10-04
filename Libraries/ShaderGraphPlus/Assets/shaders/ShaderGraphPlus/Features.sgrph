@@ -1,5 +1,5 @@
 {
-  "Model": null,
+  "Model": "models/dev/plane.vmdl",
   "Description": null,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
@@ -15,9 +15,9 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "288,-96",
+      "Position": "792,-252",
       "Albedo": {
-        "Identifier": "7",
+        "Identifier": "9",
         "Output": "Result"
       }
     },
@@ -36,7 +36,7 @@
       "IsDynamicCombo": false,
       "PreviewToggle": false,
       "Identifier": "1",
-      "Position": "-552,-84",
+      "Position": "-696,-84",
       "True": {
         "Identifier": "2",
         "Output": "Result"
@@ -83,7 +83,7 @@
       "IsDynamicCombo": false,
       "PreviewToggle": false,
       "Identifier": "4",
-      "Position": "-204,-276",
+      "Position": "-216,-288",
       "True": {
         "Identifier": "5",
         "Output": "Result"
@@ -110,7 +110,7 @@
       "_class": "Blend",
       "Fraction": 0.5,
       "BlendMode": "Mix",
-      "Clamp": true,
+      "Clamp": false,
       "Identifier": "7",
       "Position": "48,-180",
       "A": {
@@ -119,6 +119,63 @@
       },
       "B": {
         "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "BoxShapeNode",
+      "DefaultWidth": 0.5,
+      "DefaultHeight": 0.5,
+      "Identifier": "8",
+      "Position": "-96,-408"
+    },
+    {
+      "_class": "StaticComboSwitchNode",
+      "Feature": {
+        "FeatureName": "Shape",
+        "HeaderName": "Shape",
+        "Options": [
+          "Box",
+          "NoBox"
+        ],
+        "IsValid": true,
+        "IsOptionsValid": true
+      },
+      "IsDynamicCombo": false,
+      "PreviewToggle": false,
+      "Identifier": "9",
+      "Position": "456,-312",
+      "True": {
+        "Identifier": "10",
+        "Output": "Result"
+      },
+      "False": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.5,
+      "BlendMode": "Subtract",
+      "Clamp": false,
+      "Identifier": "10",
+      "Position": "228,-396",
+      "A": {
+        "Identifier": "7",
+        "Output": "Result"
+      },
+      "C": {
+        "Identifier": "11",
+        "Output": "Out"
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "11",
+      "Position": "96,-348",
+      "In": {
+        "Identifier": "8",
         "Output": "Result"
       }
     }

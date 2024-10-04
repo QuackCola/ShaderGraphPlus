@@ -9,6 +9,7 @@ FEATURES
 	#include "common/features.hlsl"
 	Feature(F_NOISE, 0..1(0="Value",1="Voronoi"), "Noise");
 	Feature(F_COLOR, 0..1(0="Red",1="Blue"), "Color");
+	Feature(F_SHAPE, 0..1(0="Box",1="NoBox"), "Shape");
 	
 }
 
@@ -79,8 +80,16 @@ PS
 	
 	StaticCombo( S_NOISE, F_NOISE, Sys( ALL ) );
 	StaticCombo( S_COLOR, F_COLOR, Sys( ALL ) );
+	StaticCombo( S_SHAPE, F_SHAPE, Sys( ALL ) );
 	float4 g_vBlue < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.00, 0.30, 1.00, 1.00 ); >;
 	float4 g_vRed < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 0.00, 1.00 ); >;
+		
+	float BoxShape( float2 UV, float Width, float Height )
+	{
+		float2 d = abs(UV * 2 - 1) - float2(Width, Height);
+	    d = 1 - d / fwidth(d);
+		return saturate(min(d.x, d.y));
+	}
 	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
@@ -99,15 +108,9 @@ PS
 		
 		float l_1 = ValueNoise(i.vTextureCoords.xy);
 		
-							[branch] switch (S_NOISE)
-							{ 
-								default: l_0 = l_0;
-									break; 
-								case 0: l_0 = l_1;
-									break;
-							}
-		
-						
+		#if S_NOISE == 0
+		l_0 = l_1;
+		#endif
 		
 		float l_2 = l_0;
 		
@@ -115,22 +118,28 @@ PS
 		
 		float4 l_4 = g_vRed;
 		
-							[branch] switch (S_COLOR)
-							{ 
-								default: l_3 = l_3;
-									break; 
-								case 0: l_3 = l_4;
-									break;
-							}
-		
-						
+		#if S_COLOR == 0
+		l_3 = l_4;
+		#endif
 		
 		float4 l_5 = l_3;
 		
-		float4 l_6 = saturate( lerp( float4( l_2, l_2, l_2, l_2 ), l_5, 0.5 ) );
+		float4 l_6 = lerp( float4( l_2, l_2, l_2, l_2 ), l_5, 0.5 );
+		
+		float l_7 = BoxShape( i.vTextureCoords.xy,0.5,0.5 );
+		
+		float l_8 = 1 - l_7;
+		
+		float4 l_9 = lerp( l_6, max( 0.0f, (l_6) - (float4( 1, 1, 1, 1 )) ), l_8 );
+		
+		#if S_SHAPE == 0
+		l_6 = l_9;
+		#endif
+		
+		float4 l_10 = l_6;
 		
 		
-		m.Albedo = l_6.xyz;
+		m.Albedo = l_10.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
