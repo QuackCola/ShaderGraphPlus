@@ -2,7 +2,10 @@
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title( "Static Combo Switch" ), Description( "for making use of Static Combos" ), Category( "Dev" )]
+/// <summary>
+/// If True, do this, if False, do that. Similar to the branch node but using a static combo instead.
+/// </summary>
+[Title( "Static Combo Switch" ), Category("Logic")]
 public sealed class StaticComboSwitchNode : ShaderNodePlus
 {
 	[Hide]
