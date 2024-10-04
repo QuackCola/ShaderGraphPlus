@@ -178,6 +178,16 @@
         "Identifier": "8",
         "Output": "Result"
       }
+    },
+    {
+      "_class": "Branch",
+      "Name": "",
+      "IsAttribute": true,
+      "Operator": "Equal",
+      "Enabled": false,
+      "UI": {},
+      "Identifier": "12",
+      "Position": "456,-120"
     }
   ]
 }
