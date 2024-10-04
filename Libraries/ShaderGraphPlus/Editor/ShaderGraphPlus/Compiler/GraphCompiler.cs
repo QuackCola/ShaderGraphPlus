@@ -208,8 +208,8 @@ public sealed partial class GraphCompiler
             sfinfo.FeatureDeclaration = featureDeclaration;
             sfinfo.FeatureBody = feature_body.ToString();
 			sfinfo.OptionsCount = featureDeclarationOptionAmount;
-            sfinfo.True = trueResult;
-            sfinfo.False = falseResult;
+            sfinfo.TrueResult = trueResult;
+            sfinfo.FalseResult = falseResult;
 			sfinfo.IsDynamicCombo = feature.IsDynamicCombo;
 
             var id = sfinfo.FeatureName;
@@ -1037,7 +1037,7 @@ public sealed partial class GraphCompiler
 
                 foreach (var feature in ShaderResult.ShaderFeatures)
                 {
-                    if (result.Item1.Code == feature.Value.Item1.True)
+                    if (result.Item1.Code == feature.Value.Item1.TrueResult)
                     {
                         sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, feature.Value.Item2 ? "0" : "1") );
                     }
@@ -1076,7 +1076,7 @@ public sealed partial class GraphCompiler
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
                 {
-                    if ( result.Item1.Code == feature.Value.Item1.True )
+                    if ( result.Item1.Code == feature.Value.Item1.TrueResult )
                     {
                         sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, "0" ) );
                     }
