@@ -1,6 +1,9 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
 
+/// <summary>
+/// Container for the generated shader feature info.
+/// </summary>
 public struct ShaderFeatureInfo
 { 
     public string FeatureName{ get; set; }
@@ -10,6 +13,7 @@ public struct ShaderFeatureInfo
     public string True { get; set; }
     public string False { get; set; }
 	public bool IsDynamicCombo { get; set; }
+
     public readonly string ToFeatureName()
     {
         return $"F_{FeatureName.ToUpper()}";
@@ -26,7 +30,9 @@ public struct ShaderFeatureInfo
     }
 }
 
-
+/// <summary>
+///	
+/// </summary>
 public struct ShaderFeature : IValid
 {
 	public string FeatureName { get; set; }
