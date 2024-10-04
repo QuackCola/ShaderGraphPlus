@@ -160,7 +160,7 @@
       "BlendMode": "Subtract",
       "Clamp": false,
       "Identifier": "10",
-      "Position": "228,-384",
+      "Position": "240,-384",
       "A": {
         "Identifier": "7",
         "Output": "Result"
