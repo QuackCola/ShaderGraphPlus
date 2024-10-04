@@ -992,6 +992,8 @@ public sealed partial class GraphCompiler
         
         }
 
+		string TrueIndex = "0";
+
         if ( IsPreview )
 		{
 			int localId = 1;
@@ -1039,7 +1041,8 @@ public sealed partial class GraphCompiler
                 {
                     if ( result.Item1.Code == feature.Value.Item1.TrueResult )
                     {
-                        sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, feature.Value.Item2 ? "0" : "1") );
+						TrueIndex = feature.Value.Item2 ? "0" : "1";
+                        sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
                     }
                 }
             }
@@ -1078,7 +1081,7 @@ public sealed partial class GraphCompiler
                 {
                     if ( result.Item1.Code == feature.Value.Item1.TrueResult )
                     {
-                        sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, "0" ) );
+                        sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
                     }
                 }
 
