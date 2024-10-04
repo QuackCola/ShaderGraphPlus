@@ -1004,13 +1004,11 @@ public sealed partial class GraphCompiler
 				{
 					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
 					sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );");
-
                 }
 				else if (result.Item2.ResultType is ResultType.Float2x2)
 				{
 					sb.AppendLine($"float2x2 {result.Item1} = float2x2({result.Item2.Code});");
 					Log.Info($"Generated Local : float2x2({result.Item2.Code});");
-
 				}
 				else if (result.Item2.ResultType is ResultType.Float3x3)
 				{
@@ -1031,7 +1029,6 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
-
 						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
                     }
@@ -1054,7 +1051,6 @@ public sealed partial class GraphCompiler
 				if ( result.Item2.ResultType is ResultType.TextureObject )
 				{
 					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-
                 }
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
@@ -1073,7 +1069,6 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-
 					sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
                 }
 
