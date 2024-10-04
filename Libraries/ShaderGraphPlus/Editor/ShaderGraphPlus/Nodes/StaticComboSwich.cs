@@ -50,23 +50,30 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 			if ( Feature.IsOptionsValid )
 			{
 				// Register the shader feature with shadergraph. 
-				compiler.RegisterShaderFeature( Feature );
+				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code );
+
+
+
+
+
+
+
 
 				// put the if block into NodeResult CodeTwo.
-				if ( compiler.IsNotPreview )
-				{
-					sb.AppendLine();
-					sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == 1 )" );
-					sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
-					sb.AppendLine( $"#endif" );
-				}
-				else
-				{
-					sb.AppendLine();
-					sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == {(PreviewToggle ? 0 : 1)} )" );
-					sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
-					sb.AppendLine( $"#endif" );
-				}
+				//if ( compiler.IsNotPreview )
+				//{
+				//	sb.AppendLine();
+				//	sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == 1 )" );
+				//	sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
+				//	sb.AppendLine( $"#endif" );
+				//}
+				//else
+				//{
+				//	sb.AppendLine();
+				//	sb.AppendLine( $"#if ( S_{Feature.FeatureName.ToUpper()} == {(PreviewToggle ? 0 : 1)} )" );
+				//	sb.AppendLine( $"{result_default.Code} = {result_true.Code};" );
+				//	sb.AppendLine( $"#endif" );
+				//}
 			}
 			else
 			{
@@ -78,8 +85,12 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		// Return the default result with a variable result type.
-		return new NodeResult( result_default.ResultType, $"{result_default}", codetwo: sb.ToString(), constant: false );
-	};
+
+
+
+
+        // Return the default result with a variable result type.
+        return new NodeResult( result_default.ResultType, $"{result_default}", constant: false);//codetwo: sb.ToString(), constant: false );
+    };
 
 }

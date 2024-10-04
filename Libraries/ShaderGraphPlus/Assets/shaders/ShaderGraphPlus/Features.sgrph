@@ -4,6 +4,9 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
   "nodes": [
     {
       "_class": "Result",
@@ -12,205 +15,112 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-48,144",
+      "Position": "288,-96",
       "Albedo": {
-        "Identifier": "8",
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "StaticComboSwitchNode",
+      "Feature": {
+        "FeatureName": "Color",
+        "HeaderName": "Color",
+        "Options": [
+          "Red",
+          "Blue"
+        ],
+        "IsValid": true,
+        "IsOptionsValid": true
+      },
+      "IsDynamicCombo": false,
+      "PreviewToggle": false,
+      "Identifier": "1",
+      "Position": "-552,-84",
+      "True": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "False": {
+        "Identifier": "3",
         "Output": "Result"
       }
     },
     {
       "_class": "Float4",
       "Value": "1,0,0,1",
-      "Name": "TintRed",
-      "IsAttribute": true,
+      "Name": "Red",
+      "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "1",
-      "Position": "-1456,-320"
-    },
-    {
-      "_class": "Round",
       "Identifier": "2",
-      "Position": "-912,-304",
-      "Input": {
-        "Identifier": "4",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "StaticComboSwitchNode",
-      "Feature": {
-        "FeatureName": "Texture",
-        "HeaderName": "Texture",
-        "Options": [
-          "TextureOne",
-          "TextureTwo"
-        ],
-        "IsValid": true,
-        "IsOptionsValid": true
-      },
-      "IsDynamicCombo": false,
-      "PreviewToggle": false,
-      "Identifier": "3",
-      "Position": "-1792,160",
-      "True": {
-        "Identifier": "13",
-        "Output": "Result"
-      },
-      "False": {
-        "Identifier": "12",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "VoronoiNoise",
-      "AngleOffset": 0,
-      "CellDensity": 32,
-      "Worley": false,
-      "Identifier": "4",
-      "Position": "-1104,-368"
+      "Position": "-1032,-132"
     },
     {
       "_class": "Float4",
-      "Value": "0,0,1,1",
-      "Name": "TintBlue",
-      "IsAttribute": true,
+      "Value": "0,0.3,1,1",
+      "Name": "Blue",
+      "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "5",
-      "Position": "-1456,-112"
+      "Identifier": "3",
+      "Position": "-1032,24"
     },
     {
       "_class": "StaticComboSwitchNode",
       "Feature": {
-        "FeatureName": "Tint",
-        "HeaderName": "Tint",
+        "FeatureName": "Noise",
+        "HeaderName": "Noise",
         "Options": [
-          "Blue",
-          "Red"
+          "Value",
+          "Voronoi"
         ],
         "IsValid": true,
         "IsOptionsValid": true
       },
       "IsDynamicCombo": false,
       "PreviewToggle": false,
-      "Identifier": "6",
-      "Position": "-1088,-80",
+      "Identifier": "4",
+      "Position": "-204,-276",
       "True": {
-        "Identifier": "1",
+        "Identifier": "5",
         "Output": "Result"
       },
       "False": {
-        "Identifier": "5",
+        "Identifier": "6",
         "Output": "Result"
       }
+    },
+    {
+      "_class": "ValueNoise",
+      "Identifier": "5",
+      "Position": "-480,-360"
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 10,
+      "Worley": false,
+      "Identifier": "6",
+      "Position": "-456,-252"
     },
     {
       "_class": "Blend",
       "Fraction": 0.5,
-      "BlendMode": "Add",
+      "BlendMode": "Mix",
       "Clamp": true,
       "Identifier": "7",
-      "Position": "-688,128",
+      "Position": "48,-180",
       "A": {
-        "Identifier": "6",
+        "Identifier": "4",
         "Output": "Result"
       },
       "B": {
-        "Identifier": "3",
+        "Identifier": "1",
         "Output": "Result"
       }
-    },
-    {
-      "_class": "Blend",
-      "Fraction": 0.14919594,
-      "BlendMode": "Add",
-      "Clamp": true,
-      "Identifier": "8",
-      "Position": "-320,16",
-      "B": {
-        "Identifier": "7",
-        "Output": "Result"
-      },
-      "C": {
-        "Identifier": "9",
-        "Output": "Out"
-      }
-    },
-    {
-      "_class": "OneMinus",
-      "Identifier": "9",
-      "Position": "-544,-256",
-      "In": {
-        "Identifier": "10",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "StaticComboSwitchNode",
-      "Feature": {
-        "FeatureName": "Circles",
-        "HeaderName": "Circles",
-        "Options": [
-          "NoCircles",
-          "Circles"
-        ],
-        "IsValid": true,
-        "IsOptionsValid": true
-      },
-      "IsDynamicCombo": false,
-      "PreviewToggle": false,
-      "Identifier": "10",
-      "Position": "-768,-208",
-      "True": {
-        "Identifier": "2",
-        "Output": "Result"
-      },
-      "False": {
-        "Identifier": "11",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "Float",
-      "Min": 0,
-      "Max": 1,
-      "Value": 0,
-      "Name": "shitty",
-      "IsAttribute": true,
-      "UI": {},
-      "Identifier": "11",
-      "Position": "-1088,-176"
-    },
-    {
-      "_class": "TextureSampler",
-      "Image": "textures/sbox_logo.psd",
-      "DefaultSampler": {
-        "Name": ""
-      },
-      "UI": {
-        "Name": "Texture_One",
-        "Default": "1,1,1,1",
-        "SrgbRead": true
-      },
-      "Identifier": "12",
-      "Position": "-2192,320"
-    },
-    {
-      "_class": "TextureSampler",
-      "Image": "textures/s2_logo.psd",
-      "DefaultSampler": {
-        "Name": ""
-      },
-      "UI": {
-        "Name": "Texture_Two",
-        "Default": "1,1,1,1",
-        "SrgbRead": true
-      },
-      "Identifier": "13",
-      "Position": "-2192,32"
     }
   ]
 }
