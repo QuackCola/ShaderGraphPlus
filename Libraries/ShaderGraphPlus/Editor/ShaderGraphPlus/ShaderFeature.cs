@@ -10,8 +10,8 @@ public struct ShaderFeatureInfo
     public string FeatureDeclaration { get; set; }
     public string FeatureBody { get; set; }
 	public int OptionsCount { get; set; }
-    public string True { get; set; }
-    public string False { get; set; }
+    public string TrueResult { get; set; }
+    public string FalseResult { get; set; }
 	public bool IsDynamicCombo { get; set; }
 
     public readonly string ToFeatureName()
