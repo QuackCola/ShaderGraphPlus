@@ -69,6 +69,7 @@ public abstract class BaseNodePlus : INode
     {
         return PrimaryColor;
     }
+
     public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;

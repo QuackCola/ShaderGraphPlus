@@ -4,7 +4,6 @@
 ///
 /// </summary>
 [Title( "Random" ), Category( "PostProcessing/Utility" )]
-[PostProcessingCompatable]
 public sealed class RandomNode : ShaderNodePlus
 {
 
