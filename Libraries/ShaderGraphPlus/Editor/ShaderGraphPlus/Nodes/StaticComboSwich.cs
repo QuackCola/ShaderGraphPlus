@@ -5,13 +5,13 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// If True, do this, if False, do that. Similar to the branch node but using a static combo instead.
 /// </summary>
-[Title( "Static Combo Switch" ), Category("Logic")]
+[Title("Static Combo Switch"), Category("Logic")]
 public sealed class StaticComboSwitchNode : ShaderNodePlus
 {
 	[Hide]
-	public override string Title => !string.IsNullOrWhiteSpace( Feature.FeatureName ) ?
-		$"{DisplayInfo.For( this ).Name} (F_{Feature.FeatureName.ToUpper()})" :
-		$"{DisplayInfo.For( this ).Name}";
+	public override string Title => !string.IsNullOrWhiteSpace(Feature.FeatureName) ?
+		$"{DisplayInfo.For(this).Name} (F_{Feature.FeatureName.ToUpper()})" :
+		$"{DisplayInfo.For(this).Name}";
 
 	[InlineEditor]
 	public ShaderFeature Feature { get; set; } = new();
@@ -29,9 +29,6 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 	[Hide]
 	public bool IsDynamicCombo { get; set; }
 
-
-	//[Hide]
-	//[Title("InvertTrue")]
 	public bool PreviewToggle { get; set; }
 
 	public StaticComboSwitchNode()
@@ -56,7 +53,7 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 				//f.Preview = PreviewToggle;
 
 				// Register the shader feature with shadergraph. 
-				compiler.RegisterShaderFeatureTest( Feature , result_default.Code, result_true.Code, PreviewToggle );
+				compiler.RegisterShaderFeature( Feature , result_default.Code, result_true.Code, PreviewToggle );
 
 			}
 			else

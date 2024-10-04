@@ -46,8 +46,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public Dictionary<string, string> Functions = new();
 		public Dictionary<string, Gradient> Gradients = new();
-		public Dictionary<string, ShaderFeature> ShaderFeatures = new();
-        public Dictionary<(string,string), (ShaderFeature,bool)> ShaderFeaturesTest = new();
+        public Dictionary<(string,string), (ShaderFeature,bool)> ShaderFeatures = new();
     }
 
 	public enum ShaderStage
@@ -167,63 +166,38 @@ public sealed partial class GraphCompiler
 		/// <summary>
 	/// Iterate through a list of Shader Features and register them.
 	/// </summary>
-	public void RegisterShaderFeatures( List<ShaderFeature> features )
-	{
-		var result = ShaderResult;
+	//public void RegisterShaderFeatures( List<ShaderFeature> features )
+	//{
+	//	var result = ShaderResult;
+	//
+	//	if ( features.Any() )
+	//	{
+	//		foreach ( var feature in features )
+	//		{
+	//			if ( feature.IsValid )
+	//			{
+	//				//Log.Info( $"Feature : {feature.Feature.ToUpper()} " );
+	//				//var feature_name = feature.Name.Replace( " ", "_" ); ;
+	//				if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
+	//				{
+	//					result.ShaderFeatures.Add( feature.FeatureName, feature );
+	//					Log.Info( $"Registerd Feature : {feature.FeatureName.ToUpper()} " );
+	//				}
+	//			}
+	//			else
+	//			{
+	//				Log.Warning( "invalid feature!" );
+	//			}
+	//		}
+	//	}
+	//	//return features;
+	//}
 
-		if ( features.Any() )
-		{
-			foreach ( var feature in features )
-			{
-				if ( feature.IsValid )
-				{
-					//Log.Info( $"Feature : {feature.Feature.ToUpper()} " );
-					//var feature_name = feature.Name.Replace( " ", "_" ); ;
-					if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
-					{
-						result.ShaderFeatures.Add( feature.FeatureName, feature );
-						Log.Info( $"Registerd Feature : {feature.FeatureName.ToUpper()} " );
-					}
-				}
-				else
-				{
-					Log.Warning( "invalid feature!" );
-				}
-			}
-		}
-		//return features;
-	}
-
-	/// <summary>
-	/// Register a Shader Feature.
-	/// </summary>
-	public void RegisterShaderFeature( ShaderFeature feature )
-	{
-		var result = ShaderResult;
-
-		if ( feature.IsValid )
-		{
-			var feature_name = feature.FeatureName.Replace( " ", "_" ); ;
-
-
-
-            // Add new dictionary key
-            if ( !result.ShaderFeatures.ContainsKey( feature_name ) )
-			{
-				result.ShaderFeatures.Add( feature_name, feature );
-			}
-		}
-		else
-		{
-			Log.Warning( "invalid feature!" );
-		}
-
-	}
-
+	
     /// <summary>
     /// Register & Build a Shader Feature.
     /// </summary>
-    public void RegisterShaderFeatureTest( ShaderFeature feature, string resultDefault, string trueResult, bool previewToggle )
+    public void RegisterShaderFeature( ShaderFeature feature, string resultDefault, string trueResult, bool previewToggle )
     {
         var result = ShaderResult;
 
@@ -232,9 +206,9 @@ public sealed partial class GraphCompiler
             var feature_name = feature.FeatureName.Replace(" ", "_"); ;
 
             // Add new dictionary key
-            if ( !result.ShaderFeaturesTest.ContainsKey( (resultDefault, trueResult) ) )
+            if ( !result.ShaderFeatures.ContainsKey( (resultDefault, trueResult) ) )
             {
-                result.ShaderFeaturesTest.Add( new (resultDefault, trueResult) , new (feature,previewToggle));
+                result.ShaderFeatures.Add( new (resultDefault, trueResult) , new (feature,previewToggle));
             }
         }
         else
@@ -674,9 +648,9 @@ public sealed partial class GraphCompiler
         // Register any Graph level Shader Features...
         //RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
 
-        if (result.ShaderFeaturesTest.Any())
+        if (result.ShaderFeatures.Any())
         {
-            foreach (var feature in result.ShaderFeaturesTest)
+            foreach (var feature in result.ShaderFeatures)
             {
                 if (feature.Value.Item1.IsDynamicCombo is not true)
                 {
@@ -894,7 +868,7 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 
 		// Static & Dynamic shader feature combos
-		foreach ( var feature in ShaderResult.ShaderFeaturesTest )
+		foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
 			if ( feature.Value.Item1.IsDynamicCombo is not true )
 			{
@@ -1012,7 +986,7 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-        foreach (var feature in ShaderResult.ShaderFeaturesTest)
+        foreach (var feature in ShaderResult.ShaderFeatures)
 		{
             // feature.Key.Item2  is the true result while feature.Key.Item1 is the default result
             if (localOne == feature.Key.Item2 )
