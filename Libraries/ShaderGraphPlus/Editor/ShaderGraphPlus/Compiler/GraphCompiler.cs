@@ -443,44 +443,9 @@ public sealed partial class GraphCompiler
 
 		var attribName = name;
 
-		//var prefix = "";
-
-        var prefix = value switch
-        {
-            Color _ => "g_v",
-            Vector4 _ => "g_v",
-            Vector3 _ => "g_v",
-            Vector2 _ => "g_v",
-            float _ => "g_fl",
-            bool _ => "g_b",
-            Float2x2 _ => "g_m",
-            Float3x3 _ => "g_m",
-            Float4x4 _ => "g_m",
-            _ => throw new ArgumentException("Unsupported value type", nameof( value ) )
-        };
-
-        //if (value is float)
-		//{
-		//	prefix = "g_fl";
-		//}
-		//else if (value is bool)
-		//{
-		//	prefix = "g_b";
-		//}
-		//else if (value is Float2x2 or Float3x3 or Float4x4)
-		//{
-		//	prefix = "g_m";
-		//}
-		//else if (value is Vector2 or Vector3 or Color)
-		//{
-		//	prefix = "g_v";
-		//}
-		//else
-		//{
-		//	throw new ArgumentException("Unsupported value type", nameof(value));
-        //}
-
-		if (!name.StartsWith(prefix))
+		var prefix = GetLocalPrefix(value);
+       
+        if (!name.StartsWith(prefix))
 			name = prefix + name;
 
 		if (ShaderResult.Parameters.TryGetValue(name, out var parameter))
@@ -587,6 +552,26 @@ public sealed partial class GraphCompiler
 			_ => throw new ArgumentException("Unsupported attribute type", nameof(value))
 		};
 	}
+
+	private static string GetLocalPrefix<T>( T value)
+	{
+        var prefix = value switch
+        {
+            Color _ => "g_v",
+            Vector4 _ => "g_v",
+            Vector3 _ => "g_v",
+            Vector2 _ => "g_v",
+            float _ => "g_fl",
+            bool _ => "g_b",
+            Float2x2 _ => "g_m",
+            Float3x3 _ => "g_m",
+            Float4x4 _ => "g_m",
+            _ => throw new ArgumentException("Unsupported value type", nameof(value))
+        };
+
+		return prefix;
+    }
+
 
 	private static int GetComponentCount(Type inputType)
 	{
