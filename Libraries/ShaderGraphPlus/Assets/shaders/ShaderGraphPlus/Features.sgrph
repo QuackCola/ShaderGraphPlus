@@ -1,5 +1,5 @@
 {
-  "Model": "models/dev/plane.vmdl",
+  "Model": "models/dev/box.vmdl",
   "Description": null,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
@@ -36,7 +36,7 @@
       "IsDynamicCombo": false,
       "PreviewToggle": false,
       "Identifier": "1",
-      "Position": "-696,-84",
+      "Position": "-708,-132",
       "True": {
         "Identifier": "2",
         "Output": "Result"
@@ -55,7 +55,7 @@
         "Type": "Color"
       },
       "Identifier": "2",
-      "Position": "-1032,-132"
+      "Position": "-1020,-144"
     },
     {
       "_class": "Float4",
@@ -112,7 +112,7 @@
       "BlendMode": "Mix",
       "Clamp": false,
       "Identifier": "7",
-      "Position": "48,-180",
+      "Position": "48,-240",
       "A": {
         "Identifier": "4",
         "Output": "Result"
@@ -144,7 +144,7 @@
       "IsDynamicCombo": false,
       "PreviewToggle": false,
       "Identifier": "9",
-      "Position": "468,-300",
+      "Position": "480,-348",
       "True": {
         "Identifier": "10",
         "Output": "Result"

@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.IO;
-using static Editor.ShaderGraphPlus.GraphCompiler;
+﻿using System.IO;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -147,6 +145,7 @@ public class MainWindow : DockWindow, IAssetEditor
     }
     private void Compile()
 	{
+
 		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
 			RestoreShader();
@@ -257,10 +256,6 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	private void OnCompileFinished( int exitCode )
 	{
-
-	
-
-
 		_isCompiling = false;
 
 		if ( _isPendingCompile )
@@ -274,7 +269,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		if ( exitCode == 0 )
 		{
-			Log.Info( $"Compile finished in {_timeSinceCompile}" );
+            Log.Info( $"Compile finished in {_timeSinceCompile}" );
 
 			var shaderPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 
@@ -391,7 +386,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		// Evaluate all nodes
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
-			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
+            var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
 
 			if ( property == null )
@@ -504,7 +499,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		// Evaluate all nodes
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
-			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
+            var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
 
 			if ( property == null )
