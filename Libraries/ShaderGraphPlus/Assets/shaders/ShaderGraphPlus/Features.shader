@@ -105,39 +105,31 @@ PS
 		m.Transmission = 0;
 		
 		float l_0 = VoronoiNoise( i.vTextureCoords.xy, 3.1415925, 10 );
-		
 		float l_1 = ValueNoise(i.vTextureCoords.xy);
 		
-		#if S_NOISE == 0
+		#if S_NOISE == 0 
 		l_0 = l_1;
 		#endif
 		
 		float l_2 = l_0;
-		
 		float4 l_3 = g_vBlue;
-		
 		float4 l_4 = g_vRed;
 		
-		#if S_COLOR == 0
+		#if S_COLOR == 0 
 		l_3 = l_4;
 		#endif
 		
 		float4 l_5 = l_3;
-		
 		float4 l_6 = lerp( float4( l_2, l_2, l_2, l_2 ), l_5, 0.5 );
-		
 		float l_7 = BoxShape( i.vTextureCoords.xy,0.5,0.5 );
-		
 		float l_8 = 1 - l_7;
-		
 		float4 l_9 = lerp( l_6, max( 0.0f, (l_6) - (float4( 1, 1, 1, 1 )) ), l_8 );
 		
-		#if S_SHAPE == 0
+		#if S_SHAPE == 0 
 		l_6 = l_9;
 		#endif
 		
 		float4 l_10 = l_6;
-		
 		
 		m.Albedo = l_10.xyz;
 		m.Opacity = 1;

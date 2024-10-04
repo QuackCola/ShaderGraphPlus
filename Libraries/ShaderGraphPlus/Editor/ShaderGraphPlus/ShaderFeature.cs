@@ -1,5 +1,32 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
+
+public struct ShaderFeatureInfo
+{ 
+    public string FeatureName{ get; set; }
+    public string FeatureDeclaration { get; set; }
+    public string FeatureBody { get; set; }
+	public int OptionsCount { get; set; }
+    public string True { get; set; }
+    public string False { get; set; }
+	public bool IsDynamicCombo { get; set; }
+    public readonly string ToFeatureName()
+    {
+        return $"F_{FeatureName.ToUpper()}";
+    }
+
+    public readonly string ToStaticComboString()
+    {
+        return $"S_{FeatureName.ToUpper()}";
+    }
+
+    public readonly string ToDynamicComboString()
+    {
+        return $"D_{FeatureName.ToUpper()}";
+    }
+}
+
+
 public struct ShaderFeature : IValid
 {
 	public string FeatureName { get; set; }
@@ -65,20 +92,5 @@ public struct ShaderFeature : IValid
 				return false;
 			}
 		}
-	}
-
-	public readonly string ToFeatureName()
-	{
-		return $"F_{FeatureName.ToUpper()}";
-	}
-
-	public readonly string ToStaticComboString()
-	{
-		return $"S_{FeatureName.ToUpper()}";
-	}
-
-	public readonly string ToDynamicComboString()
-	{
-		return $"D_{FeatureName.ToUpper()}";
 	}
 }

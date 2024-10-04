@@ -20,11 +20,6 @@ public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
-
-	/// <summary>
-	/// Holds other shit. mainly #if blocks and whatnot for static and dynamic combos if need be.
-	/// </summary>
-	//public string CodeTwo { get; private set; }
 	public ResultType ResultType { get; private set; }
 	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
