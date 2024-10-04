@@ -144,7 +144,7 @@
       "IsDynamicCombo": false,
       "PreviewToggle": false,
       "Identifier": "9",
-      "Position": "456,-312",
+      "Position": "468,-300",
       "True": {
         "Identifier": "10",
         "Output": "Result"
@@ -160,7 +160,7 @@
       "BlendMode": "Subtract",
       "Clamp": false,
       "Identifier": "10",
-      "Position": "228,-396",
+      "Position": "228,-384",
       "A": {
         "Identifier": "7",
         "Output": "Result"
