@@ -741,12 +741,18 @@ public sealed partial class GraphCompiler
 				IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
 			);
 
-            var postProcessClass = GeneratePostProcessingComponent(
-                	Graph.postProcessComponentInfo,
-                	$"{CleanName(_Asset.Name)}_PostProcess",
-                	$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
-            );
+			var postProcessClass = "";
 
+
+			if (Graph.postProcessComponentInfo.GenerateClass is true)
+			{
+				postProcessClass = GeneratePostProcessingComponent(
+				Graph.postProcessComponentInfo,
+				$"{CleanName(_Asset.Name)}_PostProcess",
+				$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
+				);
+			}
+       
 			return (shaderCode, postProcessClass);
         }
 

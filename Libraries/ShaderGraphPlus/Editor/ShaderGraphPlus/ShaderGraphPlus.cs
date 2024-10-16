@@ -44,8 +44,8 @@ public sealed partial class ShaderGraphPlus : IGraph
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-    [HideIf( nameof(MaterialDomain), MaterialDomain.Surface )]
-	[InlineEditor]
+    [HideIf( nameof(MaterialDomain), MaterialDomain.Surface  )]
+    [InlineEditor]
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
