@@ -1069,7 +1069,12 @@ public class MainWindow : DockWindow, IAssetEditor
         // Write generated post processing class to file within the current projects code folder.
         if (_graph.MaterialDomain is MaterialDomain.PostProcess)
 		{
-			WritePostProcessingShaderClass( code.Item2 );
+			// If the post processing class code is blank, dont bother generating the class.
+			if ( !string.IsNullOrWhiteSpace( code.Item2 ) )
+			{
+                WritePostProcessingShaderClass( code.Item2 );
+            }
+			
         }
        
         AddToRecentFiles( savePath );
