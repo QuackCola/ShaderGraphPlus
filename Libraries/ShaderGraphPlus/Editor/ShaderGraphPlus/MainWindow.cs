@@ -140,7 +140,7 @@ public class MainWindow : DockWindow, IAssetEditor
         else
         {
             var path = _asset.AbsolutePath;
-            Utils.OpenInNotepad(path);
+            Utilities.Path.OpenInNotepad(path);
         }
     }
     private void Compile()
@@ -1079,7 +1079,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
     private void WritePostProcessingShaderClass( string classCode )
     {
-		var path = System.IO.Directory.CreateDirectory($"{Utils.GetProjectCodePath()}/Components/PostProcessing");
+		var path = System.IO.Directory.CreateDirectory($"{Utilities.Path.GetProjectCodePath()}/Components/PostProcessing");
 
         File.WriteAllText( Path.Combine( path.FullName , $"{_asset.Name}_PostProcessing.cs"), classCode );
     }

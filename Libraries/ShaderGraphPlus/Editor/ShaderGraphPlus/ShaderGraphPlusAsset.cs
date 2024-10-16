@@ -14,7 +14,7 @@ public static class CreateShaderGraphPlusAsset
 
 		var dev_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/ShaderGraphPlus/templates";
 		var user_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/quack.shadergraphplus/templates";
-		var template_path = Utils.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
+		var template_path = Utilities.Path.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
 
 		var sourceFile = template_path + "/default.sgrph";
 
@@ -78,7 +78,7 @@ public static class CreateShaderGraphPlusAssetPP
 
 		var dev_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/ShaderGraphPlus/templates";
 		var user_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/quack.shadergraphplus/templates";
-		var template_path = Utils.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
+		var template_path = Utilities.Path.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
 
 		var sourceFile = template_path + "/default_postprocessing.sgrph";
 
