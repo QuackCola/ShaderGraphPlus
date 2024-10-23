@@ -19,13 +19,12 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
-
 	public bool Debug { get; private set; } = false;
-
-    /// <summary>
-    /// Current graph we're compiling
-    /// </summary>
-    public ShaderGraphPlus Graph { get; private set; }
+	
+	/// <summary>
+	/// Current graph we're compiling
+	/// </summary>
+	public ShaderGraphPlus Graph { get; private set; }
 
 	public Asset _Asset { get; private set; }
 
