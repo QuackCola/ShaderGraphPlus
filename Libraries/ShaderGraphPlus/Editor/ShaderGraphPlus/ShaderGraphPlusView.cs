@@ -9,7 +9,15 @@ public class ShaderGraphPlusView : GraphView
 
 	protected override string ViewCookie => _window?.AssetPath;
 
-	public new ShaderGraphPlus Graph
+    private static bool? _cachedConnectionStyle;
+
+    public static bool EnableGridAlignedWires
+    {
+        get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
+        set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
+    }
+
+    public new ShaderGraphPlus Graph
 	{
 		get => (ShaderGraphPlus)base.Graph;
 		set => base.Graph = value;
@@ -17,12 +25,35 @@ public class ShaderGraphPlusView : GraphView
 
 	private readonly Dictionary<string, INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
-	public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
+    public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
+    ? GridConnectionStyle.Instance
+    : ConnectionStyle.Default;
+
+    private ConnectionStyle _oldConnectionStyle;
+
+    public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
 	{
 		_window = window;
 		_undoStack = window.UndoStack;
 
-		OnSelectionChanged += SelectionChanged;
+        // Make a nice background 
+        {
+            var pixmap = new Pixmap((int)GridSize, (int)GridSize);
+            pixmap.Clear(Theme.WindowBackground);
+            using (Paint.ToPixmap(pixmap))
+            {
+                var h = pixmap.Size * 0.5f;
+
+                Paint.SetPen(Theme.WindowBackground.Lighten(0.3f));
+                Paint.DrawLine(0, new Vector2(0, pixmap.Height));
+                Paint.DrawLine(0, new Vector2(pixmap.Width, 0));
+            }
+
+            SetBackgroundImage(pixmap);
+        }
+
+
+        OnSelectionChanged += SelectionChanged;
 	}
 
 	protected override INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
