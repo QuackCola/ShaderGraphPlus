@@ -47,9 +47,7 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 
 		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( CRTBoarder , 
 			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" +
-			$",{scenecolor}" + 
-			$",{curvature}" 
+			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {scenecolor}, {curvature}" 
 		));
 	};
 }

@@ -9,7 +9,8 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "UV Rotation" ), Category( "UV" )]
 public sealed class UVRotationNode : ShaderNodePlus
 {
-	[Hide]
+
+[Hide]
 public string UVRotation => @"
 float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 {
@@ -65,12 +66,7 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVRotation, 
-			args:
-			$"{coords}" + 
-			$",{rotationcenter}" +
-            $",{rotation}"
-		) );
+		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVRotation, args: $"{coords}, {rotationcenter}, {rotation}" ));
 	};
 
 }
@@ -81,13 +77,14 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 [Title( "UV Scale" ), Category( "UV" )]
 public sealed class UVScaleNode : ShaderNodePlus
 {
+
 	[Hide]
 	public string UVScale => @"
-float2 UVScale( float2 vUv, float2 vScale )
-{
-	return vUv * vScale;
-}
-";
+	float2 UVScale( float2 vUv, float2 vScale )
+	{
+		return vUv * vScale;
+	}
+	";
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
@@ -120,7 +117,7 @@ float2 UVScale( float2 vUv, float2 vScale )
 		}
 
 		//return new NodeResult( ResultType.Vector2, compiler.ResultFunction( compiler.GetFunction( UVScale ), $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}", $"{scale}" ) );
-		return new NodeResult( ResultType.Vector2, $"({coords}" + $" * {scale})" );
+		return new NodeResult( ResultType.Vector2, $"({coords} * {scale})" );
 	};
 
 }
@@ -131,8 +128,9 @@ float2 UVScale( float2 vUv, float2 vScale )
 [Title( "UV Scale By Point" ), Category( "UV" )]
 public sealed class UVScaleByPointNode : ShaderNodePlus
 {
-	[Hide]
-	public string UVScaleByPoint => @"
+
+[Hide]
+public string UVScaleByPoint => @"
 //  vUv - UV coordinates input.
 //  flCenter - Center point to scale from. A flCenter 0f 0.5 would let you scale by the center. 
 //  flScale - Amount to scale the UVs by in both the X & Y.
@@ -182,52 +180,10 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVScaleByPoint, 
-			args:
-			$"{coords}" +
-			$",{center}" + 
-			$",{scale}" 
-		) );
+		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVScaleByPoint, args: $"{coords}, {center}, {scale}" ));
 	};
 
 }
-
-//[Title( "UV Offset" ), Category( "UV" )]
-//public sealed class UVOffsetNode : ShaderNodePlus
-//{
-//	[Hide]
-//public string UVOffset => @"
-//float2 UVOffset( float2 vUv, float2 vOffset )
-//{
-//    return vUv + vOffset;
-//}
-//";
-//
-//	[Title( "UV" )]
-//	[Input( typeof( Vector2 ) )]
-//	[Hide]
-//	public NodeInput Coords { get; set; }
-//
-//	[Title( "Offset" )]
-//	[Input( typeof( Vector2 ) )]
-//	[Hide]
-//	public NodeInput Offset { get; set; }
-//
-//	public Vector2 DefaultOffset { get; set; } = new Vector2( 0.0f, 0.0f );
-//
-//	[Output( typeof( Vector2 ) )]
-//	[Hide]
-//	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-//	{
-//		var coords = compiler.Result( Coords );
-//		var offset = compiler.ResultOrDefault( Offset, DefaultOffset );
-//
-//
-//		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( compiler.GetFunction( UVOffset ), $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}", $"{offset}" ) );
-//	};
-//
-//}
-
 
 /// <summary>
 /// Scroll your texture coordinates in a particular direction.
@@ -236,8 +192,8 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 public sealed class UVScrollNode : ShaderNodePlus
 {
 
-	[Hide]
-	public string UVScroll => @"
+[Hide]
+public string UVScroll => @"
 float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 {
     return vUv + flTime * vScrollSpeed;
@@ -296,7 +252,7 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 		}
 
 		//return new NodeResult( ResultType.Vector2, compiler.ResultFunction( compiler.GetFunction( UVScroll ), $"{time}", $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}", $"{scrollspeed}" ) );
-		return new NodeResult( ResultType.Vector2, $"({coords}" + $" + {time}" + $" * {scrollspeed})");
+		return new NodeResult( ResultType.Vector2, $"({coords} + {time} * {scrollspeed})");
 	};
 }
 
@@ -417,11 +373,7 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 
 		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( FlipBook,
 			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" +
-			$",{width}" +
-			$",{height}" +
-			$",{tileindex}" +
-			$",float2({(Invertx ? 1 : 0)},{(Inverty ? 1 : 0)})" 
+			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, {width}, {height}, {tileindex}, float2({(Invertx ? 1 : 0)},{(Inverty ? 1 : 0)})" 
 		) );
 	};
 }

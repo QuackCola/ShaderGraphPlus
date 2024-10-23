@@ -82,15 +82,20 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		var Grid = compiler.ResultOrDefault( GridSize, DefaultGridSize );
 		var Boarder = compiler.ResultOrDefault( BoarderThickness, DefaultBoarderThickness );
 
-		return new NodeResult( ResultType.Color, compiler.ResultFunction( PixelPlot , 
-		args: 
-		$"{result.Item1}" + 
-		$",{result.Item2}" + 
-		$",{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" + 
-		$",{Grid}" + 
-		$",{Boarder}" ) 
-		);
-	};
+        //return new NodeResult( ResultType.Color, compiler.ResultFunction( PixelPlot , 
+        //args: 
+        //$"{result.Item1}" + 
+        //$",{result.Item2}" + 
+        //$",{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" + 
+        //$",{Grid}" + 
+        //$",{Boarder}" ) 
+        //);
+
+        return new NodeResult(ResultType.Color, compiler.ResultFunction(PixelPlot,
+        args:
+        $"{result.Item1}, {result.Item2}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}"
+		));
+    };
 
 	/// <summary>
 	/// Red component of result	
