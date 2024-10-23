@@ -235,7 +235,17 @@ public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : 
 		}
 	}
 
-	public ValueEditor CreateEditor( NodeUI node, Plug plug )
+    public float? GetHandleOffset(string name)
+    {
+        return null;
+    }
+
+    public void SetHandleOffset(string name, float? value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ValueEditor CreateEditor( NodeUI node, Plug plug )
 	{
 		var editor = Property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 		if ( editor == null )
