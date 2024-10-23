@@ -1,8 +1,8 @@
 ﻿
 namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title("Gradient"), Description(""), Category("Dev")]
-public sealed class TestGradient : ShaderNodePlus
+[Title("Gradient"), Description(""), Category("Constants")]
+public sealed class GradientNode : ShaderNodePlus
 {
 
     [Hide]
@@ -26,7 +26,7 @@ public sealed class TestGradient : ShaderNodePlus
     {
         if (Gradient.Colors.Count > 8)
         {
-            return NodeResult.Error($"{DisplayInfo.Name} has {Gradient.Colors.Count} color keys which is greatrer than the maximum amount of 8 allowed color keys ");
+            return NodeResult.Error($"{DisplayInfo.Name} has {Gradient.Colors.Count} color keys which is greater than the maximum amount of 8 allowed color keys.");
         }
         else
         {
@@ -43,7 +43,7 @@ public sealed class TestGradient : ShaderNodePlus
 /// <summary>
 /// Sample a provided gradient.
 /// </summary>
-[Title("Sample Gradient"),Category("Dev")]
+[Title("Sample Gradient"),Category("Sample")]
 public sealed class SampleGradientNode : ShaderNodePlus
 {
     [Title("Gradient")]
