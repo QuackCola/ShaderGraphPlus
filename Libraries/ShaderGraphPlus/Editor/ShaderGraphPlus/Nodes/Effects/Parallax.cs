@@ -3,7 +3,7 @@
 /// <summary>
 /// 
 /// </summary>
-[Title( "Parallax Node Test" ), Category( "Effects" )]
+[Title( "Parallax Node Test" ), Category( "Dev" )]
 public sealed class ParallaxNode : ShaderNodePlus
 {
 	[Hide]
