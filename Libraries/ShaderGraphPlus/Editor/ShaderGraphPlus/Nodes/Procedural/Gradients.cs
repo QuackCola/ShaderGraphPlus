@@ -83,11 +83,7 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 
 		return new NodeResult( ResultType.Float, compiler.ResultFunction( RoundGradient, 
 			args:
-			$"{coords}" +
-            $",{center}" +
-            $",{radius}" +
-            $",{density}" + 
-			$",{invert}" 
+			$"{coords}, {center}, {radius}, {density}, {invert}" 
 		));
 	};
 

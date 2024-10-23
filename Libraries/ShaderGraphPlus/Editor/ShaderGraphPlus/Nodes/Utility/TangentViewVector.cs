@@ -84,10 +84,7 @@ float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangent
 
 		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( GetTangentViewVector,
 			args:
-			$"{worldspaceposition}" +
-			$",{worldnormal}" +
-            $",{tangentuws}" +
-            $",{tangentvws}" 
+			$"{worldspaceposition}, {worldnormal}, {tangentuws}, {tangentvws}" 
 		) );
 	};
 }

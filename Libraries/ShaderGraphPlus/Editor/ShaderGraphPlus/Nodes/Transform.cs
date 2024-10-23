@@ -757,37 +757,37 @@ float4 Divide_blend( float4 a, float4 b, bool blendAlpha = false )
 				returnCall = $"min( 1.0f, ({aStr}) + ({bStr}) )";
 				break;
 			case BlendNodeMode.ColorBurn:
-				returnCall = compiler.ResultFunction( ColorBurn_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( ColorBurn_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.LinearBurn:
-				returnCall = compiler.ResultFunction( LinearBurn_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( LinearBurn_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.ColorDodge:
-				returnCall = compiler.ResultFunction( ColorDodge_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( ColorDodge_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.LinearDodge:
-				returnCall = compiler.ResultFunction( LinearDodge_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( LinearDodge_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.Overlay:
-				returnCall = compiler.ResultFunction( Overlay_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( Overlay_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.SoftLight:
-				returnCall = compiler.ResultFunction( SoftLight_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( SoftLight_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.HardLight:
-				returnCall = compiler.ResultFunction( HardLight_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( HardLight_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.VividLight:
-				returnCall = compiler.ResultFunction( VividLight_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( VividLight_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.LinearLight:
-				returnCall = compiler.ResultFunction( LinearLight_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( LinearLight_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.HardMix:
-				returnCall = compiler.ResultFunction( HardMix_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( HardMix_blend, args: $"{aStr}, {bStr}" );
 				break;
 			case BlendNodeMode.Divide:
-				returnCall = compiler.ResultFunction( Divide_blend, args: $"{aStr}" + $",{bStr}" );
+				returnCall = compiler.ResultFunction( Divide_blend, args: $"{aStr}, {bStr}" );
 				break;
 		}
 

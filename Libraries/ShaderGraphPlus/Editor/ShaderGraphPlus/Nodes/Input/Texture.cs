@@ -502,10 +502,7 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 
 		var result = compiler.ResultFunction( TexTriplanar_Color,
             args:
-            $"{tex}" +
-            $",{sampler}" +
-			$",{(coords.IsValid ? $"{coords.Cast(3)}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}" +
-            $",{(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")}"
+            $" {tex}, {sampler}, {(coords.IsValid ? $"{coords.Cast(3)}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
         );
 
 		return new NodeResult( ResultType.Color, result );
@@ -639,10 +636,7 @@ float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 
 
 		var result = compiler.ResultFunction( TexTriplanar_Normal ,
 			args:
-			$"{tex}" +
-			$"{sampler}" +
-            $"{(coords.IsValid ? $"{coords.Cast( 3 )}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}" +
-            $",{(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")}"
+			$"{tex}, {sampler}, {(coords.IsValid ? $"{coords.Cast( 3 )}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
         );
 
         return new NodeResult( ResultType.Vector3, result );

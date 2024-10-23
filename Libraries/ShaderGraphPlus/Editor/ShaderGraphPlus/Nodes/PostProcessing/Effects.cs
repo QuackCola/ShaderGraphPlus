@@ -42,8 +42,7 @@ float2 Warp(float2 vUv , float flWarp_amount)
 
 		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( Warp , 
 			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" + 
-			$",{warpamount}" 
+			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")} , {warpamount} " 
 		));
 	};
 }
@@ -87,11 +86,9 @@ float Vignette(float2 vUv , float flVignette_intensity, float flVignette_opacity
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( Vignette , 
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( Vignette, 
 			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" +
-			$",{vignetteintensity}" + 
-			$",{vignetteopacity}" 
+			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {vignetteintensity}, {vignetteopacity}" 
 		));
 	};
 }
@@ -133,8 +130,7 @@ float Border(float2 vUv , float flWarp_amount)
 
 		return new NodeResult( ResultType.Float, compiler.ResultFunction( Border, 
 			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" + 
-			$",{warpamount}" 
+			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount}" 
 		));
 	};
 }

@@ -39,9 +39,7 @@ float4 TestMatrix( float4x4 test4x4, float3x3 test3x3, float2x2 test2x2 )
 
         return new NodeResult(ResultType.Color, compiler.ResultFunction(TestMatrix, 
             args:
-            $"{result4x4}" +
-            $",{result3x3}" +
-            $",{result2x2}"
+            $"{result4x4}, {result3x3}, {result2x2}"
         ));
 
     };

@@ -98,27 +98,11 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-    public string ResultFunctionOld((string, string) code, params string[] args)
-	{
-		var result = ShaderResult;
-
-		if (!result.Functions.ContainsKey(code.Item2))
-		{
-			result.Functions.Add(code.Item2, code.Item1);
-		}
-		else
-		{
-			result.Functions[code.Item2] = code.Item1;
-		}
-
-		return $"{code.Item2}( {string.Join(", ", args)} )";
-	}
-
-    public string ResultFunction( string code, [CallerArgumentExpression("code")] string propertyName = "", params string[] args )
+    public string ResultFunction(string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "")
     {
         var result = ShaderResult;
 
-		(string, string) func = (code, propertyName);
+        (string, string) func = (code, propertyName);
 
         if (!result.Functions.ContainsKey(func.Item2))
         {
@@ -128,18 +112,10 @@ public sealed partial class GraphCompiler
         {
             result.Functions[func.Item2] = func.Item1;
         }
-        
-        return $"{func.Item2}( {string.Join(", ", args)} )";
-  
-    }
 
-    /// <summary>
-    /// Returns a tuple with item1 being the code itself and item2 being the name of the function that was fetched from the input property name.
-    /// </summary>
-    public (string, string) GetFunction(string code, [CallerArgumentExpression("code")] string propertyName = "")
-	{
-		return new(code, propertyName);
-	}
+        return $"{func.Item2}({args})";
+
+    }
 
 	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
