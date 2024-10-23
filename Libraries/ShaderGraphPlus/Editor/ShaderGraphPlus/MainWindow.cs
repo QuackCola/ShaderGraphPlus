@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType( "sgrph" )]
 [EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
@@ -833,9 +831,16 @@ public class MainWindow : DockWindow, IAssetEditor
 			o.Checked = DockManager.IsDockOpen( dock.Title );
 			o.Toggled += ( b ) => DockManager.SetDockState( dock.Title, b );
 		}
-	}
 
-	private void ClearRecentFiles()
+        // Doesn't work yet.
+        //var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+        //style.Checkable = false;//true;
+        //style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
+        //style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
+
+    }
+
+    private void ClearRecentFiles()
 	{
 		if ( _recentFiles.Count == 0 )
 			return;
@@ -1145,7 +1150,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		_graphCanvas.Layout.Add( graphToolBar );
 
 		_graphView = new ShaderGraphPlusView( _graphCanvas, this );
-		_graphView.SetBackgroundImage( "toolimages:/grapheditor/grapheditorbackgroundpattern_shader.png" );
+		//_graphView.SetBackgroundImage( "toolimages:/grapheditor/grapheditorbackgroundpattern_shader.png" );
 		_graphView.BilinearFiltering = false;
 
 		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
