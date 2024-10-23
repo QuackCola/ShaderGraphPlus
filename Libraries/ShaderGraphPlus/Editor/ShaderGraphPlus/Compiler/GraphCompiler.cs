@@ -40,11 +40,11 @@ public sealed partial class GraphCompiler
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
 		public Dictionary<string, Sampler> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
-		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
+        public Dictionary<string, Gradient> Gradients = new();
+        public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
+        public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public Dictionary<string, string> Functions = new();
-		public Dictionary<string, Gradient> Gradients = new();
-        public Dictionary< string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
     }
 
 	public enum ShaderStage
