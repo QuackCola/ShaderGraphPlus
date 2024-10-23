@@ -19,10 +19,13 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
-	/// <summary>
-	/// Current graph we're compiling
-	/// </summary>
-	public ShaderGraphPlus Graph { get; private set; }
+
+	public bool Debug { get; private set; } = false;
+
+    /// <summary>
+    /// Current graph we're compiling
+    /// </summary>
+    public ShaderGraphPlus Graph { get; private set; }
 
 	public Asset _Asset { get; private set; }
 
@@ -811,7 +814,6 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 		sb.AppendLine();
 		sb.AppendLine( "DynamicComboRule( Allow0( D_MORPH ) );" );
-		sb.AppendLine( "DynamicComboRule( Allow0( D_COMPRESSED_NORMALS_AND_TANGENTS ) );" );
 		return sb.ToString();
 	}
 
@@ -958,14 +960,20 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		if ( IsPreview )
+
+
+		if ( Debug )
 		{
-			Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
-		}
-		else
-		{
-            Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
+            if (IsPreview)
+            {
+                Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
+            }
+            else
+            {
+                Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
+            }
         }
+
 
         foreach (var gradient in ShaderResult.Gradients)
         {
@@ -983,7 +991,10 @@ public sealed partial class GraphCompiler
 
             foreach (var color in gradient.Value.Colors)
         	{
-                Log.Info($"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}");
+				if ( Debug )
+				{
+					Log.Info($"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}");
+				}
 
 				// All good with time as the 4th component?
                 sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4({color.Value.r},{color.Value.g},{color.Value.b},{color.Time});");
