@@ -2,7 +2,7 @@
   "Title": "Shader Graph Plus",
   "Type": "game",
   "Org": "local",
-  "Ident": "shadergraphplus",
+  "Ident": "shdrgrphplus",
   "Schema": 1,
   "IncludeSourceFiles": false,
   "Resources": null,
