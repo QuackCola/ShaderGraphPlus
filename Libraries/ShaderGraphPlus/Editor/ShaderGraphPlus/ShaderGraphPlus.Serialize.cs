@@ -85,7 +85,7 @@ partial class ShaderGraphPlus
     {
         var nodes = new Dictionary<string, BaseNodePlus>();
         var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
-        var connections = new List<(IPlug Plug, NodeInput Value)>();
+        var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 
         var arrayProperty = doc.GetProperty("nodes");
         foreach (var element in arrayProperty.EnumerateArray())

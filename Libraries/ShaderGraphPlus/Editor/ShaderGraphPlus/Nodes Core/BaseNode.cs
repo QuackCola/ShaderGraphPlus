@@ -30,10 +30,10 @@ public abstract class BaseNodePlus : INode
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlug> Inputs { get; }
+	public IEnumerable<IPlugIn> Inputs { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlug> Outputs { get; }
+	public IEnumerable<IPlugOut> Outputs { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public string ErrorMessage => null;
@@ -154,12 +154,12 @@ public abstract class BaseNodePlus : INode
 
 
 
-	public static (IEnumerable<IPlug> Inputs, IEnumerable<IPlug> Outputs) GetPlugs( BaseNodePlus node )
+	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
-		var inputs = new List<BasePlug>();
-		var outputs = new List<BasePlug>();
+		var inputs = new List<BasePlugIn>();
+		var outputs = new List<BasePlugOut>();
 
 		//inputs.Exists( < BasePlug >, "");
 
@@ -167,12 +167,12 @@ public abstract class BaseNodePlus : INode
 		{
 			if ( propertyInfo.GetCustomAttribute<InputAttribute>() is { } inputAttrib )
 			{
-				inputs.Add( new BasePlug( node, propertyInfo, inputAttrib.Type ?? typeof( object ) ) );
+				inputs.Add( new BasePlugIn( node, propertyInfo, inputAttrib.Type ?? typeof( object ) ) );
 			}
 
 			if ( propertyInfo.GetCustomAttribute<OutputAttribute>() is { } outputAttrib )
 			{
-				outputs.Add( new BasePlug( node, propertyInfo, outputAttrib.Type ?? typeof( object ) ) );
+				outputs.Add( new BasePlugOut( node, propertyInfo, outputAttrib.Type ?? typeof( object ) ) );
 			}
 		}
 
@@ -187,65 +187,7 @@ public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : 
 	public string Identifier => Property.Name;
 	public DisplayInfo DisplayInfo => DisplayInfo.ForMember( Property );
 
-	IPlug IPlug.ConnectedOutput
-	{
-		get
-		{
-			if ( Property.PropertyType != typeof( NodeInput ) )
-			{
-				return null;
-			}
-
-			var value = (NodeInput)Property.GetValue( Node )!;
-
-			if ( !value.IsValid )
-			{
-				return null;
-			}
-
-			var node = ((ShaderGraphPlus) Node.Graph).FindNode( value.Identifier );
-			var output = node?.Outputs
-				.FirstOrDefault( x => x.Identifier == value.Output );
-
-			return output;
-		}
-		set
-		{
-			if ( Property.PropertyType != typeof( NodeInput ) )
-			{
-				return;
-			}
-
-			if ( value is null )
-			{
-				Property.SetValue( Node, default( NodeInput ) );
-				return;
-			}
-
-			if ( value is not BasePlug fromPlug )
-			{
-				return;
-			}
-
-			Property.SetValue( Node, new NodeInput
-			{
-				Identifier = fromPlug.Node.Identifier,
-				Output = fromPlug.Identifier
-			} );
-		}
-	}
-
-    public float? GetHandleOffset(string name)
-    {
-        return null;
-    }
-
-    public void SetHandleOffset(string name, float? value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ValueEditor CreateEditor( NodeUI node, Plug plug )
+	public ValueEditor CreateEditor( NodeUI node, Plug plug )
 	{
 		var editor = Property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 		if ( editor == null )
@@ -307,3 +249,69 @@ public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : 
 	}
 
 }
+
+
+public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
+	: BasePlug( Node, Property, Type ), IPlugIn
+{
+	IPlugOut IPlugIn.ConnectedOutput
+	{
+		get
+		{
+			if (Property.PropertyType != typeof( NodeInput ))
+			{
+				return null;
+			}
+
+			var value = (NodeInput) Property.GetValue( Node )!;
+
+			if (!value.IsValid)
+			{
+				return null;
+			}
+
+			var node = ((ShaderGraphPlus) Node.Graph).FindNode( value.Identifier );
+			var output = node?.Outputs
+				.FirstOrDefault( x => x.Identifier == value.Output );
+
+			return output;
+		}
+		set
+		{
+			if (Property.PropertyType != typeof( NodeInput ))
+			{
+				return;
+			}
+
+			if (value is null)
+			{
+				Property.SetValue( Node, default( NodeInput ) );
+				return;
+			}
+
+			if (value is not BasePlug fromPlug)
+			{
+				return;
+			}
+
+			Property.SetValue( Node, new NodeInput
+			{
+				Identifier = fromPlug.Node.Identifier,
+				Output = fromPlug.Identifier
+			} );
+		}
+	}
+
+	public float? GetHandleOffset( string name )
+	{
+		return null;
+	}
+
+	public void SetHandleOffset( string name, float? value )
+	{
+		throw new NotImplementedException();
+	}
+}
+
+public record BasePlugOut( BaseNodePlus Node, PropertyInfo Property, Type Type )
+	: BasePlug( Node, Property, Type ), IPlugOut;
