@@ -11,7 +11,7 @@
       "ProjectTemplate": {
       "Icon": "extension",
       "Order": 100,
-      "Description": "You want to make regular material shader"
+      "Description": "You want to make material shader"
     }
   },
   "nodes": [
