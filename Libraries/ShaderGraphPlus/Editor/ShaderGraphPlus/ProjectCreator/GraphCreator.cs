@@ -1,7 +1,4 @@
 ﻿using MaterialDesign;
-using Sandbox.DataModel;
-using Sandbox.UI;
-
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -107,7 +104,7 @@ public class GraphCreator : Dialog
         FolderFullPath = footer.Add(new FieldSubtitle(""));
         OkayButton = footer.Add(new Button("Create", "add_box", (Widget)null)
         {
-            //Clicked = CreateProject
+            //Clicked = CreateProject // TODO : Actually make it so once the button is click we use the selected template to create a project. - Quack
         });
         OkayButton.ButtonType = "primary";
         ProjectTemplatesListView listView = Templates.ListView;
@@ -116,7 +113,7 @@ public class GraphCreator : Dialog
             ActiveTemplate = item as ProjectTemplate;
         });
         ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
-        //Validate();
+        Validate();
     }
     private static string DefaultProjectName()
     {
@@ -144,6 +141,30 @@ public class GraphCreator : Dialog
         }
 
         OkayButton.Enabled = enabled;
+    }
+
+    private void CreateProject()
+    {
+        //IL_0023: Unknown result type (might be due to invalid IL or missing references)
+        //IL_0029: Expected O, but got Unknown
+        string addonPath = Path.Combine(FolderEdit.Text, IdentEdit.Text); 
+        Directory.CreateDirectory(addonPath);
+        ShaderGraphPlus config = new ShaderGraphPlus();
+
+        //config.Ident = IdentEdit.Text;
+        //config.Title = TitleEdit.Text;
+        //config.Org = "local";
+        //config.Type = "game";
+        //config.Schema = 1;
+        //Templates.ListView.ChosenTemplate?.Apply(addonPath, ref config);
+        //string configPath = Path.Combine(addonPath, config.Ident + ".sbproj");
+        //string txt = config.ToJson();
+
+        //File.WriteAllText(configPath, txt);
+
+        Close();
+
+        //OnProjectCreated?.Invoke(configPath);
     }
 
 }
