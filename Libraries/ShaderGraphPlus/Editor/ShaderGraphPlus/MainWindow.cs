@@ -60,21 +60,30 @@ public class MainWindow : DockWindow, IAssetEditor
 		Title = "Shader Graph Plus";
 		Size = new Vector2( 1700, 1050 );
 
-		_graph = new();
+        var gc = new GraphCreator();
+        gc.Show();
+
+
+        _graph = new();
 
 		CreateToolBar();
 
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault( "shadergraphplus_recentfiles.json", _recentFiles )
 			.Where( x => System.IO.File.Exists( x ) ).ToList();
 
-		CreateUI();
+
+  
+
+        CreateUI();
 		Show();
+    
 
-		CreateNew();
+        CreateNew();
 
-	}
 
-	public void AssetOpen( Asset asset )
+    }
+
+    public void AssetOpen( Asset asset )
 	{
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
