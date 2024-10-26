@@ -1,9 +1,19 @@
 {
   "Model": null,
-  "Description": "",
+  "Description": null,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "Metadata": {
+      "ProjectTemplate": {
+      "Icon": "extension",
+      "Order": 100,
+      "Description": "You want to make regular material shader"
+    }
+  },
   "nodes": [
     {
       "_class": "Result",

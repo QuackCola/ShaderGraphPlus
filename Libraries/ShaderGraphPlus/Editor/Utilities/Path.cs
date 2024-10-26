@@ -2,7 +2,8 @@
 
 public static class Path
 {
-	public static string ChooseExistingPath( string path1, string path2 )
+
+    public static string ChooseExistingPath( string path1, string path2 )
 	{
 		if ( Directory.Exists( path1 ) )
 		{
