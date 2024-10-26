@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
 {
@@ -107,6 +104,14 @@ public sealed partial class ShaderGraphPlus : IGraph
 	{
 		RemoveNode( (BaseNodePlus)node );
 	}
+
+    ////
+    //// Summary:
+    ////     Serialize the entire config to a JSON string.
+    //public string ToJson()
+    //{
+    //    return Json.SerializeAsObject(this).ToJsonString(new JsonSerializerOptions());
+    //}
 
     //
     // Summary:

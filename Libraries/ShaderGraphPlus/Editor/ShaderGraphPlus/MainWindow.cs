@@ -53,32 +53,39 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool CanOpenMultipleAssets => true;
 
+	public bool IsCreateProjectDialogOpen { get; set; }
+
 	public MainWindow()
 	{
 		DeleteOnClose = true;
 
 		Title = "Shader Graph Plus";
 		Size = new Vector2( 1700, 1050 );
+		
+		IsCreateProjectDialogOpen = true;
 
+
+		// TODO : Ability for GraphCreator to return the selected & ready to use graph template. - Quack
         var gc = new GraphCreator();
         gc.Show();
 
+		//if (!IsCreateProjectDialogOpen)
+		{
+            _graph = new();
 
-        _graph = new();
+            CreateToolBar();
 
-		CreateToolBar();
+            _recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
+                .Where(x => System.IO.File.Exists(x)).ToList();
 
-		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault( "shadergraphplus_recentfiles.json", _recentFiles )
-			.Where( x => System.IO.File.Exists( x ) ).ToList();
+            CreateUI();
+            Show();
 
 
-  
+            CreateNew();
 
-        CreateUI();
-		Show();
-    
-
-        CreateNew();
+        }
+        
 
 
     }
