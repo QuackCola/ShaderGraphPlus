@@ -355,9 +355,9 @@ public class PreviewPanel : Widget
 
 		var toolBar = new ToolBar( this, "PreviewToolBar" );
 		toolBar.SetIconSize( 16 );
-		toolBar.AddOption( null, "view_in_ar", () => Model = Model.Load( "models/dev/box.vmdl" ) ).Tooltip = "Box";
-		toolBar.AddOption( null, "circle", () => Model = null ).Tooltip = "Sphere";
-		toolBar.AddOption( null, "square", () => Model = Model.Load( "models/dev/plane.vmdl" ) ).Tooltip = "Plane";
+		toolBar.AddOption( null, "view_in_ar", () => Model = Model.Load( "models/dev/box.vmdl" ) ).ToolTip = "Box";
+		toolBar.AddOption( null, "circle", () => Model = null ).ToolTip = "Sphere";
+		toolBar.AddOption( null, "square", () => Model = Model.Load( "models/dev/plane.vmdl" ) ).ToolTip = "Plane";
 		toolBar.AddOption( null, "accessibility", () =>
 		{
 			var picker = new AssetPicker( this, AssetType.Model );
@@ -367,7 +367,7 @@ public class PreviewPanel : Widget
 			picker.OnAssetHighlighted = x => Model = x.First().LoadResource<Model>();
 			picker.OnAssetPicked = x => Model = x.First().LoadResource<Model>();
 			picker.Window.Show();
-		} ).Tooltip = "Model";
+		} ).ToolTip = "Model";
 
 		toolBar.AddSeparator();
 
@@ -400,20 +400,20 @@ public class PreviewPanel : Widget
 		var option = toolBar.AddOption( null, "preview" );
 		option.Checkable = true;
 		option.Toggled = ( e ) => _preview.EnableNodePreview = e;
-		option.Tooltip = "Toggle Node Preview";
-		option.StatusText = "Toggle Node Preview";
+		option.ToolTip = "Toggle Node Preview";
+		option.StatusTip = "Toggle Node Preview";
 
 		option = toolBar.AddOption( null, "flare" );
 		option.Checkable = true;
 		option.Toggled = ( e ) => _preview.EnablePostProcessing = e;
-		option.Tooltip = "Toggle Post Processing";
-		option.StatusText = "Toggle Post Processing";
+		option.ToolTip = "Toggle Post Processing";
+		option.StatusTip = "Toggle Post Processing";
 
 		toolBar.AddSeparator();
 
 		option = toolBar.AddOption( null, "lightbulb" );
 		option.Enabled = false;
-		option.Tooltip = "Coming Soon";
+		option.ToolTip = "Coming Soon";
 
 		toolBar.AddSeparator();
 
