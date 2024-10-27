@@ -84,9 +84,9 @@ public class ShaderGraphPlusView : GraphView
 			: null;
 	}
 
-	protected override IEnumerable<INodeType> GetRelevantNodes()
+	protected override IEnumerable<INodeType> GetRelevantNodes( NodeQuery query )
 	{
-		return AvailableNodes.Values;
+		return AvailableNodes.Values.Filter( query );
 	}
 
 	private Dictionary<Type, HandleConfig> HandleConfigs { get; } = new()

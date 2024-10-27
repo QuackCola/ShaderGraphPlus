@@ -16,8 +16,8 @@ public class UndoHistory : Widget
 			_clearOption.Enabled = _undoStack.CanUndo || _undoStack.CanRedo;
 			_undoOption.Text = _undoStack.UndoName;
 			_redoOption.Text = _undoStack.RedoName;
-			_undoOption.StatusText = _undoStack.UndoName;
-			_redoOption.StatusText = _undoStack.RedoName;
+			_undoOption.StatusTip = _undoStack.UndoName;
+			_redoOption.StatusTip = _undoStack.RedoName;
 
 			if ( _undoLevel == value )
 				return;
@@ -54,7 +54,7 @@ public class UndoHistory : Widget
 		_redoOption = toolBar.AddOption( "Redo", "redo", () => OnRedo?.Invoke() );
 		toolBar.AddSeparator();
 		_clearOption = toolBar.AddOption( "Clear History", "playlist_remove", Clear );
-		_clearOption.StatusText = "Clear History";
+		_clearOption.StatusTip = "Clear History";
 
 		Layout.Add( toolBar );
 

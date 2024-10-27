@@ -653,10 +653,10 @@ public class MainWindow : DockWindow, IAssetEditor
 		_undoMenuOption.Text = _undoStack.UndoName ?? "Undo";
 		_redoMenuOption.Text = _undoStack.RedoName ?? "Redo";
 
-		_undoOption.StatusText = _undoStack.UndoName;
-		_redoOption.StatusText = _undoStack.RedoName;
-		_undoMenuOption.StatusText = _undoStack.UndoName;
-		_redoMenuOption.StatusText = _undoStack.RedoName;
+		_undoOption.StatusTip = _undoStack.UndoName;
+		_redoOption.StatusTip = _undoStack.RedoName;
+		_undoMenuOption.StatusTip = _undoStack.UndoName;
+		_redoMenuOption.StatusTip = _undoStack.RedoName;
 
 		_undoHistory.UndoLevel = _undoStack.UndoLevel;
 	}
@@ -738,9 +738,9 @@ public class MainWindow : DockWindow, IAssetEditor
 		var toolBar = new ToolBar( this, "ShaderGraphPlusToolbar" );
 		AddToolBar( toolBar, ToolbarPosition.Top );
 
-		toolBar.AddOption( "New", "common/new.png", New ).StatusText = "New Graph";
-		toolBar.AddOption( "Open", "common/open.png", Open ).StatusText = "Open Graph";
-		toolBar.AddOption( "Save", "common/save.png", () => Save() ).StatusText = "Save Graph";
+		toolBar.AddOption( "New", "common/new.png", New ).StatusTip = "New Graph";
+		toolBar.AddOption( "Open", "common/open.png", Open ).StatusTip = "Open Graph";
+		toolBar.AddOption( "Save", "common/save.png", () => Save() ).StatusTip = "Save Graph";
 
 		toolBar.AddSeparator();
 
@@ -756,9 +756,9 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		toolBar.AddSeparator();
 
-		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusText = "Compile Graph";
+		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
 
-		toolBar.AddOption( "Open Generated Shader", "txtedit/appicon.png", () => OpenGeneratedShader() ).StatusText = "Open Generated Shader";
+		toolBar.AddOption( "Open Generated Shader", "txtedit/appicon.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
 
 		_undoOption.Enabled = false;
 		_redoOption.Enabled = false;
@@ -767,10 +767,10 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void BuildMenuBar()
 	{
 		var file = MenuBar.AddMenu( "File" );
-		file.AddOption( "New", "common/new.png", New, "editor.new" ).StatusText = "New Graph";
-		file.AddOption( "Open", "common/open.png", Open, "editor.open" ).StatusText = "Open Graph";
-		file.AddOption( "Save", "common/save.png", Save, "editor.save" ).StatusText = "Save Graph";
-		file.AddOption( "Save As...", "common/save.png", SaveAs, "editor.save-as" ).StatusText = "Save Graph As...";
+		file.AddOption( "New", "common/new.png", New, "editor.new" ).StatusTip = "New Graph";
+		file.AddOption( "Open", "common/open.png", Open, "editor.open" ).StatusTip = "Open Graph";
+		file.AddOption( "Save", "common/save.png", Save, "editor.save" ).StatusTip = "Save Graph";
+		file.AddOption( "Save As...", "common/save.png", SaveAs, "editor.save-as" ).StatusTip = "Save Graph As...";
 
 		file.AddSeparator();
 
@@ -778,7 +778,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		file.AddSeparator();
 
-		file.AddOption( "Quit", null, Quit, "editor.quit" ).StatusText = "Quit";
+		file.AddOption( "Quit", null, Quit, "editor.quit" ).StatusTip = "Quit";
 
 		var edit = MenuBar.AddMenu( "Edit" );
 		_undoMenuOption = edit.AddOption( "Undo", "undo", Undo, "editor.undo" );
@@ -815,7 +815,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		_recentFilesMenu.Clear();
 
 		_recentFilesMenu.AddOption( "Clear recent files", null, ClearRecentFiles )
-			.StatusText = "Clear recent files";
+			.StatusTip = "Clear recent files";
 
 		_recentFilesMenu.AddSeparator();
 
@@ -830,7 +830,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			var filePath = _recentFiles[i];
 
 			_recentFilesMenu.AddOption( $"{++fileCount} - {filePath}", null, () => PromptSave( () => Open( filePath ) ) )
-				.StatusText = $"Open {filePath}";
+				.StatusTip = $"Open {filePath}";
 		}
 	}
 
