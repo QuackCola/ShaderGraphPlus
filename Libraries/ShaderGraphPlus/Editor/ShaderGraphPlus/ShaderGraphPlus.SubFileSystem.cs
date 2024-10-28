@@ -21,6 +21,7 @@ public static class ShaderGraphPlusFileSystem
         }
         else if (Directory.Exists(dev_path) || Directory.Exists(user_path))
         {
+            Utilities.EdtiorSound.OhFiddleSticks();
             Log.Error($"Both dev_path & user_path exist!");
             return null;
         }
