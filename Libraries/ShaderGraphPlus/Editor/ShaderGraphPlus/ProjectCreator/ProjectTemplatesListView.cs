@@ -61,9 +61,7 @@ internal class ProjectTemplatesListView : ListView
             {
                 ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
                 Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
-        
             }
-        
         }
     }
 
