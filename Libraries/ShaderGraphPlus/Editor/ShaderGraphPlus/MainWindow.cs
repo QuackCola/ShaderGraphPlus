@@ -66,7 +66,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
         var gc = new GraphCreator();
         gc.Show();
-		//gc.OnProjectCreated += test; // TODO : Should I open the window once we click ok or not and just open the GraphCreator and the ShaderGraphPlus window?.
+		gc.OnProjectCreated += OpenGeneratedProject; // TODO : Should I open the window once we click ok or not and just open the GraphCreator and the ShaderGraphPlus window?.
 
 		_graph = new();
 		
@@ -80,9 +80,18 @@ public class MainWindow : DockWindow, IAssetEditor
 		CreateNew();
     }
 
-    private void test(string obj)
+    private void OpenGeneratedProject( string generatedProjectPath )
     {
-        throw new NotImplementedException();
+		if (!File.Exists(generatedProjectPath))
+		{
+			Log.Error($" Generated project does not exist!!!");
+		}
+		else
+		{
+			Log.Info($"Generated project succesfully!!");
+		}
+
+        //throw new NotImplementedException();
     }
 
     public void AssetOpen( Asset asset )
