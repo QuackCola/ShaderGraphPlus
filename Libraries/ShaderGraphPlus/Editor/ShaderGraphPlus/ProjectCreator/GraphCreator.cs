@@ -43,7 +43,7 @@ public class GraphCreator : Dialog
     private bool identEdited;
 
     public Action<string> OnProjectCreated { get; set; }
-    public Action OnProjectCreatedTest { get; set; }
+    //public Action<string> OnProjectCreatedTest { get; set; }
 
     public GraphCreator(Widget parent = null) : base(null, true)
     {
@@ -172,8 +172,7 @@ public class GraphCreator : Dialog
         Utilities.EdtiorSound.Success();
         Close();
 
-        //OnProjectCreated?.Invoke(configPath);
-        OnProjectCreatedTest?.Invoke();
+        OnProjectCreated?.Invoke(OutputPath);
     }
 
 }
