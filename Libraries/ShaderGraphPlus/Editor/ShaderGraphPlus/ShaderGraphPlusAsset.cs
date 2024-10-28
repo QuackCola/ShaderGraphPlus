@@ -10,13 +10,10 @@ public static class CreateShaderGraphPlusAsset
 
 	internal static void Create( string targetPath )
 	{
-		var extension = System.IO.Path.GetExtension( "default.sgrph" );
-
-		var dev_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/ShaderGraphPlus/templates";
-		var user_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/quack.shadergraphplus/templates";
-		var template_path = Utilities.Path.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
-
-		var sourceFile = template_path + "/default.sgrph";
+		var extension = System.IO.Path.GetExtension( "$name.sgrph" );
+		var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath( "templates/shadergraphplus.surface" );
+		
+        var sourceFile = template_path + "/$name.sgrph";
 
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
@@ -37,7 +34,7 @@ public static class CreateShaderGraphPlusAsset
 	{
 		parent.AddOption( $"New Shader Graph Plus Surface Shader...", "account_tree", () =>
 		{
-			var extension = System.IO.Path.GetExtension( "default.sgrph" ).Trim( '.' );
+			var extension = System.IO.Path.GetExtension( "$name.sgrph" ).Trim( '.' );
 
 			var fd = new FileDialog( null );
 			fd.Title = $"Create Shader Graph Plus";
@@ -58,13 +55,11 @@ public static class CreateShaderGraphPlusAsset
 	[Event( "folder.contextmenu", Priority = 101 )]
 	internal static void OnFolderContextMenu_BottomSection( FolderContextMenu e )
 	{
-
 		if ( e.Target != null )
 		{
 			e.Menu.AddSeparator();
 			AddShaderGraphPlusOption( e.Menu, e.Target );
 		}
-
 	}
 
 }
@@ -74,13 +69,10 @@ public static class CreateShaderGraphPlusAssetPP
 
 	internal static void Create( string targetPath )
 	{
-		var extension = System.IO.Path.GetExtension( "default_postprocessing.sgrph" );
+		var extension = System.IO.Path.GetExtension( "$name.sgrph");
+        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath( "templates/shadergraphplus.postprocessing" );
 
-		var dev_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/ShaderGraphPlus/templates";
-		var user_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/quack.shadergraphplus/templates";
-		var template_path = Utilities.Path.ChooseExistingPath( dev_path, user_path ); // Choose the correct path for user or dev.
-
-		var sourceFile = template_path + "/default_postprocessing.sgrph";
+        var sourceFile = template_path + "/$name.sgrph";
 
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
@@ -101,7 +93,7 @@ public static class CreateShaderGraphPlusAssetPP
 	{
 		parent.AddOption( $"New Shader Graph Plus PostProcessing Shader...", "account_tree", () =>
 		{
-			var extension = System.IO.Path.GetExtension( "default_postprocessing.sgrph" ).Trim( '.' );
+			var extension = System.IO.Path.GetExtension( "$name.sgrph" ).Trim( '.' );
 
 			var fd = new FileDialog( null );
 			fd.Title = $"Create Shader Graph Plus";
