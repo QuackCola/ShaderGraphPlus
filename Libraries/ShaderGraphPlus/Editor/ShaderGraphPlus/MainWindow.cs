@@ -80,15 +80,17 @@ public class MainWindow : DockWindow, IAssetEditor
 		CreateNew();
     }
 
-    private void OpenGeneratedProject( string generatedProjectPath )
+    private void OpenGeneratedProject( string absolutePath, string relativePath )
     {
-		if (!File.Exists(generatedProjectPath))
+		if (!File.Exists(absolutePath))
 		{
 			Log.Error($" Generated project does not exist!!!");
 		}
 		else
 		{
 			Log.Info($"Generated project succesfully!!!");
+
+			Open(relativePath);
 		}
 
         //throw new NotImplementedException();
@@ -980,19 +982,24 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void Open( string path )
 	{
 		var asset = AssetSystem.FindByPath( path );
-		if ( asset == null )
+
+        if ( asset == null )
 			return;
 
-		if ( asset == _asset )
+
+        Log.Info($" opend Asset Path is : {asset.Path}");
+
+
+        if ( asset == _asset )
 		{
 			Log.Warning( $"{asset.RelativePath} is already open" );
 			return;
 		}
 
 		var graph = new ShaderGraphPlus();
-		graph.Deserialize( System.IO.File.ReadAllText( path ) );
-
-		_preview.Model = Model.Load( graph.Model );
+		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
+     
+        _preview.Model = Model.Load( graph.Model );
 
 		_asset = asset;
 		_graph = graph;

@@ -42,7 +42,7 @@ public class GraphCreator : Dialog
 
     private bool identEdited;
 
-    public Action<string> OnProjectCreated { get; set; }
+    public Action<string, string> OnProjectCreated { get; set; }
     //public Action<string> OnProjectCreatedTest { get; set; }
 
     public GraphCreator(Widget parent = null) : base(null, true)
@@ -91,7 +91,7 @@ public class GraphCreator : Dialog
         body.Add(new FieldTitle("Shader Location"));
         FolderEdit = body.Add(new FolderProperty(null));
         FolderEdit.PlaceholderText = "";
-        FolderEdit.Text = $"Shaders";
+        FolderEdit.Text = $"shaders";
         FolderEdit.ToolTip = "This is the folder path inside your current project asset's directory where your ShaderGraphPlus project will be created.";
         FolderEdit.TextEdited += delegate
         {
@@ -172,7 +172,11 @@ public class GraphCreator : Dialog
         Utilities.EdtiorSound.Success();
         Close();
 
-        OnProjectCreated?.Invoke(OutputPath);
+        var relative_out = $"{FolderEdit.Text}/{TitleEdit.Text}.sgrph".Replace('\\', '/');
+
+        Log.Info($"relative_out is : {relative_out}");
+
+        OnProjectCreated?.Invoke(OutputPath,relative_out);
     }
 
 }
