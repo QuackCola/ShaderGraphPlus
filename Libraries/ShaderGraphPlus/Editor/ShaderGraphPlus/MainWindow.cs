@@ -57,37 +57,36 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public MainWindow()
 	{
-		DeleteOnClose = true;
-
-		Title = "Shader Graph Plus";
-		Size = new Vector2( 1700, 1050 );
-		
-		IsCreateProjectDialogOpen = true;
-
-
-		// TODO : Ability for GraphCreator to return the selected & ready to use graph template. - Quack
+        // TODO : Ability for GraphCreator to return the selected & ready to use graph template. - Quack
         var gc = new GraphCreator();
         gc.Show();
-
-		//if (!IsCreateProjectDialogOpen)
-		{
-            _graph = new();
-
-            CreateToolBar();
-
-            _recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
-                .Where(x => System.IO.File.Exists(x)).ToList();
-
-            CreateUI();
-            Show();
+        gc.OnProjectCreatedTest += InitShaderGraphPlusWindow; // TODO : Should I open the window once we click ok or not and just open the GraphCreator and the ShaderGraphPlus window?.
 
 
-            CreateNew();
+		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
+			.Where(x => System.IO.File.Exists(x)).ToList();
+    }
 
-        }
-        
+    private void InitShaderGraphPlusWindow()
+    {
+
+        DeleteOnClose = true;
+
+        Title = "Shader Graph Plus";
+        Size = new Vector2(1700, 1050);
+
+        IsCreateProjectDialogOpen = true;
 
 
+        _graph = new();
+
+        CreateToolBar();
+
+
+        CreateUI();
+        Show();
+
+        CreateNew();
     }
 
     public void AssetOpen( Asset asset )
