@@ -172,11 +172,11 @@ public class GraphCreator : Dialog
         Utilities.EdtiorSound.Success();
         Close();
 
-        var relative_out = $"{FolderEdit.Text}/{TitleEdit.Text}.sgrph".Replace('\\', '/');
+        var RelativeOutputPath = $"{FolderEdit.Text}/{TitleEdit.Text}.sgrph".Replace('\\', '/');
 
-        Log.Info($"relative_out is : {relative_out}");
+        Log.Info($"relative_out is : {RelativeOutputPath}");
 
-        OnProjectCreated?.Invoke(OutputPath,relative_out);
+        OnProjectCreated?.Invoke(OutputPath,RelativeOutputPath);
     }
 
 }
