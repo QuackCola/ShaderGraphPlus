@@ -7,14 +7,13 @@ namespace Editor.ShaderGraphPlus.AssetBrowser;
 /// </summary>
 public static class CreateShaderGraphPlusAsset
 {
-
 	internal static void Create( string targetPath )
 	{
 		var extension = System.IO.Path.GetExtension( "$name.sgrph" );
 		var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath( "templates/shadergraphplus.surface" );
-		
-        var sourceFile = template_path + "/$name.sgrph";
 
+		var sourceFile = template_path + "/$name.sgrph";
+		
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
 
@@ -66,13 +65,12 @@ public static class CreateShaderGraphPlusAsset
 
 public static class CreateShaderGraphPlusAssetPP
 {
-
 	internal static void Create( string targetPath )
 	{
 		var extension = System.IO.Path.GetExtension( "$name.sgrph");
-        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath( "templates/shadergraphplus.postprocessing" );
+		var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath( "templates/shadergraphplus.postprocessing" );
 
-        var sourceFile = template_path + "/$name.sgrph";
+		var sourceFile = template_path + "/$name.sgrph";
 
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
@@ -114,13 +112,10 @@ public static class CreateShaderGraphPlusAssetPP
 	[Event( "folder.contextmenu", Priority = 101 )]
 	internal static void OnFolderContextMenu_BottomSection( FolderContextMenu e )
 	{
-
 		if ( e.Target != null )
 		{
 			e.Menu.AddSeparator();
 			AddShaderGraphPlusOption( e.Menu, e.Target );
 		}
-
 	}
-
 }
