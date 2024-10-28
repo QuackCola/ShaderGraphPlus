@@ -8,7 +8,6 @@ internal class ProjectTemplatesListView : ListView
 
     public ProjectTemplate Template { get; set; }
 
-
     public ProjectTemplate ChosenTemplate { get; set; }
 
     public ProjectTemplatesListView(Widget parent) : base(parent)
@@ -21,21 +20,16 @@ internal class ProjectTemplatesListView : ListView
 
         List<ProjectTemplate> orderedTemplates = Templates.OrderBy(x => x.Order).ToList();
 
-        foreach (ProjectTemplate x in orderedTemplates)
-        {
-            Log.Info($"Project Template : {x.Title}");
-        }
-        
         SetItems(orderedTemplates);
         ChosenTemplate = orderedTemplates.FirstOrDefault();
         if (ChosenTemplate != null)
         {
-            Log.Info($"Selected template : {ChosenTemplate}");
+
             SelectItem(ChosenTemplate, false, false);
         }
         else
         {
-            Log.Info($"Didn't select a template");
+
         }
     }
 
@@ -44,26 +38,28 @@ internal class ProjectTemplatesListView : ListView
         if (value is ProjectTemplate pt)
         {
             ChosenTemplate = pt;
+            Log.Info($"Selected ShadergraphPlus Template : {ChosenTemplate.TemplatePath}");
+            //Utilities.EdtiorSound.Success();
         }
     }
 
     protected void FindLocalTemplates()
     {
-        var dev_name = "ShaderGraphPlus";
-        var user_name = "quack.shadergraphplus";
-        var dev_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{dev_name}/templates";
-        var user_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{user_name}/templates";
-        var template_path = Utilities.Path.ChooseExistingPath(dev_path, user_path); // Choose the correct path for user or dev.
-        var library_name = "";
+        //var dev_name = "ShaderGraphPlus";
+        //var user_name = "quack.shadergraphplus";
+        //var dev_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{dev_name}/templates";
+        //var user_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{user_name}/templates";
+        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath("/templates");//Utilities.Path.ChooseExistingPath(dev_path, user_path); // Choose the correct path for user or dev.
+        //var library_name = "";
 
-        if (template_path == user_path)
-        {
-            library_name = user_name;
-        }
-        else 
-        {
-            library_name = dev_name;
-        }
+        //if (template_path == user_path)
+        //{
+        //    library_name = user_name;
+        //}
+        //else 
+        //{
+        //    library_name = dev_name;
+        //}
 
 
         if (!Directory.Exists(template_path))
@@ -71,27 +67,25 @@ internal class ProjectTemplatesListView : ListView
             return;
         }
 
-        foreach (string directory in FileSystem.Libraries.FindDirectory("/", "*", false))
-        {
-            if (directory == library_name)
-            {
-                var sgrphplus = FileSystem.Libraries.CreateSubSystem($"/{library_name}");
-
-                foreach (string directory_inner in sgrphplus.FindDirectory("/templates", "*", false))
+        //foreach (string directory in FileSystem.Libraries.FindDirectory("/", "*", false))
+        //{
+            //if (directory == library_name)
+            //{
+                foreach (string template_folder in ShaderGraphPlusFileSystem.FileSystem.FindDirectory("/templates", "*", false))
                 {
-                    string templateRoot = "/templates/" + directory_inner;
+                    string templateRoot = "/templates/" + template_folder;
                     string addonPath = templateRoot + "/$name.sgrph";
 
-                    if (sgrphplus.FileExists(addonPath))
+                    if (ShaderGraphPlusFileSystem.FileSystem.FileExists(addonPath))
                     {
-                        ShaderGraphPlus addon = Json.Deserialize<ShaderGraphPlus>(sgrphplus.ReadAllText(addonPath));
-                        Templates.Add(new ProjectTemplate(addon,templateRoot));
+                        ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
+                        Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
 
                     }
 
                 }
-            }
-        }
+           // }
+        //}
 
     }
 

@@ -1,4 +1,6 @@
 ﻿using MaterialDesign;
+using Sandbox.DataModel;
+using static Editor.Button;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -17,7 +19,6 @@ internal class FieldSubtitle : Label
         WordWrap = true;
     }
 }
-
 
 public class GraphCreator : Dialog
 {
@@ -86,8 +87,9 @@ public class GraphCreator : Dialog
 
         body.Add(new FieldTitle("Shader Location"));
         FolderEdit = body.Add(new FolderProperty(null));
-        FolderEdit.PlaceholderText = "REPLACEME";
-        FolderEdit.Text = "REPLACEME";
+        FolderEdit.PlaceholderText = "";
+        FolderEdit.Text = $"Shaders";
+        FolderEdit.ToolTip = "This is the folder path inside your current project asset's directory where your ShaderGraphPlus project will be created.";
         FolderEdit.TextEdited += delegate
         {
             Validate();
@@ -102,11 +104,10 @@ public class GraphCreator : Dialog
         footer.Spacing = 8f;
         footer.AddStretchCell(0);
         FolderFullPath = footer.Add(new FieldSubtitle(""));
-        OkayButton = footer.Add(new Button("Create", "add_box", (Widget)null)
+        OkayButton = footer.Add(new Primary("Create", "add_box", null)
         {
-            //Clicked = CreateProject // TODO : Actually make it so once the button is click we use the selected template to create a project. - Quack
+            Clicked = CreateProject // TODO : Actually make it so once the button is click we use the selected template to create a project. - Quack
         });
-        OkayButton.ButtonType = "primary";
         ProjectTemplatesListView listView = Templates.ListView;
         listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
         {
@@ -145,23 +146,23 @@ public class GraphCreator : Dialog
 
     private void CreateProject()
     {
-        //IL_0023: Unknown result type (might be due to invalid IL or missing references)
-        //IL_0029: Expected O, but got Unknown
-        string addonPath = Path.Combine(FolderEdit.Text, IdentEdit.Text); 
-        Directory.CreateDirectory(addonPath);
-        ShaderGraphPlus config = new ShaderGraphPlus();
 
-        //config.Ident = IdentEdit.Text;
-        //config.Title = TitleEdit.Text;
-        //config.Org = "local";
-        //config.Type = "game";
-        //config.Schema = 1;
-        //Templates.ListView.ChosenTemplate?.Apply(addonPath, ref config);
-        //string configPath = Path.Combine(addonPath, config.Ident + ".sbproj");
-        //string txt = config.ToJson();
+        string shaderGraphProjectPath = ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
+        Directory.CreateDirectory(shaderGraphProjectPath);
 
-        //File.WriteAllText(configPath, txt);
+        ShaderGraphPlus shaderGraphProject = new ShaderGraphPlus();
 
+        Templates.ListView.ChosenTemplate?.Apply(shaderGraphProjectPath, shaderGraphProject, TitleEdit.Text);
+
+        //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");
+
+        string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
+        string TemplateTxt = Template.ReadTemplate(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/'));
+
+        File.WriteAllText($"{OutputPath}", TemplateTxt);
+
+        Log.Info($"Creating ShaderGraphPlus project from : {Templates.ListView.ChosenTemplate.TemplatePath}");
+        Utilities.EdtiorSound.Success();
         Close();
 
         //OnProjectCreated?.Invoke(configPath);

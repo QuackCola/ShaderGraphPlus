@@ -105,14 +105,6 @@ public sealed partial class ShaderGraphPlus : IGraph
 		RemoveNode( (BaseNodePlus)node );
 	}
 
-    ////
-    //// Summary:
-    ////     Serialize the entire config to a JSON string.
-    //public string ToJson()
-    //{
-    //    return Json.SerializeAsObject(this).ToJsonString(new JsonSerializerOptions());
-    //}
-
     //
     // Summary:
     //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
@@ -165,4 +157,35 @@ public sealed partial class ShaderGraphPlus : IGraph
 
         return true;
     }
+
+    //
+    // Summary:
+    //     Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
+    //
+    //
+    // Parameters:
+    //   keyname:
+    //     The key for the data.
+    //
+    //   outvalue:
+    //     The data itself to store.
+    //
+    // Returns:
+    //     Always true.
+    public bool SetMeta(string keyname, object outvalue)
+    {
+        if (Metadata == null)
+        {
+            Dictionary<string, object> dictionary2 = (Metadata = new Dictionary<string, object>());
+        }
+
+        if (outvalue == null)
+        {
+            return Metadata.Remove(keyname);
+        }
+
+        Metadata[keyname] = outvalue;
+        return true;
+    }
+
 }
