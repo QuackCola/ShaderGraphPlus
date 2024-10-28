@@ -88,7 +88,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 		else
 		{
-			Log.Info($"Generated project succesfully!!");
+			Log.Info($"Generated project succesfully!!!");
 		}
 
         //throw new NotImplementedException();
