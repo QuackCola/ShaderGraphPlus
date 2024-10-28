@@ -54,7 +54,7 @@ public class GraphCreator : Dialog
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
-
+ 
 
         Layout = Layout.Row();
         Layout.Spacing = 4;
@@ -63,8 +63,11 @@ public class GraphCreator : Dialog
         obj.Add(new FieldTitle("Graph Templates"));
         obj.AddSpacingCell(18f);
         ProjectTemplates templates = obj.Add( new ProjectTemplates(this) );
+
         Templates = templates;
+
         Layout.AddSeparator();
+
         Layout body = Layout.AddColumn(2,false);
         body.Margin = 20f;
         body.Spacing = 8f;
@@ -72,6 +75,7 @@ public class GraphCreator : Dialog
         body.Add(new FieldTitle("Shader Graph Plus Project Setup"));
         body.AddSpacingCell(12f);
         body.Add(new FieldTitle("Shader Name"));
+
         TitleEdit = body.Add(new LineEdit("", null)
         {
             PlaceholderText = "Garry's Project"
@@ -81,6 +85,7 @@ public class GraphCreator : Dialog
         {
             Validate();
         };
+
         body.AddSpacingCell(8f);
 
         body.Add(new FieldTitle("Shader Location"));
@@ -98,6 +103,7 @@ public class GraphCreator : Dialog
             Validate();
         });
         body.AddStretchCell(1);
+
         Layout footer = body.AddRow(0, false);
         footer.Spacing = 8f;
         footer.AddStretchCell(0);
@@ -106,12 +112,15 @@ public class GraphCreator : Dialog
         {
             Clicked = CreateProject
         });
+
         ProjectTemplatesListView listView = Templates.ListView;
         listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
         {
             ActiveTemplate = item as ProjectTemplate;
         });
+
         ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
+
         Validate();
     }
     private static string DefaultProjectName()
