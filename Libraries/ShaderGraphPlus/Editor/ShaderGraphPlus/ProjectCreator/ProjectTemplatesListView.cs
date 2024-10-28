@@ -45,48 +45,26 @@ internal class ProjectTemplatesListView : ListView
 
     protected void FindLocalTemplates()
     {
-        //var dev_name = "ShaderGraphPlus";
-        //var user_name = "quack.shadergraphplus";
-        //var dev_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{dev_name}/templates";
-        //var user_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{user_name}/templates";
-        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath("/templates");//Utilities.Path.ChooseExistingPath(dev_path, user_path); // Choose the correct path for user or dev.
-        //var library_name = "";
-
-        //if (template_path == user_path)
-        //{
-        //    library_name = user_name;
-        //}
-        //else 
-        //{
-        //    library_name = dev_name;
-        //}
-
+        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath("/templates");
 
         if (!Directory.Exists(template_path))
         {
             return;
         }
 
-        //foreach (string directory in FileSystem.Libraries.FindDirectory("/", "*", false))
-        //{
-            //if (directory == library_name)
-            //{
-                foreach (string template_folder in ShaderGraphPlusFileSystem.FileSystem.FindDirectory("/templates", "*", false))
-                {
-                    string templateRoot = "/templates/" + template_folder;
-                    string addonPath = templateRoot + "/$name.sgrph";
-
-                    if (ShaderGraphPlusFileSystem.FileSystem.FileExists(addonPath))
-                    {
-                        ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
-                        Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
-
-                    }
-
-                }
-           // }
-        //}
-
+        foreach (string template_folder in ShaderGraphPlusFileSystem.FileSystem.FindDirectory("/templates", "*", false))
+        {
+            string templateRoot = "/templates/" + template_folder;
+            string addonPath = templateRoot + "/$name.sgrph";
+        
+            if (ShaderGraphPlusFileSystem.FileSystem.FileExists(addonPath))
+            {
+                ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
+                Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
+        
+            }
+        
+        }
     }
 
     protected override void OnPaint()
