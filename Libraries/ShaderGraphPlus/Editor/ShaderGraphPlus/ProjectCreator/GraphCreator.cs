@@ -1,6 +1,4 @@
 ﻿using MaterialDesign;
-using Sandbox.DataModel;
-using static Editor.Button;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -104,9 +102,9 @@ public class GraphCreator : Dialog
         footer.Spacing = 8f;
         footer.AddStretchCell(0);
         FolderFullPath = footer.Add(new FieldSubtitle(""));
-        OkayButton = footer.Add(new Primary("Create", "add_box", null)
+        OkayButton = footer.Add(new Button.Primary("Create", "add_box", null)
         {
-            Clicked = CreateProject // TODO : Actually make it so once the button is click we use the selected template to create a project. - Quack
+            Clicked = CreateProject
         });
         ProjectTemplatesListView listView = Templates.ListView;
         listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
