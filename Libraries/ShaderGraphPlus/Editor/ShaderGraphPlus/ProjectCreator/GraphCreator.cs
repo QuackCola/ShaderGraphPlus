@@ -24,12 +24,6 @@ public class GraphCreator : Dialog
 
     private LineEdit TitleEdit;
 
-    private LineEdit IdentEdit;
-
-    private Checkbox CreateGitIgnore;
-
-    private Checkbox SetDefaultProjectLocation;
-
     private FolderProperty FolderEdit;
 
     private FieldSubtitle FolderFullPath;
@@ -40,10 +34,7 @@ public class GraphCreator : Dialog
 
     //private ErrorBox FolderError;
 
-    private bool identEdited;
-
-    public Action<string, string> OnProjectCreated { get; set; }
-    //public Action<string> OnProjectCreatedTest { get; set; }
+    public Action<string> OnProjectCreated { get; set; }
 
     public GraphCreator(Widget parent = null) : base(null, true)
     {
@@ -165,18 +156,18 @@ public class GraphCreator : Dialog
 
         string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
         string TemplateTxt = Template.ReadTemplate(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/'));
+        string template_test = ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/');
 
-        File.WriteAllText($"{OutputPath}", TemplateTxt);
+        File.WriteAllText(OutputPath, TemplateTxt);
+
+        // Register the generated project with the assetsystem.
+        AssetSystem.RegisterFile(OutputPath); 
 
         Log.Info($"Creating ShaderGraphPlus project from : {Templates.ListView.ChosenTemplate.TemplatePath}");
         Utilities.EdtiorSound.Success();
         Close();
 
-        var RelativeOutputPath = $"{FolderEdit.Text}/{TitleEdit.Text}.sgrph".Replace('\\', '/');
-
-        Log.Info($"relative_out is : {RelativeOutputPath}");
-
-        OnProjectCreated?.Invoke(OutputPath,RelativeOutputPath);
+        OnProjectCreated?.Invoke(OutputPath);
     }
 
 }

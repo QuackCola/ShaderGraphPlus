@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Sandbox.Utility.Svg;
+
+namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType( "sgrph" )]
 [EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
@@ -64,10 +66,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		
 		IsCreateProjectDialogOpen = true;
 
-        var gc = new GraphCreator();
-        gc.Show();
-		gc.OnProjectCreated += OpenGeneratedProject; // TODO : Should I open the window once we click ok or not and just open the GraphCreator and the ShaderGraphPlus window?.
-
+      
 		_graph = new();
 		
 		CreateToolBar();
@@ -78,22 +77,11 @@ public class MainWindow : DockWindow, IAssetEditor
 		CreateUI();
 		Show();
 		CreateNew();
-    }
 
-    private void OpenGeneratedProject( string absolutePath, string relativePath )
-    {
-		if (!File.Exists(absolutePath))
-		{
-			Log.Error($" Generated project does not exist!!!");
-		}
-		else
-		{
-			Log.Info($"Generated project succesfully!!!");
+        var gc = new GraphCreator();
+        gc.Show();
+		gc.OnProjectCreated += Open;
 
-			Open(relativePath);
-		}
-
-        //throw new NotImplementedException();
     }
 
     public void AssetOpen( Asset asset )
@@ -982,13 +970,9 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void Open( string path )
 	{
 		var asset = AssetSystem.FindByPath( path );
-
+      
         if ( asset == null )
 			return;
-
-
-        Log.Info($" opend Asset Path is : {asset.Path}");
-
 
         if ( asset == _asset )
 		{
