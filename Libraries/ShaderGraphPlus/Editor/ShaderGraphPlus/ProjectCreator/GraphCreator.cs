@@ -65,13 +65,14 @@ public class GraphCreator : Dialog
         body.AddSpacingCell(8f);
         body.Add(new FieldTitle("Shader Graph Plus Project Setup"));
         body.AddSpacingCell(12f);
-        body.Add(new FieldTitle("Shader Name"));
+        body.Add(new FieldTitle("Name"));
 
         TitleEdit = body.Add(new LineEdit("", null)
         {
             PlaceholderText = "Garry's Project"
         });
         TitleEdit.Text = DefaultProjectName();
+        TitleEdit.ToolTip = "Name of your Shader Graph Plus project.";
         TitleEdit.TextEdited += delegate
         {
             Validate();
@@ -79,11 +80,11 @@ public class GraphCreator : Dialog
 
         body.AddSpacingCell(8f);
 
-        body.Add(new FieldTitle("Shader Location"));
+        body.Add(new FieldTitle("Location"));
         FolderEdit = body.Add(new FolderProperty(null));
         FolderEdit.PlaceholderText = "";
-        FolderEdit.Text = $"shaders";
-        FolderEdit.ToolTip = "This is the folder path inside your current project asset's directory where your ShaderGraphPlus project will be created.";
+        FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\","/")}/";
+        FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
         FolderEdit.TextEdited += delegate
         {
             Validate();
@@ -145,7 +146,7 @@ public class GraphCreator : Dialog
     private void CreateProject()
     {
 
-        string shaderGraphProjectPath = ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
+        string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
 
         ShaderGraphPlus shaderGraphProject = new ShaderGraphPlus();
@@ -156,7 +157,6 @@ public class GraphCreator : Dialog
 
         string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
         string TemplateTxt = Template.ReadTemplate(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/'));
-        string template_test = ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/');
 
         File.WriteAllText(OutputPath, TemplateTxt);
 
