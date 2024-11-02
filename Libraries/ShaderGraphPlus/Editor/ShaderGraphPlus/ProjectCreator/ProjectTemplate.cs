@@ -1,6 +1,4 @@
-﻿using Sandbox.DataModel;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 internal class ProjectTemplate
 {
