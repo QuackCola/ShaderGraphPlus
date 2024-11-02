@@ -1,4 +1,5 @@
 ﻿using MaterialDesign;
+using static Sandbox.VideoWriter;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -143,6 +144,15 @@ public class GraphCreator : Dialog
         OkayButton.Enabled = enabled;
     }
 
+    private ShaderGraphPlus ReadTemplate(ShaderGraphPlus shaderGraphPlusTemplate, string templatePath)
+    {
+        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{templatePath}/$name.sgrph")));
+        shaderGraphPlusTemplate.SetMeta("ProjectTemplate", null);
+        
+        return shaderGraphPlusTemplate;
+    }
+
+
     private void CreateProject()
     {
 
@@ -151,14 +161,13 @@ public class GraphCreator : Dialog
 
         ShaderGraphPlus shaderGraphProject = new ShaderGraphPlus();
 
-        Templates.ListView.ChosenTemplate?.Apply(shaderGraphProjectPath, shaderGraphProject, TitleEdit.Text);
+        Templates.ListView.ChosenTemplate?.Apply(shaderGraphProjectPath, ref shaderGraphProject, TitleEdit.Text);
 
         //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");
 
         string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
-        string TemplateTxt = Template.ReadTemplate(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Replace('\\', '/'));
-
-        File.WriteAllText(OutputPath, TemplateTxt);
+        string txt = ReadTemplate(shaderGraphProject, $"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Serialize();
+        File.WriteAllText(OutputPath, txt);
 
         // Register the generated project with the assetsystem.
         AssetSystem.RegisterFile(OutputPath); 
