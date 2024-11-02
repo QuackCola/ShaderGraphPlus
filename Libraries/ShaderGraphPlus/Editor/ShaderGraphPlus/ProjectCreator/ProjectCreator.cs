@@ -153,7 +153,6 @@ public class ProjectCreator : Dialog
         return shaderGraphPlusTemplate;
     }
 
-
     private void CreateProject()
     {
 
