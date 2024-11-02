@@ -144,8 +144,10 @@ public class GraphCreator : Dialog
         OkayButton.Enabled = enabled;
     }
 
-    private ShaderGraphPlus ReadTemplate(ShaderGraphPlus shaderGraphPlusTemplate, string templatePath)
+    private ShaderGraphPlus ReadTemplate(string templatePath)
     {
+        var shaderGraphPlusTemplate = new ShaderGraphPlus();
+
         shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{templatePath}/$name.sgrph")));
         shaderGraphPlusTemplate.SetMeta("ProjectTemplate", null);
         
@@ -159,14 +161,10 @@ public class GraphCreator : Dialog
         string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
 
-        ShaderGraphPlus shaderGraphProject = new ShaderGraphPlus();
-
-        Templates.ListView.ChosenTemplate?.Apply(shaderGraphProjectPath, ref shaderGraphProject, TitleEdit.Text);
-
         //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");
 
         string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
-        string txt = ReadTemplate(shaderGraphProject, $"{Templates.ListView.ChosenTemplate.TemplatePath}/$name.sgrph").Serialize();
+        string txt = ReadTemplate($"{Templates.ListView.ChosenTemplate.TemplatePath}").Serialize();
         File.WriteAllText(OutputPath, txt);
 
         // Register the generated project with the assetsystem.
