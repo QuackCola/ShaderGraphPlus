@@ -37,26 +37,6 @@ internal class ProjectTemplate
         }
     }
 
-    public void Apply(string targetDir, ref ShaderGraphPlus config, string title_test)
-    {
-        string sourceDir = ShaderGraphPlusFileSystem.FileSystem.GetFullPath(TemplatePath);
-        //Log.Info($"sourceDir is : {sourceDir}");
-        if (Directory.Exists(sourceDir))
-        {
-            CopyFolder(sourceDir, targetDir, title_test);
-            //string ident = title_test;
-            //string title = title_test;
-            string fullPath = Path.Combine(sourceDir, "$name.sgrph");
-            //var test = ProjectConfig
-            if (Directory.Exists(fullPath))
-            {
-                config = JsonSerializer.Deserialize<ShaderGraphPlus>(File.ReadAllText(fullPath));
-   
-                config.SetMeta("ProjectTemplate", null);
-            }
-        }
-    }
-
     private void CopyFolder(string sourceDir, string targetDir, string addonIdent)
     {
         if (!sourceDir.Contains("\\.", StringComparison.OrdinalIgnoreCase))
