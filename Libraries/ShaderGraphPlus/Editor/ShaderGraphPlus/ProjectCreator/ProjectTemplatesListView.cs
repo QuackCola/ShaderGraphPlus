@@ -24,12 +24,11 @@ internal class ProjectTemplatesListView : ListView
         ChosenTemplate = orderedTemplates.FirstOrDefault();
         if (ChosenTemplate != null)
         {
-
             SelectItem(ChosenTemplate, false, false);
         }
         else
         {
-
+            // Do Nothing...
         }
     }
 
