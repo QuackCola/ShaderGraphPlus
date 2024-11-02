@@ -18,7 +18,7 @@ internal class FieldSubtitle : Label
     }
 }
 
-public class GraphCreator : Dialog
+public class ProjectCreator : Dialog
 {
     private Button OkayButton;
 
@@ -36,7 +36,7 @@ public class GraphCreator : Dialog
 
     public Action<string> OnProjectCreated { get; set; }
 
-    public GraphCreator(Widget parent = null) : base(null, true)
+    public ProjectCreator(Widget parent = null) : base(null, true)
     {
         Window.Size = new Vector2(800, 500);
         Window.MaximumSize = Window.Size;

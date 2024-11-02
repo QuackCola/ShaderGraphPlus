@@ -76,7 +76,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        var gc = new GraphCreator();
+        var gc = new ProjectCreator();
         gc.Show();
 		gc.OnProjectCreated += Open;
 
