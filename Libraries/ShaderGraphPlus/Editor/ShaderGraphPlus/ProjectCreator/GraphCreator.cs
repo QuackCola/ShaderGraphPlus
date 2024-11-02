@@ -1,5 +1,4 @@
 ﻿using MaterialDesign;
-using static Sandbox.VideoWriter;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
