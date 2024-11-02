@@ -37,7 +37,7 @@ internal class ProjectTemplate
         }
     }
 
-    public void Apply(string targetDir, ShaderGraphPlus config, string title_test)
+    public void Apply(string targetDir, ref ShaderGraphPlus config, string title_test)
     {
         string sourceDir = ShaderGraphPlusFileSystem.FileSystem.GetFullPath(TemplatePath);
         //Log.Info($"sourceDir is : {sourceDir}");
