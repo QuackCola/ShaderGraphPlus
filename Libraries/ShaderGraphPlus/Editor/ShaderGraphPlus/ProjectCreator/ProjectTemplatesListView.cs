@@ -72,77 +72,86 @@ internal class ProjectTemplatesListView : ListView
         //Paint.DrawRect(LocalRect);
     }
 
-    protected override void PaintItem(VirtualWidget v)
-    {
-        Rect rect = v.Rect;
+    protected override void PaintItem( VirtualWidget v )
+	{
+		object @object = v.Object;
+		Rect rect = v.Rect;
 
-        if (v.Object is ProjectTemplate template)
-        {
-            Rect r = rect;
-            Color fg = Theme.White;
-            if (Paint.HasSelected)
-            {
-                fg = Theme.Blue;
-            }
+		if (@object is ProjectTemplate template)
+		{
+			Rect r = rect;
+			Color fg = Theme.White;
 
-            Paint.Antialiasing = true;
-            Paint.ClearPen();
-            Color val = Theme.ButtonDefault.WithAlpha(0.1f);
-            Paint.SetBrush(val);
+			if (Paint.HasSelected)
+			{
+				fg = Theme.Blue;
+			}
 
-            if (Paint.HasSelected)
-            {
-                val = Theme.Blue.WithAlpha(0.1f);
-                Paint.SetBrush(val);
-            }
+			Paint.Antialiasing = true;
+			Paint.ClearPen();
+			Color color = Theme.ButtonDefault.WithAlpha(0.1f);
+			Paint.SetBrush(in color);
 
-            Paint.DrawRect(r, 4f);
+			if (Paint.HasSelected)
+			{
+				color = Theme.Blue.WithAlpha(0.1f);
+				Paint.SetBrush(in color);
+			}
 
-            if (Paint.HasMouseOver)
-            {
-                Paint.ClearPen();
-                val = Theme.White.WithAlpha(0.05f);
-                Paint.SetBrush(val);
-                Paint.DrawRect(r, 4f);
-            }
+			Paint.DrawRect(in r, 4f);
 
-            Paint.Antialiasing = false;
+			if (Paint.HasMouseOver)
+			{
+				Paint.ClearPen();
+				color = Theme.White.WithAlpha(0.05f);
+				Paint.SetBrush(in color);
+				Paint.DrawRect(in r, 4f);
+			}
 
-            float num = 8f;
-            r = r.Shrink(num);
-            val = fg.WithAlpha(0.7f);
-            num = 0f;
+			Paint.Antialiasing = false;
 
-            Paint.SetPen(val, num, PenStyle.Solid);
-            Vector2 val3 = rect.Height - 16f;
-            Paint.DrawIcon(r.Align(val3, TextFlag.CenterVertically), template.Icon, 24f, TextFlag.Center);
-            Paint.SetDefaultFont(8f, 400, false, false);
-            num = 0f;
-            Paint.SetPen(fg,num, PenStyle.Solid);
-            num = rect.Height - 8f;
+			float amt = 8f;
+			r = r.Shrink(in amt);
+			color = fg.WithAlpha(0.7f);
+			amt = 0f;
 
-            float num2 = 0f;
-            r = r.Shrink(num,num2);
-            Rect x = Paint.DrawText(r, template.Title, TextFlag.LeftTop);
-            r.Top = r.Top + x.Height + 4f;
-            if (Paint.HasSelected)
-            {
-                val = Theme.Blue.WithAlpha(1f);
-                num = 0f;
-                Paint.SetPen(val,num, PenStyle.Solid);
-            }
-            else
-            {
-                val = Theme.ControlText.WithAlpha(0.5f);
-                num = 0f;
-                Paint.SetPen(val,num, PenStyle.Solid);
-            }
+			PenStyle style = PenStyle.Solid;
+			Paint.SetPen(in color, in amt, in style);
+			Vector2 size = rect.Height - 16f;
+			Paint.DrawIcon(r.Align(in size, TextFlag.LeftCenter), template.Icon, 24f);
+			Paint.SetDefaultFont();
 
-            r.Right = rect.Width;
-            x = Paint.DrawIcon(r, "info", 12f, TextFlag.LeftTop);
-            r.Left = x.Right + 4f;
-            x = Paint.DrawText(r, template.Description, TextFlag.LeftTop);
-            r.Left = x.Right + 4f;
-        }
-    }
+			amt = 0f;
+			style = PenStyle.Solid;
+
+			Paint.SetPen(in fg, in amt, in style);
+
+			amt = rect.Height - 8f;
+			float y = 0f;
+			r = r.Shrink(in amt, in y);
+
+			Rect x = Paint.DrawText(in r, template.Title, TextFlag.LeftTop);
+
+			r.Top += x.Height + 4f;
+
+			if (Paint.HasSelected)
+			{
+				color = Theme.Blue.WithAlpha(1f);
+				amt = 0f;
+				style = PenStyle.Solid;
+				Paint.SetPen(in color, in amt, in style);
+			}
+			else
+			{
+				color = Theme.ControlText.WithAlpha(0.5f);
+				amt = 0f;
+				style = PenStyle.Solid;
+				Paint.SetPen(in color, in amt, in style);
+			}
+
+			r.Right = rect.Width;
+			r.Left = Paint.DrawIcon(r, "info", 12f, TextFlag.LeftTop).Right + 4f;
+			r.Left = Paint.DrawText(in r, template.Description, TextFlag.LeftTop).Right + 4f;
+		}
+	}
 }
