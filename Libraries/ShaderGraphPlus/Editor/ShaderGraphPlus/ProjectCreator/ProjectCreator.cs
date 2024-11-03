@@ -38,6 +38,9 @@ public class ProjectCreator : Dialog
 
     private bool NoTemplates { get; set; } = false;
 
+	// TODO : Add in some extra options to the template metadata. Something like the ability to further configure the selected template such as shading model and the description.
+	//
+
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
         // Set some basic window stuff.
