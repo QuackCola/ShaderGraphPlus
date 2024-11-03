@@ -36,6 +36,8 @@ public class ProjectCreator : Dialog
 
     public Action<string> OnProjectCreated { get; set; }
 
+    private bool NoTemplates { get; set; } = false;
+
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
         // Set some basic window stuff.
@@ -53,7 +55,7 @@ public class ProjectCreator : Dialog
         body0.Margin = 20f;
         body0.Spacing = 8f;
         body0.AddSpacingCell(8f);
-        body0.Add(new Label.Subtitle("Core Templates"));
+        body0.Add(new Label.Subtitle("Templates"));
         body0.AddSpacingCell(12f);
 
         ProjectTemplates templates = body0.Add( new ProjectTemplates(this) );
@@ -121,10 +123,12 @@ public class ProjectCreator : Dialog
         // Handle situations where there is no templates found.
         if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
         {
+
             ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
         }
         else
         {
+            NoTemplates = true;
             Layout error = body1.AddRow(0, false);
             error.Spacing = 8f;
             error.AddStretchCell(0);
@@ -175,6 +179,11 @@ public class ProjectCreator : Dialog
 
     private void CreateProject()
     {
+        // No templates? then dont run the rest of the code...
+        if ( NoTemplates )
+        {
+            return;
+        }
 
         string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
