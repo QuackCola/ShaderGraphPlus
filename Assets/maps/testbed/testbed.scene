@@ -1,0 +1,100 @@
+{
+  "__guid": "f102cbeb-0ae7-4501-b738-14dda90b0df3",
+  "GameObjects": [
+    {
+      "__guid": "1628dba6-f5a6-484f-953c-0d25c0f4244d",
+      "Flags": 0,
+      "Name": "MapRoot",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MapInstance",
+          "__guid": "f2be94e5-2a88-4391-9d3f-19d84150e557",
+          "__version": 1,
+          "EnableCollision": true,
+          "MapName": "maps/testbed/testbed.vmap",
+          "NoOrigin": false,
+          "OnMapLoaded": null,
+          "OnMapUnloaded": null,
+          "UseMapFromLaunch": false
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "399d236c-895f-46cb-baf6-9e9c2bc39387",
+      "Flags": 0,
+      "Name": "DemoPlayer",
+      "Position": "-224,256,56",
+      "Rotation": "0,-0,-0.7071068,0.7071068",
+      "Tags": "player",
+      "Enabled": true,
+      "__Prefab": "prefabs/demoplayer_boomcam.prefab",
+      "__PrefabVariables": {
+        "Player Field Of View": 90,
+        "Arm Length": 112,
+        "Socket Offset": "0,32,16"
+      }
+    },
+    {
+      "__guid": "b30b2f66-1aab-48e7-af91-dfb26294c9a7",
+      "Flags": 0,
+      "Name": "TestObjects",
+      "Enabled": true,
+      "Children": [
+        {
+          "__guid": "aea1438b-dd33-4a9a-8170-e16f84c09676",
+          "Flags": 0,
+          "Name": "Cube",
+          "Position": "-244.862,-1376.798,30.00339",
+          "Enabled": true,
+          "Components": [
+            {
+              "__type": "Sandbox.ModelRenderer",
+              "__guid": "34aede27-41fb-40d8-8a93-d968d2170750",
+              "BodyGroups": 18446744073709551615,
+              "MaterialOverride": "materials/parallaxtest.vmat",
+              "Model": "models/dev/box.vmdl",
+              "RenderOptions": {
+                "GameLayer": true,
+                "OverlayLayer": false,
+                "BloomLayer": false,
+                "AfterUILayer": false
+              },
+              "RenderType": "On",
+              "Tint": "1,1,1,1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 30,
+    "NetworkInterpolation": true,
+    "PhysicsSubSteps": 1,
+    "ThreadedAnimation": true,
+    "TimeScale": 1,
+    "UseFixedUpdate": true,
+    "Metadata": {},
+    "NavMesh": {
+      "Enabled": false,
+      "IncludeStaticBodies": true,
+      "IncludeKeyframedBodies": true,
+      "EditorAutoUpdate": true,
+      "AgentHeight": 64,
+      "AgentRadius": 16,
+      "AgentStepSize": 18,
+      "AgentMaxSlope": 40,
+      "ExcludedBodies": "",
+      "IncludedBodies": ""
+    }
+  },
+  "ResourceVersion": 2,
+  "Title": null,
+  "Description": null,
+  "__references": [],
+  "__version": 2
+}

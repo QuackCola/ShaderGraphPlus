@@ -1,0 +1,194 @@
+{
+  "RootObject": {
+    "__guid": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+    "Flags": 0,
+    "Name": "player_boomcam",
+    "Tags": "player",
+    "Enabled": true,
+    "Components": [
+      {
+        "__type": "Sandbox.SkinnedModelRenderer",
+        "__guid": "78393e20-1536-4660-a306-402ab328929b",
+        "BodyGroups": 341,
+        "CreateBoneObjects": false,
+        "Model": "models/citizen/citizen.vmdl",
+        "Morphs": {},
+        "Parameters": {
+          "bools": {},
+          "ints": {},
+          "floats": {},
+          "vectors": {},
+          "rotations": {}
+        },
+        "RenderOptions": {
+          "GameLayer": true,
+          "OverlayLayer": false,
+          "BloomLayer": false,
+          "AfterUILayer": false
+        },
+        "RenderType": "On",
+        "Tint": "1,1,1,1",
+        "UseAnimGraph": true
+      },
+      {
+        "__type": "Sandbox.CharacterController",
+        "__guid": "a6069d7f-c1ee-402f-9e93-9876ddae6583",
+        "Acceleration": 10,
+        "Bounciness": 0.3,
+        "GroundAngle": 45,
+        "Height": 64,
+        "IgnoreLayers": "",
+        "Radius": 16,
+        "StepHeight": 18,
+        "UseCollisionRules": false
+      },
+      {
+        "__type": "Sandbox.Citizen.CitizenAnimationHelper",
+        "__guid": "31388d99-6d06-409d-ac19-d93678146f6d",
+        "BodyWeight": 1,
+        "EyesWeight": 1,
+        "HeadWeight": 1,
+        "Height": 1,
+        "LookAtEnabled": false,
+        "Target": {
+          "_type": "component",
+          "component_id": "78393e20-1536-4660-a306-402ab328929b",
+          "go": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+          "component_type": "SkinnedModelRenderer"
+        }
+      },
+      {
+        "__type": "ShaderGraphPlusPlayer",
+        "__guid": "c5d4285f-cd2a-4aa3-9778-55b55aa960d8",
+        "Animator": {
+          "_type": "component",
+          "component_id": "31388d99-6d06-409d-ac19-d93678146f6d",
+          "go": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+          "component_type": "CitizenAnimationHelper"
+        },
+        "Camera": {
+          "_type": "gameobject",
+          "go": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a"
+        },
+        "Controller": {
+          "_type": "component",
+          "component_id": "a6069d7f-c1ee-402f-9e93-9876ddae6583",
+          "go": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+          "component_type": "CharacterController"
+        },
+        "EyePosition": "0,0,60",
+        "JumpStrength": 400,
+        "RunSpeed": 250,
+        "WalkSpeed": 120
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a",
+        "Flags": 0,
+        "Name": "Camera",
+        "Position": "0,0,56",
+        "Scale": "1,1,12",
+        "Enabled": true,
+        "Components": [
+          {
+            "__type": "Sandbox.CameraComponent",
+            "__guid": "703835c1-5d80-42ef-ada9-9dbbe659c69b",
+            "BackgroundColor": "0.33333,0.46275,0.52157,1",
+            "ClearFlags": "All",
+            "FieldOfView": 90,
+            "IsMainCamera": true,
+            "Orthographic": false,
+            "OrthographicHeight": 1204,
+            "Priority": 1,
+            "RenderExcludeTags": "",
+            "RenderTags": "",
+            "TargetEye": "None",
+            "Viewport": "0,0,1,1",
+            "ZFar": 10000,
+            "ZNear": 0.1
+          },
+          {
+            "__type": "BoomArm",
+            "__guid": "d631411c-fc49-4cf1-a689-82d2d34d095c",
+            "_armLength": 112,
+            "_camera": {
+              "_type": "component",
+              "component_id": "703835c1-5d80-42ef-ada9-9dbbe659c69b",
+              "go": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a",
+              "component_type": "CameraComponent"
+            },
+            "_socketOffset": "0,32,16"
+          }
+        ]
+      }
+    ],
+    "__variables": [
+      {
+        "Id": "Player Field Of View",
+        "Title": "Player Field Of View",
+        "Group": "Cemera Settings",
+        "Targets": [
+          {
+            "Id": "703835c1-5d80-42ef-ada9-9dbbe659c69b",
+            "Property": "FieldOfView"
+          }
+        ]
+      },
+      {
+        "Id": "Arm Length",
+        "Title": "Arm Length",
+        "Group": "Camera Boom",
+        "Order": 1,
+        "Targets": [
+          {
+            "Id": "d631411c-fc49-4cf1-a689-82d2d34d095c",
+            "Property": "_armLength"
+          }
+        ]
+      },
+      {
+        "Id": "Socket Offset",
+        "Title": "Socket Offset",
+        "Group": "Camera Boom",
+        "Order": 1,
+        "Targets": [
+          {
+            "Id": "d631411c-fc49-4cf1-a689-82d2d34d095c",
+            "Property": "_socketOffset"
+          }
+        ]
+      }
+    ],
+    "__properties": {
+      "FixedUpdateFrequency": 50,
+      "MaxFixedUpdates": 5,
+      "NetworkFrequency": 30,
+      "NetworkInterpolation": true,
+      "PhysicsSubSteps": 1,
+      "ThreadedAnimation": true,
+      "TimeScale": 1,
+      "UseFixedUpdate": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    }
+  },
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "ResourceVersion": 1,
+  "__references": [],
+  "__version": 1
+}
