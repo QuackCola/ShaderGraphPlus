@@ -38,36 +38,39 @@ public class ProjectCreator : Dialog
 
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
+        // Set some basic window stuff.
         Window.Size = new Vector2(800, 500);
         Window.MaximumSize = Window.Size;
         Window.MinimumSize = Window.Size;
-
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
  
-
+        // Start laying stuff out.
         Layout = Layout.Row();
         Layout.Spacing = 4;
-        var obj = Layout.AddColumn(3,false);
-        obj.AddSpacingCell(8f);
-        obj.Add(new FieldTitle("Graph Templates"));
-        obj.AddSpacingCell(18f);
-        ProjectTemplates templates = obj.Add( new ProjectTemplates(this) );
+        var body0 = Layout.AddColumn(3,false);
+        body0.Margin = 20f;
+        body0.Spacing = 8f;
+        body0.AddSpacingCell(8f);
+        body0.Add(new Label.Subtitle("Core Templates"));
+        body0.AddSpacingCell(12f);
 
+        ProjectTemplates templates = body0.Add( new ProjectTemplates(this) );
         Templates = templates;
 
         Layout.AddSeparator();
 
-        Layout body = Layout.AddColumn(2,false);
-        body.Margin = 20f;
-        body.Spacing = 8f;
-        body.AddSpacingCell(8f);
-        body.Add(new FieldTitle("Shader Graph Plus Project Setup"));
-        body.AddSpacingCell(12f);
-        body.Add(new FieldTitle("Name"));
+        Layout body1 = Layout.AddColumn(2,false);
+        body1.Margin = 20f;
+        body1.Spacing = 8f;
+        body1.AddSpacingCell(8f);
+        body1.Add(new FieldTitle("Shader Graph Plus Project Setup"));
+        body1.AddSpacingCell(12f);
+        body1.Add(new FieldTitle("Name"));
 
-        TitleEdit = body.Add(new LineEdit("", null)
+        // Title Edit.
+        TitleEdit = body1.Add(new LineEdit("", null)
         {
             PlaceholderText = "Garry's Project"
         });
@@ -78,10 +81,11 @@ public class ProjectCreator : Dialog
             Validate();
         };
 
-        body.AddSpacingCell(8f);
+        body1.AddSpacingCell(8f);
 
-        body.Add(new FieldTitle("Location"));
-        FolderEdit = body.Add(new FolderProperty(null));
+        // Folder Edit.
+        body1.Add(new FieldTitle("Location"));
+        FolderEdit = body1.Add(new FolderProperty(null));
         FolderEdit.PlaceholderText = "";
         FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\","/")}/";
         FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
@@ -94,9 +98,10 @@ public class ProjectCreator : Dialog
         {
             Validate();
         });
-        body.AddStretchCell(1);
+        body1.AddStretchCell(1);
 
-        Layout footer = body.AddRow(0, false);
+        // Create button.
+        Layout footer = body1.AddRow(0, false);
         footer.Spacing = 8f;
         footer.AddStretchCell(0);
         FolderFullPath = footer.Add(new FieldSubtitle(""));
@@ -105,13 +110,28 @@ public class ProjectCreator : Dialog
             Clicked = CreateProject
         });
 
+        // Template list view for all the projects in the templates folder.
         ProjectTemplatesListView listView = Templates.ListView;
+  
         listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
         {
             ActiveTemplate = item as ProjectTemplate;
         });
 
-        ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
+        // Handle situations where there is no templates found.
+        if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
+        {
+            ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
+        }
+        else
+        {
+            Layout error = body1.AddRow(0, false);
+            error.Spacing = 8f;
+            error.AddStretchCell(0);
+            var errorlabel = new Label("No Templates found!");
+            errorlabel.Color = Color.Red;
+            error.Add(errorlabel);
+        }
 
         Validate();
     }

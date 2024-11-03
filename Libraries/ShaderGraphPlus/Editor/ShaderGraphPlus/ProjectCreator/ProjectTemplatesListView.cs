@@ -28,6 +28,7 @@ internal class ProjectTemplatesListView : ListView
         }
         else
         {
+            Log.Error($"ShaderGraphPlus : No templates found!!!");
             // Do Nothing...
         }
     }
@@ -46,6 +47,7 @@ internal class ProjectTemplatesListView : ListView
     {
         var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath("/templates");
 
+
         if (!Directory.Exists(template_path))
         {
             return;
@@ -55,13 +57,13 @@ internal class ProjectTemplatesListView : ListView
         {
             string templateRoot = "/templates/" + template_folder;
             string addonPath = templateRoot + "/$name.sgrph";
-        
+
             if (ShaderGraphPlusFileSystem.FileSystem.FileExists(addonPath))
             {
                 ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
                 Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
             }
-        }
+        }   
     }
 
     protected override void OnPaint()
@@ -77,7 +79,7 @@ internal class ProjectTemplatesListView : ListView
 		object @object = v.Object;
 		Rect rect = v.Rect;
 
-		if (@object is ProjectTemplate template)
+        if (@object is ProjectTemplate template)
 		{
 			Rect r = rect;
 			Color fg = Theme.White;
