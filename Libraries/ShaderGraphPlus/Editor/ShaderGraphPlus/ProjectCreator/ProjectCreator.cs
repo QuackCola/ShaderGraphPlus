@@ -123,7 +123,6 @@ public class ProjectCreator : Dialog
         // Handle situations where there is no templates found.
         if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
         {
-
             ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
         }
         else
