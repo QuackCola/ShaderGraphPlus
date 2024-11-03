@@ -9,7 +9,7 @@
   },
   "Metadata": {
       "ProjectTemplate": {
-      "Icon": "extension",
+      "Icon": "texture",
       "Order": 100,
       "Description": "You want to make material shader"
     }
