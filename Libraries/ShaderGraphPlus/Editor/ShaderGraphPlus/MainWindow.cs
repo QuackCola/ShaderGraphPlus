@@ -53,8 +53,6 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool CanOpenMultipleAssets => true;
 
-	public bool IsCreateProjectDialogOpen { get; set; }
-
 	private ProjectCreator ProjectCreator { get; set; }
 
 	public MainWindow()
@@ -63,10 +61,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		Title = "Shader Graph Plus";
 		Size = new Vector2( 1700, 1050 );
-		
-		IsCreateProjectDialogOpen = true;
 
-      
 		_graph = new();
 		
 		CreateToolBar();
@@ -77,7 +72,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		CreateUI();
 		Show();
 		CreateNew();
-
 
         OpenProjectCreationDialog();
     }
