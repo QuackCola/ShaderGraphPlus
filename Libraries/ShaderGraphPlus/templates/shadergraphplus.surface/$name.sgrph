@@ -11,7 +11,8 @@
       "ProjectTemplate": {
       "Icon": "texture",
       "Order": 100,
-      "Description": "You want to make a material shader"
+      "Description": "You want to make a material shader",
+	  "MaterialDomain": "Surface"
     }
   },
   "nodes": [

@@ -79,6 +79,11 @@ internal class ProjectTemplatesListView : ListView
 		object @object = v.Object;
 		Rect rect = v.Rect;
 
+		if (@object is null)
+		{
+			Log.Info("Nothing!");
+		}
+
         if (@object is ProjectTemplate template)
 		{
 			Rect r = rect;

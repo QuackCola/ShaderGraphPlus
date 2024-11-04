@@ -9,6 +9,8 @@ internal class ProjectTemplate
         public int? Order { get; set; }
 
         public string Description { get; set; }
+
+        public MaterialDomain materialDomain { get; set; }
     }
 
     private ShaderGraphPlus Config { get; init; }
@@ -21,6 +23,8 @@ internal class ProjectTemplate
     public int Order { get; set; }
     public string Description { get; set; } = "No description provided.";
 
+    public MaterialDomain MaterialDomain { get; set; }
+
     public ProjectTemplate(ShaderGraphPlus templateConfig, string path)
     {
         Config = templateConfig;
@@ -32,6 +36,7 @@ internal class ProjectTemplate
             Icon = display.Icon;
             Order = display.Order.GetValueOrDefault();
             Description = display.Description ?? "No description provided.";
+            MaterialDomain = display.materialDomain;
         }
     }
 
