@@ -55,6 +55,8 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool IsCreateProjectDialogOpen { get; set; }
 
+	private ProjectCreator ProjectCreator { get; set; }
+
 	public MainWindow()
 	{
 		DeleteOnClose = true;
@@ -76,18 +78,28 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        var gc = new ProjectCreator();
-        gc.Show();
-		gc.OnProjectCreated += Open;
 
+        OpenProjectCreationDialog();
+    }
+
+	private void OpenProjectCreationDialog()
+	{
+        ProjectCreator = new ProjectCreator();
+        ProjectCreator.DeleteOnClose = true;
+        ProjectCreator.Show();
+        ProjectCreator.OnProjectCreated += Open;
     }
 
     public void AssetOpen( Asset asset )
 	{
+		Log.Info($"Opened Asset : {asset.Name}");
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
 
-		Open( asset.AbsolutePath );
+		// We dont need the project creator when opening an existing asset. So lets forceably close it.
+        ProjectCreator.Close();
+
+        Open( asset.AbsolutePath );
 	}
 
 	private void RestoreShader()
@@ -379,7 +391,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 	}
 
-
 	private string GeneratePostProcessPreviewCode()
 	{
 		ClearAttributes();
@@ -488,7 +499,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		return code.Item1;
 
 	}
-
 
 	private string GeneratePreviewCode()
 	{
