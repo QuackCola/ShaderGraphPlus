@@ -38,8 +38,18 @@ public class ProjectCreator : Dialog
 
     private bool NoTemplates { get; set; } = false;
 
-	// TODO : Add in some extra options to the template metadata. Something like the ability to further configure the selected template such as shading model and the shader description.
-	//
+    // TODO : Add in some extra options to the template metadata. Something like the ability to further configure the selected template such as shading model and the shader description.
+    //
+
+    internal class TemplateUserConfig
+    {
+        [TextArea]
+        public string description { get; set; }    
+        public BlendMode blendmode { get; set; }
+        public ShadingModel shadingmodel { get; set; }
+    }
+
+    private TemplateUserConfig templateUserConfig;
 
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
@@ -50,11 +60,12 @@ public class ProjectCreator : Dialog
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
- 
+
         // Start laying stuff out.
         Layout = Layout.Row();
         Layout.Spacing = 4;
-        var body0 = Layout.AddColumn(3,false);
+
+        var body0 = Layout.AddColumn(3, false);
         body0.Margin = 20f;
         body0.Spacing = 8f;
         body0.AddSpacingCell(8f);
@@ -64,64 +75,101 @@ public class ProjectCreator : Dialog
         ProjectTemplates templates = body0.Add( new ProjectTemplates(this) );
         Templates = templates;
 
+        // Template list view for all the projects in the templates folder.
+        ProjectTemplatesListView listView = Templates.ListView;
+
+        listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
+        {
+            ActiveTemplate = item as ProjectTemplate;
+        });
+
         Layout.AddSeparator();
 
-        Layout body1 = Layout.AddColumn(2,false);
+        Layout body1 = Layout.AddColumn(2, false);
         body1.Margin = 20f;
         body1.Spacing = 8f;
         body1.AddSpacingCell(8f);
         body1.Add(new FieldTitle("Shader Graph Plus Project Setup"));
         body1.AddSpacingCell(12f);
         body1.Add(new FieldTitle("Name"));
-
+       
         // Title Edit.
-        TitleEdit = body1.Add(new LineEdit("", null)
         {
-            PlaceholderText = "Garry's Project"
-        });
-        TitleEdit.Text = DefaultProjectName();
-        TitleEdit.ToolTip = "Name of your Shader Graph Plus project.";
-        TitleEdit.TextEdited += delegate
-        {
-            Validate();
-        };
+            TitleEdit = body1.Add(new LineEdit("", null)
+            {
+                PlaceholderText = "Garry's Project"
+            });
+            TitleEdit.Text = DefaultProjectName();
+            TitleEdit.ToolTip = "Name of your Shader Graph Plus project.";
+            TitleEdit.TextEdited += delegate
+            {
+                Validate();
+            };
+        }
 
         body1.AddSpacingCell(8f);
 
         // Folder Edit.
         body1.Add(new FieldTitle("Location"));
-        FolderEdit = body1.Add(new FolderProperty(null));
-        FolderEdit.PlaceholderText = "";
-        FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\","/")}/";
-        FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
-        FolderEdit.TextEdited += delegate
         {
-            Validate();
-        };
-        FolderProperty folderEdit = FolderEdit;
-        folderEdit.FolderSelected = (Action<string>)Delegate.Combine(folderEdit.FolderSelected, (Action<string>)delegate
+            FolderEdit = body1.Add(new FolderProperty(null));
+            FolderEdit.PlaceholderText = "";
+            FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/";
+            FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
+            FolderEdit.TextEdited += delegate
+            {
+                Validate();
+            };
+            FolderProperty folderEdit = FolderEdit;
+            folderEdit.FolderSelected = (Action<string>)Delegate.Combine(folderEdit.FolderSelected, (Action<string>)delegate
+            {
+                Validate();
+            });
+        }
+
+        body1.AddSpacingCell(8f);
+
+        // Additional per-template config. 
+        body1.Add(new FieldTitle("Config"));
         {
-            Validate();
-        });
+
+            templateUserConfig = new TemplateUserConfig();
+
+            // Dont know if i should use this or PropertySheet. - Quack
+            /*
+                var so = templateUserConfig.GetSerialized();
+                var ps = new ControlSheet();
+                ps.AddObject(so);
+                var property = ps;
+            */
+
+            var canvas = new Widget(null);
+            canvas.Layout = Layout.Row();
+            canvas.Layout.Spacing = 32;
+
+            var property = new PropertySheet(canvas);
+            property.MinimumWidth = 350;
+            property.AddProperty(templateUserConfig, nameof(templateUserConfig.description));
+            property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
+            property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
+        
+            body1.Add(property);
+        }
+        
         body1.AddStretchCell(1);
 
         // Create button.
-        Layout footer = body1.AddRow(0, false);
-        footer.Spacing = 8f;
-        footer.AddStretchCell(0);
-        FolderFullPath = footer.Add(new FieldSubtitle(""));
-        OkayButton = footer.Add(new Button.Primary("Create", "add_box", null)
         {
-            Clicked = CreateProject
-        });
+            Layout footer = body1.AddRow(0, false);
+            footer.Spacing = 8f;
+            footer.AddStretchCell(0);
+            FolderFullPath = footer.Add(new FieldSubtitle(""));
+            OkayButton = footer.Add(new Button.Primary("Create", "add_box", null)
+            {
+                Clicked = CreateProject
+            });
+        }
 
-        // Template list view for all the projects in the templates folder.
-        ProjectTemplatesListView listView = Templates.ListView;
-  
-        listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
-        {
-            ActiveTemplate = item as ProjectTemplate;
-        });
 
         // Handle situations where there is no templates found.
         if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
@@ -169,11 +217,25 @@ public class ProjectCreator : Dialog
         OkayButton.Enabled = enabled;
     }
 
-    private ShaderGraphPlus ReadTemplate(string templatePath)
+    private void ConfigureTemplate( ShaderGraphPlus shaderGraphPlusTemplate )
+    {
+        if (shaderGraphPlusTemplate.MaterialDomain is not MaterialDomain.PostProcess)
+        {
+            shaderGraphPlusTemplate.BlendMode   = templateUserConfig.blendmode;
+        }
+        shaderGraphPlusTemplate.Description     = templateUserConfig.description;
+        shaderGraphPlusTemplate.ShadingModel    = templateUserConfig.shadingmodel;
+
+    }
+
+    private ShaderGraphPlus ReadTemplate( string templatePath )
     {
         var shaderGraphPlusTemplate = new ShaderGraphPlus();
-
         shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{templatePath}/$name.sgrph")));
+
+        // configure the template.
+        ConfigureTemplate(shaderGraphPlusTemplate);
+
         shaderGraphPlusTemplate.SetMeta("ProjectTemplate", null);
         
         return shaderGraphPlusTemplate;
@@ -186,6 +248,8 @@ public class ProjectCreator : Dialog
         {
             return;
         }
+
+        Log.Info($"Instance option : {templateUserConfig.shadingmodel}");
 
         string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);

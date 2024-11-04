@@ -11,7 +11,8 @@
       "ProjectTemplate": {
       "Icon": "camera",
       "Order": 100,
-      "Description": "You want to make a post processing shader"
+      "Description": "You want to make a post processing shader",
+	  "MaterialDomain": "PostProcess"
     }
   },
   "nodes": [
