@@ -98,6 +98,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		// We dont need the project creator when opening an existing asset. So lets forceably close it.
         ProjectCreator.Close();
+        ProjectCreator = null;
 
         Open( asset.AbsolutePath );
 	}
