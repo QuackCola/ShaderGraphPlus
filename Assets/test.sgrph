@@ -1,0 +1,80 @@
+{
+  "Model": null,
+  "Description": null,
+  "BlendMode": "Translucent",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "PostProcess",
+  "postProcessComponentInfo": {
+    "ComponentTitle": "VisDepth",
+    "ComponentCategory": "Test",
+    "Icon": "",
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "ScreenPosition",
+      "Mode": "Raw",
+      "Identifier": "0",
+      "Position": "-420,120"
+    },
+    {
+      "_class": "Depth",
+      "Mode": "Linear",
+      "Identifier": "1",
+      "Position": "-444,24",
+      "UV": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "2",
+      "Position": "-648,48"
+    },
+    {
+      "_class": "DepthToView",
+      "Identifier": "3",
+      "Position": "-276,-72",
+      "Depth": {
+        "Identifier": "1",
+        "Output": "Out"
+      }
+    },
+    {
+      "_class": "PostProcessingResult",
+      "Identifier": "4",
+      "Position": "144,36",
+      "SceneColor": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": -3,
+      "Identifier": "5",
+      "Position": "-168,108",
+      "A": {
+        "Identifier": "0",
+        "Output": "W"
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "6",
+      "Position": "12,60",
+      "A": {
+        "Identifier": "1",
+        "Output": "Out"
+      },
+      "B": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    }
+  ]
+}

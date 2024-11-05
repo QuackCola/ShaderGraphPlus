@@ -37,6 +37,15 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalOs", compiler.IsNotPreview );
 }
 
+public enum ScreenPositionMode
+{
+    Raw,
+    Center,
+    Tiled,
+    Pixel
+
+}
+
 /// <summary>
 /// Return the current screen position of the object
 /// </summary>
@@ -46,9 +55,34 @@ public sealed class ScreenPosition : ShaderNodePlus
 	// Note: We could make all of these constants but I don't like the situation where it can generated something like
 	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
 
-	[Output( typeof( Vector3 ) )]
+	public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
+
+	[Output(typeof(Vector3))]
 	[Hide]
-	public static NodeResult.Func XYZ => ( GraphCompiler compiler ) => compiler.IsVs ? new( ResultType.Vector3, "i.vPositionPs.xyz" ) : new( ResultType.Vector3, "i.vPositionSs.xyz" );
+	public NodeResult.Func XYZ => (GraphCompiler compiler) =>
+	{
+
+        string returnCall = string.Empty;
+
+        switch (Mode)
+		{ 
+			case ScreenPositionMode.Raw:
+				returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+                break;
+            case ScreenPositionMode.Center:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz * 2 - 1" : "i.vPositionSs.xyz * 2 - 1")}";
+                break;
+            case ScreenPositionMode.Tiled:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+                break;
+            case ScreenPositionMode.Pixel:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+                break;
+        }
+
+
+        return new(ResultType.Vector3, returnCall);
+    };
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]
@@ -58,9 +92,32 @@ public sealed class ScreenPosition : ShaderNodePlus
 	[Hide]
 	public static NodeResult.Func Z => ( GraphCompiler compiler ) => compiler.IsVs ? new( ResultType.Float, "i.vPositionPs.z" ) : new( ResultType.Float, "i.vPositionSs.z" );
 
-	[Output( typeof( float ) )]
+	[Output(typeof(float))]
 	[Hide]
-	public static NodeResult.Func W => ( GraphCompiler compiler ) => compiler.IsVs ? new( ResultType.Float, "i.vPositionPs.w" ) : new( ResultType.Float, "i.vPositionSs.w" );
+	public NodeResult.Func W => (GraphCompiler compiler) =>
+	{
+        string returnCall = string.Empty;
+
+        switch (Mode)
+        {
+            case ScreenPositionMode.Raw:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
+                break;
+            case ScreenPositionMode.Center:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w * 2 - 1" : "i.vPositionSs.w * 2 - 1")}";
+                break;
+            case ScreenPositionMode.Tiled:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
+                break;
+            case ScreenPositionMode.Pixel:
+                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
+                break;
+        }
+
+
+        return new(ResultType.Float, returnCall);
+        //return compiler.IsVs ? new(ResultType.Float, "i.vPositionPs.w") : new(ResultType.Float, "i.vPositionSs.w");
+    };
 }
 
 /// <summary>
