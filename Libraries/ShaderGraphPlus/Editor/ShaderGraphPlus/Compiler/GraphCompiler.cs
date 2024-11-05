@@ -828,10 +828,10 @@ public sealed partial class GraphCompiler
 
 		if ( Graph.MaterialDomain != MaterialDomain.Surface )
 		{
-			sb.AppendLine( "RenderState( DepthWriteEnable, false );" );
-			sb.AppendLine( "RenderState( DepthEnable, false );" );
+			//sb.AppendLine( "RenderState( DepthWriteEnable, false );" );
+			//sb.AppendLine( "RenderState( DepthEnable, false );" );
 			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
-			sb.AppendLine( "CreateTexture2D( g_tDepthBuffer ) < Attribute( \"DepthBuffer\" ); SrgbRead( false ); Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;" );
+			//sb.AppendLine( "CreateTexture2D( g_tDepthBuffer ) < Attribute( \"DepthBuffer\" ); SrgbRead( false ); Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;" );
 			//sb.AppendLine( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
 			//sb.AppendLine( "SamplerState ColorBufferSampler < Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
 			//sb.AppendLine( "Texture2D g_tDepthBuffer < Attribute( \"DepthBuffer\" ); SrgbRead( false ); >;" );
