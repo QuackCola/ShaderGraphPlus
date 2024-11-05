@@ -25,11 +25,6 @@ public sealed class Camera : ShaderNodePlus
 }
 
 
-public enum DepthMode
-{ 
-	Linear,
-	Raw
-}
 
 
 /// <summary>
@@ -38,6 +33,12 @@ public enum DepthMode
 [Title( "Depth" ), Category( "Camera" )]
 public sealed class Depth : ShaderNodePlus
 {
+	public enum DepthMode
+	{
+	    Linear,
+	    Raw
+	}
+
 	[Input( typeof( Vector2 ) ), Hide]
 	public NodeInput UV { get; set; }
 
@@ -61,18 +62,16 @@ public sealed class Depth : ShaderNodePlus
                 break;
 		}
 
-
-
 		return new NodeResult( ResultType.Float, returnCall );
 	};
 }
 
 
 /// <summary>
-/// Linearize the input depth.
+/// Test node for doing depth stuff..
 /// </summary>
-[Title("LinearizeDepth"), Category("Camera")]
-public sealed class DepthToView : ShaderNodePlus
+[Title("Test Depth"), Category("Camera")]
+public sealed class DepthNodeThing : ShaderNodePlus
 {
 
     public static string LinearizeDepth => @"
@@ -92,19 +91,9 @@ float LinearizeDepth(float2 vUV)
 
 ";
 
-    [Input(typeof(float)), Hide]
-    public NodeInput Depth { get; set; }
-
-    //[Input(typeof(Vector2)), Hide]
-    //public NodeInput UV { get; set; }
-
     [Output(typeof(float)), Hide]
     public NodeResult.Func Out => (GraphCompiler compiler) =>
 	{
-
-		var depth = Depth.IsValid() ? $"{compiler.Result(Depth)}" : "Depth::Get( {result} )";
-
-
 
         return new NodeResult(ResultType.Float, compiler.ResultFunction(LinearizeDepth, args: $"CalculateViewportUv(i.vPositionSs.xy)"));
     };
