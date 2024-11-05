@@ -1,4 +1,6 @@
 ﻿using MaterialDesign;
+using static Editor.WidgetGalleryWindow;
+using static Sandbox.Connection;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -50,6 +52,9 @@ public class ProjectCreator : Dialog
     }
 
     private TemplateUserConfig templateUserConfig;
+    private  bool debugLayout = false;
+
+    private Layout headerLayout;
 
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
@@ -60,135 +65,233 @@ public class ProjectCreator : Dialog
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
+        //Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
+
+
+        Init();
+    }
+
+
+    private void Init()
+    {
 
         // Start laying stuff out.
-        Layout = Layout.Row();
-        Layout.Spacing = 4;
+        //Layout = Layout.Row();
 
-        var body0 = Layout.AddColumn(3, false);
-        body0.Margin = 20f;
-        body0.Spacing = 8f;
-        body0.AddSpacingCell(8f);
-        body0.Add(new Label.Subtitle("Templates"));
-        body0.AddSpacingCell(12f);
+        debugLayout = false;
 
-        ProjectTemplates templates = body0.Add( new ProjectTemplates(this) );
-        Templates = templates;
+        Layout = Layout.Column();
+        Layout.Spacing = 3;
 
-        // Template list view for all the projects in the templates folder.
-        ProjectTemplatesListView listView = Templates.ListView;
-
-        listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, (Action<object>)delegate (object item)
+        // Header
         {
-            ActiveTemplate = item as ProjectTemplate;
-        });
-
-        Layout.AddSeparator();
-
-        Layout body1 = Layout.AddColumn(2, false);
-        body1.Margin = 20f;
-        body1.Spacing = 8f;
-        body1.AddSpacingCell(8f);
-        body1.Add(new FieldTitle("Shader Graph Plus Project Setup"));
-        body1.AddSpacingCell(12f);
-        body1.Add(new FieldTitle("Name"));
-       
-        // Title Edit.
-        {
-            TitleEdit = body1.Add(new LineEdit("", null)
+            if (debugLayout)
             {
-                PlaceholderText = "Garry's Project"
-            });
-            TitleEdit.Text = DefaultProjectName();
-            TitleEdit.ToolTip = "Name of your Shader Graph Plus project.";
-            TitleEdit.TextEdited += delegate
+                Layout headerBody = Layout.AddColumn(2, false);
+                headerLayout = headerBody;
+                headerBody.Add(new ColouredLabel(Theme.Green, $"Header Layout \n InnerRect Size : {headerBody.InnerRect.Size} \n OuterRect Size : {headerBody.OuterRect.Size} \n Margin : {headerBody.Margin.Position.x} \n Spacing : {headerBody.Spacing}"), 2);
+
+            }
+            else
             {
-                Validate();
-            };
+                //Layout headerBody = Layout.AddColumn(2, false);
+                //headerBody.Add(new ColouredLabel(Theme.Red, "Templates"), 2);
+                //headerBody.Add(new Label.Subtitle("Templates"), 2);
+                //headerBody.AddStretchCell(64);
+            }
         }
 
-        body1.AddSpacingCell(8f);
-
-        // Folder Edit.
-        body1.Add(new FieldTitle("Location"));
+        // Templates ListView & Template setup
         {
-            FolderEdit = body1.Add(new FolderProperty(null));
-            FolderEdit.PlaceholderText = "";
-            FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/";
-            FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
-            FolderEdit.TextEdited += delegate
+            var row = Layout.AddRow(8);
+
+            row.AddColumn();
+
+            // Templates ListView
+            if (debugLayout)
             {
-                Validate();
-            };
-            FolderProperty folderEdit = FolderEdit;
-            folderEdit.FolderSelected = (Action<string>)Delegate.Combine(folderEdit.FolderSelected, (Action<string>)delegate
+                Layout listViewBody = row.AddColumn(2, false);
+                listViewBody.Margin = 20f;
+                listViewBody.Spacing = 8f;
+                listViewBody.Add(new ColouredLabel(Theme.Red, $"Templates List View Layout \n InnerRect Size : {listViewBody.InnerRect.Size} \n OuterRect Size : {listViewBody.OuterRect.Size} \n Margin : {listViewBody.Margin.Position.x} \n Spacing : {listViewBody.Spacing}"), 2);
+            }
+            else
             {
-                Validate();
-            });
-        }
+                Layout listViewBody = row.AddColumn(2, false);
+                listViewBody.Margin = 20f;
+                listViewBody.Spacing = 8f;
 
-        body1.AddSpacingCell(8f);
+                listViewBody.AddSpacingCell(16f);
 
-        // Additional per-template config. 
-        body1.Add(new FieldTitle("Config"));
-        {
+                listViewBody.Add(new FieldTitle("Templates"));
 
-            templateUserConfig = new TemplateUserConfig();
+                listViewBody.AddSpacingCell(16f);
 
-            // Dont know if i should use this or PropertySheet. - Quack
-            /*
-                var so = templateUserConfig.GetSerialized();
-                var ps = new ControlSheet();
-                ps.AddObject(so);
-                var property = ps;
-            */
+                listViewBody.AddSeparator();
 
-            var canvas = new Widget(null);
-            canvas.Layout = Layout.Row();
-            canvas.Layout.Spacing = 32;
+                ProjectTemplates templates = listViewBody.Add(new ProjectTemplates(this), 2);
 
-            var property = new PropertySheet(canvas);
-            property.MinimumWidth = 350;
-            property.AddProperty(templateUserConfig, nameof(templateUserConfig.description));
-            property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
-            property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
-        
-            body1.Add(property);
-        }
-        
-        body1.AddStretchCell(1);
+                Templates = templates;
 
-        // Create button.
-        {
-            Layout footer = body1.AddRow(0, false);
-            footer.Spacing = 8f;
-            footer.AddStretchCell(0);
-            FolderFullPath = footer.Add(new FieldSubtitle(""));
-            OkayButton = footer.Add(new Button.Primary("Create", "add_box", null)
+                // Template list view for all the projects in the templates folder.
+                ProjectTemplatesListView listView = Templates.ListView;
+
+                listView.ItemSelected = (Action<object>)Delegate.Combine(listView.ItemSelected, delegate(object item)
+                {
+                    ActiveTemplate = item as ProjectTemplate;
+                });
+
+                listViewBody.AddSpacingCell(128f);
+
+            }
+
+            row.AddColumn();
+
+            if (debugLayout)
             {
-                Clicked = CreateProject
-            });
-        }
+                Layout setupBody = row.AddColumn(2, false);
+                setupBody.Margin = 20f;
+                setupBody.Spacing = 8f;
+                setupBody.Add(new ColouredLabel(Theme.Blue, $"Template Setup Layout \n InnerRect Size : {setupBody.InnerRect.Size} \n OuterRect Size : {setupBody.OuterRect.Size} \n Margin : {setupBody.Margin.Position.x} \n Spacing : {setupBody.Spacing}"), 2);
+            }
+            else
+            {
+                Layout setupBody = row.AddColumn(2, false);
+                setupBody.Margin = 20f;
+                setupBody.Spacing = 8f;
+
+                setupBody.AddSpacingCell(16f);
+
+                setupBody.Add(new FieldTitle("Shader Graph Plus Project Setup"));
+
+                setupBody.AddSpacingCell(16f);
+
+                setupBody.AddSeparator();
+
+                setupBody.Add(new FieldTitle("Name"));
+                {
+                    TitleEdit = setupBody.Add(new LineEdit("", null)
+                    {
+                        PlaceholderText = "Garry's Project"
+                    });
+                    TitleEdit.Text = DefaultProjectName();
+                    TitleEdit.ToolTip = "Name of your Shader Graph Plus project.";
+                    TitleEdit.TextEdited += delegate
+                    {
+                        Validate();
+                    };
+                }
+
+                setupBody.AddSpacingCell(16);
+
+                // Folder Edit.
+                setupBody.Add(new FieldTitle("Location"));
+                {
+                    FolderEdit = setupBody.Add(new FolderProperty(null));
+                    FolderEdit.PlaceholderText = "";
+                    FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/";
+                    FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
+                    FolderEdit.TextEdited += delegate
+                    {
+                        Validate();
+                    };
+                    FolderProperty folderEdit = FolderEdit;
+                    folderEdit.FolderSelected = (Action<string>)Delegate.Combine(folderEdit.FolderSelected, (Action<string>)delegate
+                    {
+                        Validate();
+                    });
+                }
+
+                setupBody.AddSpacingCell(16);
+
+                // Additional per-template config. 
+                setupBody.Add(new FieldTitle("Config"));
+                {
+
+                    templateUserConfig = new TemplateUserConfig();
+
+                    // Dont know if i should use this or PropertySheet. - Quack
+                    /*
+                        var so = templateUserConfig.GetSerialized();
+                        var ps = new ControlSheet();
+                        ps.AddObject(so);
+                        var property = ps;
+                    */
+
+                    var canvas = new Widget(null);
+                    canvas.Layout = Layout.Row();
+                    canvas.Layout.Spacing = 32;
+
+                    var property = new PropertySheet(canvas);
+                    property.MinimumWidth = 350;
+                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.description));
+                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
+                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
+
+                    setupBody.Add(property);
+                }
 
 
-        // Handle situations where there is no templates found.
-        if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
-        {
-            ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
-        }
-        else
-        {
-            NoTemplates = true;
-            Layout error = body1.AddRow(0, false);
-            error.Spacing = 8f;
-            error.AddStretchCell(0);
-            var errorlabel = new Label("No Templates found!");
-            errorlabel.Color = Color.Red;
-            error.Add(errorlabel);
+                // Create button & any errors.
+                {
+                    OkayButton = new Button.Primary("Create", "add_box", null);
+                    OkayButton.Clicked = CreateProject;
+
+                    var footer = Layout.AddRow(2, false);
+                    footer.Margin = 16;
+                    footer.Spacing = 8;
+                    footer.AddStretchCell();
+
+                    // Handle situations where there is no templates found.
+                    if (!Diagnostics.Assert.Check(Templates.ListView.Items.Count(), 0))
+                    {
+                        ActiveTemplate = Templates.ListView.SelectedItems.First() as ProjectTemplate;
+                    }
+                    else
+                    {
+                        NoTemplates = true;
+                        Layout error = footer.AddColumn(2, false);
+                        error.Spacing = 8f;
+                        error.AddStretchCell(0);
+                        var errorlabel = new Label("No Templates found!");
+                        errorlabel.Color = Color.Red;
+                        error.Add(errorlabel);
+                    }
+
+                    footer.Add(OkayButton);
+                }
+
+                setupBody.AddSpacingCell(16f);
+            }
         }
 
         Validate();
     }
+
+    protected override void OnPaint()
+    {
+#if false
+        Paint.BilinearFiltering = true;
+        Paint.ClearPen();
+
+        Rect rect = new Rect(new Vector2(0, 0), new Vector2(Width, headerLayout.InnerRect.Size.y));
+        var aPos = rect.TopLeft;
+        var bPos = rect.BottomLeft;
+        var aColor = Theme.Blue.WithAlpha(0);
+        var bColor = Theme.Blue.WithAlpha(0.5f);
+        Paint.SetBrushLinear(aPos, bPos, aColor, bColor);
+        Paint.DrawRect(rect);
+
+        Paint.RenderMode = RenderMode.Screen;
+        var pos = new Vector2(64 + 16 + 16, 16 + 8);
+
+        Paint.RenderMode = RenderMode.Normal;
+
+        Paint.SetPen(Theme.White.WithAlpha(0.9f));
+        Paint.SetDefaultFont();
+#endif
+    }
+
     private static string DefaultProjectName()
     {
         string name = "My Shadergraph Plus Project";
@@ -269,5 +372,13 @@ public class ProjectCreator : Dialog
 
         OnProjectCreated?.Invoke(OutputPath);
     }
+
+
+    [EditorEvent.Hotload]
+    public void OnHotload()
+    {
+        Init();
+    }
+
 
 }
