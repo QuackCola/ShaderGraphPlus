@@ -37,14 +37,7 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalOs", compiler.IsNotPreview );
 }
 
-public enum ScreenPositionMode
-{
-    Raw,
-    Center,
-    Tiled,
-    Pixel
 
-}
 
 /// <summary>
 /// Return the current screen position of the object
@@ -52,10 +45,19 @@ public enum ScreenPositionMode
 [Title( "Screen Position" ), Category( "Variables" )]
 public sealed class ScreenPosition : ShaderNodePlus
 {
-	// Note: We could make all of these constants but I don't like the situation where it can generated something like
-	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
+    // Note: We could make all of these constants but I don't like the situation where it can generated something like
+    // "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
 
-	public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
+    public enum ScreenPositionMode
+    {
+        Raw,
+        Center,
+        //Tiled,
+        //Pixel
+
+    }
+
+    public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
 	[Output(typeof(Vector3))]
 	[Hide]
@@ -72,12 +74,12 @@ public sealed class ScreenPosition : ShaderNodePlus
             case ScreenPositionMode.Center:
                 returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz * 2 - 1" : "i.vPositionSs.xyz * 2 - 1")}";
                 break;
-            case ScreenPositionMode.Tiled:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
-                break;
-            case ScreenPositionMode.Pixel:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
-                break;
+            //case ScreenPositionMode.Tiled:
+            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+            //    break;
+            //case ScreenPositionMode.Pixel:
+            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+            //    break;
         }
 
 
@@ -106,12 +108,12 @@ public sealed class ScreenPosition : ShaderNodePlus
             case ScreenPositionMode.Center:
                 returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w * 2 - 1" : "i.vPositionSs.w * 2 - 1")}";
                 break;
-            case ScreenPositionMode.Tiled:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
-                break;
-            case ScreenPositionMode.Pixel:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
-                break;
+            //case ScreenPositionMode.Tiled:
+            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
+            //    break;
+            //case ScreenPositionMode.Pixel:
+            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
+            //    break;
         }
 
 
