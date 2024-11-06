@@ -2,5 +2,5 @@
 
 Layer0
 {
-	shader "test.shader"
+	shader "depth_01.shader"
 }

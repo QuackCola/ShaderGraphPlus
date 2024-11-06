@@ -1,0 +1,107 @@
+{
+  "Model": "models/saul.vmdl",
+  "Description": null,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "GenerateClass": true,
+    "ComponentTitle": "VisDepth",
+    "ComponentCategory": "Test",
+    "Icon": "",
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "408,-180",
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Depth",
+      "Linear": true,
+      "Identifier": "1",
+      "Position": "-660,-180"
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 128,
+      "Identifier": "2",
+      "Position": "-456,-180",
+      "A": {
+        "Identifier": "1",
+        "Output": "Out"
+      }
+    },
+    {
+      "_class": "Clamp",
+      "DefaultMin": 0,
+      "DefaultMax": 1,
+      "Identifier": "3",
+      "Position": "-276,-180",
+      "InputA": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Lerp",
+      "Fraction": 0.5,
+      "Identifier": "4",
+      "Position": "84,-288",
+      "A": {
+        "Identifier": "5",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "6",
+        "Output": "Result"
+      },
+      "C": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "5",
+      "Position": "-276,-504"
+    },
+    {
+      "_class": "Float4",
+      "Value": "0,0.9,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "6",
+      "Position": "-276,-336"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "300,96",
+      "Color": "Green",
+      "Title": "Untitled",
+      "Description": "2048",
+      "Layer": 1,
+      "Identifier": "7",
+      "Position": "-648,-300"
+    }
+  ]
+}
