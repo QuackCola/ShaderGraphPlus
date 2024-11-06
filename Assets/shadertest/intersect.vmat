@@ -2,5 +2,5 @@
 
 Layer0
 {
-	shader "depth_01.shader"
+	shader "shadertest/intersect.shader"
 }
