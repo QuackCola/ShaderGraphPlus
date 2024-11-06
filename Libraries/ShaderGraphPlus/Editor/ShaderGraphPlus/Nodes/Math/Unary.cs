@@ -91,6 +91,39 @@ public sealed class Transpose : Unary
     protected override string Op => "transpose";
 }
 
+[Title("Clamp"), Category("Unary")]
+public sealed class Clamp : ShaderNodePlus
+{
+    [Input]
+    [Hide]
+    [Title("Value")]
+    public NodeInput InputA { get; set; }
+
+    [Input]
+    [Hide]
+	[Title("Min")]
+    public NodeInput InputB { get; set; }
+
+    [Input]
+    [Hide]
+    [Title("Max")]
+    public NodeInput InputC { get; set; }
+
+
+	public float DefaultMin { get; set; } = 0.0f;
+	public float DefaultMax { get; set; } = 1.0f;
+
+    [Output]
+    [Hide]
+    public NodeResult.Func Result => (GraphCompiler compiler) =>
+    {
+        var resultA = compiler.ResultOrDefault(InputA, 0.0f);
+        var resultB = compiler.ResultOrDefault(InputB, DefaultMin);
+        var resultC = compiler.ResultOrDefault(InputC, DefaultMax).Cast(resultB.Components());
+
+        return new NodeResult(ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )");
+    };
+}
 
 [Title( "Cosine" ), Category( "Unary" )]
 public sealed class Cosine : Unary

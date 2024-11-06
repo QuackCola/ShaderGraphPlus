@@ -24,9 +24,6 @@ public sealed class Camera : ShaderNodePlus
 	public static NodeResult.Func FarPlane => ( GraphCompiler compiler ) => new( ResultType.Float, "g_flFarPlane");
 }
 
-
-
-
 /// <summary>
 /// Sample depth texture
 /// </summary>
@@ -42,7 +39,10 @@ public sealed class Depth : ShaderNodePlus
 	[Input( typeof( Vector2 ) ), Hide]
 	public NodeInput UV { get; set; }
 
-	public DepthMode Mode { get; set; } = DepthMode.Raw;
+    /// <summary>
+    /// Use Linear depth
+    /// </summary>
+    public bool Linear { get; set; } = false;
 
 	[Output( typeof( float ) ), Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -52,15 +52,14 @@ public sealed class Depth : ShaderNodePlus
 
         string returnCall = string.Empty;
 
-        switch (Mode)
-		{ 
-			case DepthMode.Linear:
-				returnCall = $"Depth::GetLinear( {result} )";
-                break;
-			case DepthMode.Raw:
-                returnCall = $"Depth::Get( {result} )";
-                break;
+        if ( Linear )
+		{
+			returnCall = $"Depth::GetLinear( {result} )";
 		}
+		else
+		{
+			returnCall = $"Depth::Get( {result} )";
+        }
 
 		return new NodeResult( ResultType.Float, returnCall );
 	};

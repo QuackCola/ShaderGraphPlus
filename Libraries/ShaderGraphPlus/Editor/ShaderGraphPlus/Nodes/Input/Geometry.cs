@@ -59,32 +59,34 @@ public sealed class ScreenPosition : ShaderNodePlus
 
     public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
-	[Output(typeof(Vector3))]
-	[Hide]
-	public NodeResult.Func XYZ => (GraphCompiler compiler) =>
+	private string GetMode( string components, GraphCompiler compiler)
 	{
-
         string returnCall = string.Empty;
 
         switch (Mode)
-		{ 
-			case ScreenPositionMode.Raw:
-				returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+        {
+            case ScreenPositionMode.Raw:
+                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
                 break;
             case ScreenPositionMode.Center:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz * 2 - 1" : "i.vPositionSs.xyz * 2 - 1")}";
+                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1")}";
                 break;
             //case ScreenPositionMode.Tiled:
-            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+            //    returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
             //    break;
             //case ScreenPositionMode.Pixel:
-            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.xyz" : "i.vPositionSs.xyz")}";
+            //    returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
             //    break;
         }
 
+        return returnCall;
+    }
 
-        return new(ResultType.Vector3, returnCall);
-    };
+
+	[Output(typeof(Vector3))]
+	[Hide]
+	public NodeResult.Func XYZ => (GraphCompiler compiler) => new (ResultType.Vector3, GetMode("xyz",compiler));
+        
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]
@@ -96,30 +98,7 @@ public sealed class ScreenPosition : ShaderNodePlus
 
 	[Output(typeof(float))]
 	[Hide]
-	public NodeResult.Func W => (GraphCompiler compiler) =>
-	{
-        string returnCall = string.Empty;
-
-        switch (Mode)
-        {
-            case ScreenPositionMode.Raw:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
-                break;
-            case ScreenPositionMode.Center:
-                returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w * 2 - 1" : "i.vPositionSs.w * 2 - 1")}";
-                break;
-            //case ScreenPositionMode.Tiled:
-            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
-            //    break;
-            //case ScreenPositionMode.Pixel:
-            //    returnCall = $"{(compiler.IsVs ? "i.vPositionPs.w" : "i.vPositionSs.w")}";
-            //    break;
-        }
-
-
-        return new(ResultType.Float, returnCall);
-        //return compiler.IsVs ? new(ResultType.Float, "i.vPositionPs.w") : new(ResultType.Float, "i.vPositionSs.w");
-    };
+	public NodeResult.Func W => (GraphCompiler compiler) => new(ResultType.Float, GetMode("w", compiler));
 }
 
 /// <summary>
