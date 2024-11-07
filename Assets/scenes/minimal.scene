@@ -109,8 +109,7 @@
       "__guid": "3c2490ef-54a0-49bb-8f13-490e40aa51d1",
       "Flags": 0,
       "Name": "Cube",
-      "Position": "334.684,129.5287,26.0401",
-      "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
+      "Position": "303.1157,48.35179,35.94833",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Enabled": true,
       "Components": [
@@ -159,7 +158,7 @@
       "__guid": "523e3e8f-a4ec-4ec1-af9a-d86ffc9c17e1",
       "Flags": 0,
       "Name": "Cube (1)",
-      "Position": "-5.538154,115.6383,22.79072",
+      "Position": "315.0645,120.8943,11.77575",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Enabled": true,
@@ -169,7 +168,7 @@
           "__guid": "ffca7dbf-43fe-4293-847a-ba27639c4886",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "intersect.vmat",
+          "MaterialOverride": "shadertest/depth_01.vmat",
           "Model": "models/dev/box.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -178,7 +177,7 @@
             "AfterUILayer": false
           },
           "RenderType": "On",
-          "Tint": "1,0,0.93333,1"
+          "Tint": "0,0,0,0"
         },
         {
           "__type": "Sandbox.BoxCollider",
@@ -192,6 +191,56 @@
         {
           "__type": "Sandbox.Rigidbody",
           "__guid": "30012887-64ab-498e-ab41-a8e677c2c986",
+          "AngularDamping": 0,
+          "Gravity": true,
+          "LinearDamping": 0,
+          "Locking": {},
+          "MassCenterOverride": "0,0,0",
+          "MassOverride": 0,
+          "MotionEnabled": true,
+          "OverrideMassCenter": false,
+          "RigidbodyFlags": 0,
+          "StartAsleep": false
+        }
+      ]
+    },
+    {
+      "__guid": "4b233928-0de8-443c-90b4-fea27eb1f21e",
+      "Flags": 0,
+      "Name": "Cube (3)",
+      "Position": "45.56264,112.8206,22.79072",
+      "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
+      "Scale": "0.5632889,0.5632889,0.5632889",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "499dcdbf-02fa-4293-a451-d7633c95abb2",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialOverride": "shadertest/depth_01.vmat",
+          "Model": "models/dev/box.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,0,0.93333,1"
+        },
+        {
+          "__type": "Sandbox.BoxCollider",
+          "__guid": "16732062-3d61-4469-8381-f2ce3fb57379",
+          "Center": "0,0,0",
+          "IsTrigger": false,
+          "Scale": "50,50,50",
+          "Static": false,
+          "SurfaceVelocity": "0,0,0"
+        },
+        {
+          "__type": "Sandbox.Rigidbody",
+          "__guid": "abf8a840-39fa-4d74-bc06-f1130d2e03b3",
           "AngularDamping": 0,
           "Gravity": true,
           "LinearDamping": 0,
@@ -508,7 +557,7 @@
             "TextureUAxis": [
               "1,0,0",
               "1,0,-0",
-              "-0.00002622794,-1,0.00000001040302",
+              "-0.00002612218,-1,0.00000001031929",
               "0,1,0",
               "-1,0,0",
               "1,-0,0",
@@ -517,7 +566,7 @@
             "TextureVAxis": [
               "0,-1,0",
               "0,-1,0",
-              "-0.0003966388,0.00000001040302,-1",
+              "-0.0003950395,0.0000000103193,-1",
               "-0,0,-1",
               "0,0,-1",
               "0,0,-1",
@@ -529,25 +578,25 @@
               "0.25,0.25",
               "0.25,0.25",
               "0.25,0.25",
-              "0.2500001,0.25",
+              "0.25,0.25",
               "0.2500001,0.25"
             ],
             "TextureOffset": [
-              "123.303,114.0672",
+              "123.3029,114.0672",
               "405.0009,114.0671",
-              "114.0969,72.91582",
-              "397.9328,72.46698",
-              "388.697,72.46698",
-              "123.3033,72.46699",
+              "114.0968,72.91399",
+              "397.9328,72.46695",
+              "388.6971,72.46696",
+              "123.3029,72.46696",
               "23.25439,0"
             ],
             "MaterialIndex": [
-              3,
+              4,
               0,
-              0,
-              0,
-              0,
-              0,
+              4,
+              4,
+              4,
+              4,
               0
             ],
             "EdgeFlags": [
@@ -580,12 +629,37 @@
               "materials/dev/reflectivity_30.vmat",
               "intersect.vmat",
               "depth_01.vmat",
-              "materials/error.vmat"
+              "materials/error.vmat",
+              "shadertest/depth_01.vmat"
             ]
           },
           "SmoothingAngle": 40,
           "Static": true,
           "SurfaceVelocity": "0,0,0"
+        }
+      ]
+    },
+    {
+      "__guid": "1578404a-064b-4286-9a4c-c7e226a8fbd9",
+      "Flags": 0,
+      "Name": "Sphere",
+      "Position": "371.5895,66.06648,30.97663",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "0ba3c7dd-f8e5-44a1-ac61-cc9da9d0bde5",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "Model": "models/dev/sphere.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
         }
       ]
     }
