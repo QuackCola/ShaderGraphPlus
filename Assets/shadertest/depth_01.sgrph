@@ -19,7 +19,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "276,-444",
+      "Position": "456,-408",
       "Albedo": {
         "Identifier": "4",
         "Output": "Result"
@@ -29,14 +29,14 @@
       "_class": "Depth",
       "Linear": true,
       "Identifier": "1",
-      "Position": "-648,-180"
+      "Position": "-1080,-204"
     },
     {
       "_class": "Divide",
       "DefaultA": 0,
       "DefaultB": 256,
       "Identifier": "2",
-      "Position": "-408,-192",
+      "Position": "-288,84",
       "A": {
         "Identifier": "1",
         "Output": "Out"
@@ -47,7 +47,7 @@
       "DefaultMin": 0,
       "DefaultMax": 1,
       "Identifier": "3",
-      "Position": "-276,-180",
+      "Position": "-312,-192",
       "InputA": {
         "Identifier": "2",
         "Output": "Result"
@@ -57,7 +57,7 @@
       "_class": "Lerp",
       "Fraction": 0.5,
       "Identifier": "4",
-      "Position": "-0,-228",
+      "Position": "48,-384",
       "A": {
         "Identifier": "5",
         "Output": "Result"
@@ -80,7 +80,7 @@
         "Type": "Color"
       },
       "Identifier": "5",
-      "Position": "-276,-528"
+      "Position": "-564,-552"
     },
     {
       "_class": "Float4",
@@ -91,7 +91,31 @@
         "Type": "Color"
       },
       "Identifier": "6",
-      "Position": "-276,-360"
+      "Position": "-564,-384"
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.006991,
+      "CellDensity": 10,
+      "Worley": false,
+      "Identifier": "7",
+      "Position": "72,144"
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.6178765,
+      "BlendMode": "Screen",
+      "Clamp": false,
+      "Identifier": "8",
+      "Position": "336,96",
+      "A": {
+        "Identifier": "3",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
     }
   ]
 }
