@@ -1144,16 +1144,8 @@ public sealed partial class GraphCompiler
 
 		BaseNodePlus resultNode;
 
-		//var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
 
-		if ( Graph.MaterialDomain is MaterialDomain.Surface )
-		{
-			resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
-		}
-		else
-		{
-			resultNode = Graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
-		}
+		resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
 
 		if ( resultNode == null )
 			return null;
@@ -1165,7 +1157,19 @@ public sealed partial class GraphCompiler
 			if ( property.Name == "PositionOffset" )
 				continue;
 
-			NodeResult result;
+            if (Graph.ShadingModel is ShadingModel.Unlit)
+			{
+                if (property.Name == "Roughness")
+                    continue;
+
+                if (property.Name == "Metalness")
+                    continue;
+
+                if (property.Name == "AmbientOcclusion")
+                    continue;
+            }
+
+            NodeResult result;
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
@@ -1175,14 +1179,7 @@ public sealed partial class GraphCompiler
 			{
 				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 				if ( editorAttribute == null )
-				{
-					if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-					{
-						// If there is no input to PostProcessingResultNode. Then default to un-modified SceneColor.
-						sb.AppendLine( $"FinalColor = Tex2D( g_tColorBuffer,i.vPositionSs.xy / g_vRenderTargetSize);" );
-					}
 					continue;
-				}
 
 				var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
 				if ( valueProperty == null )
@@ -1203,15 +1200,7 @@ public sealed partial class GraphCompiler
 			var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
 			var componentCount = GetComponentCount( inputAttribute.Type );
 
-			if ( Graph.MaterialDomain is MaterialDomain.Surface )
-			{
-				sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
-			}
-			else
-			{
-				sb.AppendLine( $"FinalColor = {result.Cast( componentCount )};" );
-			}
-
+			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
 		return sb.ToString();
