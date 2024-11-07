@@ -1,5 +1,5 @@
-#ifndef COMMON_TEST_PIXEL_H
-#define COMMON_TEST_PIXEL_H
+#ifndef COMMON_UNLIT_PIXEL_H
+#define COMMON_UNLIT_PIXEL_H
 
 //-----------------------------------------------------------------------------
 //
@@ -18,4 +18,4 @@
 //#include "common/light.hlsl"
 #include "common/unlit_shadingmodel.hlsl"
 
-#endif // COMMON_TEST_PIXEL_H
+#endif // COMMON_UNLIT_PIXEL_H
