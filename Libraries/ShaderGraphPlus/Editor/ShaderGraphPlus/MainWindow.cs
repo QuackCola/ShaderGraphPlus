@@ -1116,8 +1116,6 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
 		BuildMenuBar();
 
-
-
 		DockManager.RegisterDockType( "Graph", "account_tree", null, false );
 		DockManager.RegisterDockType( "Preview", "photo", null, false );
 		DockManager.RegisterDockType( "Properties", "edit", null, false );
@@ -1290,8 +1288,16 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
         if (_properties.Target is BaseNodePlus node)
         {
-            //Log.Info($"Property of {node.DisplayInfo.Name} Changed!!!");
             
+
+			if (node is CustomCodeTest { } sb)
+			{
+                Log.Info($"Property : {nameof(sb.InputsTest)} of : {node.DisplayInfo.Name} has Updated!!! ");
+                sb.DictionaryUpdated();
+			}
+
+
+
             _graphView.UpdateNode(node);
 
         }

@@ -1,4 +1,7 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using System.Reflection.Emit;
+using static Sandbox.Gizmo;
+
+namespace Editor.ShaderGraphPlus;
 
 public abstract class BaseNodePlus : INode
 {
@@ -30,10 +33,10 @@ public abstract class BaseNodePlus : INode
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugIn> Inputs { get; }
+	public IEnumerable<IPlugIn> Inputs { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugOut> Outputs { get; }
+	public IEnumerable<IPlugOut> Outputs { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public string ErrorMessage => null;
@@ -47,15 +50,111 @@ public abstract class BaseNodePlus : INode
 		NewIdentifier();
 
 		(Inputs, Outputs) = GetPlugs( this );
-	}
+    }
+
+	public void AddInputPortsTest(BaseNodePlus node, string inputName, ResultType intype)
+	{
+        var inputs = new List<BasePlugIn>();
+        var type = intype switch
+        {
+            ResultType.Bool => typeof(Boolean),
+            ResultType.Float => typeof(Float),
+            ResultType.Vector2 => typeof(Vector2),
+            ResultType.Vector3 => typeof(Vector3),
+            ResultType.Color => typeof(Color),
+            ResultType.Float2x2 => typeof(Float2x2),
+            ResultType.Float3x3 => typeof(Float3x3),
+            ResultType.Float4x4 => typeof(Float4x4),
+            ResultType.Sampler => typeof(Sampler),
+            ResultType.TextureObject => typeof(TextureObject),
+            ResultType.String => typeof(string),
+            ResultType.Gradient => typeof(Gradient),
+            _ => throw new ArgumentException("Unsupported value type", nameof(intype))
+        };
+
+        var prop = CreatePropertyInfo(inputName, type);
+
+        inputs.Add(new BasePlugIn(node, prop, type));
+
+        Inputs = inputs;
+    }
+
+    public void AddInputs(BaseNodePlus node, Dictionary<string, ResultType> inputdict)
+    {
+        var inputs = new List<BasePlugIn>();
+
+        // Build the inputs list
+        foreach (var input in inputdict)
+		{
+            var type = input.Value switch
+            {
+                ResultType.Bool => typeof(Boolean),
+                ResultType.Float => typeof(Float),
+                ResultType.Vector2 => typeof(Vector2),
+                ResultType.Vector3 => typeof(Vector3),
+                ResultType.Color => typeof(Color),
+                ResultType.Float2x2 => typeof(Float2x2),
+                ResultType.Float3x3 => typeof(Float3x3),
+                ResultType.Float4x4 => typeof(Float4x4),
+                ResultType.Sampler => typeof(Sampler),
+                ResultType.TextureObject => typeof(TextureObject),
+                ResultType.String => typeof(string),
+                ResultType.Gradient => typeof(Gradient),
+                _ => throw new ArgumentException("Unsupported value type", nameof(input.Value))
+            };
+
+            // Generate the needed propertyInfo
+            var prop = CreatePropertyInfo(input.Key, type);
+
+            inputs.Add(new BasePlugIn(node, prop, type));
+        }
+
+
+        Inputs = inputs;
+    }
+
+    public static PropertyInfo CreatePropertyInfo(string propertyName, Type propertyType)
+    {
+        // Create a dynamic assembly and module
+        AssemblyName assemblyName = new AssemblyName("DynamicAssembly");
+        AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+        ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
+
+        // Define a new type to hold the property
+        TypeBuilder typeBuilder = moduleBuilder.DefineType("DynamicType", TypeAttributes.Public);
+
+        // Define the property
+        FieldBuilder fieldBuilder = typeBuilder.DefineField("_" + propertyName, propertyType, FieldAttributes.Private);
+        PropertyBuilder propertyBuilder = typeBuilder.DefineProperty(propertyName, PropertyAttributes.HasDefault, propertyType, null);
+
+        // Define the 'get' accessor method for the property
+        MethodBuilder getMethodBuilder = typeBuilder.DefineMethod("get_" + propertyName, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, propertyType, Type.EmptyTypes);
+        ILGenerator getIL = getMethodBuilder.GetILGenerator();
+        getIL.Emit(OpCodes.Ldarg_0);
+        getIL.Emit(OpCodes.Ldfld, fieldBuilder);
+        getIL.Emit(OpCodes.Ret);
+        propertyBuilder.SetGetMethod(getMethodBuilder);
+
+        // Define the 'set' accessor method for the property
+        MethodBuilder setMethodBuilder = typeBuilder.DefineMethod("set_" + propertyName, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, null, new Type[] { propertyType });
+        ILGenerator setIL = setMethodBuilder.GetILGenerator();
+        setIL.Emit(OpCodes.Ldarg_0);
+        setIL.Emit(OpCodes.Ldarg_1);
+        setIL.Emit(OpCodes.Stfld, fieldBuilder);
+        setIL.Emit(OpCodes.Ret);
+        propertyBuilder.SetSetMethod(setMethodBuilder);
+
+        // Create the type and return the PropertyInfo object
+        Type dynamicType = typeBuilder.CreateType();
+        return dynamicType.GetProperty(propertyName);
+    }
 
 	public void Update()
-	{
-		Changed?.Invoke();
-	}
-
-	public string NewIdentifier()
-	{
+    {
+        Changed?.Invoke();
+    }
+    public string NewIdentifier()
+    {
 		Identifier = Guid.NewGuid().ToString();
 		return Identifier;
 	}

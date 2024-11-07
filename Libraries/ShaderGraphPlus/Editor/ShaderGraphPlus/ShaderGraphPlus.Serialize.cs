@@ -101,6 +101,22 @@ partial class ShaderGraphPlus
                 identifiers.Add(node.Identifier, node.NewIdentifier());
             }
 
+            // Spacial case for custom code node. TODO : This is shit since inputs and outputs arnt serialized and thus connections arnt maintained with custom user defined inputs.
+            if (node is CustomCodeTest { } subgrph)
+            {
+                Log.Info($"Found custom code node : {node.DisplayInfo.ClassName}");
+
+                //Log.Info($"Adding user defined inputs to : {node.DisplayInfo.ClassName} ");
+                foreach (var userinputs in subgrph.InputsTest)
+                {
+                    Log.Info($"Adding user defined custom input : {userinputs.Key} to : {node.DisplayInfo.ClassName}");
+                }
+
+                node.AddInputs(subgrph, subgrph.InputsTest);
+
+
+            }
+
             foreach (var input in node.Inputs)
             {
                 if (!element.TryGetProperty(input.Identifier, out var connectedElem))

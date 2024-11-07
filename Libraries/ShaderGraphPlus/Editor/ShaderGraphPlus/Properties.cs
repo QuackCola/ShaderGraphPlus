@@ -1,8 +1,4 @@
-﻿
-using Facepunch.ActionGraphs;
-using static Sandbox.Gizmo;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public class Properties : Widget
 {
