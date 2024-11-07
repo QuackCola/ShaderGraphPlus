@@ -1,0 +1,95 @@
+{
+  "Model": "models/saul.vmdl",
+  "Description": null,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "GenerateClass": true,
+    "ComponentTitle": "VisDepth",
+    "ComponentCategory": "Test",
+    "Icon": "",
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-1188,-948"
+    },
+    {
+      "_class": "Depth",
+      "Linear": true,
+      "Identifier": "1",
+      "Position": "-1884,-624"
+    },
+    {
+      "_class": "Clamp",
+      "DefaultMin": 0,
+      "DefaultMax": 1,
+      "Identifier": "2",
+      "Position": "-2076,-936"
+    },
+    {
+      "_class": "ScreenPosition",
+      "Mode": "Raw",
+      "Identifier": "3",
+      "Position": "-2076,-648"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "424,428",
+      "Color": "Green",
+      "Title": "New Nodes",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "4",
+      "Position": "-2112,-1188"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "660,224",
+      "Color": "Green",
+      "Title": "Updated Nodes",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "5",
+      "Position": "-2112,-720"
+    },
+    {
+      "_class": "RGBtoLinear",
+      "Identifier": "6",
+      "Position": "-1908,-1140"
+    },
+    {
+      "_class": "LineartoRGB",
+      "Identifier": "7",
+      "Position": "-1908,-1080"
+    },
+    {
+      "_class": "HSVtoLinear",
+      "Identifier": "8",
+      "Position": "-2100,-1140"
+    },
+    {
+      "_class": "LineartoHSV",
+      "Identifier": "9",
+      "Position": "-2100,-1080"
+    },
+    {
+      "_class": "RemapValue",
+      "In": 0.5,
+      "InMin": 0,
+      "InMax": 1,
+      "OutMin": 0,
+      "OutMax": 0.556725,
+      "Clamp": true,
+      "Identifier": "10",
+      "Position": "-1668,-672"
+    }
+  ]
+}
