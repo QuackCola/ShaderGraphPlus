@@ -644,6 +644,27 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
+	public string GenerateRenderStates()
+	{ 
+	
+		var sb = new StringBuilder();
+
+
+		foreach (var rs in Graph.RenderStates)
+		{
+			// TODO : VALIDATE!!! 
+			if ( string.IsNullOrWhiteSpace(rs.Value))
+				continue;
+
+			sb.AppendLine( $"RenderState({rs.Key}, {rs.Value})" );
+			Log.Info($"RenderState : {rs.Key} With Value : {rs.Value}");
+		}
+
+
+		return sb.ToString();
+	}
+
+
     public string GeneratePostProcessingComponent( PostProcessingComponentInfo postProcessiComponentInfo, string className, string shaderPath )
 	{
 		var ppcb = new PostProcessingComponentBuilder( postProcessiComponentInfo );
@@ -799,7 +820,7 @@ public sealed partial class GraphCompiler
 
 		var sb = new StringBuilder();
 
-		sb.AppendLine();
+        sb.AppendLine();
 		sb.AppendLine( "DynamicComboRule( Allow0( D_BAKED_LIGHTING_FROM_LIGHTMAP ) );" );
 		sb.AppendLine( "DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );" );
 		sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
@@ -811,8 +832,13 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-		// Static & Dynamic shader feature combos
-		foreach ( var feature in ShaderResult.ShaderFeatures )
+		if (IsPs)
+		{
+            sb.Append(GenerateRenderStates());
+        }
+
+        // Static & Dynamic shader feature combos
+        foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
 			if ( feature.Value.Item1.IsDynamicCombo is not true )
 			{

@@ -49,6 +49,14 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
+    //[Feature("RenderStates ( ADVANCED!!! )")]
+    //[InlineEditor]
+    //public RenderState renderState { get; set; }
+
+    [Feature("Advanced")]
+    public Dictionary<string,string> RenderStates { get; set; }
+
+	//public bool
 
     public ShaderGraphPlus()
 	{

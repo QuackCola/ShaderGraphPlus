@@ -11,6 +11,17 @@
     "Icon": "",
     "Order": 500
   },
+  "RenderStates": {
+    "AlphaToCoverageEnable": "false",
+    "IndependentBlendEnable": "true",
+    "BlendEnable": "true",
+    "SrcBlend": "ONE",
+    "DstBlend": "INV_SRC_ALPHA",
+    "BlendOp": "ADD",
+    "SrcBlendAlpha": "ONE",
+    "DstBlendAlpha": "INV_SRC_ALPHA",
+    "BlendOpAlpha": "ADD"
+  },
   "nodes": [
     {
       "_class": "Result",
@@ -23,9 +34,9 @@
     },
     {
       "_class": "Depth",
-      "Linear": true,
+      "Mode": "Raw",
       "Identifier": "1",
-      "Position": "-1884,-624"
+      "Position": "-1872,-588"
     },
     {
       "_class": "Clamp",

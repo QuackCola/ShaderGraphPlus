@@ -32,17 +32,22 @@ public sealed class Depth : ShaderNodePlus
 {
 	public enum DepthMode
 	{
-	    Linear,
-	    Raw
+        ///<summary>Returns the depth value at the given screen position from the depth.</summary>
+        Raw,
+        ///<summary>Returns the linear depth value at the given screen position.</summary>
+        Linear,
+        ///<summary>Returns the normalized depth value at the given screen position.</summary>
+        Normalized,
 	}
 
 	[Input( typeof( Vector2 ) ), Hide]
 	public NodeInput UV { get; set; }
 
     /// <summary>
-    /// Use Linear depth
+    /// What Mode to get 
     /// </summary>
-    public bool Linear { get; set; } = false;
+	public DepthMode Mode { get; set; }
+
 
 	[Output( typeof( float ) ), Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -52,13 +57,11 @@ public sealed class Depth : ShaderNodePlus
 
         string returnCall = string.Empty;
 
-        if ( Linear )
+		switch (Mode)
 		{
-			returnCall = $"Depth::GetLinear( {result} )";
-		}
-		else
-		{
-			returnCall = $"Depth::Get( {result} )";
+            case DepthMode.Raw: returnCall = $"Depth::Get( {result} )"; break;
+            case DepthMode.Linear: returnCall = $"Depth::GetLinear( {result} )"; break;
+            case DepthMode.Normalized: returnCall = $"Depth::GetNormalized( {result} )"; break;
         }
 
 		return new NodeResult( ResultType.Float, returnCall );

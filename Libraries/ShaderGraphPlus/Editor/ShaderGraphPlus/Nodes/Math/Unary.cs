@@ -139,6 +139,13 @@ public sealed class Abs : Unary
     protected override string Op => "abs";
 }
 
+[Title("Rsqrt"), Category("Unary")]
+public sealed class Rsqrt : Unary
+{
+    [Hide]
+    protected override string Op => "rsqrt";
+}
+
 [Title( "Sqrt" ), Category( "Unary" )]
 public sealed class Sqrt : Unary
 {

@@ -74,7 +74,17 @@ VS
 PS
 {
 	#include "common/pixel.hlsl"
-
+	
+	RenderState(AlphaToCoverageEnable, false)
+	RenderState(IndependentBlendEnable, true)
+	RenderState(BlendEnable, true)
+	RenderState(SrcBlend, ONE)
+	RenderState(DstBlend, INV_SRC_ALPHA)
+	RenderState(BlendOp, ADD)
+	RenderState(SrcBlendAlpha, ONE)
+	RenderState(DstBlendAlpha, INV_SRC_ALPHA)
+	RenderState(BlendOpAlpha, ADD)
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
