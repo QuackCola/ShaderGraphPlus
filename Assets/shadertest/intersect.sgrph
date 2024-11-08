@@ -1,8 +1,8 @@
 {
   "Model": "models/saul.vmdl",
   "Description": null,
-  "BlendMode": "Opaque",
-  "ShadingModel": "Unlit",
+  "BlendMode": "Translucent",
+  "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "GenerateClass": true,
@@ -19,89 +19,748 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "408,-180",
+      "Position": "6192,276",
       "Albedo": {
-        "Identifier": "4",
+        "Identifier": "67",
+        "Output": "Result"
+      },
+      "Opacity": {
+        "Identifier": "60",
         "Output": "Result"
       }
     },
     {
       "_class": "Depth",
-      "Linear": true,
+      "Mode": "Normalized",
       "Identifier": "1",
-      "Position": "-660,-180"
+      "Position": "60,-288"
+    },
+    {
+      "_class": "WorldPosition",
+      "Identifier": "2",
+      "Position": "-396,-204"
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "3",
+      "Position": "-192,-108",
+      "In": {
+        "Identifier": "4",
+        "Output": "Direction"
+      }
+    },
+    {
+      "_class": "Camera",
+      "Identifier": "4",
+      "Position": "-396,-144"
+    },
+    {
+      "_class": "DotProduct",
+      "Identifier": "5",
+      "Position": "-84,-204",
+      "InputA": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "InputB": {
+        "Identifier": "3",
+        "Output": "Out"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "1116,452",
+      "Color": "Green",
+      "Title": "Untitled",
+      "Description": "\t\tfloat3 pos = i.vPositionWithOffsetWs.xyz;\n\t\tfloat depth = Depth::GetNormalized(i.vPositionSs);\n\t\tfloat notSure = -abs(dot(pos, -g_vCameraDirWs)) \u002B (1 / depth);",
+      "Layer": 2,
+      "Identifier": "6",
+      "Position": "-432,-444"
+    },
+    {
+      "_class": "Abs",
+      "Identifier": "7",
+      "Position": "96,-204",
+      "Input": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "8",
+      "Position": "228,-204",
+      "In": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "9",
+      "Position": "372,-264",
+      "A": {
+        "Identifier": "8",
+        "Output": "Out"
+      },
+      "B": {
+        "Identifier": "10",
+        "Output": "Result"
+      }
     },
     {
       "_class": "Divide",
-      "DefaultA": 0,
-      "DefaultB": 128,
-      "Identifier": "2",
-      "Position": "-456,-180",
-      "A": {
+      "DefaultA": 1,
+      "DefaultB": 1,
+      "Identifier": "10",
+      "Position": "252,-372",
+      "B": {
         "Identifier": "1",
         "Output": "Out"
       }
     },
     {
-      "_class": "Clamp",
-      "DefaultMin": 0,
-      "DefaultMax": 1,
-      "Identifier": "3",
-      "Position": "-276,-180",
-      "InputA": {
-        "Identifier": "2",
+      "_class": "CommentNode",
+      "Size": "756,288",
+      "Color": "Green",
+      "Title": "Clamped Depth",
+      "Description": "float clampedDepth = saturate(notSure * g_flIntersectionSharpness * 0.1);",
+      "Layer": 1,
+      "Identifier": "11",
+      "Position": "1764,-348"
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "12",
+      "Position": "1800,-228",
+      "Input": {
+        "Identifier": "40",
         "Output": "Result"
       }
     },
     {
-      "_class": "Lerp",
-      "Fraction": 0.5,
-      "Identifier": "4",
-      "Position": "84,-288",
+      "_class": "Saturate",
+      "Identifier": "13",
+      "Position": "2388,-156",
+      "Input": {
+        "Identifier": "16",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "14",
+      "Position": "2016,-180",
       "A": {
-        "Identifier": "5",
+        "Identifier": "12",
         "Output": "Result"
       },
       "B": {
-        "Identifier": "6",
-        "Output": "Result"
-      },
-      "C": {
-        "Identifier": "3",
+        "Identifier": "15",
         "Output": "Result"
       }
     },
     {
-      "_class": "Float4",
-      "Value": "1,0,0,1",
-      "Name": "",
+      "_class": "Float",
+      "Min": 0.01,
+      "Max": 5,
+      "Value": 0.2,
+      "Name": "IntersectionSharpness",
       "IsAttribute": false,
-      "UI": {
-        "Type": "Color"
-      },
-      "Identifier": "5",
-      "Position": "-276,-504"
+      "UI": {},
+      "Identifier": "15",
+      "Position": "1788,-144"
     },
     {
-      "_class": "Float4",
-      "Value": "0,0.9,0,1",
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color"
-      },
-      "Identifier": "6",
-      "Position": "-276,-336"
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 0.1,
+      "Identifier": "16",
+      "Position": "2148,-228",
+      "A": {
+        "Identifier": "14",
+        "Output": "Result"
+      }
     },
     {
       "_class": "CommentNode",
-      "Size": "300,96",
+      "Size": "1044,456",
+      "Color": "Green",
+      "Title": "something",
+      "Description": "float something = pow(dot(worldpos * rsqrt(dot(worldpos, worldpos)), worldnormal), 2);",
+      "Layer": 3,
+      "Identifier": "17",
+      "Position": "1224,156"
+    },
+    {
+      "_class": "WorldPosition",
+      "Identifier": "18",
+      "Position": "1248,384"
+    },
+    {
+      "_class": "WorldNormal",
+      "Identifier": "19",
+      "Position": "1248,444"
+    },
+    {
+      "_class": "DotProduct",
+      "Identifier": "20",
+      "Position": "1464,384",
+      "InputA": {
+        "Identifier": "18",
+        "Output": "Result"
+      },
+      "InputB": {
+        "Identifier": "18",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Rsqrt",
+      "Identifier": "21",
+      "Position": "1644,384",
+      "Input": {
+        "Identifier": "20",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "22",
+      "Position": "1476,336",
+      "Input": {
+        "Identifier": "18",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "23",
+      "Position": "1776,336",
+      "Input": {
+        "Identifier": "22",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "DotProduct",
+      "Identifier": "24",
+      "Position": "1956,420",
+      "InputA": {
+        "Identifier": "25",
+        "Output": "Result"
+      },
+      "InputB": {
+        "Identifier": "19",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "25",
+      "Position": "1848,324",
+      "A": {
+        "Identifier": "23",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "21",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Power",
+      "DefaultA": 1,
+      "DefaultB": 1,
+      "Identifier": "26",
+      "Position": "2160,432",
+      "A": {
+        "Identifier": "24",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "27",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 2,
+      "Max": 2,
+      "Value": 2,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "27",
+      "Position": "1956,504"
+    },
+    {
+      "_class": "Saturate",
+      "Identifier": "28",
+      "Position": "2352,636",
+      "Input": {
+        "Identifier": "26",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "216,152",
+      "Color": "Green",
+      "Title": "clampedSomething",
+      "Description": "",
+      "Layer": 4,
+      "Identifier": "29",
+      "Position": "2316,564"
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "30",
+      "Position": "2640,576",
+      "A": {
+        "Identifier": "26",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "28",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "136,176",
+      "Color": "Green",
+      "Title": "varDiff",
+      "Description": "",
+      "Layer": 5,
+      "Identifier": "31",
+      "Position": "2604,504"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "744,300",
+      "Color": "Green",
+      "Title": "sampleArg",
+      "Description": "float sampleArg = abs((varDiff * clampedDepth \u002B clampedSomething) * clampedDepth);",
+      "Layer": 4,
+      "Identifier": "32",
+      "Position": "2676,180"
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "33",
+      "Position": "2868,324",
+      "A": {
+        "Identifier": "30",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "37",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "34",
+      "Position": "3000,324",
+      "A": {
+        "Identifier": "33",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "35",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "clampedSomething",
+      "Identifier": "35",
+      "Position": "2892,684",
+      "Input": {
+        "Identifier": "28",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "36",
+      "Position": "3108,336",
+      "A": {
+        "Identifier": "34",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "38",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Clamped Depth",
+      "Identifier": "37",
+      "Position": "2604,432",
+      "Input": {
+        "Identifier": "13",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Clamped Depth",
+      "Identifier": "38",
+      "Position": "3036,432",
+      "Input": {
+        "Identifier": "37",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Abs",
+      "Identifier": "39",
+      "Position": "3252,312",
+      "Input": {
+        "Identifier": "36",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "40",
+      "Position": "1200,-228",
+      "Input": {
+        "Identifier": "9",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "1152,516",
+      "Color": "Green",
+      "Title": "sample2",
+      "Description": "float sample2 = abs((varDiff * clampedDepth \u002B clampedSomething) * clampedDepth - 0.02);",
+      "Layer": 3,
+      "Identifier": "41",
+      "Position": "3456,180"
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "varDiff",
+      "Identifier": "42",
+      "Position": "3408,612",
+      "Input": {
+        "Identifier": "30",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 0.01,
+      "Identifier": "43",
+      "Position": "4140,372",
+      "A": {
+        "Identifier": "46",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "51",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Clamped Depth",
+      "Identifier": "44",
+      "Position": "3516,420",
+      "Input": {
+        "Identifier": "38",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Clamped Depth",
+      "Identifier": "45",
+      "Position": "3948,420",
+      "Input": {
+        "Identifier": "44",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "46",
+      "Position": "4020,324",
+      "A": {
+        "Identifier": "47",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "45",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "47",
+      "Position": "3816,324",
+      "A": {
+        "Identifier": "48",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "50",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "48",
+      "Position": "3684,324",
+      "A": {
+        "Identifier": "42",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "44",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Abs",
+      "Identifier": "49",
+      "Position": "4284,336",
+      "Input": {
+        "Identifier": "43",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "clampedSomething",
+      "Identifier": "50",
+      "Position": "3744,684",
+      "Input": {
+        "Identifier": "35",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.01,
+      "Name": "0.01",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "51",
+      "Position": "3936,444"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "1344,600",
       "Color": "Green",
       "Title": "Untitled",
-      "Description": "2048",
-      "Layer": 1,
-      "Identifier": "7",
-      "Position": "-648,-300"
+      "Description": "float alphaMul = 0.05;\nfloat alpha = alphaMul / sampleArg - alphaMul;\nalpha = alpha \u002B (alphaMul / sample2 - alphaMul);",
+      "Layer": 5,
+      "Identifier": "52",
+      "Position": "4680,480"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.05,
+      "Name": "alphamul",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "53",
+      "Position": "4704,612"
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "54",
+      "Position": "4896,684",
+      "A": {
+        "Identifier": "53",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "56",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "sampleArg",
+      "Identifier": "55",
+      "Position": "3528,804",
+      "Input": {
+        "Identifier": "39",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "sampleArg",
+      "Identifier": "56",
+      "Position": "4572,816",
+      "Input": {
+        "Identifier": "55",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "57",
+      "Position": "5040,684",
+      "A": {
+        "Identifier": "54",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "58",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "alphamul",
+      "Identifier": "58",
+      "Position": "4980,648",
+      "Input": {
+        "Identifier": "53",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "59",
+      "Position": "-60,96"
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "60",
+      "Position": "5616,720",
+      "A": {
+        "Identifier": "57",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "65",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "alphamul",
+      "Identifier": "61",
+      "Position": "5184,648",
+      "Input": {
+        "Identifier": "58",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "62",
+      "Position": "5256,660",
+      "A": {
+        "Identifier": "61",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "64",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "sample2",
+      "Identifier": "63",
+      "Position": "4728,840",
+      "Input": {
+        "Identifier": "49",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "sample2",
+      "Identifier": "64",
+      "Position": "5172,840",
+      "Input": {
+        "Identifier": "63",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "65",
+      "Position": "5412,648",
+      "A": {
+        "Identifier": "62",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "66",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "alphamul",
+      "Identifier": "66",
+      "Position": "5292,780",
+      "Input": {
+        "Identifier": "61",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "IntersectionNode",
+      "DefaultFrequency": 1,
+      "DefaultPhase": 0,
+      "DefaultStrength": 10,
+      "Identifier": "67",
+      "Position": "5832,228"
     }
   ]
 }
