@@ -25,14 +25,13 @@ COMMON
 	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
-	#define S_TRANSLUCENT 0
+	#define S_TRANSLUCENT 1
 	#endif
 	
 	#include "common/shared.hlsl"
 	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
 	
-	#define UNLIT
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -74,8 +73,69 @@ VS
 
 PS
 {
-	#include "common/test_pixel.hlsl"
+	#include "common/pixel.hlsl"
+	
+	RenderState(AlphaToCoverageEnable, false)
+	RenderState(IndependentBlendEnable, true)
+	RenderState(BlendEnable, true)
+	RenderState(SrcBlend, ONE)
+	RenderState(DstBlend, INV_SRC_ALPHA)
+	RenderState(BlendOp, ADD)
+	RenderState(SrcBlendAlpha, ONE)
+	RenderState(DstBlendAlpha, INV_SRC_ALPHA)
+	RenderState(BlendOpAlpha, ADD)	
 
+	// SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D(TextureTintMask, 				Linear, 	8, "", "_mask",	"Basic,10/11",	Default3(1.0, 1.0, 1.0));
+	CreateTexture2DWithoutSampler(g_tTintMask) 			< Channel(R,	Box(TextureTintMask),	Linear); OutputFormat(ATI1N); SrgbRead(false); > ;
+	// Texture2D g_tTintMask < Channel( RGBA, Box( TextureTintMask ), Srgb ); OutputFormat( ATI1N ); SrgbRead( false ); >;
+
+	float3 g_vShieldColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default3( 1.00, 1.00, 1.00 ); >;
+	float g_flIntersectionSharpness < UiGroup( ",0/,0/0" ); Default1( 0.2 ); Range1( 0.01, 1 ); >;
+	float g_flBorderDistanceFromSphereCenter < UiGroup( ",0/,0/0" ); Default1( 3 ); Range1( 0.01, 5 ); >;
+	float g_flBubbleAlphaMul < UiGroup( ",0/,0/0" ); Default1( 0.1 ); Range1( 0, 10 ); >;
+	float g_flMasterAlphaMul < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
+
+	float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , float2 screencoords)
+	{
+			float2 f2FinalTexCoord = TexCoord;//i.vTextureCoords.xy;
+	
+			float3 pos = WorldPos;
+			float depth = Depth::GetNormalized(screencoords);
+			float notSure = -abs(dot(pos, -g_vCameraDirWs)) + (1 / depth);
+	
+			float clampedDepth = saturate(notSure * g_flIntersectionSharpness * 0.1);
+			
+			float something = pow(dot(pos * rsqrt(dot(pos, pos)), WorldNormal), 2);
+			float clampedSomething = saturate(something);
+	
+			float varDiff = something - clampedSomething;
+			float sampleArg = abs((varDiff * clampedDepth + clampedSomething) * clampedDepth);
+			float sample2 = abs((varDiff * clampedDepth + clampedSomething) * clampedDepth - 0.02);
+	
+			float alphaMul = g_flBubbleAlphaMul;
+			float alpha = alphaMul / sampleArg - alphaMul;
+			alpha = alpha + (alphaMul / sample2 - alphaMul);
+	
+			alpha = abs(alpha);
+	
+			float time = g_flTime;
+	
+			float2 offset1 = float2(time * 0.0725, time * 0.04);
+			float f1TintMask = g_tTintMask.Sample( TextureFiltering, f2FinalTexCoord + offset1 ).x;
+	
+			float2 offset2 = float2(time * -0.0725, time * -0.04);
+			float f2TintMask = g_tTintMask.Sample( TextureFiltering, f2FinalTexCoord + offset2 ).x;
+	
+			alpha = alpha * (f1TintMask + f2TintMask);
+	
+			float3 outVar = g_vShieldColor * alpha;
+	
+			outVar = outVar * g_flMasterAlphaMul;//g_flMasterAlphaMul;
+	
+			return outVar;
+	}
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
@@ -89,15 +149,10 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float4 l_0 = float4( 1, 0, 0, 1 );
-		float4 l_1 = float4( 0, 0.9, 0, 1 );
-		float l_2 = Depth::GetLinear( i.vPositionSs.xy );
-		float l_3 = l_2 / 128;
-		float l_4 = clamp( l_3, 0, 1 );
-		float4 l_5 = lerp( l_0, l_1, l_4 );
-		
-		m.Albedo = l_5.xyz;
-		m.Opacity = 1;
+		float l_0 = Intersection(i.vPositionWithOffsetWs.xyz,i.vNormalWs,i.vTextureCoords.xy, i.vPositionSs);
+	
+		m.Albedo = float3( l_0, l_0, l_0 );
+		m.Opacity = 0;
 		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
@@ -115,7 +170,6 @@ PS
 		m.WorldTangentV = i.vTangentVWs;
         m.TextureCoords = i.vTextureCoords.xy;
 		
-		return ShadingModelStandardUnlit::Shade( i, m );
-		//return float4( m.Albedo, 1 );
+		return ShadingModelStandard::Shade( i, m );
 	}
 }
