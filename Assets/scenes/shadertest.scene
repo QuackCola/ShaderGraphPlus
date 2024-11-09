@@ -465,7 +465,7 @@
             "Yaw": true,
             "Roll": true
           },
-          "MassCenterOverride": "0,0,12.93303",
+          "MassCenterOverride": "0,0,36",
           "MassOverride": 500,
           "MotionEnabled": true,
           "OverrideMassCenter": true,
@@ -559,7 +559,6 @@
             {
               "__type": "Sandbox.CameraComponent",
               "__guid": "9ad56d03-2cb7-4525-a2d4-341e81975b19",
-              "__enabled": false,
               "BackgroundColor": "0.33333,0.46275,0.52157,1",
               "ClearFlags": "All",
               "FieldOfView": 60,

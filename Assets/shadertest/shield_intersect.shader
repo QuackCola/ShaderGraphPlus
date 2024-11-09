@@ -87,6 +87,7 @@ PS
 	float g_flBubbleAlphaMul < UiGroup( ",0/,0/0" ); Default1( 0.1 ); Range1( 0, 10 ); >;
 	float g_flMasterAlphaMul < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
 	float4 g_vShieldColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 1.00, 1.00, 1.00 ); >;
+	float g_flInsideOpacity < UiGroup( ",0/,0/0" ); Default1( 0.91242296 ); Range1( 0, 1 ); >;
 		
 	float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , float2 screencoords , float flIntersectionSharpness, float flBubbleAlphaMul, float flMasterAlphaMul, Texture2D tTintMask, float3 vShieldColor)
 	{
@@ -149,9 +150,10 @@ PS
 		float l_5 = g_flMasterAlphaMul;
 		float4 l_6 = g_vShieldColor;
 		float3 l_7 = Intersection(l_0,i.vNormalWs,l_1,l_2,l_3,l_4,l_5,g_tTexture_ps_0,l_6);
+		float l_8 = g_flInsideOpacity;
 		
 		m.Albedo = l_7;
-		m.Opacity = 0;
+		m.Opacity = l_8;
 		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
