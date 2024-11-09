@@ -537,7 +537,8 @@
       "__guid": "bf5c1041-5787-4023-a16c-4815e16a69f7",
       "Flags": 0,
       "Name": "saul",
-      "Position": "-47.39229,91.89668,12.26341",
+      "Position": "-70.82201,130.5796,12.26341",
+      "Rotation": "0,0,0.9914449,0.1305263",
       "Enabled": true,
       "Components": [
         {
@@ -725,6 +726,57 @@
         {
           "__type": "Sandbox.ModelRenderer",
           "__guid": "0f503695-9e84-4cca-b12d-f0753edd384e",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "Model": "models/dev/sphere.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        }
+      ]
+    },
+    {
+      "__guid": "f49fc4e2-2047-42a9-a0ea-67f39f8b99a5",
+      "Flags": 0,
+      "Name": "Sphere (4)",
+      "Position": "-160.6391,157.0758,68.92159",
+      "Scale": "0.3471668,0.3471668,0.3471668",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "b53cfb0b-946a-4d17-a7f1-eb8fe8640f25",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "Model": "models/dev/sphere.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        }
+      ]
+    },
+    {
+      "__guid": "87a9a956-8bc5-41b2-9de2-60a8db8ba594",
+      "Flags": 0,
+      "Name": "Sphere (3)",
+      "Position": "-80.97417,104.4979,-1.198493",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "b0a2c886-5ef7-49a6-be9e-5ad76548e73f",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialOverride": "shadertest/shield_intersect.vmat",
