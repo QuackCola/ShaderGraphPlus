@@ -11,16 +11,18 @@
     "Icon": "",
     "Order": 500
   },
+  "UseAdvanced": false,
   "RenderStates": {
-    "AlphaToCoverageEnable": "false",
-    "IndependentBlendEnable": "true",
-    "BlendEnable": "true",
-    "SrcBlend": "ONE",
-    "DstBlend": "INV_SRC_ALPHA",
-    "BlendOp": "ADD",
-    "SrcBlendAlpha": "ONE",
-    "DstBlendAlpha": "INV_SRC_ALPHA",
-    "BlendOpAlpha": "ADD"
+    "FillMode": "Solid",
+    "CullMode": "Back",
+    "DepthFunc": "Less",
+    "StencilEnable": true,
+    "StencilReadMask": 1,
+    "StencilWriteMask": 254,
+    "StencilFunc": "NotEqual",
+    "StencilRef": 3,
+    "SrcBlend": "Src_Alpha",
+    "DstBlend": "Inv_Src_Alpha"
   },
   "nodes": [
     {
@@ -92,15 +94,16 @@
       "Position": "-2100,-1080"
     },
     {
-      "_class": "RemapValue",
-      "In": 0.5,
-      "InMin": 0,
-      "InMax": 1,
-      "OutMin": 0,
-      "OutMax": 0.556725,
-      "Clamp": true,
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
       "Identifier": "10",
-      "Position": "-1668,-672"
+      "Position": "-1872,-660"
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "CalculateViewportUV": true,
+      "Identifier": "11",
+      "Position": "-1692,-588"
     }
   ]
 }
