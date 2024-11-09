@@ -186,7 +186,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 1,
-      "Value": 0.91242296,
+      "Value": 0.9,
       "Name": "InsideOpacity",
       "IsAttribute": false,
       "UI": {},

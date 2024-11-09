@@ -87,7 +87,7 @@ PS
 	float g_flBubbleAlphaMul < UiGroup( ",0/,0/0" ); Default1( 0.1 ); Range1( 0, 10 ); >;
 	float g_flMasterAlphaMul < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
 	float4 g_vShieldColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 1.00, 1.00, 1.00 ); >;
-	float g_flInsideOpacity < UiGroup( ",0/,0/0" ); Default1( 0.91242296 ); Range1( 0, 1 ); >;
+	float g_flInsideOpacity < UiGroup( ",0/,0/0" ); Default1( 0.9 ); Range1( 0, 1 ); >;
 		
 	float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , float2 screencoords , float flIntersectionSharpness, float flBubbleAlphaMul, float flMasterAlphaMul, Texture2D tTintMask, float3 vShieldColor)
 	{
