@@ -2,7 +2,7 @@
 
 Layer0
 {
-	shader "shadertest/shield_intersect.shader"
+	shader "shadertest/force_field_intersect.shader"
 
 	g_flBubbleAlphaMul "0.040"
 	g_flInsideOpacity "0.900"
