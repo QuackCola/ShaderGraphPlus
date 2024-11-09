@@ -7,7 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
-  "UseAdvanced": true,
+  "UseAdvanced": false,
   "RenderStates": {
     "SetBlendOp": true,
     "SetBlendOpAlpha": true,
@@ -64,7 +64,7 @@
       "DefaultMasterAlphaMul": 1,
       "DefaultShieldColor": "1,0,0,1",
       "Identifier": "2",
-      "Position": "-588,-192",
+      "Position": "-588,-204",
       "WorldPos": {
         "Identifier": "3",
         "Output": "Result"
