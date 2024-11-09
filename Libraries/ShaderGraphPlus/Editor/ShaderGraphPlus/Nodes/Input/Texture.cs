@@ -123,8 +123,8 @@ public sealed class TextureObjectNode : ShaderNodePlus
 	/// <summary>
 	/// Texture to sample in preview
 	/// </summary>
-	[ResourceType( "jpg" )]
-	public string Image
+	[ResourceType( "png" )]
+    public string Image
 	{
 		get => _image;
 		set
@@ -202,7 +202,7 @@ public sealed class TextureObjectNode : ShaderNodePlus
 
 	public TextureObjectNode() : base()
 	{
-		Image = "materials/dev/white_color.tga";
+		Image = "textures/sbox_logo.psd";
 		ExpandSize = new Vector2( 32, 128 );
 	}
 

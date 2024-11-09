@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -648,20 +649,91 @@ public sealed partial class GraphCompiler
 	{ 
 	
 		var sb = new StringBuilder();
+		var rs = new RenderStates();
 
+		var type = Graph.RenderStates.GetType();
 
-		foreach (var rs in Graph.RenderStates)
+		foreach (var propertyinfo in type.GetProperties())
 		{
-			// TODO : VALIDATE!!! 
-			if ( string.IsNullOrWhiteSpace(rs.Value))
-				continue;
+	
+            if (propertyinfo.GetCustomAttribute<RenderStateAttribute>() is { } renderStateAttrib)
+            {
+                //Log.Info(renderStateAttrib.Name);
 
-			sb.AppendLine( $"RenderState({rs.Key}, {rs.Value})" );
-			Log.Info($"RenderState : {rs.Key} With Value : {rs.Value}");
-		}
+                var propertyValue = propertyinfo.GetValue(Graph.RenderStates);
+                var renderStateArg = string.Empty;
+                Type propType = propertyValue.GetType();
+
+                // Check to see if the property of Graph.renderStateTest is at its default value or not.
+                if (!rs.Check(propType, propertyinfo.Name, $"{propertyValue}"))
+                {
+                    switch (propertyValue)
+                    {
+                        case bool:
+                            renderStateArg = $"{((bool)propertyValue ? "true" : "false")}";
+                            break;
+                        case int:
+                            renderStateArg = $"{propertyValue}";
+                            break;
+                        case Enum:
+                            renderStateArg = $"{propertyValue.ToString().ToUpper()}";
+                            break;
+
+                    }
+                }
 
 
-		return sb.ToString();
+                if (propertyinfo.Name == "CullMode")
+                {
+                    if (IsPreview)
+                    {
+                        // Force set CullMode to NONE in preview if Render Backfaces is toggled, and BACK when not toggled.
+                        sb.AppendLine($"RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );");
+                    }
+
+                }
+
+                // Dont want these being generated if they arnt set to be so.
+                if (propertyinfo.Name == "BlendOp" && Graph.RenderStates.SetBlendOp is false) continue;
+                if (propertyinfo.Name == "BlendOpAlpha" && Graph.RenderStates.SetBlendOpAlpha is false) continue;
+                if (propertyinfo.Name == "SrcBlendAlpha" && Graph.RenderStates.SetSrcBlendAlpha is false) continue;
+                if (propertyinfo.Name == "DstBlendAlpha" && Graph.RenderStates.SetDstBlendAlpha is false) continue;
+                if (propertyinfo.Name == "AlphaTestFunc" && Graph.RenderStates.SetAlphaTestFunc is false) continue;
+
+                if (!string.IsNullOrWhiteSpace(renderStateArg))
+                {
+                    if ((propertyinfo.Name is "DepthFunc") && IsPreview)
+                    {
+                        //sb.AppendLine($"RenderState({prop.Name}, ALWAYS);");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"RenderState({propertyinfo.Name}, {renderStateArg});");
+                    }
+                }
+                else
+                {
+                    // The value was at is default setting. So do nothing....
+                }
+                //Log.Info($"Class property {prop.Name} is : {renderStateArg}");
+            }
+
+
+        }
+
+        // Old way
+        //foreach (var rs in Graph.RenderStates)
+        //{
+        //	// TODO : VALIDATE!!! 
+        //	if ( string.IsNullOrWhiteSpace(rs.Value))
+        //		continue;
+        //
+        //	sb.AppendLine( $"RenderState({rs.Key}, {rs.Value})" );
+        //	Log.Info($"RenderState : {rs.Key} With Value : {rs.Value}");
+        //}
+
+
+        return sb.ToString();
 	}
 
 
@@ -823,7 +895,9 @@ public sealed partial class GraphCompiler
         sb.AppendLine();
 		sb.AppendLine( "DynamicComboRule( Allow0( D_BAKED_LIGHTING_FROM_LIGHTMAP ) );" );
 		sb.AppendLine( "DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );" );
-		sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
+
+		if ( !Graph.UseAdvanced )
+			sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
 
 		return sb.ToString();
 	}
@@ -832,7 +906,7 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-		if (IsPs)
+		if (IsPs && Graph.UseAdvanced)
 		{
             sb.Append(GenerateRenderStates());
         }
@@ -854,8 +928,6 @@ public sealed partial class GraphCompiler
 
 		if ( Graph.MaterialDomain != MaterialDomain.Surface )
 		{
-			//sb.AppendLine( "RenderState( DepthWriteEnable, false );" );
-			//sb.AppendLine( "RenderState( DepthEnable, false );" );
 			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
 			sb.AppendLine();
 		}
