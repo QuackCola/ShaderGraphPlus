@@ -4,9 +4,9 @@ Layer0
 {
 	shader "shadertest/shield_intersect.shader"
 
-	g_flBubbleAlphaMul "0.010"
-	g_flIntersectionSharpness "0.150"
-	g_flMasterAlphaMul "1.000"
+	g_flBubbleAlphaMul "0.100"
+	g_flIntersectionSharpness "0.200"
+	g_flMasterAlphaMul "0.457"
 	g_vShieldColor "[1.000000 0.800000 0.000000 1.000000]"
-	Texture_ps_0 "[0.100000 0.100000 0.100000 0.000000]"
+	Texture_ps_0 "textures/noise_01.psd"
 }
