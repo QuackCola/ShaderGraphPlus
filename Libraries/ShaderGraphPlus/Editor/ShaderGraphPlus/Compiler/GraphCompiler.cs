@@ -658,8 +658,6 @@ public sealed partial class GraphCompiler
 	
             if (propertyinfo.GetCustomAttribute<RenderStateAttribute>() is { } renderStateAttrib)
             {
-                //Log.Info(renderStateAttrib.Name);
-
                 var propertyValue = propertyinfo.GetValue(Graph.RenderStates);
                 var renderStateArg = string.Empty;
                 Type propType = propertyValue.GetType();
@@ -715,23 +713,10 @@ public sealed partial class GraphCompiler
                 {
                     // The value was at is default setting. So do nothing....
                 }
-                //Log.Info($"Class property {prop.Name} is : {renderStateArg}");
             }
 
 
         }
-
-        // Old way
-        //foreach (var rs in Graph.RenderStates)
-        //{
-        //	// TODO : VALIDATE!!! 
-        //	if ( string.IsNullOrWhiteSpace(rs.Value))
-        //		continue;
-        //
-        //	sb.AppendLine( $"RenderState({rs.Key}, {rs.Value})" );
-        //	Log.Info($"RenderState : {rs.Key} With Value : {rs.Value}");
-        //}
-
 
         return sb.ToString();
 	}

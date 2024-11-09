@@ -727,7 +727,7 @@
           "__guid": "0f503695-9e84-4cca-b12d-f0753edd384e",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/intersect.vmat",
+          "MaterialOverride": "shadertest/shield_intersect.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -744,7 +744,7 @@
       "__guid": "91c40341-2159-4d18-88c1-7fbc119ae303",
       "Flags": 0,
       "Name": "Sphere (2)",
-      "Position": "71.55962,107.0788,3.952087",
+      "Position": "73.12529,107.0788,11.38222",
       "Enabled": true,
       "Components": [
         {
@@ -752,7 +752,7 @@
           "__guid": "8ea50413-d7c9-45b5-bf11-efff4f9a99fe",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/intersect_dummy.vmat",
+          "MaterialOverride": "shadertest/shield_intersect.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,

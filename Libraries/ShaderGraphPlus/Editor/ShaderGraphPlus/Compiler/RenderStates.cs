@@ -345,21 +345,18 @@ public class RenderStates
 
         var defaultRS = new RenderStates();
 
-        var objProperties = defaultRS.GetType().GetProperties()
+        var Properties = defaultRS.GetType().GetProperties()
                .Where(p => (p.PropertyType.IsEnum || p.PropertyType == typeof(int) || p.PropertyType == typeof(bool)));
 
-        foreach (var property in objProperties)
+        foreach (var Property in Properties)
         {
-           // Log.Info($"Found property : {property.Name} of type ( {property} )");
-            var objValue = property.GetValue(defaultRS)?.ToString();
-        
-            //Log.Info($"property {property.Name} default value : {enumValue}");
-            //Log.Info($"in value is : {valueToCheck}");
-            if (PropertyName == property.Name)
+            var objValue = Property.GetValue(defaultRS)?.ToString();
+
+            if (PropertyName == Property.Name)
             {
                 if (objValue == Value)
                 {
-                    Log.Info($" {PropertyName} input value : {Value} == {property.Name} default value : {objValue}");
+                    Log.Info($" {PropertyName} input value : {Value} == {Property.Name} default value : {objValue}");
                     return true;
                 }
             }
