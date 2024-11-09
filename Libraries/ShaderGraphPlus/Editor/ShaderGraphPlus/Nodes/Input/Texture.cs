@@ -120,10 +120,10 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 [Title( "Texture Object" ), Category( "Textures" )]
 public sealed class TextureObjectNode : ShaderNodePlus
 {
-	/// <summary>
-	/// Texture to sample in preview
-	/// </summary>
-	[ResourceType( "png" )]
+    /// <summary>
+    /// Texture to sample in preview
+    /// </summary>
+    [ResourceType("jpg")]
     public string Image
 	{
 		get => _image;
