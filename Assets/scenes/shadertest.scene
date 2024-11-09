@@ -259,13 +259,33 @@
       "__guid": "bf5c1041-5787-4023-a16c-4815e16a69f7",
       "Flags": 0,
       "Name": "saul",
-      "Position": "-70.82201,130.5796,12.26341",
+      "Position": "-71.27529,130.5796,12.26341",
       "Rotation": "0,0,0.9914449,0.1305263",
       "Enabled": true,
       "Components": [
         {
           "__type": "Sandbox.Prop",
           "__guid": "3a1486c1-d9ad-4bb5-aa25-c455f152c614",
+          "BodyGroups": 18446744073709551615,
+          "Health": 0,
+          "IsStatic": false,
+          "Model": "models/saul.vmdl",
+          "StartAsleep": false,
+          "Tint": "1,1,1,1"
+        }
+      ]
+    },
+    {
+      "__guid": "62c80b0e-f813-4c74-89c6-c9f1e03465a9",
+      "Flags": 0,
+      "Name": "saul (1)",
+      "Position": "-7.607395,104.281,7.685959",
+      "Rotation": "0,0,0.9914449,0.1305263",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.Prop",
+          "__guid": "e6d2cf5d-aaa4-41fc-9770-1fd808289e41",
           "BodyGroups": 18446744073709551615,
           "Health": 0,
           "IsStatic": false,
@@ -287,7 +307,7 @@
           "__guid": "0ba3c7dd-f8e5-44a1-ac61-cc9da9d0bde5",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "MaterialOverride": "shadertest/force_field_intersect.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -312,7 +332,7 @@
           "__guid": "0f503695-9e84-4cca-b12d-f0753edd384e",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "MaterialOverride": "shadertest/force_field_intersect_spooky.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -329,7 +349,7 @@
       "__guid": "f49fc4e2-2047-42a9-a0ea-67f39f8b99a5",
       "Flags": 0,
       "Name": "Sphere (4)",
-      "Position": "-160.6391,157.0758,68.92159",
+      "Position": "-134.791,140.2508,68.92159",
       "Scale": "0.3471668,0.3471668,0.3471668",
       "Enabled": true,
       "Components": [
@@ -338,7 +358,7 @@
           "__guid": "b53cfb0b-946a-4d17-a7f1-eb8fe8640f25",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "MaterialOverride": "shadertest/force_field_intersect_spooky.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -363,7 +383,7 @@
           "__guid": "b0a2c886-5ef7-49a6-be9e-5ad76548e73f",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "MaterialOverride": "shadertest/force_field_intersect.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -388,7 +408,7 @@
           "__guid": "8ea50413-d7c9-45b5-bf11-efff4f9a99fe",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/shield_intersect.vmat",
+          "MaterialOverride": "shadertest/force_field_intersect.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
