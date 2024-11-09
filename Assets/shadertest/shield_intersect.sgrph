@@ -36,7 +36,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-360,-168",
+      "Position": "-384,-192",
       "Albedo": {
         "Identifier": "2",
         "Output": "Result"
@@ -69,6 +69,10 @@
         "Identifier": "4",
         "Output": "Result"
       },
+      "Coordinates": {
+        "Identifier": "11",
+        "Output": "Result"
+      },
       "ScreenUV": {
         "Identifier": "10",
         "Output": "Result"
@@ -98,12 +102,12 @@
       "_class": "WorldPosition",
       "NoHighPrecisionLightingOffsets": true,
       "Identifier": "3",
-      "Position": "-876,-264"
+      "Position": "-876,-324"
     },
     {
       "_class": "WorldNormal",
       "Identifier": "4",
-      "Position": "-876,-204"
+      "Position": "-876,-264"
     },
     {
       "_class": "TextureObjectNode",
@@ -115,7 +119,7 @@
         "ColorSpace": "Linear"
       },
       "Identifier": "5",
-      "Position": "-912,300"
+      "Position": "-912,96"
     },
     {
       "_class": "Float",
@@ -126,7 +130,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "6",
-      "Position": "-876,48"
+      "Position": "-876,36"
     },
     {
       "_class": "Float",
@@ -137,7 +141,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "7",
-      "Position": "-876,-12"
+      "Position": "-876,-24"
     },
     {
       "_class": "Float",
@@ -148,7 +152,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "8",
-      "Position": "-876,-72"
+      "Position": "-876,-84"
     },
     {
       "_class": "Float4",
@@ -159,13 +163,20 @@
         "Type": "Color"
       },
       "Identifier": "9",
-      "Position": "-888,120"
+      "Position": "-876,288"
     },
     {
       "_class": "ScreenCoordinate",
       "CalculateViewportUV": false,
       "Identifier": "10",
       "Position": "-876,-144"
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "11",
+      "Position": "-876,-204"
     }
   ]
 }
