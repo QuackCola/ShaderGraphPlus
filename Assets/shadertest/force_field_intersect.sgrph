@@ -171,9 +171,9 @@
     },
     {
       "_class": "ScreenCoordinate",
-      "CalculateViewportUV": false,
+      "CalculateViewportUV": true,
       "Identifier": "10",
-      "Position": "-876,-144"
+      "Position": "-1152,-144"
     },
     {
       "_class": "TextureCoord",
@@ -192,6 +192,16 @@
       "UI": {},
       "Identifier": "12",
       "Position": "-588,-264"
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "220,152",
+      "Color": "Green",
+      "Title": "Untitled",
+      "Description": "",
+      "Layer": 5,
+      "Identifier": "13",
+      "Position": "-1188,-216"
     }
   ]
 }
