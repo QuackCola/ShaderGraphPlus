@@ -107,12 +107,15 @@ public sealed class ScreenPosition : ShaderNodePlus
 [Title( "Screen Coordinate" ), Category( "Variables" )]
 public sealed class ScreenCoordinate : ShaderNodePlus
 {
+
+	public bool CalculateViewportUV { get; set; } = true;
+
 	[Output( typeof( Vector2 ) )]
 	[Hide]
-	public static NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 		compiler.IsVs ?
-		new( ResultType.Vector2, "CalculateViewportUv( i.vPositionPs.xy )" ) :
-		new( ResultType.Vector2, "CalculateViewportUv( i.vPositionSs.xy )" );
+		new( ResultType.Vector2, $"{(CalculateViewportUV !? "CalculateViewportUv( i.vPositionPs.xy)" : "i.vPositionPs.xy")}" ) :
+		new( ResultType.Vector2, $"{(CalculateViewportUV !? "CalculateViewportUv( i.vPositionSs.xy)" : "i.vPositionSs.xy")}" );
 }
 
 /// <summary>
@@ -121,12 +124,15 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 [Title( "World Space Position" ), Category( "Variables" )]
 public sealed class WorldPosition : ShaderNodePlus
 {
+
+	public bool NoHighPrecisionLightingOffsets { get; set; } = false;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
-	public static NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 		compiler.IsVs ?
 		new( ResultType.Vector3, "i.vPositionWs" ) :
-		new( ResultType.Vector3, "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz" );
+		new( ResultType.Vector3, $"i.vPositionWithOffsetWs.xyz {(NoHighPrecisionLightingOffsets ? "" : "+ g_vHighPrecisionLightingOffsetWs.xyz")}" );
 }
 
 /// <summary>
