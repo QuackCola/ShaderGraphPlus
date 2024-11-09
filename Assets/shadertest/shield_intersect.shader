@@ -90,7 +90,7 @@ PS
 		
 	float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , float2 screencoords , float flIntersectionSharpness, float flBubbleAlphaMul, float flMasterAlphaMul, Texture2D tTintMask, float3 vShieldColor)
 	{
-			float2 f2FinalTexCoord = TexCoord;//i.vTextureCoords.xy;
+			float2 f2FinalTexCoord = TexCoord;
 	
 			float3 pos = WorldPos;
 			float depth = Depth::GetNormalized(screencoords);
