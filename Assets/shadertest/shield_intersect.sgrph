@@ -111,7 +111,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": null,
+      "Image": "textures/noise_01.psd",
       "UI": {
         "Default": "1,1,1,1",
         "Extension": "Mask",
