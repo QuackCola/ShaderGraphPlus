@@ -125,7 +125,7 @@ float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , floa
 
         var shieldcolor = compiler.ResultOrDefault(ShieldColor, DefaultShieldColor);
 
-        return new NodeResult(ResultType.Float, compiler.ResultFunction(Intersection, 
+        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(Intersection, 
             args: 
             $"{worldpos}," +
             $"{worldnormal}," +

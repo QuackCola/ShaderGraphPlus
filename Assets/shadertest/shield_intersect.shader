@@ -148,9 +148,9 @@ PS
 		float l_4 = g_flBubbleAlphaMul;
 		float l_5 = g_flMasterAlphaMul;
 		float4 l_6 = g_vShieldColor;
-		float l_7 = Intersection(l_0,i.vNormalWs,l_1,l_2,l_3,l_4,l_5,g_tTexture_ps_0,l_6);
+		float3 l_7 = Intersection(l_0,i.vNormalWs,l_1,l_2,l_3,l_4,l_5,g_tTexture_ps_0,l_6);
 		
-		m.Albedo = float3( l_7, l_7, l_7 );
+		m.Albedo = l_7;
 		m.Opacity = 0;
 		m.Roughness = 1;
 		m.Metalness = 0;
