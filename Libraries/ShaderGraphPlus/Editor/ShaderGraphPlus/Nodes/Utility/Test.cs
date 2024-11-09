@@ -1,9 +1,10 @@
-﻿using Editor.ShaderGraph.Nodes;
-using static Sandbox.Gizmo;
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
-namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title("Intersection"), Category("Utility")]
+/// <summary>
+/// Test sheid effect with depth intersection
+/// </summary>
+[Title("Sheild"), Category("Dev")]
 public sealed class IntersectionNode : ShaderNodePlus
 {
 
@@ -11,7 +12,7 @@ public sealed class IntersectionNode : ShaderNodePlus
     public string Intersection => @"
 float3 Intersection( float3 WorldPos, float3 WorldNormal, float2 TexCoord , float2 screencoords , float flIntersectionSharpness, float flBubbleAlphaMul, float flMasterAlphaMul, Texture2D tTintMask, float3 vShieldColor)
 {
-		float2 f2FinalTexCoord = TexCoord;//i.vTextureCoords.xy;
+		float2 f2FinalTexCoord = TexCoord;
 
 		float3 pos = WorldPos;
 		float depth = Depth::GetNormalized(screencoords);
