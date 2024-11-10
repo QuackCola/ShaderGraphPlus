@@ -139,7 +139,7 @@ PS
 		
 		float3 l_0 = i.vPositionWithOffsetWs.xyz ;
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float2 l_2 = CalculateViewportUv( i.vPositionSs.xy);
+		float2 l_2 = i.vPositionSs.xy;
 		float l_3 = g_flIntersectionSharpness;
 		float l_4 = g_flBubbleAlphaMul;
 		float l_5 = g_flMasterAlphaMul;
