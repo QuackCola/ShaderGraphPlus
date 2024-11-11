@@ -1,4 +1,3 @@
-
 namespace Editor.ShaderGraphPlus.Nodes;
 
 [Title( "Oscillator" ), Category( "Utility" )]
