@@ -44,7 +44,7 @@ public sealed class Depth : ShaderNodePlus
     public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
 
     [Input( typeof( Vector2 ) ), Hide]
-	public NodeInput UV { get; set; }
+    public NodeInput UV { get; set; }
 
     /// <summary>
     /// What Mode to get 
