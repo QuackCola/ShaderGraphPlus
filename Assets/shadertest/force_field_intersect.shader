@@ -76,6 +76,11 @@ PS
 {
 	#include "common/test_pixel.hlsl"
 	
+	RenderState(BlendEnable, true);
+	RenderState(IndependentBlendEnable, true);
+	RenderState(SrcBlend, ONE);
+	RenderState(SrcBlendAlpha, ONE);
+	RenderState(DstBlendAlpha, INV_SRC_ALPHA);
 	CreateInputTexture2D( Texture_ps_0, Linear, 8, "None", "_mask", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Linear ); OutputFormat( DXT5 ); SrgbRead( False ); >;
 	float g_flIntersectionSharpness < UiGroup( ",0/,0/0" ); Default1( 0.2 ); Range1( 0.01, 1 ); >;

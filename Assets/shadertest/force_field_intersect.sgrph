@@ -7,7 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
-  "UseAdvanced": false,
+  "UseAdvanced": true,
   "RenderStates": {
     "SetBlendOp": true,
     "SetBlendOpAlpha": true,
