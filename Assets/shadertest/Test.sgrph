@@ -7,7 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
-  "UseAdvanced": true,
+  "UseAdvanced": false,
   "RenderStates": null,
   "nodes": [
     {
