@@ -31,8 +31,7 @@ COMMON
 	#include "common/shared.hlsl"
 	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
-	
-	#define UNLIT
+
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -74,13 +73,8 @@ VS
 
 PS
 {
-	#include "common/test_pixel.hlsl"
+	#include "common/unlit_pixel.hlsl"
 	
-	RenderState(BlendEnable, true);
-	RenderState(IndependentBlendEnable, true);
-	RenderState(SrcBlend, ONE);
-	RenderState(SrcBlendAlpha, ONE);
-	RenderState(DstBlendAlpha, INV_SRC_ALPHA);
 	CreateInputTexture2D( Texture_ps_0, Linear, 8, "None", "_mask", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Linear ); OutputFormat( DXT5 ); SrgbRead( False ); >;
 	float g_flIntersectionSharpness < UiGroup( ",0/,0/0" ); Default1( 0.2 ); Range1( 0.01, 1 ); >;
@@ -133,18 +127,12 @@ PS
 	{
 		Material m = Material::Init();
 		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
 		
 		float3 l_0 = i.vPositionWithOffsetWs.xyz ;
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float2 l_2 = i.vPositionSs.xy;
+		float2 l_2 = CalculateViewportUv( i.vPositionSs.xy);
 		float l_3 = g_flIntersectionSharpness;
 		float l_4 = g_flBubbleAlphaMul;
 		float l_5 = g_flMasterAlphaMul;
@@ -154,24 +142,9 @@ PS
 		
 		m.Albedo = l_7;
 		m.Opacity = l_8;
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
 		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
 		m.Opacity = saturate( m.Opacity );
 
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-        m.TextureCoords = i.vTextureCoords.xy;
-		
-		return ShadingModelStandardUnlit::Shade( i, m );
-		//return float4( m.Albedo, 1 );
+		return ShadingModelUnlit::Shade( i, m );
 	}
 }

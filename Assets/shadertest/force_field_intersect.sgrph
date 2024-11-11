@@ -7,7 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
-  "UseAdvanced": true,
+  "UseAdvanced": false,
   "RenderStates": {
     "SetBlendOp": true,
     "SetBlendOpAlpha": true,
@@ -38,24 +38,13 @@
       "Identifier": "0",
       "Position": "-312,-336",
       "Albedo": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result"
       },
       "Opacity": {
-        "Identifier": "12",
+        "Identifier": "11",
         "Output": "Result"
       }
-    },
-    {
-      "_class": "Float4",
-      "Value": "0.1,0,1,1",
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color"
-      },
-      "Identifier": "1",
-      "Position": "48,-240"
     },
     {
       "_class": "IntersectionNode",
@@ -63,54 +52,54 @@
       "DefaultBubbleAlphaMul": 0.1,
       "DefaultMasterAlphaMul": 1,
       "DefaultShieldColor": "1,0,0,1",
-      "Identifier": "2",
+      "Identifier": "1",
       "Position": "-588,-204",
       "WorldPos": {
-        "Identifier": "3",
+        "Identifier": "2",
         "Output": "Result"
       },
       "WorldNormal": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result"
       },
       "Coordinates": {
-        "Identifier": "11",
-        "Output": "Result"
-      },
-      "ScreenUV": {
         "Identifier": "10",
         "Output": "Result"
       },
-      "IntersectSharpness": {
-        "Identifier": "8",
+      "ScreenUV": {
+        "Identifier": "9",
         "Output": "Result"
       },
-      "BubbleAlphaMul": {
+      "IntersectSharpness": {
         "Identifier": "7",
         "Output": "Result"
       },
-      "MasterAlphaMul": {
+      "BubbleAlphaMul": {
         "Identifier": "6",
         "Output": "Result"
       },
-      "TintMask": {
+      "MasterAlphaMul": {
         "Identifier": "5",
         "Output": "Result"
       },
+      "TintMask": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
       "ShieldColor": {
-        "Identifier": "9",
+        "Identifier": "8",
         "Output": "Result"
       }
     },
     {
       "_class": "WorldPosition",
       "NoHighPrecisionLightingOffsets": true,
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "-876,-324"
     },
     {
       "_class": "WorldNormal",
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "-876,-264"
     },
     {
@@ -122,7 +111,7 @@
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
-      "Identifier": "5",
+      "Identifier": "4",
       "Position": "-912,96"
     },
     {
@@ -133,7 +122,7 @@
       "Name": "MasterAlphaMul",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "-876,36"
     },
     {
@@ -144,7 +133,7 @@
       "Name": "BubbleAlphaMul",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "-876,-24"
     },
     {
@@ -155,7 +144,7 @@
       "Name": "IntersectionSharpness",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "8",
+      "Identifier": "7",
       "Position": "-876,-84"
     },
     {
@@ -166,20 +155,20 @@
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "-876,288"
     },
     {
       "_class": "ScreenCoordinate",
-      "CalculateViewportUV": false,
-      "Identifier": "10",
+      "CalculateViewportUV": true,
+      "Identifier": "9",
       "Position": "-1152,-144"
     },
     {
       "_class": "TextureCoord",
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "11",
+      "Identifier": "10",
       "Position": "-876,-204"
     },
     {
@@ -190,7 +179,7 @@
       "Name": "InsideOpacity",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "12",
+      "Identifier": "11",
       "Position": "-588,-264"
     },
     {
@@ -200,8 +189,13 @@
       "Title": "Untitled",
       "Description": "",
       "Layer": 5,
-      "Identifier": "13",
+      "Identifier": "12",
       "Position": "-1188,-216"
+    },
+    {
+      "_class": "DepthIntersectionNode",
+      "Identifier": "13",
+      "Position": "-636,-528"
     }
   ]
 }
