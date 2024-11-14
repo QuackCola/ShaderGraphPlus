@@ -246,6 +246,12 @@ public class RenderStateAttribute : Attribute
 }
 
 
+
+
+//
+// TODO : Im really not sure about the RenderState class below. There should probabaly be a better way to only set
+// what you want rather than having every thing show up at once.
+
 /// <summary>
 /// Most of the avalible shader render states. Initially set to their defaults ( I think ) and if one is set to the default it should be compiled out of the shader.
 /// </summary>
