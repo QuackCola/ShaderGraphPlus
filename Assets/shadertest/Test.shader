@@ -25,13 +25,13 @@ COMMON
 	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
-	#define S_TRANSLUCENT 0
+	#define S_TRANSLUCENT 1
 	#endif
 	
 	#include "common/shared.hlsl"
 	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
-	
+
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -73,47 +73,36 @@ VS
 
 PS
 {
-	#include "common/pixel.hlsl"
-
+	#include "common/unlit_pixel.hlsl"
+	
+	float g_flDepthOffset < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 1, 64 ); >;
+		
+	float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
+	{
+		float3 l_1 = vWorldPos - g_vCameraPositionWs;
+		float l_2 = dot( l_1, g_vCameraDirWs );
+		float l_3 = l_2 + flDepthOffset;
+		float l_4 = Depth::GetLinear( vUv );
+		float l_5 = smoothstep( l_2, l_3, l_4 );
+		float result = 1 - l_5;
+	
+		return result;
+	}
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
 		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
 		
-		float l_0 = i.vPositionSs.z;
-		float2 l_1 = i.vPositionSs.xy;
-		float l_2 = Depth::GetLinear( l_1 );
-		float l_3 = l_0 - l_2;
-		float l_4 = abs( l_3 );
-		float l_5 = step( 82.49982, l_4 );
+		float l_0 = g_flDepthOffset;
+		float l_1 = DepthIntersect(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vPositionSs.xy, l_0);
 		
-		m.Albedo = float3( l_5, l_5, l_5 );
-		m.Opacity = 1;
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
+		m.Opacity = l_1;
 		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
 		m.Opacity = saturate( m.Opacity );
 
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-        m.TextureCoords = i.vTextureCoords.xy;
-		
-		return ShadingModelStandard::Shade( i, m );
+		return ShadingModelUnlit::Shade( i, m );
 	}
 }
