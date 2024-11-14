@@ -244,7 +244,7 @@
       "__guid": "ccae31ae-866e-47d3-95ec-e56b63790197",
       "Flags": 0,
       "Name": "Cube (6)",
-      "Position": "153.0151,107.1431,-24.59471",
+      "Position": "-67.64275,-111.7415,-24.59478",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5240427,2.807888,2.172769",
       "Enabled": true,
@@ -556,31 +556,6 @@
       ]
     },
     {
-      "__guid": "04b6ed06-1cfa-4a78-ac3a-a38e2a4719d5",
-      "Flags": 0,
-      "Name": "Sphere (9)",
-      "Position": "150.3393,-10.19531,-1.553404",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "9d4ab1b7-95d7-4f37-b63b-92879d527fd8",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
-          "Model": "models/dev/sphere.vmdl",
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "Off",
-          "Tint": "1,1,1,1"
-        }
-      ]
-    },
-    {
       "__guid": "e2260671-0f31-442e-bad2-d818308eafcd",
       "Flags": 0,
       "Name": "Sphere (1)",
@@ -593,31 +568,6 @@
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialOverride": "shadertest/force_field_intersect_test.vmat",
-          "Model": "models/dev/sphere.vmdl",
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "1,1,1,1"
-        }
-      ]
-    },
-    {
-      "__guid": "9f2b5b33-4f53-4b51-b60e-a3e971f0f1d5",
-      "Flags": 0,
-      "Name": "Sphere (5)",
-      "Position": "-6.237179,-56.25236,-3.749832",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "0419ae94-363b-4af0-a8ca-d5d91705947a",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
