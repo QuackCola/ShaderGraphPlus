@@ -472,6 +472,28 @@ public sealed class OneMinus : ShaderNodePlus
 }
 
 /// <summary>
+/// Positive values passed in become negative and negative values passed in become positive.
+/// </summary>
+[Title("Negate"), Category("Unary")]
+public sealed class Negate : ShaderNodePlus
+{
+    [Input(typeof(float)), Hide, Title("")]
+    public NodeInput In { get; set; }
+
+    public Negate() : base()
+    {
+        ExpandSize = new Vector3(-85, 0);
+    }
+
+    [Output, Hide, Title("")]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        var result = compiler.ResultOrDefault(In, 0.0f);
+        return new NodeResult(result.ResultType, $"-1 * {result}");
+    };
+}
+
+/// <summary>
 /// Returns a distance scalar between two vectors.
 /// </summary>
 [Title( "Distance" ), Category( "Unary" )]
