@@ -106,41 +106,6 @@
       ]
     },
     {
-      "__guid": "be21ba85-0249-4303-887e-390c3cf5e968",
-      "Flags": 0,
-      "Name": "Plane (1)",
-      "Position": "668.2305,0,0",
-      "Scale": "5,5,5",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "45b42a09-60b4-4bc6-8094-693c7541bad8",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
-          "Model": "models/dev/plane.vmdl",
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "0.27,0.4,0.5,1"
-        },
-        {
-          "__type": "Sandbox.BoxCollider",
-          "__guid": "3f295536-42f6-409b-a812-b8f50c9294f8",
-          "Center": "0,0,-5",
-          "IsTrigger": false,
-          "Scale": "100,100,10",
-          "Static": false,
-          "SurfaceVelocity": "0,0,0"
-        }
-      ]
-    },
-    {
       "__guid": "4b233928-0de8-443c-90b4-fea27eb1f21e",
       "Flags": 0,
       "Name": "Cube (3)",
@@ -254,7 +219,7 @@
           "__guid": "1806a74f-f552-45b8-86ca-9dda4df70bf9",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/box.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -431,31 +396,6 @@
       ]
     },
     {
-      "__guid": "07ba9f9a-9343-4f98-80c8-0df68529a129",
-      "Flags": 0,
-      "Name": "Sphere (6)",
-      "Position": "164.3159,-25.52484,104.1125",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "1868d3c6-5a35-41ee-a4d1-b3d78a5971d7",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
-          "Model": "models/dev/sphere.vmdl",
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "1,1,1,1"
-        }
-      ]
-    },
-    {
       "__guid": "d6924178-a6ac-4260-a4dd-c5c2fa62fc3a",
       "Flags": 0,
       "Name": "Sphere (7)",
@@ -467,7 +407,7 @@
           "__guid": "fdb65786-31f9-42f9-a006-4d8bebbf2643",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -492,7 +432,7 @@
           "__guid": "8a3014d7-a3dd-431e-ae51-c0208cc7f6b5",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -542,7 +482,7 @@
           "__guid": "b0a2c886-5ef7-49a6-be9e-5ad76548e73f",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -568,7 +508,7 @@
           "__guid": "8ea50413-d7c9-45b5-bf11-efff4f9a99fe",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/test.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
