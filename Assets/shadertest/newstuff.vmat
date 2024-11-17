@@ -2,15 +2,13 @@
 
 Layer0
 {
-	shader "shadertest/depthintersection.shader"
+	shader "shadertest/newstuff.shader"
 
 	//---- Rendering ----
 	F_DO_NOT_CAST_SHADOWS 1
 	F_RENDER_BACKFACES 1
 
 	g_flDepthOffset "4.000"
-	g_flFresnelPower "0.000"
-	g_vEmissionColor "[1.000000 1.000000 1.000000 1.000000]"
 
 	//---- Fog ----
 	g_bFogEnabled "1"

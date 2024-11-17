@@ -527,6 +527,17 @@
         "Identifier": "37",
         "Output": "Result"
       }
+    },
+    {
+      "_class": "Clamp",
+      "DefaultMin": 0,
+      "DefaultMax": 1,
+      "Identifier": "47",
+      "Position": "4596,1116",
+      "InputA": {
+        "Identifier": "34",
+        "Output": "Result"
+      }
     }
   ]
 }
