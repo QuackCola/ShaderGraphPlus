@@ -76,15 +76,10 @@ public sealed class ScreenPosition : ShaderNodePlus
         return returnCall;
     }
 
-    [Output(typeof(Color))]
-    [Hide]
-    public NodeResult.Func XYZW => (GraphCompiler compiler) => new(ResultType.Color, GetMode("xyzw", compiler));
-
     [Output(typeof(Vector3))]
 	[Hide]
 	public NodeResult.Func XYZ => (GraphCompiler compiler) => new (ResultType.Vector3, GetMode("xyz", compiler));
-        
-
+ 
 	[Output(typeof(Vector2))]
 	[Hide]
 	public NodeResult.Func XY => ( GraphCompiler compiler ) => new(ResultType.Vector2, GetMode("xy", compiler));
