@@ -1,0 +1,37 @@
+{
+  "Model": "models/saul.vmdl",
+  "Description": null,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "ComponentTitle": "VisDepth",
+    "ComponentCategory": "Test",
+    "Icon": "",
+    "Order": 500
+  },
+  "UseAdvanced": false,
+  "RenderStates": {
+    "FillMode": "Solid",
+    "CullMode": "Back",
+    "DepthFunc": "Less",
+    "StencilEnable": true,
+    "StencilReadMask": 1,
+    "StencilWriteMask": 254,
+    "StencilFunc": "NotEqual",
+    "StencilRef": 3,
+    "SrcBlend": "Src_Alpha",
+    "DstBlend": "Inv_Src_Alpha"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-1548,-972"
+    }
+  ]
+}

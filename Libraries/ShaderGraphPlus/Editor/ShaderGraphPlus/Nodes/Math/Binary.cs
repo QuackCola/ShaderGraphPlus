@@ -174,9 +174,9 @@ public sealed class CrossProduct : ShaderNodePlus
 }
 
 /// <summary>
-/// Transform a value from range In Min->In Max to Out Min->Out Mix
+/// Transform a value from range "In Min->In Max" to "Out Min->Out Max". When clamped values Less-than "In" map to "In Max", and Greater-than "In Min" maps to "Out Min".
 /// </summary>
-[Title( "Remap" ), Category( "Binary" )]
+[Title( "Remap Value" ), Category( "Binary" )]
 public sealed class RemapValue : ShaderNodePlus
 {
 	/// <summary>
@@ -300,7 +300,7 @@ public sealed class RemapValue : ShaderNodePlus
 		}
 
 		// Remap the normalized value to the output range
-		var remappedOutput = $"{normalizedInValue} * ( {outMaxValue} - {outMinValue} ) + {outMinValue}";
+		var remappedOutput = $"({normalizedInValue} * ( {outMaxValue} - {outMinValue} )) + {outMinValue}";
 
 		return new NodeResult( (ResultType)maxComponents, remappedOutput );
 	};
