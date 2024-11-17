@@ -79,6 +79,7 @@
         "IsAttribute": true,
         "Default": "1,1,1,1",
         "CustomExtension": "",
+        "ShowExtension": true,
         "SrgbRead": true
       },
       "Identifier": "6",
@@ -129,7 +130,7 @@
       }
     },
     {
-      "_class": "ScreenUVNode",
+      "_class": "ScreenCoordinate",
       "Identifier": "11",
       "Position": "-1260,240"
     },
@@ -139,10 +140,6 @@
       "DefaultB": 1,
       "Identifier": "12",
       "Position": "-1068,240",
-      "A": {
-        "Identifier": "11",
-        "Output": "ScreenUV"
-      },
       "B": {
         "Identifier": "13",
         "Output": "RenderTargetSize"
@@ -159,10 +156,6 @@
       "DefaultB": 1,
       "Identifier": "14",
       "Position": "-564,-156",
-      "A": {
-        "Identifier": "16",
-        "Output": "ScreenUV"
-      },
       "B": {
         "Identifier": "15",
         "Output": "RenderTargetSize"
@@ -174,7 +167,7 @@
       "Position": "-804,-144"
     },
     {
-      "_class": "ScreenUVNode",
+      "_class": "ScreenCoordinate",
       "Identifier": "16",
       "Position": "-804,-204"
     },

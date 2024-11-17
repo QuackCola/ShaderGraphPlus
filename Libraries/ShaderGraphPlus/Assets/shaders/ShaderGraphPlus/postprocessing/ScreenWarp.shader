@@ -60,10 +60,7 @@ PS
 	#include "postprocess/functions.hlsl"
 	#include "postprocess/PostProcessingUtils.hlsl"
 	
-	RenderState( DepthWriteEnable, false );
-	RenderState( DepthEnable, false );
 	CreateTexture2D( g_tColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;
-	CreateTexture2D( g_tDepthBuffer ) < Attribute( "DepthBuffer" ); SrgbRead( false ); Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;
 	
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	Texture2D g_tWarpTexture < Attribute( "WarpTexture" ); >;
