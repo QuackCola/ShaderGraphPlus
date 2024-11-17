@@ -629,7 +629,7 @@
           "__guid": "a7f40513-ea73-417e-a9f0-a65724ac695f",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/newstuff.vmat",
+          "MaterialOverride": "shadertest/depthintersection.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
