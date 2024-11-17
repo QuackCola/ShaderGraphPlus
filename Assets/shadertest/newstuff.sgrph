@@ -1,7 +1,7 @@
 {
   "Model": "models/saul.vmdl",
   "Description": null,
-  "BlendMode": "Opaque",
+  "BlendMode": "Translucent",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
@@ -18,66 +18,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1548,-972"
-    },
-    {
-      "_class": "Depth",
-      "Mode": "Raw",
-      "Identifier": "1",
-      "Position": "-1872,-576"
-    },
-    {
-      "_class": "Clamp",
-      "DefaultMin": 0,
-      "DefaultMax": 1,
-      "Identifier": "2",
-      "Position": "-2076,-936"
-    },
-    {
-      "_class": "CommentNode",
-      "Size": "424,428",
-      "Color": "Green",
-      "Title": "New Nodes",
-      "Description": "",
-      "Layer": 1,
-      "Identifier": "3",
-      "Position": "-2112,-1188"
-    },
-    {
-      "_class": "CommentNode",
-      "Size": "660,224",
-      "Color": "Green",
-      "Title": "Updated Nodes",
-      "Description": "",
-      "Layer": 1,
-      "Identifier": "4",
-      "Position": "-2112,-720"
-    },
-    {
-      "_class": "RGBtoLinear",
-      "Identifier": "5",
-      "Position": "-1908,-1140"
-    },
-    {
-      "_class": "LineartoRGB",
-      "Identifier": "6",
-      "Position": "-1908,-1080"
-    },
-    {
-      "_class": "HSVtoLinear",
-      "Identifier": "7",
-      "Position": "-2100,-1140"
-    },
-    {
-      "_class": "LineartoHSV",
-      "Identifier": "8",
-      "Position": "-2100,-1080"
-    },
-    {
-      "_class": "ScreenPosition",
-      "Mode": "Raw",
-      "Identifier": "9",
-      "Position": "-2076,-648"
+      "Position": "-1164,-984"
     }
   ]
 }

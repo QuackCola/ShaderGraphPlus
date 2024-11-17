@@ -209,7 +209,7 @@
       "__guid": "abd1a71b-6ad5-4439-96d1-cce1c84c5b4b",
       "Flags": 0,
       "Name": "Cube (6)",
-      "Position": "-83.74564,-71.1952,4.738052",
+      "Position": "-87.00877,-100.9489,4.738024",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5632889,0.5632889,2.172769",
       "Enabled": true,
@@ -259,7 +259,7 @@
       "__guid": "65a37682-7b31-44c8-8935-f718e389570a",
       "Flags": 0,
       "Name": "Cube (7)",
-      "Position": "-85.6701,-0.8363152,-24.95321",
+      "Position": "-103.2137,-54.85264,-24.95321",
       "Scale": "0.5632889,0.5632889,2.172769",
       "Enabled": true,
       "Components": [
@@ -305,17 +305,16 @@
       ]
     },
     {
-      "__guid": "98ac8650-56d3-445c-84cf-240d1821a9a9",
+      "__guid": "c00010ba-c8dd-46d4-b587-fa745b5e0e79",
       "Flags": 0,
-      "Name": "Cube (8)",
-      "Position": "-92.42652,-65.06927,89.09334",
-      "Rotation": "0.7071067,0,0,0.7071068",
+      "Name": "Cube (9)",
+      "Position": "-103.2137,-26.81045,-4.673864",
       "Scale": "0.5632889,0.5632889,2.172769",
       "Enabled": true,
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
-          "__guid": "96d9dfde-fc4a-4480-b836-168f10ea50e1",
+          "__guid": "b764822e-e5ee-4362-95f3-3e59700dc221",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialOverride": "shadertest/depthintersection.vmat",
@@ -331,7 +330,7 @@
         },
         {
           "__type": "Sandbox.BoxCollider",
-          "__guid": "6ab31fbd-18e5-4c8c-8254-9b487141ecc2",
+          "__guid": "987bf6dc-44fb-4b83-b902-c8b8365fb78c",
           "Center": "0,0,0",
           "IsTrigger": false,
           "Scale": "50,50,50",
@@ -340,7 +339,56 @@
         },
         {
           "__type": "Sandbox.Rigidbody",
-          "__guid": "7ed88776-ca9b-49ff-8643-190ae1b3e2a3",
+          "__guid": "45300bf0-62d3-44c4-870e-a1e6218c1e9e",
+          "AngularDamping": 0,
+          "Gravity": true,
+          "LinearDamping": 0,
+          "Locking": {},
+          "MassCenterOverride": "0,0,0",
+          "MassOverride": 0,
+          "MotionEnabled": true,
+          "OverrideMassCenter": false,
+          "RigidbodyFlags": 0,
+          "StartAsleep": false
+        }
+      ]
+    },
+    {
+      "__guid": "e8c766bf-0f81-41af-bd02-640be6f4d53e",
+      "Flags": 0,
+      "Name": "Cube (10)",
+      "Position": "-88.35095,-42.30516,-31.73715",
+      "Scale": "0.5632889,0.5632889,2.172769",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "a7dd5909-3641-45a6-b49c-66a91cf9dbea",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialOverride": "shadertest/depthintersection.vmat",
+          "Model": "models/dev/box.vmdl",
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "Off",
+          "Tint": "1,0,0.93333,1"
+        },
+        {
+          "__type": "Sandbox.BoxCollider",
+          "__guid": "2dec5eb0-0d28-4274-8a44-4786e4ca1845",
+          "Center": "0,0,0",
+          "IsTrigger": false,
+          "Scale": "50,50,50",
+          "Static": true,
+          "SurfaceVelocity": "0,0,0"
+        },
+        {
+          "__type": "Sandbox.Rigidbody",
+          "__guid": "d5969c1e-bc2a-484b-a8d6-857ea734074f",
           "AngularDamping": 0,
           "Gravity": true,
           "LinearDamping": 0,
@@ -570,18 +618,18 @@
       ]
     },
     {
-      "__guid": "5a66cc45-6ac9-40d0-84bd-cbe202226844",
+      "__guid": "1d0aa607-22e7-4438-9452-8620887739f4",
       "Flags": 0,
-      "Name": "Sphere (4)",
-      "Position": "-117.9774,-176.1732,14.93547",
+      "Name": "Sphere (6)",
+      "Position": "-90.37276,-80.27448,93.47945",
       "Enabled": true,
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
-          "__guid": "59a0a975-3bbc-43cb-857e-52508102eecd",
+          "__guid": "a7f40513-ea73-417e-a9f0-a65724ac695f",
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
-          "MaterialOverride": "shadertest/depthintersection.vmat",
+          "MaterialOverride": "shadertest/newstuff.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
@@ -632,31 +680,6 @@
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialOverride": "shadertest/force_field_intersect_test.vmat",
-          "Model": "models/dev/sphere.vmdl",
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "1,1,1,1"
-        }
-      ]
-    },
-    {
-      "__guid": "87a9a956-8bc5-41b2-9de2-60a8db8ba594",
-      "Flags": 0,
-      "Name": "Sphere (3)",
-      "Position": "-80.97417,104.4979,-1.198493",
-      "Enabled": true,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "b0a2c886-5ef7-49a6-be9e-5ad76548e73f",
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "MaterialOverride": "shadertest/depthintersection.vmat",
           "Model": "models/dev/sphere.vmdl",
           "RenderOptions": {
             "GameLayer": true,
