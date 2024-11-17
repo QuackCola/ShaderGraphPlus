@@ -70,36 +70,3 @@ public sealed class Depth : ShaderNodePlus
 		return new NodeResult( ResultType.Float, returnCall );
 	};
 }
-
-
-/// <summary>
-/// Test node for doing depth stuff..
-/// </summary>
-[Title("Test Depth"), Category("Camera")]
-public sealed class DepthNodeThing : ShaderNodePlus
-{
-
-    public static string LinearizeDepth => @"
-float LinearizeDepth(float2 vUV)
-{
-        float flProjectedDepth = Depth::Get(vUV);
-        // Remap depth to viewport depth range
-        flProjectedDepth = RemapValClamped( flProjectedDepth, g_flViewportMinZ, g_flViewportMaxZ, 0.0, 1.0 );
-
-        float flZScale = g_vInvProjRow3.z;
-        float flZTran = g_vInvProjRow3.w;
-
-        float flDepthRelativeToRayLength = 1.0 / ( ( flProjectedDepth * flZScale + flZTran ) );
-
-        return flDepthRelativeToRayLength;
-}
-
-";
-
-    [Output(typeof(float)), Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-	{
-
-        return new NodeResult(ResultType.Float, compiler.ResultFunction(LinearizeDepth, args: $"CalculateViewportUv(i.vPositionSs.xy)"));
-    };
-}
