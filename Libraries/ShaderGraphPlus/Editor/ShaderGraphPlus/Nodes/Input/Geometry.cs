@@ -57,6 +57,7 @@ public sealed class ScreenPosition : ShaderNodePlus
 
     }
 
+    [Hide]
     public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
 	private string GetMode( string components, GraphCompiler compiler)

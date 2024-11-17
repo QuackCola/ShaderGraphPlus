@@ -5,7 +5,6 @@
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
-    "GenerateClass": true,
     "ComponentTitle": "VisDepth",
     "ComponentCategory": "Test",
     "Icon": "",
@@ -38,7 +37,7 @@
       "_class": "Depth",
       "Mode": "Raw",
       "Identifier": "1",
-      "Position": "-1872,-588"
+      "Position": "-1872,-576"
     },
     {
       "_class": "Clamp",
@@ -48,19 +47,13 @@
       "Position": "-2076,-936"
     },
     {
-      "_class": "ScreenPosition",
-      "Mode": "Raw",
-      "Identifier": "3",
-      "Position": "-2076,-648"
-    },
-    {
       "_class": "CommentNode",
       "Size": "424,428",
       "Color": "Green",
       "Title": "New Nodes",
       "Description": "",
       "Layer": 1,
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "-2112,-1188"
     },
     {
@@ -70,40 +63,34 @@
       "Title": "Updated Nodes",
       "Description": "",
       "Layer": 1,
-      "Identifier": "5",
+      "Identifier": "4",
       "Position": "-2112,-720"
     },
     {
       "_class": "RGBtoLinear",
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "-1908,-1140"
     },
     {
       "_class": "LineartoRGB",
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "-1908,-1080"
     },
     {
       "_class": "HSVtoLinear",
-      "Identifier": "8",
+      "Identifier": "7",
       "Position": "-2100,-1140"
     },
     {
       "_class": "LineartoHSV",
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "-2100,-1080"
     },
     {
-      "_class": "WorldPosition",
-      "NoHighPrecisionLightingOffsets": false,
-      "Identifier": "10",
-      "Position": "-1872,-660"
-    },
-    {
-      "_class": "ScreenCoordinate",
-      "CalculateViewportUV": true,
-      "Identifier": "11",
-      "Position": "-1692,-588"
+      "_class": "ScreenPosition",
+      "Mode": "Raw",
+      "Identifier": "9",
+      "Position": "-2076,-648"
     }
   ]
 }
