@@ -2,7 +2,7 @@
   "Model": "models/saul.vmdl",
   "Description": null,
   "BlendMode": "Translucent",
-  "ShadingModel": "Unlit",
+  "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "Order": 500
@@ -20,7 +20,6 @@
     "SrcBlend": "Src_Alpha",
     "DstBlend": "Inv_Src_Alpha"
   },
-  "test": [],
   "nodes": [
     {
       "_class": "Result",
@@ -29,9 +28,13 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "3756,300",
+      "Position": "5160,948",
+      "Emission": {
+        "Identifier": "35",
+        "Output": "Result"
+      },
       "Opacity": {
-        "Identifier": "43",
+        "Identifier": "39",
         "Output": "Result"
       }
     },
@@ -226,140 +229,63 @@
       "Position": "-1188,456"
     },
     {
-      "_class": "WorldPosition",
-      "NoHighPrecisionLightingOffsets": false,
-      "Identifier": "19",
-      "Position": "2316,300"
-    },
-    {
-      "_class": "Subtract",
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "20",
-      "Position": "2556,324",
-      "A": {
-        "Identifier": "19",
-        "Output": "Result"
-      },
-      "B": {
-        "Identifier": "22",
-        "Output": "WorldPosition"
-      }
-    },
-    {
-      "_class": "DotProduct",
-      "Identifier": "21",
-      "Position": "2676,372",
-      "InputA": {
-        "Identifier": "22",
-        "Output": "Direction"
-      },
-      "InputB": {
-        "Identifier": "20",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "Camera",
-      "Identifier": "22",
-      "Position": "2316,372"
-    },
-    {
-      "_class": "Add",
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "23",
-      "Position": "2952,432",
-      "A": {
-        "Identifier": "21",
-        "Output": "Result"
-      },
-      "B": {
-        "Identifier": "24",
-        "Output": "Result"
-      }
-    },
-    {
       "_class": "Float",
-      "Min": 1,
+      "Min": 0,
       "Max": 64,
-      "Value": 1,
+      "Value": 0.5,
       "Name": "Depth Offset",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "24",
-      "Position": "2676,456"
-    },
-    {
-      "_class": "SmoothStep",
-      "Identifier": "25",
-      "Position": "3084,300",
-      "Input": {
-        "Identifier": "26",
-        "Output": "Out"
-      },
-      "Edge1": {
-        "Identifier": "21",
-        "Output": "Result"
-      },
-      "Edge2": {
-        "Identifier": "23",
-        "Output": "Result"
-      }
-    },
-    {
-      "_class": "Depth",
-      "Mode": "Linear",
-      "Identifier": "26",
-      "Position": "2664,300"
+      "Identifier": "19",
+      "Position": "4152,1008"
     },
     {
       "_class": "DotProduct",
-      "Identifier": "27",
-      "Position": "2988,1320",
+      "Identifier": "20",
+      "Position": "4128,1404",
       "InputA": {
-        "Identifier": "31",
+        "Identifier": "24",
         "Output": "Result"
       },
       "InputB": {
-        "Identifier": "36",
+        "Identifier": "29",
         "Output": "Out"
       }
     },
     {
       "_class": "Camera",
-      "Identifier": "28",
-      "Position": "2592,1260"
+      "Identifier": "21",
+      "Position": "3732,1344"
     },
     {
       "_class": "Add",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "29",
-      "Position": "3552,1320",
+      "Identifier": "22",
+      "Position": "4692,1404",
       "A": {
-        "Identifier": "35",
+        "Identifier": "28",
         "Output": "Out"
       },
       "B": {
-        "Identifier": "33",
+        "Identifier": "26",
         "Output": "Result"
       }
     },
     {
       "_class": "Abs",
-      "Identifier": "30",
-      "Position": "3216,1320",
+      "Identifier": "23",
+      "Position": "4356,1404",
       "Input": {
-        "Identifier": "27",
+        "Identifier": "20",
         "Output": "Result"
       }
     },
     {
       "_class": "WorldPosition",
       "NoHighPrecisionLightingOffsets": true,
-      "Identifier": "31",
-      "Position": "2772,1524"
+      "Identifier": "24",
+      "Position": "3912,1608"
     },
     {
       "_class": "Float",
@@ -369,45 +295,45 @@
       "Name": "",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "32",
-      "Position": "3204,1392"
+      "Identifier": "25",
+      "Position": "4344,1476"
     },
     {
       "_class": "Divide",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "33",
-      "Position": "3408,1392",
+      "Identifier": "26",
+      "Position": "4548,1476",
       "A": {
-        "Identifier": "32",
+        "Identifier": "25",
         "Output": "Result"
       },
       "B": {
-        "Identifier": "34",
+        "Identifier": "27",
         "Output": "Out"
       }
     },
     {
       "_class": "Depth",
       "Mode": "Normalized",
-      "Identifier": "34",
-      "Position": "3204,1464"
+      "Identifier": "27",
+      "Position": "4344,1548"
     },
     {
       "_class": "Negate",
-      "Identifier": "35",
-      "Position": "3372,1320",
+      "Identifier": "28",
+      "Position": "4512,1404",
       "In": {
-        "Identifier": "30",
+        "Identifier": "23",
         "Output": "Result"
       }
     },
     {
       "_class": "Negate",
-      "Identifier": "36",
-      "Position": "2820,1284",
+      "Identifier": "29",
+      "Position": "3960,1368",
       "In": {
-        "Identifier": "28",
+        "Identifier": "21",
         "Output": "Direction"
       }
     },
@@ -418,65 +344,200 @@
       "Title": "",
       "Description": "Set to have no highprecision lighting offset\u0027s",
       "Layer": 3,
-      "Identifier": "37",
-      "Position": "2736,1404"
+      "Identifier": "30",
+      "Position": "3876,1488"
     },
     {
       "_class": "Step",
       "DefaultInput": 0,
       "DefaultEdge": 1,
-      "Identifier": "38",
-      "Position": "3648,1332",
+      "Identifier": "31",
+      "Position": "4788,1416",
       "Input": {
-        "Identifier": "29",
+        "Identifier": "22",
         "Output": "Result"
       }
     },
     {
       "_class": "OneMinus",
-      "Identifier": "39",
-      "Position": "3828,1344",
+      "Identifier": "32",
+      "Position": "4968,1428",
       "In": {
-        "Identifier": "38",
+        "Identifier": "31",
         "Output": "Result"
       }
     },
     {
       "_class": "CommentNode",
-      "Size": "1356,464",
+      "Size": "1356,476",
       "Color": "Green",
-      "Title": "Depth Intersection 1",
+      "Title": "Depth Intersection Old",
       "Description": "",
       "Layer": 4,
-      "Identifier": "40",
-      "Position": "2556,1188"
+      "Identifier": "33",
+      "Position": "3696,1260"
     },
     {
-      "_class": "ReroutePlus",
-      "Comment": null,
-      "Identifier": "41",
-      "Position": "2604,480",
-      "Input": {
-        "Identifier": "22",
-        "Output": "FarPlane"
-      }
-    },
-    {
-      "_class": "OneMinus",
-      "Identifier": "42",
-      "Position": "3264,300",
-      "In": {
-        "Identifier": "25",
+      "_class": "DepthIntersectionNode",
+      "DefaultDepthOffset": 2,
+      "Identifier": "34",
+      "Position": "4356,1008",
+      "DepthOffset": {
+        "Identifier": "19",
         "Output": "Result"
       }
     },
     {
-      "_class": "DepthIntersectionNode",
-      "DefaultDepthOffset": 1,
+      "_class": "Float4",
+      "Value": "1,1,1,1",
+      "Name": "Emission Color",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "35",
+      "Position": "4908,768"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "36",
+      "Position": "4416,864"
+    },
+    {
+      "_class": "Fresnel",
+      "DefaultPower": 5,
+      "Identifier": "37",
+      "Position": "4152,888",
+      "Power": {
+        "Identifier": "38",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 16,
+      "Value": 10,
+      "Name": "Fresnel Power",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "38",
+      "Position": "3900,936"
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "39",
+      "Position": "4884,960",
+      "A": {
+        "Identifier": "44",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "40",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SmoothStep",
+      "Identifier": "40",
+      "Position": "4596,1008",
+      "Input": {
+        "Identifier": "34",
+        "Output": "Result"
+      },
+      "Edge1": {
+        "Identifier": "41",
+        "Output": "Result"
+      },
+      "Edge2": {
+        "Identifier": "42",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "41",
+      "Position": "4356,1068"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 1,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "42",
+      "Position": "4356,1128"
+    },
+    {
+      "_class": "Float3",
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "Value": "0,0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
       "Identifier": "43",
-      "Position": "3456,396",
-      "DepthOffset": {
-        "Identifier": "24",
+      "Position": "4404,672"
+    },
+    {
+      "_class": "Branch",
+      "Name": "",
+      "IsAttribute": true,
+      "Operator": "Equal",
+      "Enabled": false,
+      "UI": {},
+      "Identifier": "44",
+      "Position": "4608,756",
+      "True": {
+        "Identifier": "43",
+        "Output": "Result"
+      },
+      "False": {
+        "Identifier": "46",
+        "Output": "Result"
+      },
+      "A": {
+        "Identifier": "45",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "36",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "45",
+      "Position": "4128,840",
+      "Input": {
+        "Identifier": "38",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "46",
+      "Position": "4404,816",
+      "Input": {
+        "Identifier": "37",
         "Output": "Result"
       }
     }

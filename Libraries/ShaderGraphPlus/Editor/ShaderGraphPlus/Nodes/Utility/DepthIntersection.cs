@@ -1,7 +1,7 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 /// <summary>
-/// WIP Depth Intersection Node Test.
+/// WIP Depth Intersection Effect. May not be "Correct".
 /// </summary>
 [Title("Depth Intersection"), Category( "Utility" )]
 public sealed class DepthIntersectionNode : ShaderNodePlus
@@ -13,14 +13,29 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 {
 	float3 l_1 = vWorldPos - g_vCameraPositionWs;
 	float l_2 = dot( l_1, g_vCameraDirWs );
-	float l_3 = l_2 + flDepthOffset;
-	float l_4 = Depth::GetLinear( vUv );
-	float l_5 = smoothstep( l_2, l_3, l_4 );
-	float result = 1 - l_5;
 
-	return result;
+    flDepthOffset += l_2;
+	float Depth = Depth::GetLinear( vUv );
+
+	float l_3 = smoothstep( l_2, flDepthOffset, Depth );
+
+    // One Minus the result before return
+	return 1 - l_3;
 }
 ";
+
+    public DepthIntersectionNode() : base()
+    {
+
+    }
+
+    /// <summary>
+    /// Coordinates to use.
+    /// </summary>
+    //[Title("ScreenUVs")]
+    //[Input(typeof(Vector2))]
+    //[Hide]
+    //public NodeInput Coords { get; set; }
 
     [Input(typeof(float))]
     [Hide]
@@ -33,7 +48,8 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
     [Hide]
     public NodeResult.Func Result => (GraphCompiler compiler) =>
     {
-        var coords = $"i.vPositionSs.xy";
+
+        var coords = "i.vPositionSs.xy";
         var worldpos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
 
         var depthoffset = compiler.ResultOrDefault(DepthOffset, DefaultDepthOffset);
