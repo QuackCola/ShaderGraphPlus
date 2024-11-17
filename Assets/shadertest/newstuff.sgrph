@@ -10,19 +10,6 @@
     "Icon": "",
     "Order": 500
   },
-  "UseAdvanced": false,
-  "RenderStates": {
-    "FillMode": "Solid",
-    "CullMode": "Back",
-    "DepthFunc": "Less",
-    "StencilEnable": true,
-    "StencilReadMask": 1,
-    "StencilWriteMask": 254,
-    "StencilFunc": "NotEqual",
-    "StencilRef": 3,
-    "SrcBlend": "Src_Alpha",
-    "DstBlend": "Inv_Src_Alpha"
-  },
   "nodes": [
     {
       "_class": "Result",
