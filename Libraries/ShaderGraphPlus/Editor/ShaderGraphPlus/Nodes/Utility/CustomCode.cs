@@ -20,7 +20,7 @@ public class CustomCodeNode : ShaderNodePlus
 
 	public string Code { get; set; }
 
-	public ResultType ResultType { get; set; }
+	public ResultType ResultType { get; set; } = ResultType.Float;
 
 	[Output]
 	[Hide]

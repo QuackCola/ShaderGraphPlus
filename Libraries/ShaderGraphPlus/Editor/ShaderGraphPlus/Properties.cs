@@ -1,14 +1,7 @@
-﻿
-using Facepunch.ActionGraphs;
-using static Sandbox.Gizmo;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public class Properties : Widget
 {
-
-	private readonly List<ExpandGroup> expandGroups = new List<ExpandGroup>();
-
 	private object _target;
 	public object Target
 	{
@@ -32,7 +25,6 @@ public class Properties : Widget
 			};
 
 			var sheet = new ControlSheet();
-	
 			sheet.AddObject( so );
 
 			var scroller = new ScrollArea( this );
