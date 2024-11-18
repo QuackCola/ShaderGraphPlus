@@ -528,11 +528,6 @@ public sealed partial class GraphCompiler
 				{
                    options.Write($"Expression( {expression} );");
                 }
-
-                if (!string.IsNullOrWhiteSpace(expression))
-                {
-                    options.Write($"Expression( {expression} ); ");
-                }
             }
 		}
 
