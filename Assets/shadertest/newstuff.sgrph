@@ -1,7 +1,7 @@
 {
-  "Model": "models/saul.vmdl",
+  "Model": "models/dev/plane.vmdl",
   "Description": null,
-  "BlendMode": "Translucent",
+  "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
@@ -18,7 +18,88 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1164,-984"
+      "Position": "-1188,-972",
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float2",
+      "Min": "0,0",
+      "Max": "1,1",
+      "Value": "0,0",
+      "Name": "TexCoordOffset",
+      "IsAttribute": false,
+      "Expression": "v0 = (g_flTexCoordRotation*3.1415927)/180; \nv1 = cos(v0);\nv2 = sin(v0);\nv3 = g_vTexCoordScale; \nv4 = this;\n(((-.5*v3)*float2(v1-v2,v2\u002Bv1))\u002Bv4)\u002B.5",
+      "UI": {},
+      "Identifier": "1",
+      "Position": "-2004,-840"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 360,
+      "Value": 0,
+      "Name": "TexCoordRotation",
+      "IsAttribute": false,
+      "Expression": "v0 = (TexCoordRotation*3.1415927)/180; \nv1 = cos(v0);\nv2 = sin(v0);\nv3 = TexCoordScale; \nv4 = this;\n(((-.5*v3)*float2(v1-v2,v2\u002Bv1))\u002Bv4)\u002B.5",
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-2004,-936"
+    },
+    {
+      "_class": "Float2",
+      "Min": "0,0",
+      "Max": "64,64",
+      "Value": "1,1",
+      "Name": "TexCoordScale",
+      "IsAttribute": false,
+      "Expression": null,
+      "UI": {},
+      "Identifier": "3",
+      "Position": "-2004,-1044"
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "materials/decals/garrysmod.png",
+      "DefaultSampler": {
+        "Name": ""
+      },
+      "UI": {
+        "Name": "CoolTex",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "4",
+      "Position": "-1572,-1008",
+      "Coords": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "5",
+      "Position": "-2004,-1128"
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "6",
+      "Position": "-1752,-1044",
+      "A": {
+        "Identifier": "5",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
     }
   ]
 }

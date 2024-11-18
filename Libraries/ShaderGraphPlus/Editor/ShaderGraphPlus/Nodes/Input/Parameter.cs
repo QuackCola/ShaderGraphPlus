@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class ParameterNode<T> : ShaderNodePlus
 {
@@ -19,7 +16,15 @@ public abstract class ParameterNode<T> : ShaderNodePlus
 	/// </summary>
 	public bool IsAttribute { get; set; }
 
-	[InlineEditor]
+    [TextArea]
+    [Description(
+    "Expression is used to evaluate an expression on the variable, using the Dynamic Expressions language." +
+    " A good reason for their use is to save GPU instructions, since they get evaluated on the CPU prior to rendering." +
+    "The expression can refer to: the variable itself with this, as well as to any other variables or features."
+    )]
+    public string Expression { get; set; }
+
+    [InlineEditor]
 	//[Group( "UI" )]
 	//[Title("")]
 	public ParameterUI UI { get; set; }
@@ -122,7 +127,7 @@ public sealed class Float : ParameterNode<float>
 	[Hide, Editor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI, expression: Expression );
 	};
 
 	[Group( "Range" )] public float Min { get; set; }
@@ -144,7 +149,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI, expression: Expression );
 	};
 
 	[Group( "Range" )] public Vector2 Min { get; set; }
@@ -199,7 +204,7 @@ public sealed class Float3 : ParameterNode<Vector3>
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI, expression: Expression);
 	};
 
 	[Group( "Range" )] public Vector3 Min { get; set; }
@@ -271,7 +276,7 @@ public sealed class Float4 : ParameterNode<Color>
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
+		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI, expression: Expression);
 	};
 
 	[JsonIgnore, Hide]

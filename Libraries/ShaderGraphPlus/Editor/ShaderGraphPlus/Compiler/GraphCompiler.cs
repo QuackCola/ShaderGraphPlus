@@ -446,7 +446,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of a value that can be set in material editor
 	/// </summary>
-	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
+	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default , string expression = "")
 	{
 		if (IsPreview || string.IsNullOrWhiteSpace(name))
 			return ResultValue(value);
@@ -524,6 +524,12 @@ public sealed partial class GraphCompiler
 					options.Write($"Range{parameter.Result.Components()}( {min}, {max} ); ");
 				}
 			}
+
+				if ( !string.IsNullOrWhiteSpace(expression) )
+				{
+				    options.Write($"Expression( {expression} ); ");
+				}
+            }
 		}
 
 		parameter.Options = options.ToString().Trim();
