@@ -91,6 +91,39 @@ public sealed class Transpose : Unary
     protected override string Op => "transpose";
 }
 
+[Title("Clamp"), Category("Unary")]
+public sealed class Clamp : ShaderNodePlus
+{
+    [Input]
+    [Hide]
+    [Title("Value")]
+    public NodeInput InputA { get; set; }
+
+    [Input]
+    [Hide]
+	[Title("Min")]
+    public NodeInput InputB { get; set; }
+
+    [Input]
+    [Hide]
+    [Title("Max")]
+    public NodeInput InputC { get; set; }
+
+
+	public float DefaultMin { get; set; } = 0.0f;
+	public float DefaultMax { get; set; } = 1.0f;
+
+    [Output]
+    [Hide]
+    public NodeResult.Func Result => (GraphCompiler compiler) =>
+    {
+        var resultA = compiler.ResultOrDefault(InputA, 0.0f);
+        var resultB = compiler.ResultOrDefault(InputB, DefaultMin);
+        var resultC = compiler.ResultOrDefault(InputC, DefaultMax).Cast(resultB.Components());
+
+        return new NodeResult(ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )");
+    };
+}
 
 [Title( "Cosine" ), Category( "Unary" )]
 public sealed class Cosine : Unary
@@ -104,6 +137,13 @@ public sealed class Abs : Unary
 {
     [Hide]
     protected override string Op => "abs";
+}
+
+[Title("Rsqrt"), Category("Unary")]
+public sealed class Rsqrt : Unary
+{
+    [Hide]
+    protected override string Op => "rsqrt";
 }
 
 [Title( "Sqrt" ), Category( "Unary" )]
@@ -429,6 +469,28 @@ public sealed class OneMinus : ShaderNodePlus
 	{
 		ExpandSize = new Vector3( -85, 0 );
 	}
+}
+
+/// <summary>
+/// Positive values passed in become negative and negative values passed in become positive.
+/// </summary>
+[Title("Negate"), Category("Unary")]
+public sealed class Negate : ShaderNodePlus
+{
+    [Input(typeof(float)), Hide, Title("")]
+    public NodeInput In { get; set; }
+
+    public Negate() : base()
+    {
+        ExpandSize = new Vector3(-85, 0);
+    }
+
+    [Output, Hide, Title("")]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        var result = compiler.ResultOrDefault(In, 0.0f);
+        return new NodeResult(result.ResultType, $"-1 * {result}");
+    };
 }
 
 /// <summary>

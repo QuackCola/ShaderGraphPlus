@@ -329,10 +329,10 @@ float4x4 Matrix_FromTranslation( float3 vTranslation )
 	}
 }
 
-	/// <summary>
-	/// Convert from Cartesian coordinates to polar coordinates.
-	/// </summary>
-	[Title( "Polar Coordinates" ), Category( "Transform" )]
+/// <summary>
+/// Convert from Cartesian coordinates to polar coordinates.
+/// </summary>
+[Title( "Polar Coordinates" ), Category( "Transform" )]
 public sealed class PolarCoordinates : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]
@@ -852,6 +852,122 @@ float3 HSV2RGB( float3 c )
 	{
 		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( HSV2RGB, args: $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
+}
+
+[Title("RGB to Linear"), Category("Transform")]
+public sealed class RGBtoLinear : ShaderNodePlus
+{
+
+public static string RGB2Linear => @"
+float3 RGB2Linear( float3 c )
+{
+    float3 vlinearRGBLo = c / 12.92;;
+    float3 vlinearRGBHi = pow( max( abs( ( c + 0.055 ) / 1.055 ), 1.192092896e-07 ), float3( 2.4, 2.4, 2.4 ) );
+
+    return float3( c <= 0.04045 ) ? vlinearRGBLo : vlinearRGBHi;
+}
+";
+
+    [Input(typeof(Vector3))]
+    [Hide]
+    public NodeInput In { get; set; }
+
+    [Output(typeof(Vector3))]
+    [Hide]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(RGB2Linear, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+    };
+}
+
+[Title("Linear to RGB"), Category("Transform")]
+public sealed class LineartoRGB : ShaderNodePlus
+{
+
+public static string Linear2RGB => @"
+float3 Linear2RGB( float3 c )
+{
+    float3 vSRGBLo = c * 12.92;
+    float3 vSRGBHi = ( pow( max( abs(c), 1.192092896e-07 ), float3( 1.0 / 2.4, 1.0 / 2.4, 1.0 / 2.4 ) ) * 1.055 ) - 0.055;
+    
+	return float3( c <= 0.0031308 ) ? vSRGBLo : vSRGBHi;
+}
+";
+
+    [Input(typeof(Vector3))]
+    [Hide]
+    public NodeInput In { get; set; }
+
+    [Output(typeof(Vector3))]
+    [Hide]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(Linear2RGB, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+    };
+}
+
+[Title("Linear to HSV"), Category("Transform")]
+public sealed class LineartoHSV : ShaderNodePlus
+{
+
+public static string Linear2HSV => @"
+float3 Linear2HSV( float3 c )
+{
+    float3 vSRGBLo = c * 12.92;
+    float3 vSRGBHi = (pow(max(abs(c), 1.192092896e-07), float3(1.0 / 2.4, 1.0 / 2.4, 1.0 / 2.4)) * 1.055) - 0.055;
+    
+	float3 Linear = float3(c <= 0.0031308) ? vSRGBLo : vSRGBHi;
+    
+	float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    float4 P = lerp(float4(Linear.bg, K.wz), float4(Linear.gb, K.xy), step(Linear.b, Linear.g));
+    float4 Q = lerp(float4(P.xyw, Linear.r), float4(Linear.r, P.yzx), step(P.x, Linear.r));
+    float D = Q.x - min(Q.w, Q.y);
+    float  E = 1e-10;
+
+    return float3(abs(Q.z + (Q.w - Q.y)/(6.0 * D + E)), D / (Q.x + E), Q.x);
+}
+";
+
+    [Input(typeof(Vector3))]
+    [Hide]
+    public NodeInput In { get; set; }
+
+    [Output(typeof(Vector3))]
+    [Hide]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(Linear2HSV, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+    };
+}
+
+[Title("HSV to Linear"), Category("Transform")]
+public sealed class HSVtoLinear : ShaderNodePlus
+{
+
+public static string HSV2Linear => @"
+float3 HSV2Linear( float3 c )
+{
+    float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    float3 P = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
+    float3 RGB = c.z * lerp(K.xxx, saturate(P - K.xxx), c.y);
+
+    float3 vlinearRGBLo = RGB / 12.92;
+    float3 vlinearRGBHi = pow(max(abs((RGB + 0.055) / 1.055), 1.192092896e-07), float3(2.4, 2.4, 2.4));
+
+    return float3(RGB <= 0.04045) ? vlinearRGBLo : vlinearRGBHi;
+}
+";
+
+    [Input(typeof(Vector3))]
+    [Hide]
+    public NodeInput In { get; set; }
+
+    [Output(typeof(Vector3))]
+    [Hide]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(HSV2Linear, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+    };
 }
 
 [Title( "Make Greyscale" ), Category( "Transform" )]

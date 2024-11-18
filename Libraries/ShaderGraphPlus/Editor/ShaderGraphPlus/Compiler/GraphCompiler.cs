@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -644,6 +645,9 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
+	
+
+
     public string GeneratePostProcessingComponent( PostProcessingComponentInfo postProcessiComponentInfo, string className, string shaderPath )
 	{
 		var ppcb = new PostProcessingComponentBuilder( postProcessiComponentInfo );
@@ -799,7 +803,7 @@ public sealed partial class GraphCompiler
 
 		var sb = new StringBuilder();
 
-		sb.AppendLine();
+        sb.AppendLine();
 		sb.AppendLine( "DynamicComboRule( Allow0( D_BAKED_LIGHTING_FROM_LIGHTMAP ) );" );
 		sb.AppendLine( "DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );" );
 		sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
@@ -811,8 +815,8 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-		// Static & Dynamic shader feature combos
-		foreach ( var feature in ShaderResult.ShaderFeatures )
+        // Static & Dynamic shader feature combos
+        foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
 			if ( feature.Value.Item1.IsDynamicCombo is not true )
 			{
@@ -828,14 +832,7 @@ public sealed partial class GraphCompiler
 
 		if ( Graph.MaterialDomain != MaterialDomain.Surface )
 		{
-			sb.AppendLine( "RenderState( DepthWriteEnable, false );" );
-			sb.AppendLine( "RenderState( DepthEnable, false );" );
 			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
-			sb.AppendLine( "CreateTexture2D( g_tDepthBuffer ) < Attribute( \"DepthBuffer\" ); SrgbRead( false ); Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;" );
-			//sb.AppendLine( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
-			//sb.AppendLine( "SamplerState ColorBufferSampler < Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
-			//sb.AppendLine( "Texture2D g_tDepthBuffer < Attribute( \"DepthBuffer\" ); SrgbRead( false ); >;" );
-			//sb.AppendLine( "SamplerState DepthBufferSampler < Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;" );
 			sb.AppendLine();
 		}
 
@@ -1144,16 +1141,8 @@ public sealed partial class GraphCompiler
 
 		BaseNodePlus resultNode;
 
-		//var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
 
-		if ( Graph.MaterialDomain is MaterialDomain.Surface )
-		{
-			resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
-		}
-		else
-		{
-			resultNode = Graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
-		}
+		resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
 
 		if ( resultNode == null )
 			return null;
@@ -1165,7 +1154,19 @@ public sealed partial class GraphCompiler
 			if ( property.Name == "PositionOffset" )
 				continue;
 
-			NodeResult result;
+            if (Graph.ShadingModel is ShadingModel.Unlit)
+			{
+                if (property.Name == "Roughness")
+                    continue;
+
+                if (property.Name == "Metalness")
+                    continue;
+
+                if (property.Name == "AmbientOcclusion")
+                    continue;
+            }
+
+            NodeResult result;
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
@@ -1175,14 +1176,7 @@ public sealed partial class GraphCompiler
 			{
 				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 				if ( editorAttribute == null )
-				{
-					if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-					{
-						// If there is no input to PostProcessingResultNode. Then default to un-modified SceneColor.
-						sb.AppendLine( $"FinalColor = Tex2D( g_tColorBuffer,i.vPositionSs.xy / g_vRenderTargetSize);" );
-					}
 					continue;
-				}
 
 				var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
 				if ( valueProperty == null )
@@ -1203,15 +1197,7 @@ public sealed partial class GraphCompiler
 			var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
 			var componentCount = GetComponentCount( inputAttribute.Type );
 
-			if ( Graph.MaterialDomain is MaterialDomain.Surface )
-			{
-				sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
-			}
-			else
-			{
-				sb.AppendLine( $"FinalColor = {result.Cast( componentCount )};" );
-			}
-
+			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
 		return sb.ToString();

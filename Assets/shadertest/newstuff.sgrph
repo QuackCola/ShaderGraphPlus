@@ -1,0 +1,24 @@
+{
+  "Model": "models/saul.vmdl",
+  "Description": null,
+  "BlendMode": "Translucent",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "ComponentTitle": "VisDepth",
+    "ComponentCategory": "Test",
+    "Icon": "",
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-1164,-984"
+    }
+  ]
+}
