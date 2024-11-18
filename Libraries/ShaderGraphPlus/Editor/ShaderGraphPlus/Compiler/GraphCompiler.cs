@@ -523,12 +523,16 @@ public sealed partial class GraphCompiler
 				{
 					options.Write($"Range{parameter.Result.Components()}( {min}, {max} ); ");
 				}
-			}
 
-				if ( !string.IsNullOrWhiteSpace(expression) )
+				if (!string.IsNullOrWhiteSpace(expression))
 				{
-				    options.Write($"Expression( {expression} ); ");
-				}
+                   options.Write($"Expression( {expression} );");
+                }
+
+                if (!string.IsNullOrWhiteSpace(expression))
+                {
+                    options.Write($"Expression( {expression} ); ");
+                }
             }
 		}
 
