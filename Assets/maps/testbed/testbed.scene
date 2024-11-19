@@ -29,7 +29,7 @@
       "Rotation": "0,-0,-0.7071068,0.7071068",
       "Tags": "player",
       "Enabled": true,
-      "__Prefab": "prefabs/demoplayer_boomcam.prefab",
+      "__Prefab": "prefabs/demoplayer.prefab",
       "__PrefabVariables": {
         "Player Field Of View": 90,
         "Arm Length": 112,
@@ -53,6 +53,7 @@
               "__type": "Sandbox.ModelRenderer",
               "__guid": "34aede27-41fb-40d8-8a93-d968d2170750",
               "BodyGroups": 18446744073709551615,
+              "CreateAttachments": false,
               "MaterialOverride": "materials/parallaxtest.vmat",
               "Model": "models/dev/box.vmdl",
               "RenderOptions": {
@@ -67,6 +68,12 @@
           ]
         }
       ]
+    },
+    {
+      "__guid": "8a513be9-ef8a-4c4a-8c11-2d4be871b3ca",
+      "Flags": 0,
+      "Name": "GameObject",
+      "Enabled": true
     }
   ],
   "SceneProperties": {
@@ -96,5 +103,6 @@
   "Title": null,
   "Description": null,
   "__references": [],
+  "HasUnsavedChanges": false,
   "__version": 2
 }
