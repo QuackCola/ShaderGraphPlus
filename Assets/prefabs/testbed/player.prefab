@@ -1,18 +1,19 @@
 {
   "RootObject": {
-    "__guid": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+    "__guid": "5e4edcc1-8b12-46a4-80d6-3855f51c4620",
     "Flags": 0,
-    "Name": "demoplayer",
-    "Tags": "player",
+    "Name": "Player Controller",
+    "Position": "-224,256,56",
+    "Rotation": "0,-0,-0.7071068,0.7071068",
     "Enabled": true,
     "Components": [
       {
         "__type": "Sandbox.PlayerController",
-        "__guid": "183612cb-121b-4668-80cf-89f490300b7f",
+        "__guid": "0b2d1fb0-0c50-4115-87dd-75d1daaa6b83",
         "Body": {
           "_type": "component",
-          "component_id": "7360fb50-85e5-4a65-aeb6-cfd69a36e51f",
-          "go": "e5dd1fa1-d6ea-4239-a1fb-bbbaf801b119",
+          "component_id": "90815dc7-3658-44d0-b0c5-86f6945a15df",
+          "go": "5e4edcc1-8b12-46a4-80d6-3855f51c4620",
           "component_type": "Rigidbody"
         },
         "BodyHeight": 72,
@@ -32,6 +33,12 @@
         "HideBodyInFirstPerson": true,
         "JumpSpeed": 300,
         "ReachLength": 130,
+        "Renderer": {
+          "_type": "component",
+          "component_id": "245c128b-6420-4e5a-823a-b67d3bcbcbe5",
+          "go": "d09669ad-1198-4b09-9438-773160866c2f",
+          "component_type": "SkinnedModelRenderer"
+        },
         "RotateWithGround": true,
         "RotationAngleLimit": 45,
         "RotationSpeed": 1,
@@ -48,7 +55,7 @@
       },
       {
         "__type": "Sandbox.Rigidbody",
-        "__guid": "7360fb50-85e5-4a65-aeb6-cfd69a36e51f",
+        "__guid": "90815dc7-3658-44d0-b0c5-86f6945a15df",
         "AngularDamping": 1,
         "Gravity": true,
         "LinearDamping": 0.1,
@@ -57,7 +64,7 @@
           "Yaw": true,
           "Roll": true
         },
-        "MassCenterOverride": "0,0,0",
+        "MassCenterOverride": "0,0,4.372114",
         "MassOverride": 500,
         "MotionEnabled": true,
         "OverrideMassCenter": true,
@@ -66,7 +73,7 @@
       },
       {
         "__type": "Sandbox.Movement.MoveModeWalk",
-        "__guid": "0dce5ce2-6155-4368-82ab-3a8761b3ad13",
+        "__guid": "8357feaf-56ca-4bf0-86bb-5d73bd55f6e8",
         "GroundAngle": 45,
         "Priority": 0,
         "StepDownHeight": 18,
@@ -74,7 +81,7 @@
       },
       {
         "__type": "Sandbox.CapsuleCollider",
-        "__guid": "2b32bd35-72e4-412a-b840-d06a04b6b754",
+        "__guid": "a92415b3-6edd-417d-9737-75911566966e",
         "End": "0,0,45.05097",
         "Friction": 0,
         "IsTrigger": false,
@@ -85,7 +92,7 @@
       },
       {
         "__type": "Sandbox.BoxCollider",
-        "__guid": "70b1336a-3fc9-4e86-8ffe-28af69494917",
+        "__guid": "327401c7-06e9-464c-beb4-d8ed8bd66998",
         "Center": "0,0,18",
         "Friction": 0,
         "IsTrigger": false,
@@ -94,36 +101,28 @@
         "SurfaceVelocity": "0,0,0"
       },
       {
-        "__type": "Sandbox.Movement.MoveModeWalk",
-        "__guid": "1bfd29cf-8845-4a8b-b387-454ad84062ab",
-        "GroundAngle": 45,
-        "Priority": 0,
-        "StepDownHeight": 18,
-        "StepUpHeight": 18
-      },
-      {
         "__type": "Sandbox.Movement.MoveModeSwim",
-        "__guid": "93e17422-fefc-4f90-8906-b1493e13577e",
+        "__guid": "e42bad6e-30a5-4970-90be-47b8c89a44b1",
         "Priority": 10,
         "SwimLevel": 0.7
       },
       {
         "__type": "Sandbox.Movement.MoveModeLadder",
-        "__guid": "d29e606f-31f3-4132-8640-a3693c39c035",
+        "__guid": "c50c3701-252d-42f1-ba01-5ee1f1f09e7d",
         "ClimbableTags": "ladder",
         "Priority": 5
       }
     ],
     "Children": [
       {
-        "__guid": "425e70af-afa9-43ff-834f-3808a154ffe8",
+        "__guid": "d09669ad-1198-4b09-9438-773160866c2f",
         "Flags": 0,
         "Name": "Body",
         "Enabled": true,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
-            "__guid": "90a9e232-cded-4c97-b6d1-fdf58abcadb9",
+            "__guid": "245c128b-6420-4e5a-823a-b67d3bcbcbe5",
             "BodyGroups": 341,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
@@ -152,19 +151,19 @@
         ]
       },
       {
-        "__guid": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a",
+        "__guid": "fb4d29b2-dddc-448d-954c-0e07f02480b0",
         "Flags": 0,
         "Name": "Camera",
-        "Position": "0,0,56",
-        "Scale": "1,1,12",
+        "Position": "0,0,64",
+        "Tags": "maincamera",
         "Enabled": true,
         "Components": [
           {
             "__type": "Sandbox.CameraComponent",
-            "__guid": "703835c1-5d80-42ef-ada9-9dbbe659c69b",
+            "__guid": "1ec5dce3-e535-4790-9484-d7c7c90bca8e",
             "BackgroundColor": "0.33333,0.46275,0.52157,1",
             "ClearFlags": "All",
-            "FieldOfView": 90,
+            "FieldOfView": 60,
             "IsMainCamera": true,
             "Orthographic": false,
             "OrthographicHeight": 1204,
@@ -174,47 +173,11 @@
             "TargetEye": "None",
             "Viewport": "0,0,1,1",
             "ZFar": 10000,
-            "ZNear": 0.1
+            "ZNear": 10
           }
         ]
       }
-    ],
-    "__variables": [
-      {
-        "Id": "Player Field Of View",
-        "Title": "Player Field Of View",
-        "Group": "Cemera Settings",
-        "Targets": [
-          {
-            "Id": "703835c1-5d80-42ef-ada9-9dbbe659c69b",
-            "Property": "FieldOfView"
-          }
-        ]
-      }
-    ],
-    "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
-      "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
-      "TimeScale": 1,
-      "UseFixedUpdate": true,
-      "Metadata": {},
-      "NavMesh": {
-        "Enabled": false,
-        "IncludeStaticBodies": true,
-        "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
-        "AgentHeight": 64,
-        "AgentRadius": 16,
-        "AgentStepSize": 18,
-        "AgentMaxSlope": 40,
-        "ExcludedBodies": "",
-        "IncludedBodies": ""
-      }
-    }
+    ]
   },
   "ShowInMenu": false,
   "MenuPath": null,

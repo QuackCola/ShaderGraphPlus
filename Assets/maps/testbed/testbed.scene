@@ -22,21 +22,6 @@
       "Children": []
     },
     {
-      "__guid": "399d236c-895f-46cb-baf6-9e9c2bc39387",
-      "Flags": 0,
-      "Name": "DemoPlayer",
-      "Position": "-224,256,56",
-      "Rotation": "0,-0,-0.7071068,0.7071068",
-      "Tags": "player",
-      "Enabled": true,
-      "__Prefab": "prefabs/demoplayer.prefab",
-      "__PrefabVariables": {
-        "Player Field Of View": 90,
-        "Arm Length": 112,
-        "Socket Offset": "0,32,16"
-      }
-    },
-    {
       "__guid": "b30b2f66-1aab-48e7-af91-dfb26294c9a7",
       "Flags": 0,
       "Name": "TestObjects",
@@ -64,6 +49,29 @@
               },
               "RenderType": "On",
               "Tint": "1,1,1,1"
+            },
+            {
+              "__type": "Sandbox.BoxCollider",
+              "__guid": "0f60b7f0-589e-44c7-ad55-6ff9e2d83731",
+              "Center": "0,0,0",
+              "IsTrigger": false,
+              "Scale": "50,50,50",
+              "Static": false,
+              "SurfaceVelocity": "0,0,0"
+            },
+            {
+              "__type": "Sandbox.Rigidbody",
+              "__guid": "22916805-0bdf-4ff5-a1f2-dc31ea76ed34",
+              "AngularDamping": 0,
+              "Gravity": true,
+              "LinearDamping": 0,
+              "Locking": {},
+              "MassCenterOverride": "0,0,0",
+              "MassOverride": 0,
+              "MotionEnabled": true,
+              "OverrideMassCenter": false,
+              "RigidbodyFlags": 0,
+              "StartAsleep": false
             }
           ]
         }
@@ -74,6 +82,16 @@
       "Flags": 0,
       "Name": "GameObject",
       "Enabled": true
+    },
+    {
+      "__guid": "5e4edcc1-8b12-46a4-80d6-3855f51c4620",
+      "Flags": 0,
+      "Name": "Player Controller",
+      "Position": "-224,256,56",
+      "Rotation": "0,-0,-0.7071068,0.7071068",
+      "Enabled": true,
+      "__Prefab": "prefabs/testbed/player.prefab",
+      "__PrefabVariables": {}
     }
   ],
   "SceneProperties": {
