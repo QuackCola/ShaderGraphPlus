@@ -10,6 +10,17 @@
     "Icon": "",
     "Order": 500
   },
+  "Metadata": {},
+  "test": {
+    "description": "ass",
+    "blendmode": "Translucent",
+    "shadingmodel": "Unlit",
+    "t": {
+      "description": "ass",
+      "blendmode": "Masked",
+      "shadingmodel": "Unlit"
+    }
+  },
   "nodes": [
     {
       "_class": "Result",
@@ -18,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1164,-984"
+      "Position": "-1296,-984"
     }
   ]
 }

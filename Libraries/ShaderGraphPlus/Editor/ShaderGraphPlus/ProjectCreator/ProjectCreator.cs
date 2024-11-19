@@ -1,6 +1,5 @@
 ﻿using MaterialDesign;
 using static Editor.WidgetGalleryWindow;
-using static Sandbox.Connection;
 namespace Editor.ShaderGraphPlus;
 
 internal class FieldTitle : Label
@@ -28,7 +27,7 @@ public class ProjectCreator : Dialog
 
     private FolderProperty FolderEdit;
 
-    private FieldSubtitle FolderFullPath;
+    //private FieldSubtitle FolderFullPath;
 
     private ProjectTemplate ActiveTemplate;
 
@@ -42,14 +41,6 @@ public class ProjectCreator : Dialog
 
     // TODO : Add in some extra options to the template metadata. Something like the ability to further configure the selected template such as shading model and the shader description.
     //
-
-    internal class TemplateUserConfig
-    {
-        [TextArea]
-        public string description { get; set; }    
-        public BlendMode blendmode { get; set; }
-        public ShadingModel shadingmodel { get; set; }
-    }
 
     private TemplateUserConfig templateUserConfig;
     private  bool debugLayout = false;
@@ -84,6 +75,7 @@ public class ProjectCreator : Dialog
         Layout.Spacing = 3;
 
         // Header
+        /*
         {
             if (debugLayout)
             {
@@ -94,12 +86,13 @@ public class ProjectCreator : Dialog
             }
             else
             {
-                //Layout headerBody = Layout.AddColumn(2, false);
-                //headerBody.Add(new ColouredLabel(Theme.Red, "Templates"), 2);
-                //headerBody.Add(new Label.Subtitle("Templates"), 2);
-                //headerBody.AddStretchCell(64);
+                Layout headerBody = Layout.AddColumn(2, false);
+                headerBody.Add(new ColouredLabel(Theme.Red, "Templates"), 2);
+                headerBody.Add(new Label.Subtitle("Templates"), 2);
+                headerBody.AddStretchCell(64);
             }
         }
+        */
 
         // Templates ListView & Template setup
         {
@@ -140,6 +133,13 @@ public class ProjectCreator : Dialog
                 {
                     ActiveTemplate = item as ProjectTemplate;
                 });
+
+                ActiveTemplate = templates.ListView.ChosenTemplate; // Set the intital selected template.
+
+                if (!Diagnostics.Assert.Check(ActiveTemplate,null))
+                {
+                    Log.Info($"Active template : {ActiveTemplate.TemplatePath}");
+                }
 
                 listViewBody.AddSpacingCell(128f);
 
@@ -205,29 +205,22 @@ public class ProjectCreator : Dialog
                 setupBody.AddSpacingCell(16);
 
                 // Additional per-template config. 
+
                 setupBody.Add(new FieldTitle("Config"));
                 {
 
                     templateUserConfig = new TemplateUserConfig();
-
-                    // Dont know if i should use this or PropertySheet. - Quack
-                    /*
-                        var so = templateUserConfig.GetSerialized();
-                        var ps = new ControlSheet();
-                        ps.AddObject(so);
-                        var property = ps;
-                    */
 
                     var canvas = new Widget(null);
                     canvas.Layout = Layout.Row();
                     canvas.Layout.Spacing = 32;
 
                     var property = new PropertySheet(canvas);
+                  
                     property.MinimumWidth = 350;
-                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.description));
-                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
-                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
-
+                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.Description));
+                    //property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
+                    //property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
                     setupBody.Add(property);
                 }
 
@@ -322,13 +315,12 @@ public class ProjectCreator : Dialog
 
     private void ConfigureTemplate( ShaderGraphPlus shaderGraphPlusTemplate )
     {
-        if (shaderGraphPlusTemplate.MaterialDomain is not MaterialDomain.PostProcess)
-        {
-            shaderGraphPlusTemplate.BlendMode   = templateUserConfig.blendmode;
-        }
-        shaderGraphPlusTemplate.Description     = templateUserConfig.description;
-        shaderGraphPlusTemplate.ShadingModel    = templateUserConfig.shadingmodel;
-
+        //if (shaderGraphPlusTemplate.MaterialDomain is not MaterialDomain.PostProcess)
+        //{
+        //    shaderGraphPlusTemplate.BlendMode = templateUserConfig.blendmode;
+        //}
+        shaderGraphPlusTemplate.Description = templateUserConfig.Description;
+        //shaderGraphPlusTemplate.ShadingModel = templateUserConfig.shadingmodel;
     }
 
     private ShaderGraphPlus ReadTemplate( string templatePath )
@@ -352,7 +344,7 @@ public class ProjectCreator : Dialog
             return;
         }
 
-        Log.Info($"Instance option : {templateUserConfig.shadingmodel}");
+        Log.Info($"Instance option : {templateUserConfig.ShadingModel}");
 
         string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
@@ -379,6 +371,4 @@ public class ProjectCreator : Dialog
     {
         Init();
     }
-
-
 }

@@ -8,9 +8,11 @@ internal class ProjectTemplates : Widget
     {
        Layout = Layout.Column(false);
        Layout.Spacing = 8f;
+
        ListView = new ProjectTemplatesListView(this);
        ListView.SetSizeMode(SizeMode.Default, SizeMode.Default);
        ListView.Layout  = Layout.Row(false);
+
        Layout.Add(ListView, 1);
     }
 }

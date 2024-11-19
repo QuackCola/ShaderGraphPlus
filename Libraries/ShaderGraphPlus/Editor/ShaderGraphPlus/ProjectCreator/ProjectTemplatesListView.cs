@@ -22,7 +22,8 @@ internal class ProjectTemplatesListView : ListView
 
         SetItems(orderedTemplates);
         ChosenTemplate = orderedTemplates.FirstOrDefault();
-        if (ChosenTemplate != null)
+        
+		if (ChosenTemplate != null)
         {
             SelectItem(ChosenTemplate, false, false);
         }
@@ -79,11 +80,6 @@ internal class ProjectTemplatesListView : ListView
 		object @object = v.Object;
 		Rect rect = v.Rect;
 
-		if (@object is null)
-		{
-			Log.Info("Nothing!");
-		}
-
         if (@object is ProjectTemplate template)
 		{
 			Rect r = rect;
@@ -96,13 +92,11 @@ internal class ProjectTemplatesListView : ListView
 
 			Paint.Antialiasing = true;
 			Paint.ClearPen();
-			Color color = Theme.ButtonDefault.WithAlpha(0.1f);
-			Paint.SetBrush(in color);
+			Paint.SetBrush(Theme.ButtonDefault.WithAlpha(0.1f));
 
 			if (Paint.HasSelected)
 			{
-				color = Theme.Blue.WithAlpha(0.1f);
-				Paint.SetBrush(in color);
+				Paint.SetBrush(Theme.Blue.WithAlpha(0.1f));
 			}
 
 			Paint.DrawRect(in r, 4f);
@@ -110,32 +104,21 @@ internal class ProjectTemplatesListView : ListView
 			if (Paint.HasMouseOver)
 			{
 				Paint.ClearPen();
-				color = Theme.White.WithAlpha(0.05f);
-				Paint.SetBrush(in color);
+				Paint.SetBrush(Theme.White.WithAlpha(0.05f));
 				Paint.DrawRect(in r, 4f);
 			}
 
 			Paint.Antialiasing = false;
 
-			float amt = 8f;
-			r = r.Shrink(in amt);
-			color = fg.WithAlpha(0.7f);
-			amt = 0f;
-
-			PenStyle style = PenStyle.Solid;
-			Paint.SetPen(in color, in amt, in style);
-			Vector2 size = rect.Height - 16f;
-			Paint.DrawIcon(r.Align(in size, TextFlag.LeftCenter), template.Icon, 24f);
+			r = r.Shrink(8f);
+	
+			Paint.SetPen(fg.WithAlpha(0.7f), 0f, PenStyle.Solid);
+			Paint.DrawIcon(r.Align(rect.Height - 16f, TextFlag.LeftCenter), template.Icon, 24f);
 			Paint.SetDefaultFont();
 
-			amt = 0f;
-			style = PenStyle.Solid;
+			Paint.SetPen(in fg, 0f, PenStyle.Solid);
 
-			Paint.SetPen(in fg, in amt, in style);
-
-			amt = rect.Height - 8f;
-			float y = 0f;
-			r = r.Shrink(in amt, in y);
+			r = r.Shrink(rect.Height - 8f, 0f);
 
 			Rect x = Paint.DrawText(in r, template.Title, TextFlag.LeftTop);
 
@@ -143,17 +126,11 @@ internal class ProjectTemplatesListView : ListView
 
 			if (Paint.HasSelected)
 			{
-				color = Theme.Blue.WithAlpha(1f);
-				amt = 0f;
-				style = PenStyle.Solid;
-				Paint.SetPen(in color, in amt, in style);
+				Paint.SetPen(Theme.Blue.WithAlpha(1f), 0f, PenStyle.Solid);
 			}
 			else
 			{
-				color = Theme.ControlText.WithAlpha(0.5f);
-				amt = 0f;
-				style = PenStyle.Solid;
-				Paint.SetPen(in color, in amt, in style);
+				Paint.SetPen(Theme.ControlText.WithAlpha(0.5f), 0f, PenStyle.Solid);
 			}
 
 			r.Right = rect.Width;

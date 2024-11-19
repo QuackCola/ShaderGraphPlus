@@ -8,11 +8,10 @@
     "Order": 500
   },
   "Metadata": {
-      "ProjectTemplate": {
+    "ProjectTemplate": {
       "Icon": "camera",
-      "Order": 100,
-      "Description": "You want to make a post processing shader",
-	  "MaterialDomain": "PostProcess"
+      "Order": 150,
+      "Description": "You want to make a Post Processing Shader"
     }
   },
   "nodes": [
