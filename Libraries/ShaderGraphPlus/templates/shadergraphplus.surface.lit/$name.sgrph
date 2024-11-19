@@ -12,7 +12,7 @@
       "Icon": "texture",
       "Order": 50,
       "Description": "You want to make a Standard Material Shader"
-	}
+    }
   },
   "nodes": [
     {
