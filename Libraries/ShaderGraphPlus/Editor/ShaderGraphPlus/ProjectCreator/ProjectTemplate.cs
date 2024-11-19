@@ -1,5 +1,14 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
+public class TemplateUserConfig
+{
+    [TextArea]
+    [Title("Shader Description")]
+    public string Description { get; set; }
+    public BlendMode BlendMode { get; set; }
+    public ShadingModel ShadingModel { get; set; }
+}
+
 internal class ProjectTemplate
 {
     private class DisplayData
@@ -10,34 +19,49 @@ internal class ProjectTemplate
 
         public string Description { get; set; }
 
-        public MaterialDomain materialDomain { get; set; }
+        public BlendMode BlendMode { get; set; }
+
+        public ShadingModel ShadingModel { get; set; }
     }
 
+    //private class ConfigData
+    //{
+    //    public BlendMode BlendMode { get; set; }
+    //
+    //    public ShadingModel ShadingModel { get; set; }
+    //}
+
     private ShaderGraphPlus Config { get; init; }
+
+    //public TemplateUserConfig templateConfigUser { get; set; } = new TemplateUserConfig();
 
     public string TemplatePath { get; init; }
 
     public string Title => Config.Description;
 
+    // Display Data
     public string Icon { get; set; } = "question_mark";
     public int Order { get; set; }
     public string Description { get; set; } = "No description provided.";
 
-    public MaterialDomain MaterialDomain { get; set; }
+    // Config Data
+    //public BlendMode BlendMode { get; set; }
+    //public ShadingModel ShadingModel { get; set; }
 
     public ProjectTemplate(ShaderGraphPlus templateConfig, string path)
     {
         Config = templateConfig;
         TemplatePath = path;
         DisplayData display = default(DisplayData);
+        //ConfigData config = default(ConfigData);
 
         if (Config.TryGetMeta("ProjectTemplate", out display))
         {
             Icon = display.Icon;
             Order = display.Order.GetValueOrDefault();
             Description = display.Description ?? "No description provided.";
-            MaterialDomain = display.materialDomain;
         }
+
     }
 
     private void CopyFolder(string sourceDir, string targetDir, string addonIdent)
@@ -45,12 +69,16 @@ internal class ProjectTemplate
         if (!sourceDir.Contains("\\.", StringComparison.OrdinalIgnoreCase))
         {
             Directory.CreateDirectory(targetDir);
+
             string[] files = Directory.GetFiles(sourceDir);
+
             foreach (string file in files)
             {
                 CopyAndProcessFile(file, targetDir, addonIdent);
             }
+
             files = Directory.GetDirectories(sourceDir);
+
             foreach (string directory in files)
             {
                 CopyFolder(directory, Path.Combine(targetDir, Path.GetFileName(directory)), addonIdent);

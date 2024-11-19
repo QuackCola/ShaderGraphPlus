@@ -1,20 +1,13 @@
 {
   "Model": null,
-  "Description": null,
+  "Description": "MyUnlitShaderDescription",
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "Order": 500
   },
-  "Metadata": {
-      "ProjectTemplate": {
-      "Icon": "texture",
-      "Order": 100,
-      "Description": "You want to make a material shader",
-	  "MaterialDomain": "Surface"
-    }
-  },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
