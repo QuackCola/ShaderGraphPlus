@@ -1,8 +1,8 @@
 {
-  "Model": "models/saul.vmdl",
+  "Model": null,
   "Description": null,
-  "BlendMode": "Translucent",
-  "ShadingModel": "Lit",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "ComponentTitle": "VisDepth",
@@ -18,7 +18,49 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1164,-984"
+      "Position": "-1164,-984",
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureTriplanar",
+      "DefaultTile": 4,
+      "Image": "textures/dev/helper/dev_testgrid_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "-1608,-900"
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 3,
+      "Identifier": "2",
+      "Position": "-1752,-936",
+      "A": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "3",
+      "Position": "-2040,-1080"
+    },
+    {
+      "_class": "CustomCodeNode",
+      "Name": null,
+      "Code": "(i.vPositionWithOffsetWs.xyz \u002B g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+      "ResultType": "Vector3",
+      "Identifier": "4",
+      "Position": "-1944,-924"
     }
   ]
 }

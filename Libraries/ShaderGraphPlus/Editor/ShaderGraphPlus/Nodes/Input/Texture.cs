@@ -68,13 +68,15 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 	}
 
 	[InlineEditor]
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+    [Group("Sampler")]
+    public Sampler DefaultSampler { get; set; } = new Sampler();
 
 	/// <summary>
 	/// Settings for how this texture shows up in material editor
 	/// </summary>
 	[InlineEditor]
-	public TextureInput UI { get; set; } = new TextureInput
+    [Group("UI")]
+    public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -477,14 +479,25 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 	/// How the texture is filtered and wrapped when sampled
 	/// </summary>
 	[Title( "Sampler" )]
-	[Input]
+    [Input]
 	[Hide]
 	public NodeInput Sampler { get; set; }
 
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
+    /// <summary>
+    /// How many times to file the coordinates.
+    /// </summary>
+    [Title("Tile")]
+    [Input(typeof(float))]
+    [Hide]
+    public NodeInput Tile { get; set; }
+
+	[Group("Default Values")]
+	public float DefaultTile { get; set; } = 1.0f;
+
+    /// <summary>
+    /// RGBA color result
+    /// </summary>
+    [Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -498,11 +511,12 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 
 		var (tex, sampler) = compiler.ResultTexture(compiler.ResultSamplerOrDefault(Sampler, DefaultSampler), input, texture);
 		var coords = compiler.Result(Coords);
+		var tile = compiler.ResultOrDefault(Tile, DefaultTile);
 		var normal = compiler.Result(Normal);
 
 		var result = compiler.ResultFunction( TexTriplanar_Color,
             args:
-            $" {tex}, {sampler}, {(coords.IsValid ? $"{coords.Cast(3)}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
+            $" {tex}, {sampler}, ({(coords.IsValid ? $"{coords.Cast(3)}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}) * {tile}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
         );
 
 		return new NodeResult( ResultType.Color, result );
