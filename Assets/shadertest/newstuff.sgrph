@@ -1,8 +1,8 @@
 {
-  "Model": "models/dev/plane.vmdl",
+  "Model": null,
   "Description": null,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "ComponentTitle": "VisDepth",
@@ -18,88 +18,66 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1188,-972",
+      "Position": "-1164,-984",
       "Albedo": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "TextureTriplanar",
+      "DefaultTile": 4,
+      "DefaultBlendFactor": 4,
+      "Image": "textures/dev/helper/dev_testgrid_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "-1608,-900"
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 3,
+      "Identifier": "2",
+      "Position": "-1752,-936",
+      "A": {
         "Identifier": "4",
         "Output": "Result"
       }
     },
     {
-      "_class": "Float2",
-      "Min": "0,0",
-      "Max": "1,1",
-      "Value": "0,0",
-      "Name": "TexCoordOffset",
-      "IsAttribute": false,
-      "Expression": "v0 = (g_flTexCoordRotation*3.1415927)/180; \nv1 = cos(v0);\nv2 = sin(v0);\nv3 = g_vTexCoordScale; \nv4 = this;\n(((-.5*v3)*float2(v1-v2,v2\u002Bv1))\u002Bv4)\u002B.5",
-      "UI": {},
-      "Identifier": "1",
-      "Position": "-2004,-840"
-    },
-    {
-      "_class": "Float",
-      "Min": 0,
-      "Max": 360,
-      "Value": 0,
-      "Name": "TexCoordRotation",
-      "IsAttribute": false,
-      "Expression": "v0 = (TexCoordRotation*3.1415927)/180; \nv1 = cos(v0);\nv2 = sin(v0);\nv3 = TexCoordScale; \nv4 = this;\n(((-.5*v3)*float2(v1-v2,v2\u002Bv1))\u002Bv4)\u002B.5",
-      "UI": {},
-      "Identifier": "2",
-      "Position": "-2004,-936"
-    },
-    {
-      "_class": "Float2",
-      "Min": "0,0",
-      "Max": "64,64",
-      "Value": "1,1",
-      "Name": "TexCoordScale",
-      "IsAttribute": false,
-      "Expression": null,
-      "UI": {},
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
       "Identifier": "3",
-      "Position": "-2004,-1044"
+      "Position": "-2040,-1080"
     },
     {
-      "_class": "TextureSampler",
-      "Image": "materials/decals/garrysmod.png",
-      "DefaultSampler": {
-        "Name": ""
-      },
-      "UI": {
-        "Name": "CoolTex",
-        "Default": "1,1,1,1",
-        "ShowExtension": true,
-        "SrgbRead": true
-      },
+      "_class": "CustomCodeNode",
+      "Name": null,
+      "Code": "(i.vPositionWithOffsetWs.xyz \u002B g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+      "ResultType": "Vector3",
       "Identifier": "4",
-      "Position": "-1572,-1032",
-      "Coords": {
-        "Identifier": "6",
-        "Output": "Result"
-      }
+      "Position": "-1944,-924"
     },
     {
-      "_class": "TextureCoord",
-      "UseSecondaryCoord": false,
-      "Tiling": "1,1",
-      "Identifier": "5",
-      "Position": "-2004,-1128"
-    },
-    {
-      "_class": "Add",
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "6",
-      "Position": "-1752,-1044",
-      "A": {
-        "Identifier": "5",
-        "Output": "Result"
+      "_class": "NormapMapTriplanar",
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Image": "materials/dev/white_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "0.5,0.5,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "Processor": "NormalizeNormals",
+        "ColorSpace": "Linear"
       },
-      "B": {
-        "Identifier": "1",
-        "Output": "Result"
-      }
+      "Identifier": "5",
+      "Position": "-1608,-672"
     }
   ]
 }
