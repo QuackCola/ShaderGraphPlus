@@ -61,6 +61,21 @@
       "ResultType": "Vector3",
       "Identifier": "4",
       "Position": "-1944,-924"
+    },
+    {
+      "_class": "NormapMapTriplanar",
+      "DefaultTile": 1,
+      "Image": "materials/dev/white_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "0.5,0.5,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "Processor": "NormalizeNormals",
+        "ColorSpace": "Linear"
+      },
+      "Identifier": "5",
+      "Position": "-1608,-672"
     }
   ]
 }

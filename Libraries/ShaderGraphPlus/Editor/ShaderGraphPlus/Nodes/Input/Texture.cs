@@ -629,10 +629,21 @@ float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 
 		};
 	}
 
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
+    /// <summary>
+    /// How many times to file the coordinates.
+    /// </summary>
+    [Title("Tile")]
+    [Input(typeof(float))]
+    [Hide]
+    public NodeInput Tile { get; set; }
+
+    [Group("Default Values")]
+    public float DefaultTile { get; set; } = 1.0f;
+
+    /// <summary>
+    /// RGBA color result
+    /// </summary>
+    [Hide]
 	[Output( typeof( Vector3 ) ), Title( "XYZ" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -646,11 +657,12 @@ float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 
 
 		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
 		var coords = compiler.Result( Coords );
-		var normal = compiler.Result( Normal );
+        var tile = compiler.ResultOrDefault(Tile, DefaultTile);
+        var normal = compiler.Result( Normal );
 
 		var result = compiler.ResultFunction( TexTriplanar_Normal ,
 			args:
-			$"{tex}, {sampler}, {(coords.IsValid ? $"{coords.Cast( 3 )}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
+			$"{tex}, {sampler}, ({(coords.IsValid ? $"{coords.Cast( 3 )}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}) * {tile}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")} "
         );
 
         return new NodeResult( ResultType.Vector3, result );
