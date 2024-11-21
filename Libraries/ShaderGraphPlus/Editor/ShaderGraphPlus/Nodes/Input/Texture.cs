@@ -68,7 +68,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 	}
 
 	[InlineEditor]
-    [Group("Sampler")]
+    [Group("Default Values")]
     public Sampler DefaultSampler { get; set; } = new Sampler();
 
 	/// <summary>
