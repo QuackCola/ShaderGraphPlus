@@ -27,6 +27,7 @@
     {
       "_class": "TextureTriplanar",
       "DefaultTile": 4,
+      "DefaultBlendFactor": 4,
       "Image": "textures/dev/helper/dev_testgrid_color.tga",
       "DefaultSampler": {},
       "UI": {
@@ -65,6 +66,7 @@
     {
       "_class": "NormapMapTriplanar",
       "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
       "Image": "materials/dev/white_color.tga",
       "DefaultSampler": {},
       "UI": {

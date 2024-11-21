@@ -79,13 +79,13 @@ PS
 	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 		
-	float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 vPosition, float3 vNormal )
+	float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 vPosition, float3 vNormal, float BlendFactor )
 	{
 		float2 uvX = vPosition.zy;
 		float2 uvY = vPosition.xz;
 		float2 uvZ = vPosition.xy;
 	
-		float3 triblend = saturate(pow(abs(vNormal), 4));
+		float3 triblend = saturate(pow(abs(vNormal), BlendFactor));
 		triblend /= max(dot(triblend, half3(1,1,1)), 0.0001);
 	
 		half3 axisSign = vNormal < 0 ? -1 : 1;
@@ -108,7 +108,7 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		
-		float4 l_0 = TexTriplanar_Color( g_tTexture_ps_0, g_sSampler0, ((i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701) * 4, normalize( i.vNormalWs.xyz ) );
+		float4 l_0 = TexTriplanar_Color( g_tTexture_ps_0, g_sSampler0, ((i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701) * 4, normalize( i.vNormalWs.xyz ), 4);
 		
 		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
