@@ -29,7 +29,7 @@ public class ShaderGraphPlusView : GraphView
     ? GridConnectionStyle.Instance
     : ConnectionStyle.Default;
 
-    private ConnectionStyle _oldConnectionStyle;
+    //private ConnectionStyle _oldConnectionStyle; // TODO : Get GridConnectionStyle Working!!!
 
     public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
 	{
