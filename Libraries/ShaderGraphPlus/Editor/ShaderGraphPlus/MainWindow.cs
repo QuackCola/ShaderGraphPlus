@@ -53,6 +53,8 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool CanOpenMultipleAssets => true;
 
+	private ProjectCreator ProjectCreator { get; set; }
+
 	public MainWindow()
 	{
 		DeleteOnClose = true;
@@ -61,25 +63,38 @@ public class MainWindow : DockWindow, IAssetEditor
 		Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
-
+		
 		CreateToolBar();
-
-		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault( "shadergraphplus_recentfiles.json", _recentFiles )
-			.Where( x => System.IO.File.Exists( x ) ).ToList();
-
+		
+		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
+		    .Where(x => System.IO.File.Exists(x)).ToList();
+		
 		CreateUI();
 		Show();
-
 		CreateNew();
 
-	}
+        OpenProjectCreationDialog();
+    }
 
-	public void AssetOpen( Asset asset )
+	private void OpenProjectCreationDialog()
 	{
+        ProjectCreator = new ProjectCreator();
+        ProjectCreator.DeleteOnClose = true;
+        ProjectCreator.Show();
+        ProjectCreator.OnProjectCreated += Open;
+    }
+
+    public void AssetOpen( Asset asset )
+	{
+		Log.Info($"Opened Asset : {asset.Name}");
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
 
-		Open( asset.AbsolutePath );
+		// We dont need the project creator when opening an existing asset. So lets forceably close it.
+        ProjectCreator.Close();
+        ProjectCreator = null;
+
+        Open( asset.AbsolutePath );
 	}
 
 	private void RestoreShader()
@@ -371,7 +386,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 	}
 
-
 	private string GeneratePostProcessPreviewCode()
 	{
 		ClearAttributes();
@@ -480,7 +494,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		return code.Item1;
 
 	}
-
 
 	private string GeneratePreviewCode()
 	{
@@ -960,19 +973,20 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void Open( string path )
 	{
 		var asset = AssetSystem.FindByPath( path );
-		if ( asset == null )
+      
+        if ( asset == null )
 			return;
 
-		if ( asset == _asset )
+        if ( asset == _asset )
 		{
 			Log.Warning( $"{asset.RelativePath} is already open" );
 			return;
 		}
 
 		var graph = new ShaderGraphPlus();
-		graph.Deserialize( System.IO.File.ReadAllText( path ) );
-
-		_preview.Model = Model.Load( graph.Model );
+		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
+     
+        _preview.Model = Model.Load( graph.Model );
 
 		_asset = asset;
 		_graph = graph;
