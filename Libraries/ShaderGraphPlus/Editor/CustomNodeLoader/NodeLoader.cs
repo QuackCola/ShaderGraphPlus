@@ -27,9 +27,10 @@ public static class CustomNodeLoader
 
                 //Log.Info($"Found file: '{filename}' at path: '{path}'");
 
-                var destination = $"{lib_path}/Editor/Generated/ShaderGraphPlus/Nodes";//System.IO.Path.ChangeExtension(file, ".cs").Replace('\\', '/');
-      
+                var destination = $"{lib_path}/Editor/Generated/ShaderGraphPlus/Nodes";
+
                 System.IO.Directory.CreateDirectory(destination);
+
                 System.IO.File.Copy(path, $"{destination}/{filename}.cs");
             }
         }
