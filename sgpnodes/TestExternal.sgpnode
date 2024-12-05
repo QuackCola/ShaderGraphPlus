@@ -55,18 +55,18 @@ float BoxShape( float2 UV, float Width, float Height )
 		}
 
         // Avalible Result Types
-        /*
-			ResultType.Bool
-			ResultType.Float
-			ResultType.Vector2
-			ResultType.Vector3
-			ResultType.Color
-			ResultType.Float2x2
-			ResultType.Float3x3
-			ResultType.Float4x4
-			ResultType.Sampler
-			ResultType.TextureObject
-        */
+        
+		//ResultType.Bool
+		//ResultType.Float
+		//ResultType.Vector2
+		//ResultType.Vector3
+		//ResultType.Color
+		//ResultType.Float2x2
+		//ResultType.Float3x3
+		//ResultType.Float4x4
+		//ResultType.Sampler
+		//ResultType.TextureObject
+        
 		return new NodeResult( ResultType.Float , compiler.ResultFunction( BoxShape, args: $"{coords}, {width}, {height}" ) );
 	};
 
