@@ -1,0 +1,73 @@
+
+namespace Editor.ShaderGraphPlus.Nodes;
+
+[Title( "Box Shape Test" ), Category( "Procedural" )]
+public sealed class BoxShapeTestNode : ShaderNodePlus
+{
+	[Hide]
+	public string BoxShape => @"
+float BoxShape( float2 UV, float Width, float Height )
+{
+	float2 d = abs(UV * 2 - 1) - float2(Width, Height);
+    d = 1 - d / fwidth(d);
+	return saturate(min(d.x, d.y));
+}
+";
+
+	[Title( "UV" )]
+	[Input( typeof( Vector2 ) )]
+	[Hide]
+	public NodeInput Coords { get; set; }
+
+	[Title( "Width" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Width { get; set; }
+
+	[Title( "Height" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Height { get; set; }
+
+	public float DefaultWidth { get; set; } = 0.5f;
+	public float DefaultHeight { get; set; } = 0.5f;
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var incoords = compiler.Result( Coords );
+
+        // use defaults if no input is connected to either Width or Height.
+		var width = compiler.ResultOrDefault( Width, DefaultWidth );
+		var height = compiler.ResultOrDefault( Height, DefaultHeight );
+
+		var coords = "";
+
+        // Handle PostProcessing Shaders texture coords.
+		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		{
+			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
+		}
+		else
+		{
+			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
+		}
+
+        // Avalible Result Types
+        /*
+			ResultType.Bool
+			ResultType.Float
+			ResultType.Vector2
+			ResultType.Vector3
+			ResultType.Color
+			ResultType.Float2x2
+			ResultType.Float3x3
+			ResultType.Float4x4
+			ResultType.Sampler
+			ResultType.TextureObject
+        */
+		return new NodeResult( ResultType.Float , compiler.ResultFunction( BoxShape, args: $"{coords}, {width}, {height}" ) );
+	};
+
+}
