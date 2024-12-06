@@ -25,14 +25,13 @@ COMMON
 	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
-	#define S_TRANSLUCENT 0
+	#define S_TRANSLUCENT 1
 	#endif
 	
 	#include "common/shared.hlsl"
 	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
 	
-	#define UNLIT
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -74,8 +73,26 @@ VS
 
 PS
 {
-	#include "common/test_pixel.hlsl"
-
+	#include "common/pixel.hlsl"
+	
+	float4 g_vEmissionColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 1.00, 1.00, 1.00 ); >;
+	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 10 ); Range1( 0, 16 ); >;
+	float g_flDepthOffset < UiGroup( ",0/,0/0" ); Default1( 0.5 ); Range1( 0, 64 ); >;
+		
+	float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
+	{
+		float3 l_1 = vWorldPos - g_vCameraPositionWs;
+		float l_2 = dot( l_1, g_vCameraDirWs );
+	
+	    flDepthOffset += l_2;
+		float Depth = Depth::GetLinear( vUv );
+	
+		float l_3 = smoothstep( l_2, flDepthOffset, Depth );
+	
+	    // One Minus the result before return
+		return 1 - l_3;
+	}
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
@@ -89,15 +106,18 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float4 l_0 = float4( 1, 0, 0, 1 );
-		float4 l_1 = float4( 0, 0.9, 0, 1 );
-		float l_2 = Depth::GetLinear( i.vPositionSs.xy );
-		float l_3 = l_2 / 256;
-		float l_4 = clamp( l_3, 0, 1 );
-		float4 l_5 = lerp( l_0, l_1, l_4 );
+		float4 l_0 = g_vEmissionColor;
+		float3 l_1 = float3( 0, 0, 0 );
+		float l_2 = g_flFresnelPower;
+		float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
+		float3 l_4 = l_2 == 0 ? l_1 : l_3;
+		float l_5 = g_flDepthOffset;
+		float l_6 = DepthIntersect(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vPositionSs.xy, l_5);
+		float l_7 = smoothstep( 0, 1, l_6 );
+		float3 l_8 = l_4 + float3( l_7, l_7, l_7 );
 		
-		m.Albedo = l_5.xyz;
-		m.Opacity = 1;
+		m.Emission = l_0.xyz;
+		m.Opacity = l_8.x;
 		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
@@ -115,7 +135,6 @@ PS
 		m.WorldTangentV = i.vTangentVWs;
         m.TextureCoords = i.vTextureCoords.xy;
 		
-		return ShadingModelStandardUnlit::Shade( i, m );
-		//return float4( m.Albedo, 1 );
+		return ShadingModelStandard::Shade( i, m );
 	}
 }

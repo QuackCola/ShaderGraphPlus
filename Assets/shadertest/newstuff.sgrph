@@ -1,11 +1,10 @@
 {
-  "Model": "models/saul.vmdl",
+  "Model": null,
   "Description": null,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
-    "GenerateClass": true,
     "ComponentTitle": "VisDepth",
     "ComponentCategory": "Test",
     "Icon": "",
@@ -19,77 +18,66 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-1548,-972"
+      "Position": "-1164,-984",
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
     },
     {
-      "_class": "Depth",
-      "Linear": true,
+      "_class": "TextureTriplanar",
+      "DefaultTile": 4,
+      "DefaultBlendFactor": 4,
+      "Image": "textures/dev/helper/dev_testgrid_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
       "Identifier": "1",
-      "Position": "-1884,-624"
+      "Position": "-1608,-900"
     },
     {
-      "_class": "Clamp",
-      "DefaultMin": 0,
-      "DefaultMax": 1,
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 3,
       "Identifier": "2",
-      "Position": "-2076,-936"
+      "Position": "-1752,-936",
+      "A": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
     },
     {
-      "_class": "ScreenPosition",
-      "Mode": "Raw",
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
       "Identifier": "3",
-      "Position": "-2076,-648"
+      "Position": "-2040,-1080"
     },
     {
-      "_class": "CommentNode",
-      "Size": "424,428",
-      "Color": "Green",
-      "Title": "New Nodes",
-      "Description": "",
-      "Layer": 1,
+      "_class": "CustomCodeNode",
+      "Name": null,
+      "Code": "(i.vPositionWithOffsetWs.xyz \u002B g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+      "ResultType": "Vector3",
       "Identifier": "4",
-      "Position": "-2112,-1188"
+      "Position": "-1944,-924"
     },
     {
-      "_class": "CommentNode",
-      "Size": "660,224",
-      "Color": "Green",
-      "Title": "Updated Nodes",
-      "Description": "",
-      "Layer": 1,
+      "_class": "NormapMapTriplanar",
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Image": "materials/dev/white_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "0.5,0.5,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "Processor": "NormalizeNormals",
+        "ColorSpace": "Linear"
+      },
       "Identifier": "5",
-      "Position": "-2112,-720"
-    },
-    {
-      "_class": "RGBtoLinear",
-      "Identifier": "6",
-      "Position": "-1908,-1140"
-    },
-    {
-      "_class": "LineartoRGB",
-      "Identifier": "7",
-      "Position": "-1908,-1080"
-    },
-    {
-      "_class": "HSVtoLinear",
-      "Identifier": "8",
-      "Position": "-2100,-1140"
-    },
-    {
-      "_class": "LineartoHSV",
-      "Identifier": "9",
-      "Position": "-2100,-1080"
-    },
-    {
-      "_class": "RemapValue",
-      "In": 0.5,
-      "InMin": 0,
-      "InMax": 1,
-      "OutMin": 0,
-      "OutMax": 0.556725,
-      "Clamp": true,
-      "Identifier": "10",
-      "Position": "-1668,-672"
+      "Position": "-1608,-672"
     }
   ]
 }

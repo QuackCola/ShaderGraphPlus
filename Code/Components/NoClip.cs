@@ -2,26 +2,26 @@ using Sandbox;
 
 public sealed class NoClip : Component
 {
-	[Property] public float MoveSpeed { get; set; } = 600.0f;
+    [Property] public float MoveSpeed { get; set; } = 600.0f;
 
-	Angles eyeAngles;
+    Angles eyeAngles;
 
-	protected override void OnStart()
-	{
-		eyeAngles = Transform.Rotation;
-	}
+    protected override void OnStart()
+    {
+        eyeAngles = WorldRotation;
+    }
 
-	protected override void OnUpdate()
-	{
-		eyeAngles += Input.AnalogLook;
+    protected override void OnUpdate()
+    {
+        eyeAngles += Input.AnalogLook;
 
-		Vector3 movement = Input.AnalogMove;
+        Vector3 movement = Input.AnalogMove;
 
-		Transform.Rotation = eyeAngles;
+        WorldRotation = eyeAngles;
 
-		if ( !movement.IsNearlyZero() )
-		{
-			Transform.Position += Transform.Rotation * movement.Normal * Time.Delta * MoveSpeed;
-		}
-	}
+        if (!movement.IsNearlyZero())
+        {
+            WorldPosition += WorldRotation * movement.Normal * Time.Delta * MoveSpeed;
+        }
+    }
 }

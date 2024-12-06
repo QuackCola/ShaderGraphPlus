@@ -139,6 +139,13 @@ public sealed class Abs : Unary
     protected override string Op => "abs";
 }
 
+[Title("Rsqrt"), Category("Unary")]
+public sealed class Rsqrt : Unary
+{
+    [Hide]
+    protected override string Op => "rsqrt";
+}
+
 [Title( "Sqrt" ), Category( "Unary" )]
 public sealed class Sqrt : Unary
 {
@@ -462,6 +469,28 @@ public sealed class OneMinus : ShaderNodePlus
 	{
 		ExpandSize = new Vector3( -85, 0 );
 	}
+}
+
+/// <summary>
+/// Positive values passed in become negative and negative values passed in become positive.
+/// </summary>
+[Title("Negate"), Category("Unary")]
+public sealed class Negate : ShaderNodePlus
+{
+    [Input(typeof(float)), Hide, Title("")]
+    public NodeInput In { get; set; }
+
+    public Negate() : base()
+    {
+        ExpandSize = new Vector3(-85, 0);
+    }
+
+    [Output, Hide, Title("")]
+    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    {
+        var result = compiler.ResultOrDefault(In, 0.0f);
+        return new NodeResult(result.ResultType, $"-1 * {result}");
+    };
 }
 
 /// <summary>

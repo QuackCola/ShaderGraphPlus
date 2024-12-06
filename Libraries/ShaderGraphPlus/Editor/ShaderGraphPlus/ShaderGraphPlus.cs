@@ -49,7 +49,6 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
-
     public ShaderGraphPlus()
 	{
 	}

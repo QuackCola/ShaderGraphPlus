@@ -1,4 +1,4 @@
-﻿
+﻿ 
 namespace Editor.ShaderGraphPlus.Nodes;
 
 /// <summary>
@@ -32,17 +32,25 @@ public sealed class Depth : ShaderNodePlus
 {
 	public enum DepthMode
 	{
-	    Linear,
-	    Raw
+        ///<summary>Returns the depth value at the given screen position from the depth.</summary>
+        Raw,
+        ///<summary>Returns the linear depth value at the given screen position.</summary>
+        Linear,
+        ///<summary>Returns the normalized depth value at the given screen position.</summary>
+        Normalized,
 	}
 
-	[Input( typeof( Vector2 ) ), Hide]
-	public NodeInput UV { get; set; }
+    [Hide]
+    public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
+
+    [Input( typeof( Vector2 ) ), Hide]
+    public NodeInput UV { get; set; }
 
     /// <summary>
-    /// Use Linear depth
+    /// What Mode to get 
     /// </summary>
-    public bool Linear { get; set; } = false;
+	public DepthMode Mode { get; set; }
+
 
 	[Output( typeof( float ) ), Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -52,48 +60,13 @@ public sealed class Depth : ShaderNodePlus
 
         string returnCall = string.Empty;
 
-        if ( Linear )
+		switch (Mode)
 		{
-			returnCall = $"Depth::GetLinear( {result} )";
-		}
-		else
-		{
-			returnCall = $"Depth::Get( {result} )";
+            case DepthMode.Raw: returnCall = $"Depth::Get( {result} )"; break;
+            case DepthMode.Linear: returnCall = $"Depth::GetLinear( {result} )"; break;
+            case DepthMode.Normalized: returnCall = $"Depth::GetNormalized( {result} )"; break;
         }
 
 		return new NodeResult( ResultType.Float, returnCall );
 	};
-}
-
-
-/// <summary>
-/// Test node for doing depth stuff..
-/// </summary>
-[Title("Test Depth"), Category("Camera")]
-public sealed class DepthNodeThing : ShaderNodePlus
-{
-
-    public static string LinearizeDepth => @"
-float LinearizeDepth(float2 vUV)
-{
-        float flProjectedDepth = Depth::Get(vUV);
-        // Remap depth to viewport depth range
-        flProjectedDepth = RemapValClamped( flProjectedDepth, g_flViewportMinZ, g_flViewportMaxZ, 0.0, 1.0 );
-
-        float flZScale = g_vInvProjRow3.z;
-        float flZTran = g_vInvProjRow3.w;
-
-        float flDepthRelativeToRayLength = 1.0 / ( ( flProjectedDepth * flZScale + flZTran ) );
-
-        return flDepthRelativeToRayLength;
-}
-
-";
-
-    [Output(typeof(float)), Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-	{
-
-        return new NodeResult(ResultType.Float, compiler.ResultFunction(LinearizeDepth, args: $"CalculateViewportUv(i.vPositionSs.xy)"));
-    };
 }

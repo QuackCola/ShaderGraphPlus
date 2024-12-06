@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public enum TextureExtension
 {
@@ -82,7 +80,7 @@ public struct TextureInput
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
 	/// </summary>
-	[ShowIf( nameof( CustomExtension ), "" )]
+	[ShowIf( nameof(ShowExtension ), true )]
 	public TextureExtension Extension { get; set; }
 
 	/// <summary>
@@ -90,7 +88,9 @@ public struct TextureInput
 	/// </summary>
 	public string CustomExtension { get; set; }
 
-	[JsonIgnore, Hide]
+    public readonly bool ShowExtension => string.IsNullOrWhiteSpace(CustomExtension);
+
+    [JsonIgnore, Hide]
 	public string ExtensionString
 	{
 		get

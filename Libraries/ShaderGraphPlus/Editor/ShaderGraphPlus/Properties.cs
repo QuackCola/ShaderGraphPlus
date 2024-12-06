@@ -2,9 +2,6 @@
 
 public class Properties : Widget
 {
-
-	private readonly List<ExpandGroup> expandGroups = new List<ExpandGroup>();
-
 	private object _target;
 	public object Target
 	{
@@ -28,7 +25,6 @@ public class Properties : Widget
 			};
 
 			var sheet = new ControlSheet();
-	
 			sheet.AddObject( so );
 
 			var scroller = new ScrollArea( this );

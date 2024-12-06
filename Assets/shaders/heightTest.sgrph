@@ -1,0 +1,142 @@
+{
+  "Model": null,
+  "Description": "",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 0,
+      "Identifier": "0",
+      "Position": "-84,-48",
+      "Albedo": {
+        "Identifier": "6",
+        "Output": "Result"
+      },
+      "Normal": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "HeightToNormal",
+      "OutputSpace": "World",
+      "DefaultStrength": 0.1,
+      "Identifier": "1",
+      "Position": "-480,-60",
+      "Height": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "Strength": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 4,
+      "CellDensity": 24,
+      "Worley": false,
+      "Identifier": "2",
+      "Position": "-768,-156"
+    },
+    {
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "3",
+      "Position": "-768,24"
+    },
+    {
+      "_class": "WorldNormal",
+      "Identifier": "4",
+      "Position": "-768,96"
+    },
+    {
+      "_class": "ObjectSpaceNormal",
+      "Identifier": "5",
+      "Position": "-768,204"
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,1,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "6",
+      "Position": "-288,-276"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.1,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "7",
+      "Position": "-768,-48"
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/sbox_logo.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "8",
+      "Position": "-948,-444"
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "9",
+      "Position": "-660,-444",
+      "In": {
+        "Identifier": "8",
+        "Output": "R"
+      }
+    },
+    {
+      "_class": "HeightToNormal",
+      "OutputSpace": "Tangent",
+      "DefaultStrength": 0.1,
+      "Identifier": "10",
+      "Position": "-480,156",
+      "Height": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "Strength": {
+        "Identifier": "7",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 1,
+      "BlendMode": "Exclusion",
+      "Clamp": false,
+      "Identifier": "11",
+      "Position": "-480,-288",
+      "A": {
+        "Identifier": "2",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "8",
+        "Output": "R"
+      }
+    }
+  ]
+}

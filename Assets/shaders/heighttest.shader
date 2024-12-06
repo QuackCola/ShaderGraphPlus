@@ -32,7 +32,6 @@ COMMON
 	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
 	
-	#define UNLIT
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -74,8 +73,29 @@ VS
 
 PS
 {
-	#include "common/test_pixel.hlsl"
-
+	#include "common/pixel.hlsl"
+	
+	float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float3 vNormal )
+	{
+	    float3 worldDerivativeX = ddx(vPosition);
+	    float3 worldDerivativeY = ddy(vPosition);
+	
+	    float3 crossX = cross(vNormal, worldDerivativeX);
+	    float3 crossY = cross(worldDerivativeY, vNormal);
+	
+	    float d = dot(worldDerivativeX, crossY);
+	
+	    float sgn = d < 0.0 ? (-1.f) : 1.f;
+	    float surface = sgn / max(0.00000000000001192093f, abs(d));
+	
+	    float dHdx = ddx(flHeight);
+	    float dHdy = ddy(flHeight);
+	
+	    float3 surfGrad = surface * (dHdx*crossY + dHdy*crossX);
+	
+	    return normalize(vNormal - (flStrength * surfGrad));
+	}
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		Material m = Material::Init();
@@ -89,18 +109,16 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float4 l_0 = float4( 1, 0, 0, 1 );
-		float4 l_1 = float4( 0, 0.9, 0, 1 );
-		float l_2 = Depth::GetLinear( i.vPositionSs.xy );
-		float l_3 = l_2 / 128;
-		float l_4 = clamp( l_3, 0, 1 );
-		float4 l_5 = lerp( l_0, l_1, l_4 );
+		float4 l_0 = float4( 1, 1, 1, 1 );
+		float l_1 = VoronoiNoise( i.vTextureCoords.xy, 4, 24 );
+		float3 l_2 = Height2Normal(l_1, 0.1, i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs);
 		
-		m.Albedo = l_5.xyz;
+		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
+		m.Normal = l_2;
 		m.Roughness = 1;
 		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
+		m.AmbientOcclusion = 0;
 		
 		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
 		m.Roughness = saturate( m.Roughness );
@@ -115,7 +133,6 @@ PS
 		m.WorldTangentV = i.vTangentVWs;
         m.TextureCoords = i.vTextureCoords.xy;
 		
-		return ShadingModelStandardUnlit::Shade( i, m );
-		//return float4( m.Albedo, 1 );
+		return ShadingModelStandard::Shade( i, m );
 	}
 }

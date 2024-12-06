@@ -1,5 +1,5 @@
-#ifndef COMMON_TEST_PIXEL_H
-#define COMMON_TEST_PIXEL_H
+#ifndef COMMON_UNLIT_PIXEL_H
+#define COMMON_UNLIT_PIXEL_H
 
 //-----------------------------------------------------------------------------
 //
@@ -15,15 +15,7 @@
 #include "sbox_pixel.fxc"
 
 #include "common/material.hlsl"
-#include "common/light.hlsl"
-
-#ifdef UNLIT
+//#include "common/light.hlsl"
 #include "common/unlit_shadingmodel.hlsl"
-#endif
 
-#ifndef UNLIT
-#include "common/shadingmodel.hlsl"
-#endif 
-
-
-#endif // COMMON_TEST_PIXEL_H
+#endif // COMMON_UNLIT_PIXEL_H
