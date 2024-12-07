@@ -8,7 +8,7 @@ namespace Editor.ShaderGraphPlus;
 public static class CustomNodeLoader
 {
     // Hacky fix so that users can make custom nodes until https://github.com/Facepunch/sbox-issues/issues/6284 is resloved.
-    [Event("tools.gamedata.refresh")]
+    [Event( "editor.created" )]//[Event("tools.gamedata.refresh")]
     public static void OnGameDataRefresh()
     {
         var dev_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/ShaderGraphPlus";
