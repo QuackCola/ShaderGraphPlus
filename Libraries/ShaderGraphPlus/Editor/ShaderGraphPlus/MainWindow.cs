@@ -1,6 +1,4 @@
-﻿using static Sandbox.Package;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType( "sgrph" )]
 [EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
