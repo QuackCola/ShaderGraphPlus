@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using static Sandbox.Package;
+
+namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType( "sgrph" )]
 [EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
@@ -141,6 +143,20 @@ public class MainWindow : DockWindow, IAssetEditor
             Utilities.Path.OpenInNotepad(path);
         }
     }
+
+    private void Screenshot()
+    {
+        if (_asset is null)
+            return;
+
+        var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphs/{_asset.Name}.png");
+        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+
+        _graphView.Capture($"screenshots/shadergraphs/{_asset.Name}.png");
+
+        EditorUtility.OpenFileFolder(path);
+    }
+
     private void Compile()
 	{
 
@@ -741,10 +757,11 @@ public class MainWindow : DockWindow, IAssetEditor
 		toolBar.AddSeparator();
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
-
 		toolBar.AddOption( "Open Generated Shader", "txtedit/appicon.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
+        toolBar.AddOption("Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
 
-		_undoOption.Enabled = false;
+
+        _undoOption.Enabled = false;
 		_redoOption.Enabled = false;
 	}
 
