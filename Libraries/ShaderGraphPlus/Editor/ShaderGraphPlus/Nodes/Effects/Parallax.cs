@@ -1,7 +1,7 @@
 ﻿using Editor.ShaderGraphPlus;
 
 /// <summary>
-/// 
+/// Basic probabaly shit Parallax test.
 /// </summary>
 [Title( "Parallax Node Test" ), Category( "Dev" )]
 public sealed class ParallaxNode : ShaderNodePlus

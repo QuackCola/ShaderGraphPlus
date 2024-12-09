@@ -281,7 +281,7 @@ public sealed class TileAndOffset : ShaderNodePlus
 
 	public bool WrapTo01 { get; set; } = false;
 
-	[Output( typeof( Vector2 ) ), Title( "ScreenUVs" )]
+	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{

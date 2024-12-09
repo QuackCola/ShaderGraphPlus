@@ -34,16 +34,25 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	[Hide]
 	public NodeInput WorldSpacePosition { get; set; }
 
+	/// <summary>
+	/// Direction of the waves.
+	/// </summary>
 	[Title( "Direction" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Direction { get; set; }
 
+	/// <summary>
+	/// How long the waves should be.
+	/// </summary>
 	[Title( "Wave Length" )]
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput WaveLength { get; set; }
 
+	/// <summary>
+	/// How fast the waves should be.
+	/// </summary>
 	[Title( "Speed" )]
 	[Input( typeof( float ) )]
 	[Hide]
@@ -55,18 +64,26 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	public NodeInput Amplitude { get; set; }
 
 
+	/// <summary>
+	/// How steep the waves should be.
+	/// </summary>
 	[Title( "Steepness" )]
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput Steepness { get; set; }
 
+	/// <summary>
+	/// How many waves there should be.
+	/// </summary>
 	[Title( "Num Waves" )]
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput NumWaves { get; set; }
 
+	/// <summary>
+	/// Gravitational constant to be used. Default is 385.827
+	/// </summary>
 	[Title( "Gravity Constant" )]
-	[Description( "Gravitational constant to be used. Default is 385.827" )]
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput GravityConstant { get; set; }
@@ -83,8 +100,10 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	public float DefaultSteepness { get; set; } = 0.420f;
 	public float DefaultNumWaves { get; set; } = 1.0f;
 
-	[Description( "Gravitational constant to be used. Default is 385.827" )]
-	public float DefaultGravityConstant { get; set; } = 385.827f;
+    /// <summary>
+    /// Gravitational constant to be used. Default is 385.827
+    /// </summary>
+    public float DefaultGravityConstant { get; set; } = 385.827f;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]

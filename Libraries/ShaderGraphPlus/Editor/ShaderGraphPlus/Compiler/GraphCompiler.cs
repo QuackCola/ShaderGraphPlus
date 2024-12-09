@@ -236,7 +236,7 @@ public sealed partial class GraphCompiler
     }
 
     /// <summary>
-    /// Register a gradient and return a generic name if gradient_name is empty.
+    /// Register a gradient and return the name of the graident. A generic name is returned instead if the gradient name is empty.
     /// </summary>
     public string RegisterGradient(Gradient gradient, string gradient_name)
 	{

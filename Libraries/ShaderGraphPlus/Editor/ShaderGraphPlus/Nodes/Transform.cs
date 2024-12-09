@@ -1009,11 +1009,16 @@ float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float
     /// </summary>
     public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
 
+    /// <summary>
+    /// The height to be converted into a normal.
+    /// </summary>
     [Input(typeof(float))]
     [Hide]
     public NodeInput Height { get; set; }
 
-
+    /// <summary>
+    /// How strong you want the normal map effect to be.
+    /// </summary>
     [Input(typeof(float))]
     [Hide]
     public NodeInput Strength { get; set; }
