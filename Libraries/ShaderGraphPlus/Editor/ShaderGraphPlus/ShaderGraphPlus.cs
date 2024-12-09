@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus;
+namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
 {
