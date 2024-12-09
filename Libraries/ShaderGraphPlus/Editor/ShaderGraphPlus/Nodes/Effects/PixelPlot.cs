@@ -4,7 +4,7 @@
 /// Creates a 
 /// </summary>
 [Title( "Pixel Plot" ), Category( "Effects" )]
-public sealed class PixelPlotNode : ShaderNodePlus//TextureSamplerBase
+public sealed class PixelPlotNode : ShaderNodePlus
 {
 
 [Hide]
