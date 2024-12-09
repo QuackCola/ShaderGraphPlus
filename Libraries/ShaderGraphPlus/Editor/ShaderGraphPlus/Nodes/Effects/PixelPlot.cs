@@ -1,11 +1,14 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
+/// <summary>
+/// Creates a 
+/// </summary>
 [Title( "Pixel Plot" ), Category( "Effects" )]
-public sealed class PixelPlotNode : TextureSamplerBase
+public sealed class PixelPlotNode : ShaderNodePlus//TextureSamplerBase
 {
 
-	[Hide]
-	public string PixelPlot => @"	
+[Hide]
+public string PixelPlot => @"	
 float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , float2 vGridSize , float flBoarderThickness)
 {
 
@@ -30,10 +33,18 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-	/// <summary>
-	/// How the texture is filtered and wrapped when sampled
-	/// </summary>
-	[Title( "Sampler" )]
+    /// <summary>
+    /// Texture object to apply the effect to.
+    /// </summary>
+    [Title("TexObject")]
+    [Input( typeof( TextureObject ) )]
+    [Hide]
+    public NodeInput TexObject { get; set; }
+
+    /// <summary>
+    /// How the effect is filtered and wrapped when sampled
+    /// </summary>
+    [Title( "Sampler" )]
 	[Input( typeof( Sampler ) )]
 	[Hide]
 	public NodeInput Sampler { get; set; }
@@ -46,78 +57,41 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput BoarderThickness { get; set; }
 
-	public Vector2 DefaultGridSize { get; set; } = new Vector2( 24.0f, 24.0f );
-
+    [InlineEditor]
+    [Group("Default Values")]
+    public Sampler DefaultSampler { get; set; } = new Sampler();
+    public Vector2 DefaultGridSize { get; set; } = new Vector2( 24.0f, 24.0f );
 	public float DefaultBoarderThickness { get; set; } = 0.420f;
 
 	public PixelPlotNode()
 	{
-		ExpandSize = new Vector2( 0f, 128f );
-
-		UI = new TextureInput
-		{
-			ImageFormat = TextureFormat.DXT5,
-			SrgbRead = true,
-			Default = Color.White,
-		};
+		//ExpandSize = new Vector2( 0f, 12f );
 	}
 
 	/// <summary>
-	/// RGBA color result
+	/// Pixel Plot effect result.
 	/// </summary>
 	[Hide]
-	[Output( typeof( Color ) ), Title( "RGBA" )]
+	[Output( typeof( Color ) ), Title( "Result" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var input = UI;
-		input.Type = TextureType.Tex2D;
-
-		CompileTexture();
-
-		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-		texture ??= Texture.White;
-
-		var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
+        var textureobject = compiler.Result(TexObject);
 		var coords = compiler.Result( Coords );
 		var Grid = compiler.ResultOrDefault( GridSize, DefaultGridSize );
 		var Boarder = compiler.ResultOrDefault( BoarderThickness, DefaultBoarderThickness );
 
-        //return new NodeResult( ResultType.Color, compiler.ResultFunction( PixelPlot , 
-        //args: 
-        //$"{result.Item1}" + 
-        //$",{result.Item2}" + 
-        //$",{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" + 
-        //$",{Grid}" + 
-        //$",{Boarder}" ) 
-        //);
+        if (!textureobject.IsValid)
+        {
+            return NodeResult.MissingInput(nameof(TextureObject));
+        }
+        else if (textureobject.ResultType is not ResultType.TextureObject)
+        {
+            return NodeResult.Error($"Input to TexObject is not a texture object!");
+        }
 
         return new NodeResult(ResultType.Color, compiler.ResultFunction(PixelPlot,
         args:
-        $"{result.Item1}, {result.Item2}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}"
-		));
+        $"{textureobject}, {compiler.ResultSamplerOrDefault(Sampler, DefaultSampler)}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}"
+        ));
     };
-
-	/// <summary>
-	/// Red component of result	
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "R" )]
-	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "r", compiler );
-
-	/// <summary>
-	/// Green component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "G" )]
-	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "g", compiler );
-
-	/// <summary>
-	/// Blue component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "B" )]
-	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "b", compiler );
-
-	/// <summary>
-	/// Alpha (Opacity) component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "A" )]
-	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
