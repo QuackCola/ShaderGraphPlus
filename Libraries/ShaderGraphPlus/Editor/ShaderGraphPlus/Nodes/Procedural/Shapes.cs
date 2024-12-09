@@ -1,5 +1,8 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
+/// <summary>
+/// Basic procedural box shape
+/// </summary>
 [Title( "Box Shape" ), Category( "Procedural/Shapes" )]
 public sealed class BoxShapeNode : ShaderNodePlus
 {
@@ -56,6 +59,9 @@ float BoxShape( float2 UV, float Width, float Height )
 
 }
 
+/// <summary>
+/// Basic procedural elipse shape
+/// </summary>
 [Title( "Elipse Shape" ), Category( "Procedural/Shapes" )]
 public sealed class ElipseShapeNode : ShaderNodePlus
 {
@@ -111,6 +117,9 @@ float ElipseShape( float2 UV, float Width, float Height )
 
 }
 
+/// <summary>
+/// Basic procedural polygon shape.
+/// </summary>
 [Title( "Polygon Shape" ), Category( "Procedural/Shapes" )]
 public sealed class PolygonShapeNode : ShaderNodePlus
 {
