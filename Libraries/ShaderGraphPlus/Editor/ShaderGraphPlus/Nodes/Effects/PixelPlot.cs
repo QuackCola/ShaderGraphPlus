@@ -80,11 +80,11 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		var Grid = compiler.ResultOrDefault( GridSize, DefaultGridSize );
 		var Boarder = compiler.ResultOrDefault( BoarderThickness, DefaultBoarderThickness );
 
-        if (!textureobject.IsValid)
+        if ( !textureobject.IsValid )
         {
-            return NodeResult.MissingInput(nameof(TextureObject));
+            return NodeResult.MissingInput( nameof( TextureObject ) );
         }
-        else if (textureobject.ResultType is not ResultType.TextureObject)
+        else if ( textureobject.ResultType is not ResultType.TextureObject )
         {
             return NodeResult.Error($"Input to TexObject is not a texture object!");
         }
