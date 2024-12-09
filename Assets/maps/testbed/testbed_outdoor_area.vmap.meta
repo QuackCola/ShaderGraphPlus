@@ -1,0 +1,22 @@
+{
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "testbed_outdoor_area",
+      "Type": "map",
+      "Org": "local",
+      "Ident": "testbed_outdoor_area",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": [],
+      "EditorReferences": [
+        "penguins.hanging_picture#12034"
+      ],
+      "IsWhitelistDisabled": false,
+      "Metadata": {
+        "SingleAssetSource": "maps/testbed/testbed_outdoor_area.vmap"
+      }
+    }
+  }
+}
