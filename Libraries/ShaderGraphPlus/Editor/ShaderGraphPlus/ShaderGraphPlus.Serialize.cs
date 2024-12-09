@@ -95,16 +95,16 @@ partial class ShaderGraphPlus
             var typeDescription = EditorTypeLibrary.GetType(typeName);
 
             // If we encounter a null TypeDescription that means the node that typeName refers to dosent exist.
-            // So just bail for this node rather than failing to load the entire graph.
+            // Yell at the user.
             // TODO : Have a popup dialog open when this occurs.
-            /*
+          
             if (typeDescription is null)
             {
                 Log.Error($"Cant find node class: '{typeName}'");
                 MissingNodes.Add(typeName);
-                continue;
+                //continue;
             }
-            */
+          
 
             var type = new ClassNodeType(typeDescription);
             var node = EditorTypeLibrary.Create<BaseNodePlus>(typeName);
