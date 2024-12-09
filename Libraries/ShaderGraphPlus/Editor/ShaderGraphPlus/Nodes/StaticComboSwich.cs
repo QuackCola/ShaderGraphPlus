@@ -43,8 +43,6 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 		var result_default = compiler.ResultOrDefault( False, 0.0f );
 		var result_true = compiler.ResultOrDefault( True, 0.0f );
 
-		var sb = new StringBuilder();
-
 		if ( Feature.IsValid )
 		{
 			if ( Feature.IsOptionsValid )
