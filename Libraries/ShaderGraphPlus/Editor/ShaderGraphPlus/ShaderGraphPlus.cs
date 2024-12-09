@@ -49,6 +49,9 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
+	[Hide, JsonIgnore]
+	public List<string> MissingNodes { get; set; } = new();
+
     public ShaderGraphPlus()
 	{
 	}

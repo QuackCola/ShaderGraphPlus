@@ -1,6 +1,5 @@
-﻿
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
-namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Color of the scene
 /// </summary>
