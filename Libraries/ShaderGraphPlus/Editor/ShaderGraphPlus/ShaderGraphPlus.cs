@@ -55,6 +55,10 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Hide]
     public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
 
+    [Hide]
+    [JsonIgnore]
+    public List<string> MissingNodes { get; set; } = new List<string>();
+
     public ShaderGraphPlus()
 	{
 	}
