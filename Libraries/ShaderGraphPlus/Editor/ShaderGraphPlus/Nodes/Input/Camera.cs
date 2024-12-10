@@ -32,14 +32,14 @@ public sealed class Depth : ShaderNodePlus
 {
 	public enum DepthMode
 	{
-        ///<summary>The raw value of the depth buffer.</summary>
-        Raw,
-        ///<summary>Depth from 0..1 based on the z-near and z-far of the current viewport.</summary>
-        [Title("Normalized ( Projected Space )")]
-        Normalized,
-        ///<summary>Depth in world units from the camera.</summary>
+		///<summary>The raw value of the depth buffer.</summary>
+		Raw,
+		///<summary>Depth from 0..1 based on the z-near and z-far of the current viewport.</summary>
+		[Title("Normalized ( Projected Space )")]
+		Normalized,
+		///<summary>Depth in world units from the camera.</summary>
 		[Title("Linear ( View Space )")]
-        Linear
+		Linear
 	}
 
 
