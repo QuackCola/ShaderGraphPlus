@@ -32,13 +32,17 @@ public sealed class Depth : ShaderNodePlus
 {
 	public enum DepthMode
 	{
-        ///<summary>Returns the depth value at the given screen position from the depth.</summary>
-        Raw,
-        ///<summary>Returns the linear depth value at the given screen position.</summary>
-        Linear,
-        ///<summary>Returns the normalized depth value at the given screen position.</summary>
-        Normalized,
+		///<summary>The raw value of the depth buffer.</summary>
+		Raw,
+		///<summary>Depth from 0..1 based on the z-near and z-far of the current viewport.</summary>
+		[Title("Normalized ( Projected Space )")]
+		Normalized,
+		///<summary>Depth in world units from the camera.</summary>
+		[Title("Linear ( View Space )")]
+		Linear
 	}
+
+
 
     [Hide]
     public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
