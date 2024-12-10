@@ -360,11 +360,13 @@ public sealed class TextureCube : ShaderNodePlus
 	[ResourceType( "vtex" )]
 	public string Texture { get; set; }
 
+	[InlineEditor]
 	public Sampler DefaultSampler { get; set; } = new Sampler();
 
 	/// <summary>
 	/// Settings for how this texture shows up in material editor
 	/// </summary>
+	[InlineEditor]
 	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
@@ -376,8 +378,6 @@ public sealed class TextureCube : ShaderNodePlus
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
 	}
-
-
 
 	/// <summary>
 	/// RGBA color result
