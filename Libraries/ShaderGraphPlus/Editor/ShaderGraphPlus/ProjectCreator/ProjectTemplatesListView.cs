@@ -46,7 +46,7 @@ internal class ProjectTemplatesListView : ListView
 
     protected void FindLocalTemplates()
     {
-        var template_path = ShaderGraphPlusFileSystem.FileSystem.GetFullPath("/templates");
+        var template_path = ShaderGraphPlusFileSystem.LibraryRoot.GetFullPath("/templates");
 
 
         if (!Directory.Exists(template_path))
@@ -54,14 +54,14 @@ internal class ProjectTemplatesListView : ListView
             return;
         }
 
-        foreach (string template_folder in ShaderGraphPlusFileSystem.FileSystem.FindDirectory("/templates", "*", false))
+        foreach (string template_folder in ShaderGraphPlusFileSystem.LibraryRoot.FindDirectory("/templates", "*", false))
         {
             string templateRoot = "/templates/" + template_folder;
             string addonPath = templateRoot + "/$name.sgrph";
 
-            if (ShaderGraphPlusFileSystem.FileSystem.FileExists(addonPath))
+            if (ShaderGraphPlusFileSystem.LibraryRoot.FileExists(addonPath))
             {
-                ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.FileSystem.ReadAllText(addonPath));
+                ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.LibraryRoot.ReadAllText(addonPath));
                 Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
             }
         }   

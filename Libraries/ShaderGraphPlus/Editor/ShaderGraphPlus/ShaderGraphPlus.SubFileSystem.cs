@@ -2,7 +2,7 @@
 
 public static class ShaderGraphPlusFileSystem
 {
-    public static BaseFileSystem FileSystem = Editor.FileSystem.Libraries.CreateSubSystem($"/{LibraryName()}");
+    public static BaseFileSystem LibraryRoot = Editor.FileSystem.Libraries.CreateSubSystem($"/{LibraryName()}");
 
     private static string LibraryName()
     {
