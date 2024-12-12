@@ -1,0 +1,126 @@
+{
+  "__guid": "f102cbeb-0ae7-4501-b738-14dda90b0df3",
+  "GameObjects": [
+    {
+      "__guid": "1628dba6-f5a6-484f-953c-0d25c0f4244d",
+      "Flags": 0,
+      "Name": "MapRoot",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MapInstance",
+          "__guid": "f2be94e5-2a88-4391-9d3f-19d84150e557",
+          "__version": 1,
+          "EnableCollision": true,
+          "MapName": "maps/testbed/testbed.vmap",
+          "NoOrigin": false,
+          "OnMapLoaded": null,
+          "OnMapUnloaded": null,
+          "UseMapFromLaunch": false
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "b30b2f66-1aab-48e7-af91-dfb26294c9a7",
+      "Flags": 0,
+      "Name": "TestObjects",
+      "Enabled": true,
+      "Children": [
+        {
+          "__guid": "aea1438b-dd33-4a9a-8170-e16f84c09676",
+          "Flags": 0,
+          "Name": "Cube",
+          "Position": "-244.862,-1376.798,30.00339",
+          "Enabled": true,
+          "Components": [
+            {
+              "__type": "Sandbox.ModelRenderer",
+              "__guid": "34aede27-41fb-40d8-8a93-d968d2170750",
+              "BodyGroups": 18446744073709551615,
+              "CreateAttachments": false,
+              "MaterialOverride": "materials/parallaxtest.vmat",
+              "Model": "models/dev/box.vmdl",
+              "RenderOptions": {
+                "GameLayer": true,
+                "OverlayLayer": false,
+                "BloomLayer": false,
+                "AfterUILayer": false
+              },
+              "RenderType": "On",
+              "Tint": "1,1,1,1"
+            },
+            {
+              "__type": "Sandbox.BoxCollider",
+              "__guid": "0f60b7f0-589e-44c7-ad55-6ff9e2d83731",
+              "Center": "0,0,0",
+              "IsTrigger": false,
+              "Scale": "50,50,50",
+              "Static": false,
+              "SurfaceVelocity": "0,0,0"
+            },
+            {
+              "__type": "Sandbox.Rigidbody",
+              "__guid": "22916805-0bdf-4ff5-a1f2-dc31ea76ed34",
+              "AngularDamping": 0,
+              "Gravity": true,
+              "LinearDamping": 0,
+              "Locking": {},
+              "MassCenterOverride": "0,0,0",
+              "MassOverride": 0,
+              "MotionEnabled": true,
+              "OverrideMassCenter": false,
+              "RigidbodyFlags": 0,
+              "StartAsleep": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "__guid": "8a513be9-ef8a-4c4a-8c11-2d4be871b3ca",
+      "Flags": 0,
+      "Name": "GameObject",
+      "Enabled": true
+    },
+    {
+      "__guid": "5e4edcc1-8b12-46a4-80d6-3855f51c4620",
+      "Flags": 0,
+      "Name": "Player Controller",
+      "Position": "-224,256,56",
+      "Rotation": "0,-0,-0.7071068,0.7071068",
+      "Enabled": true,
+      "__Prefab": "prefabs/testbed/player.prefab",
+      "__PrefabVariables": {}
+    }
+  ],
+  "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 30,
+    "NetworkInterpolation": true,
+    "PhysicsSubSteps": 1,
+    "ThreadedAnimation": true,
+    "TimeScale": 1,
+    "UseFixedUpdate": true,
+    "Metadata": {},
+    "NavMesh": {
+      "Enabled": false,
+      "IncludeStaticBodies": true,
+      "IncludeKeyframedBodies": true,
+      "EditorAutoUpdate": true,
+      "AgentHeight": 64,
+      "AgentRadius": 16,
+      "AgentStepSize": 18,
+      "AgentMaxSlope": 40,
+      "ExcludedBodies": "",
+      "IncludedBodies": ""
+    }
+  },
+  "ResourceVersion": 2,
+  "Title": null,
+  "Description": null,
+  "__references": [],
+  "HasUnsavedChanges": false,
+  "__version": 2
+}
