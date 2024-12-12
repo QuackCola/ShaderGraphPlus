@@ -1,9 +1,13 @@
 {
   "Model": null,
-  "Description": "",
+  "Description": "MyUnlitShaderDescription",
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",

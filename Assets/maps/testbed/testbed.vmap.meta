@@ -1,0 +1,23 @@
+{
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "testbed",
+      "Type": "map",
+      "Org": "local",
+      "Ident": "testbed",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": [],
+      "EditorReferences": [
+        "facepunch.floor_grass_dirt_cliff_blend_a#18754",
+        "facepunch.inflatable_hs_2#9584"
+      ],
+      "IsWhitelistDisabled": false,
+      "Metadata": {
+        "SingleAssetSource": "maps/testbed/testbed.vmap"
+      }
+    }
+  }
+}

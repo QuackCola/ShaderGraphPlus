@@ -27,4 +27,25 @@ public static class Assert
         EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
         Sandbox.Diagnostics.Assert.AreNotEqual(a, b, message);
     }
+
+    /// <summary>
+    /// Returns true if input a equals input b. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static bool Check<T>(T a, T b)
+    {
+        if (object.Equals(a, b))
+        {
+            EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }

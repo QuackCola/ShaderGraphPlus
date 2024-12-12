@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus;
+namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
 {
@@ -49,8 +49,15 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
-	[Hide, JsonIgnore]
-	public List<string> MissingNodes { get; set; } = new();
+    //
+    // Summary:
+    //     Custom key-value storage for this project.
+    [Hide]
+    public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
+
+    [Hide]
+    [JsonIgnore]
+    public List<string> MissingNodes { get; set; } = new List<string>();
 
     public ShaderGraphPlus()
 	{
@@ -81,8 +88,6 @@ public sealed partial class ShaderGraphPlus : IGraph
 		_nodes.Clear();
 	}
 
-	
-
 	string IGraph.SerializeNodes( IEnumerable<INode> nodes )
 	{
 		return SerializeNodes( nodes.Cast<BaseNodePlus>() );
@@ -102,4 +107,88 @@ public sealed partial class ShaderGraphPlus : IGraph
 	{
 		RemoveNode( (BaseNodePlus)node );
 	}
+
+    //
+    // Summary:
+    //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+    //
+    //
+    // Parameters:
+    //   keyname:
+    //     The key to retrieve the value of.
+    //
+    //   outvalue:
+    //     The value, if it was present in the metadata storage.
+    //
+    // Type parameters:
+    //   T:
+    //     Type of the value.
+    //
+    // Returns:
+    //     Whether the value was successfully retrieved.
+    public bool TryGetMeta<T>(string keyname, out T outvalue)
+    {
+        outvalue = default(T);
+        if (Metadata == null)
+        {
+            return false;
+        }
+
+        if (!Metadata.TryGetValue(keyname, out var value))
+        {
+            return false;
+        }
+
+        if (value is T val)
+        {
+            outvalue = val;
+            return true;
+        }
+
+        if (value is JsonElement element)
+        {
+            try
+            {
+                T val2 = element.Deserialize<T>(new JsonSerializerOptions());
+                outvalue = ((val2 != null) ? val2 : default(T));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //
+    // Summary:
+    //     Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
+    //
+    //
+    // Parameters:
+    //   keyname:
+    //     The key for the data.
+    //
+    //   outvalue:
+    //     The data itself to store.
+    //
+    // Returns:
+    //     Always true.
+    public bool SetMeta(string keyname, object outvalue)
+    {
+        if (Metadata == null)
+        {
+            Dictionary<string, object> dictionary2 = (Metadata = new Dictionary<string, object>());
+        }
+
+        if (outvalue == null)
+        {
+            return Metadata.Remove(keyname);
+        }
+
+        Metadata[keyname] = outvalue;
+        return true;
+    }
+
 }
