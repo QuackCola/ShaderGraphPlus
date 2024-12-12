@@ -12,6 +12,7 @@ public static class CreateShaderGraphPlusAsset
         {
             var ProjectCreator = new ProjectCreator();
             ProjectCreator.DeleteOnClose = true;
+            ProjectCreator.FolderEditPath = folder.FullName;
             ProjectCreator.Show();
         });
     }
