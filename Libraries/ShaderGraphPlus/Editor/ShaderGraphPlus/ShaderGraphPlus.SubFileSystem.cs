@@ -1,6 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-public static class ShaderGraphPlusFileSystem
+internal static class ShaderGraphPlusFileSystem
 {
     public static BaseFileSystem Root => Editor.FileSystem.Libraries.CreateSubSystem($"/{GetLibraryFolderName()}");
     public static BaseFileSystem Content => Editor.FileSystem.Libraries.CreateSubSystem($"/{GetLibraryFolderName()}/Assets");
