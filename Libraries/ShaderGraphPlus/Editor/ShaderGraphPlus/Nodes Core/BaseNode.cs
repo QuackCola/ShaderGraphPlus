@@ -33,10 +33,10 @@ public abstract class BaseNodePlus : INode
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugIn> Inputs { get; set; }
+	public IEnumerable<IPlugIn> Inputs { get; private set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugOut> Outputs { get; set; }
+	public IEnumerable<IPlugOut> Outputs { get; private set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public string ErrorMessage => null;
@@ -113,6 +113,7 @@ public abstract class BaseNodePlus : INode
         Inputs = inputs;
     }
 
+	/// I have no fucking idea but it works? though there has to be better way. right..?
     public static PropertyInfo CreatePropertyInfo(string propertyName, Type propertyType)
     {
         // Create a dynamic assembly and module
