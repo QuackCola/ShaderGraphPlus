@@ -27,6 +27,15 @@ public class ProjectCreator : Dialog
 
     private FolderProperty FolderEdit;
 
+    public string FolderEditPath 
+    { 
+        get => FolderEdit.Text;
+        set
+        {
+            FolderEdit.Text = value;
+        }
+    }
+
     //private FieldSubtitle FolderFullPath;
 
     private ProjectTemplate ActiveTemplate;
@@ -326,7 +335,7 @@ public class ProjectCreator : Dialog
     private ShaderGraphPlus ReadTemplate( string templatePath )
     {
         var shaderGraphPlusTemplate = new ShaderGraphPlus();
-        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"{templatePath}/$name.sgrph")));
+        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.LibraryRoot.GetFullPath($"{templatePath}/$name.sgrph")));
 
         // configure the template.
         ConfigureTemplate(shaderGraphPlusTemplate);
