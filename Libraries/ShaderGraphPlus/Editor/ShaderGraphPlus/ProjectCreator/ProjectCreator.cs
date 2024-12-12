@@ -335,7 +335,7 @@ public class ProjectCreator : Dialog
     private ShaderGraphPlus ReadTemplate( string templatePath )
     {
         var shaderGraphPlusTemplate = new ShaderGraphPlus();
-        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.LibraryRoot.GetFullPath($"{templatePath}/$name.sgrph")));
+        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.Root.GetFullPath($"{templatePath}/$name.sgrph")));
 
         // configure the template.
         ConfigureTemplate(shaderGraphPlusTemplate);

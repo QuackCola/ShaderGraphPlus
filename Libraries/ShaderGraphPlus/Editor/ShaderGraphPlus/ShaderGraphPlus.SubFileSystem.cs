@@ -2,9 +2,14 @@
 
 public static class ShaderGraphPlusFileSystem
 {
-    public static BaseFileSystem LibraryRoot = Editor.FileSystem.Libraries.CreateSubSystem($"/{LibraryName()}");
+    public static BaseFileSystem Root => Editor.FileSystem.Libraries.CreateSubSystem($"/{GetLibraryFolderName()}");
+    public static BaseFileSystem Content => Editor.FileSystem.Libraries.CreateSubSystem($"/{GetLibraryFolderName()}/Assets");
 
-    private static string LibraryName()
+    /// <summary>
+    /// Get's the folder name of the Shader Graph Plus library.
+    /// </summary>
+    /// <returns></returns>
+    private static string GetLibraryFolderName()
     {
         var dev_name = "ShaderGraphPlus";
         var user_name = "quack.shadergraphplus";
