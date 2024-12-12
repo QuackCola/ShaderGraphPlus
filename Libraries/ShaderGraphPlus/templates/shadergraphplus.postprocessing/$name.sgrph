@@ -7,11 +7,18 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
+  "Metadata": {
+    "ProjectTemplate": {
+      "Icon": "camera",
+      "Order": 150,
+      "Description": "You want to make a Post Processing Shader"
+    }
+  },
   "nodes": [
     {
       "_class": "PostProcessingResult",
       "Identifier": "0",
-      "Position": "-240,84"
+      "Position": "-12,48"
     }
   ]
 }

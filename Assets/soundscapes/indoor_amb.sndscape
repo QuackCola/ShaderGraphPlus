@@ -1,0 +1,12 @@
+{
+  "MasterVolume": "0.34",
+  "LoopedSounds": [
+    {
+      "SoundFile": "sounds/ambience/plains-wind-loop.vsnd",
+      "Volume": "0.34"
+    }
+  ],
+  "StingSounds": [],
+  "__references": [],
+  "__version": 0
+}
