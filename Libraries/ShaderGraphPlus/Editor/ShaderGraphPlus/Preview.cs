@@ -1,8 +1,4 @@
-﻿
-using Sandbox;
-using Sandbox.UI;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public class PostProcessingPreview : SceneCustomObject
 {
