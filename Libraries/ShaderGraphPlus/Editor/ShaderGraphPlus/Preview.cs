@@ -423,76 +423,75 @@ public class PreviewPanel : Widget
 		Layout.Add( _preview );
 	}
 
-	public void OpenSettings()
-	{
-		var popup = new PopupWidget( this );
-		popup.IsPopup = true;
-		popup.Layout = Layout.Column();
-		popup.Layout.Margin = 16;
+    public void OpenSettings()
+    {
+        var popup = new PopupWidget(this);
+        popup.IsPopup = true;
+        popup.Layout = Layout.Column();
+        popup.Layout.Margin = 16;
 
-		var ps = new PropertySheet( popup );
+        var ps = new PropertySheet(popup);
 
-		ps.AddSectionHeader( "Render Options" );
-		{
-			var w = ps.AddRow( "Render Backfaces", new Checkbox( "", this ) );
-			w.Value = _preview.RenderBackfaces;
-			w.Bind( "Value" ).From( () => _preview.RenderBackfaces, x => _preview.RenderBackfaces = x );
-		}
-		{
-			var w = ps.AddRow( "Enable Shadows", new Checkbox( "", this ) );
-			w.Value = _preview.EnableShadows;
-			w.Bind( "Value" ).From( () => _preview.EnableShadows, x => _preview.EnableShadows = x );
-		}
-		{
-			var w = ps.AddRow( "Show Ground", new Checkbox( "", this ) );
-			w.Value = _preview.ShowGround;
-			w.Bind( "Value" ).From( () => _preview.ShowGround, x => _preview.ShowGround = x );
-		}
-		{
-			var showSkybox = ps.AddRow( "Show Skybox", new Checkbox( "", this ) );
-			var backgroundColor = ps.AddRow( "Background Color", new ColorProperty( this ) );
-			showSkybox.Value = _preview.ShowSkybox;
-			backgroundColor.Value = _preview.Camera.BackgroundColor;
-			backgroundColor.Enabled = !_preview.ShowSkybox;
-			showSkybox.Bind( "Value" ).From( () => _preview.ShowSkybox, x =>
-			{
-				_preview.ShowSkybox = x;
-				backgroundColor.Enabled = !x;
-			} );
+        ps.AddSectionHeader("Render Options");
+        {
+            var w = ps.AddRow("Render Backfaces", new Checkbox("", this));
+            w.Value = _preview.RenderBackfaces;
+            w.Bind("Value").From(() => _preview.RenderBackfaces, x => _preview.RenderBackfaces = x);
+        }
+        {
+            var w = ps.AddRow("Enable Shadows", new Checkbox("", this));
+            w.Value = _preview.EnableShadows;
+            w.Bind("Value").From(() => _preview.EnableShadows, x => _preview.EnableShadows = x);
+        }
+        {
+            var w = ps.AddRow("Show Ground", new Checkbox("", this));
+            w.Value = _preview.ShowGround;
+            w.Bind("Value").From(() => _preview.ShowGround, x => _preview.ShowGround = x);
+        }
+        {
+            var showSkybox = ps.AddRow("Show Skybox", new Checkbox("", this));
+            var backgroundColor = ps.AddRow("Background Color", new ColorProperty(this));
+            showSkybox.Value = _preview.ShowSkybox;
+            backgroundColor.Value = _preview.Scene.Camera.BackgroundColor;
+            backgroundColor.Enabled = !_preview.ShowSkybox;
+            showSkybox.Bind("Value").From(() => _preview.ShowSkybox, x =>
+            {
+                _preview.ShowSkybox = x;
+                backgroundColor.Enabled = !x;
+            });
 
-			backgroundColor.Bind( "Value" ).From( () => _preview.Camera.BackgroundColor, x => _preview.Camera.BackgroundColor = x );
-		}
-		{
-			var tintColor = ps.AddRow( "Tint Color", new ColorProperty( this ) );
-			tintColor.Value = _preview.Tint;
-			tintColor.Bind( "Value" ).From( () => _preview.Tint, x => _preview.Tint = x );
-		}
+            backgroundColor.Bind("Value").From(() => _preview.Scene.Camera.BackgroundColor, x => _preview.Scene.Camera.BackgroundColor = x);
+        }
+        {
+            var tintColor = ps.AddRow("Tint Color", new ColorProperty(this));
+            tintColor.Value = _preview.Tint;
+            tintColor.Bind("Value").From(() => _preview.Tint, x => _preview.Tint = x);
+        }
 
-		popup.Layout.Add( ps );
-		popup.MinimumWidth = 300;
-		popup.OpenAtCursor();
-	}
+        popup.Layout.Add(ps);
+        popup.MinimumWidth = 300;
+        popup.OpenAtCursor();
+    }
 }
 
-public class Preview : NativeRenderingWidget
+public class Preview : SceneRenderingWidget
 {
-	private SceneWorld _world;
-	private SceneCamera _camera;
+    private SceneWorld _world => Scene.SceneWorld;
 
-	private Vector2 _lastCursorPos;
-	private Vector2 _cursorDelta;
-	private Vector2 _angles;
-	private Vector3 _origin;
-	private float _distance;
-	private float _modelRotation;
-	private bool _orbitControl;
-	private bool _orbitLights;
-	private bool _zoomControl;
-	private bool _panControl;
+    private Vector2 _lastCursorPos;
+    private Vector2 _cursorDelta;
+    private Vector2 _angles;
+    private Vector3 _origin;
+    private float _distance;
+    private float _modelRotation;
+    private bool _orbitControl;
+    private bool _orbitLights;
+    private bool _zoomControl;
+    private bool _panControl;
 
-	private SceneModel _sceneObject;
-	private Throbber _thobber;
-	private PostProcessingPreview _postprocessingpreview;
+    private SceneModel _sceneObject;
+    private Throbber _thobber;
+    private PostProcessingPreview _postprocessingpreview;
 
 	private Dictionary<string, Texture> _textureAttributes = new();
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
@@ -506,13 +505,15 @@ public class Preview : NativeRenderingWidget
 	private Dictionary<string, object> _postprocessingAttributes = new();
 	private int _stageId;
 
-	public bool EnablePostProcessing
-	{
-		get => _camera.EnablePostProcessing;
-		set => _camera.EnablePostProcessing = value;
-	}
+    public Material PostProcessingMaterial { get; set; }
 
-	private bool _enableNodePreview;
+    public bool EnablePostProcessing
+    {
+        get { return false; }
+        set { }
+    }
+
+    private bool _enableNodePreview;
 	public bool EnableNodePreview
 	{
 		get => _enableNodePreview;
@@ -527,98 +528,82 @@ public class Preview : NativeRenderingWidget
 		}
 	}
 
-	private bool _enableShadows = true;
-	public bool EnableShadows
-	{
-		get => _enableShadows;
-		set
-		{
-			_enableShadows = value;
-			_camera.Attributes.Set( "enableShadows", _enableShadows );
-		}
-	}
+    private bool _enableShadows = true;
+    public bool EnableShadows
+    {
+        get => _enableShadows;
+        set
+        {
+            _enableShadows = value;
 
-	public bool ShowSkybox
-	{
-		get => _skybox.RenderingEnabled;
-		set => _skybox.RenderingEnabled = value;
-	}
+            // TODO
+            //_camera.Attributes.Set( "enableShadows", _enableShadows );
+        }
+    }
 
-	public bool ShowGround
+    public bool ShowSkybox
+    {
+        get => _sky.IsValid() && _sky.Enabled;
+        set
+        {
+            if (!_sky.IsValid())
+                return;
+
+            _sky.Enabled = value;
+        }
+    }
+
+    public bool ShowGround
 	{
 		get => _ground.RenderingEnabled;
 		set => _ground.RenderingEnabled = value;
 	}
 
-	private bool _renderBackfaces;
-	public bool RenderBackfaces
-	{
-		get => _renderBackfaces;
-		set
-		{
-			_renderBackfaces = value;
+    private bool _renderBackfaces;
+    public bool RenderBackfaces
+    {
+        get => _renderBackfaces;
+        set
+        {
+            _renderBackfaces = value;
 
-			if ( _sceneObject.IsValid() )
-			{
-				_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
-			}
-		}
-	}
+            if (_sceneObject.IsValid())
+            {
+                _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
+            }
+        }
+    }
 
-	private float _tonemapScalar = 1.0f;
-	public float TonemapScalar
-	{
-		get => _tonemapScalar;
-		set
-		{
-			_tonemapScalar = value;
-			_camera.Attributes.Set( "tonemapScalar", _tonemapScalar );
-		}
-	}
+    public void UpdateMaterial()
+    {
+        _sceneObject.GetType().GetMethod("SetMaterialOverrideForMeshInstances",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.Invoke(_sceneObject, new[] { _material });
+    }
 
-	public void UpdateMaterial()
-	{
-		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
-			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { _material } );
+    private Material _material;
+    public Material Material
+    {
+        get => _material;
+        set
+        {
+            _material = value;
+            UpdateMaterial();
+        }
+    }
 
-		//_postprocessingpreview.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
-		//BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _postprocessingpreview, new[] { _PostProcessingMaterial } );
-	}
+    private Color _tint = Color.White;
+    public Color Tint
+    {
+        get => _tint;
+        set
+        {
+            _tint = value;
+            if (_sceneObject.IsValid())
+                _sceneObject.ColorTint = _tint;
+        }
+    }
 
-	private Material _material;
-	public Material Material
-	{
-		get => _material;
-		set
-		{
-			_material = value;
-			UpdateMaterial();
-		}
-	}
-
-	private Material _PostProcessingMaterial;
-	public Material PostProcessingMaterial
-	{
-		get => _PostProcessingMaterial;
-		set
-		{
-			_PostProcessingMaterial = value;
-		}
-	}
-
-	private Color _tint = Color.White;
-	public Color Tint
-	{
-		get => _tint;
-		set
-		{
-			_tint = value;
-			if ( _sceneObject.IsValid() )
-				_sceneObject.ColorTint = _tint;
-		}
-	}
-
-	private Model _model;
+    private Model _model;
 	public Model Model
 	{
 		get => _model;
@@ -842,42 +827,47 @@ public class Preview : NativeRenderingWidget
 		set
 		{
 			_postprocessingpreview.Enabled = value;
-			_postprocessingpreview.Material = _PostProcessingMaterial;
+			_postprocessingpreview.Material = PostProcessingMaterial;
 		}
 	}
 
 	public Model SphereModel { get; set; }
 	public Model GroundModel { get; set; }
 
-	private SceneSkyBox _skybox;
-	private SceneObject _ground;
+    private readonly SceneObject _ground;
+    private readonly SkyBox2D _sky;
 
-	public Preview( Widget parent, string model ) : base( parent )
+
+    public Preview( Widget parent, string model ) : base( parent )
 	{
 		MouseTracking = true;
 		FocusMode = FocusMode.Click;
 
-		_world = new SceneWorld();
-		_camera = new SceneCamera
-		{
-			World = _world,
-			AmbientLightColor = Color.Gray,
-			ZNear = 0.1f,
-			ZFar = 4000,
-			EnablePostProcessing = true,
-		};
+        Scene = Scene.CreateEditorScene();
 
-		Camera = _camera;
+        using (Scene.Push())
+        {
+            var camera = new GameObject(true, "camera").GetOrAddComponent<CameraComponent>();
+            camera.BackgroundColor = Color.White;
 
-		_distance = 150.0f;
-		_angles = new Vector2( 45 * 3, 30 );
-		_camera.Angles = new Angles( _angles.y, -_angles.x, 0 );
-		_camera.Position = _camera.Rotation.Backward * _distance;
-		_camera.FieldOfView = 45;
-		_camera.AntiAliasing = true;
-		_camera.BackgroundColor = Color.White;
+            var sun = new GameObject(true, "sun").GetOrAddComponent<DirectionalLight>();
+            sun.WorldRotation = Rotation.FromPitch(50);
+            sun.LightColor = Color.White * 2.5f + Color.Cyan * 0.05f;
 
-		SphereModel = Model.Builder
+            var cubemap = new GameObject(true, "cubemap").GetOrAddComponent<EnvmapProbe>();
+            cubemap.Texture = Texture.Load("textures/cubemaps/default2.vtex");
+
+            _sky = new GameObject(true, "sky").GetOrAddComponent<SkyBox2D>();
+        }
+
+        _distance = 150.0f;
+        _angles = new Vector2(45 * 3, 30);
+
+        Scene.Camera.WorldRotation = new Angles(_angles.y, -_angles.x, 0);
+        Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
+        Scene.Camera.FieldOfView = 45;
+
+        SphereModel = Model.Builder
 			.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
 			.Create();
 
@@ -885,29 +875,28 @@ public class Preview : NativeRenderingWidget
 			.AddMesh( CreatePlane() )
 			.Create();
 
-		_skybox = new SceneSkyBox( _world, Material.Load( "materials/skybox/skybox_studio_01.vmat" ) );
-		new SceneCubemap( _world, Texture.Load( "materials/skybox/skybox_studio_01.vtex" ), BBox.FromPositionAndSize( Vector3.Zero, 1000 ) );
-		new SceneDirectionalLight( _world, Rotation.FromPitch( 50 ), Color.White * 2.5f + Color.Cyan * 0.05f );
 
-		new SceneLight( _world, new Vector3( 100, 100, 100 ), 500, Color.Orange * 3 )
-		{
-			ShadowsEnabled = true
-		};
+        new SceneDirectionalLight(_world, Rotation.FromPitch(50), Color.White * 2.5f + Color.Cyan * 0.05f);
 
-		new SceneLight( _world, new Vector3( -100, -100, 100 ), 500, Color.Cyan * 3 )
-		{
-			ShadowsEnabled = true
-		};
+        new SceneLight(_world, new Vector3(100, 100, 100), 500, Color.Orange * 3)
+        {
+            ShadowsEnabled = true
+        };
 
-		_thobber = new Throbber( _world, this );
-		_postprocessingpreview = new PostProcessingPreview( _world, this );
+        new SceneLight(_world, new Vector3(-100, -100, 100), 500, Color.Cyan * 3)
+        {
+            ShadowsEnabled = true
+        };
 
-		_PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
+        _thobber = new Throbber(_world, this);
+        _postprocessingpreview = new PostProcessingPreview( _world, this );
+
+		PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
 		_material = Material.Load( "materials/core/shader_editor.vmat" );
 
-		Model = string.IsNullOrWhiteSpace( model ) ? SphereModel : Model.Load( model );
+        Model = string.IsNullOrWhiteSpace(model) ? SphereModel : Model.Load(model);
 
-		_ground = new SceneObject( _world, GroundModel );
+        _ground = new SceneObject( _world, GroundModel );
 		_ground.RenderingEnabled = false;
 	}
 
@@ -954,12 +943,12 @@ public class Preview : NativeRenderingWidget
 		{
 			if ( _cursorDelta.Length > 0.0f )
 			{
-				var right = _camera.Rotation.Right * _cursorDelta.x * 0.2f;
-				var down = _camera.Rotation.Down * _cursorDelta.y * 0.2f;
-				var invRot = Rotation.FromYaw( _modelRotation ).Inverse;
-				_origin += right * invRot;
-				_origin += down * invRot;
-			}
+                var right = Scene.Camera.WorldRotation.Right * _cursorDelta.x * 0.2f;
+                var down = Scene.Camera.WorldRotation.Down * _cursorDelta.y * 0.2f;
+                var invRot = Rotation.FromYaw(_modelRotation).Inverse;
+                _origin += right * invRot;
+                _origin += down * invRot;
+            }
 
 			Application.UnscaledCursorPosition = _lastCursorPos;
 			Cursor = CursorShape.Blank;
@@ -977,11 +966,11 @@ public class Preview : NativeRenderingWidget
 
 		_ground.Position = Vector3.Up * (_model.RenderBounds.Mins.z - 0.1f);
 
-		_camera.Angles = new Angles( _angles.y, -_angles.x, 0 );
-		_camera.Position = (_origin + _model.RenderBounds.Center) * _sceneObject.Rotation + _camera.Rotation.Backward * _distance;
-	}
+        Scene.Camera.WorldRotation = new Angles(_angles.y, -_angles.x, 0);
+        Scene.Camera.WorldPosition = (_origin + _model.RenderBounds.Center) * _sceneObject.Rotation + Scene.Camera.WorldRotation.Backward * _distance;
+    }
 
-	protected override void OnKeyPress( KeyEvent e )
+    protected override void OnKeyPress( KeyEvent e )
 	{
 		base.OnKeyPress( e );
 
@@ -1055,14 +1044,6 @@ public class Preview : NativeRenderingWidget
 	{
 		_distance += delta;
 		_distance = _distance.Clamp( 0, 2000 );
-	}
-
-	public override void OnDestroyed()
-	{
-		base.OnDestroyed();
-
-		_world?.Delete();
-		_world = null;
 	}
 
 	static Mesh CreatePlane()
