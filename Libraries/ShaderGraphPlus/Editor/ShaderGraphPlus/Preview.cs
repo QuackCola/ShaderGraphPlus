@@ -94,34 +94,34 @@ public class PostProcessingPreview : SceneCustomObject
 	// hmmmm
 	private void SetAttributes()
 	{
-		foreach ( var attrib in _textureAttributes )
+		foreach ( var attribute in _textureAttributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
-		foreach ( var attrib in _float4Attributes )
+		foreach ( var attribute in _float4Attributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
-		foreach ( var attrib in _float3Attributes )
+		foreach ( var attribute in _float3Attributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
-		foreach ( var attrib in _float2Attributes )
+		foreach ( var attribute in _float2Attributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
-		foreach ( var attrib in _floatAttributes )
+		foreach ( var attribute in _floatAttributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
-		foreach ( var attrib in _boolAttributes )
+		foreach ( var attribute in _boolAttributes )
 		{
-			Graphics.Attributes.Set( attrib.Key, attrib.Value );
+			Graphics.Attributes.Set( attribute.Key, attribute.Value );
 		}
 
 		Graphics.Attributes.Set( "g_flPreviewTime", RealTime.Now );
