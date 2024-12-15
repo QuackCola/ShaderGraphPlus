@@ -4,6 +4,10 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -12,7 +16,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "160,-288",
+      "Position": "156,-288",
       "Albedo": {
         "Identifier": "5",
         "Output": "Result"
@@ -27,7 +31,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "1",
-      "Position": "-528,-160"
+      "Position": "-528,-156"
     },
     {
       "_class": "Float",
@@ -38,7 +42,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "2",
-      "Position": "-528,-224"
+      "Position": "-528,-228"
     },
     {
       "_class": "Float2",
@@ -62,7 +66,7 @@
         }
       },
       "Identifier": "4",
-      "Position": "-528,-80"
+      "Position": "-528,-84"
     },
     {
       "_class": "RoundGradientNode",
@@ -71,7 +75,7 @@
       "DefaultDensity": 2.33,
       "DefaultInvert": false,
       "Identifier": "5",
-      "Position": "-208,-352",
+      "Position": "-204,-348",
       "CenterPos": {
         "Identifier": "3",
         "Output": "Result"

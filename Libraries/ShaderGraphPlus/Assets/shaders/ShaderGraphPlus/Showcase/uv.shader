@@ -112,7 +112,7 @@ PS
 		
 		float2 l_0 = g_vTexCoordCenter;
 		float l_1 = g_flTexCoordRotation;
-		float2 l_2 = UVRotation( i.vTextureCoords.xy,l_0,l_1 );
+		float2 l_2 = UVRotation(i.vTextureCoords.xy, l_0, l_1);
 		float4 l_3 = g_tTexture_ps_0.Sample( g_sSampler0,l_2 );
 		
 		m.Albedo = l_3.xyz;

@@ -4,6 +4,10 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -12,7 +16,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "160,-96",
+      "Position": "156,-96",
       "Albedo": {
         "Identifier": "1",
         "Output": "Result"
@@ -28,6 +32,7 @@
         "Name": "",
         "Default": "1,1,1,1",
         "CustomExtension": "",
+        "ShowExtension": true,
         "SrgbRead": true
       },
       "Identifier": "1",
@@ -43,7 +48,7 @@
         "Name": "SamplerAniso"
       },
       "Identifier": "2",
-      "Position": "-592,-80"
+      "Position": "-588,-84"
     },
     {
       "_class": "SamplerNode",
@@ -52,7 +57,7 @@
         "Filter": "Point"
       },
       "Identifier": "3",
-      "Position": "-592,16"
+      "Position": "-588,12"
     },
     {
       "_class": "CommentNode",
@@ -62,7 +67,7 @@
       "Description": "Texture2D Can either take in the output of sampler node or use its Default Sampler in Texture 2D node when no sampler node is connected.",
       "Layer": 1,
       "Identifier": "4",
-      "Position": "-608,-208"
+      "Position": "-612,-204"
     }
   ]
 }

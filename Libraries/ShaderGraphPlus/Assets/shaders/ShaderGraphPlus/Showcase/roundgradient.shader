@@ -29,8 +29,9 @@ COMMON
 	#endif
 	
 	#include "common/shared.hlsl"
+	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
-
+	
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }
@@ -77,7 +78,7 @@ PS
 	float2 g_vCenter < UiGroup( ",0/,0/0" ); Default2( 0.5,0.5 ); Range2( 0,0, 1,1 ); >;
 	float g_flRadius < UiGroup( ",0/,0/0" ); Default1( 0.5 ); Range1( 0, 0.5 ); >;
 	float g_flDensity < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
-	bool g_bInvertGradient < UiGroup( ",0/,0/0" ); Default( 1 ); >;
+	bool g_bInvertGradient < Attribute( "InvertGradient" ); Default( 1 ); >;
 		
 	float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensity, bool bInvert )
 	{
@@ -108,7 +109,7 @@ PS
 		float2 l_0 = g_vCenter;
 		float l_1 = g_flRadius;
 		float l_2 = g_flDensity;
-		float l_3 = RoundGradient( i.vTextureCoords.xy, l_0, l_1, l_2, g_bInvertGradient );
+		float l_3 = RoundGradient(i.vTextureCoords.xy, l_0, l_1, l_2, g_bInvertGradient);
 		
 		m.Albedo = float3( l_3, l_3, l_3 );
 		m.Opacity = 1;
