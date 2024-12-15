@@ -7,6 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -19,28 +20,21 @@
       "Albedo": {
         "Identifier": "1",
         "Output": "Result"
-      },
-      "Opacity": {
-        "Identifier": "1",
-        "Output": "A"
       }
     },
     {
       "_class": "PixelPlotNode",
-      "DefaultGridSize": "128,128",
-      "DefaultBoarderThickness": 0.42,
-      "Image": "dev/vgui/materials/hud/gameinstructor_iconsheet1.tga",
       "DefaultSampler": {
         "Name": ""
       },
-      "UI": {
-        "Name": "",
-        "Default": "1,1,1,1",
-        "CustomExtension": "",
-        "SrgbRead": true
-      },
+      "DefaultGridSize": "64,64",
+      "DefaultBoarderThickness": 0.42,
       "Identifier": "1",
       "Position": "-528,36",
+      "TexObject": {
+        "Identifier": "4",
+        "Output": "Result"
+      },
       "Sampler": {
         "Identifier": "2",
         "Output": "Sampler"
@@ -52,17 +46,29 @@
         "Name": ""
       },
       "Identifier": "2",
-      "Position": "-744,60"
+      "Position": "-732,216"
     },
     {
       "_class": "CommentNode",
-      "Size": "432,386",
+      "Size": "432,458",
       "Color": "Blue",
-      "Title": "Untitled",
+      "Title": "Pixel Plotting Effect",
       "Description": "",
-      "Layer": 5,
+      "Layer": 1,
       "Identifier": "3",
-      "Position": "-768,-36"
+      "Position": "-768,-108"
+    },
+    {
+      "_class": "TextureObjectNode",
+      "Image": "textures/sbox_logo.png",
+      "UI": {
+        "Name": "Color",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "4",
+      "Position": "-756,12"
     }
   ]
 }

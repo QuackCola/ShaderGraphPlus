@@ -7,6 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -93,6 +94,7 @@
         "Name": "",
         "Default": "1,1,1,1",
         "CustomExtension": "",
+        "ShowExtension": true,
         "SrgbRead": true
       },
       "Identifier": "6",
