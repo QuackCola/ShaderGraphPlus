@@ -43,47 +43,23 @@ public abstract class Unary : ShaderNodePlus
 
 		var result = compiler.ResultOrDefault( Input, 0.0f );
 
-		//Components = result.Components();
+		//Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
 
-        //Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
+		ResultType resulttype = result.ResultType;
 
-        return result.IsValid ? new NodeResult( result.ResultType, $"{Op}( {result} )") : default;
+		if ( Components is not null )
+		{
+            switch ( Components )
+            {
+                case 1: resulttype = ResultType.Float; break;
+                case 2: resulttype = ResultType.Vector2; break;
+                case 3: resulttype = ResultType.Vector3; break;
+                case 4: resulttype = ResultType.Color; break;
+            }
+        }
 
-        //if ( resultType == ResultType.Float )
-        //{
-        //	Log.Info( "Output Is : Is Float" );
-        //	return result.IsValid ? new NodeResult( ResultType.Float, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Vector2 )
-        //{
-        //	//Log.Info( "Output Is : Is Vector2" );
-        //	return result.IsValid ? new NodeResult( ResultType.Vector2, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Vector3 )
-        //{
-        //	//Log.Info( "Output Is : Vector3" );
-        //	return result.IsValid ? new NodeResult( ResultType.Vector3, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Float2x2 )
-        //{
-        //
-        //	return result.IsValid ? new NodeResult( ResultType.Float2x2, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Float3x3 )
-        //{
-        //
-        //	return result.IsValid ? new NodeResult( ResultType.Float3x3, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Float4x4 )
-        //{
-        //
-        //	return result.IsValid ? new NodeResult( ResultType.Float4x4, $"{Op}( {result} )" ) : default;
-        //}
-        //else if ( resultType == ResultType.Color )
-        //{
-        //	return result.IsValid ? new NodeResult( ResultType.Color, $"{Op}( {result} )" ) : default;
-        //}
 
+        return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
     };
 }
 
