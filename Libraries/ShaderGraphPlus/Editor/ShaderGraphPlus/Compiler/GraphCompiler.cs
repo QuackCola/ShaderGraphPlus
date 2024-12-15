@@ -519,7 +519,7 @@ public sealed partial class GraphCompiler
 					options.Write($"Default{parameter.Result.Components()}( {value} ); ");
 				}
 
-				if (parameter.Result.ResultType > 0 && isRange)
+				if (parameter.Result.Components() > 0 && isRange)
 				{
 					options.Write($"Range{parameter.Result.Components()}( {min}, {max} ); ");
 				}

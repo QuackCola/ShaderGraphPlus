@@ -2,14 +2,38 @@
 
 public enum ResultType
 { 
+	/// <summary>
+	/// No Components, just True or False.
+	/// </summary>
 	Bool,
+	/// <summary>
+	/// 1 Component
+	/// </summary>
 	Float,
+	/// <summary>
+	/// 2 Component's
+	/// </summary>
 	Vector2,
+	/// <summary>
+	/// 3 Component's
+	/// </summary>
 	Vector3,
-	Color,
-	Float2x2,
-	Float3x3,
-	Float4x4,
+    /// <summary>
+    /// 4 Component's
+    /// </summary>
+    Color,
+    /// <summary>
+    /// 4 Component's
+    /// </summary>
+    Float2x2,
+    /// <summary>
+    /// 9 Component's
+    /// </summary>
+    Float3x3,
+    /// <summary>
+    /// 16 Component's
+    /// </summary>
+    Float4x4,
 	Sampler,
 	TextureObject,
 	String,
@@ -25,14 +49,10 @@ public struct NodeResult : IValid
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
 	public bool IsComponentLess { get; set; }
-
 	public bool IsDepreciated { get; set; }
+
 	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 
-	// Old
-	//public readonly string TypeName => ResultType > ResultType.Float ? $"float{(int)ResultType}" : ResultType == ResultType.Bool ? "bool" : "float";
-
-	// Handling more than just floats now so this should do...
 	public readonly string TypeName
 	{
 		get
@@ -43,7 +63,7 @@ public struct NodeResult : IValid
 			}
 			else if ( ResultType is ResultType.Vector2 or ResultType.Vector3 or ResultType.Color )
 			{
-				return $"float{(int)ResultType}";
+				return $"float{Components()}";
 			}
 			else if ( ResultType is ResultType.Float2x2 )
 			{
@@ -101,7 +121,6 @@ public struct NodeResult : IValid
 	{
 		ResultType = resulttype;
 		Code = code;
-		//CodeTwo = codetwo;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 	}
@@ -116,14 +135,14 @@ public struct NodeResult : IValid
 	/// </summary>
 	public string Cast( int components, float defaultValue = 0.0f )
 	{
-		if ( ResultType == (ResultType)components )
-			return Code;
+		if ( Components() == components)
+            return Code;
 
-		if ( ResultType > (ResultType)components )
-		{
+		if ( Components() > components )
+        {
 			return $"{Code}.{"xyzw"[..components]}";
 		}
-		else if ( ResultType == (ResultType)1 )
+		else if ( ResultType == ResultType.Float )
 		{
 			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
 		}
@@ -135,8 +154,38 @@ public struct NodeResult : IValid
 
 	public readonly int Components()
 	{
-		return (int)ResultType;
-	}
+        int components = 0;
+
+		switch (ResultType)
+		{
+            case ResultType.Float:
+                components = 1;
+                break;
+            case ResultType.Vector2:
+                components = 2;
+                break;
+            case ResultType.Vector3:
+                components = 3;
+                break;
+            case ResultType.Color:
+                components = 4;
+                break;
+            case ResultType.Float2x2:
+                components = 4;
+                break;
+            case ResultType.Float3x3:
+                components = 9;
+                break;
+            case ResultType.Float4x4:
+                components = 16;
+				break;
+			default:
+                Log.Warning($"Result type: '{ResultType}' has no components.");
+			break;
+		}
+
+		return components;
+    }
 
 	public override readonly string ToString()
 	{
