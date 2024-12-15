@@ -43,45 +43,48 @@ public abstract class Unary : ShaderNodePlus
 
 		var result = compiler.ResultOrDefault( Input, 0.0f );
 
-		Components = result.Components();
+		//Components = result.Components();
 
-		if ( (ResultType)Components == ResultType.Float )
-		{
-			//Log.Info( "Output Is : Is Float" );
-			return result.IsValid ? new NodeResult( ResultType.Float, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Vector2 )
-		{
-			//Log.Info( "Output Is : Is Vector2" );
-			return result.IsValid ? new NodeResult( ResultType.Vector2, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Vector3 )
-		{
-			//Log.Info( "Output Is : Vector3" );
-			return result.IsValid ? new NodeResult( ResultType.Vector3, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float2x2 )
-		{
+        //Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
 
-			return result.IsValid ? new NodeResult( ResultType.Float2x2, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float3x3 )
-		{
+        return result.IsValid ? new NodeResult( result.ResultType, $"{Op}( {result} )") : default;
 
-			return result.IsValid ? new NodeResult( ResultType.Float3x3, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float4x4 )
-		{
+        //if ( resultType == ResultType.Float )
+        //{
+        //	Log.Info( "Output Is : Is Float" );
+        //	return result.IsValid ? new NodeResult( ResultType.Float, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Vector2 )
+        //{
+        //	//Log.Info( "Output Is : Is Vector2" );
+        //	return result.IsValid ? new NodeResult( ResultType.Vector2, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Vector3 )
+        //{
+        //	//Log.Info( "Output Is : Vector3" );
+        //	return result.IsValid ? new NodeResult( ResultType.Vector3, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Float2x2 )
+        //{
+        //
+        //	return result.IsValid ? new NodeResult( ResultType.Float2x2, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Float3x3 )
+        //{
+        //
+        //	return result.IsValid ? new NodeResult( ResultType.Float3x3, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Float4x4 )
+        //{
+        //
+        //	return result.IsValid ? new NodeResult( ResultType.Float4x4, $"{Op}( {result} )" ) : default;
+        //}
+        //else if ( resultType == ResultType.Color )
+        //{
+        //	return result.IsValid ? new NodeResult( ResultType.Color, $"{Op}( {result} )" ) : default;
+        //}
 
-			return result.IsValid ? new NodeResult( ResultType.Float4x4, $"{Op}( {result} )" ) : default;
-		}
-		else
-		{
-			//Log.Info( "Output Is : Is Color" );
-			return result.IsValid ? new NodeResult( ResultType.Color, $"{Op}( {result} )" ) : default;
-		}
-
-	};
+    };
 }
 
 [Title( "Transpose" ), Category( "Unary" )]
