@@ -426,46 +426,16 @@ public class PreviewPanel : Widget
         popup.Layout = Layout.Column();
         popup.Layout.Margin = 16;
 
-        var ps = new PropertySheet(popup);
+        var cs = new ControlSheet();
+        cs.AddProperty(_preview, x => x.RenderBackfaces);
+        cs.AddProperty(_preview, x => x.EnableShadows);
+        cs.AddProperty(_preview, x => x.ShowGround);
+        cs.AddProperty(_preview, x => x.ShowSkybox);
+        cs.AddProperty(_preview, x => x.BackgroundColor);
+        cs.AddProperty(_preview, x => x.Tint);
 
-        ps.AddSectionHeader("Render Options");
-        {
-            var w = ps.AddRow("Render Backfaces", new Checkbox("", this));
-            w.Value = _preview.RenderBackfaces;
-            w.Bind("Value").From(() => _preview.RenderBackfaces, x => _preview.RenderBackfaces = x);
-        }
-        {
-            var w = ps.AddRow("Enable Shadows", new Checkbox("", this));
-            w.Value = _preview.EnableShadows;
-            w.Bind("Value").From(() => _preview.EnableShadows, x => _preview.EnableShadows = x);
-        }
-        {
-            var w = ps.AddRow("Show Ground", new Checkbox("", this));
-            w.Value = _preview.ShowGround;
-            w.Bind("Value").From(() => _preview.ShowGround, x => _preview.ShowGround = x);
-        }
-        {
-            var showSkybox = ps.AddRow("Show Skybox", new Checkbox("", this));
-            var backgroundColor = ps.AddRow("Background Color", new ColorProperty(this));
-            showSkybox.Value = _preview.ShowSkybox;
-            backgroundColor.Value = _preview.Scene.Camera.BackgroundColor;
-            backgroundColor.Enabled = !_preview.ShowSkybox;
-            showSkybox.Bind("Value").From(() => _preview.ShowSkybox, x =>
-            {
-                _preview.ShowSkybox = x;
-                backgroundColor.Enabled = !x;
-            });
-
-            backgroundColor.Bind("Value").From(() => _preview.Scene.Camera.BackgroundColor, x => _preview.Scene.Camera.BackgroundColor = x);
-        }
-        {
-            var tintColor = ps.AddRow("Tint Color", new ColorProperty(this));
-            tintColor.Value = _preview.Tint;
-            tintColor.Bind("Value").From(() => _preview.Tint, x => _preview.Tint = x);
-        }
-
-        popup.Layout.Add(ps);
-        popup.MinimumWidth = 300;
+        popup.Layout.Add(cs);
+        popup.MaximumWidth = 300;
         popup.OpenAtCursor();
     }
 }
@@ -567,6 +537,18 @@ public class Preview : SceneRenderingWidget
             {
                 _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
             }
+        }
+    }
+
+    public Color BackgroundColor
+    {
+        get => Scene.Camera.IsValid() ? Scene.Camera.BackgroundColor : default;
+        set
+        {
+            if (!Scene.Camera.IsValid())
+                return;
+
+            Scene.Camera.BackgroundColor = value;
         }
     }
 
