@@ -40,27 +40,27 @@ public abstract class Unary : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-
+		
 		var result = compiler.ResultOrDefault( Input, 0.0f );
-
+		
 		//Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
-
+		
 		ResultType resulttype = result.ResultType;
-
+		
 		if ( Components is not null )
 		{
-            switch ( Components )
-            {
-                case 1: resulttype = ResultType.Float; break;
-                case 2: resulttype = ResultType.Vector2; break;
-                case 3: resulttype = ResultType.Vector3; break;
-                case 4: resulttype = ResultType.Color; break;
-            }
-        }
-
-
-        return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
-    };
+		    switch ( Components )
+		    {
+		        case 1: resulttype = ResultType.Float; break;
+		        case 2: resulttype = ResultType.Vector2; break;
+		        case 3: resulttype = ResultType.Vector3; break;
+		        case 4: resulttype = ResultType.Color; break;
+		    }
+		}
+		
+		
+		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
+	};
 }
 
 [Title( "Transpose" ), Category( "Unary" )]
