@@ -21,7 +21,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func X => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.ResultType > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
+		if ( result.IsValid && result.Components() > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 

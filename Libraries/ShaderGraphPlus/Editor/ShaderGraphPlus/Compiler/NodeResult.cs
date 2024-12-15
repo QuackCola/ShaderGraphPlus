@@ -142,16 +142,20 @@ public struct NodeResult : IValid
         {
 			return $"{Code}.{"xyzw"[..components]}";
 		}
-		else if ( ResultType == ResultType.Float )
+		else if (Components() == 1 )
 		{
 			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
 		}
 		else
 		{
-			return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", (ResultType)components - ResultType ) )} )";
+			return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - Components()) )} )";
 		}
 	}
 
+	/// <summary>
+	/// Returns the components
+	/// </summary>
+	/// <returns></returns>
 	public readonly int Components()
 	{
         int components = 0;
