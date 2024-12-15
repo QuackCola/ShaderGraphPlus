@@ -224,13 +224,26 @@ public class ProjectCreator : Dialog
                     canvas.Layout = Layout.Row();
                     canvas.Layout.Spacing = 32;
 
-                    var property = new PropertySheet(canvas);
-                  
-                    property.MinimumWidth = 350;
-                    property.AddProperty(templateUserConfig, nameof(templateUserConfig.Description));
+                    var so = templateUserConfig.GetSerialized();
+                    var cs = new ControlSheet();
+                    //canvas.MinimumWidth = 350;
+
+                    cs.AddProperty(templateUserConfig, x => x.Description);
+
+
+
+                    //var canvas = new Widget(null);
+                    //canvas.Layout = Layout.Row();
+                    //canvas.Layout.Spacing = 32;
+
+
+                    //var cs = new ControlSheet(canvas);
+
+                    //
+                    //cs.AddProperty(templateUserConfig, nameof(templateUserConfig.Description));
                     //property.AddProperty(templateUserConfig, nameof(templateUserConfig.blendmode));
                     //property.AddProperty(templateUserConfig, nameof(templateUserConfig.shadingmodel));
-                    setupBody.Add(property);
+                    setupBody.Add(cs);
                 }
 
 
