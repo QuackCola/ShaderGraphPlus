@@ -25,7 +25,7 @@ public class ProjectCreator : Dialog
 
     private LineEdit TitleEdit;
 
-    private FolderProperty FolderEdit;
+    private FolderEdit FolderEdit;
 
     public string FolderEditPath 
     { 
@@ -196,7 +196,7 @@ public class ProjectCreator : Dialog
                 // Folder Edit.
                 setupBody.Add(new FieldTitle("Location"));
                 {
-                    FolderEdit = setupBody.Add(new FolderProperty(null));
+                    FolderEdit = setupBody.Add(new FolderEdit(null));
                     FolderEdit.PlaceholderText = "";
                     FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/";
                     FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
@@ -204,7 +204,7 @@ public class ProjectCreator : Dialog
                     {
                         Validate();
                     };
-                    FolderProperty folderEdit = FolderEdit;
+                    FolderEdit folderEdit = FolderEdit;
                     folderEdit.FolderSelected = (Action<string>)Delegate.Combine(folderEdit.FolderSelected, (Action<string>)delegate
                     {
                         Validate();
