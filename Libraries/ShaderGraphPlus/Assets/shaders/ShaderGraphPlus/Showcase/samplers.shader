@@ -29,8 +29,9 @@ COMMON
 	#endif
 	
 	#include "common/shared.hlsl"
+	#include "common/gradient.hlsl"
 	#include "procedural.hlsl"
-
+	
 	#define S_UV2 1
 	#define CUSTOM_MATERIAL_INPUTS
 }

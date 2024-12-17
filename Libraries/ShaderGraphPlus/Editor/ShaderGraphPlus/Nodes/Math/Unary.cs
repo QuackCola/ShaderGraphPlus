@@ -40,47 +40,26 @@ public abstract class Unary : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-
+		
 		var result = compiler.ResultOrDefault( Input, 0.0f );
-
-		Components = result.Components();
-
-		if ( (ResultType)Components == ResultType.Float )
+		
+		//Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
+		
+		ResultType resulttype = result.ResultType;
+		
+		if ( Components is not null )
 		{
-			//Log.Info( "Output Is : Is Float" );
-			return result.IsValid ? new NodeResult( ResultType.Float, $"{Op}( {result} )" ) : default;
+		    switch ( Components )
+		    {
+		        case 1: resulttype = ResultType.Float; break;
+		        case 2: resulttype = ResultType.Vector2; break;
+		        case 3: resulttype = ResultType.Vector3; break;
+		        case 4: resulttype = ResultType.Color; break;
+		    }
 		}
-		else if ( (ResultType)Components == ResultType.Vector2 )
-		{
-			//Log.Info( "Output Is : Is Vector2" );
-			return result.IsValid ? new NodeResult( ResultType.Vector2, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Vector3 )
-		{
-			//Log.Info( "Output Is : Vector3" );
-			return result.IsValid ? new NodeResult( ResultType.Vector3, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float2x2 )
-		{
-
-			return result.IsValid ? new NodeResult( ResultType.Float2x2, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float3x3 )
-		{
-
-			return result.IsValid ? new NodeResult( ResultType.Float3x3, $"{Op}( {result} )" ) : default;
-		}
-		else if ( (ResultType)Components == ResultType.Float4x4 )
-		{
-
-			return result.IsValid ? new NodeResult( ResultType.Float4x4, $"{Op}( {result} )" ) : default;
-		}
-		else
-		{
-			//Log.Info( "Output Is : Is Color" );
-			return result.IsValid ? new NodeResult( ResultType.Color, $"{Op}( {result} )" ) : default;
-		}
-
+		
+		
+		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
 	};
 }
 
@@ -91,6 +70,9 @@ public sealed class Transpose : Unary
     protected override string Op => "transpose";
 }
 
+/// <summary>
+/// Clamps the specified input value to the pecified minimum and maximum.
+/// </summary>
 [Title("Clamp"), Category("Unary")]
 public sealed class Clamp : ShaderNodePlus
 {
@@ -125,6 +107,9 @@ public sealed class Clamp : ShaderNodePlus
     };
 }
 
+/// <summary>
+/// Returns the cosine of the input value.
+/// </summary>
 [Title( "Cosine" ), Category( "Unary" )]
 public sealed class Cosine : Unary
 {
@@ -132,6 +117,9 @@ public sealed class Cosine : Unary
     protected override string Op => "cos";
 }
 
+/// <summary>
+/// Returns the absolute value of the input value.
+/// </summary>
 [Title( "Abs" ), Category( "Unary" )]
 public sealed class Abs : Unary
 {
@@ -139,6 +127,9 @@ public sealed class Abs : Unary
     protected override string Op => "abs";
 }
 
+/// <summary>
+/// Returns the reciprocal of the square root of the input value.
+/// </summary>
 [Title("Rsqrt"), Category("Unary")]
 public sealed class Rsqrt : Unary
 {
@@ -146,6 +137,9 @@ public sealed class Rsqrt : Unary
     protected override string Op => "rsqrt";
 }
 
+/// <summary>
+/// Returns the square root of the input value.
+/// </summary>
 [Title( "Sqrt" ), Category( "Unary" )]
 public sealed class Sqrt : Unary
 {
@@ -153,6 +147,9 @@ public sealed class Sqrt : Unary
     protected override string Op => "sqrt";
 }
 
+/// <summary>
+/// Returns the doc product which is a value equal to the magnitudes of the two input values multiplied together and then multiplied by the cosine of the angle between them.
+/// </summary>
 [Title( "Dot Product" ), Category( "Unary" )]
 public sealed class DotProduct : ShaderNodePlus
 {
@@ -231,6 +228,9 @@ public sealed class Exponential : Unary
     protected override string Op => Base == ExponentBase.BaseE ? "exp" : "exp2";
 }
 
+/// <summary>
+/// Returns the fractional (or decimal) part of the input value.
+/// </summary>
 [Title( "Frac" ), Category( "Unary" )]
 public sealed class Frac : Unary
 {
@@ -238,6 +238,9 @@ public sealed class Frac : Unary
     protected override string Op => "frac";
 }
 
+/// <summary>
+/// The largest integer value (or whole number) that is less than or equal to the input value.
+/// </summary>
 [Title( "Floor" ), Category( "Unary" )]
 public sealed class Floor : Unary
 {
@@ -245,6 +248,9 @@ public sealed class Floor : Unary
     protected override string Op => "floor";
 }
 
+/// <summary>
+/// Return the length (or magnitude) of the input value.
+/// </summary>
 [Title( "Length" ), Category( "Unary" )]
 public sealed class Length : Unary
 {
@@ -254,6 +260,7 @@ public sealed class Length : Unary
     [Hide]
     protected override string Op => "length";
 }
+
 
 [Title( "Log" ), Category( "Unary" )]
 public sealed class BaseLog : Unary
@@ -338,6 +345,9 @@ public sealed class Saturate : Unary
     protected override string Op => "saturate";
 }
 
+/// <summary>
+/// Returns the sine of the input value
+/// </summary>
 [Title( "Sine" ), Category( "Unary" )]
 public sealed class Sine : Unary
 {
@@ -345,6 +355,9 @@ public sealed class Sine : Unary
     protected override string Op => "sin";
 }
 
+/// <summary>
+/// Computes a smooth interpolation between 0 and 1. When the the input value of Input is greater than or equal to the input value of Edge.
+/// </summary>
 [Title( "Step" ), Category( "Unary" )]
 public sealed class Step : ShaderNodePlus
 {
@@ -372,6 +385,9 @@ public sealed class Step : ShaderNodePlus
 	};
 }
 
+/// <summary>
+/// Used to create a smooth transition between two input values (or edges).
+/// </summary>
 [Title( "Smooth Step" ), Category( "Unary" )]
 public sealed class SmoothStep : ShaderNodePlus
 {
@@ -452,6 +468,9 @@ public sealed class Ceil : Unary
     protected override string Op => "ceil";
 }
 
+/// <summary>
+/// Returns the reuslt of the input value subtracted from 1.
+/// </summary>
 [Title( "One Minus" ), Category( "Unary" )]
 public sealed class OneMinus : ShaderNodePlus
 {
