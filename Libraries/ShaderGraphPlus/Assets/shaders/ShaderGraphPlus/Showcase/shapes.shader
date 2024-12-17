@@ -102,7 +102,7 @@ PS
 		m.Transmission = 0;
 		
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
-		float l_1 = PolygonShape( l_0,5,0.5,0.5 );
+		float l_1 = PolygonShape(l_0, 5, 0.5, 0.5);
 		
 		m.Albedo = float3( l_1, l_1, l_1 );
 		m.Opacity = 1;
