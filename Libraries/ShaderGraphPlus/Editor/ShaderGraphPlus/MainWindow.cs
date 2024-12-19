@@ -295,23 +295,16 @@ public class MainWindow : DockWindow, IAssetEditor
 			// Alternatively Material.Create could be made to force reload the shader
 			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 
-			var created_mat = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
-
-
 			if ( _graph.MaterialDomain is MaterialDomain.Surface )
 			{
-				_preview.PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
-				_preview.Material = created_mat;
-				_preview.IsPostProcessShader = false;
+				_preview.Material = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
+                _preview.IsPostProcessShader = false;
 			}
 			else
 			{
-				_preview.PostProcessingMaterial = created_mat;
-				_preview.Material = Material.Load( "materials/core/shader_editor.vmat" );
+				_preview.PostProcessingMaterial = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
 				_preview.IsPostProcessShader = true;
 			}
-
-			Log.Info( $"Created Material : {created_mat.Name}" );
 		}
 		else
 		{
