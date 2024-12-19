@@ -84,7 +84,7 @@ VS
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 		
 		float3 l_0 = i.vPositionWs;
-		float3 l_1 = GerstnerWaves( l_0,float2( 0, 1 ),0.4,0.05,0.5,0.42,1,385.827 );
+		float3 l_1 = GerstnerWaves( l_0, float2( 0, 1 ), 0.4, 0.05, 0.5, 0.42, 1, 385.827 );
 		i.vPositionWs.xyz += l_1;
 		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		
