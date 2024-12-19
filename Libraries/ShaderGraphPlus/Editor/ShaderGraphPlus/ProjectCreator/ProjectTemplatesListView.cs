@@ -39,7 +39,7 @@ internal class ProjectTemplatesListView : ListView
         if (value is ProjectTemplate pt)
         {
             ChosenTemplate = pt;
-            Log.Info($"Selected ShadergraphPlus Template : {ChosenTemplate.TemplatePath}");
+            //Log.Info($"Selected ShadergraphPlus Template : {ChosenTemplate.TemplatePath}");
             //Utilities.EdtiorSound.Success();
         }
     }

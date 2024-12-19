@@ -353,8 +353,6 @@ public class ProjectCreator : Dialog
             return;
         }
 
-        Log.Info($"Instance option : {templateUserConfig.ShadingModel}");
-
         string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
 
@@ -367,7 +365,7 @@ public class ProjectCreator : Dialog
         // Register the generated project with the assetsystem.
         AssetSystem.RegisterFile(OutputPath); 
 
-        Log.Info($"Creating ShaderGraphPlus project from : {Templates.ListView.ChosenTemplate.TemplatePath}");
+        //Log.Info($"Creating ShaderGraphPlus project from : {Templates.ListView.ChosenTemplate.TemplatePath}");
         Utilities.EdtiorSound.Success();
         Close();
 
