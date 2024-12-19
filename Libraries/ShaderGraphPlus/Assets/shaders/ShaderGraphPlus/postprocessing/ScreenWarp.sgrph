@@ -84,7 +84,7 @@
         "SrgbRead": true
       },
       "Identifier": "6",
-      "Position": "-804,84",
+      "Position": "-804,96",
       "Coords": {
         "Identifier": "5",
         "Output": "Result"
@@ -106,7 +106,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "8",
-      "Position": "-468,12",
+      "Position": "-468,0",
       "A": {
         "Identifier": "9",
         "Output": "Result"

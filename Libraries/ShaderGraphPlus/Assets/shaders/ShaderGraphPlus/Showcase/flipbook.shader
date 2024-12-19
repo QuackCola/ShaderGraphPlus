@@ -110,7 +110,7 @@ PS
 		float l_3 = g_flSpeed;
 		float l_4 = g_flTime * l_3;
 		float l_5 = floor( l_4 );
-		float2 l_6 = FlipBook( l_0, l_1, l_2, l_5, float2(0,0) );
+		float2 l_6 = FlipBook(l_0, l_1, l_2, l_5, float2(0,0));
 		float4 l_7 = g_tTexSheet.Sample( g_sSampler0,l_6 );
 		
 		m.Albedo = l_7.xyz;

@@ -4,6 +4,10 @@
   "BlendMode": "Masked",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "postProcessComponentInfo": {
+    "Order": 500
+  },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -26,7 +30,7 @@
       "Invertx": false,
       "Inverty": false,
       "Identifier": "1",
-      "Position": "-468,-144",
+      "Position": "-492,-180",
       "Coords": {
         "Identifier": "8",
         "Output": "Result"
@@ -54,6 +58,7 @@
         "Name": "TexSheet",
         "Default": "1,1,1,1",
         "CustomExtension": "",
+        "ShowExtension": true,
         "SrgbRead": true
       },
       "Identifier": "2",
