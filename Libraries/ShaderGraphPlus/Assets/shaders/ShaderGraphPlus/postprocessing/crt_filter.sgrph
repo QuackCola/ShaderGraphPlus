@@ -9,22 +9,14 @@
     "ComponentCategory": "Post Processing",
     "Order": 500
   },
+  "Metadata": {},
   "nodes": [
     {
-      "_class": "Result",
-      "DefaultOpacity": 1,
-      "DefaultRoughness": 1,
-      "DefaultMetalness": 0,
-      "DefaultAmbientOcclusion": 1,
-      "Identifier": "0",
-      "Position": "-300,-480"
-    },
-    {
       "_class": "PostProcessingResult",
-      "Identifier": "1",
-      "Position": "-708,-396",
+      "Identifier": "0",
+      "Position": "-696,-408",
       "SceneColor": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result"
       }
     },
@@ -51,14 +43,14 @@
       "DefaultClipWarp": false,
       "DefaultVignetteIntensity": 0.4,
       "DefaultVignetteOpacity": 0.5,
-      "Identifier": "2",
-      "Position": "-972,-444",
+      "Identifier": "1",
+      "Position": "-996,-432",
       "Resolution": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result"
       },
       "Pixelate": {
-        "Identifier": "3",
+        "Identifier": "2",
         "Output": "Result"
       }
     },
@@ -72,7 +64,7 @@
           "Name": ""
         }
       },
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "-1272,-348"
     },
     {
@@ -83,7 +75,7 @@
       "Name": "Resolution",
       "IsAttribute": true,
       "UI": {},
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "-1284,-240"
     },
     {
@@ -92,7 +84,7 @@
       "Name": "s",
       "IsAttribute": true,
       "UI": {},
-      "Identifier": "5",
+      "Identifier": "4",
       "Position": "-1260,-432"
     },
     {
@@ -103,7 +95,7 @@
       "Name": "VecThreeTest",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "-1536,-228"
     }
   ]
