@@ -7,6 +7,7 @@
   "postProcessComponentInfo": {
     "Order": 500
   },
+  "Metadata": {},
   "nodes": [
     {
       "_class": "Result",
@@ -43,6 +44,7 @@
     },
     {
       "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
       "Identifier": "2",
       "Position": "-792,-120"
     },
