@@ -188,47 +188,37 @@ public class MainWindow : DockWindow, IAssetEditor
 			return;
 		}
 
-		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-		var resourcePath = System.IO.Path.Combine( ".source2/temp", assetPath );
+        var assetPath = $"shadergraph/{_asset?.Name ?? "untitled"}_shadergraph.generated.shader";
+        var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
 
-		FileSystem.Root.CreateDirectory( ".source2/temp/shadergraphplus" );
-		FileSystem.Root.WriteAllText( resourcePath, _generatedCode );
+        FileSystem.Root.CreateDirectory(".source2/temp/shadergraph");
+        FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
-		_isCompiling = true;
-		_preview.IsCompiling = _isCompiling;
-		
-		var p = new Process();
-		p.StartInfo.FileName = "bin/win64/vfxcompile.exe";
-		p.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
-		p.StartInfo.CreateNoWindow = true;
-		p.StartInfo.RedirectStandardOutput = true;
-		p.StartInfo.RedirectStandardError = true;
-		p.StartInfo.UseShellExecute = false;
+        _isCompiling = true;
+        _preview.IsCompiling = _isCompiling;
 
-		p.StartInfo.ArgumentList.Add( assetPath );
-		p.StartInfo.ArgumentList.Add( "-progress" );
-		p.StartInfo.ArgumentList.Add( "-robot" );
-		p.StartInfo.ArgumentList.Add( "-verbose" );
-		p.StartInfo.ArgumentList.Add( "-searchpaths" );
-		p.StartInfo.ArgumentList.Add( EditorUtility.GetSearchPaths() );
+        RestoreShader();
 
-		RestoreShader();
+        _timeSinceCompile = 0;
 
-		_timeSinceCompile = 0;
+        _shaderCompileErrors.Clear();
 
-		p.OutputDataReceived += OnOutputData;
-		p.ErrorDataReceived += OnErrorData;
-		_shaderCompileErrors.Clear();
-		_Warnings.Clear();
+        CompileAsync(resourcePath);
+    }
 
-		p.Start();
-		p.BeginOutputReadLine();
-		p.BeginErrorReadLine();
+    private async void CompileAsync(string path)
+    {
+        var options = new Sandbox.Engine.Shaders.ShaderCompileOptions
+        {
+            ConsoleOutput = true
+        };
 
-		_ = Task.Run( () => MonitorProcessAsync( p ) );
-	}
+        var result = await EditorUtility.CompileShader(FileSystem.Root, path, options);
 
-	private readonly List<string> _shaderCompileErrors = new();
+        MainThread.Queue(() => OnCompileFinished(result.Success ? 0 : 1));
+    }
+
+    private readonly List<string> _shaderCompileErrors = new();
 	private readonly List<string> _Warnings = new();
 
 	private struct StatusMessage
