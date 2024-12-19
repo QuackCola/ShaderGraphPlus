@@ -60,10 +60,7 @@ PS
 	#include "postprocess/functions.hlsl"
 	#include "postprocess/PostProcessingUtils.hlsl"
 	
-	RenderState( DepthWriteEnable, false );
-	RenderState( DepthEnable, false );
 	CreateTexture2D( g_tColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;
-	CreateTexture2D( g_tDepthBuffer ) < Attribute( "DepthBuffer" ); SrgbRead( false ); Filter( MIN_MAG_MIP_POINT ); AddressU( CLAMP ); AddressV( CLAMP ); >;
 	
 		
 	float3 InvertColors(float3 vInput )
@@ -77,7 +74,7 @@ PS
 		
 		float2 l_0 = CalculateViewportUv( i.vPositionSs.xy );
 		float3 l_1 = Tex2D( g_tColorBuffer, l_0);
-		float3 l_2 = InvertColors( l_1 );
+		float3 l_2 = InvertColors(l_1);
 		
 		FinalColor = l_2;
 		
