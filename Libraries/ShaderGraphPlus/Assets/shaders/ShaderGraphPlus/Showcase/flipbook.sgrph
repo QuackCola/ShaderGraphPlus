@@ -16,7 +16,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "12,-144",
+      "Position": "36,-144",
       "Albedo": {
         "Identifier": "2",
         "Output": "Result"
@@ -62,7 +62,7 @@
         "SrgbRead": true
       },
       "Identifier": "2",
-      "Position": "-276,-144",
+      "Position": "-276,-156",
       "Coords": {
         "Identifier": "1",
         "Output": "Result"

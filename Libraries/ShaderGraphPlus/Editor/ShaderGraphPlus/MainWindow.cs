@@ -188,10 +188,10 @@ public class MainWindow : DockWindow, IAssetEditor
 			return;
 		}
 
-        var assetPath = $"shadergraph/{_asset?.Name ?? "untitled"}_shadergraph.generated.shader";
+        var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
         var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
 
-        FileSystem.Root.CreateDirectory(".source2/temp/shadergraph");
+        FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
         FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
         _isCompiling = true;
@@ -265,13 +265,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		} );
 	}
 
-	internal async Task MonitorProcessAsync( Process p )
-	{
-		await p.WaitForExitAsync();
-
-		MainThread.Queue( () => OnCompileFinished( p.ExitCode ) );
-	}
-
 	private void OnCompileFinished( int exitCode )
 	{
 		_isCompiling = false;
@@ -295,17 +288,18 @@ public class MainWindow : DockWindow, IAssetEditor
 			// Alternatively Material.Create could be made to force reload the shader
 			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 
-			if ( _graph.MaterialDomain is MaterialDomain.Surface )
-			{
-				_preview.Material = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
+
+            if ( _graph.MaterialDomain is MaterialDomain.Surface )
+            {
+            	_preview.Material = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
                 _preview.IsPostProcessShader = false;
-			}
-			else
-			{
-				_preview.PostProcessingMaterial = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
-				_preview.IsPostProcessShader = true;
-			}
-		}
+            }
+            else
+            {
+            	_preview.PostProcessingMaterial = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
+            	_preview.IsPostProcessShader = true;
+            }
+        }
 		else
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
@@ -314,14 +308,16 @@ public class MainWindow : DockWindow, IAssetEditor
 
 			DockManager.RaiseDock( "Output" );
 
-			if ( _graph.MaterialDomain is MaterialDomain.Surface )
-			{
-				_preview.IsPostProcessShader = false;
-			}
-			else
-			{
-				_preview.IsPostProcessShader = true;
-			}
+            _preview.IsPostProcessShader = false;
+
+            //if ( _graph.MaterialDomain is MaterialDomain.Surface )
+            //{
+            //	_preview.IsPostProcessShader = false;
+            //}
+            //else
+            //{
+            //	_preview.IsPostProcessShader = true;
+			//}
 
 			RestoreShader();
 			ClearAttributes();
