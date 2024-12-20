@@ -11,8 +11,6 @@ HEADER
 FEATURES
 {{
 	#include ""common/features.hlsl""
-	Feature( F_MULTIBLEND, 0..3 ( 0=""1 Layers"", 1=""2 Layers"", 2=""3 Layers"", 3=""4 Layers"", 4=""5 Layers"" ), ""Number Of Blendable Layers"" );
- 
 {1}
 }}
 
