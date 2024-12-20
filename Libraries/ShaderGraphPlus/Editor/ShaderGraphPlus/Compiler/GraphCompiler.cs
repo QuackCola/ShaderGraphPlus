@@ -700,7 +700,11 @@ public sealed partial class GraphCompiler
 		var shaderCode = "";
 
         // Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
-        if ( Graph.MaterialDomain is MaterialDomain.Surface )
+        if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+        {
+            shader_tempalte = ShaderTemplateBlending.Code;
+        }
+        else if ( Graph.MaterialDomain is MaterialDomain.Surface )
 		{
 			if ( Graph.ShadingModel is ShadingModel.Lit )
 			{
