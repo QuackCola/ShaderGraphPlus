@@ -610,18 +610,23 @@ public sealed partial class GraphCompiler
 
     private string GenerateFeatures()
     {
-        var sb = new StringBuilder();
-        var result = ShaderResult;
-
+		var sb = new StringBuilder();
+		var result = ShaderResult;
+		
 		// Register any Graph level Shader Features...
 		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
-
+		
+		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+		{
+		    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
+		}
+		
 		foreach (var feature in result.ShaderFeatures)
 		{
 			sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
 		}
-
-        return sb.ToString();
+		
+		return sb.ToString();
     }
 
     private string GenerateCommon()
