@@ -12,8 +12,7 @@ FEATURES
 {{
 	#include ""common/features.hlsl""
 	Feature( F_MULTIBLEND, 0..3 ( 0=""1 Layers"", 1=""2 Layers"", 2=""3 Layers"", 3=""4 Layers"", 4=""5 Layers"" ), ""Number Of Blendable Layers"" );
-	Feature( F_USE_TINT_MASKS_IN_VERTEX_PAINT, 0..1, ""Use Tint Masks In Vertex Paint"" );
-	
+ 
 {1}
 }}
 
@@ -40,7 +39,7 @@ COMMON
 struct VertexInput
 {{
 	float4 vColorBlendValues : TEXCOORD4 < Semantic( VertexPaintBlendParams ); >;
-    float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;
+	float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;
 	float4 vColor : COLOR0 < Semantic( Color ); >;
 	#include ""common/vertexinput.hlsl""
 }};
@@ -70,7 +69,7 @@ VS
 	{{
 		PixelInput i = ProcessVertex( v );
 		i.vBlendValues = v.vColorBlendValues;
-        i.vPaintValues = v.vColorPaintValues;
+		i.vPaintValues = v.vColorPaintValues;
 
 {6}
 		return FinalizeVertex( i );
@@ -80,7 +79,6 @@ VS
 PS
 {{
 	StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );
-    StaticCombo( S_USE_TINT_MASKS_IN_VERTEX_PAINT, F_USE_TINT_MASKS_IN_VERTEX_PAINT, Sys( PC ) );
 
 	#include ""common/pixel.hlsl""
 {9}{3}{10}
@@ -109,7 +107,7 @@ PS
 		// for some toolvis shit
 		m.WorldTangentU = i.vTangentUWs;
 		m.WorldTangentV = i.vTangentVWs;
-        m.TextureCoords = i.vTextureCoords.xy;
+		m.TextureCoords = i.vTextureCoords.xy;
 		
 		return ShadingModelStandard::Shade( i, m );
 	}}
