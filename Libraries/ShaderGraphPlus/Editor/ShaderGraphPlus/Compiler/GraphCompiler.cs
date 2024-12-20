@@ -1001,17 +1001,14 @@ public sealed partial class GraphCompiler
 				else if (result.Item2.ResultType is ResultType.Float2x2)
 				{
 					sb.AppendLine($"float2x2 {result.Item1} = float2x2({result.Item2.Code});");
-					Log.Info($"Generated Local : float2x2({result.Item2.Code});");
 				}
 				else if (result.Item2.ResultType is ResultType.Float3x3)
 				{
 					sb.AppendLine($"float3x3 {result.Item1} = float3x3({result.Item2.Code});");
-					Log.Info($"Generated Local : float3x3({result.Item2.Code});");
 				}
 				else if (result.Item2.ResultType is ResultType.Float4x4)
 				{
 					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
-					Log.Info($"Generated Local : float4x4({result.Item2.Code});");
 				}
 				else
 				{
