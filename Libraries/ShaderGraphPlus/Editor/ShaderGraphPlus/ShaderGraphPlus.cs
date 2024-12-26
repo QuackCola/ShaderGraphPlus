@@ -15,6 +15,7 @@ public enum ShadingModel
 public enum MaterialDomain
 {
 	Surface,
+	BlendingSurface,
 	PostProcess,
 }
 
