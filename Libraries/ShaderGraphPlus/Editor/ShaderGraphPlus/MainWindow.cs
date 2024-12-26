@@ -215,6 +215,16 @@ public class MainWindow : DockWindow, IAssetEditor
 
         var result = await EditorUtility.CompileShader(FileSystem.Root, path, options);
 
+        if (result.Success)
+        {
+            var asset = AssetSystem.RegisterFile(FileSystem.Root.GetFullPath(path));
+
+            while (!asset.IsCompiledAndUpToDate)
+            {
+                await Task.Yield();
+            }
+        }
+
         MainThread.Queue(() => OnCompileFinished(result.Success ? 0 : 1));
     }
 

@@ -165,6 +165,44 @@ public sealed class VertexColor : ShaderNodePlus
 }
 
 /// <summary>
+/// Blend of the vertex
+/// </summary>
+[Title( "Vertex Blend" ), Category( "Variables" )]
+public sealed class VertexBlend : ShaderNodePlus
+{
+	[Output( typeof( float ) )]
+	[Hide]
+	public static NodeResult.Func R => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vBlendValues.r" );
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public static NodeResult.Func G => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vBlendValues.g" );
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public static NodeResult.Func B => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vBlendValues.b" );
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public static NodeResult.Func A => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vBlendValues.a" );
+}
+
+/// <summary>
+/// Paint of the vertex
+/// </summary>
+[Title( "Vertex Paint" ), Category( "Variables" )]
+public sealed class VertexPaint : ShaderNodePlus
+{
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public static NodeResult.Func RGB => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vPaintValues.rgb" );
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public static NodeResult.Func Alpha => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vPaintValues.a" );
+}
+
+/// <summary>
 /// Tint of the scene object
 /// </summary>
 [Title( "Tint" ), Category( "Variables" )]
