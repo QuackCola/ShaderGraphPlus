@@ -1,0 +1,143 @@
+{
+  "Model": null,
+  "Description": null,
+  "BlendMode": "Translucent",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Glass",
+  "postProcessComponentInfo": {
+    "Order": 10
+  },
+  "Metadata": {
+    "ProjectTemplate": {
+      "Icon": "texture",
+      "Order": 50,
+      "Description": "You want to make a Glass Material Shader"
+    }
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 0,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "60,276",
+      "Albedo": {
+        "Identifier": "3",
+        "Output": "SceneColor"
+      }
+    },
+    {
+      "_class": "ProjectedScreenCoordinate",
+      "Identifier": "1",
+      "Position": "-876,288"
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 0,
+      "Identifier": "2",
+      "Position": "-576,288",
+      "A": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "6",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "SceneColorNode",
+      "Identifier": "3",
+      "Position": "-336,276",
+      "ScreenUVs": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.05,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "4",
+      "Position": "-1764,384"
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 256,
+      "Value": 0.01,
+      "Name": "refraction",
+      "IsAttribute": false,
+      "UI": {
+        "PrimaryGroup": {
+          "Name": "Parameters"
+        }
+      },
+      "Identifier": "5",
+      "Position": "-1152,420"
+    },
+    {
+      "_class": "HeightToNormal",
+      "OutputSpace": "World",
+      "DefaultStrength": 1,
+      "Identifier": "6",
+      "Position": "-876,360",
+      "Height": {
+        "Identifier": "10",
+        "Output": "Result"
+      },
+      "Strength": {
+        "Identifier": "5",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "7",
+      "Position": "-1596,360"
+    },
+    {
+      "_class": "TileAndOffset",
+      "DefaultTile": "1,1",
+      "DefaultOffset": "0,0",
+      "WrapTo01": false,
+      "Identifier": "8",
+      "Position": "-1368,360",
+      "UV": {
+        "Identifier": "7",
+        "Output": "Result"
+      },
+      "Tile": {
+        "Identifier": "4",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "1728,300",
+      "Color": "Green",
+      "Title": "Refraction",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "9",
+      "Position": "-1800,204"
+    },
+    {
+      "_class": "SimplexNoise",
+      "Identifier": "10",
+      "Position": "-1152,360",
+      "Coords": {
+        "Identifier": "8",
+        "Output": "Result"
+      }
+    }
+  ]
+}

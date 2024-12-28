@@ -709,7 +709,7 @@ public sealed partial class GraphCompiler
         {
             shader_tempalte = ShaderTemplateBlending.Code;
         }
-        else if ( Graph.MaterialDomain is MaterialDomain.Surface )
+        else if ( Graph.MaterialDomain is MaterialDomain.Surface || Graph.MaterialDomain is MaterialDomain.Glass )
 		{
 			if ( Graph.ShadingModel is ShadingModel.Lit )
 			{
@@ -839,11 +839,19 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		if ( Graph.MaterialDomain != MaterialDomain.Surface )
+		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
 			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
 			sb.AppendLine();
 		}
+		
+		if ( Graph.MaterialDomain == MaterialDomain.Glass )
+		{
+			sb.AppendLine( "BoolAttribute( bWantsFBCopyTexture, true );");
+			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"FrameBufferCopyTexture\" );     SrgbRead( true ); Filter( MIN_MAG_MIP_LINEAR ); AddressU( CLAMP  ); AddressV( CLAMP  ); >;" );
+			sb.AppendLine();
+		}
+		
 
 		foreach ( var Sampler in ShaderResult.SamplerStates )
 		{

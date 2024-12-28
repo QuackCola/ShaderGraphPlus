@@ -16,6 +16,7 @@ public enum MaterialDomain
 {
 	Surface,
 	BlendingSurface,
+	Glass,
 	PostProcess,
 }
 
@@ -45,7 +46,7 @@ public sealed partial class ShaderGraphPlus : IGraph
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-    [HideIf( nameof(MaterialDomain), MaterialDomain.Surface  )]
+    [ShowIf( nameof(MaterialDomain), MaterialDomain.PostProcess  )]
     [InlineEditor]
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
