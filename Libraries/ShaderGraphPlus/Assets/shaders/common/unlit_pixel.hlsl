@@ -15,7 +15,6 @@
 #include "sbox_pixel.fxc"
 
 #include "common/material.hlsl"
-//#include "common/light.hlsl"
 #include "common/unlit_shadingmodel.hlsl"
 
 #endif // COMMON_UNLIT_PIXEL_H
