@@ -24,7 +24,7 @@ public abstract class Unary : ShaderNodePlus
 {
 	[Input]
 	[Hide]
-	public NodeInput Input { get; set; }
+	public virtual NodeInput Input { get; set; }
 
 	protected virtual string Op { get; }
 
@@ -38,7 +38,7 @@ public abstract class Unary : ShaderNodePlus
 
 	[Output]
 	[Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	public virtual NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		
 		var result = compiler.ResultOrDefault( Input, 0.0f );
@@ -61,6 +61,42 @@ public abstract class Unary : ShaderNodePlus
 		
 		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
 	};
+}
+
+public abstract class UnaryCurve : Unary
+{
+	[Input, Title( "" ), Hide]
+	public override NodeInput Input { get => base.Input; set => base.Input = value; }
+
+	[Output, Title( "" ), Hide]
+	public override NodeResult.Func Result => base.Result;
+
+	protected virtual float Evaluate( float x ) => 0.0f;
+
+	public UnaryCurve() : base()
+	{
+		ExpandSize = new Vector2( -12 * 6, 12 );
+	}
+
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 20, 28, 20, 6 );
+		Paint.SetBrush( Theme.ControlText );
+		Paint.SetPen( Theme.ControlText, 2 );
+		var inc = 1f / 16f;
+		List<Vector2> points = new List<Vector2>();
+		for ( var i = 0f; i < 1f; i += inc )
+		{
+			var x = rect.BottomLeft.x + rect.Width * i;
+			var y = rect.BottomLeft.y - rect.Height * Evaluate( i );
+			points.Add( new Vector2( x, y ) );
+		}
+		for ( int i = points.Count - 1; i >= 0; i-- )
+		{
+			points.Add( points[i] );
+		}
+		Paint.DrawPolygon( points.ToArray() );
+	}
 }
 
 [Title( "Transpose" ), Category( "Unary" )]
@@ -110,9 +146,14 @@ public sealed class Clamp : ShaderNodePlus
 /// <summary>
 /// Returns the cosine of the input value.
 /// </summary>
-[Title( "Cosine" ), Category( "Unary" )]
-public sealed class Cosine : Unary
+[Title("Cosine"), Category("Unary")]
+public sealed class Cosine : UnaryCurve
 {
+    protected override float Evaluate(float x)
+    {
+        return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
+    }
+
     [Hide]
     protected override string Op => "cos";
 }
@@ -133,6 +174,39 @@ public sealed class Abs : Unary
 [Title("Rsqrt"), Category("Unary")]
 public sealed class Rsqrt : Unary
 {
+	[Input, Title( "" ), Hide]
+	public override NodeInput Input { get => base.Input; set => base.Input = value; }
+
+	[Output, Title( "" ), Hide]
+	public override NodeResult.Func Result => base.Result;
+
+	public Rsqrt() : base()
+	{
+		ExpandSize = new Vector2( -12 * 8, 12 );
+	}
+
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 2, 20, 0, 0 );
+		Paint.SetPen( Theme.ControlText );
+		Paint.SetFont( "Poppins Bold", 12 );
+		Paint.DrawText( rect, " x" );
+		List<Vector2> points = new()
+		{
+			rect.TopLeft + new Vector2(10, 20),
+			rect.TopLeft + new Vector2(14, 20),
+			rect.TopLeft + new Vector2(18, 30),
+			rect.TopLeft + new Vector2(22, 12),
+			rect.TopLeft + new Vector2(40, 12)
+		};
+		for ( int i = points.Count - 1; i >= 0; i-- )
+		{
+			points.Add( points[i] );
+		}
+		Paint.DrawPolygon( points.ToArray() );
+	}
+
+
     [Hide]
     protected override string Op => "rsqrt";
 }
@@ -143,6 +217,39 @@ public sealed class Rsqrt : Unary
 [Title( "Sqrt" ), Category( "Unary" )]
 public sealed class Sqrt : Unary
 {
+	[Input, Title( "" ), Hide]
+	public override NodeInput Input { get => base.Input; set => base.Input = value; }
+
+	[Output, Title( "" ), Hide]
+	public override NodeResult.Func Result => base.Result;
+
+	public Sqrt() : base()
+	{
+		ExpandSize = new Vector2( -12 * 8, 12 );
+	}
+
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 2, 20, 0, 0 );
+		Paint.SetPen( Theme.ControlText );
+		Paint.SetFont( "Poppins Bold", 12 );
+		Paint.DrawText( rect, " x" );
+		List<Vector2> points = new()
+		{
+			rect.TopLeft + new Vector2(10, 20),
+			rect.TopLeft + new Vector2(14, 20),
+			rect.TopLeft + new Vector2(18, 30),
+			rect.TopLeft + new Vector2(22, 12),
+			rect.TopLeft + new Vector2(40, 12)
+		};
+		for ( int i = points.Count - 1; i >= 0; i-- )
+		{
+			points.Add( points[i] );
+		}
+		Paint.DrawPolygon( points.ToArray() );
+	}
+
+
     [Hide]
     protected override string Op => "sqrt";
 }
@@ -224,8 +331,29 @@ public sealed class Exponential : Unary
 {
 	public ExponentBase Base { get; set; }
 
-    [Hide]
-    protected override string Op => Base == ExponentBase.BaseE ? "exp" : "exp2";
+	[Input, Title( "" ), Hide]
+	public override NodeInput Input { get => base.Input; set => base.Input = value; }
+
+	[Output, Title( "" ), Hide]
+	public override NodeResult.Func Result => base.Result;
+
+	public Exponential() : base()
+	{
+		ExpandSize = new Vector2( -12 * 6, 12 );
+	}
+
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 0, 20, 0, 0 );
+		Paint.SetPen( Theme.ControlText );
+		Paint.SetFont( "Poppins Bold", 16 );
+		Paint.DrawText( rect, (Base == ExponentBase.BaseE) ? "e" : "2" );
+		Paint.SetFont( "Poppins Bold", 8 );
+		Paint.DrawText( rect.Shrink( 20, 0, 0, 16 ), "x" );
+	}
+
+	[Hide]
+	protected override string Op => Base == ExponentBase.BaseE ? "exp" : "exp2";
 }
 
 /// <summary>
@@ -348,9 +476,14 @@ public sealed class Saturate : Unary
 /// <summary>
 /// Returns the sine of the input value
 /// </summary>
-[Title( "Sine" ), Category( "Unary" )]
-public sealed class Sine : Unary
+[Title("Sine"), Category("Unary")]
+public sealed class Sine : UnaryCurve
 {
+    protected override float Evaluate(float x)
+    {
+        return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
+    }
+
     [Hide]
     protected override string Op => "sin";
 }
@@ -403,6 +536,15 @@ public sealed class SmoothStep : ShaderNodePlus
 	[Hide]
 	public NodeInput Edge2 { get; set; }
 
+	[InputDefault( nameof( Input ) )]
+	public float DefaultInput { get; set; } = 0.0f;
+
+	[InputDefault( nameof( Edge1 ) )]
+	public float DefaultEdge1 { get; set; } = 0.0f;
+
+	[InputDefault( nameof( Edge2 ) )]
+	public float DefaultEdge2 { get; set; } = 0.0f;
+
 	[Output]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -414,7 +556,11 @@ public sealed class SmoothStep : ShaderNodePlus
 		int maxComponents = Math.Max( edge1.IsValid ? edge1.Components() : 1, input.IsValid ? input.Components() : 1 );
 		maxComponents = Math.Max( edge2.IsValid ? edge2.Components() : 1, maxComponents );
 
-		return new NodeResult( (ResultType)maxComponents, $"smoothstep( {(edge1.IsValid ? edge1 : "0.0f")}, {(edge2.IsValid ? edge2 : "0.0f")}, {(input.IsValid ? input : "0.0f")} )" );
+		var edge1String = edge1.IsValid ? edge1.ToString() : compiler.ResultValue( DefaultEdge1 ).ToString();
+		var edge2String = edge2.IsValid ? edge2.ToString() : compiler.ResultValue( DefaultEdge2 ).ToString();
+		var inputString = input.IsValid ? input.ToString() : compiler.ResultValue( DefaultInput ).ToString();
+
+		return new NodeResult( (ResultType)maxComponents, $"smoothstep( {edge1String}, {edge2String}, {inputString} )" );
 	};
 }
 

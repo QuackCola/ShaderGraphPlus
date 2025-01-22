@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor.ShaderGraph;
+
+namespace Editor.ShaderGraphPlus;
 
 public abstract class BaseNodePlus : INode
 {
@@ -105,7 +107,18 @@ public abstract class BaseNodePlus : INode
 		}
 	}
 
-	[System.AttributeUsage( AttributeTargets.Property )]
+    [System.AttributeUsage(AttributeTargets.Property)]
+    public class InputDefaultAttribute : Attribute
+    {
+        public string Input;
+
+        public InputDefaultAttribute(string input)
+        {
+            Input = input;
+        }
+    }
+
+    [System.AttributeUsage( AttributeTargets.Property )]
 	public class OutputAttribute : Attribute
 	{
 		public System.Type Type;
@@ -138,23 +151,25 @@ public abstract class BaseNodePlus : INode
 		}
 	}
 
-	[System.AttributeUsage( AttributeTargets.Property )]
-	public class RangeAttribute : Attribute
-	{
-		public string Min;
-		public string Max;
+    [System.AttributeUsage(AttributeTargets.Property)]
+    public class RangeAttribute : Attribute
+    {
+        public string Min;
+        public string Max;
+        public string Step;
 
-		public RangeAttribute( string min, string max )
-		{
-			Min = min;
-			Max = max;
-		}
-	}
+        public RangeAttribute(string min, string max, string step)
+        {
+            Min = min;
+            Max = max;
+            Step = step;
+        }
+    }
 
 
 
 
-	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
+    public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
@@ -187,45 +202,52 @@ public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : 
 	public string Identifier => Property.Name;
 	public DisplayInfo DisplayInfo => DisplayInfo.ForMember( Property );
 
-	public ValueEditor CreateEditor( NodeUI node, Plug plug )
-	{
-		var editor = Property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-		if ( editor == null )
-			return null;
+    public ValueEditor CreateEditor(NodeUI node, Plug plug)
+    {
+        var editor = Property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 
-		if ( Type == typeof( float ) )
-		{
-			var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
-			slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+        if (editor is not null)
+        {
+            if (Type == typeof(float))
+            {
+                var slider = new FloatEditor(plug) { Title = DisplayInfo.Name, Node = node };
+                slider.Bind("Value").From(node.Node, editor.ValueName);
 
-			var range =
-				Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
-			if ( range != null )
-			{
-				slider.Bind( "Min" ).From( node.Node, range.Min );
-				slider.Bind( "Max" ).From( node.Node, range.Max );
-			}
-			else if ( Property.GetCustomAttribute<MinMaxAttribute>() is MinMaxAttribute minMax )
-			{
-				slider.Min = minMax.MinValue;
-				slider.Max = minMax.MaxValue;
-			}
+                var range =
+                    Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
+                if (range != null)
+                {
+                    slider.Bind("Min").From(node.Node, range.Min);
+                    slider.Bind("Max").From(node.Node, range.Max);
+                    slider.Bind("Step").From(node.Node, range.Step);
+                }
+                else if (Property.GetCustomAttribute<MinMaxAttribute>() is MinMaxAttribute minMax)
+                {
+                    slider.Min = minMax.MinValue;
+                    slider.Max = minMax.MaxValue;
+                }
 
-			return slider;
-		}
+                return slider;
+            }
 
-			if ( Type == typeof( Color ) )
-		{
-			var slider = new ColorEditor( plug ) { Title = DisplayInfo.Name, Node = node };
-			slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+            if (Type == typeof(Color))
+            {
+                var slider = new ColorEditor(plug) { Title = DisplayInfo.Name, Node = node };
+                slider.Bind("Value").From(node.Node, editor.ValueName);
 
-			return slider;
-		}
+                return slider;
+            }
+        }
 
-		return null;
-	}
+        // Default
+        {
+            var defaultEditor = new DefaultEditor(plug);
+        }
 
-	public Menu CreateContextMenu( NodeUI node, Plug plug )
+        return null;
+    }
+
+    public Menu CreateContextMenu( NodeUI node, Plug plug )
 	{
 		return null;
 	}
