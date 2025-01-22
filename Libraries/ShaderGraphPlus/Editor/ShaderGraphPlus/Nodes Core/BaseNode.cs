@@ -307,10 +307,10 @@ public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
 		return null;
 	}
 
-	public void SetHandleOffset( string name, float? value )
-	{
-		throw new NotImplementedException();
-	}
+    public void SetHandleOffset(string name, float? value)
+    {
+        // Do nothing instead of throwing unimplemented exception
+    }
 }
 
 public record BasePlugOut( BaseNodePlus Node, PropertyInfo Property, Type Type )

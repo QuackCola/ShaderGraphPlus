@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor.ShaderGraph;
+
+namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType( "sgrph" )]
 [EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
@@ -850,11 +852,12 @@ public class MainWindow : DockWindow, IAssetEditor
 			o.Toggled += ( b ) => DockManager.SetDockState( dock.Title, b );
 		}
 
-        // Doesn't work yet.
-        //var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
-        //style.Checkable = false;//true;
-        //style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
-        //style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
+        view.AddSeparator();
+
+        var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+        style.Checkable = true;
+        style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
+        style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
 
     }
 
@@ -1175,25 +1178,10 @@ public class MainWindow : DockWindow, IAssetEditor
 		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
 			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
 
-		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
-		//{
-		//	foreach ( var type in types )
-		//	{
-		//		if ( type.HasAttribute<PostProcessingCompatable>() )
-		//		{
-		//			_graphView.AddNodeType( type );
-		//		}
-		//	}
-		//}
-		//else
-		//{
-			foreach ( var type in types )
-			{
-					_graphView.AddNodeType( type );
-			}
-
-		//}
-	
+		foreach ( var type in types )
+		{
+				_graphView.AddNodeType( type );
+		}
 
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
