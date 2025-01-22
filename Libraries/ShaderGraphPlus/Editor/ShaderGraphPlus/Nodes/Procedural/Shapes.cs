@@ -31,8 +31,10 @@ float BoxShape( float2 UV, float Width, float Height )
 	[Hide]
 	public NodeInput Height { get; set; }
 
-
+	[InputDefault( nameof( Width ) )]
 	public float DefaultWidth { get; set; } = 0.5f;
+
+	[InputDefault( nameof( Height ) )]
 	public float DefaultHeight { get; set; } = 0.5f;
 
 	[Output( typeof( float ) )]
@@ -89,8 +91,10 @@ float ElipseShape( float2 UV, float Width, float Height )
 	[Hide]
 	public NodeInput Height { get; set; }
 
-
+	[InputDefault( nameof( Width ) )]
 	public float DefaultWidth { get; set; } = 0.5f;
+
+	[InputDefault( nameof( Height ) )]
 	public float DefaultHeight { get; set; } = 0.5f;
 
 	[Output( typeof( float ) )]
@@ -159,9 +163,13 @@ float PolygonShape( float2 UV, float Sides, float Width, float Height )
 	[Hide]
 	public NodeInput Height { get; set; }
 
+	[InputDefault( nameof( Sides ) )]
+	public int DefaultSides { get; set; } = 4;
 
-	public float DefaultSides { get; set; } = 4.0f;
+	[InputDefault( nameof( Width ) )]
 	public float DefaultWidth { get; set; } = 0.5f;
+
+	[InputDefault( nameof( Height ) )]
 	public float DefaultHeight { get; set; } = 0.5f;
 
 	[Output( typeof( float ) )]

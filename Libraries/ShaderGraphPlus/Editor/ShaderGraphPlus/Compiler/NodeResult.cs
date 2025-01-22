@@ -6,10 +6,14 @@ public enum ResultType
 	/// No Components, just True or False.
 	/// </summary>
 	Bool,
-	/// <summary>
-	/// 1 Component
-	/// </summary>
-	Float,
+    /// <summary>
+    /// Single Int32 Value. Internally will be generated as a float.
+    /// </summary>
+    Int,
+    /// <summary>
+    /// 1 Component
+    /// </summary>
+    Float,
 	/// <summary>
 	/// 2 Component's
 	/// </summary>
@@ -57,7 +61,11 @@ public struct NodeResult : IValid
 	{
 		get
 		{
-			if ( ResultType is ResultType.Float )
+            if ( ResultType is ResultType.Int )
+            {
+                return $"float"; // Just identify as a float.
+            }	
+            else if ( ResultType is ResultType.Float )
 			{
 				return $"float";
 			}
@@ -101,7 +109,8 @@ public struct NodeResult : IValid
 			return ResultType switch
 			{
 				ResultType.Bool => typeof( bool ),
-				ResultType.Float => typeof( float ),
+                ResultType.Int => typeof( int ),
+                ResultType.Float => typeof( float ),
 				ResultType.Vector2 => typeof( Vector2 ),
 				ResultType.Vector3 => typeof( Vector3 ),
 				ResultType.Color => typeof( Color ),
@@ -162,6 +171,9 @@ public struct NodeResult : IValid
 
 		switch (ResultType)
 		{
+            case ResultType.Int:
+                components = 1;
+                break;
             case ResultType.Float:
                 components = 1;
                 break;

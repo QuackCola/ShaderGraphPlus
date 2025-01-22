@@ -76,4 +76,9 @@ class ShadingModelUnlit
 #endif
 };
 
+DynamicCombo( D_BAKED_LIGHTING_FROM_PROBE, 0..1, Sys( ALL ) );
+DynamicCombo( D_BAKED_LIGHTING_FROM_LIGHTMAP, 0..1, Sys( ALL ) );
+DynamicComboRule( Allow1( D_BAKED_LIGHTING_FROM_PROBE, D_BAKED_LIGHTING_FROM_LIGHTMAP ) );
+
+
 #endif // COMMON_UNLIT_PIXEL_SHADING_H
