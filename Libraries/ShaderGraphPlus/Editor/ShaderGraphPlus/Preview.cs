@@ -438,6 +438,27 @@ public class PreviewPanel : Widget
         popup.MaximumWidth = 300;
         popup.OpenAtCursor();
     }
+
+	public void LoadSettings( PreviewSettings settings )
+	{
+		_preview.RenderBackfaces = settings.RenderBackfaces;
+		_preview.EnableShadows = settings.EnableShadows;
+		_preview.ShowGround = settings.ShowGround;
+		_preview.ShowSkybox = settings.ShowSkybox;
+		_preview.BackgroundColor = settings.BackgroundColor;
+		_preview.Tint = settings.Tint;
+	}
+
+	public void SaveSettings( PreviewSettings settings )
+	{
+		settings.RenderBackfaces = _preview.RenderBackfaces;
+		settings.EnableShadows = _preview.EnableShadows;
+		settings.ShowGround = _preview.ShowGround;
+		settings.ShowSkybox = _preview.ShowSkybox;
+		settings.BackgroundColor = _preview.BackgroundColor;
+		settings.Tint = _preview.Tint;
+	}
+
 }
 
 public class Preview : SceneRenderingWidget
