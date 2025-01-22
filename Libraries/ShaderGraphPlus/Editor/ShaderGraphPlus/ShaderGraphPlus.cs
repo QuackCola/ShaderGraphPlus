@@ -2,21 +2,29 @@ namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
 {
-	Opaque,
-	Masked,
-	Translucent,
+    [Icon("circle")]
+    Opaque,
+    [Icon("radio_button_unchecked")]
+    Masked,
+    [Icon("blur_on")]
+    Translucent,
 }
 
 public enum ShadingModel
 {
+	[Icon( "tungsten" )]
 	Lit,
+	[Icon( "brightness_3" )]
 	Unlit,
 }
+
 public enum MaterialDomain
 {
-	Surface,
+    [Icon("view_in_ar")]
+    Surface,
 	BlendingSurface,
-	PostProcess,
+    [Icon("desktop_windows")]
+    PostProcess,
 }
 
 
@@ -37,15 +45,14 @@ public sealed partial class ShaderGraphPlus : IGraph
 
 	public string Description { get; set; }
 
-	[HideIf( nameof( MaterialDomain ), MaterialDomain.PostProcess )]
+	[HideIf( nameof(this.MaterialDomain), MaterialDomain.PostProcess )]
 	public BlendMode BlendMode { get; set; }
 
-	[HideIf( nameof ( MaterialDomain ), MaterialDomain.PostProcess )]
 	public ShadingModel ShadingModel { get; set; }
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-    [HideIf( nameof(MaterialDomain), MaterialDomain.Surface  )]
+    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.Surface  )]
     [InlineEditor]
     [Group("Post Processing")]
     public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
