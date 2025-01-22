@@ -37,7 +37,8 @@ public class MainWindow : DockWindow, IAssetEditor
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-	private readonly Dictionary<string, float> _floatAttributes = new();
+    //private readonly Dictionary<string, int> _intAttributes = new();
+    private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
 
 	private readonly List<BaseNodePlus> _compiledNodes = new();
@@ -361,7 +362,11 @@ public class MainWindow : DockWindow, IAssetEditor
 				_float2Attributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-			case float v:
+            case int v: // 
+                _floatAttributes.Add(name, v);
+                _preview?.SetAttribute(name, v);
+                break;
+            case float v:
 				_floatAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
