@@ -356,8 +356,8 @@ public class PreviewPanel : Widget
 		toolBar.AddOption( null, "square", () => Model = Model.Load( "models/dev/plane.vmdl" ) ).ToolTip = "Plane";
 		toolBar.AddOption( null, "accessibility", () =>
 		{
-			var picker = new AssetPicker( this, AssetType.Model );
-			picker.Window.StateCookie = "PreviewPanel";
+			var picker = AssetPicker.Create(this, AssetType.Model);
+            picker.Window.StateCookie = "PreviewPanel";
 			picker.Window.RestoreFromStateCookie();
 			picker.Window.Title = $"Select {AssetType.Model.FriendlyName}";
 			picker.OnAssetHighlighted = x => Model = x.First().LoadResource<Model>();
