@@ -47,16 +47,16 @@ public sealed class GradientNode : ShaderNodePlus
 public sealed class SampleGradientNode : ShaderNodePlus
 {
     [Title("Gradient")]
-    [Input(typeof(Gradient))]
+    [Input( typeof( Gradient ) )]
     [Hide]
     public NodeInput Gradient { get; set; }
 
     [Title("Time")]
-    [Input(typeof(float))]
+    [Input( typeof( float ) )]
     [Hide]
     public NodeInput Time { get; set; }
 
-    [Output(typeof(Color))]
+    [Output( typeof( Color ) )]
     [Hide]
     public NodeResult.Func Result => (GraphCompiler compiler) =>
     {

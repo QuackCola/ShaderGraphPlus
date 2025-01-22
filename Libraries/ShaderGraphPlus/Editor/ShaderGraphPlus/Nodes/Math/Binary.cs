@@ -13,8 +13,11 @@ public abstract class Binary : ShaderNodePlus
 	[Title( "" )]
 	public NodeInput B { get; set; }
 
-	public float DefaultA { get; set; } = 0.0f;
-	public float DefaultB { get; set; } = 1.0f;
+    [InputDefault( nameof( A ) )]
+    public float DefaultA { get; set; } = 0.0f;
+
+    [InputDefault( nameof( B ) )]
+    public float DefaultB { get; set; } = 1.0f;
 
 	protected virtual string Op { get; }
 
@@ -23,7 +26,15 @@ public abstract class Binary : ShaderNodePlus
 		ExpandSize = new Vector3( -85, 5 );
 	}
 
-	[Output]
+    public override void OnPaint(Rect rect)
+    {
+        rect = rect.Shrink(0, 20, 0, 0);
+        Paint.SetPen(Theme.ControlText);
+        Paint.SetFont("Poppins Bold", 20);
+        Paint.DrawText(rect, Op);
+    }
+
+    [Output]
 	[Hide]
 	[Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -31,70 +42,75 @@ public abstract class Binary : ShaderNodePlus
 		var results = compiler.Result( A, B, DefaultA, DefaultB );
 		return new NodeResult( results.Item1.ResultType, $"{results.Item1} {Op} {results.Item2}" );
 	};
+
+    [JsonIgnore, Hide, Browsable(false)]
+    public override DisplayInfo DisplayInfo
+    {
+        get
+        {
+            var info = base.DisplayInfo;
+            info.Icon = null;
+            return info;
+        }
+    }
 }
 
 /// <summary>
 /// Add two values together
 /// </summary>
-[Title( "Add" ), Category( "Binary" )]
+[Title( "Add" ), Category( "Binary" ), Icon( "+" )]
 public sealed class Add : Binary
 {
-    [Hide]
-    protected override string Op => "+";
-
-	public override void OnPaint( Rect rect )
-	{
-		rect = rect.Shrink( 0, 25, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
-		Paint.DrawIcon( rect, "add", 50 );
-	}
+	[Hide]
+	protected override string Op => "+";
 }
 
 /// <summary>
 /// Subtract two values together
 /// </summary>
-[Title( "Subtract" ), Category( "Binary" )]
+[Title( "Subtract" ), Category( "Binary" ), Icon( "-" )]
 public sealed class Subtract : Binary
 {
-    [Hide]
-    protected override string Op => "-";
+	[Hide]
+	protected override string Op => "-";
 }
 
 /// <summary>
 /// Multiply two values together
 /// </summary>
-[Title( "Multiply" ), Category( "Binary" )]
+[Title( "Multiply" ), Category( "Binary" ), Icon( "*" )]
 public sealed class Multiply : Binary
 {
-    [Hide]
-    protected override string Op => "*";
+	[Hide]
+	protected override string Op => "*";
 
 	public override void OnPaint( Rect rect )
 	{
-		rect = rect.Shrink( 0, 25, 0, 0 );
+		rect = rect.Shrink( 0, 20, 0, 0 );
 		Paint.SetPen( Theme.ControlText );
-		Paint.DrawIcon( rect, "close", 50 );
+		Paint.SetFont( "Poppins Bold", 20 );
+		Paint.DrawText( rect, "x" );
 	}
 }
 
 /// <summary>
 /// Divide two values together
 /// </summary>
-[Title( "Divide" ), Category( "Binary" )]
+[Title( "Divide" ), Category( "Binary" ), Icon( "/" )]
 public sealed class Divide : Binary
 {
-    [Hide]
-    protected override string Op => "/";
+	[Hide]
+	protected override string Op => "/";
 }
 
 /// <summary>
 /// Computes the remainder of the division of two values
 /// </summary>
-[Title( "Mod" ), Category( "Binary" )]
+[Title( "Mod" ), Category( "Binary" ), Icon( "percent" )]
 public sealed class Mod : Binary
 {
-    [Hide]
-    protected override string Op => "%";
+	[Hide]
+	protected override string Op => "%";
 }
 
 /// <summary>
@@ -115,8 +131,15 @@ public sealed class Lerp : ShaderNodePlus
 	[Hide, Editor( nameof( Fraction ) )]
 	public NodeInput C { get; set; }
 
-	[MinMax( 0, 1 )]
-	public float Fraction { get; set; } = 0.5f;
+    [InputDefault( nameof( A ) )]
+    public float DefaultA { get; set; } = 0.0f;
+
+    [InputDefault( nameof( B ) )]
+    public float DefaultB { get; set; } = 1.0f;
+
+    [MinMax( 0, 1 )]
+    [InputDefault( nameof( C ) )]
+    public float Fraction { get; set; } = 0.5f;
 
 	[Output]
 	[Hide]
@@ -150,20 +173,22 @@ public sealed class CrossProduct : ShaderNodePlus
 	[Hide]
 	public NodeInput B { get; set; }
 
-	/// <summary>
-	/// Default value for when A input is missing
-	/// </summary>
-	public Vector3 DefaultA { get; set; }
+    /// <summary>
+    /// Default value for when A input is missing
+    /// </summary>
+    [InputDefault (nameof( A ) )]
+    public Vector3 DefaultA { get; set; }
 
-	/// <summary>
-	/// Default value for when B input is missing
-	/// </summary>
-	public Vector3 DefaultB { get; set; }
+    /// <summary>
+    /// Default value for when B input is missing
+    /// </summary>
+    [InputDefault( nameof( B ) )]
+    public Vector3 DefaultB { get; set; }
 
-	/// <summary>
-	/// The result of the cross product
-	/// </summary>
-	[Output( typeof( Vector3 ) )]
+    /// <summary>
+    /// The result of the cross product
+    /// </summary>
+    [Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -214,10 +239,11 @@ public sealed class RemapValue : ShaderNodePlus
 	[Hide, Editor( nameof( OutMax ) )]
 	public NodeInput E { get; set; }
 
-	/// <summary>
-	/// Input value to be transformed
-	/// </summary>
-	public float In { get; set; } = 0.5f;
+    /// <summary>
+    /// Input value to be transformed
+    /// </summary>
+    [InputDefault( nameof( A ) )]
+    public float In { get; set; } = 0.5f;
 
 	/// <summary>
 	/// The minimum range of the input
@@ -320,7 +346,10 @@ public sealed class Arctan2 : ShaderNodePlus
 	[Hide]
 	public NodeInput X { get; set; }
 
+	[InputDefault( nameof( Y ) )]
 	public float DefaultY { get; set; } = 0.0f;
+
+	[InputDefault( nameof( X ) )]
 	public float DefaultX { get; set; } = 1.0f;
 
 	public Arctan2() : base()
@@ -340,7 +369,7 @@ public sealed class Arctan2 : ShaderNodePlus
 /// <summary>
 /// Raise a value to the power of another value
 /// </summary>
-[Title( "Power" ), Category( "Binary" )]
+[Title( "Power" ), Category( "Binary" ), Icon( "^" )]
 public sealed class Power : ShaderNodePlus
 {
 	[Input( typeof( float ) )]
@@ -353,7 +382,10 @@ public sealed class Power : ShaderNodePlus
 	[Title( "" )]
 	public NodeInput B { get; set; }
 
+	[InputDefault( nameof( A ) )]
 	public float DefaultA { get; set; } = 1.0f;
+
+	[InputDefault( nameof( B ) )]
 	public float DefaultB { get; set; } = 1.0f;
 
 	public Power() : base()

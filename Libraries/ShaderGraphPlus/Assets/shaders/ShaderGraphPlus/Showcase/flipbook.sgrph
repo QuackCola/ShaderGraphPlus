@@ -62,7 +62,7 @@
         "SrgbRead": true
       },
       "Identifier": "2",
-      "Position": "-276,-156",
+      "Position": "-276,-180",
       "Coords": {
         "Identifier": "1",
         "Output": "Result"
@@ -137,7 +137,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "9",
-      "Position": "-816,-132"
+      "Position": "-828,-132"
     },
     {
       "_class": "Float",
@@ -148,7 +148,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "10",
-      "Position": "-816,-204"
+      "Position": "-828,-204"
     }
   ]
 }
