@@ -27,6 +27,15 @@ public enum MaterialDomain
     PostProcess,
 }
 
+public class PreviewSettings
+{
+    public bool RenderBackfaces { get; set; } = false;
+    public bool EnableShadows { get; set; } = true;
+    public bool ShowGround { get; set; } = false;
+    public bool ShowSkybox { get; set; } = true;
+    public Color BackgroundColor { get; set; } = Color.Black;
+    public Color Tint { get; set; } = Color.White;
+}
 
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
 public sealed partial class ShaderGraphPlus : IGraph
@@ -66,6 +75,10 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Hide]
     [JsonIgnore]
     public List<string> MissingNodes { get; set; } = new List<string>();
+
+
+    [Hide]
+    public PreviewSettings PreviewSettings { get; set; } = new();
 
     public ShaderGraphPlus()
 	{

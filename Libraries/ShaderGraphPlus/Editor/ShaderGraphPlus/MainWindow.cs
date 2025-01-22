@@ -998,8 +998,9 @@ public class MainWindow : DockWindow, IAssetEditor
 		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
      
         _preview.Model = Model.Load( graph.Model );
+        _preview.LoadSettings(graph.PreviewSettings);
 
-		_asset = asset;
+        _asset = asset;
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
@@ -1060,6 +1061,8 @@ public class MainWindow : DockWindow, IAssetEditor
 		var savePath = _asset == null || saveAs ? GetSavePath() : _asset.AbsolutePath;
 		if ( string.IsNullOrWhiteSpace( savePath ) )
 			return false;
+
+		_preview.SaveSettings( _graph.PreviewSettings );
 
 		// Write serialized graph to asset file
 		System.IO.File.WriteAllText( savePath, _graph.Serialize() );
