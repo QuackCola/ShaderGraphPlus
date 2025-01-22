@@ -86,45 +86,41 @@ partial class ShaderGraphPlus
         var arrayProperty = doc.GetProperty("nodes");
         foreach (var element in arrayProperty.EnumerateArray())
         {
-            
-            var typeName = element.GetProperty("_class").GetString();
-            var typeDescription = EditorTypeLibrary.GetType(typeName);
+  			var typeName = element.GetProperty( "_class" ).GetString();
+			var typeDesc = EditorTypeLibrary.GetType( typeName );
+			var type = new ClassNodeType( typeDesc );
 
-            // If we encounter a null TypeDescription that means the node that typeName refers to dosent exist.
-            // Yell at the user.
-            // TODO : Have a popup dialog open when this occurs.
-          
-            if (typeDescription is null)
-            {
-                Log.Error($"Cant find node class: '{typeName}'");
-                MissingNodes.Add(typeName);
-                //continue;
-            }
-          
+			BaseNodePlus node;
+			if ( typeDesc is null )
+			{
+				var missingNode = new MissingNode( typeName, element );
+				node = missingNode;
+				DeserializeObject( node, element, options );
+			}
+			else
+			{
+				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
+				DeserializeObject( node, element, options );
 
-            var type = new ClassNodeType(typeDescription);
-            var node = EditorTypeLibrary.Create<BaseNodePlus>(typeName);
+				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
+				{
+					identifiers.Add( node.Identifier, node.NewIdentifier() );
+				}
 
-            DeserializeObject(node, element, options);
+				foreach ( var input in node.Inputs )
+				{
+					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
+						continue;
 
-            if (identifiers != null && _nodes.ContainsKey(node.Identifier))
-            {
-                identifiers.Add(node.Identifier, node.NewIdentifier());
-            }
+					var connected = connectedElem
+						.Deserialize<NodeInput?>();
 
-            foreach (var input in node.Inputs)
-            {
-                if (!element.TryGetProperty(input.Identifier, out var connectedElem))
-                    continue;
-
-                var connected = connectedElem
-                    .Deserialize<NodeInput?>();
-
-                if (connected is { IsValid: true })
-                {
-                    connections.Add((input, connected.Value));
-                }
-            }
+					if ( connected is { IsValid: true } )
+					{
+						connections.Add( (input, connected.Value) );
+					}
+				}
+			}
 
             nodes.Add(node.Identifier, node);
 
