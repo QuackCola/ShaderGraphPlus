@@ -369,115 +369,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 	}
 
-	//private string GeneratePostProcessPreviewCode()
-	//{
-	//	ClearAttributes();
-	//
-	//	var resultNode = _graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
-	//
-	//	var compiler = new GraphCompiler(_asset, _graph, true );
-	//	compiler.OnAttribute = OnAttribute;
-	//
-	//	// Evaluate all nodes
-	//	foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
-	//	{
-    //        var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
-	//			.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
-	//
-	//		if ( property == null )
-	//			continue;
-	//
-	//		var output = property.GetCustomAttribute<BaseNodePlus.OutputAttribute>();
-	//		if ( output == null )
-	//			continue;
-	//
-	//		var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
-	//		if ( !result.IsValid() )
-	//			continue;
-	//
-	//		var componentType = result.ComponentType;
-	//
-	//		if ( componentType == null )
-	//			continue;
-	//
-	//		// While we're here, let's check the output plugs and update their handle configs to the result type
-	//
-	//		var nodeUI = _graphView.FindNode( node );
-	//		if ( !nodeUI.IsValid() )
-	//			continue;
-	//
-	//		var plugOut = nodeUI.Outputs.FirstOrDefault( x => ((BasePlug)x.Inner).Property == property );
-	//		if ( !plugOut.IsValid() )
-	//			continue;
-	//
-	//		plugOut.PropertyType = componentType;
-	//
-	//		// We also have to update everything so they get repainted
-	//
-	//		nodeUI.Update();
-	//
-	//		foreach ( var input in nodeUI.Inputs )
-	//		{
-	//			if ( !input.IsValid() || !input.Connection.IsValid() )
-	//				continue;
-	//
-	//			input.Connection.Update();
-	//		}
-	//	}
-	//
-	//	_compiledNodes.Clear();
-	//	_compiledNodes.AddRange( compiler.Nodes );
-	//
-	//	if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
-	//	{
-	//		_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
-	//	}
-	//
-	//	if ( resultNode != null )
-	//	{
-	//		var nodeUI = _graphView.FindNode( resultNode );
-	//		if ( nodeUI.IsValid() )
-	//		{
-	//			nodeUI.Update();
-	//
-	//			foreach ( var input in nodeUI.Inputs )
-	//			{
-	//				if ( !input.IsValid() || !input.Connection.IsValid() )
-	//					continue;
-	//
-	//				input.Connection.Update();
-	//			}
-	//		}
-	//	}
-	//
-	//	var code = compiler.GenerateTest();
-	//
-	//
-	//	if ( compiler.Errors.Any()  )
-	//	{
-	//		_output.Errors = compiler.Errors;
-	//
-	//		DockManager.RaiseDock( "Output" );
-	//
-	//		_generatedCode = null;
-	//
-	//		RestoreShader();
-	//
-	//		return null;
-	//	}
-	//
-	//	_output.Clear();
-	//
-	//	if ( _generatedCode != code.Item1 )
-	//	{
-	//		_generatedCode = code.Item1;
-	//
-	//		Compile();
-	//	}
-	//	return code.Item1;
-	//
-	//}
-
 	private string GeneratePreviewCode()
 	{
 		ClearAttributes();
@@ -608,14 +499,7 @@ public class MainWindow : DockWindow, IAssetEditor
         _dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
-		//if ( _graph.MaterialDomain is MaterialDomain.Surface )
-		//{
-			GeneratePreviewCode();
-		//}
-		//else
-		//{
-		//	GeneratePostProcessPreviewCode();
-		//}
+		GeneratePreviewCode();
 	}
 
 	[EditorEvent.Frame]
