@@ -15,59 +15,59 @@ FEATURES
 
 MODES
 {{
-	VrForward();
-	Depth();
-	ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
+    VrForward();
+    Depth();
+    ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
 }}
 
 COMMON
 {{
 {1}
-	#include ""common/shared.hlsl""
+    #include ""common/shared.hlsl""
     #include ""common/gradient.hlsl""
-	#include ""procedural.hlsl""
-
-	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
+    #include ""procedural.hlsl""
+    
+    #define S_UV2 1
+    #define CUSTOM_MATERIAL_INPUTS
 }}
 
 struct VertexInput
 {{
-	#include ""common/vertexinput.hlsl""
-	float4 vColor : COLOR0 < Semantic( Color ); >;
+    #include ""common/vertexinput.hlsl""
+    float4 vColor : COLOR0 < Semantic( Color ); >;
 }};
 
 struct PixelInput
 {{
-	#include ""common/pixelinput.hlsl""
-	float3 vPositionOs : TEXCOORD14;
-	float3 vNormalOs : TEXCOORD15;
-	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
-	float4 vColor : COLOR0;
-	float4 vTintColor : COLOR1;
+    #include ""common/pixelinput.hlsl""
+    float3 vPositionOs : TEXCOORD14;
+    float3 vNormalOs : TEXCOORD15;
+    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+    float4 vColor : COLOR0;
+    float4 vTintColor : COLOR1;
 }};
 
 VS
 {{
-	#include ""common/vertex.hlsl""
+    #include ""common/vertex.hlsl""
 {7}{6}{10}
-	PixelInput MainVs( VertexInput v )
-	{{
+    PixelInput MainVs( VertexInput v )
+    {{
 {5}
-	}}
+    }}
 }}
 
 PS
 {{
-	#include ""common/pixel.hlsl""
+    #include ""common/pixel.hlsl""
 {8}{2}{9}
-	float4 MainPs( PixelInput i ) : SV_Target0
-	{{
+    float4 MainPs( PixelInput i ) : SV_Target0
+    {{
 {11}
 {3}
 {4}
 {12}
-	}}
+    }}
 }}
 ";
 
