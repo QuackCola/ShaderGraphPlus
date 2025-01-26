@@ -11,6 +11,7 @@ HEADER
 FEATURES
 {{
     #include ""common/features.hlsl""
+{1}
 }}
 
 MODES
@@ -22,7 +23,7 @@ MODES
 
 COMMON
 {{
-{1}
+{2}
     #include ""common/shared.hlsl""
     #include ""common/gradient.hlsl""
     #include ""procedural.hlsl""
@@ -50,23 +51,23 @@ struct PixelInput
 VS
 {{
     #include ""common/vertex.hlsl""
-{7}{6}{10}
+{8}{7}{11}
     PixelInput MainVs( VertexInput v )
     {{
-{5}
+{6}
     }}
 }}
 
 PS
 {{
     #include ""common/pixel.hlsl""
-{8}{2}{9}
+{9}{3}{10}
     float4 MainPs( PixelInput i ) : SV_Target0
     {{
-{11}
-{3}
-{4}
 {12}
+{4}
+{5}
+{13}
     }}
 }}
 ";
