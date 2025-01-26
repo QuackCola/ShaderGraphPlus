@@ -593,8 +593,8 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
 		var compiler = new GraphCompiler( _asset, _graph, false );
 
-        return compiler.Generate();
-	}
+		return compiler.Generate();
+    }
 
 	public void OnUndoPushed()
 	{

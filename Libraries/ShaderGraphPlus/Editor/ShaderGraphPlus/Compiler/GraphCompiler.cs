@@ -803,7 +803,7 @@ public sealed partial class GraphCompiler
 	/// Generate shader code, will evaluate the graph if it hasn't already.
 	/// Different code is generated for preview and not preview.
 	/// </summary>
-	public string GenerateTest()
+	public string Generate()
 	{
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
