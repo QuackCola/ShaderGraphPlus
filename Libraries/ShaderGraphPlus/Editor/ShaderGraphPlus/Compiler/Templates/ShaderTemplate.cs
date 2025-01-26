@@ -5,12 +5,12 @@ public static class ShaderTemplate
 public static string Code => @"
 HEADER
 {{
-	Description = ""{0}"";
+    Description = ""{0}"";
 }}
 
 FEATURES
 {{
-	#include ""common/features.hlsl""
+    #include ""common/features.hlsl""
 }}
 
 MODES
