@@ -32,15 +32,6 @@ public enum MaterialDomain
     PostProcess,
 }
 
-//public enum MaterialDomain
-//{
-//    [Icon("view_in_ar")]
-//    Surface,
-//    //BlendingSurface,
-//    [Icon("desktop_windows")]
-//    PostProcess,
-//}
-
 public class PreviewSettings
 {
     public bool RenderBackfaces { get; set; } = false;
