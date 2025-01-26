@@ -557,7 +557,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			}
 		}
 
-		var code = compiler.GenerateTest();
+		var code = compiler.Generate();
 
 		//if ( compiler.Warnings.Any() )
 		//{
@@ -593,7 +593,7 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
 		var compiler = new GraphCompiler( _asset, _graph, false );
 
-        return compiler.GenerateTest();
+        return compiler.Generate();
 	}
 
 	public void OnUndoPushed()
