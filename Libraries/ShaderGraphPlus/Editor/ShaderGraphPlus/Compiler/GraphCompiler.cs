@@ -682,9 +682,6 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	
-
-
     public string GeneratePostProcessingComponent( PostProcessingComponentInfo postProcessiComponentInfo, string className, string shaderPath )
 	{
 		var ppcb = new PostProcessingComponentBuilder( postProcessiComponentInfo );
@@ -1234,89 +1231,9 @@ public sealed partial class GraphCompiler
 
             }
 		}
-		
-
-        //if (IsPreview)
-        //{
-        //    int localId = 1;
-		//
-        //    foreach (var result in ShaderResult.Results)
-        //    {
-        //        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-        //        sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};");
-        //    }
-        //}
-        //else
-        //{
-        //    foreach (var result in ShaderResult.Results)
-        //    {
-        //        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-        //    }
-        //}
-
 
         return sb.ToString();
 	}
-
-	//private string GeneratePostprocessingMaterial()
-	//{
-	//	Stage = ShaderStage.Pixel;
-	//
-	//	var PostProcessingResultNode = Graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
-	//	
-	//	if ( PostProcessingResultNode == null )
-	//	{
-	//		Log.Info( "Cant find PostProcessingResultNode" );
-	//		return null;
-	//	}
-	//
-	//	var sb = new StringBuilder();
-	//
-	//	foreach ( var property in GetNodeInputProperties( PostProcessingResultNode.GetType() ) )
-	//	{
-	//		NodeResult result;
-	//
-	//		if ( property.GetValue( PostProcessingResultNode ) is NodeInput connection && connection.IsValid() )
-	//		{
-	//			result = Result( connection );
-	//		}
-	//		else
-	//		{
-	//			var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-	//			if ( editorAttribute == null )
-	//			{
-	//				// If there is no input to PostProcessingResultNode. Then default to un-modified SceneColor.
-	//				sb.AppendLine( $"FinalColor = Tex2D( g_tColorBuffer, i.vPositionSs.xy / g_vRenderTargetSize );" );
-	//				continue;
-	//			}
-	//
-	//
-	//			var valueProperty = PostProcessingResultNode.GetType().GetProperty( editorAttribute.ValueName );
-	//			if ( valueProperty == null )
-	//			{
-	//				continue;
-	//			}
-	//
-	//			result = ResultValue( valueProperty.GetValue( PostProcessingResultNode ) );
-	//		}
-	//
-	//		if ( Errors.Any() )
-	//			return null;
-	//
-	//		if ( !result.IsValid() )
-	//			continue;
-	//
-	//		if ( string.IsNullOrWhiteSpace( result.Code ) )
-	//			continue;
-	//
-	//		var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-	//		var componentCount = GetComponentCount( inputAttribute.Type );
-	//
-	//		sb.AppendLine( $"FinalColor = {result.Cast( componentCount )};" );
-	//	}
-	//
-	//	return sb.ToString();
-	//}
 
 	private string GenerateMaterial()
 	{
@@ -1332,18 +1249,6 @@ public sealed partial class GraphCompiler
 		{
 			if ( property.Name == "PositionOffset" )
 				continue;
-
-            //if (Graph.ShadingModel is ShadingModel.Unlit)
-            //{
-            //    if (property.Name == "Roughness")
-            //        continue;
-            //
-            //    if (property.Name == "Metalness")
-            //        continue;
-            //
-            //    if (property.Name == "AmbientOcclusion")
-            //        continue;
-            //}
 
 			CurrentResultInput = property.Name;
 
@@ -1469,53 +1374,4 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 
         return sb.ToString();
     }
-
-    //private string GenerateVertex()
-    //{
-    //	Stage = ShaderStage.Vertex;
-    //
-    //	var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
-    //	if ( resultNode == null )
-    //		return null;
-    //
-    //	var property = GetNodeInputProperties( resultNode.GetType() )
-    //		.FirstOrDefault( x => x.Name == "PositionOffset" );
-    //
-    //	var sb = new StringBuilder();
-    //
-    //	NodeResult result;
-    //
-    //	if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
-    //	{
-    //		result = Result( connection );
-    //	}
-    //	else
-    //	{
-    //		return null;
-    //	}
-    //
-    //	if ( Errors.Any() )
-    //		return null;
-    //
-    //	if ( !result.IsValid() )
-    //		return null;
-    //
-    //	if ( string.IsNullOrWhiteSpace( result.Code ) )
-    //		return null;
-    //
-    //	var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-    //	var componentCount = GetComponentCount( inputAttribute.Type );
-    //
-    //	sb.AppendLine();
-    //
-    //	foreach ( var local in ShaderResult.Results )
-    //	{
-    //		sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
-    //	}
-    //
-    //	sb.AppendLine( $"i.vPositionWs.xyz += {result.Cast( componentCount )};" );
-    //	sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );
-    //
-    //	return sb.ToString();
-    //}
 }
