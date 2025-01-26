@@ -1,6 +1,4 @@
-﻿using Editor.ShaderGraph;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public abstract class BaseNodePlus : INode
 {

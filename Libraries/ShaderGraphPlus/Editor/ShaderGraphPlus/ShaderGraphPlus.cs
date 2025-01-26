@@ -1,3 +1,7 @@
+using Editor.NodeEditor;
+using System.Text.Json.Serialization;
+
+
 namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
@@ -22,10 +26,18 @@ public enum MaterialDomain
 {
     [Icon("view_in_ar")]
     Surface,
-	BlendingSurface,
     [Icon("desktop_windows")]
     PostProcess,
 }
+
+//public enum MaterialDomain
+//{
+//    [Icon("view_in_ar")]
+//    Surface,
+//    //BlendingSurface,
+//    [Icon("desktop_windows")]
+//    PostProcess,
+//}
 
 public class PreviewSettings
 {
@@ -54,17 +66,17 @@ public sealed partial class ShaderGraphPlus : IGraph
 
 	public string Description { get; set; }
 
-	[HideIf( nameof(this.MaterialDomain), MaterialDomain.PostProcess )]
 	public BlendMode BlendMode { get; set; }
 
-	public ShadingModel ShadingModel { get; set; }
+    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.PostProcess )]
+    public ShadingModel ShadingModel { get; set; }
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.Surface  )]
-    [InlineEditor]
-    [Group("Post Processing")]
-    public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
+   //[HideIf( nameof( this.MaterialDomain ), MaterialDomain.Surface  )]
+   //[InlineEditor]
+   //[Group("Post Processing")]
+   //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
     //
     // Summary:
@@ -72,9 +84,9 @@ public sealed partial class ShaderGraphPlus : IGraph
     [Hide]
     public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
 
-    [Hide]
-    [JsonIgnore]
-    public List<string> MissingNodes { get; set; } = new List<string>();
+    //[Hide]
+    //[JsonIgnore]
+    //public List<string> MissingNodes { get; set; } = new List<string>();
 
 
     [Hide]
