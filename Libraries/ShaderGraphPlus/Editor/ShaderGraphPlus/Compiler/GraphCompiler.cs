@@ -640,26 +640,26 @@ public sealed partial class GraphCompiler
 			property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) );
 	}
 
-   //private string GenerateFeatures()
-   //{
-	//	var sb = new StringBuilder();
-	//	var result = ShaderResult;
-	//	
-	//	// Register any Graph level Shader Features...
-	//	//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
-	//	
-	//	if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
-	//	{
-	//	    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
-	//	}
-	//	
-	//	foreach (var feature in result.ShaderFeatures)
-	//	{
-	//		sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
-	//	}
-	//	
-	//	return sb.ToString();
-   //}
+   private string GenerateFeatures()
+   {
+		var sb = new StringBuilder();
+		var result = ShaderResult;
+		
+		// Register any Graph level Shader Features...
+		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
+		 
+		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+		{
+		    sb.AppendLine( "Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );" );
+		}
+		
+		foreach (var feature in result.ShaderFeatures)
+		{
+			sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
+		}
+		
+		return sb.ToString();
+   }
 
     private string GenerateCommon()
 	{
@@ -803,7 +803,7 @@ public sealed partial class GraphCompiler
 	/// Generate shader code, will evaluate the graph if it hasn't already.
 	/// Different code is generated for preview and not preview.
 	/// </summary>
-	public string GenerateTest()
+	public string Generate()
 	{
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
@@ -816,23 +816,62 @@ public sealed partial class GraphCompiler
 			return null;
 
 		return string.Format( ShaderTemplate.Code,
-			Graph.Description,
-			IndentString( GenerateCommon(), 1 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateLocals(), 2 ),
-			IndentString( material, 2 ),
-			IndentString( GenerateVertex(), 2 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateVertexComboRules(), 1 ),
-			IndentString( GeneratePixelComboRules(), 1 ),
-			IndentString( GenerateFunctions( PixelResult ), 1 ),
-			IndentString( GenerateFunctions( VertexResult ), 1 ),
-			IndentString( GeneratePixelInit(), 2 ),
-			IndentString( GeneratePixelOutput(), 2 )
-		);
+			Graph.Description, // {0}
+            IndentString( GenerateFeatures(), 1), // {1}
+            IndentString( GenerateCommon(), 1 ), // {2}
+            IndentString( GenerateVertexInputs(), 1), // {3}
+            IndentString( GeneratePixelInputs(), 1), // {4}
+            IndentString( GenerateGlobals(), 1 ), // new {5}
+            IndentString( GenerateLocals(), 2 ), // new {6}
+            IndentString( material, 2 ), // new {7}
+            IndentString( GenerateVertex(), 2 ), // new {8}
+            IndentString( GenerateGlobals(), 1 ), // new {9}
+            IndentString( GenerateVertexPreIncludeComboRules(), 1), // new {10}
+            IndentString( GenerateVertexComboRules(), 1 ), // new {11}
+            IndentString( GeneratePixelPreIncludeComboRules(), 1), // new {12}
+            IndentString( GeneratePixelComboRules(), 1 ), // new {13}
+            IndentString( GenerateFunctions( PixelResult ), 1 ), // new {14}
+            IndentString( GenerateFunctions( VertexResult ), 1 ), // new {15}
+            IndentString( GeneratePixelInit(), 2 ), // new {16}
+            IndentString( GeneratePixelOutput(), 2) // new {17}
+        );
 	}
 
-	private static string GenerateFunctions( CompileResult result )
+    /// <summary>
+    /// Stuff in the VetexInput struct
+    /// </summary>
+    /// <returns></returns>
+    private string GenerateVertexInputs()
+	{
+        var sb = new StringBuilder();
+
+        if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+        {
+            sb.AppendLine($"float4 vColorBlendValues : TEXCOORD4 < Semantic( VertexPaintBlendParams ); >;");
+            sb.AppendLine($"float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;");
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+	/// Stuff in the PixelInput struct
+	/// </summary>
+	/// <returns></returns>
+    private string GeneratePixelInputs()
+    {
+        var sb = new StringBuilder();
+
+        if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+        {
+            sb.AppendLine($"float4 vBlendValues		 : TEXCOORD14;");
+            sb.AppendLine($"float4 vPaintValues		 : TEXCOORD15;");
+        }
+
+        return sb.ToString();
+    }
+
+    private static string GenerateFunctions( CompileResult result )
 	{
 		var sb = new StringBuilder();
 
@@ -871,7 +910,32 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	private string GeneratePixelComboRules()
+	private string GenerateVertexPreIncludeComboRules()
+	{
+        var sb = new StringBuilder();
+
+		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+		{
+			sb.AppendLine( $"StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );" );
+		}
+
+
+		return sb.ToString();
+    }
+
+    private string GeneratePixelPreIncludeComboRules()
+    {
+        var sb = new StringBuilder();
+
+        if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+        {
+            sb.AppendLine( $"StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );" );
+        }
+
+        return sb.ToString();
+    }
+
+    private string GeneratePixelComboRules()
 	{
 		if ( IsNotPreview )
 			return null;
@@ -1076,7 +1140,22 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( sb.Length > 0 )
+		if ( IsVs )
+		{
+          
+            if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+			{
+                sb.AppendLine($"BoolAttribute( VertexPaintUI2Layer, F_MULTIBLEND == 1 );");
+                sb.AppendLine($"BoolAttribute( VertexPaintUI3Layer, F_MULTIBLEND == 2 );");
+                sb.AppendLine($"BoolAttribute( VertexPaintUI4Layer, F_MULTIBLEND == 3 );");
+                sb.AppendLine($"BoolAttribute( VertexPaintUI5Layer, F_MULTIBLEND == 4 );");
+                sb.AppendLine($"BoolAttribute( VertexPaintUIPickColor, true );");
+            }
+		}
+
+
+
+        if ( sb.Length > 0 )
 		{
 			sb.Insert( 0, "\n" );
 		}
@@ -1406,6 +1485,13 @@ i.vTintColor = extraShaderData.vTint;
 
 VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );");
                 break;
+//case MaterialDomain.BlendingSurface: // TODO 
+//                sb.AppendLine(@"
+//PixelInput i = ProcessVertex( v );
+//i.vBlendValues = v.vColorBlendValues;
+//i.vPaintValues = v.vColorPaintValues;
+//");
+//                break;
             case MaterialDomain.PostProcess:
                 sb.AppendLine(@"
 PixelInput i;

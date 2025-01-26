@@ -11,6 +11,7 @@ HEADER
 FEATURES
 {{
     #include ""common/features.hlsl""
+{1}
 }}
 
 MODES
@@ -22,7 +23,7 @@ MODES
 
 COMMON
 {{
-{1}
+{2}
     #include ""common/shared.hlsl""
     #include ""common/gradient.hlsl""
     #include ""procedural.hlsl""
@@ -35,6 +36,7 @@ struct VertexInput
 {{
     #include ""common/vertexinput.hlsl""
     float4 vColor : COLOR0 < Semantic( Color ); >;
+{3}
 }};
 
 struct PixelInput
@@ -45,28 +47,31 @@ struct PixelInput
     float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
     float4 vColor : COLOR0;
     float4 vTintColor : COLOR1;
+{4}
 }};
 
 VS
 {{
+{10} 
     #include ""common/vertex.hlsl""
-{7}{6}{10}
+{11}{9}{15} 
     PixelInput MainVs( VertexInput v )
     {{
-{5}
+{8}
     }}
 }}
 
 PS
 {{
+{12} 
     #include ""common/pixel.hlsl""
-{8}{2}{9}
+{13}{5}{14}
     float4 MainPs( PixelInput i ) : SV_Target0
     {{
-{11}
-{3}
-{4}
-{12}
+{16}
+{6}
+{7}
+{17}
     }}
 }}
 ";
