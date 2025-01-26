@@ -984,7 +984,6 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-
 		if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
