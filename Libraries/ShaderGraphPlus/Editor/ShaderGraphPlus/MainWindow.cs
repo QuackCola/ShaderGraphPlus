@@ -54,7 +54,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool CanOpenMultipleAssets => true;
 
-	//private ProjectCreator ProjectCreator { get; set; }
+	private ProjectCreator ProjectCreator { get; set; }
 
 	public MainWindow()
 	{
@@ -74,25 +74,25 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        //OpenProjectCreationDialog();
+        OpenProjectCreationDialog();
     }
 
-	//private void OpenProjectCreationDialog()
-	//{
-	//	ProjectCreator = new ProjectCreator();
-	//	ProjectCreator.DeleteOnClose = true;
-	//	ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
-	//	ProjectCreator.Show();
-	//	ProjectCreator.OnProjectCreated += Open;
-	//}
+	private void OpenProjectCreationDialog()
+	{
+		ProjectCreator = new ProjectCreator();
+		ProjectCreator.DeleteOnClose = true;
+		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+		ProjectCreator.Show();
+		ProjectCreator.OnProjectCreated += Open;
+	}
 
 	public void AssetOpen( Asset asset )
 	{
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
 		// We dont need the project creator when opening an existing asset. So lets forceably close it.
-		//ProjectCreator.Close();
-		//ProjectCreator = null;
+		ProjectCreator.Close();
+		ProjectCreator = null;
 		
 		Open( asset.AbsolutePath );
 	}
