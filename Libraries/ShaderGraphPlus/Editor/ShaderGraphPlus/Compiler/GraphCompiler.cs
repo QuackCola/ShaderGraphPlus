@@ -640,26 +640,26 @@ public sealed partial class GraphCompiler
 			property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) );
 	}
 
-   //private string GenerateFeatures()
-   //{
-	//	var sb = new StringBuilder();
-	//	var result = ShaderResult;
-	//	
-	//	// Register any Graph level Shader Features...
-	//	//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
-	//	
-	//	if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
-	//	{
-	//	    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
-	//	}
-	//	
-	//	foreach (var feature in result.ShaderFeatures)
-	//	{
-	//		sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
-	//	}
-	//	
-	//	return sb.ToString();
-   //}
+   private string GenerateFeatures()
+   {
+		var sb = new StringBuilder();
+		var result = ShaderResult;
+		
+		// Register any Graph level Shader Features...
+		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
+		
+		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+		{
+		    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
+		}
+		
+		foreach (var feature in result.ShaderFeatures)
+		{
+			sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
+		}
+		
+		return sb.ToString();
+   }
 
     private string GenerateCommon()
 	{
@@ -815,8 +815,16 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return null;
 
-		return string.Format( ShaderTemplate.Code,
+		string template = ShaderTemplate.Code;
+
+		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+		{
+			template = ShaderTemplateBlending.Code;
+        }
+
+		return string.Format( template,
 			Graph.Description,
+			IndentString( GenerateFeatures(), 1),
 			IndentString( GenerateCommon(), 1 ),
 			IndentString( GenerateGlobals(), 1 ),
 			IndentString( GenerateLocals(), 2 ),
@@ -1406,7 +1414,14 @@ i.vTintColor = extraShaderData.vTint;
 
 VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );");
                 break;
-            case MaterialDomain.PostProcess:
+case MaterialDomain.BlendingSurface:
+                sb.AppendLine(@"
+PixelInput i = ProcessVertex( v );
+i.vBlendValues = v.vColorBlendValues;
+i.vPaintValues = v.vColorPaintValues;
+");
+                break;
+case MaterialDomain.PostProcess:
                 sb.AppendLine(@"
 PixelInput i;
 i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
@@ -1442,6 +1457,9 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
         switch (Graph.MaterialDomain)
         {
             case MaterialDomain.Surface:
+                sb.AppendLine("return FinalizeVertex( i );");
+                break;
+            case MaterialDomain.BlendingSurface:
                 sb.AppendLine("return FinalizeVertex( i );");
                 break;
             case MaterialDomain.PostProcess:
