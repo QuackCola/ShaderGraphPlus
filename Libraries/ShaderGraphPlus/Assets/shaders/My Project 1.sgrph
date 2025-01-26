@@ -1,18 +1,15 @@
 {
   "Model": null,
-  "Description": null,
+  "Description": "",
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "PostProcess",
-  "postProcessComponentInfo": {
-    "Order": 500
-  },
-  "Metadata": {
-    "ProjectTemplate": {
-      "Icon": "camera",
-      "Order": 200,
-      "Description": "You want to make a Post Processing Shader"
-    }
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
   },
   "nodes": [
     {
