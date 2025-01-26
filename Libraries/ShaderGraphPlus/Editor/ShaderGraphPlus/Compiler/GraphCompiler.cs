@@ -1092,7 +1092,7 @@ public sealed partial class GraphCompiler
 		{
 			sb.AppendLine();
 		}
-        /*
+        
 		if ( Debug )
 		{
             if (IsPreview)
@@ -1127,12 +1127,12 @@ public sealed partial class GraphCompiler
 				}
 
 				// All good with time as the 4th component?
-                sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4({color.Value.r},{color.Value.g},{color.Value.b},{color.Time});");
+                sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );");
             }
         
             foreach ( var alpha in gradient.Value.Alphas )
             {
-                sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float({alpha.Value});");
+                sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );");
             }
 
             sb.AppendLine();
@@ -1166,16 +1166,16 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-					if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-					{
+					//if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
+					//{
+					//	sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+					//	sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
+					//}
+					//else
+					//{
 						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-					}
-					else
-					{
-						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-                    }
+                    //}
                 }
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
@@ -1226,25 +1226,25 @@ public sealed partial class GraphCompiler
 
             }
 		}
-		*/
+		
 
-        if (IsPreview)
-        {
-            int localId = 1;
-
-            foreach (var result in ShaderResult.Results)
-            {
-                sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-                sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};");
-            }
-        }
-        else
-        {
-            foreach (var result in ShaderResult.Results)
-            {
-                sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-            }
-        }
+        //if (IsPreview)
+        //{
+        //    int localId = 1;
+		//
+        //    foreach (var result in ShaderResult.Results)
+        //    {
+        //        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
+        //        sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};");
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (var result in ShaderResult.Results)
+        //    {
+        //        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
+        //    }
+        //}
 
 
         return sb.ToString();
