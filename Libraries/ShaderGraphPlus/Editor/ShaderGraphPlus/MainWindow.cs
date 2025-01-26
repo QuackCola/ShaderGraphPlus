@@ -54,7 +54,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public bool CanOpenMultipleAssets => true;
 
-	private ProjectCreator ProjectCreator { get; set; }
+	//private ProjectCreator ProjectCreator { get; set; }
 
 	public MainWindow()
 	{
@@ -74,27 +74,25 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        OpenProjectCreationDialog();
+        //OpenProjectCreationDialog();
     }
 
-	private void OpenProjectCreationDialog()
-	{
-		ProjectCreator = new ProjectCreator();
-		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
-		ProjectCreator.Show();
-		ProjectCreator.OnProjectCreated += Open;
-	}
+	//private void OpenProjectCreationDialog()
+	//{
+	//	ProjectCreator = new ProjectCreator();
+	//	ProjectCreator.DeleteOnClose = true;
+	//	ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+	//	ProjectCreator.Show();
+	//	ProjectCreator.OnProjectCreated += Open;
+	//}
 
 	public void AssetOpen( Asset asset )
 	{
-		Log.Info($"Opened Asset : {asset.Name}");
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
-		
 		// We dont need the project creator when opening an existing asset. So lets forceably close it.
-		ProjectCreator.Close();
-		ProjectCreator = null;
+		//ProjectCreator.Close();
+		//ProjectCreator = null;
 		
 		Open( asset.AbsolutePath );
 	}
@@ -105,7 +103,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			return;
 
 		_preview.Material = Material.Load( "materials/core/shader_editor.vmat" );
-		_preview.PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
+		//_preview.PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
 	}
 
 	public void OnNodeSelected( BaseNodePlus node )
@@ -140,8 +138,6 @@ public class MainWindow : DockWindow, IAssetEditor
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 		var resourcePath = System.IO.Path.Combine( FileSystem.Temporary.GetFullPath( "/temp" ), assetPath );
 		var asset = AssetSystem.FindByPath( resourcePath );
-
-		//Log.Info( asset.AbsolutePath );
 
 		asset?.OpenInEditor();
 	}
@@ -230,7 +226,7 @@ public class MainWindow : DockWindow, IAssetEditor
     }
 
     private readonly List<string> _shaderCompileErrors = new();
-	private readonly List<string> _Warnings = new();
+	//private readonly List<string> _Warnings = new();
 
 	private struct StatusMessage
 	{
@@ -291,7 +287,7 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		if ( exitCode == 0 )
 		{
-            Log.Info( $"Compile finished in {_timeSinceCompile}" );
+			Log.Info( $"Compile finished in {_timeSinceCompile}" );
 
 			var shaderPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 
@@ -299,36 +295,14 @@ public class MainWindow : DockWindow, IAssetEditor
 			// Alternatively Material.Create could be made to force reload the shader
 			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 
-
-            if ( _graph.MaterialDomain is MaterialDomain.Surface )
-            {
-            	_preview.Material = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
-                _preview.IsPostProcessShader = false;
-            }
-            else
-            {
-            	_preview.PostProcessingMaterial = Material.Create($"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath);
-            	_preview.IsPostProcessShader = true;
-            }
-        }
+			_preview.Material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
+		}
 		else
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
 
 			_output.Errors = _shaderCompileErrors.Select( x => new GraphCompiler.Error { Message = x } );
-
 			DockManager.RaiseDock( "Output" );
-
-            _preview.IsPostProcessShader = false;
-
-            //if ( _graph.MaterialDomain is MaterialDomain.Surface )
-            //{
-            //	_preview.IsPostProcessShader = false;
-            //}
-            //else
-            //{
-            //	_preview.IsPostProcessShader = true;
-			//}
 
 			RestoreShader();
 			ClearAttributes();
@@ -395,129 +369,125 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 	}
 
-	private string GeneratePostProcessPreviewCode()
-	{
-		ClearAttributes();
-
-		var resultNode = _graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
-
-		var compiler = new GraphCompiler(_asset, _graph, true );
-		compiler.OnAttribute = OnAttribute;
-
-		// Evaluate all nodes
-		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
-		{
-            var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
-				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
-
-			if ( property == null )
-				continue;
-
-			var output = property.GetCustomAttribute<BaseNodePlus.OutputAttribute>();
-			if ( output == null )
-				continue;
-
-			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
-			if ( !result.IsValid() )
-				continue;
-
-			var componentType = result.ComponentType;
-
-			if ( componentType == null )
-				continue;
-
-			// While we're here, let's check the output plugs and update their handle configs to the result type
-
-			var nodeUI = _graphView.FindNode( node );
-			if ( !nodeUI.IsValid() )
-				continue;
-
-			var plugOut = nodeUI.Outputs.FirstOrDefault( x => ((BasePlug)x.Inner).Property == property );
-			if ( !plugOut.IsValid() )
-				continue;
-
-			plugOut.PropertyType = componentType;
-
-			// We also have to update everything so they get repainted
-
-			nodeUI.Update();
-
-			foreach ( var input in nodeUI.Inputs )
-			{
-				if ( !input.IsValid() || !input.Connection.IsValid() )
-					continue;
-
-				input.Connection.Update();
-			}
-		}
-
-		_compiledNodes.Clear();
-		_compiledNodes.AddRange( compiler.Nodes );
-
-		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
-		{
-			_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
-		}
-
-		if ( resultNode != null )
-		{
-			var nodeUI = _graphView.FindNode( resultNode );
-			if ( nodeUI.IsValid() )
-			{
-				nodeUI.Update();
-
-				foreach ( var input in nodeUI.Inputs )
-				{
-					if ( !input.IsValid() || !input.Connection.IsValid() )
-						continue;
-
-					input.Connection.Update();
-				}
-			}
-		}
-
-		var code = compiler.Generate();
-
-
-		if ( compiler.Errors.Any()  )
-		{
-			_output.Errors = compiler.Errors;
-
-			DockManager.RaiseDock( "Output" );
-
-			_generatedCode = null;
-
-			RestoreShader();
-
-			return null;
-		}
-
-		_output.Clear();
-
-		if ( _generatedCode != code.Item1 )
-		{
-			_generatedCode = code.Item1;
-
-			Compile();
-		}
-		return code.Item1;
-
-	}
+	//private string GeneratePostProcessPreviewCode()
+	//{
+	//	ClearAttributes();
+	//
+	//	var resultNode = _graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
+	//
+	//	var compiler = new GraphCompiler(_asset, _graph, true );
+	//	compiler.OnAttribute = OnAttribute;
+	//
+	//	// Evaluate all nodes
+	//	foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
+	//	{
+    //        var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
+	//			.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
+	//
+	//		if ( property == null )
+	//			continue;
+	//
+	//		var output = property.GetCustomAttribute<BaseNodePlus.OutputAttribute>();
+	//		if ( output == null )
+	//			continue;
+	//
+	//		var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
+	//		if ( !result.IsValid() )
+	//			continue;
+	//
+	//		var componentType = result.ComponentType;
+	//
+	//		if ( componentType == null )
+	//			continue;
+	//
+	//		// While we're here, let's check the output plugs and update their handle configs to the result type
+	//
+	//		var nodeUI = _graphView.FindNode( node );
+	//		if ( !nodeUI.IsValid() )
+	//			continue;
+	//
+	//		var plugOut = nodeUI.Outputs.FirstOrDefault( x => ((BasePlug)x.Inner).Property == property );
+	//		if ( !plugOut.IsValid() )
+	//			continue;
+	//
+	//		plugOut.PropertyType = componentType;
+	//
+	//		// We also have to update everything so they get repainted
+	//
+	//		nodeUI.Update();
+	//
+	//		foreach ( var input in nodeUI.Inputs )
+	//		{
+	//			if ( !input.IsValid() || !input.Connection.IsValid() )
+	//				continue;
+	//
+	//			input.Connection.Update();
+	//		}
+	//	}
+	//
+	//	_compiledNodes.Clear();
+	//	_compiledNodes.AddRange( compiler.Nodes );
+	//
+	//	if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
+	//	{
+	//		_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
+	//	}
+	//
+	//	if ( resultNode != null )
+	//	{
+	//		var nodeUI = _graphView.FindNode( resultNode );
+	//		if ( nodeUI.IsValid() )
+	//		{
+	//			nodeUI.Update();
+	//
+	//			foreach ( var input in nodeUI.Inputs )
+	//			{
+	//				if ( !input.IsValid() || !input.Connection.IsValid() )
+	//					continue;
+	//
+	//				input.Connection.Update();
+	//			}
+	//		}
+	//	}
+	//
+	//	var code = compiler.GenerateTest();
+	//
+	//
+	//	if ( compiler.Errors.Any()  )
+	//	{
+	//		_output.Errors = compiler.Errors;
+	//
+	//		DockManager.RaiseDock( "Output" );
+	//
+	//		_generatedCode = null;
+	//
+	//		RestoreShader();
+	//
+	//		return null;
+	//	}
+	//
+	//	_output.Clear();
+	//
+	//	if ( _generatedCode != code.Item1 )
+	//	{
+	//		_generatedCode = code.Item1;
+	//
+	//		Compile();
+	//	}
+	//	return code.Item1;
+	//
+	//}
 
 	private string GeneratePreviewCode()
 	{
 		ClearAttributes();
 
 		var resultNode = _graph.Nodes.OfType<Result>().FirstOrDefault();
-
 		var compiler = new GraphCompiler( _asset, _graph, true );
-
-        //compiler.ClearGradientsDict();
-
         compiler.OnAttribute = OnAttribute;
 
-		// Evaluate all nodes
-		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
+        // Evaluate all nodes
+        foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
             var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
@@ -587,7 +557,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			}
 		}
 
-		var code = compiler.Generate();
+		var code = compiler.GenerateTest();
 
 		//if ( compiler.Warnings.Any() )
 		//{
@@ -609,21 +579,21 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		_output.Clear();
 
-		if ( _generatedCode != code.Item1 )
+		if ( _generatedCode != code )
 		{
-			_generatedCode = code.Item1;
+			_generatedCode = code;
 
 			Compile();
 		}
-		return code.Item1;
 
+		return code;
 	}
 
-	private (string,string) GenerateShaderCode()
+	private string GenerateShaderCode()
 	{
 		var compiler = new GraphCompiler( _asset, _graph, false );
 
-        return compiler.Generate();
+        return compiler.GenerateTest();
 	}
 
 	public void OnUndoPushed()
@@ -633,17 +603,19 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	public void SetDirty()
 	{
-		_dirty = true;
+        Update();
+
+        _dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
-		if ( _graph.MaterialDomain is MaterialDomain.Surface )
-		{
+		//if ( _graph.MaterialDomain is MaterialDomain.Surface )
+		//{
 			GeneratePreviewCode();
-		}
-		else
-		{
-			GeneratePostProcessPreviewCode();
-		}
+		//}
+		//else
+		//{
+		//	GeneratePostProcessPreviewCode();
+		//}
 	}
 
 	[EditorEvent.Frame]
@@ -997,8 +969,8 @@ public class MainWindow : DockWindow, IAssetEditor
 		var graph = new ShaderGraphPlus();
 		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
      
-        _preview.Model = Model.Load( graph.Model );
-        _preview.LoadSettings(graph.PreviewSettings);
+		_preview.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
+		_preview.LoadSettings( graph.PreviewSettings );
 
         _asset = asset;
 		_graph = graph;
@@ -1031,16 +1003,16 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		AddToRecentFiles( path );
 
-		if ( _graph.MaterialDomain is MaterialDomain.Surface )
-		{
-			_preview.IsPostProcessShader = false;
+		//if ( _graph.MaterialDomain is MaterialDomain.Surface )
+		//{
+			//_preview.IsPostProcessShader = false;
 			GeneratePreviewCode();
-		}
-		else
-		{
-			_preview.IsPostProcessShader = true;
-			GeneratePostProcessPreviewCode();
-		}
+		//}
+		//else
+		//{
+			//_preview.IsPostProcessShader = true;
+			//GeneratePostProcessPreviewCode();
+		//}
 	}
 
 
@@ -1092,24 +1064,25 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		var code = GenerateShaderCode();
 
-		if ( string.IsNullOrWhiteSpace( code.Item1 ) )
+		if ( string.IsNullOrWhiteSpace( code ) )
 			return false;
 
 
 		// Write generated shader to file
-		System.IO.File.WriteAllText( shaderPath, code.Item1 );
+		System.IO.File.WriteAllText( shaderPath, code);
 
         // Write generated post processing class to file within the current projects code folder.
-        if (_graph.MaterialDomain is MaterialDomain.PostProcess)
-		{
-			// If the post processing class code is blank, dont bother generating the class.
-			if ( !string.IsNullOrWhiteSpace( code.Item2 ) )
-			{
-                WritePostProcessingShaderClass( code.Item2 );
-            }
-			
-        }
-       
+        //if (_graph.MaterialDomain is MaterialDomain.PostProcess)
+		//{
+		//	// If the post processing class code is blank, dont bother generating the class.
+		//	if ( !string.IsNullOrWhiteSpace( code.Item2 ) )
+		//	{
+        //        WritePostProcessingShaderClass( code.Item2 );
+        //    }
+		//	
+        //}
+       	//
+
         AddToRecentFiles( savePath );
 
 		return true;
@@ -1207,14 +1180,14 @@ public class MainWindow : DockWindow, IAssetEditor
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
 
-		if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
-		{
-			_preview.IsPostProcessShader = true;
-		}
-		else
-		{
-			_preview.IsPostProcessShader = false;
-		}
+		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
+		//{
+		//	_preview.IsPostProcessShader = true;
+		//}
+		//else
+		//{
+		//	_preview.IsPostProcessShader = false;
+		//}
 
 		foreach ( var value in _textureAttributes )
 		{
@@ -1347,7 +1320,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		MenuBar.Clear();
 
 		CreateUI();
-        Compile();
+        //Compile();
 	}
 
 	void IAssetEditor.SelectMember( string memberName )

@@ -5,11 +5,11 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus
 {
-	/// <summary>
-	/// Texture to sample in preview
-	/// </summary>
-	[ResourceType( "jpg" )]
-	public string Image
+    /// <summary>
+    /// Texture to sample in preview
+    /// </summary>
+    [ImageAssetPath]
+    public string Image
 	{
 		get => _image;
 		set
@@ -42,7 +42,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		if ( string.IsNullOrWhiteSpace( _image ) )
 			return;
 
-		var resourceText = string.Format( TextureDefinitionTemplate.TextureDefinition,
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
 			_image,
 			UI.ColorSpace,
 			UI.ImageFormat,
@@ -67,15 +67,13 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		}
 	}
 
-	[InlineEditor]
-    [Group("Default Values")]
+    [InlineEditor(Label = false), Group("Sampler")]
     public Sampler DefaultSampler { get; set; } = new Sampler();
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-    [Group("UI")]
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
     public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
@@ -89,8 +87,8 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 	protected TextureSamplerBase() : base()
 	{
 		Image = "materials/dev/white_color.tga";
-		ExpandSize = new Vector2( 0, 74 );
-	}
+        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+    }
 
 	public override void OnPaint( Rect rect )
 	{
@@ -125,7 +123,7 @@ public sealed class TextureObjectNode : ShaderNodePlus
     /// <summary>
     /// Texture to sample in preview
     /// </summary>
-    [ResourceType("jpg")]
+   	[ImageAssetPath]
     public string Image
 	{
 		get => _image;
@@ -163,7 +161,7 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		if ( string.IsNullOrWhiteSpace( _image ) )
 			return;
 
-		var resourceText = string.Format( TextureDefinitionTemplate.TextureDefinition,
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
 			_image,
 			UI.ColorSpace,
 			UI.ImageFormat,
@@ -188,11 +186,11 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		}
 	}
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-	public TextureInput UI { get; set; } = new TextureInput
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
+    public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -205,8 +203,8 @@ public sealed class TextureObjectNode : ShaderNodePlus
 	public TextureObjectNode() : base()
 	{
 		Image = "textures/sbox_logo.psd";
-		ExpandSize = new Vector2( 32, 128 );
-	}
+        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+    }
 
 	public override void OnPaint( Rect rect )
 	{
@@ -363,11 +361,11 @@ public sealed class TextureCube : ShaderNodePlus
 	[InlineEditor]
 	public Sampler DefaultSampler { get; set; } = new Sampler();
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-	public TextureInput UI { get; set; } = new TextureInput
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
+    public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -377,12 +375,32 @@ public sealed class TextureCube : ShaderNodePlus
 	public TextureCube() : base()
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
-	}
+        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+    }
 
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
+    public override void OnPaint(Rect rect)
+    {
+        rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
+
+        Paint.SetBrush("/image/transparent-small.png");
+        Paint.DrawRect(rect.Shrink(2), 2);
+
+        Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
+        Paint.DrawRect(rect, 2);
+
+        if (!string.IsNullOrEmpty(Texture))
+        {
+            var tex = Sandbox.Texture.Find(Texture);
+            if (tex is null) return;
+            var pixmap = Pixmap.FromTexture(tex);
+            Paint.Draw(rect.Shrink(2), pixmap);
+        }
+    }
+
+    /// <summary>
+    /// RGBA color result
+    /// </summary>
+    [Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
