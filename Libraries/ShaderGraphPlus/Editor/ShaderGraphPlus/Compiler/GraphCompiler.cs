@@ -68,6 +68,7 @@ public sealed partial class GraphCompiler
 	public Action<string, object> OnAttribute { get; set; }
 
 	public List<BaseNodePlus> Nodes { get; private set; } = new();
+	private List<BaseNodePlus> NodeStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
@@ -384,8 +385,17 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if (property == null)
+		if ( node is not IRerouteNode && NodeStack.Contains( node ) )
+		{
+		    NodeErrors.Add( node, new List<string> { "Circular reference detected" } );
+		    return default;
+		}
+
+		if ( property == null )
 			return default;
+		
+		if ( node is not IRerouteNode )
+			NodeStack.Add( node );
 
 		var value = property.GetValue( node );
 		if (value == null)
