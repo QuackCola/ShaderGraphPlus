@@ -404,7 +404,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			if ( !nodeUI.IsValid() )
 				continue;
 
-			var plugOut = nodeUI.Outputs.FirstOrDefault( x => ((BasePlug)x.Inner).Property == property );
+			var plugOut = nodeUI.Outputs.FirstOrDefault( x => ((BasePlug)x.Inner).Info.Property == property );
 			if ( !plugOut.IsValid() )
 				continue;
 

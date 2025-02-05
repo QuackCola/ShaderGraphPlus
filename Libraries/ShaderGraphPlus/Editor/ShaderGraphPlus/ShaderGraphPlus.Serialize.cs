@@ -23,61 +23,71 @@ partial class ShaderGraphPlus
     public string Serialize()
     {
         var doc = new JsonObject();
-        var options = SerializerOptions(true);
+        var options = SerializerOptions( true );
 
-        SerializeObject(this, doc, options);
-        SerializeNodes(Nodes, doc, options);
+        SerializeObject( this, doc, options );
+        SerializeNodes( Nodes, doc, options );
 
-        return doc.ToJsonString(options);
+        return doc.ToJsonString( options );
     }
 
     public void Deserialize(string json)
     {
-        using var doc = JsonDocument.Parse(json);
+        using var doc = JsonDocument.Parse( json );
         var root = doc.RootElement;
         var options = SerializerOptions();
 
-        DeserializeObject(this, root, options);
-        DeserializeNodes(root, options);
+        DeserializeObject( this, root, options );
+        DeserializeNodes( root, options );
     }
+
+    public void Deserialize( string json, string subgraphPath = null )
+	{
+		using var doc = JsonDocument.Parse( json );
+		var root = doc.RootElement;
+		var options = SerializerOptions();
+
+		DeserializeObject( this, root, options );
+		DeserializeNodes( root, options, subgraphPath );
+	}
 
     public IEnumerable<BaseNodePlus> DeserializeNodes(string json)
     {
-        using var doc = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-        return DeserializeNodes(doc.RootElement, SerializerOptions());
+        using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
+        return DeserializeNodes( doc.RootElement, SerializerOptions() );
     }
 
-    private static void DeserializeObject(object obj, JsonElement doc, JsonSerializerOptions options)
-    {
-        var type = obj.GetType();
-        var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(x => x.GetSetMethod() != null);
+ 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
+	{
+		var type = obj.GetType();
+		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( x => x.GetSetMethod() != null );
 
-        foreach (var nodeProperty in doc.EnumerateObject())
-        {
-            var prop = properties.FirstOrDefault(x =>
-            {
-                var propName = x.Name;
-                if (x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna)
-                    propName = jpna.Name;
+		foreach ( var nodeProperty in doc.EnumerateObject() )
+		{
+			var prop = properties.FirstOrDefault( x =>
+			{
+				var propName = x.Name;
+				if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
+					propName = jpna.Name;
 
-                return string.Equals(propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase);
-            });
+				return string.Equals( propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase );
+			} );
 
-            if (prop == null)
-                continue;
+			if ( prop == null )
+				continue;
 
-            if (prop.CanWrite == false)
-                continue;
+			if ( prop.CanWrite == false )
+				continue;
 
-            if (prop.IsDefined(typeof(JsonIgnoreAttribute)))
-                continue;
+			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
+				continue;
 
-            prop.SetValue(obj, JsonSerializer.Deserialize(nodeProperty.Value.GetRawText(), prop.PropertyType, options));
-        }
-    }
+			prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
+		}
+	}
 
-    private IEnumerable<BaseNodePlus> DeserializeNodes(JsonElement doc, JsonSerializerOptions options)
+    private IEnumerable<BaseNodePlus> DeserializeNodes(JsonElement doc, JsonSerializerOptions options, string subgraphPath = null )
     {
         var nodes = new Dictionary<string, BaseNodePlus>();
         var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
@@ -107,7 +117,17 @@ partial class ShaderGraphPlus
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-				foreach ( var input in node.Inputs )
+                if (node is FunctionResult funcResult)
+                {
+                    funcResult.CreateInputs();
+                }
+
+                if ( node is SubgraphNode subgraphNode )
+				{
+					subgraphNode.OnNodeCreated();
+				}
+
+                foreach ( var input in node.Inputs )
 				{
 					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
 						continue;
@@ -117,25 +137,52 @@ partial class ShaderGraphPlus
 
 					if ( connected is { IsValid: true } )
 					{
-						connections.Add( (input, connected.Value) );
+						var connection = connected.Value;
+						if ( !string.IsNullOrEmpty( subgraphPath ) )
+						{
+							connection = new()
+							{
+								Identifier = connection.Identifier,
+								Output = connection.Output,
+								Subgraph = subgraphPath
+							};
+						}
+						connections.Add( (input, connection) );
 					}
 				}
 			}
 
-            nodes.Add(node.Identifier, node);
+            nodes.Add( node.Identifier, node );
 
-            AddNode(node);
+            AddNode( node );
         }
 
-        foreach (var (input, value) in connections)
-        {
-            var outputIdent = identifiers?.TryGetValue(value.Identifier, out var newIdent) ?? false
-                ? newIdent : value.Identifier;
+		foreach ( var (input, value) in connections )
+		{
+			var outputIdent = identifiers?.TryGetValue( value.Identifier, out var newIdent ) ?? false
+				? newIdent : value.Identifier;
 
-            input.ConnectedOutput = nodes.TryGetValue(outputIdent, out var node)
-                ? node.Outputs.FirstOrDefault(x => x.Identifier == value.Output)
-                : null;
-        }
+			if ( nodes.TryGetValue( outputIdent, out var node ) )
+			{
+				var output = node.Outputs.FirstOrDefault( x => x.Identifier == value.Output );
+				if ( output is null )
+				{
+					// Check for Aliases
+					foreach ( var op in node.Outputs )
+					{
+						if ( op is not BasePlugOut plugOut ) continue;
+
+						var aliasAttr = plugOut.Info.Property?.GetCustomAttribute<AliasAttribute>();
+						if ( aliasAttr is not null && aliasAttr.Value.Contains( value.Output ) )
+						{
+							output = plugOut;
+							break;
+						}
+					}
+				}
+				input.ConnectedOutput = output;
+			}
+		}
 
         return nodes.Values;
     }
@@ -188,20 +235,26 @@ partial class ShaderGraphPlus
             doc.Add(propertyName, JsonSerializer.SerializeToNode(propertyValue, options));
         }
 
-        if (obj is INode node)
-        {
-            foreach (var input in node.Inputs)
-            {
-                if (input.ConnectedOutput is not { } output)
-                    continue;
+		if ( obj is INode node )
+		{
+			string subgraphPath = null;
+			if ( obj is SubgraphNode subgraphNode )
+			{
+				subgraphPath = subgraphNode.SubgraphPath;
+			}
+			foreach ( var input in node.Inputs )
+			{
+				if ( input.ConnectedOutput is not { } output )
+					continue;
 
-                doc.Add(input.Identifier, JsonSerializer.SerializeToNode(new NodeInput
-                {
-                    Identifier = identifiers?.TryGetValue(output.Node.Identifier, out var newIdent) ?? false ? newIdent : output.Node.Identifier,
-                    Output = output.Identifier
-                }));
-            }
-        }
+				doc.Add( input.Identifier, JsonSerializer.SerializeToNode( new NodeInput
+				{
+					Identifier = identifiers?.TryGetValue( output.Node.Identifier, out var newIdent ) ?? false ? newIdent : output.Node.Identifier,
+					Output = output.Identifier,
+					Subgraph = subgraphPath
+				} ) );
+			}
+		}
     }
 
     private static void SerializeNodes(IEnumerable<BaseNodePlus> nodes, JsonObject doc, JsonSerializerOptions options)

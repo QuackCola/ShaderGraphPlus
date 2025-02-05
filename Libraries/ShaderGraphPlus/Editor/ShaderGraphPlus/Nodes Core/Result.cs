@@ -5,7 +5,7 @@ namespace Editor.ShaderGraphPlus;
 /// Final result
 /// </summary>
 [Title( "Material" ), Icon( "tonality" )]
-public sealed class Result : ShaderNodePlus
+public sealed class Result : BaseResult
 {
     [Hide]
     private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
@@ -62,84 +62,102 @@ public sealed class Result : ShaderNodePlus
 	[Input( typeof( Vector3 ) )]
 	public NodeInput PositionOffset { get; set; }
 
+	[JsonIgnore, Hide]
+	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.White, 0.25f );
 
-	//public string[] Defines { get; set; }
 
-
-	///public List<ShaderFeature> ShaderFeatures { get; set; }
-
-	//public Dictionary<string, string> Defines { get; set; } = new();
-
-	// All of these do fuck all?
-
-	//[Hide]
-	//[Input( typeof( Vector3 ) )] 
-	//public NodeInput Sheen { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )]
-	//public NodeInput SheenRoughness { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput Clearcoat { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput ClearcoatRoughness { get; set; }
-
-	//[Hide]
-	//[Input( typeof( Vector3 ) )] 
-	//public NodeInput ClearcoatNormal { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )]
-	//public NodeInput Anisotropy { get; set; }
-
-	//[Hide]
-	//[Input( typeof( Vector3 ) )] 
-	//public NodeInput AnisotropyRotation { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )]
-	//public NodeInput Thickness { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput SubsurfacePower { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput SheenColor { get; set; }
-
-	//[Hide]
-	//[Input( typeof( Vector3 ) )]
-	//public NodeInput SubsurfaceColor { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput Transmission { get; set; }
-
-	//[Hide]
-	//[Input( typeof( Vector3 ) )]
-	//public NodeInput Absorption { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput IndexOfRefraction { get; set; }
-
-	//[Hide]
-	//[Input( typeof( float ) )] 
-	//public NodeInput MicroThickness { get; set; }
+    public override NodeInput GetAlbedo() => Albedo;
+    public override NodeInput GetEmission() => Emission;
+    public override NodeInput GetOpacity() => Opacity;
+    public override NodeInput GetNormal() => Normal;
+    public override NodeInput GetRoughness() => Roughness;
+    public override NodeInput GetMetalness() => Metalness;
+    public override NodeInput GetAmbientOcclusion() => AmbientOcclusion;
+    public override NodeInput GetPositionOffset() => PositionOffset;
 }
 
-/// <summary>
-/// Final Postprocessing result
-/// </summary>
-//[Title( "Post Processing" ), Category( "" )]
-//public sealed class PostProcessingResult : ShaderNodePlus
-//{
-//	[Hide]
-//	[Input( typeof( Vector3 ) )]
-//	public NodeInput SceneColor { get; set; }
-//}
+
+public abstract class BaseResult : ShaderNodePlus
+{
+	public virtual NodeInput GetAlbedo() => new();
+	public virtual NodeInput GetEmission() => new();
+	public virtual NodeInput GetOpacity() => new();
+	public virtual NodeInput GetNormal() => new();
+	public virtual NodeInput GetRoughness() => new();
+	public virtual NodeInput GetMetalness() => new();
+	public virtual NodeInput GetAmbientOcclusion() => new();
+	public virtual NodeInput GetPositionOffset() => new();
+
+	public virtual Color GetDefaultAlbedo() => Color.White;
+	public virtual Color GetDefaultEmission() => Color.Black;
+	public virtual float GetDefaultOpacity() => 1.0f;
+	public virtual Vector3 GetDefaultNormal() => new( 0, 0, 0 );
+	public virtual float GetDefaultRoughness() => 1.0f;
+	public virtual float GetDefaultMetalness() => 0.0f;
+	public virtual float GetDefaultAmbientOcclusion() => 1.0f;
+	public virtual Vector3 GetDefaultPositionOffset() => new( 0, 0, 0 );
+
+	public NodeResult GetAlbedoResult( GraphCompiler compiler )
+	{
+		var albedoInput = GetAlbedo();
+		if ( albedoInput.IsValid )
+			return compiler.ResultValue( albedoInput );
+		return compiler.ResultValue( GetDefaultAlbedo() );
+	}
+
+	public NodeResult GetEmissionResult( GraphCompiler compiler )
+	{
+		var emissionInput = GetEmission();
+		if ( emissionInput.IsValid )
+			return compiler.ResultValue( emissionInput );
+		return compiler.ResultValue( GetDefaultEmission() );
+	}
+
+	public NodeResult GetOpacityResult( GraphCompiler compiler )
+	{
+		var opacityInput = GetOpacity();
+		if ( opacityInput.IsValid )
+			return compiler.ResultValue( opacityInput );
+		return compiler.ResultValue( GetDefaultOpacity() );
+	}
+
+	public NodeResult GetNormalResult( GraphCompiler compiler )
+	{
+		var normalInput = GetNormal();
+		if ( normalInput.IsValid )
+			return compiler.ResultValue( normalInput );
+		return compiler.ResultValue( GetDefaultNormal() );
+	}
+
+	public NodeResult GetRoughnessResult( GraphCompiler compiler )
+	{
+		var roughnessInput = GetRoughness();
+		if ( roughnessInput.IsValid )
+			return compiler.ResultValue( roughnessInput );
+		return compiler.ResultValue( GetDefaultRoughness() );
+	}
+
+	public NodeResult GetMetalnessResult( GraphCompiler compiler )
+	{
+		var metalnessInput = GetMetalness();
+		if ( metalnessInput.IsValid )
+			return compiler.ResultValue( metalnessInput );
+		return compiler.ResultValue( GetDefaultMetalness() );
+	}
+
+	public NodeResult GetAmbientOcclusionResult( GraphCompiler compiler )
+	{
+		var ambientOcclusionInput = GetAmbientOcclusion();
+		if ( ambientOcclusionInput.IsValid )
+			return compiler.ResultValue( ambientOcclusionInput );
+		return compiler.ResultValue( GetDefaultAmbientOcclusion() );
+	}
+
+	public NodeResult GetPositionOffsetResult( GraphCompiler compiler )
+	{
+		var positionOffsetInput = GetPositionOffset();
+		if ( positionOffsetInput.IsValid )
+			return compiler.ResultValue( positionOffsetInput );
+		return compiler.ResultValue( GetDefaultPositionOffset() );
+	}
+}

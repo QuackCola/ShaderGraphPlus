@@ -3,34 +3,34 @@ using System;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-public abstract class ParameterNode<T> : ShaderNodePlus
-{
-    [Hide]
-    public override string Title => string.IsNullOrWhiteSpace(Name) ?
-        $"{DisplayInfo.For(this).Name}" :
-        $"{DisplayInfo.For(this).Name} {Name}";
-
-    public T Value { get; set; }
-
-    public string Name { get; set; } = "";
-
-    /// <summary>
-    /// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
-    /// </summary>
-    public bool IsAttribute { get; set; }
-
-    [InlineEditor(Label = false), Group("UI")]
-    public ParameterUI UI { get; set; }
-
-    protected NodeResult Component(string component, float value, GraphCompiler compiler)
-    {
-        if (compiler.IsPreview)
-            return compiler.ResultValue(value);
-
-        var result = compiler.Result(new NodeInput { Identifier = Identifier, Output = nameof(Result) });
-        return new( ResultType.Float, $"{result}.{component}", true );
-    }
-}
+//public abstract class ParameterNode<T> : ShaderNodePlus
+//{
+//    [Hide]
+//    public override string Title => string.IsNullOrWhiteSpace(Name) ?
+//        $"{DisplayInfo.For(this).Name}" :
+//        $"{DisplayInfo.For(this).Name} {Name}";
+//
+//    public T Value { get; set; }
+//
+//    public string Name { get; set; } = "";
+//
+//    /// <summary>
+//    /// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
+//    /// </summary>
+//    public bool IsAttribute { get; set; }
+//
+//    [InlineEditor(Label = false), Group("UI")]
+//    public ParameterUI UI { get; set; }
+//
+//    protected NodeResult Component(string component, float value, GraphCompiler compiler)
+//    {
+//        if (compiler.IsPreview)
+//            return compiler.ResultValue(value);
+//
+//        var result = compiler.Result(new NodeInput { Identifier = Identifier, Output = nameof(Result) });
+//        return new( ResultType.Float, $"{result}.{component}", true );
+//    }
+//}
 
 public abstract class MatrixParameterNode<T> : ShaderNodePlus
 {
