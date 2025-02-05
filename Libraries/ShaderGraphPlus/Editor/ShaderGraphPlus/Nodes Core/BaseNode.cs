@@ -1,4 +1,4 @@
-﻿using Editor.ShaderGraph;
+﻿using Editor.ShaderGraphPlus;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -418,7 +418,7 @@ public class PlugInfo
 			return null;
 		}
 
-		var editor = Property?.GetCustomAttribute<BaseNode.EditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 
 		if ( editor is not null )
 		{
