@@ -95,8 +95,8 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
 		DeleteOnClose = true;
 
-		Title = "Shader Graph Plus";
-		Size = new Vector2( 1700, 1050 );
+        Title = FileType;
+        Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
         _graph.IsSubgraph = IsSubgraph;

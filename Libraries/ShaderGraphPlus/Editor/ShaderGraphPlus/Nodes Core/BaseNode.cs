@@ -21,9 +21,20 @@ public abstract class BaseNodePlus : INode
 	[Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 
-	[Browsable( false )]
+    [JsonIgnore, Hide]
+    public IGraph _graph;
+
+    [Browsable( false )]
 	[JsonIgnore, Hide]
-	public IGraph Graph { get; set; }
+	public IGraph Graph
+	{
+		get => _graph;
+		set
+		{
+			_graph = value;
+			FilterInputsAndOutputs();
+		}
+	}
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public Vector2 ExpandSize { get; set; }
@@ -202,13 +213,13 @@ public abstract class BaseNodePlus : INode
 
     private void FilterInputsAndOutputs()
     {
-       //if (_graph is not null)
-       //{
-       //    if (Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn)
-       //    {
-       //        Inputs = new List<IPlugIn>();
-       //    }
-       //}
+       if (_graph is not null)
+       {
+           if (Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn)
+           {
+               Inputs = new List<IPlugIn>();
+           }
+       }
     }
 
 }
@@ -408,8 +419,8 @@ public class PlugInfo
 				}
 				else if ( parameterType == typeof( Color ) )
 				{
-					var slider = new ColorEditor( plug ) { Title = DisplayInfo.Name, Node = node };
-					//slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
+					var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+					slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
 
 					return slider;
 				}
@@ -445,7 +456,7 @@ public class PlugInfo
 
 			if ( type == typeof( Color ) )
 			{
-				var slider = new ColorEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
 				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
 
 				return slider;

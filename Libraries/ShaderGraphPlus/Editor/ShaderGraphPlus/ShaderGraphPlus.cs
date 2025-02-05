@@ -1,7 +1,3 @@
-using Editor.NodeEditor;
-using System.Text.Json.Serialization;
-
-
 namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
@@ -220,14 +216,14 @@ public sealed partial class ShaderGraphPlus : IGraph
     //
     // Returns:
     //     Always true.
-    public bool SetMeta(string keyname, object outvalue)
+    public bool SetMeta( string keyname, object outvalue )
     {
-        if (Metadata == null)
+        if ( Metadata == null )
         {
-            Dictionary<string, object> dictionary2 = (Metadata = new Dictionary<string, object>());
+            Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
         }
 
-        if (outvalue == null)
+        if ( outvalue == null )
         {
             return Metadata.Remove(keyname);
         }

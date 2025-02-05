@@ -18,6 +18,16 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
+	public static Dictionary<Type, string> ValueTypes => new()
+	{
+		{typeof(Color), "float4" },
+		{typeof(Vector4), "float4" },
+		{typeof(Vector3), "float3" },
+		{typeof(Vector2), "float2" },
+		{typeof(float), "float" },
+		{typeof(bool), "bool" }
+	};
+
 	public bool Debug { get; private set; } = false;
 	
 	/// <summary>
@@ -25,7 +35,19 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public ShaderGraphPlus Graph { get; private set; }
 
-	public Asset _Asset { get; private set; }
+	/// <summary>
+	/// Current SubGraph
+	/// </summary>
+    private ShaderGraphPlus Subgraph = null;
+
+    private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
+
+    /// <summary>
+    /// The loaded sub-graphs
+    /// </summary>
+    public List<ShaderGraphPlus> Subgraphs { get; private set; }
+
+    public Asset _Asset { get; private set; }
 
 	/// <summary>
 	/// Is this compile for just the preview or not, preview uses attributes for constant values
@@ -89,6 +111,27 @@ public sealed partial class GraphCompiler
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
+
+        Subgraphs = new();
+
+        AddSubgraphs( Graph );
+    }
+
+		private void AddSubgraphs( ShaderGraphPlus graph )
+	{
+		if ( graph != Graph )
+		{
+			if ( Subgraphs.Contains( graph ) )
+				return;
+			Subgraphs.Add( graph );
+		}
+		foreach ( var node in graph.Nodes )
+		{
+			if ( node is SubgraphNode subgraphNode )
+			{
+				AddSubgraphs( subgraphNode.Subgraph );
+			}
+		}
 	}
 
 	private static string CleanName( string name )
@@ -349,15 +392,37 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result(NodeInput input)
+	public NodeResult Result( NodeInput input )
 	{
 		if (!input.IsValid)
 			return default;
 
+		BaseNodePlus node = null;
+		if ( string.IsNullOrEmpty( input.Subgraph ) )
+		{
+			if ( Subgraph is not null )
+			{
+				return Result( new()
+				{
+					Identifier = input.Identifier,
+					Output = input.Output,
+					Subgraph = Subgraph.Path
+				} );
+			}
+			node = Graph.FindNode( input.Identifier );
+		}
+		else
+		{
+			var subgraph = Subgraphs.FirstOrDefault( x => x.Path == input.Subgraph );
+			if ( subgraph is not null )
+			{
+				node = subgraph.FindNode( input.Identifier );
+			}
+		}
+
 		if (ShaderResult.InputResults.TryGetValue(input, out var result))
 			return result;
 
-		var node = Graph.FindNode(input.Identifier);
 		if (node == null)
 			return default;
 
@@ -385,41 +450,112 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( node is not IRerouteNode && NodeStack.Contains( node ) )
+        object value = null;
+
+        if ( node is not IRerouteNode && NodeStack.Contains( node ) )
 		{
 		    NodeErrors.Add( node, new List<string> { "Circular reference detected" } );
 		    return default;
 		}
 
-		if ( property == null )
-			return default;
-		
-		if ( node is not IRerouteNode )
-			NodeStack.Add( node );
-
-		var value = property.GetValue( node );
-		if (value == null)
-			return default;
-
-		if (value is NodeResult nodeResult)
+		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
+			if ( node.Graph != Graph )
+			{
+				Subgraph = node.Graph as ShaderGraphPlus;
+			}
+			else
+			{
+				Subgraph = null;
+			}
+		}
+
+		if ( node is SubgraphNode subgraphNode )
+		{
+			var newStack = (subgraphNode, Subgraph);
+			SubgraphStack.Add( newStack );
+			Subgraph = subgraphNode.Subgraph;
+			if ( !Subgraphs.Contains( Subgraph ) )
+			{
+				Subgraphs.Add( Subgraph );
+			}
+
+			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
+			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
+			if ( resultInput?.ConnectedOutput is not null )
+			{
+				var newConnection = new NodeInput()
+				{
+					Identifier = resultInput.ConnectedOutput.Node.Identifier,
+					Output = resultInput.ConnectedOutput.Identifier,
+					Subgraph = Subgraph.Path
+				};
+				var newResult = Result( newConnection );
+				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+				Subgraph = newStack.Item2;
+				return newResult;
+			}
+			else
+			{
+				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );
+			}
+		}
+		else
+		{
+			if ( Subgraph is not null )
+			{
+				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
+				{
+					var newResult = ResolveParameterNode( parameterNode, ref value );
+					if ( newResult.IsValid )
+						return newResult;
+				}
+			}
+			else
+			{
+				if ( node is IParameterNode parameterNode )
+				{
+					if ( parameterNode.PreviewInput.IsValid )
+					{
+						return Result( parameterNode.PreviewInput );
+					}
+				}
+			}
+
+			if ( value is null )
+			{
+				if ( property == null )
+					return default;
+
+				value = property.GetValue( node );
+			}
+
+			if ( value == null )
+				return default;
+		}
+
+		if ( value is NodeResult nodeResult )
+		{
+			NodeStack.Remove( node );
 			return nodeResult;
 		}
-		else if (value is NodeInput nodeInput)
+		else if ( value is NodeInput nodeInput )
 		{
-			return Result(nodeInput);
+			var newResult = Result( nodeInput );
+			NodeStack.Remove( node );
+			return newResult;
 		}
-		else if (value is NodeResult.Func resultFunc)
+		else if ( value is NodeResult.Func resultFunc )
 		{
-			var funcResult = resultFunc.Invoke(this);
+			var funcResult = resultFunc.Invoke( this );
 
 			// only enter this if IsComponentLess is is false
-			if (!funcResult.IsValid && !funcResult.IsComponentLess)
+			if ( !funcResult.IsValid && !funcResult.IsComponentLess )
 			{
-				if (!NodeErrors.TryGetValue(node, out var errors))
+				if ( !NodeErrors.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
-					NodeErrors.Add(node, errors);
+					NodeErrors.Add( node, errors );
 				}
 
 				if (funcResult.Errors is null || funcResult.Errors.Length == 0)
@@ -441,27 +577,28 @@ public sealed partial class GraphCompiler
 			}
 
 			// We can return this result without making it a local variable because it's constant & or isnt somethign that is directly put into the graph.
-			if (funcResult.Constant)
+			if ( funcResult.Constant )
 			{
 				return funcResult;
 			}
 
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult(funcResult.ResultType, varName);
+			var localResult = new NodeResult( funcResult.ResultType, varName) ;
 
-			ShaderResult.InputResults.Add(input, localResult);
-			ShaderResult.Results.Add((localResult, funcResult));
+			ShaderResult.InputResults.Add( input, localResult );
+			ShaderResult.Results.Add( ( localResult, funcResult ) );
 
-			if (IsPreview)
+			if ( IsPreview )
 			{
-				Nodes.Add(node);
+				Nodes.Add( node );
 			}
 
+			NodeStack.Remove( node );
 			return localResult;
 		}
 
-		return ResultValue(value);
+		return ResultValue( value );
 	}
 
 	/// <summary>
@@ -486,29 +623,28 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
-		if (IsPreview || string.IsNullOrWhiteSpace(name))
-			return ResultValue(value);
+		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+			return ResultValue( value );
 
 		name = CleanName(name);
 
 		var attribName = name;
 
-		var prefix = GetLocalPrefix(value);
+		var prefix = GetLocalPrefix( value );
        
-        if (!name.StartsWith(prefix))
+        if ( !name.StartsWith( prefix ) )
 			name = prefix + name;
 
-		if (ShaderResult.Parameters.TryGetValue(name, out var parameter))
+		if ( ShaderResult.Parameters.TryGetValue( name, out var parameter ) )
 			return parameter.Result;
 
-		parameter.Result = ResultValue(value, name);
+		parameter.Result = ResultValue( value, name );
 
 		var options = new StringWriter();
 
 		// If we're an attribute, we don't care about the UI options
 		if ( isAttribute )
 		{
-
 			options.Write($"Attribute( \"{attribName}\" ); ");
 
 			if (value is bool boolValue)
@@ -519,8 +655,6 @@ public sealed partial class GraphCompiler
 			{
 				options.Write($"Default{parameter.Result.Components()}( {value} ); ");
 			}
-
-
 		}
 		else
 		{
@@ -566,7 +700,7 @@ public sealed partial class GraphCompiler
 
 		parameter.Options = options.ToString().Trim();
 
-		ShaderResult.Parameters.Add(name, parameter);
+		ShaderResult.Parameters.Add( name, parameter );
 
 		return parameter.Result;
 	}
@@ -575,15 +709,17 @@ public sealed partial class GraphCompiler
     /// Get result of a value, in preview mode an attribute will be registered and returned
     /// Only supports float, Vector2, Vector3, Vector4, Color, Float2x2, Float3x3, Float4x4, Sampler & bool.
     /// </summary>
-    public NodeResult ResultValue<T>(T value, string name = null, bool previewOverride = false)
+    public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
 	{
+		if ( value is NodeInput nodeInput ) return Result( nodeInput );
+
 		bool isConstant = IsPreview && !previewOverride;
         bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
 		name = isConstant ? $"g_{StageName}_{ShaderResult.Attributes.Count}" : name;
 
 		if ( isConstant )
 		{
-			OnAttribute?.Invoke(name, value);
+			OnAttribute?.Invoke( name, value );
 			ShaderResult.Attributes[name] = value;
 		}
 
@@ -625,19 +761,93 @@ public sealed partial class GraphCompiler
 		return prefix;
     }
 
+	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
+	{
+		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
+		{
+			return null;
+		}
+		if ( value is JsonElement el )
+		{
+            if ( type == typeof( int ) )
+            {
+                value = el.GetInt32();
+            }
+            else if ( type == typeof( float ) )
+			{
+				value = el.GetSingle();
+			}
+			else if ( type == typeof( Vector2 ) )
+			{
+				value = Vector2.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Vector3 ) )
+			{
+				value = Vector3.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Vector4 ) )
+			{
+				value = Vector4.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Color ) )
+			{
+				value = Color.Parse( el.GetString() ) ?? Color.White;
+			}
+			else if ( type == typeof( bool ) )
+			{
+				value = el.GetBoolean();
+			}
+		}
 
-	private static int GetComponentCount(Type inputType)
+		return value;
+	}
+
+	private NodeResult ResolveParameterNode( IParameterNode node, ref object value )
+	{
+		var lastStack = SubgraphStack.LastOrDefault();
+		var lastNodeEntered = lastStack.Item1;
+		if ( lastNodeEntered is not null )
+		{
+			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
+			if ( parentInput.Key is not null )
+			{
+				var connectedPlug = parentInput.Key.ConnectedOutput;
+				if ( connectedPlug is not null )
+				{
+					var lastSubgraph = Subgraph;
+					Subgraph = lastStack.Item2;
+					SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+					var newResult = Result( new()
+					{
+						Identifier = connectedPlug.Node.Identifier,
+						Output = connectedPlug.Identifier,
+						Subgraph = Subgraph?.Path
+					} );
+					SubgraphStack.Add( lastStack );
+					Subgraph = lastSubgraph;
+					return newResult;
+				}
+				else
+				{
+					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );
+				}
+			}
+		}
+		return new();
+	}
+
+	private static int GetComponentCount( Type inputType )
 	{
 		return inputType switch
 		{
-			Type t when t == typeof(Float4x4) => 16,
-			Type t when t == typeof(Float3x3) => 6,
-			Type t when t == typeof(Float2x2) => 4,
-			Type t when t == typeof(Vector4) || t == typeof(Color) => 4,
-			Type t when t == typeof(Vector3) => 3,
-			Type t when t == typeof(Vector2) => 2,
-			Type t when t == typeof(float) => 1,
-            Type t when t == typeof(int) => 1,
+			Type t when t == typeof( Float4x4 ) => 16,
+			Type t when t == typeof( Float3x3 ) => 6,
+			Type t when t == typeof( Float2x2 ) => 4,
+			Type t when t == typeof( Vector4 ) || t == typeof(Color) => 4,
+			Type t when t == typeof( Vector3 ) => 3,
+			Type t when t == typeof( Vector2 ) => 2,
+			Type t when t == typeof( float ) => 1,
+            Type t when t == typeof( int ) => 1,
             _ => 0
 		};
 	}
@@ -678,8 +888,6 @@ public sealed partial class GraphCompiler
 		var blendMode = Graph.BlendMode;
 		var alphaTest = blendMode == BlendMode.Masked ? 1 : 0;
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
-
-		var result = ShaderResult;
 
 		sb.AppendLine($"#ifndef S_ALPHA_TEST");
 		sb.AppendLine($"#define S_ALPHA_TEST {alphaTest}");
@@ -817,9 +1025,10 @@ public sealed partial class GraphCompiler
 			return null;
 
 		var material = GenerateMaterial();
+        var pixelOutput = GeneratePixelOutput();
 
-		// If we have any errors after evaluating, no point going further
-		if ( Errors.Any() )
+        // If we have any errors after evaluating, no point going further
+        if ( Errors.Any() )
 			return null;
 
 		string template = ShaderTemplate.Code;
@@ -843,7 +1052,7 @@ public sealed partial class GraphCompiler
 			IndentString( GenerateFunctions( PixelResult ), 1 ),
 			IndentString( GenerateFunctions( VertexResult ), 1 ),
 			IndentString( GeneratePixelInit(), 2 ),
-			IndentString( GeneratePixelOutput(), 2 )
+			IndentString( pixelOutput, 2 )
 		);
 	}
 
@@ -912,72 +1121,61 @@ public sealed partial class GraphCompiler
     {
         Stage = ShaderStage.Pixel;
 
-        if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
-        {
-            var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
-            if (resultNode == null)
-                return null;
-            string albedo = "float3(1.00,1.00,1.00)";
-            string opacity = "1.00";
-            foreach (var property in GetNodeInputProperties(resultNode.GetType()))
-            {
-                var val = GetPropertyValue(property, resultNode);
-                if (!string.IsNullOrEmpty(val))
-                {
-                    switch (property.Name)
-                    {
-                        case "Albedo":
-                            albedo = val;
-                            break;
-                        case "Opacity":
-                            opacity = val;
-                            break;
-                    }
-                }
-            }
-            return $"return float4( {albedo}, {opacity} );";
-        }
-        else if ( Graph.ShadingModel == ShadingModel.Lit )
-        {
-            return ShaderTemplate.Material_output;
-        }
+		Subgraph = null;
+		SubgraphStack.Clear();
 
-        return null;
+		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
+		{
+			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+			if ( resultNode == null )
+				return null;
+			var albedoResult = resultNode.GetAlbedoResult( this );
+			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+			var opacityResult = resultNode.GetOpacityResult( this );
+			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
+			return $"return float4( {albedo}, {opacity} );";
+		}
+		else if ( Graph.ShadingModel == ShadingModel.Lit )
+		{
+
+			return ShaderTemplate.Material_output;
+		}
+		return null;
     }
 
     private string GetPropertyValue(PropertyInfo property, Result resultNode)
     {
         NodeResult result;
         var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-        var componentCount = GetComponentCount(inputAttribute.Type);
+        var componentCount = GetComponentCount( inputAttribute.Type );
 
-        if (property.GetValue(resultNode) is NodeInput connection && connection.IsValid())
+        if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
         {
-            result = Result(connection);
+            result = Result( connection );
         }
         else
         {
             var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-            if (editorAttribute == null)
+            if ( editorAttribute == null )
                 return null;
 
-            var valueProperty = resultNode.GetType().GetProperty(editorAttribute.ValueName);
-            if (valueProperty == null)
+            var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
+            if ( valueProperty == null )
                 return null;
 
-            result = ResultValue(valueProperty.GetValue(resultNode), previewOverride: true);
+            result = ResultValue( valueProperty.GetValue( resultNode ), previewOverride: true );
         }
 
-        if (Errors.Any())
+        if ( Errors.Any() )
             return null;
 
-        if (!result.IsValid())
+        if ( !result.IsValid() )
             return null;
 
-        if (string.IsNullOrWhiteSpace(result.Code))
+        if ( string.IsNullOrWhiteSpace( result.Code ) )
             return null;
 
-        return $"{result.Cast(componentCount)}";
+        return $"{result.Cast( componentCount )}";
     }
 
     private string GenerateGlobals()
@@ -1247,20 +1445,24 @@ public sealed partial class GraphCompiler
 
 	private string GenerateMaterial()
 	{
-		Stage = ShaderStage.Pixel;
+        Stage = ShaderStage.Pixel;
+        Subgraph = null;
+        SubgraphStack.Clear();
 
-		var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
-		if ( resultNode == null )
+        var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+        if ( resultNode == null )
 			return null;
 
         var sb = new StringBuilder();
+        var visited = new HashSet<string>();
 
-		foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
+        foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
 			if ( property.Name == "PositionOffset" )
 				continue;
 
 			CurrentResultInput = property.Name;
+			visited.Add( property.Name );
 
 			NodeResult result;
 
@@ -1296,23 +1498,29 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
+        if ( resultNode is FunctionResult functionResult )
+		{
+			functionResult.AddMaterialOutputs( this, sb, visited );
+		}
+
+        visited.Clear();
+
         CurrentResultInput = null;
 
-        if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
-		
-		return sb.ToString();
+        //if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+
+        return sb.ToString();
 	}
 
     private string GenerateVertex()
     {
         Stage = ShaderStage.Vertex;
 
-        var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
+        var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
         if (resultNode == null)
             return null;
 
-        var property = GetNodeInputProperties(resultNode.GetType())
-            .FirstOrDefault(x => x.Name == "PositionOffset");
+        var positionOffsetInput = resultNode.GetPositionOffset();
 
         var sb = new StringBuilder();
 
@@ -1347,24 +1555,26 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 
         NodeResult result;
 
-        if (property.GetValue(resultNode) is NodeInput connection && connection.IsValid())
+        if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
         {
             result = Result(connection);
 
-            if (!Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace(result.Code))
+            if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
             {
+				var componentCount = GetComponentCount( typeof( Vector3 ) );
 
-                var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-                var componentCount = GetComponentCount(inputAttribute.Type);
 
-                sb.AppendLine();
+               //var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+               //var componentCount = GetComponentCount( inputAttribute.Type );
+			   
+               sb.AppendLine();
+			   
+               foreach ( var local in ShaderResult.Results )
+               {
+                   sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
+               }
 
-                foreach (var local in ShaderResult.Results)
-                {
-                    sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
-                }
-
-                sb.AppendLine($"i.vPositionWs.xyz += {result.Cast(componentCount)};");
+                sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
                 sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
             }
         }

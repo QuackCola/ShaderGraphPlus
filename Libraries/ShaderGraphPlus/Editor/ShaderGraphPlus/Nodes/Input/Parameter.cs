@@ -154,6 +154,16 @@ public sealed class Float : ParameterNode<float>
 		Min = 0;
 		Max = 1;
 	}
+
+	public override Vector4 GetRangeMin()
+	{
+		return new( Min );
+	}
+
+	public override Vector4 GetRangeMax()
+	{
+		return new( Max );
+	}
 }
 
 /// <summary>
@@ -211,6 +221,16 @@ public sealed class Float2 : ParameterNode<Vector2>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueY ) ), Title( "Y" )]
 	[Range( nameof( MinY ), nameof( MaxY ), nameof( Step ) )]
 	public NodeResult.Func Y => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
+
+	public override Vector4 GetRangeMin()
+	{
+		return new( Min.x, Min.y, 0, 0 );
+	}
+
+	public override Vector4 GetRangeMax()
+	{
+		return new( Max.x, Max.y, 0, 0 );
+	}
 }
 
 /// <summary>
