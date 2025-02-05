@@ -54,10 +54,39 @@ public sealed partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
+    [Hide]
+	public bool IsSubgraph { get; set; }
+
+	[Hide]
+	public string Path { get; set; }
+
 	[Hide]
 	public string Model { get; set; }
 
+    /// <summary>
+	/// The name of the Node when used in ShaderGraph
+	/// </summary>
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public string Title { get; set; }
+
 	public string Description { get; set; }
+
+    /// <summary>
+	/// The category of the Node when browsing the Node Library (optional)
+	/// </summary>
+	[ShowIf( nameof( AddToNodeLibrary ), true )]
+	public string Category { get; set; }
+
+	[IconName, ShowIf( nameof( IsSubgraph ), true )]
+	public string Icon { get; set; }
+
+    /// <summary>
+	/// Whether or not this Node should appear when browsing the Node Library.
+	/// Otherwise can only be referenced by dragging the Subgraph asset into the graph.
+	/// </summary>
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public bool AddToNodeLibrary { get; set; }
+
 
 	public BlendMode BlendMode { get; set; }
 
@@ -66,21 +95,11 @@ public sealed partial class ShaderGraphPlus : IGraph
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-   //[HideIf( nameof( this.MaterialDomain ), MaterialDomain.Surface  )]
-   //[InlineEditor]
-   //[Group("Post Processing")]
-   //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
-
     //
     // Summary:
     //     Custom key-value storage for this project.
     [Hide]
     public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
-
-    //[Hide]
-    //[JsonIgnore]
-    //public List<string> MissingNodes { get; set; } = new List<string>();
-
 
     [Hide]
     public PreviewSettings PreviewSettings { get; set; } = new();
