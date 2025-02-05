@@ -111,6 +111,29 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
 		return result.IsValid ? new( ResultType.Float, $"{result}.{component}", true ) : new( ResultType.Float, "0.0f", true );
 	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		if ( Graph is ShaderGraphPlus sgp && sgp.IsSubgraph )
+		{
+			if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			{
+				errors.Add( $"Texture parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			}
+
+			foreach ( var node in sgp.Nodes )
+			{
+				if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
+				{
+					errors.Add( $"Duplicate texture parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
+				}
+			}
+		}
+
+		return errors;
+	}
 }
 
 
