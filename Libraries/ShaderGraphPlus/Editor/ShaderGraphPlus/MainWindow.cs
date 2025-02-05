@@ -1,10 +1,39 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-[EditorForAssetType( "sgrph" )]
-[EditorApp( "Shader Graph Plus", "gradient", "edit shaders" )]
+[EditorForAssetType( "shdrfunc" )]
+public class MainWindowFunc : MainWindow, IAssetEditor
+{
+	public override bool IsSubgraph => true;
+	public override string FileType => "Shader Sub-Graph";
+	public override string FileExtension => "shdrfunc";
+
+	void IAssetEditor.SelectMember( string memberName )
+	{
+		throw new NotImplementedException();
+	}
+}
+
+[EditorForAssetType("sgrph")]
+[EditorApp("Shader Graph Plus", "gradient", "edit shaders")]
+public class MainWindowShader : MainWindow, IAssetEditor
+{
+	public override bool IsSubgraph => false;
+	public override string FileType => "Shader Graph Plus";
+	public override string FileExtension => "sgrph";
+
+	void IAssetEditor.SelectMember( string memberName )
+	{
+		throw new NotImplementedException();
+	}
+}
+
 public class MainWindow : DockWindow, IAssetEditor
 {
-	private ShaderGraphPlus _graph;
+    public virtual bool IsSubgraph => false;
+    public virtual string FileType => "Shader Graph Plus";
+    public virtual string FileExtension => "sgrph";
+
+    private ShaderGraphPlus _graph;
 	private ShaderGraphPlusView _graphView;
 	private Asset _asset;
 
@@ -49,8 +78,14 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	private Menu _recentFilesMenu;
 	private readonly List<string> _recentFiles = new();
+    private Option _fileHistoryBack;
+    private Option _fileHistoryForward;
+    private Option _fileHistoryHome;
+   
+	private List<string> _fileHistory = new();
+    private int _fileHistoryPosition = 0;
 
-	private string _defaultDockState;
+    private string _defaultDockState;
 
 	public bool CanOpenMultipleAssets => true;
 
@@ -64,8 +99,9 @@ public class MainWindow : DockWindow, IAssetEditor
 		Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
-		
-		CreateToolBar();
+        _graph.IsSubgraph = IsSubgraph;
+
+        CreateToolBar();
 		
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
 		    .Where(x => System.IO.File.Exists(x)).ToList();
@@ -74,25 +110,25 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        OpenProjectCreationDialog();
+        //OpenProjectCreationDialog();
     }
 
-	private void OpenProjectCreationDialog()
-	{
-		ProjectCreator = new ProjectCreator();
-		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
-		ProjectCreator.Show();
-		ProjectCreator.OnProjectCreated += Open;
-	}
+	//private void OpenProjectCreationDialog()
+	//{
+	//	ProjectCreator = new ProjectCreator();
+	//	ProjectCreator.DeleteOnClose = true;
+	//	ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+	//	ProjectCreator.Show();
+	//	ProjectCreator.OnProjectCreated += Open;
+	//}
 
 	public void AssetOpen( Asset asset )
 	{
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
 		// We dont need the project creator when opening an existing asset. So lets forceably close it.
-		ProjectCreator.Close();
-		ProjectCreator = null;
+		//ProjectCreator.Close();
+		//ProjectCreator = null;
 		
 		Open( asset.AbsolutePath );
 	}
@@ -168,10 +204,35 @@ public class MainWindow : DockWindow, IAssetEditor
         EditorUtility.OpenFileFolder(path);
     }
 
-    private void Compile()
-	{
+    protected virtual void Compile()
+    {
+        _shaderCompileErrors.Clear();
 
-		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
+
+		var compileErrors = new List<GraphCompiler.Error>();
+		foreach ( var node in _graph.Nodes )
+		{
+			if ( node is IErroringNode erroring )
+			{
+				var errors = erroring.GetErrors();
+				if ( errors.Count > 0 )
+				{
+					_shaderCompileErrors.AddRange( errors );
+
+					if ( IsSubgraph )
+					{
+						foreach ( var error in errors )
+						{
+							compileErrors.Add( new() { Message = error, Node = node } );
+						}
+					}
+				}
+			}
+		}
+		_output.Errors = compileErrors;
+
+
+        if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
 			RestoreShader();
 
@@ -197,8 +258,6 @@ public class MainWindow : DockWindow, IAssetEditor
         RestoreShader();
 
         _timeSinceCompile = 0;
-
-        _shaderCompileErrors.Clear();
 
         CompileAsync(resourcePath);
     }
@@ -373,7 +432,7 @@ public class MainWindow : DockWindow, IAssetEditor
 	{
 		ClearAttributes();
 
-		var resultNode = _graph.Nodes.OfType<Result>().FirstOrDefault();
+		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, true );
         compiler.OnAttribute = OnAttribute;
 
@@ -483,7 +542,6 @@ public class MainWindow : DockWindow, IAssetEditor
 	private string GenerateShaderCode()
 	{
 		var compiler = new GraphCompiler( _asset, _graph, false );
-
 		return compiler.Generate();
     }
 
@@ -521,9 +579,28 @@ public class MainWindow : DockWindow, IAssetEditor
 		_redoMenuOption.StatusTip = _undoStack.RedoName;
 
 		_undoHistory.UndoLevel = _undoStack.UndoLevel;
+
+        CheckForChanges();
+    }
+
+	private void CheckForChanges()
+	{
+	    bool wasDirty = false;
+	    foreach ( var node in _graph.Nodes )
+	    {
+	        if ( node is ShaderNodePlus shaderNode && shaderNode.IsDirty )
+	        {
+	            shaderNode.IsDirty = false;
+	            wasDirty = true;
+	        }
+	    }
+	    if ( wasDirty )
+	    {
+	        _graphView.ChildValuesChanged( null );
+	    }
 	}
 
-	[Shortcut( "editor.undo", "CTRL+Z" )]
+    [Shortcut( "editor.undo", "CTRL+Z" )]
 	private void Undo()
 	{
 		if ( _undoStack.Undo() is UndoOp op )
@@ -589,10 +666,28 @@ public class MainWindow : DockWindow, IAssetEditor
 		_graphView.PasteSelection();
 	}
 
+	[Shortcut( "editor.duplicate", "CTRL+D", ShortcutType.Window )]
+	private void DuplicateSelection()
+	{
+		_graphView.DuplicateSelection();
+	}
+
 	[Shortcut( "editor.select-all", "CTRL+A" )]
 	private void SelectAll()
 	{
 		_graphView.SelectAll();
+	}
+
+	[Shortcut( "editor.clear-selection", "ESC", ShortcutType.Window )]
+	private void ClearSelection()
+	{
+		_graphView.ClearSelection();
+	}
+
+	[Shortcut( "gameObject.frame", "F", ShortcutType.Window )]
+	private void CenterOnSelection()
+	{
+		_graphView.CenterOnSelection();
 	}
 
 	private void CreateToolBar()
@@ -795,10 +890,18 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		_output.Clear();
 
-		var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( Result ) ), 0 );
-
-		_graphView.Scale = 1;
-		_graphView.CenterOn( result.Size * 0.5f );
+		if ( !IsSubgraph )
+		{
+			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( Result ) ), 0 );
+			_graphView.Scale = 1;
+			_graphView.CenterOn( result.Size * 0.5f );
+		}
+		else
+		{
+			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( FunctionResult ) ), 0 );
+			_graphView.Scale = 1;
+			_graphView.CenterOn( result.Size * 0.5f );
+		}
 
 		ClearAttributes();
 
@@ -837,7 +940,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		PromptSave( () => Open( fd.SelectedFile ) );
 	}
 
-	public void Open( string path )
+	public void Open( string path, bool addToPath = true)
 	{
 		var asset = AssetSystem.FindByPath( path );
       
@@ -851,8 +954,10 @@ public class MainWindow : DockWindow, IAssetEditor
 		}
 
 		var graph = new ShaderGraphPlus();
-		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
-     
+		graph.Deserialize( System.IO.File.ReadAllText( path ) );
+		graph.Path = asset.RelativePath;
+		graph.IsSubgraph = IsSubgraph;
+
 		_preview.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
 		_preview.LoadSettings( graph.PreviewSettings );
 
@@ -866,10 +971,13 @@ public class MainWindow : DockWindow, IAssetEditor
 		_generatedCode = "";
 		_properties.Target = _graph;
 
+		if ( addToPath )
+			AddFileHistory( path );
+
 		_output.Clear();
 
 		var center = Vector2.Zero;
-		var resultNode = graph.Nodes.OfType<Result>().FirstOrDefault();
+		var resultNode = graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		if ( resultNode != null )
 		{
 			var nodeUI = _graphView.FindNode( resultNode );
@@ -887,16 +995,8 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		AddToRecentFiles( path );
 
-		//if ( _graph.MaterialDomain is MaterialDomain.Surface )
-		//{
-			//_preview.IsPostProcessShader = false;
-			GeneratePreviewCode();
-		//}
-		//else
-		//{
-			//_preview.IsPostProcessShader = true;
-			//GeneratePostProcessPreviewCode();
-		//}
+
+		GeneratePreviewCode();
 	}
 
 
@@ -910,6 +1010,63 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void Save()
 	{
 		SaveInternal( false );
+	}
+
+	private void AddFileHistory( string path )
+	{
+		var lastFileHistory = _fileHistory.LastOrDefault();
+		if ( _fileHistoryPosition < _fileHistory.Count - 1 )
+		{
+			_fileHistory.RemoveRange( _fileHistoryPosition + 1, _fileHistory.Count - _fileHistoryPosition - 1 );
+		}
+		if ( path != lastFileHistory )
+			_fileHistory.Add( path );
+		_fileHistoryPosition = _fileHistory.Count - 1;
+
+		UpdateFileHistoryButtons();
+	}
+
+	private void FileHistoryForward()
+	{
+		if ( _fileHistoryPosition < _fileHistory.Count - 1 )
+		{
+			_fileHistoryPosition++;
+			PromptSave( () =>
+			{
+				Open( _fileHistory[_fileHistoryPosition], false );
+				UpdateFileHistoryButtons();
+			} );
+		}
+	}
+
+	private void FileHistoryBack()
+	{
+		if ( _fileHistoryPosition > 0 )
+		{
+			_fileHistoryPosition--;
+			PromptSave( () =>
+			{
+				Open( _fileHistory[_fileHistoryPosition], false );
+				UpdateFileHistoryButtons();
+			} );
+		}
+	}
+
+	private void FileHistoryHome()
+	{
+		if ( _fileHistory.Count == 0 ) return;
+		PromptSave( () =>
+		{
+			Open( _fileHistory.First() );
+			UpdateFileHistoryButtons();
+		} );
+	}
+
+	private void UpdateFileHistoryButtons()
+	{
+		_fileHistoryForward.Enabled = _fileHistoryPosition < _fileHistory.Count - 1;
+		_fileHistoryBack.Enabled = _fileHistoryPosition > 0;
+		_fileHistoryHome.Enabled = _asset.Path != _fileHistory.FirstOrDefault();
 	}
 
 	private bool SaveInternal( bool saveAs )
@@ -944,16 +1101,22 @@ public class MainWindow : DockWindow, IAssetEditor
 		_dirty = false;
 		_graphCanvas.WindowTitle = _asset.Name;
 
-		var shaderPath = System.IO.Path.ChangeExtension( savePath, ".shader" );
+		if ( IsSubgraph )
+		{
+			Compile();
+		}
+		else
+		{
+			var shaderPath = System.IO.Path.ChangeExtension( savePath, ".shader" );
 
-		var code = GenerateShaderCode();
+			var code = GenerateShaderCode();
+			if ( string.IsNullOrWhiteSpace( code ) )
+				return false;
 
-		if ( string.IsNullOrWhiteSpace( code ) )
-			return false;
+			// Write generated shader to file
+			System.IO.File.WriteAllText( shaderPath, code );
+		}
 
-
-		// Write generated shader to file
-		System.IO.File.WriteAllText( shaderPath, code);
 
         // Write generated post processing class to file within the current projects code folder.
         //if (_graph.MaterialDomain is MaterialDomain.PostProcess)
@@ -969,7 +1132,9 @@ public class MainWindow : DockWindow, IAssetEditor
 
         AddToRecentFiles( savePath );
 
-		return true;
+        EditorEvent.Run("shadergraphplus.update.subgraph", _asset.RelativePath);
+
+        return true;
 	}
 
     private void WritePostProcessingShaderClass( string classCode )
@@ -979,18 +1144,18 @@ public class MainWindow : DockWindow, IAssetEditor
         File.WriteAllText( Path.Combine( path.FullName , $"{_asset.Name}_PostProcessing.cs"), classCode );
     }
 
-    private static string GetSavePath()
+	private string GetSavePath()
 	{
 		var fd = new FileDialog( null )
 		{
-			Title = $"Save Shader Graph Plus",
-			DefaultSuffix = $".sgrph"
+			Title = $"Save {FileType}",
+			DefaultSuffix = $".{FileExtension}"
 		};
 
-		fd.SelectFile( $"untitled.sgrph" );
+		fd.SelectFile( $"untitled.{FileExtension}" );
 		fd.SetFindFile();
 		fd.SetModeSave();
-		fd.SetNameFilter( "Shader Graph Plus (*.sgrph)" );
+		fd.SetNameFilter( $"{FileType} (*.{FileExtension})" );
 		if ( !fd.Execute() )
 			return null;
 
@@ -1000,8 +1165,6 @@ public class MainWindow : DockWindow, IAssetEditor
 	public void CreateUI()
 	{
 		BuildMenuBar();
-
-
 
 		DockManager.RegisterDockType( "Graph", "account_tree", null, false );
 		DockManager.RegisterDockType( "Preview", "photo", null, false );
@@ -1018,10 +1181,17 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		var graphToolBar = new ToolBar( _graphCanvas, "GraphToolBar" );
 		graphToolBar.SetIconSize( 16 );
-		graphToolBar.AddOption( null, "arrow_back" ).Enabled = false;
-		graphToolBar.AddOption( null, "arrow_forward" ).Enabled = false;
+		_fileHistoryBack = graphToolBar.AddOption( null, "arrow_back" );
+		_fileHistoryForward = graphToolBar.AddOption( null, "arrow_forward" );
 		graphToolBar.AddSeparator();
-		graphToolBar.AddOption( null, "common/home.png" ).Enabled = false;
+		_fileHistoryHome = graphToolBar.AddOption( null, "common/home.png" );
+		_fileHistoryBack.Triggered += FileHistoryBack;
+		_fileHistoryForward.Triggered += FileHistoryForward;
+		_fileHistoryHome.Triggered += FileHistoryHome;
+		_fileHistoryBack.Enabled = false;
+		_fileHistoryForward.Enabled = false;
+		_fileHistoryHome.Enabled = false;
+
 
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
@@ -1043,7 +1213,13 @@ public class MainWindow : DockWindow, IAssetEditor
 
 		foreach ( var type in types )
 		{
-				_graphView.AddNodeType( type );
+			_graphView.AddNodeType( type );
+		}
+
+		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".shdrfunc", StringComparison.OrdinalIgnoreCase ) );
+		foreach ( var subgraph in subgraphs )
+		{
+			_graphView.AddNodeType( subgraph.Path );
 		}
 
 		_graphView.Graph = _graph;
@@ -1127,7 +1303,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		_undoHistory.OnRedo = Redo;
 		_undoHistory.OnHistorySelected = SetUndoLevel;
 
-		_palette = new PaletteWidget( this );
+		_palette = new PaletteWidget( this, IsSubgraph );
 
 		DockManager.AddDock( null, _preview, DockArea.Left, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
@@ -1158,12 +1334,10 @@ public class MainWindow : DockWindow, IAssetEditor
 
 	private void OnPropertyUpdated()
 	{
+        //Log.Info($"Property Updated: {_properties.Target}");
         if (_properties.Target is BaseNodePlus node)
         {
-            //Log.Info($"Property of {node.DisplayInfo.Name} Changed!!!");
-            
             _graphView.UpdateNode(node);
-
         }
 
         SetDirty();
@@ -1210,5 +1384,19 @@ public class MainWindow : DockWindow, IAssetEditor
 	void IAssetEditor.SelectMember( string memberName )
 	{
 		throw new NotImplementedException();
+	}
+
+	[Event( "shadergraphplus.update.subgraph" )]
+	public void OnSubgraphUpdate( string updatedPath )
+	{
+		if ( !_graph.Nodes.Any( x => x is SubgraphNode subgraphNode && subgraphNode.SubgraphPath == updatedPath ) )
+		{
+			return;
+		}
+
+		DockManager.Clear();
+		MenuBar.Clear();
+
+		CreateUI();
 	}
 }
