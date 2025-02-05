@@ -72,7 +72,18 @@ public class ShaderGraphPlusView : GraphView
 		AvailableNodes.TryAdd( nodeType.Identifier, nodeType );
 	}
 
-	public INodeType FindNodeType( Type type )
+    public void AddNodeType(string subgraphPath)
+    {
+        var subgraphTxt = Editor.FileSystem.Content.ReadAllText(subgraphPath);
+        var subgraph = new ShaderGraphPlus();
+        subgraph.Deserialize(subgraphTxt);
+        if (!subgraph.AddToNodeLibrary) return;
+        var nodeType = new SubgraphNodeType(subgraphPath, EditorTypeLibrary.GetType<SubgraphNode>());
+        nodeType.SetDisplayInfo(subgraph);
+        AvailableNodes.TryAdd(nodeType.Identifier, nodeType);
+    }
+
+    public INodeType FindNodeType( Type type )
 	{
 		return AvailableNodes.TryGetValue( type.FullName!, out var nodeType ) ? nodeType : null;
 	}
