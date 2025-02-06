@@ -23,11 +23,6 @@ public sealed class Result : BaseResult
 	[Input( typeof( float ) )]
 	public NodeInput Opacity { get; set; }
 
-	// This does fuck all?
-	//[Hide, Editor( nameof( DefaultTintMask ) )]
-	//[Input( typeof( float ) )]
-	//public NodeInput TintMask { get; set; }
-
 	[Hide]
 	[Input( typeof( Vector3 ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
@@ -50,7 +45,7 @@ public sealed class Result : BaseResult
 
 	[InputDefault( nameof( Opacity ) )]
 	public float DefaultOpacity { get; set; } = 1.0f;
-	//public float DefaultTintMask { get; set; } = 1.0f;
+
 	[InputDefault( nameof( Roughness ) )]
 	public float DefaultRoughness { get; set; } = 1.0f;
 	[InputDefault( nameof( Metalness ) )]
