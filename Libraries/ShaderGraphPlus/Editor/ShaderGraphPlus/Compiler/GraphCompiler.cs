@@ -1137,9 +1137,9 @@ public sealed partial class GraphCompiler
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
 		{
-
 			return ShaderTemplate.Material_output;
 		}
+
 		return null;
     }
 
@@ -1448,6 +1448,9 @@ public sealed partial class GraphCompiler
         Stage = ShaderStage.Pixel;
         Subgraph = null;
         SubgraphStack.Clear();
+
+        if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+
 
         var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
         if ( resultNode == null )
