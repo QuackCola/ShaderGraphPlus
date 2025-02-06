@@ -72,7 +72,7 @@ PS
 }}
 ";
 
-public static string Material_init => @"
+    public static string Material_init => @"
 Material m = Material::Init();
 m.Albedo = float3( 1, 1, 1 );
 m.Normal = float3( 0, 0, 1 );
@@ -84,7 +84,7 @@ m.Opacity = 1;
 m.Emission = float3( 0, 0, 0 );
 m.Transmission = 0;";
 
-public static string Material_output => @"
+    public static string Material_output => @"
 m.AmbientOcclusion = saturate( m.AmbientOcclusion );
 m.Roughness = saturate( m.Roughness );
 m.Metalness = saturate( m.Metalness );
