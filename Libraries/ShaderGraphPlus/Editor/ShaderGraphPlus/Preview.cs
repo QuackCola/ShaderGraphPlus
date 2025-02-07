@@ -356,8 +356,8 @@ public class PreviewPanel : Widget
 		toolBar.AddOption( null, "square", () => Model = Model.Load( "models/dev/plane.vmdl" ) ).ToolTip = "Plane";
 		toolBar.AddOption( null, "accessibility", () =>
 		{
-			var picker = new AssetPicker( this, AssetType.Model );
-			picker.Window.StateCookie = "PreviewPanel";
+			var picker = AssetPicker.Create(this, AssetType.Model);
+            picker.Window.StateCookie = "PreviewPanel";
 			picker.Window.RestoreFromStateCookie();
 			picker.Window.Title = $"Select {AssetType.Model.FriendlyName}";
 			picker.OnAssetHighlighted = x => Model = x.First().LoadResource<Model>();
@@ -438,6 +438,27 @@ public class PreviewPanel : Widget
         popup.MaximumWidth = 300;
         popup.OpenAtCursor();
     }
+
+	public void LoadSettings( PreviewSettings settings )
+	{
+		_preview.RenderBackfaces = settings.RenderBackfaces;
+		_preview.EnableShadows = settings.EnableShadows;
+		_preview.ShowGround = settings.ShowGround;
+		_preview.ShowSkybox = settings.ShowSkybox;
+		_preview.BackgroundColor = settings.BackgroundColor;
+		_preview.Tint = settings.Tint;
+	}
+
+	public void SaveSettings( PreviewSettings settings )
+	{
+		settings.RenderBackfaces = _preview.RenderBackfaces;
+		settings.EnableShadows = _preview.EnableShadows;
+		settings.ShowGround = _preview.ShowGround;
+		settings.ShowSkybox = _preview.ShowSkybox;
+		settings.BackgroundColor = _preview.BackgroundColor;
+		settings.Tint = _preview.Tint;
+	}
+
 }
 
 public class Preview : SceneRenderingWidget

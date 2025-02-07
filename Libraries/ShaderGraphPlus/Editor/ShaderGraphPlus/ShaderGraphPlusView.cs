@@ -17,6 +17,8 @@ public class ShaderGraphPlusView : GraphView
         set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
     }
 
+    private ConnectionStyle _oldConnectionStyle;
+
     public new ShaderGraphPlus Graph
 	{
 		get => (ShaderGraphPlus)base.Graph;
@@ -29,28 +31,26 @@ public class ShaderGraphPlusView : GraphView
     ? GridConnectionStyle.Instance
     : ConnectionStyle.Default;
 
-    //private ConnectionStyle _oldConnectionStyle; // TODO : Get GridConnectionStyle Working!!!
-
     public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
 	{
 		_window = window;
 		_undoStack = window.UndoStack;
 
         // Make a nice background 
-        {
-            var pixmap = new Pixmap((int)GridSize, (int)GridSize);
-            pixmap.Clear(Theme.WindowBackground);
-            using (Paint.ToPixmap(pixmap))
-            {
-                var h = pixmap.Size * 0.5f;
-
-                Paint.SetPen(Theme.WindowBackground.Lighten(0.3f));
-                Paint.DrawLine(0, new Vector2(0, pixmap.Height));
-                Paint.DrawLine(0, new Vector2(pixmap.Width, 0));
-            }
-
-            SetBackgroundImage(pixmap);
-        }
+        //{
+        //    var pixmap = new Pixmap((int)GridSize, (int)GridSize);
+        //    pixmap.Clear(Theme.WindowBackground);
+        //    using (Paint.ToPixmap(pixmap))
+        //    {
+        //        var h = pixmap.Size * 0.5f;
+		//
+        //        Paint.SetPen(Theme.WindowBackground.Lighten(0.3f));
+        //        Paint.DrawLine(0, new Vector2(0, pixmap.Height));
+        //        Paint.DrawLine(0, new Vector2(pixmap.Width, 0));
+        //    }
+		//
+        //    SetBackgroundImage(pixmap);
+        //}
 
 
         OnSelectionChanged += SelectionChanged;
@@ -84,6 +84,8 @@ public class ShaderGraphPlusView : GraphView
 			: null;
 	}
 
+
+
 	protected override IEnumerable<INodeType> GetRelevantNodes( NodeQuery query )
 	{
 		return AvailableNodes.Values.Filter( query );
@@ -105,12 +107,12 @@ public class ShaderGraphPlusView : GraphView
         { typeof(Color), new HandleConfig( "Color", Color.Parse( "#c7ae32" ).Value ) },
 	};
 
-	protected override HandleConfig OnGetHandleConfig( Type type )
-	{
-		return HandleConfigs.TryGetValue( type, out var config ) ? config : base.OnGetHandleConfig( type );
-	}
+    protected override HandleConfig OnGetHandleConfig(Type type)
+    {
+        return HandleConfigs.TryGetValue(type, out var config) ? config : base.OnGetHandleConfig(type);
+    }
 
-	public override void ChildValuesChanged( Widget source )
+    public override void ChildValuesChanged( Widget source )
 	{
 		BindSystem.Flush();
 
@@ -153,4 +155,18 @@ public class ShaderGraphPlusView : GraphView
 	{
 		Log.Info( $"Node ({node.DisplayInfo.Name}) Created" );
 	}
+
+    [EditorEvent.Frame]
+    public void Frame()
+    {
+        if (_oldConnectionStyle != ConnectionStyle)
+        {
+            _oldConnectionStyle = ConnectionStyle;
+
+            foreach (var connection in Items.OfType<NodeEditor.Connection>())
+            {
+                connection.Layout();
+            }
+        }
+    }
 }

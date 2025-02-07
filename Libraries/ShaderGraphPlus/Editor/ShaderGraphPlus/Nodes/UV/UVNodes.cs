@@ -44,7 +44,10 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 	[Hide]
 	public NodeInput Rotation { get; set; }
 
+	[InputDefault( nameof( RotationCenter ) )]
 	public Vector2 DefaultRotationCenter { get; set; } = new Vector2( 0.5f, 0.5f );
+	
+	[InputDefault( nameof( Rotation ) )]
 	public float DefaultRotation { get; set; } = 0.0f;
 
 	[Output( typeof( Vector2 ) )]
@@ -96,6 +99,7 @@ public sealed class UVScaleNode : ShaderNodePlus
 	[Hide]
 	public NodeInput Scale { get; set; }
 
+	[InputDefault( nameof( Scale ) )]
 	public Vector2 DefaultScale { get; set; } = new Vector2( 1.0f, 1.0f );
 
 	[Output( typeof( Vector2 ) )]
@@ -158,7 +162,10 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 	[Hide]
 	public NodeInput Scale { get; set; }
 
+	[InputDefault( nameof( Center ) )]
 	public float DefaultCenter { get; set; } = 1.0f;
+
+	[InputDefault( nameof( Scale ) )]
 	public Vector2 DefaultScale { get; set; } = new Vector2( 1.0f, 1.0f );
 
 	[Output( typeof( Vector2 ) )]
@@ -209,7 +216,6 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-
 	/// <summary>
 	/// Direction & speed of the scrolling.
 	/// </summary>
@@ -218,6 +224,7 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 	[Hide]
 	public NodeInput ScrollSpeed { get; set; }
 
+	[InputDefault( nameof( ScrollSpeed ) )]
 	public Vector2 DefaultScrollSpeed { get; set; } = new Vector2( 1f, 1f );
 
 
@@ -276,8 +283,11 @@ public sealed class TileAndOffset : ShaderNodePlus
 	[Hide]
 	public NodeInput Offset { get; set; }
 
-	public Vector2 DefaultTile { get; set; } = 1.0f;
-	public Vector2 DefaultOffset { get; set; } = 0.0f;
+	[InputDefault( nameof( Tile ) )]
+	public Vector2 DefaultTile { get; set; } = Vector2.One;
+
+	[InputDefault( nameof( Offset ) )]
+	public Vector2 DefaultOffset { get; set; } = Vector2.Zero;
 
 	public bool WrapTo01 { get; set; } = false;
 
@@ -350,11 +360,17 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 	[Hide]
 	public NodeInput TileIndex { get; set; }
 
+	[InputDefault( nameof( Width ) )]
 	public float DefaultWidth { get; set; } = 1.0f;
+
+	[InputDefault( nameof( Height ) )]
 	public float DefaultHeight { get; set; } = 1.0f;
-	public float DefaultTileIndex { get; set; } = 1.0f;
+
+	[InputDefault( nameof( TileIndex ) )]
+	public int DefaultTileIndex { get; set; } = 1;
 
 	public bool Invertx { get; set; } = false;
+
 	public bool Inverty { get; set; } = false;
 
 	[Output( typeof( Vector2 ) ), Title( "Result" )]

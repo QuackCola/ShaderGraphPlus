@@ -1,6 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -396,7 +394,7 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			if (funcResult.ResultType is ResultType.Gradient)
+			if (funcResult.ResultType is ResultType.Gradient) // Gradient will be internal to the shader and cannot be changed externally by the material editor.
 			{
 				return funcResult;
 			}
@@ -410,7 +408,6 @@ public sealed partial class GraphCompiler
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
 			var localResult = new NodeResult(funcResult.ResultType, varName);
-			//var localResult = new NodeResult( funcResult.Components, varName );
 
 			ShaderResult.InputResults.Add(input, localResult);
 			ShaderResult.Results.Add((localResult, funcResult));
@@ -551,7 +548,9 @@ public sealed partial class GraphCompiler
 
 		return value switch
 		{
-			float v => isNamed ? new NodeResult(ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
+            bool v => isNamed ? new NodeResult(ResultType.Bool, $"{name}") : new NodeResult(ResultType.Bool, $"{v.ToString().ToLower()}"),
+            int v => isNamed ? new NodeResult(ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
+            float v => isNamed ? new NodeResult(ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
 			Vector2 v => isNamed ? new NodeResult(ResultType.Vector2, $"{name}") : new NodeResult(ResultType.Vector2, $"float2( {v.x}, {v.y} )"),
 			Vector3 v => isNamed ? new NodeResult(ResultType.Vector3, $"{name}") : new NodeResult(ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )"),
 			Vector4 v => isNamed ? new NodeResult(ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )"),
@@ -560,7 +559,6 @@ public sealed partial class GraphCompiler
 			Float3x3 v => isNamed ? new NodeResult(ResultType.Float3x3, $"{value}") : new NodeResult(ResultType.Float3x3, $"float3x3({v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33})"),
 			Float4x4 v => isNamed ? new NodeResult(ResultType.Float4x4, $"{value}") : new NodeResult(ResultType.Float4x4, $"float4x4({v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44})"),
 			Sampler v => new NodeResult(ResultType.Sampler, $"{v}", true, true),
-			bool v => isNamed ? new NodeResult(ResultType.Bool, $"{name}") : new NodeResult(ResultType.Bool, $"{v.ToString().ToLower()}"),
 			_ => throw new ArgumentException("Unsupported attribute type", nameof(value))
 		};
 	}
@@ -574,6 +572,8 @@ public sealed partial class GraphCompiler
             Vector3 _ => "g_v",
             Vector2 _ => "g_v",
             float _ => "g_fl",
+            int _ => "g_n",
+            //int _ => "g_fl",
             bool _ => "g_b",
             Float2x2 _ => "g_m",
             Float3x3 _ => "g_m",
@@ -596,7 +596,8 @@ public sealed partial class GraphCompiler
 			Type t when t == typeof(Vector3) => 3,
 			Type t when t == typeof(Vector2) => 2,
 			Type t when t == typeof(float) => 1,
-			_ => 0
+            Type t when t == typeof(int) => 1,
+            _ => 0
 		};
 	}
 
@@ -881,7 +882,8 @@ public sealed partial class GraphCompiler
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
 					float _ => "float",
-					bool _ => "bool",
+                    int _ => "float", // treat int internally as a float.
+                    bool _ => "bool",
 					Float2x2 _ => "float2x2",
 					Float3x3 _ => "float3x3",
 					Float4x4 _ => "float4x4",
@@ -1058,17 +1060,17 @@ public sealed partial class GraphCompiler
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
 					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
-					Log.Info( $"Generated Local : float2x2({result.Item2.Code});" );
+					//Log.Info( $"Generated Local : float2x2({result.Item2.Code});" );
 				}
 				else if ( result.Item2.ResultType is ResultType.Float3x3 )
 				{
 					sb.AppendLine( $"float3x3 {result.Item1} = float3x3({result.Item2.Code});" );
-					Log.Info( $"Generated Local : float3x3({result.Item2.Code});" );
+					//Log.Info( $"Generated Local : float3x3({result.Item2.Code});" );
 				}
 				else if ( result.Item2.ResultType is ResultType.Float4x4 )
 				{
 					sb.AppendLine( $"float4x4 {result.Item1} = float4x4({result.Item2.Code});" );
-					Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
+					//Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
 				}
 				else
 				{

@@ -37,7 +37,8 @@ public class MainWindow : DockWindow, IAssetEditor
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-	private readonly Dictionary<string, float> _floatAttributes = new();
+    //private readonly Dictionary<string, int> _intAttributes = new();
+    private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
 
 	private readonly List<BaseNodePlus> _compiledNodes = new();
@@ -361,7 +362,11 @@ public class MainWindow : DockWindow, IAssetEditor
 				_float2Attributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-			case float v:
+            case int v: // 
+                _floatAttributes.Add(name, v);
+                _preview?.SetAttribute(name, v);
+                break;
+            case float v:
 				_floatAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
@@ -850,11 +855,12 @@ public class MainWindow : DockWindow, IAssetEditor
 			o.Toggled += ( b ) => DockManager.SetDockState( dock.Title, b );
 		}
 
-        // Doesn't work yet.
-        //var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
-        //style.Checkable = false;//true;
-        //style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
-        //style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
+        view.AddSeparator();
+
+        var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+        style.Checkable = true;
+        style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
+        style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
 
     }
 
@@ -992,8 +998,9 @@ public class MainWindow : DockWindow, IAssetEditor
 		graph.Deserialize( System.IO.File.ReadAllText( FileSystem.Content.GetFullPath(path) ) );
      
         _preview.Model = Model.Load( graph.Model );
+        _preview.LoadSettings(graph.PreviewSettings);
 
-		_asset = asset;
+        _asset = asset;
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
@@ -1054,6 +1061,8 @@ public class MainWindow : DockWindow, IAssetEditor
 		var savePath = _asset == null || saveAs ? GetSavePath() : _asset.AbsolutePath;
 		if ( string.IsNullOrWhiteSpace( savePath ) )
 			return false;
+
+		_preview.SaveSettings( _graph.PreviewSettings );
 
 		// Write serialized graph to asset file
 		System.IO.File.WriteAllText( savePath, _graph.Serialize() );
@@ -1175,25 +1184,10 @@ public class MainWindow : DockWindow, IAssetEditor
 		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
 			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
 
-		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
-		//{
-		//	foreach ( var type in types )
-		//	{
-		//		if ( type.HasAttribute<PostProcessingCompatable>() )
-		//		{
-		//			_graphView.AddNodeType( type );
-		//		}
-		//	}
-		//}
-		//else
-		//{
-			foreach ( var type in types )
-			{
-					_graphView.AddNodeType( type );
-			}
-
-		//}
-	
+		foreach ( var type in types )
+		{
+				_graphView.AddNodeType( type );
+		}
 
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
