@@ -11,6 +11,10 @@ public sealed class Result : BaseResult
     private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 
     [Hide]
+    private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
+
+
+    [Hide]
 	[Input( typeof( Vector3 ) )]
 	public NodeInput Albedo { get; set; }
 
@@ -53,8 +57,30 @@ public sealed class Result : BaseResult
 	[InputDefault( nameof( AmbientOcclusion ) )]
 	public float DefaultAmbientOcclusion { get; set; } = 1.0f;
 
+	[Hide, JsonIgnore]
+	int _lastHashCode = 0;
+
+	public override void OnFrame()
+	{
+		var hashCode = new HashCode();
+		if ( Graph is ShaderGraphPlus shaderGraph )
+		{
+			hashCode.Add( shaderGraph.ShadingModel );
+			hashCode.Add( shaderGraph.MaterialDomain );
+		}
+		var hc = hashCode.ToHashCode();
+		if ( hc != _lastHashCode )
+		{
+			_lastHashCode = hc;
+
+			CreateInputs();
+			Update();
+		}
+	}
+
 	[Hide]
 	[Input( typeof( Vector3 ) )]
+	[HideIf( nameof( IsPostProcess ), true )]
 	public NodeInput PositionOffset { get; set; }
 
 	[JsonIgnore, Hide]
@@ -69,6 +95,58 @@ public sealed class Result : BaseResult
     public override NodeInput GetMetalness() => Metalness;
     public override NodeInput GetAmbientOcclusion() => AmbientOcclusion;
     public override NodeInput GetPositionOffset() => PositionOffset;
+
+	private void CreateInputs()
+	{
+		var plugs = new List<IPlugIn>();
+		var serialized = this.GetSerialized();
+		foreach ( var property in serialized )
+		{
+			if ( property.TryGetAttribute<InputAttribute>( out var inputAttr ) )
+			{
+				if ( property.TryGetAttribute<ConditionalVisibilityAttribute>( out var conditionalVisibilityAttr ) )
+				{
+					if ( conditionalVisibilityAttr.TestCondition( this.GetSerialized() ) )
+					{
+						continue;
+					}
+				}
+				var propertyInfo = typeof( Result ).GetProperty( property.Name );
+				if ( propertyInfo is null ) continue;
+				var info = new PlugInfo( propertyInfo );
+				var displayInfo = info.DisplayInfo;
+				displayInfo.Name = property.DisplayName;
+				info.DisplayInfo = displayInfo;
+				var plug = new BasePlugIn( this, info, info.Type );
+				var oldPlug = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.DisplayInfo.Name == info.DisplayInfo.Name ) as BasePlugIn;
+				if ( oldPlug is not null )
+				{
+					oldPlug.Info.Name = info.Name;
+					oldPlug.Info.Type = info.Type;
+					oldPlug.Info.DisplayInfo = info.DisplayInfo;
+					var nodeInput = property.GetValue<NodeInput>();
+					if ( nodeInput.IsValid && plug is IPlugIn plugIn )
+					{
+						var connectedNode = Graph.Nodes.FirstOrDefault( x => x is BaseNodePlus node && node.Identifier == nodeInput.Identifier ) as BaseNodePlus;
+						plugIn.ConnectedOutput = connectedNode.Outputs.FirstOrDefault( x => x.Identifier == nodeInput.Output );
+					}
+					plugs.Add( oldPlug );
+				}
+				else
+				{
+					var nodeInput = property.GetValue<NodeInput>();
+					if ( nodeInput.IsValid && plug is IPlugIn plugIn )
+					{
+						var connectedNode = Graph.Nodes.FirstOrDefault( x => x is BaseNodePlus node && node.Identifier == nodeInput.Identifier ) as BaseNodePlus;
+						plugIn.ConnectedOutput = connectedNode.Outputs.FirstOrDefault( x => x.Identifier == nodeInput.Output );
+					}
+					plugs.Add( plug );
+				}
+			}
+		}
+		Inputs = plugs;
+	}
+
 }
 
 
