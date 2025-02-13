@@ -15,7 +15,6 @@ public sealed class SceneColorNode : ShaderNodePlus
 	public NodeResult.Func SceneColor => ( GraphCompiler compiler ) =>
 	{
 		var coords = compiler.Result( ScreenUVs );
-		return new NodeResult( ResultType.Vector3, $"Tex2D( g_tColorBuffer, {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")})" );
-		//return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( ColorBufferSampler ,{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")})" );
+		return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sBilinearMirror ,{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")})" );
 	};
 }
