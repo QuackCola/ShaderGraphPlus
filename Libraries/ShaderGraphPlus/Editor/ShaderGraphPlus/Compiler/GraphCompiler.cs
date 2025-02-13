@@ -1199,8 +1199,11 @@ public sealed partial class GraphCompiler
 
 		if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
-			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
-			sb.AppendLine();
+			if ( IsPs )
+			{
+			    sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
+			    sb.AppendLine();
+			}
 		}
 
 		foreach ( var Sampler in ShaderResult.SamplerStates )
@@ -1582,7 +1585,7 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
             }
         }
 
-        switch (Graph.MaterialDomain)
+        switch ( Graph.MaterialDomain )
         {
             case MaterialDomain.Surface:
                 sb.AppendLine("return FinalizeVertex( i );");
