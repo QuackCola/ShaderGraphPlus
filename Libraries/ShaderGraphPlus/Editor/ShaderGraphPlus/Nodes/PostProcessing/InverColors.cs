@@ -1,5 +1,0 @@
-﻿
-
-namespace Editor.ShaderGraphPlus.Nodes;
-
-
