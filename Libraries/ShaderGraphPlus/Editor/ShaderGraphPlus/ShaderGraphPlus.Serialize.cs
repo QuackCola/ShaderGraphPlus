@@ -31,16 +31,6 @@ partial class ShaderGraphPlus
         return doc.ToJsonString( options );
     }
 
-    public void Deserialize(string json)
-    {
-        using var doc = JsonDocument.Parse( json );
-        var root = doc.RootElement;
-        var options = SerializerOptions();
-
-        DeserializeObject( this, root, options );
-        DeserializeNodes( root, options );
-    }
-
     public void Deserialize( string json, string subgraphPath = null )
 	{
 		using var doc = JsonDocument.Parse( json );
