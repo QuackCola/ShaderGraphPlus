@@ -1,0 +1,13 @@
+{
+  "IsSubgraph": true,
+  "Model": null,
+  "Description": "",
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [],
+      "Identifier": "0",
+      "Position": "0,0"
+    }
+  ]
+}

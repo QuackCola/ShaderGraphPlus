@@ -1,11 +1,11 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-[EditorForAssetType( "shdrfunc" )]
+[EditorForAssetType("sgpfunc")]
 public class MainWindowFunc : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => true;
 	public override string FileType => "Shader Sub-Graph";
-	public override string FileExtension => "shdrfunc";
+	public override string FileExtension => "sgpfunc";
 
 	void IAssetEditor.SelectMember( string memberName )
 	{
@@ -110,25 +110,27 @@ public class MainWindow : DockWindow, IAssetEditor
 		Show();
 		CreateNew();
 
-        //OpenProjectCreationDialog();
+        OpenProjectCreationDialog();
     }
 
-	//private void OpenProjectCreationDialog()
-	//{
-	//	ProjectCreator = new ProjectCreator();
-	//	ProjectCreator.DeleteOnClose = true;
-	//	ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
-	//	ProjectCreator.Show();
-	//	ProjectCreator.OnProjectCreated += Open;
-	//}
+	private void OpenProjectCreationDialog()
+	{
+		ProjectCreator = new ProjectCreator();
+		ProjectCreator.DeleteOnClose = true;
+		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+		ProjectCreator.Show();
+		ProjectCreator.OnProjectCreated += OpenProject;
+
+    }
 
 	public void AssetOpen( Asset asset )
 	{
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
+		
 		// We dont need the project creator when opening an existing asset. So lets forceably close it.
-		//ProjectCreator.Close();
-		//ProjectCreator = null;
+		ProjectCreator.Close();
+		ProjectCreator = null;
 		
 		Open( asset.AbsolutePath );
 	}
@@ -940,6 +942,11 @@ public class MainWindow : DockWindow, IAssetEditor
 		PromptSave( () => Open( fd.SelectedFile ) );
 	}
 
+	private void OpenProject( string path )
+	{
+		Open( path );
+	}
+
 	public void Open( string path, bool addToPath = true)
 	{
 		var asset = AssetSystem.FindByPath( path );
@@ -1216,7 +1223,7 @@ public class MainWindow : DockWindow, IAssetEditor
 			_graphView.AddNodeType( type );
 		}
 
-		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".shdrfunc", StringComparison.OrdinalIgnoreCase ) );
+		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".sgpfunc", StringComparison.OrdinalIgnoreCase ) );
 		foreach ( var subgraph in subgraphs )
 		{
 			_graphView.AddNodeType( subgraph.Path );

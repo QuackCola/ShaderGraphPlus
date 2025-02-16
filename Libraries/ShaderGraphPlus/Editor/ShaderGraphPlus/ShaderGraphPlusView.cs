@@ -161,7 +161,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			menu.AddOption( "Create Custom Node...", "add_box", () =>
 			{
-				const string extension = "shdrfunc";
+				const string extension = "sgpfunc";
 
 				var fd = new FileDialog( null );
 				fd.Title = "Create Shader Graph Function";
