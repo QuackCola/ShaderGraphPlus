@@ -31,7 +31,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 
 		if (graph.MaterialDomain is MaterialDomain.PostProcess)
 		{
-		    return new NodeResult(ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : "i.vPositionSs.xy / g_vRenderTargetSize")} )");
+		    return new NodeResult(ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )")} )");
 		}
 		else
 		{
