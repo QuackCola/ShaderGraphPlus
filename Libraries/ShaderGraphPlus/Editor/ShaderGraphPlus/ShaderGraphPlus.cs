@@ -39,7 +39,7 @@ public class PreviewSettings
 }
 
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
-public sealed partial class ShaderGraphPlus : IGraph
+public partial class ShaderGraphPlus : IGraph
 {
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
@@ -231,5 +231,13 @@ public sealed partial class ShaderGraphPlus : IGraph
         Metadata[keyname] = outvalue;
         return true;
     }
+
+}
+
+
+[GameResource("Shader Graph Plus Function", "sgpfunc", "Editor Resource", Icon = "account_tree" )]
+public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
+{
+
 
 }
