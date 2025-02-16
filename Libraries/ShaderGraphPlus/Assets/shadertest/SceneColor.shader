@@ -53,22 +53,15 @@ struct PixelInput
 VS
 {
     #include "common/vertex.hlsl"
-	
-	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
-	
-	
+
     PixelInput MainVs( VertexInput v )
     {
 		
-		PixelInput i = ProcessVertex( v );
-		i.vPositionOs = v.vPositionOs.xyz;
-		i.vColor = v.vColor;
+		PixelInput i;
+		i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
+		i.vPositionWs = float3(v.vTexCoord, 0.0f);
 		
-		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
-		i.vTintColor = extraShaderData.vTint;
-		
-		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
-		return FinalizeVertex( i );
+		return i;
 		
     }
 }
@@ -77,8 +70,7 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	BoolAttribute( bWantsFBCopyTexture, true ); 
-	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
+	Texture2D g_tColorBuffer < Attribute( "ColorBuffer" ); SrgbRead( true ); >;
 	
 		
 	float3 InvertColors(float3 vInput )
@@ -90,7 +82,7 @@ PS
     {
 
 		
-		float3 l_0 = g_tFrameBufferCopyTexture.Sample( g_sAniso ,CalculateViewportUv( i.vPositionSs.xy ));
+		float3 l_0 = g_tColorBuffer.Sample( g_sAniso ,CalculateViewportUv( i.vPositionSs.xy ) );
 		float3 l_1 = InvertColors(l_0);
 		
 
