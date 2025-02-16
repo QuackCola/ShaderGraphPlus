@@ -9,7 +9,7 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Translucent",
   "ShadingModel": "Unlit",
-  "MaterialDomain": "Surface",
+  "MaterialDomain": "PostProcess",
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
@@ -36,7 +36,7 @@
     {
       "_class": "InvertColorsNode",
       "Identifier": "1",
-      "Position": "-480,84",
+      "Position": "-480,24",
       "HandleOffsets": {},
       "SceneColor": {
         "Identifier": "2",
