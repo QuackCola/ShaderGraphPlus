@@ -1182,6 +1182,22 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		
+        if ( Graph.MaterialDomain is not MaterialDomain.PostProcess )
+        {
+            if ( IsPs )
+            {
+                sb.AppendLine( "BoolAttribute( bWantsFBCopyTexture, true ); ");
+
+				if ( Graph.BlendMode is BlendMode.Translucent )
+				{
+					//sb.AppendLine( "BoolAttribute( translucent, true );" );
+				}
+
+            }
+        }
+
+
         // Static & Dynamic shader feature combos
         foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
@@ -1201,10 +1217,17 @@ public sealed partial class GraphCompiler
 		{
 			if ( IsPs )
 			{
-			    sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
-			    sb.AppendLine();
+				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
+				sb.AppendLine();
 			}
 		}
+        else
+		{
+            sb.AppendLine("Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;");
+            sb.AppendLine();
+        }
+
+
 
 		foreach ( var Sampler in ShaderResult.SamplerStates )
 		{

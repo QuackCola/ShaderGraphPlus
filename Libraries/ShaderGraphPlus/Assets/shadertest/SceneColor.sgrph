@@ -1,0 +1,55 @@
+{
+  "IsSubgraph": false,
+  "Path": "shadertest/scenecolor.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Translucent",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-276,24",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "InvertColorsNode",
+      "Identifier": "1",
+      "Position": "-480,24",
+      "HandleOffsets": {},
+      "SceneColor": {
+        "Identifier": "2",
+        "Output": "SceneColor",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SceneColorNode",
+      "UseScreenUVs": true,
+      "Identifier": "2",
+      "Position": "-660,24",
+      "HandleOffsets": {}
+    }
+  ]
+}
