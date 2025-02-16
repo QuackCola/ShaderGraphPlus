@@ -19,8 +19,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 	public NodeResult.Func SceneColor => ( GraphCompiler compiler ) =>
 	{
 		var coords = compiler.Result( UV );
-		//
-
+		
 		var graph = compiler.Graph;
 
 		if ( graph.MaterialDomain != MaterialDomain.PostProcess && graph.BlendMode != BlendMode.Translucent )
@@ -32,24 +31,21 @@ public sealed class SceneColorNode : ShaderNodePlus
 
 		if (graph.MaterialDomain is MaterialDomain.PostProcess)
 		{
-            return new NodeResult(ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : "i.vPositionSs.xy / g_vRenderTargetSize")} )");
-        }
-        else
+		    return new NodeResult(ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : "i.vPositionSs.xy / g_vRenderTargetSize")} )");
+		}
+		else
 		{
-            if ( compiler.IsPreview )
-            {
-                return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}" )} * g_vFrameBufferCopyInvSizeAndUvScale.zw )");
-            }
-            else
-            {
-            	return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}")})");
-            }	
-
-            //return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}")} {(MultiplyWithFrameBufferCopyInvSizeAndUvScale ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")} )");
-        }
-
-
-
+			if ( compiler.IsPreview )
+			{
+			    return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}" )} * g_vFrameBufferCopyInvSizeAndUvScale.zw )");
+			}
+			else
+			{
+				return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}")})");
+			}	
+			
+			//return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}")} {(MultiplyWithFrameBufferCopyInvSizeAndUvScale ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")} )");
+		}
     };
 }
 
