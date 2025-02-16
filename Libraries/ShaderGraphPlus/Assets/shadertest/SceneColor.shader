@@ -83,7 +83,7 @@ PS
 		
 	float3 InvertColors(float3 vInput )
 	{
-	return float3(1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b);
+		return float3( 1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b );
 	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
