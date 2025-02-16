@@ -54,7 +54,7 @@ public class InvertColorsNode : ShaderNodePlus
 public static string InvertColors => @"
 float3 InvertColors(float3 vInput )
 {
-return float3(1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b);
+	return float3( 1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b );
 }
 ";
 
