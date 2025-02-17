@@ -16,7 +16,7 @@ FEATURES
 
 MODES
 {{
-    VrForward();
+    Forward();
     Depth();
     ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
 }}
