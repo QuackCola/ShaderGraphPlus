@@ -252,11 +252,6 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 			var ambientOcclusionResult = GetAmbientOcclusionResult( compiler );
 			sb.AppendLine( $"m.AmbientOcclusion = {ambientOcclusionResult.Cast( 1 )};" );
 		}
-		if ( !visited.Contains( "PositionOffset" ) )
-		{
-			var positionOffsetResult = GetPositionOffsetResult( compiler );
-			sb.AppendLine( $"m.PositionOffset = {positionOffsetResult.Cast( 3 )};" );
-		}
 	}
 
 	private NodeInput? GetInputFromPreview( FunctionOutput.PreviewType previewType )
