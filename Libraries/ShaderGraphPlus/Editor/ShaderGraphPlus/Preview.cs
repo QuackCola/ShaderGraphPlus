@@ -90,6 +90,11 @@ public class PreviewPanel : Widget
 		set => _preview.Tint = value;
 	}
 
+	public bool IsPostProcess
+	{
+	    set => _preview.IsPostProcess = value;
+	}
+	
 	private void UpdateAnimationCombo()
 	{
 		_animationCombo.Clear();
@@ -380,20 +385,27 @@ public class Preview : SceneRenderingWidget
 		set => _ground.RenderingEnabled = value;
 	}
 
-    private bool _renderBackfaces;
-    public bool RenderBackfaces
-    {
-        get => _renderBackfaces;
-        set
-        {
-            _renderBackfaces = value;
+	private bool _ispostprocess;
+	public bool IsPostProcess
+	{
+	    get => _ispostprocess;
+	    set => _ispostprocess = value;
+	}
 
-            if (_sceneObject.IsValid())
-            {
-                _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
-            }
-        }
-    }
+	private bool _renderBackfaces;
+	public bool RenderBackfaces
+	{
+	    get => _renderBackfaces;
+	    set
+	    {
+	        _renderBackfaces = value;
+	
+	        if (_sceneObject.IsValid())
+	        {
+	            _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
+	        }
+	    }
+	}
 
     public Color BackgroundColor
     {
