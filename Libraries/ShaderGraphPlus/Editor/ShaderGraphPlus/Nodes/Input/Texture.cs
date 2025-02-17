@@ -3,7 +3,7 @@ using Sandbox;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-public abstract class TextureSamplerBase : ShaderNodePlus
+public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
     /// <summary>
     /// Texture to sample in preview
@@ -141,7 +141,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 /// Ment for use when you want to pass a Texture2D into a node which happens to have a hlsl function that makes use of .Sample().
 /// </summary>
 [Title( "Texture Object" ), Category( "Textures" )]
-public sealed class TextureObjectNode : ShaderNodePlus
+public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
     /// <summary>
     /// Texture to sample in preview
@@ -225,8 +225,8 @@ public sealed class TextureObjectNode : ShaderNodePlus
 
 	public TextureObjectNode() : base()
 	{
-		Image = "textures/sbox_logo.psd";
-        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+        Image = "materials/dev/white_color.tga";
+        ExpandSize = new Vector2( 0, 128 );
     }
 
 	public override void OnPaint( Rect rect )
@@ -245,10 +245,33 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		}
 	}
 
-	/// <summary>
-	/// Texture object result.
-	/// </summary>
-	[Hide]
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
+		{
+			if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			{
+				errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			}
+
+			foreach ( var node in sg.Nodes )
+			{
+				if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
+				{
+					errors.Add( $"Duplicate texture object parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
+				}
+			}
+		}
+
+		return errors;
+	}
+
+    /// <summary>
+    /// Texture object result.
+    /// </summary>
+    [Hide]
 	[Output( typeof( TextureObject ) ), Title( "Tex Object" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
