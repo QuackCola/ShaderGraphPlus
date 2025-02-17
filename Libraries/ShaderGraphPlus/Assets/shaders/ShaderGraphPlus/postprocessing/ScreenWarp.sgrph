@@ -219,7 +219,7 @@
       "_class": "SceneColorNode",
       "UseScreenUVs": true,
       "Identifier": "17",
-      "Position": "-372,-0",
+      "Position": "-372,0",
       "HandleOffsets": {},
       "UV": {
         "Identifier": "7",
