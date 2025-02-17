@@ -4,7 +4,7 @@
 public class MainWindowFunc : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => true;
-	public override string FileType => "Shader Sub-Graph";
+	public override string FileType => "Shader Graph Plus Sub-Graph";
 	public override string FileExtension => "sgpfunc";
 
 	void IAssetEditor.SelectMember( string memberName )
