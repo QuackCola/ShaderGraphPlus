@@ -1,45 +1,61 @@
 {
+  "IsSubgraph": false,
+  "Path": "shaders/shadergraphplus/postprocessing/invertcolors.sgrph",
   "Model": null,
+  "Title": null,
   "Description": "PostProcessing Shadergraph Material",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "PostProcess",
-  "postProcessComponentInfo": {
-    "Order": 500
-  },
   "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
   "nodes": [
     {
-      "_class": "PostProcessingResult",
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-444,-96",
-      "SceneColor": {
+      "Position": "-384,-96",
+      "HandleOffsets": {},
+      "Albedo": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
       "_class": "SceneColorNode",
+      "UseScreenUVs": true,
       "Identifier": "1",
       "Position": "-828,-96",
-      "ScreenUVs": {
-        "Identifier": "3",
-        "Output": "Result"
-      }
+      "HandleOffsets": {}
     },
     {
       "_class": "InvertColorsNode",
       "Identifier": "2",
       "Position": "-636,-96",
+      "HandleOffsets": {},
       "SceneColor": {
         "Identifier": "1",
-        "Output": "SceneColor"
+        "Output": "SceneColor",
+        "Subgraph": null
       }
     },
     {
       "_class": "ScreenCoordinate",
       "Identifier": "3",
-      "Position": "-1056,-84"
+      "Position": "-1056,-84",
+      "HandleOffsets": {}
     }
   ]
 }

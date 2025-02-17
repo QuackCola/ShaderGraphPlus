@@ -1,22 +1,20 @@
 
 HEADER
 {
-	Description = "";
+    Description = "";
 }
 
 FEATURES
 {
-	#include "common/features.hlsl"
+    #include "common/features.hlsl"
 
 }
 
 MODES
 {
-	VrForward();
-	Depth(); 
-	ToolsVis( S_MODE_TOOLS_VIS );
-	ToolsWireframe( "vr_tools_wireframe.shader" );
-	ToolsShadingComplexity( "tools_shading_complexity.shader" );
+    VrForward();
+    Depth();
+    ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
 
 COMMON
@@ -28,53 +26,59 @@ COMMON
 	#define S_TRANSLUCENT 0
 	#endif
 	
-	#include "common/shared.hlsl"
-	#include "common/gradient.hlsl"
-	#include "procedural.hlsl"
-	
-	#define UNLIT
-	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
+    #include "common/shared.hlsl"
+    #include "common/gradient.hlsl"
+    #include "procedural.hlsl"
+    
+    #define S_UV2 1
+    #define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
 {
-	#include "common/vertexinput.hlsl"
-	float4 vColor : COLOR0 < Semantic( Color ); >;
+    #include "common/vertexinput.hlsl"
+    float4 vColor : COLOR0 < Semantic( Color ); >;
 };
 
 struct PixelInput
 {
-	#include "common/pixelinput.hlsl"
-	float3 vPositionOs : TEXCOORD14;
-	float3 vNormalOs : TEXCOORD15;
-	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
-	float4 vColor : COLOR0;
-	float4 vTintColor : COLOR1;
+    #include "common/pixelinput.hlsl"
+    float3 vPositionOs : TEXCOORD14;
+    float3 vNormalOs : TEXCOORD15;
+    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+    float4 vColor : COLOR0;
+    float4 vTintColor : COLOR1;
 };
 
 VS
 {
-	#include "common/vertex.hlsl"
-
-	PixelInput MainVs( VertexInput v )
-	{
+    #include "common/vertex.hlsl"
+	
+	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
+	
+	
+    PixelInput MainVs( VertexInput v )
+    {
+		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
 		i.vColor = v.vColor;
-
+		
 		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
 		i.vTintColor = extraShaderData.vTint;
-
+		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
-
 		return FinalizeVertex( i );
-	}
+		
+    }
 }
 
 PS
 {
-	#include "common/test_pixel.hlsl"
+    #include "common/pixel.hlsl"
+	
+	BoolAttribute( bWantsFBCopyTexture, true ); 
+	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
 	
 	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -121,18 +125,9 @@ PS
 		return vResult;
 	}
 	
-	float4 MainPs( PixelInput i ) : SV_Target0
-	{
-		Material m = Material::Init();
-		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
-		m.Opacity = 1;
-		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
+    float4 MainPs( PixelInput i ) : SV_Target0
+    {
+
 		
 		float l_0 = g_flSliceCount;
 		float l_1 = g_flSliceDistance;
@@ -140,30 +135,10 @@ PS
 		float2 l_3 = g_vTexCoordScale;
 		float2 l_4 = (l_2 * l_3);
 		float3 l_5 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
-		float3 l_6 = GetTangentViewVector( l_5,i.vNormalWs,i.vTangentUWs,i.vTangentVWs );
-		float3 l_7 = SimpleParallax( l_0,l_1,l_4,l_6,g_tHeight,g_sTestSampler );
+		float3 l_6 = GetTangentViewVector(l_5, i.vNormalWs, i.vTangentUWs, i.vTangentVWs);
+		float3 l_7 = SimpleParallax(l_0,l_1,l_4,l_6,g_tHeight,g_sTestSampler);
 		
-		m.Albedo = l_7;
-		m.Emission = l_7;
-		m.Opacity = 1;
-		m.Roughness = 0;
-		m.Metalness = 1;
-		m.AmbientOcclusion = 0;
-		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
-		m.Opacity = saturate( m.Opacity );
 
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-        m.TextureCoords = i.vTextureCoords.xy;
-		
-		return ShadingModelStandardUnlit::Shade( i, m );
-		//return float4( m.Albedo, 1 );
-	}
+		return float4( l_7, 1 );
+    }
 }
