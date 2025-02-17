@@ -1226,7 +1226,7 @@ public class MainWindow : DockWindow, IAssetEditor
 		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".sgpfunc", StringComparison.OrdinalIgnoreCase ) );
 		foreach ( var subgraph in subgraphs )
 		{
-			// Skip any _c compiled subgrpah files.
+			// Skip any _c compiled subgraph files.
 			if ( subgraph.CanRecompile )
 			{
 			    _graphView.AddNodeType(subgraph.Path);
