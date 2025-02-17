@@ -303,22 +303,22 @@ public class PreviewPanel : Widget
 
 public class Preview : SceneRenderingWidget
 {
-    private SceneWorld _world => Scene.SceneWorld;
-
-    private Vector2 _lastCursorPos;
-    private Vector2 _cursorDelta;
-    private Vector2 _angles;
-    private Vector3 _origin;
-    private float _distance;
-    private float _modelRotation;
-    private bool _orbitControl;
-    private bool _orbitLights;
-    private bool _zoomControl;
-    private bool _panControl;
-
-    private SceneModel _sceneObject;
-    private Throbber _thobber;
-
+	private SceneWorld _world => Scene.SceneWorld;
+	
+	private Vector2 _lastCursorPos;
+	private Vector2 _cursorDelta;
+	private Vector2 _angles;
+	private Vector3 _origin;
+	private float _distance;
+	private float _modelRotation;
+	private bool _orbitControl;
+	private bool _orbitLights;
+	private bool _zoomControl;
+	private bool _panControl;
+	
+	private SceneModel _sceneObject;
+	private Throbber _thobber;
+	
 	private Dictionary<string, Texture> _textureAttributes = new();
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private Dictionary<string, Float3x3> _float3x3Attributes = new();
@@ -328,14 +328,14 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Vector2> _float2Attributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
-	//private Dictionary<string, object> _postprocessingAttributes = new();
 	private int _stageId;
 
-    public bool EnablePostProcessing
-    {
-        get { return false; }
-        set { }
-    }
+	// TODO
+	public bool EnablePostProcessing
+	{
+	    get { return false; }
+	    set { }
+	}
 
     private bool _enableNodePreview;
 	public bool EnableNodePreview
@@ -400,9 +400,9 @@ public class Preview : SceneRenderingWidget
 	    {
 	        _renderBackfaces = value;
 	
-	        if (_sceneObject.IsValid())
+	        if ( _sceneObject.IsValid() )
 	        {
-	            _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
+	            _sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
 	        }
 	    }
 	}
