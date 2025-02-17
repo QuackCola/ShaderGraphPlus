@@ -1,83 +1,91 @@
 
 HEADER
 {
-	Description = "PostProcessing Shadergraph Material";
-}
-
-MODES
-{
-    Default();
-    VrForward();
+    Description = "PostProcessing Shadergraph Material";
 }
 
 FEATURES
 {
+    #include "common/features.hlsl"
+
+}
+
+MODES
+{
+    VrForward();
+    Depth();
+    ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
 
 COMMON
 {
-    #include "postprocess/shared.hlsl"
+	#ifndef S_ALPHA_TEST
+	#define S_ALPHA_TEST 0
+	#endif
+	#ifndef S_TRANSLUCENT
+	#define S_TRANSLUCENT 0
+	#endif
+	
+    #include "common/shared.hlsl"
     #include "common/gradient.hlsl"
-	#include "procedural.hlsl"
+    #include "procedural.hlsl"
+    
+    #define S_UV2 1
+    #define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
 {
-    float3 vPositionOs : POSITION < Semantic( PosXyz ); >;
-    float2 vTexCoord : TEXCOORD0 < Semantic( LowPrecisionUv ); >;
+    #include "common/vertexinput.hlsl"
+    float4 vColor : COLOR0 < Semantic( Color ); >;
 };
 
 struct PixelInput
 {
-    float2 vTexCoord : TEXCOORD0;
-
-	// VS only
-	#if ( PROGRAM == VFX_PROGRAM_VS )
-		float4 vPositionPs		: SV_Position;
-	#endif
-
-	// PS only
-	#if ( ( PROGRAM == VFX_PROGRAM_PS ) )
-		float4 vPositionSs		: SV_Position;
-	#endif
+    #include "common/pixelinput.hlsl"
+    float3 vPositionOs : TEXCOORD14;
+    float3 vNormalOs : TEXCOORD15;
+    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+    float4 vColor : COLOR0;
+    float4 vTintColor : COLOR1;
 };
 
 VS
 {
-    PixelInput MainVs( VertexInput i )
+    #include "common/vertex.hlsl"
+
+    PixelInput MainVs( VertexInput v )
     {
-        PixelInput o;
-        o.vPositionPs = float4(i.vPositionOs.xyz, 1.0f);
-        o.vTexCoord = i.vTexCoord;
-        return o;
+		
+		PixelInput i;
+		i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
+		i.vPositionWs = float3(v.vTexCoord, 0.0f);
+		
+		return i;
+		
     }
 }
 
 PS
 {
-	#include "common/classes/Depth.hlsl"
-    #include "postprocess/common.hlsl"
-	#include "postprocess/functions.hlsl"
-	#include "postprocess/PostProcessingUtils.hlsl"
+    #include "common/pixel.hlsl"
 	
-	CreateTexture2D( g_tColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;
+	Texture2D g_tColorBuffer < Attribute( "ColorBuffer" ); SrgbRead( true ); >;
 	
 		
 	float3 InvertColors(float3 vInput )
 	{
-	return float3(1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b);
+		return float3( 1.0 - vInput.r,1.0 - vInput.g,1.0 - vInput.b );
 	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
-		float3 FinalColor = float3( 1, 1, 1 );
+
 		
-		float2 l_0 = CalculateViewportUv( i.vPositionSs.xy );
-		float3 l_1 = Tex2D( g_tColorBuffer, l_0);
-		float3 l_2 = InvertColors(l_1);
+		float3 l_0 = g_tColorBuffer.Sample( g_sAniso ,CalculateViewportUv( i.vPositionSs.xy ) );
+		float3 l_1 = InvertColors(l_0);
 		
-		FinalColor = l_2;
-		
-        return float4(FinalColor,1.0f);
+
+		return float4( l_1, 1 );
     }
 }

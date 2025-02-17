@@ -1,46 +1,52 @@
 {
-  "Model": "models/citizen/citizen.vmdl",
+  "IsSubgraph": false,
+  "Path": "shaders/shadergraphplus/postprocessing/screenwarp.sgrph",
+  "Model": null,
+  "Title": null,
   "Description": "PostProcessing Shadergraph Material",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "PostProcess",
-  "postProcessComponentInfo": {
-    "Order": 500
-  },
   "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
   "nodes": [
     {
-      "_class": "PostProcessingResult",
-      "Identifier": "0",
-      "Position": "-180,12",
-      "SceneColor": {
-        "Identifier": "10",
-        "Output": "SceneColor"
-      }
-    },
-    {
       "_class": "ScreenCoordinate",
-      "Identifier": "1",
-      "Position": "-1140,108"
+      "Identifier": "0",
+      "Position": "-1272,132",
+      "HandleOffsets": {}
     },
     {
       "_class": "Time",
-      "Identifier": "2",
-      "Position": "-1308,-84"
+      "Identifier": "1",
+      "Position": "-1308,-84",
+      "HandleOffsets": {}
     },
     {
       "_class": "Multiply",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "-1080,-72",
+      "HandleOffsets": {},
       "A": {
-        "Identifier": "2",
-        "Output": "Result"
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
       },
       "B": {
-        "Identifier": "4",
-        "Output": "Result"
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -51,22 +57,26 @@
       "Name": "WavyTime",
       "IsAttribute": true,
       "UI": {},
-      "Identifier": "4",
-      "Position": "-1308,0"
+      "Identifier": "3",
+      "Position": "-1308,0",
+      "HandleOffsets": {}
     },
     {
       "_class": "Add",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "5",
+      "Identifier": "4",
       "Position": "-924,48",
+      "HandleOffsets": {},
       "A": {
-        "Identifier": "3",
-        "Output": "Result"
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
       },
       "B": {
-        "Identifier": "1",
-        "Output": "Result"
+        "Identifier": "0",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -83,102 +93,138 @@
         "ShowExtension": true,
         "SrgbRead": true
       },
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "-804,96",
+      "HandleOffsets": {},
       "Coords": {
-        "Identifier": "5",
-        "Output": "Result"
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
       "_class": "Multiply",
       "DefaultA": 0,
       "DefaultB": 0.03,
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "-588,60",
+      "HandleOffsets": {},
       "A": {
-        "Identifier": "6",
-        "Output": "R"
+        "Identifier": "5",
+        "Output": "R",
+        "Subgraph": null
       }
     },
     {
       "_class": "Add",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "8",
+      "Identifier": "7",
       "Position": "-468,0",
+      "HandleOffsets": {},
       "A": {
-        "Identifier": "9",
-        "Output": "Result"
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
       },
       "B": {
-        "Identifier": "7",
-        "Output": "Result"
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
       }
+    },
+    {
+      "_class": "ScreenCoordinate",
+      "Identifier": "8",
+      "Position": "-804,12",
+      "HandleOffsets": {}
     },
     {
       "_class": "ScreenCoordinate",
       "Identifier": "9",
-      "Position": "-804,12"
+      "Position": "-1260,240",
+      "HandleOffsets": {}
     },
     {
-      "_class": "SceneColorNode",
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
       "Identifier": "10",
-      "Position": "-372,12",
-      "ScreenUVs": {
-        "Identifier": "8",
-        "Output": "Result"
+      "Position": "-1068,240",
+      "HandleOffsets": {},
+      "B": {
+        "Identifier": "11",
+        "Output": "RenderTargetSize",
+        "Subgraph": null
       }
     },
     {
-      "_class": "ScreenCoordinate",
+      "_class": "RenderTargetSizeNode",
       "Identifier": "11",
-      "Position": "-1260,240"
+      "Position": "-1260,300",
+      "HandleOffsets": {}
     },
     {
       "_class": "Divide",
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "12",
-      "Position": "-1068,240",
+      "Position": "-564,-156",
+      "HandleOffsets": {},
       "B": {
         "Identifier": "13",
-        "Output": "RenderTargetSize"
+        "Output": "RenderTargetSize",
+        "Subgraph": null
       }
     },
     {
       "_class": "RenderTargetSizeNode",
       "Identifier": "13",
-      "Position": "-1260,300"
-    },
-    {
-      "_class": "Divide",
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "14",
-      "Position": "-564,-156",
-      "B": {
-        "Identifier": "15",
-        "Output": "RenderTargetSize"
-      }
-    },
-    {
-      "_class": "RenderTargetSizeNode",
-      "Identifier": "15",
-      "Position": "-804,-144"
+      "Position": "-804,-144",
+      "HandleOffsets": {}
     },
     {
       "_class": "ScreenCoordinate",
-      "Identifier": "16",
-      "Position": "-804,-204"
+      "Identifier": "14",
+      "Position": "-804,-204",
+      "HandleOffsets": {}
     },
     {
       "_class": "SimplexNoise",
-      "Identifier": "17",
+      "Identifier": "15",
       "Position": "-804,-48",
+      "HandleOffsets": {},
       "Coords": {
-        "Identifier": "5",
-        "Output": "Result"
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "16",
+      "Position": "-120,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "17",
+        "Output": "SceneColor",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SceneColorNode",
+      "UseScreenUVs": true,
+      "Identifier": "17",
+      "Position": "-372,-0",
+      "HandleOffsets": {},
+      "UV": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
       }
     }
   ]
