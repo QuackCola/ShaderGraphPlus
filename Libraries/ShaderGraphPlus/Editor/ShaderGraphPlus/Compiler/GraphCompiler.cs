@@ -20,12 +20,12 @@ public sealed partial class GraphCompiler
 
 	public static Dictionary<Type, string> ValueTypes => new()
 	{
-		{typeof(Color), "float4" },
-		{typeof(Vector4), "float4" },
-		{typeof(Vector3), "float3" },
-		{typeof(Vector2), "float2" },
-		{typeof(float), "float" },
-		{typeof(bool), "bool" }
+		{ typeof( Color ), "float4" },
+		{ typeof( Vector4 ), "float4" },
+		{ typeof( Vector3 ), "float3" },
+		{ typeof( Vector2 ), "float2" },
+		{ typeof( float ), "float" },
+		{ typeof( bool ), "bool" }
 	};
 
 	public bool Debug { get; private set; } = false;
@@ -39,7 +39,6 @@ public sealed partial class GraphCompiler
 	/// Current SubGraph
 	/// </summary>
     private ShaderGraphPlus Subgraph = null;
-
     private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
     /// <summary>
@@ -65,7 +64,7 @@ public sealed partial class GraphCompiler
         public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
         public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
-		public Dictionary<string, string> Functions = new();
+		public Dictionary<string, string> Functions { get; private set; } = new ();
 
         public string RepresentativeTexture { get; set; }
     }
@@ -105,19 +104,18 @@ public sealed partial class GraphCompiler
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
 
-	public GraphCompiler(Asset asset, ShaderGraphPlus graph, bool preview)
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
 	{
 		Graph = graph;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
-
         Subgraphs = new();
 
         AddSubgraphs( Graph );
     }
 
-		private void AddSubgraphs( ShaderGraphPlus graph )
+	private void AddSubgraphs( ShaderGraphPlus graph )
 	{
 		if ( graph != Graph )
 		{
@@ -1535,8 +1533,6 @@ public sealed partial class GraphCompiler
         visited.Clear();
 
         CurrentResultInput = null;
-
-        //if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
 
         return sb.ToString();
 	}
