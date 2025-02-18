@@ -1,11 +1,21 @@
 {
-  "Model": null,
+  "IsSubgraph": false,
+  "Path": "shaders/shadergraphplus/parallaxtest.sgrph",
+  "Model": "models/dev/plane.vmdl",
+  "Title": null,
   "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
-  "postProcessComponentInfo": {
-    "Order": 500
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
   },
   "nodes": [
     {
@@ -16,18 +26,16 @@
       "DefaultAmbientOcclusion": 0,
       "Identifier": "0",
       "Position": "732,-948",
+      "HandleOffsets": {},
       "Albedo": {
         "Identifier": "7",
-        "Output": "Result"
-      },
-      "Emission": {
-        "Identifier": "7",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/sbox_logo.psd",
+      "Image": "textures/s2_logo.psd",
       "UI": {
         "Name": "Height",
         "Default": "1,1,1,1",
@@ -37,48 +45,63 @@
         "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-180,-636"
+      "Position": "-132,-576",
+      "HandleOffsets": {}
     },
     {
       "_class": "GetTangentViewVectorNode",
       "Identifier": "2",
       "Position": "-180,-780",
+      "HandleOffsets": {},
       "WorldSpacePosition": {
         "Identifier": "3",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "WorldNormal": {
         "Identifier": "4",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "TangentUWs": {
         "Identifier": "13",
-        "Output": "U"
+        "Output": "U",
+        "Subgraph": null
       },
       "TangentVWs": {
         "Identifier": "13",
-        "Output": "V"
+        "Output": "V",
+        "Subgraph": null
       }
     },
     {
       "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
       "Identifier": "3",
-      "Position": "-444,-804"
+      "Position": "-444,-804",
+      "HandleOffsets": {}
     },
     {
       "_class": "WorldNormal",
       "Identifier": "4",
-      "Position": "-444,-720"
+      "Position": "-444,-720",
+      "HandleOffsets": {}
     },
     {
-      "_class": "TangentUWsNode",
+      "_class": "MissingNode",
+      "Title": "TangentUWsNode",
+      "Content": "{\r\n      \u0022_class\u0022: \u0022TangentUWsNode\u0022,\r\n      \u0022Identifier\u0022: \u00225\u0022,\r\n      \u0022Position\u0022: \u0022-756,-864\u0022\r\n    }",
       "Identifier": "5",
-      "Position": "-756,-864"
+      "Position": "-756,-864",
+      "HandleOffsets": {}
     },
     {
-      "_class": "TangentVWsNode",
+      "_class": "MissingNode",
+      "Title": "TangentVWsNode",
+      "Content": "{\r\n      \u0022_class\u0022: \u0022TangentVWsNode\u0022,\r\n      \u0022Identifier\u0022: \u00226\u0022,\r\n      \u0022Position\u0022: \u0022-756,-780\u0022\r\n    }",
       "Identifier": "6",
-      "Position": "-756,-780"
+      "Position": "-756,-780",
+      "HandleOffsets": {}
     },
     {
       "_class": "ParallaxNode",
@@ -89,26 +112,32 @@
       },
       "UseStockTextureFiltering": false,
       "Identifier": "7",
-      "Position": "168,-900",
+      "Position": "204,-900",
+      "HandleOffsets": {},
       "SliceCount": {
         "Identifier": "9",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "SliceDistance": {
         "Identifier": "10",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "TangentViewDir": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "TextureObject": {
         "Identifier": "1",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "Coords": {
         "Identifier": "11",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -116,7 +145,8 @@
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
       "Identifier": "8",
-      "Position": "-444,-348"
+      "Position": "-444,-348",
+      "HandleOffsets": {}
     },
     {
       "_class": "Float",
@@ -127,7 +157,8 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "9",
-      "Position": "-144,-912"
+      "Position": "-144,-912",
+      "HandleOffsets": {}
     },
     {
       "_class": "Float",
@@ -138,20 +169,24 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "10",
-      "Position": "-144,-852"
+      "Position": "-144,-852",
+      "HandleOffsets": {}
     },
     {
       "_class": "UVScaleNode",
       "DefaultScale": "1,1",
       "Identifier": "11",
       "Position": "-144,-432",
+      "HandleOffsets": {},
       "Coords": {
         "Identifier": "8",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "Scale": {
         "Identifier": "12",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -165,12 +200,14 @@
         "Step": 1
       },
       "Identifier": "12",
-      "Position": "-444,-528"
+      "Position": "-444,-528",
+      "HandleOffsets": {}
     },
     {
       "_class": "WorldTangent",
       "Identifier": "13",
-      "Position": "-444,-636"
+      "Position": "-444,-636",
+      "HandleOffsets": {}
     }
   ]
 }
