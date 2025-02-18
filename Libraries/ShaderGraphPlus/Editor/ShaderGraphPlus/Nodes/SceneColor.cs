@@ -1,7 +1,7 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 /// <summary>
-/// Color of the scene
+/// Color of the scene.
 /// </summary>
 [Title( "Scene Color" ), Category( "Variables" )]
 public sealed class SceneColorNode : ShaderNodePlus
