@@ -3,13 +3,13 @@ using Sandbox;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-public abstract class TextureSamplerBase : ShaderNodePlus
+public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
-	/// <summary>
-	/// Texture to sample in preview
-	/// </summary>
-	[ResourceType( "jpg" )]
-	public string Image
+    /// <summary>
+    /// Texture to sample in preview
+    /// </summary>
+    [ImageAssetPath]
+    public string Image
 	{
 		get => _image;
 		set
@@ -42,7 +42,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		if ( string.IsNullOrWhiteSpace( _image ) )
 			return;
 
-		var resourceText = string.Format( TextureDefinitionTemplate.TextureDefinition,
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
 			_image,
 			UI.ColorSpace,
 			UI.ImageFormat,
@@ -67,15 +67,13 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		}
 	}
 
-	[InlineEditor]
-    [Group("Default Values")]
+    [InlineEditor(Label = false), Group("Sampler")]
     public Sampler DefaultSampler { get; set; } = new Sampler();
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-    [Group("UI")]
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
     public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
@@ -89,8 +87,8 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 	protected TextureSamplerBase() : base()
 	{
 		Image = "materials/dev/white_color.tga";
-		ExpandSize = new Vector2( 0, 74 );
-	}
+        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+    }
 
 	public override void OnPaint( Rect rect )
 	{
@@ -113,6 +111,29 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
 		return result.IsValid ? new( ResultType.Float, $"{result}.{component}", true ) : new( ResultType.Float, "0.0f", true );
 	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		if ( Graph is ShaderGraphPlus sgp && sgp.IsSubgraph )
+		{
+			if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			{
+				errors.Add( $"Texture parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			}
+
+			foreach ( var node in sgp.Nodes )
+			{
+				if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
+				{
+					errors.Add( $"Duplicate texture parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
+				}
+			}
+		}
+
+		return errors;
+	}
 }
 
 
@@ -120,12 +141,12 @@ public abstract class TextureSamplerBase : ShaderNodePlus
 /// Ment for use when you want to pass a Texture2D into a node which happens to have a hlsl function that makes use of .Sample().
 /// </summary>
 [Title( "Texture Object" ), Category( "Textures" )]
-public sealed class TextureObjectNode : ShaderNodePlus
+public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
     /// <summary>
     /// Texture to sample in preview
     /// </summary>
-    [ResourceType("jpg")]
+   	[ImageAssetPath]
     public string Image
 	{
 		get => _image;
@@ -163,7 +184,7 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		if ( string.IsNullOrWhiteSpace( _image ) )
 			return;
 
-		var resourceText = string.Format( TextureDefinitionTemplate.TextureDefinition,
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
 			_image,
 			UI.ColorSpace,
 			UI.ImageFormat,
@@ -188,11 +209,11 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		}
 	}
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-	public TextureInput UI { get; set; } = new TextureInput
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
+    public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -204,9 +225,9 @@ public sealed class TextureObjectNode : ShaderNodePlus
 
 	public TextureObjectNode() : base()
 	{
-		Image = "textures/sbox_logo.psd";
-		ExpandSize = new Vector2( 32, 128 );
-	}
+        Image = "materials/dev/white_color.tga";
+        ExpandSize = new Vector2( 0, 128 );
+    }
 
 	public override void OnPaint( Rect rect )
 	{
@@ -224,10 +245,33 @@ public sealed class TextureObjectNode : ShaderNodePlus
 		}
 	}
 
-	/// <summary>
-	/// Texture object result.
-	/// </summary>
-	[Hide]
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
+		{
+			if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			{
+				errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			}
+
+			foreach ( var node in sg.Nodes )
+			{
+				if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
+				{
+					errors.Add( $"Duplicate texture object parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
+				}
+			}
+		}
+
+		return errors;
+	}
+
+    /// <summary>
+    /// Texture object result.
+    /// </summary>
+    [Hide]
 	[Output( typeof( TextureObject ) ), Title( "Tex Object" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -363,11 +407,11 @@ public sealed class TextureCube : ShaderNodePlus
 	[InlineEditor]
 	public Sampler DefaultSampler { get; set; } = new Sampler();
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor]
-	public TextureInput UI { get; set; } = new TextureInput
+    /// <summary>
+    /// Settings for how this texture shows up in material editor
+    /// </summary>
+    [InlineEditor(Label = false), Group("UI")]
+    public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -377,12 +421,32 @@ public sealed class TextureCube : ShaderNodePlus
 	public TextureCube() : base()
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
-	}
+        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+    }
 
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
+    public override void OnPaint(Rect rect)
+    {
+        rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
+
+        Paint.SetBrush("/image/transparent-small.png");
+        Paint.DrawRect(rect.Shrink(2), 2);
+
+        Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
+        Paint.DrawRect(rect, 2);
+
+        if (!string.IsNullOrEmpty(Texture))
+        {
+            var tex = Sandbox.Texture.Find(Texture);
+            if (tex is null) return;
+            var pixmap = Pixmap.FromTexture(tex);
+            Paint.Draw(rect.Shrink(2), pixmap);
+        }
+    }
+
+    /// <summary>
+    /// RGBA color result
+    /// </summary>
+    [Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
