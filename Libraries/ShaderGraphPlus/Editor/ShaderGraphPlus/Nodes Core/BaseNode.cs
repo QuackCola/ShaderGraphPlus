@@ -1,4 +1,4 @@
-﻿using Editor.ShaderGraph;
+﻿using Editor.ShaderGraphPlus;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -21,9 +21,20 @@ public abstract class BaseNodePlus : INode
 	[Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 
-	[Browsable( false )]
+    [JsonIgnore, Hide]
+    public IGraph _graph;
+
+    [Browsable( false )]
 	[JsonIgnore, Hide]
-	public IGraph Graph { get; set; }
+	public IGraph Graph
+	{
+		get => _graph;
+		set
+		{
+			_graph = value;
+			FilterInputsAndOutputs();
+		}
+	}
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public Vector2 ExpandSize { get; set; }
@@ -32,16 +43,19 @@ public abstract class BaseNodePlus : INode
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugIn> Inputs { get; }
+	public virtual IEnumerable<IPlugIn> Inputs { get; protected set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public IEnumerable<IPlugOut> Outputs { get; }
+	public virtual IEnumerable<IPlugOut> Outputs { get; protected set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public string ErrorMessage => null;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool IsReachable => true;
+
+	[Hide, Browsable( false )]
+	public Dictionary<string, float> HandleOffsets { get; set; } = new();
 
 	public BaseNodePlus()
 	{
@@ -56,6 +70,11 @@ public abstract class BaseNodePlus : INode
 		Changed?.Invoke();
 	}
 
+	public virtual void OnFrame()
+	{
+
+	}
+
 	public string NewIdentifier()
 	{
 		Identifier = Guid.NewGuid().ToString();
@@ -67,7 +86,7 @@ public abstract class BaseNodePlus : INode
 		return new NodeUI( view, this );
 	}
 
-    public Color GetPrimaryColor(GraphView view)
+    public Color GetPrimaryColor( GraphView view )
     {
         return PrimaryColor;
     }
@@ -176,75 +195,53 @@ public abstract class BaseNodePlus : INode
 		var inputs = new List<BasePlugIn>();
 		var outputs = new List<BasePlugOut>();
 
-		//inputs.Exists( < BasePlug >, "");
-
 		foreach ( var propertyInfo in type.GetProperties() )
 		{
 			if ( propertyInfo.GetCustomAttribute<InputAttribute>() is { } inputAttrib )
 			{
-				inputs.Add( new BasePlugIn( node, propertyInfo, inputAttrib.Type ?? typeof( object ) ) );
+				inputs.Add( new BasePlugIn( node, new( propertyInfo ), inputAttrib.Type ?? typeof( object ) ) );
 			}
 
 			if ( propertyInfo.GetCustomAttribute<OutputAttribute>() is { } outputAttrib )
 			{
-				outputs.Add( new BasePlugOut( node, propertyInfo, outputAttrib.Type ?? typeof( object ) ) );
+				outputs.Add( new BasePlugOut( node, new( propertyInfo ), outputAttrib.Type ?? typeof( object ) ) );
 			}
 		}
 
 		return (inputs, outputs);
 	}
+
+    private void FilterInputsAndOutputs()
+    {
+       if (_graph is not null)
+       {
+           if (Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn)
+           {
+               Inputs = new List<IPlugIn>();
+           }
+       }
+    }
+
 }
 
-public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : IPlug
+public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
 	INode IPlug.Node => Node;
 
-	public string Identifier => Property.Name;
-	public DisplayInfo DisplayInfo => DisplayInfo.ForMember( Property );
+    public string Identifier => Info.Name;
+    public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
     public ValueEditor CreateEditor(NodeUI node, Plug plug)
     {
-        var editor = Property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+       	var editor = Info.CreateEditor( node, plug, Type );
+		if ( editor is not null ) return editor;
 
-        if (editor is not null)
-        {
-            if (Type == typeof(float))
-            {
-                var slider = new FloatEditor(plug) { Title = DisplayInfo.Name, Node = node };
-                slider.Bind("Value").From(node.Node, editor.ValueName);
+		// Default
+		{
+			var defaultEditor = new DefaultEditor( plug );
+		}
 
-                var range =
-                    Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
-                if (range != null)
-                {
-                    slider.Bind("Min").From(node.Node, range.Min);
-                    slider.Bind("Max").From(node.Node, range.Max);
-                    slider.Bind("Step").From(node.Node, range.Step);
-                }
-                else if (Property.GetCustomAttribute<MinMaxAttribute>() is MinMaxAttribute minMax)
-                {
-                    slider.Min = minMax.MinValue;
-                    slider.Max = minMax.MaxValue;
-                }
-
-                return slider;
-            }
-
-            if (Type == typeof(Color))
-            {
-                var slider = new ColorEditor(plug) { Title = DisplayInfo.Name, Node = node };
-                slider.Bind("Value").From(node.Node, editor.ValueName);
-
-                return slider;
-            }
-        }
-
-        // Default
-        {
-            var defaultEditor = new DefaultEditor(plug);
-        }
-
-        return null;
+		return null;
     }
 
     public Menu CreateContextMenu( NodeUI node, Plug plug )
@@ -273,24 +270,30 @@ public record BasePlug( BaseNodePlus Node, PropertyInfo Property, Type Type ) : 
 }
 
 
-public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
-	: BasePlug( Node, Property, Type ), IPlugIn
+public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
+	: BasePlug( Node, Info, Type ), IPlugIn
 {
 	IPlugOut IPlugIn.ConnectedOutput
 	{
 		get
 		{
-			if (Property.PropertyType != typeof( NodeInput ))
+			if ( Info.Property is null )
+			{
+				return Info.ConnectedPlug;
+			}
+
+			if ( Info.Type != typeof( NodeInput ) )
 			{
 				return null;
 			}
 
-			var value = (NodeInput) Property.GetValue( Node )!;
+			var value = Info.GetInput( Node );
 
-			if (!value.IsValid)
+			if ( !value.IsValid )
 			{
 				return null;
 			}
+
 
 			var node = ((ShaderGraphPlus) Node.Graph).FindNode( value.Identifier );
 			var output = node?.Outputs
@@ -300,14 +303,21 @@ public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
 		}
 		set
 		{
-			if (Property.PropertyType != typeof( NodeInput ))
+			var property = Info.Property;
+			if ( property is null )
+			{
+				Info.ConnectedPlug = value;
+				return;
+			}
+
+			if ( property.PropertyType != typeof( NodeInput ) )
 			{
 				return;
 			}
 
-			if (value is null)
+			if ( value is null )
 			{
-				Property.SetValue( Node, default( NodeInput ) );
+				property.SetValue( Node, default( NodeInput ) );
 				return;
 			}
 
@@ -316,7 +326,7 @@ public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
 				return;
 			}
 
-			Property.SetValue( Node, new NodeInput
+			property.SetValue( Node, new NodeInput
 			{
 				Identifier = fromPlug.Node.Identifier,
 				Output = fromPlug.Identifier
@@ -326,14 +336,132 @@ public record BasePlugIn( BaseNodePlus Node, PropertyInfo Property, Type Type )
 
 	public float? GetHandleOffset( string name )
 	{
+		if ( Node.HandleOffsets.TryGetValue( name, out var value ) )
+		{
+			return value;
+		}
 		return null;
 	}
 
-    public void SetHandleOffset(string name, float? value)
-    {
-        // Do nothing instead of throwing unimplemented exception
-    }
+	public void SetHandleOffset( string name, float? value )
+	{
+		if ( value is null ) Node.HandleOffsets.Remove( name );
+		else Node.HandleOffsets[name] = value.Value;
+	}
 }
 
-public record BasePlugOut( BaseNodePlus Node, PropertyInfo Property, Type Type )
-	: BasePlug( Node, Property, Type ), IPlugOut;
+public record BasePlugOut( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugOut;
+
+
+public class PlugInfo
+{
+	public Guid Id { get; set; }
+	public string Name { get; set; }
+	public Type Type { get; set; }
+	public DisplayInfo DisplayInfo { get; set; }
+	public PropertyInfo Property { get; set; } = null;
+	public IPlugOut ConnectedPlug { get; set; } = null;
+
+	public PlugInfo()
+	{
+		DisplayInfo = new();
+	}
+	public PlugInfo( PropertyInfo property )
+	{
+		Name = property.Name;
+		Type = property.PropertyType;
+		var info = DisplayInfo.ForMember( Type );
+		info.Name = property.Name;
+		var titleAttr = property.GetCustomAttribute<TitleAttribute>();
+		if ( titleAttr is not null )
+		{
+			info.Name = titleAttr.Value;
+		}
+		DisplayInfo = info;
+		Property = property;
+	}
+
+	public NodeInput GetInput( BaseNodePlus node )
+	{
+		if ( Property is not null )
+		{
+			return (NodeInput)Property.GetValue( node )!;
+		}
+
+		return default;
+	}
+
+	public ValueEditor CreateEditor( NodeUI node, Plug plug, Type type )
+	{
+		if ( Property is null )
+		{
+			if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
+			{
+				var entry = subgraphNode.InputReferences[plugIn.Inner];
+				var parameterNode = entry.Item1;
+				var parameterType = entry.Item2;
+				if ( parameterNode.UI.Type == UIType.Default ) return null;
+
+				if ( parameterType == typeof( float ) )
+				{
+					var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+					slider.Bind( "Value" ).From( parameterNode, "Value" );
+
+					var rangeMin = parameterNode.GetRangeMin();
+					var rangeMax = parameterNode.GetRangeMax();
+					var rangeStep = parameterNode.UI.Step;
+
+					slider.Bind( "Min" ).FromObject( rangeMin.x );
+					slider.Bind( "Max" ).FromObject( rangeMax.x );
+					slider.Bind( "Step" ).FromObject( rangeStep );
+
+					return slider;
+				}
+				else if ( parameterType == typeof( Color ) )
+				{
+					var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+					slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
+
+					return slider;
+				}
+			}
+
+			return null;
+		}
+
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+
+		if ( editor is not null )
+		{
+			if ( type == typeof( float ) )
+			{
+				var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+
+				var range = Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
+				if ( range != null )
+				{
+					slider.Bind( "Min" ).From( node.Node, range.Min );
+					slider.Bind( "Max" ).From( node.Node, range.Max );
+					slider.Bind( "Step" ).From( node.Node, range.Step );
+				}
+				else if ( Property.GetCustomAttribute<MinMaxAttribute>() is MinMaxAttribute minMax )
+				{
+					slider.Min = minMax.MinValue;
+					slider.Max = minMax.MaxValue;
+				}
+
+				return slider;
+			}
+
+			if ( type == typeof( Color ) )
+			{
+				var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+
+				return slider;
+			}
+		}
+		return null;
+	}
+}

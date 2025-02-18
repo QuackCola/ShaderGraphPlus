@@ -1,154 +1,5 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-public class PostProcessingPreview : SceneCustomObject
-{
-
-	private Material _material;
-
-	public Material Material
-	{
-		set
-		{
-			_material = value;
-		}
-	}
-
-	// On the attribute train!
-	private Dictionary<string, Texture> _textureAttributes = new();
-	public Dictionary<string, Texture> textureAttributes
-	{
-		get => _textureAttributes;
-		set
-		{
-			_textureAttributes = value;
-		}
-	}
-
-	private Dictionary<string, Color> _float4Attributes = new();
-	public Dictionary<string, Color> float4Attributes
-	{
-		get => _float4Attributes;
-		set
-		{
-			_float4Attributes = value;
-		}
-	}
-
-	private Dictionary<string, Vector3> _float3Attributes = new();
-	public Dictionary<string, Vector3> float3Attributes
-	{
-		get => _float3Attributes;
-		set
-		{
-			_float3Attributes = value;
-		}
-	}
-
-	private Dictionary<string, Vector2> _float2Attributes = new();
-	public Dictionary<string, Vector2> float2Attributes
-	{
-		get => _float2Attributes;
-		set
-		{
-			_float2Attributes = value;
-		}
-	}
-
-	private Dictionary<string, float> _floatAttributes = new();
-	public Dictionary<string, float> floatAttributes
-	{
-		get => _floatAttributes;
-		set
-		{
-			_floatAttributes = value;
-		}
-	}
-
-	private Dictionary<string, bool> _boolAttributes = new();
-	public Dictionary<string, bool> boolAttributes
-	{
-		get => _boolAttributes;
-		set
-		{
-			_boolAttributes = value;
-		}
-	}
-
-	private bool _enabled;
-	public bool Enabled
-	{
-		get => _enabled;
-		set
-		{
-			_enabled = value;
-		}
-	}
-
-	private Preview _preview;
-
-	public PostProcessingPreview( SceneWorld sceneWorld, Preview preview ) : base( sceneWorld )
-	{
-		_preview = preview;
-	}
-
-	// hmmmm
-	private void SetAttributes()
-	{
-		foreach ( var attribute in _textureAttributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		foreach ( var attribute in _float4Attributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		foreach ( var attribute in _float3Attributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		foreach ( var attribute in _float2Attributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		foreach ( var attribute in _floatAttributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		foreach ( var attribute in _boolAttributes )
-		{
-			Graphics.Attributes.Set( attribute.Key, attribute.Value );
-		}
-
-		Graphics.Attributes.Set( "g_flPreviewTime", RealTime.Now );
-
-	}
-
-	public override void RenderSceneObject()
-	{
-		base.RenderSceneObject();
-
-		if ( !_enabled )
-			return;
-
-		if ( _material is null )
-		{
-			Log.Error( "_material is NULL!!!" );
-			return;
-		}
-
-		SetAttributes();
-
-		Graphics.GrabFrameTexture( "ColorBuffer", Graphics.Attributes );
-		Graphics.GrabDepthTexture( "DepthBuffer", Graphics.Attributes );
-		Graphics.Blit( _material, Graphics.Attributes );
-	}
-}
-
 public class Throbber : SceneCustomObject
 {
 	private readonly Texture _texture;
@@ -234,16 +85,16 @@ public class PreviewPanel : Widget
 		set => _preview.Material = value;
 	}
 
-	public Material PostProcessingMaterial
-	{
-		set => _preview.PostProcessingMaterial = value;
-	}
-
 	public Color Tint
 	{
 		set => _preview.Tint = value;
 	}
 
+	public bool IsPostProcess
+	{
+	    set => _preview.IsPostProcess = value;
+	}
+	
 	private void UpdateAnimationCombo()
 	{
 		_animationCombo.Clear();
@@ -272,14 +123,6 @@ public class PreviewPanel : Widget
 		set
 		{
 			_preview.IsCompiling = value;
-		}
-	}
-
-	public bool IsPostProcessShader
-	{
-		set
-		{
-			_preview.IsPostProcessShader = value;
 		}
 	}
 
@@ -356,10 +199,7 @@ public class PreviewPanel : Widget
 		toolBar.AddOption( null, "square", () => Model = Model.Load( "models/dev/plane.vmdl" ) ).ToolTip = "Plane";
 		toolBar.AddOption( null, "accessibility", () =>
 		{
-			var picker = AssetPicker.Create(this, AssetType.Model);
-            picker.Window.StateCookie = "PreviewPanel";
-			picker.Window.RestoreFromStateCookie();
-			picker.Window.Title = $"Select {AssetType.Model.FriendlyName}";
+			var picker = AssetPicker.Create( this, AssetType.Model );
 			picker.OnAssetHighlighted = x => Model = x.First().LoadResource<Model>();
 			picker.OnAssetPicked = x => Model = x.First().LoadResource<Model>();
 			picker.Window.Show();
@@ -463,23 +303,22 @@ public class PreviewPanel : Widget
 
 public class Preview : SceneRenderingWidget
 {
-    private SceneWorld _world => Scene.SceneWorld;
-
-    private Vector2 _lastCursorPos;
-    private Vector2 _cursorDelta;
-    private Vector2 _angles;
-    private Vector3 _origin;
-    private float _distance;
-    private float _modelRotation;
-    private bool _orbitControl;
-    private bool _orbitLights;
-    private bool _zoomControl;
-    private bool _panControl;
-
-    private SceneModel _sceneObject;
-    private Throbber _thobber;
-    private PostProcessingPreview _postprocessingpreview;
-
+	private SceneWorld _world => Scene.SceneWorld;
+	
+	private Vector2 _lastCursorPos;
+	private Vector2 _cursorDelta;
+	private Vector2 _angles;
+	private Vector3 _origin;
+	private float _distance;
+	private float _modelRotation;
+	private bool _orbitControl;
+	private bool _orbitLights;
+	private bool _zoomControl;
+	private bool _panControl;
+	
+	private SceneModel _sceneObject;
+	private Throbber _thobber;
+	
 	private Dictionary<string, Texture> _textureAttributes = new();
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private Dictionary<string, Float3x3> _float3x3Attributes = new();
@@ -489,16 +328,14 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Vector2> _float2Attributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
-	private Dictionary<string, object> _postprocessingAttributes = new();
 	private int _stageId;
 
-    public Material PostProcessingMaterial { get; set; }
-
-    public bool EnablePostProcessing
-    {
-        get { return false; }
-        set { }
-    }
+	// TODO
+	public bool EnablePostProcessing
+	{
+	    get { return false; }
+	    set { }
+	}
 
     private bool _enableNodePreview;
 	public bool EnableNodePreview
@@ -515,18 +352,20 @@ public class Preview : SceneRenderingWidget
 		}
 	}
 
-    private bool _enableShadows = true;
-    public bool EnableShadows
-    {
-        get => _enableShadows;
-        set
-        {
-            _enableShadows = value;
+	private bool _enableShadows = true;
+	public bool EnableShadows
+	{
+		get => _enableShadows;
+		set
+		{
+			_enableShadows = value;
 
-            // TODO
-            //_camera.Attributes.Set( "enableShadows", _enableShadows );
-        }
-    }
+			if ( _sceneObject.IsValid() )
+			{
+				_sceneObject.Flags.CastShadows = _enableShadows;
+			}
+		}
+	}
 
     public bool ShowSkybox
     {
@@ -546,20 +385,27 @@ public class Preview : SceneRenderingWidget
 		set => _ground.RenderingEnabled = value;
 	}
 
-    private bool _renderBackfaces;
-    public bool RenderBackfaces
-    {
-        get => _renderBackfaces;
-        set
-        {
-            _renderBackfaces = value;
+	private bool _ispostprocess;
+	public bool IsPostProcess
+	{
+	    get => _ispostprocess;
+	    set => _ispostprocess = value;
+	}
 
-            if (_sceneObject.IsValid())
-            {
-                _sceneObject.Attributes.SetCombo("D_RENDER_BACKFACES", _renderBackfaces);
-            }
-        }
-    }
+	private bool _renderBackfaces;
+	public bool RenderBackfaces
+	{
+	    get => _renderBackfaces;
+	    set
+	    {
+	        _renderBackfaces = value;
+	
+	        if ( _sceneObject.IsValid() )
+	        {
+	            _sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
+	        }
+	    }
+	}
 
     public Color BackgroundColor
     {
@@ -573,11 +419,11 @@ public class Preview : SceneRenderingWidget
         }
     }
 
-    public void UpdateMaterial()
-    {
-        _sceneObject.GetType().GetMethod("SetMaterialOverrideForMeshInstances",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.Invoke(_sceneObject, new[] { _material });
-    }
+	public void UpdateMaterial()
+	{
+		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
+			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { _material } );
+	}
 
     private Material _material;
     public Material Material
@@ -675,97 +521,57 @@ public class Preview : SceneRenderingWidget
 		set => _sceneObject.UseAnimGraph = value;
 	}
 
-	//private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
-	//private readonly Dictionary<string, Float3x3> _float3x3Attributes = new();
-	//private readonly Dictionary<string, Float4x4> _float4x4Attributes = new();
-
 	public void SetAttribute( string id, Float2x2 value ) // Stub - Quack
 	{
 		_float2x2Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			//_postprocessingpreview.textureAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.SetData( id, value );
 	}
 
 	public void SetAttribute( string id, Float3x3 value ) // Stub - Quack
 	{
 		_float3x3Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			//_postprocessingpreview.textureAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.SetData( id, value );
 	}
 
 	public void SetAttribute( string id, Float4x4 value ) // Stub - Quack
 	{
 		_float4x4Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			//_postprocessingpreview.textureAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.SetData( id, value );
 	}
 
 	public void SetAttribute( string id, Texture value )
 	{
 		_textureAttributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.textureAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
 	public void SetAttribute( string id, Color value )
 	{
 		_float4Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.float4Attributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
 	public void SetAttribute( string id, Vector3 value )
 	{
 		_float3Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.float3Attributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
 	public void SetAttribute( string id, Vector2 value )
 	{
 		_float2Attributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.float2Attributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
 	public void SetAttribute( string id, float value )
 	{
 		_floatAttributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.floatAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
 	public void SetAttribute( string id, in bool value )
 	{
 		_boolAttributes.Add( id, value );
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.boolAttributes.Add( id, value );
-		}
 		_sceneObject.Attributes.Set( id, value );
 	}
 
@@ -791,26 +597,11 @@ public class Preview : SceneRenderingWidget
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
 
-
-		if ( _postprocessingpreview.Enabled )
-		{
-			_postprocessingpreview.textureAttributes.Clear();
-			_postprocessingpreview.float4Attributes.Clear();
-			_postprocessingpreview.float3Attributes.Clear();
-			_postprocessingpreview.float2Attributes.Clear();
-			_postprocessingpreview.floatAttributes.Clear();
-			_postprocessingpreview.boolAttributes.Clear();
-		}
-
 		if ( _sceneObject.IsValid() )
 		{
 			_sceneObject.Attributes.Clear();
 		}
 
-		if ( _postprocessingpreview.IsValid() )
-		{
-		
-		}
 	}
 
 	public bool IsCompiling
@@ -821,21 +612,11 @@ public class Preview : SceneRenderingWidget
 		}
 	}
 
-	public bool IsPostProcessShader
-	{
-		set
-		{
-			_postprocessingpreview.Enabled = value;
-			_postprocessingpreview.Material = PostProcessingMaterial;
-		}
-	}
-
 	public Model SphereModel { get; set; }
 	public Model GroundModel { get; set; }
 
     private readonly SceneObject _ground;
     private readonly SkyBox2D _sky;
-
 
     public Preview( Widget parent, string model ) : base( parent )
 	{
@@ -844,29 +625,48 @@ public class Preview : SceneRenderingWidget
 
         Scene = Scene.CreateEditorScene();
 
-        using (Scene.Push())
-        {
-            var camera = new GameObject(true, "camera").GetOrAddComponent<CameraComponent>();
-            camera.BackgroundColor = Color.White;
+		using ( Scene.Push() )
+		{
+			{
+				var camera = new GameObject( true, "camera" ).GetOrAddComponent<CameraComponent>();
+                camera.BackgroundColor = Color.White;
+			}
+			{
+				var sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
+				sun.WorldRotation = Rotation.FromPitch( 50 );
+				sun.LightColor = Color.White * 2.5f + Color.Cyan * 0.05f;
+			}
+			{
+				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
+				light.WorldPosition = 100;
+				light.Radius = 500;
+				light.LightColor = Color.Orange * 3;
+				light.Enabled = true;
+			}
+			{
+				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
+				light.WorldPosition = -100;
+				light.Radius = 500;
+				light.LightColor = Color.Cyan * 3;
+				light.Enabled = true;
+			}
+			{
+				var cubemap = new GameObject( true, "cubemap" ).GetOrAddComponent<EnvmapProbe>();
+				cubemap.Texture = Texture.Load( "textures/cubemaps/default2.vtex" );
+			}
+			{
+				_sky = new GameObject( true, "sky" ).GetOrAddComponent<SkyBox2D>();
+			}
+		}
 
-            var sun = new GameObject(true, "sun").GetOrAddComponent<DirectionalLight>();
-            sun.WorldRotation = Rotation.FromPitch(50);
-            sun.LightColor = Color.White * 2.5f + Color.Cyan * 0.05f;
+		_distance = 150.0f;
+		_angles = new Vector2( 45 * 3, 30 );
 
-            var cubemap = new GameObject(true, "cubemap").GetOrAddComponent<EnvmapProbe>();
-            cubemap.Texture = Texture.Load("textures/cubemaps/default2.vtex");
+		Scene.Camera.WorldRotation = new Angles( _angles.y, -_angles.x, 0 );
+		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
+		Scene.Camera.FieldOfView = 45;
 
-            _sky = new GameObject(true, "sky").GetOrAddComponent<SkyBox2D>();
-        }
-
-        _distance = 150.0f;
-        _angles = new Vector2(45 * 3, 30);
-
-        Scene.Camera.WorldRotation = new Angles(_angles.y, -_angles.x, 0);
-        Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
-        Scene.Camera.FieldOfView = 45;
-
-        SphereModel = Model.Builder
+		SphereModel = Model.Builder
 			.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
 			.Create();
 
@@ -874,36 +674,30 @@ public class Preview : SceneRenderingWidget
 			.AddMesh( CreatePlane() )
 			.Create();
 
+		_thobber = new Throbber( _world, this );
 
-        new SceneDirectionalLight(_world, Rotation.FromPitch(50), Color.White * 2.5f + Color.Cyan * 0.05f);
-
-        new SceneLight(_world, new Vector3(100, 100, 100), 500, Color.Orange * 3)
-        {
-            ShadowsEnabled = true
-        };
-
-        new SceneLight(_world, new Vector3(-100, -100, 100), 500, Color.Cyan * 3)
-        {
-            ShadowsEnabled = true
-        };
-
-        _thobber = new Throbber(_world, this);
-        _postprocessingpreview = new PostProcessingPreview( _world, this );
-
-		PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
 		_material = Material.Load( "materials/core/shader_editor.vmat" );
+		Model = string.IsNullOrWhiteSpace( model ) ? SphereModel : Model.Load( model );
 
-        Model = string.IsNullOrWhiteSpace(model) ? SphereModel : Model.Load(model);
-
-        _ground = new SceneObject( _world, GroundModel );
+		_ground = new SceneObject( _world, GroundModel );
 		_ground.RenderingEnabled = false;
 	}
 
-	// Application.CursorPosition is fucked for different DPI
-	private static Vector2 CursorPosition => Application.UnscaledCursorPosition;
+    public override void OnDestroyed()
+    {
+        base.OnDestroyed();
+
+        Scene?.Destroy();
+        Scene = null;
+    }
+
+    // Application.CursorPosition is fucked for different DPI
+    private static Vector2 CursorPosition => Application.UnscaledCursorPosition;
 
 	public override void PreFrame()
 	{
+		Scene.EditorTick( RealTime.Now, RealTime.Delta );
+
 		var cursorPos = CursorPosition;
 		_cursorDelta = cursorPos - _lastCursorPos;
 
@@ -942,12 +736,12 @@ public class Preview : SceneRenderingWidget
 		{
 			if ( _cursorDelta.Length > 0.0f )
 			{
-                var right = Scene.Camera.WorldRotation.Right * _cursorDelta.x * 0.2f;
-                var down = Scene.Camera.WorldRotation.Down * _cursorDelta.y * 0.2f;
-                var invRot = Rotation.FromYaw(_modelRotation).Inverse;
-                _origin += right * invRot;
-                _origin += down * invRot;
-            }
+				var right = Scene.Camera.WorldRotation.Right * _cursorDelta.x * 0.2f;
+				var down = Scene.Camera.WorldRotation.Down * _cursorDelta.y * 0.2f;
+				var invRot = Rotation.FromYaw( _modelRotation ).Inverse;
+				_origin += right * invRot;
+				_origin += down * invRot;
+			}
 
 			Application.UnscaledCursorPosition = _lastCursorPos;
 			Cursor = CursorShape.Blank;
@@ -965,10 +759,9 @@ public class Preview : SceneRenderingWidget
 
 		_ground.Position = Vector3.Up * (_model.RenderBounds.Mins.z - 0.1f);
 
-        Scene.Camera.WorldRotation = new Angles(_angles.y, -_angles.x, 0);
-        Scene.Camera.WorldPosition = (_origin + _model.RenderBounds.Center) * _sceneObject.Rotation + Scene.Camera.WorldRotation.Backward * _distance;
-    }
-
+		Scene.Camera.WorldRotation = new Angles( _angles.y, -_angles.x, 0 );
+		Scene.Camera.WorldPosition = (_origin + _model.RenderBounds.Center) * _sceneObject.Rotation + Scene.Camera.WorldRotation.Backward * _distance;
+	}
     protected override void OnKeyPress( KeyEvent e )
 	{
 		base.OnKeyPress( e );
