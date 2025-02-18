@@ -165,7 +165,7 @@ public sealed partial class GraphCompiler
     }
 
 	/// <summary>
-	/// Register some global parameter for the graph to use.
+	/// Register some generic global parameter for a node to use.
 	/// </summary>
 	/// <param name="global"></param>
     public void RegisterGlobal( string global )
