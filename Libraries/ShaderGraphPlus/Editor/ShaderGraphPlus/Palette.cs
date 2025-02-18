@@ -7,10 +7,8 @@ public partial class PaletteWidget : Widget
 	private readonly TreeView _treeView;
 	private readonly Button _searchFilterClear;
 
-    private bool IsSubgraph { get; }
-
-    public PaletteWidget(Widget parent, bool isSubgraph) : base(parent)
-    {
+	public PaletteWidget( Widget parent ) : base( parent )
+	{
 		Name = "Palette";
 		WindowTitle = "Palette";
 		SetWindowIcon( "palette" );
@@ -53,23 +51,7 @@ public partial class PaletteWidget : Widget
 	public IEnumerable<IGrouping<string, DisplayInfo>> GetItems()
 	{
 		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-			.Where( x =>
-			{
-				if ( x.IsAbstract ) return false;
-				if ( IsSubgraph && x.TargetType == typeof( Result ) )
-				{
-					return false;
-				}
-				if ( !IsSubgraph && x.TargetType == typeof( FunctionResult ) )
-				{
-					return false;
-				}
-				if ( x.TargetType == typeof( SubgraphNode ) )
-				{
-					return false;
-				}
-				return true;
-			} )
+			.Where( x => !x.IsAbstract )
 			.Select( x => DisplayInfo.ForType( x.TargetType ) );
 
 		if ( !string.IsNullOrEmpty( _searchFilter.Text ) )

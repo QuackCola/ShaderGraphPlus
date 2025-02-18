@@ -22,8 +22,8 @@ public enum MaterialDomain
 {
     [Icon("view_in_ar")]
     Surface,
-    [Icon("brush")]
-    BlendingSurface,
+	  BlendingSurface,
+	  Glass,
     [Icon("desktop_windows")]
     PostProcess,
 }
@@ -39,7 +39,7 @@ public class PreviewSettings
 }
 
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
-public partial class ShaderGraphPlus : IGraph
+public sealed partial class ShaderGraphPlus : IGraph
 {
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
@@ -50,52 +50,33 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
-    [Hide]
-	public bool IsSubgraph { get; set; }
-
-	[Hide]
-	public string Path { get; set; }
-
 	[Hide]
 	public string Model { get; set; }
 
-    /// <summary>
-	/// The name of the Node when used in ShaderGraph
-	/// </summary>
-	[ShowIf( nameof( IsSubgraph ), true )]
-	public string Title { get; set; }
-
 	public string Description { get; set; }
 
-    /// <summary>
-	/// The category of the Node when browsing the Node Library (optional)
-	/// </summary>
-	[ShowIf( nameof( AddToNodeLibrary ), true )]
-	public string Category { get; set; }
-
-	[IconName, ShowIf( nameof( IsSubgraph ), true )]
-	public string Icon { get; set; }
-
-    /// <summary>
-	/// Whether or not this Node should appear when browsing the Node Library.
-	/// Otherwise can only be referenced by dragging the Subgraph asset into the graph.
-	/// </summary>
-	[ShowIf( nameof( IsSubgraph ), true )]
-	public bool AddToNodeLibrary { get; set; }
-
-
+	[HideIf( nameof(this.MaterialDomain), MaterialDomain.PostProcess )]
 	public BlendMode BlendMode { get; set; }
 
-    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.PostProcess )]
-    public ShadingModel ShadingModel { get; set; }
+	public ShadingModel ShadingModel { get; set; }
 
 	public MaterialDomain MaterialDomain { get; set; }
+
+    [ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
+    [InlineEditor]
+    [Group("Post Processing")]
+    public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
     //
     // Summary:
     //     Custom key-value storage for this project.
     [Hide]
     public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
+
+    [Hide]
+    [JsonIgnore]
+    public List<string> MissingNodes { get; set; } = new List<string>();
+
 
     [Hide]
     public PreviewSettings PreviewSettings { get; set; } = new();
@@ -216,14 +197,14 @@ public partial class ShaderGraphPlus : IGraph
     //
     // Returns:
     //     Always true.
-    public bool SetMeta( string keyname, object outvalue )
+    public bool SetMeta(string keyname, object outvalue)
     {
-        if ( Metadata == null )
+        if (Metadata == null)
         {
-            Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
+            Dictionary<string, object> dictionary2 = (Metadata = new Dictionary<string, object>());
         }
 
-        if ( outvalue == null )
+        if (outvalue == null)
         {
             return Metadata.Remove(keyname);
         }
@@ -233,12 +214,3 @@ public partial class ShaderGraphPlus : IGraph
     }
 
 }
-
-
-[GameResource("Shader Graph Plus Function", "sgpfunc", "Editor Resource", Icon = "account_tree" )]
-public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
-{
-
-
-}
-
