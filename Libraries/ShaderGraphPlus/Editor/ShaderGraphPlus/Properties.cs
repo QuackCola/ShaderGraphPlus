@@ -2,7 +2,11 @@
 
 public class Properties : Widget
 {
-	private object _target;
+    private ScrollArea scroller;
+    private ControlSheet sheet;
+    private string filterText;
+
+    private object _target;
 	public object Target
 	{
 		get => _target;
@@ -24,10 +28,10 @@ public class Properties : Widget
 				PropertyUpdated?.Invoke();
 			};
 
-			var sheet = new ControlSheet();
-			sheet.AddObject( so );
+			sheet = new ControlSheet();
+			sheet.AddObject( so, PropertyFilter );
 
-			var scroller = new ScrollArea( this );
+			scroller = new ScrollArea( this );
 			scroller.Canvas = new Widget();
 			scroller.Canvas.Layout = Layout.Column();
 			scroller.Canvas.VerticalSizeMode = SizeMode.CanGrow;
@@ -64,5 +68,33 @@ public class Properties : Widget
 
 	private void OnFilterEdited( string filter )
 	{
+		filterText = filter;
+		sheet.Clear( true );
+		sheet.AddObject( _target.GetSerialized(), PropertyFilter );
+		scroller.Update();
+	}
+
+	bool PropertyFilter( SerializedProperty property )
+	{
+		if ( property.HasAttribute<HideAttribute>() ) return false;
+		if ( string.IsNullOrEmpty( filterText ) ) return true;
+		if ( property.Name.ToLower().Contains( filterText.ToLower() ) ) return true;
+		if ( property.DisplayName.ToLower().Contains( filterText.ToLower() ) ) return true;
+		if ( property.TryGetAsObject( out var obj ) )
+		{
+			if ( property.TryGetAttribute<ConditionalVisibilityAttribute>( out var conditional ) )
+			{
+				if ( conditional.TestCondition( obj ) ) return false;
+			}
+			foreach ( var childProp in obj )
+			{
+				if ( childProp.HasAttribute<HideAttribute>() ) continue;
+				if ( childProp.Name.ToLower().Contains( filterText.ToLower() ) || childProp.DisplayName.ToLower().Contains( filterText.ToLower() ) )
+				{
+					sheet.AddRow( childProp );
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -1,0 +1,53 @@
+{
+  "IsSubgraph": true,
+  "Path": "shadertest/testsubgraph.sgpfunc",
+  "Model": "models/dev/plane.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "8a5127c2-cccb-46d4-ad0f-df5aa4cd50d4",
+          "Name": "A",
+          "Type": "Color",
+          "Preview": "Albedo"
+        }
+      ],
+      "Identifier": "0",
+      "Position": "-444,48",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0.81395,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "1",
+      "Position": "-648,48",
+      "HandleOffsets": {}
+    }
+  ]
+}

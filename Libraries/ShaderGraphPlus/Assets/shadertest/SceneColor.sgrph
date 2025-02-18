@@ -1,20 +1,20 @@
 {
   "IsSubgraph": false,
-  "Path": "shaders/shadergraphplus/postprocessing/invertcolors.sgrph",
-  "Model": null,
+  "Path": "shadertest/scenecolor.sgrph",
+  "Model": "models/dev/box.vmdl",
   "Title": null,
-  "Description": "PostProcessing Shadergraph Material",
+  "Description": null,
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": false,
-  "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "BlendMode": "Translucent",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "PostProcess",
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
     "ShowSkybox": true,
-    "BackgroundColor": "0,0,0,1",
+    "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -25,36 +25,30 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-384,-96",
+      "Position": "-276,24",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "InvertColorsNode",
+      "Identifier": "1",
+      "Position": "-480,24",
+      "HandleOffsets": {},
+      "SceneColor": {
+        "Identifier": "2",
+        "Output": "SceneColor",
         "Subgraph": null
       }
     },
     {
       "_class": "SceneColorNode",
       "UseScreenUVs": true,
-      "Identifier": "1",
-      "Position": "-828,-96",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "InvertColorsNode",
       "Identifier": "2",
-      "Position": "-636,-96",
-      "HandleOffsets": {},
-      "SceneColor": {
-        "Identifier": "1",
-        "Output": "SceneColor",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ScreenCoordinate",
-      "Identifier": "3",
-      "Position": "-1056,-84",
+      "Position": "-660,24",
       "HandleOffsets": {}
     }
   ]

@@ -29,15 +29,13 @@ public struct ParameterUI
 	/// <summary>
 	/// Primary group
 	/// </summary>
-	[Title( "Group" )]
-	[InlineEditor]
+	[InlineEditor( Label = false ), Group( "Group" )]
 	public UIGroup PrimaryGroup { get; set; }
 
 	/// <summary>
 	/// Group within the primary group
 	/// </summary>
-	[Title( "Sub Group" )]
-	[InlineEditor]
+	[InlineEditor( Label = false ), Group( "Sub Group" )]
 	public UIGroup SecondaryGroup { get; set; }
 
 	[JsonIgnore, Hide]
