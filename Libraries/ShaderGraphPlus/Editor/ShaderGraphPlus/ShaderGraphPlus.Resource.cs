@@ -22,8 +22,8 @@ public enum MaterialDomain
 {
     [Icon("view_in_ar")]
     Surface,
+	[Icon("brush")]
 	BlendingSurface,
-	Glass,
     [Icon("desktop_windows")]
     PostProcess,
 }
