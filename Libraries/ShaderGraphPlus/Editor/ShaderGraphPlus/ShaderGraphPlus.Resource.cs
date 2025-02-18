@@ -22,8 +22,8 @@ public enum MaterialDomain
 {
     [Icon("view_in_ar")]
     Surface,
-    [Icon("brush")]
-    BlendingSurface,
+	[Icon("brush")]
+	BlendingSurface,
     [Icon("desktop_windows")]
     PostProcess,
 }
@@ -90,6 +90,11 @@ public partial class ShaderGraphPlus : IGraph
     public ShadingModel ShadingModel { get; set; }
 
 	public MaterialDomain MaterialDomain { get; set; }
+
+    //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
+    //[InlineEditor]
+    //[Group("Post Processing")]
+    //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
     //
     // Summary:
