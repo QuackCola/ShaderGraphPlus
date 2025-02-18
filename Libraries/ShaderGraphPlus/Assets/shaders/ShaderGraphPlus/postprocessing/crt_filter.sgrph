@@ -1,36 +1,23 @@
 {
-  "IsSubgraph": false,
-  "Path": "shaders/shadergraphplus/postprocessing/crt_filter.sgrph",
   "Model": null,
-  "Title": null,
   "Description": "",
-  "Category": null,
-  "Icon": null,
-  "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "PostProcess",
-  "Metadata": {},
-  "PreviewSettings": {
-    "EnableShadows": true,
-    "ShowSkybox": true,
-    "BackgroundColor": "0,0,0,1",
-    "Tint": "1,1,1,1"
+  "postProcessComponentInfo": {
+    "ComponentTitle": "CRT Filter",
+    "ComponentCategory": "Post Processing",
+    "Order": 500
   },
+  "Metadata": {},
   "nodes": [
     {
-      "_class": "Result",
-      "DefaultOpacity": 1,
-      "DefaultRoughness": 1,
-      "DefaultMetalness": 0,
-      "DefaultAmbientOcclusion": 1,
+      "_class": "PostProcessingResult",
       "Identifier": "0",
-      "Position": "-612,-432",
-      "HandleOffsets": {},
-      "Albedo": {
+      "Position": "-696,-408",
+      "SceneColor": {
         "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
+        "Output": "Result"
       }
     },
     {
@@ -57,17 +44,14 @@
       "DefaultVignetteIntensity": 0.4,
       "DefaultVignetteOpacity": 0.5,
       "Identifier": "1",
-      "Position": "-936,-432",
-      "HandleOffsets": {},
+      "Position": "-996,-432",
       "Resolution": {
         "Identifier": "3",
-        "Output": "Result",
-        "Subgraph": null
+        "Output": "Result"
       },
       "Pixelate": {
         "Identifier": "2",
-        "Output": "Result",
-        "Subgraph": null
+        "Output": "Result"
       }
     },
     {
@@ -81,8 +65,7 @@
         }
       },
       "Identifier": "2",
-      "Position": "-1272,-348",
-      "HandleOffsets": {}
+      "Position": "-1272,-348"
     },
     {
       "_class": "Float2",
@@ -93,8 +76,7 @@
       "IsAttribute": true,
       "UI": {},
       "Identifier": "3",
-      "Position": "-1284,-240",
-      "HandleOffsets": {}
+      "Position": "-1284,-240"
     },
     {
       "_class": "Bool",
@@ -103,8 +85,7 @@
       "IsAttribute": true,
       "UI": {},
       "Identifier": "4",
-      "Position": "-1260,-432",
-      "HandleOffsets": {}
+      "Position": "-1260,-432"
     },
     {
       "_class": "Float3",
@@ -115,8 +96,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "5",
-      "Position": "-1536,-228",
-      "HandleOffsets": {}
+      "Position": "-1536,-228"
     }
   ]
 }

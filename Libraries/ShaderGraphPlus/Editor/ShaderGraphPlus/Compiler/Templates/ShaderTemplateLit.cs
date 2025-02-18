@@ -1,6 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-public static class ShaderTemplateBlending
+public static class ShaderTemplateLit
 {
     public static string Code => @"
 HEADER
@@ -35,39 +35,34 @@ COMMON
 
 struct VertexInput
 {{
-	float4 vColorBlendValues : TEXCOORD4 < Semantic( VertexPaintBlendParams ); >;
-	float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;
-	float4 vColor : COLOR0 < Semantic( Color ); >;
 	#include ""common/vertexinput.hlsl""
+	float4 vColor : COLOR0 < Semantic( Color ); >;
 }};
 
 struct PixelInput
 {{
-	float4 vColor : COLOR0;
-	float4 vBlendValues		 : TEXCOORD14;
-	float4 vPaintValues		 : TEXCOORD15;
 	#include ""common/pixelinput.hlsl""
+	float3 vPositionOs : TEXCOORD14;
+	float3 vNormalOs : TEXCOORD15;
+	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+	float4 vColor : COLOR0;
+	float4 vTintColor : COLOR1;
 }};
 
 VS
 {{
-	StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );
-
 	#include ""common/vertex.hlsl""
-
-	BoolAttribute( VertexPaintUI2Layer, F_MULTIBLEND == 1 );
-	BoolAttribute( VertexPaintUI3Layer, F_MULTIBLEND == 2 );
-	BoolAttribute( VertexPaintUI4Layer, F_MULTIBLEND == 3 );
-	BoolAttribute( VertexPaintUI5Layer, F_MULTIBLEND == 4 );
-	BoolAttribute( VertexPaintUIPickColor, true );
-
 {8}{7}{11}
 	PixelInput MainVs( VertexInput v )
 	{{
 		PixelInput i = ProcessVertex( v );
-		i.vBlendValues = v.vColorBlendValues;
-		i.vPaintValues = v.vColorPaintValues;
+		i.vPositionOs = v.vPositionOs.xyz;
+		i.vColor = v.vColor;
 
+		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
+		i.vTintColor = extraShaderData.vTint;
+
+		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 {6}
 		return FinalizeVertex( i );
 	}}
@@ -75,8 +70,6 @@ VS
 
 PS
 {{
-	StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );
-
 	#include ""common/pixel.hlsl""
 {9}{3}{10}
 	float4 MainPs( PixelInput i ) : SV_Target0
@@ -104,7 +97,7 @@ PS
 		// for some toolvis shit
 		m.WorldTangentU = i.vTangentUWs;
 		m.WorldTangentV = i.vTangentVWs;
-		m.TextureCoords = i.vTextureCoords.xy;
+        m.TextureCoords = i.vTextureCoords.xy;
 		
 		return ShadingModelStandard::Shade( i, m );
 	}}

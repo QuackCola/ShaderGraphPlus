@@ -2,7 +2,7 @@
 
 public static class TextureDefinitionTemplate
 {
-public static string TextureDefinition => @"<!-- dmx encoding keyvalues2_noids 1 format vtex 1 -->
+    public static string TextureDefinition => @"<!-- dmx encoding keyvalues2_noids 1 format vtex 1 -->
 ""CDmeVtex""
 {{
     ""m_inputTextureArray"" ""element_array"" 

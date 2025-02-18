@@ -18,16 +18,6 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
-	public static Dictionary<Type, string> ValueTypes => new()
-	{
-		{ typeof( Color ), "float4" },
-		{ typeof( Vector4 ), "float4" },
-		{ typeof( Vector3 ), "float3" },
-		{ typeof( Vector2 ), "float2" },
-		{ typeof( float ), "float" },
-		{ typeof( bool ), "bool" }
-	};
-
 	public bool Debug { get; private set; } = false;
 	
 	/// <summary>
@@ -35,18 +25,7 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public ShaderGraphPlus Graph { get; private set; }
 
-	/// <summary>
-	/// Current SubGraph
-	/// </summary>
-    private ShaderGraphPlus Subgraph = null;
-    private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
-
-    /// <summary>
-    /// The loaded sub-graphs
-    /// </summary>
-    public List<ShaderGraphPlus> Subgraphs { get; private set; }
-
-    public Asset _Asset { get; private set; }
+	public Asset _Asset { get; private set; }
 
 	/// <summary>
 	/// Is this compile for just the preview or not, preview uses attributes for constant values
@@ -64,9 +43,7 @@ public sealed partial class GraphCompiler
         public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
         public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
-		public Dictionary<string, string> Functions { get; private set; } = new ();
-
-        public string RepresentativeTexture { get; set; }
+		public Dictionary<string, string> Functions = new();
     }
 
 	public enum ShaderStage
@@ -80,16 +57,13 @@ public sealed partial class GraphCompiler
 	public bool IsPs => Stage == ShaderStage.Pixel;
 	private string StageName => Stage == ShaderStage.Vertex ? "vs" : "ps";
 
-    private string CurrentResultInput;
-
-    private readonly CompileResult VertexResult = new();
+	private readonly CompileResult VertexResult = new();
 	private readonly CompileResult PixelResult = new();
 	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
 
 	public Action<string, object> OnAttribute { get; set; }
 
 	public List<BaseNodePlus> Nodes { get; private set; } = new();
-	private List<BaseNodePlus> NodeStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
@@ -104,54 +78,34 @@ public sealed partial class GraphCompiler
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
+	public GraphCompiler(Asset asset, ShaderGraphPlus graph, bool preview)
 	{
 		Graph = graph;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
-        Subgraphs = new();
-
-        AddSubgraphs( Graph );
-    }
-
-	private void AddSubgraphs( ShaderGraphPlus graph )
-	{
-		if ( graph != Graph )
-		{
-			if ( Subgraphs.Contains( graph ) )
-				return;
-			Subgraphs.Add( graph );
-		}
-		foreach ( var node in graph.Nodes )
-		{
-			if ( node is SubgraphNode subgraphNode )
-			{
-				AddSubgraphs( subgraphNode.Subgraph );
-			}
-		}
 	}
 
-	private static string CleanName( string name )
+	private static string CleanName(string name)
 	{
-		if ( string.IsNullOrWhiteSpace( name ) )
+		if (string.IsNullOrWhiteSpace(name))
 			return "";
 
-		name = name.Trim().Replace( " ", string.Empty );
-		name = new string(name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
+		name = name.Trim().Replace(" ", string.Empty);
+		name = new string(name.Where(x => char.IsLetter(x) || x == '_').ToArray());
 
 		return name;
 	}
 
-    public string ResultFunction( string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "" )
+    public string ResultFunction(string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "")
     {
         var result = ShaderResult;
 
         (string, string) func = (code, propertyName);
 
-        if (!result.Functions.ContainsKey( func.Item2 ) )
+        if (!result.Functions.ContainsKey(func.Item2))
         {
-            result.Functions.Add( func.Item2, func.Item1 );
+            result.Functions.Add(func.Item2, func.Item1);
         }
         else
         {
@@ -171,9 +125,9 @@ public sealed partial class GraphCompiler
 
 		Gradient gradient = new();
 
-		foreach ( var g in result.Gradients )
+		foreach (var g in result.Gradients)
 		{
-			if ( g.Key == gradient_name )
+			if (g.Key == gradient_name)
 			{
 				gradient = g.Value;
 			}
@@ -250,19 +204,19 @@ public sealed partial class GraphCompiler
 
     }
 
-    private string BuildFeatureOptions( List<string> options )
+    private string BuildFeatureOptions(List<string> options)
     {
         var options_body = "";
         int count = 0;
 
-        foreach  (var option in options )
+        foreach (var option in options)
         {
-            if ( count == 0 ) // first option starts at 0 :)
+            if (count == 0) // first option starts at 0 :)
             {
                 options_body += $"0=\"{option}\",";
                 count++;
             }
-            else if ( count != ( options.Count - 1 ) )  // These options dont get the privilege of being the first >:)
+            else if (count != (options.Count - 1))  // These options dont get the privilege of being the first >:)
             {
                 options_body += $"{count}=\"{option}\",";
                 count++;
@@ -282,19 +236,19 @@ public sealed partial class GraphCompiler
     /// <summary>
     /// Register a gradient and return the name of the graident. A generic name is returned instead if the gradient name is empty.
     /// </summary>
-    public string RegisterGradient( Gradient gradient, string gradient_name )
+    public string RegisterGradient(Gradient gradient, string gradient_name)
 	{
 		var result = ShaderResult;
 
-		var name = CleanName( gradient_name );
+		var name = CleanName(gradient_name);
 
-		name = string.IsNullOrWhiteSpace( name ) ? $"Gradient{result.Gradients.Count}" : name;
+		name = string.IsNullOrWhiteSpace(name) ? $"Gradient{result.Gradients.Count}" : name;
 
 		var id = name;
 
-		if (!result.Gradients.ContainsKey( id ) )
+		if (!result.Gradients.ContainsKey(id))
 		{
-			result.Gradients.Add( id, gradient );
+			result.Gradients.Add(id, gradient);
 		}
 
 		return name;
@@ -303,19 +257,19 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a sampler and return the name of it
 	/// </summary>
-	public string ResultSampler( Sampler sampler )
+	public string ResultSampler(Sampler sampler)
 	{
-		var name = CleanName( sampler.Name );
+		var name = CleanName(sampler.Name);
 
 		var result = ShaderResult;
 
-		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{result.SamplerStates.Count}" : name;
+		name = string.IsNullOrWhiteSpace(name) ? $"Sampler{result.SamplerStates.Count}" : name;
 
 		var id = name;
 
-		if (!result.SamplerStates.ContainsKey( id ) )
+		if (!result.SamplerStates.ContainsKey(id))
 		{
-			result.SamplerStates.Add( id, sampler ); // Add the Name of the sampler and its associated options.
+			result.SamplerStates.Add(id, sampler); // Add the Name of the sampler and its associated options.
 
 		}
 
@@ -324,56 +278,51 @@ public sealed partial class GraphCompiler
 		return result_sampler;
 	}
 
-	public string ResultSamplerOrDefault( NodeInput sampler, Sampler defaultsampler )
+	public string ResultSamplerOrDefault(NodeInput sampler, Sampler defaultsampler)
 	{
-		if ( sampler.IsValid )
+		if (sampler.IsValid)
 		{
-			return Result( sampler ).Code;
+			return Result(sampler).Code;
 		}
 		else
 		{
 			// Register the default sampler
-			return ResultSampler( defaultsampler );
+			return ResultSampler(defaultsampler);
 		}
 	}
 
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public (string, string) ResultTexture( string samplerinput, TextureInput input, Texture texture )
+	public (string, string) ResultTexture(string samplerinput, TextureInput input, Texture texture)
 	{
-		var name = CleanName( input.Name );
-		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		var name = CleanName(input.Name);
+		name = string.IsNullOrWhiteSpace(name) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
 
 		var id = name;
 		int count = 0;
 
 		var result = ShaderResult;
 
-		while ( result.TextureInputs.ContainsKey( id ) )
+		while (result.TextureInputs.ContainsKey(id))
 		{
 			id = $"{name}_{count++}";
 		}
 
-		OnAttribute?.Invoke( id, texture );
+		OnAttribute?.Invoke(id, texture);
 
-		result.TextureInputs.Add( id, input );
+		result.TextureInputs.Add(id, input);
 
-        if ( CurrentResultInput == "Albedo" )
-        {
-            result.RepresentativeTexture = $"g_t{id}";
-        }
-
-        return new( $"g_t{id}", samplerinput );
+		return new($"g_t{id}", samplerinput);
 	}
 
 	/// <summary>
 	/// Get result of an input with an optional default value if it failed to resolve
 	/// </summary>
-	public NodeResult ResultOrDefault<T>( NodeInput input, T defaultValue )
+	public NodeResult ResultOrDefault<T>(NodeInput input, T defaultValue)
 	{
-		var result = Result( input );
-		return result.IsValid ? result : ResultValue( defaultValue );
+		var result = Result(input);
+		return result.IsValid ? result : ResultValue(defaultValue);
 	}
 
 	public void DepreciationWarning(BaseNodePlus node, string oldnode, string newnode)
@@ -390,170 +339,46 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result( NodeInput input )
+	public NodeResult Result(NodeInput input)
 	{
 		if (!input.IsValid)
 			return default;
 
-		BaseNodePlus node = null;
-		if ( string.IsNullOrEmpty( input.Subgraph ) )
-		{
-			if ( Subgraph is not null )
-			{
-				return Result( new()
-				{
-					Identifier = input.Identifier,
-					Output = input.Output,
-					Subgraph = Subgraph.Path
-				} );
-			}
-			node = Graph.FindNode( input.Identifier );
-		}
-		else
-		{
-			var subgraph = Subgraphs.FirstOrDefault( x => x.Path == input.Subgraph );
-			if ( subgraph is not null )
-			{
-				node = subgraph.FindNode( input.Identifier );
-			}
-		}
-
 		if (ShaderResult.InputResults.TryGetValue(input, out var result))
 			return result;
 
+		var node = Graph.FindNode(input.Identifier);
 		if (node == null)
 			return default;
 
 		var nodeType = node.GetType();
-		var property = nodeType.GetProperty( input.Output );
+		var property = nodeType.GetProperty(input.Output);
+		if (property == null)
+			return default;
 
-		if ( property == null )
+		var value = property.GetValue(node);
+		if (value == null)
+			return default;
+
+		if (value is NodeResult nodeResult)
 		{
-			// Search for alias
-			var allProperties = nodeType.GetProperties();
-			foreach ( var prop in allProperties )
-			{
-				var alias = prop.GetCustomAttribute<AliasAttribute>();
-				if ( alias is null ) continue;
-				foreach ( var al in alias.Value )
-				{
-					if ( al == input.Output )
-					{
-						property = prop;
-						break;
-					}
-				}
-				if ( property != null )
-					break;
-			}
-		}
-
-        object value = null;
-
-        if ( node is not IRerouteNode && NodeStack.Contains( node ) )
-		{
-		    NodeErrors.Add( node, new List<string> { "Circular reference detected" } );
-		    return default;
-		}
-
-		if ( Subgraph is not null && node.Graph != Subgraph )
-		{
-			if ( node.Graph != Graph )
-			{
-				Subgraph = node.Graph as ShaderGraphPlus;
-			}
-			else
-			{
-				Subgraph = null;
-			}
-		}
-
-		if ( node is SubgraphNode subgraphNode )
-		{
-			var newStack = (subgraphNode, Subgraph);
-			SubgraphStack.Add( newStack );
-			Subgraph = subgraphNode.Subgraph;
-			if ( !Subgraphs.Contains( Subgraph ) )
-			{
-				Subgraphs.Add( Subgraph );
-			}
-
-			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
-			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
-			if ( resultInput?.ConnectedOutput is not null )
-			{
-				var newConnection = new NodeInput()
-				{
-					Identifier = resultInput.ConnectedOutput.Node.Identifier,
-					Output = resultInput.ConnectedOutput.Identifier,
-					Subgraph = Subgraph.Path
-				};
-				var newResult = Result( newConnection );
-				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
-				Subgraph = newStack.Item2;
-				return newResult;
-			}
-			else
-			{
-				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );
-			}
-		}
-		else
-		{
-			if ( Subgraph is not null )
-			{
-				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
-				{
-					var newResult = ResolveParameterNode( parameterNode, ref value );
-					if ( newResult.IsValid )
-						return newResult;
-				}
-			}
-			else
-			{
-				if ( node is IParameterNode parameterNode )
-				{
-					if ( parameterNode.PreviewInput.IsValid )
-					{
-						return Result( parameterNode.PreviewInput );
-					}
-				}
-			}
-
-			if ( value is null )
-			{
-				if ( property == null )
-					return default;
-
-				value = property.GetValue( node );
-			}
-
-			if ( value == null )
-				return default;
-		}
-
-		if ( value is NodeResult nodeResult )
-		{
-			NodeStack.Remove( node );
 			return nodeResult;
 		}
-		else if ( value is NodeInput nodeInput )
+		else if (value is NodeInput nodeInput)
 		{
-			var newResult = Result( nodeInput );
-			NodeStack.Remove( node );
-			return newResult;
+			return Result(nodeInput);
 		}
-		else if ( value is NodeResult.Func resultFunc )
+		else if (value is NodeResult.Func resultFunc)
 		{
-			var funcResult = resultFunc.Invoke( this );
+			var funcResult = resultFunc.Invoke(this);
 
 			// only enter this if IsComponentLess is is false
-			if ( !funcResult.IsValid && !funcResult.IsComponentLess )
+			if (!funcResult.IsValid && !funcResult.IsComponentLess)
 			{
-				if ( !NodeErrors.TryGetValue( node, out var errors ) )
+				if (!NodeErrors.TryGetValue(node, out var errors))
 				{
 					errors = new();
-					NodeErrors.Add( node, errors );
+					NodeErrors.Add(node, errors);
 				}
 
 				if (funcResult.Errors is null || funcResult.Errors.Length == 0)
@@ -575,45 +400,44 @@ public sealed partial class GraphCompiler
 			}
 
 			// We can return this result without making it a local variable because it's constant & or isnt somethign that is directly put into the graph.
-			if ( funcResult.Constant )
+			if (funcResult.Constant)
 			{
 				return funcResult;
 			}
 
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult( funcResult.ResultType, varName) ;
+			var localResult = new NodeResult(funcResult.ResultType, varName);
 
-			ShaderResult.InputResults.Add( input, localResult );
-			ShaderResult.Results.Add( ( localResult, funcResult ) );
+			ShaderResult.InputResults.Add(input, localResult);
+			ShaderResult.Results.Add((localResult, funcResult));
 
-			if ( IsPreview )
+			if (IsPreview)
 			{
-				Nodes.Add( node );
+				Nodes.Add(node);
 			}
 
-			NodeStack.Remove( node );
 			return localResult;
 		}
 
-		return ResultValue( value );
+		return ResultValue(value);
 	}
 
 	/// <summary>
 	/// Get result of two inputs and cast to the largest component of the two (a float2 and float3 will both become float3 results)
 	/// </summary>
-	public (NodeResult, NodeResult) Result( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
+	public (NodeResult, NodeResult) Result(NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f)
 	{
-		var resultA = ResultOrDefault( a, defaultA );
-		var resultB = ResultOrDefault( b, defaultB );
+		var resultA = ResultOrDefault(a, defaultA);
+		var resultB = ResultOrDefault(b, defaultB);
 
-		if ( resultA.Components() == resultB.Components() )
+		if (resultA.Components() == resultB.Components())
 			return (resultA, resultB);
 
-		if ( resultA.Components() < resultB.Components() )
-			return (new(resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+		if (resultA.Components() < resultB.Components())
+			return (new(resultB.ResultType, resultA.Cast(resultB.Components())), resultB);
 
-		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+		return (resultA, new(resultA.ResultType, resultB.Cast(resultA.Components())));
 	}
 
 	/// <summary>
@@ -621,28 +445,29 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
-		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-			return ResultValue( value );
+		if (IsPreview || string.IsNullOrWhiteSpace(name))
+			return ResultValue(value);
 
 		name = CleanName(name);
 
 		var attribName = name;
 
-		var prefix = GetLocalPrefix( value );
+		var prefix = GetLocalPrefix(value);
        
-        if ( !name.StartsWith( prefix ) )
+        if (!name.StartsWith(prefix))
 			name = prefix + name;
 
-		if ( ShaderResult.Parameters.TryGetValue( name, out var parameter ) )
+		if (ShaderResult.Parameters.TryGetValue(name, out var parameter))
 			return parameter.Result;
 
-		parameter.Result = ResultValue( value, name );
+		parameter.Result = ResultValue(value, name);
 
 		var options = new StringWriter();
 
 		// If we're an attribute, we don't care about the UI options
-		if ( isAttribute )
+		if (isAttribute)
 		{
+
 			options.Write($"Attribute( \"{attribName}\" ); ");
 
 			if (value is bool boolValue)
@@ -653,6 +478,8 @@ public sealed partial class GraphCompiler
 			{
 				options.Write($"Default{parameter.Result.Components()}( {value} ); ");
 			}
+
+
 		}
 		else
 		{
@@ -698,7 +525,7 @@ public sealed partial class GraphCompiler
 
 		parameter.Options = options.ToString().Trim();
 
-		ShaderResult.Parameters.Add( name, parameter );
+		ShaderResult.Parameters.Add(name, parameter);
 
 		return parameter.Result;
 	}
@@ -707,17 +534,15 @@ public sealed partial class GraphCompiler
     /// Get result of a value, in preview mode an attribute will be registered and returned
     /// Only supports float, Vector2, Vector3, Vector4, Color, Float2x2, Float3x3, Float4x4, Sampler & bool.
     /// </summary>
-    public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
+    public NodeResult ResultValue<T>(T value, string name = null)
 	{
-		if ( value is NodeInput nodeInput ) return Result( nodeInput );
-
-		bool isConstant = IsPreview && !previewOverride;
-        bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
+		bool isConstant = IsPreview;
+		bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
 		name = isConstant ? $"g_{StageName}_{ShaderResult.Attributes.Count}" : name;
 
-		if ( isConstant )
+		if (IsPreview)
 		{
-			OnAttribute?.Invoke( name, value );
+			OnAttribute?.Invoke(name, value);
 			ShaderResult.Attributes[name] = value;
 		}
 
@@ -759,107 +584,33 @@ public sealed partial class GraphCompiler
 		return prefix;
     }
 
-	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
-	{
-		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
-		{
-			return null;
-		}
-		if ( value is JsonElement el )
-		{
-            if ( type == typeof( int ) )
-            {
-                value = el.GetInt32();
-            }
-            else if ( type == typeof( float ) )
-			{
-				value = el.GetSingle();
-			}
-			else if ( type == typeof( Vector2 ) )
-			{
-				value = Vector2.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Vector3 ) )
-			{
-				value = Vector3.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Vector4 ) )
-			{
-				value = Vector4.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Color ) )
-			{
-				value = Color.Parse( el.GetString() ) ?? Color.White;
-			}
-			else if ( type == typeof( bool ) )
-			{
-				value = el.GetBoolean();
-			}
-		}
 
-		return value;
-	}
-
-	private NodeResult ResolveParameterNode( IParameterNode node, ref object value )
-	{
-		var lastStack = SubgraphStack.LastOrDefault();
-		var lastNodeEntered = lastStack.Item1;
-		if ( lastNodeEntered is not null )
-		{
-			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
-			if ( parentInput.Key is not null )
-			{
-				var connectedPlug = parentInput.Key.ConnectedOutput;
-				if ( connectedPlug is not null )
-				{
-					var lastSubgraph = Subgraph;
-					Subgraph = lastStack.Item2;
-					SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
-					var newResult = Result( new()
-					{
-						Identifier = connectedPlug.Node.Identifier,
-						Output = connectedPlug.Identifier,
-						Subgraph = Subgraph?.Path
-					} );
-					SubgraphStack.Add( lastStack );
-					Subgraph = lastSubgraph;
-					return newResult;
-				}
-				else
-				{
-					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );
-				}
-			}
-		}
-		return new();
-	}
-
-	private static int GetComponentCount( Type inputType )
+	private static int GetComponentCount(Type inputType)
 	{
 		return inputType switch
 		{
-			Type t when t == typeof( Float4x4 ) => 16,
-			Type t when t == typeof( Float3x3 ) => 6,
-			Type t when t == typeof( Float2x2 ) => 4,
-			Type t when t == typeof( Vector4 ) || t == typeof(Color) => 4,
-			Type t when t == typeof( Vector3 ) => 3,
-			Type t when t == typeof( Vector2 ) => 2,
-			Type t when t == typeof( float ) => 1,
-            Type t when t == typeof( int ) => 1,
+			Type t when t == typeof(Float4x4) => 16,
+			Type t when t == typeof(Float3x3) => 6,
+			Type t when t == typeof(Float2x2) => 4,
+			Type t when t == typeof(Vector4) || t == typeof(Color) => 4,
+			Type t when t == typeof(Vector3) => 3,
+			Type t when t == typeof(Vector2) => 2,
+			Type t when t == typeof(float) => 1,
+            Type t when t == typeof(int) => 1,
             _ => 0
 		};
 	}
 
-	private static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
+	private static IEnumerable<PropertyInfo> GetNodeInputProperties(Type type)
 	{
-		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-			.Where( property => property.GetSetMethod() != null &&
-			property.PropertyType == typeof( NodeInput ) &&
-			property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) );
+		return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+			.Where(property => property.GetSetMethod() != null &&
+			property.PropertyType == typeof(NodeInput) &&
+			property.IsDefined(typeof(BaseNodePlus.InputAttribute), false));
 	}
 
-   private string GenerateFeatures()
-   {
+    private string GenerateFeatures()
+    {
 		var sb = new StringBuilder();
 		var result = ShaderResult;
 		
@@ -877,7 +628,7 @@ public sealed partial class GraphCompiler
 		}
 		
 		return sb.ToString();
-   }
+    }
 
     private string GenerateCommon()
 	{
@@ -886,6 +637,8 @@ public sealed partial class GraphCompiler
 		var blendMode = Graph.BlendMode;
 		var alphaTest = blendMode == BlendMode.Masked ? 1 : 0;
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
+
+		var result = ShaderResult;
 
 		sb.AppendLine($"#ifndef S_ALPHA_TEST");
 		sb.AppendLine($"#define S_ALPHA_TEST {alphaTest}");
@@ -897,6 +650,9 @@ public sealed partial class GraphCompiler
 
 		return sb.ToString();
 	}
+
+	
+
 
     public string GeneratePostProcessingComponent( PostProcessingComponentInfo postProcessiComponentInfo, string className, string shaderPath )
 	{
@@ -936,122 +692,79 @@ public sealed partial class GraphCompiler
     /// Generate shader code, will evaluate the graph if it hasn't already.
     /// Different code is generated for preview and not preview.
     /// </summary>
-    //public (string,string) Generate()
-	//{
-	//	// May have already evaluated and there's errors
-	//	if (Errors.Any())
-	//		return (string.Empty, string.Empty); //null;
-	//
-	//	// If we have any errors after evaluating, no point going further
-	//	if ( Errors.Any() )
-	//		return (string.Empty, string.Empty);
-	//
-	//	var shader_tempalte = "";
-	//	var shaderCode = "";
-	//
-    //    // Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
-    //    if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
-    //    {
-    //        shader_tempalte = ShaderTemplateBlending.Code;
-    //    }
-    //    else if ( Graph.MaterialDomain is MaterialDomain.Surface )
-	//	{
-	//		if ( Graph.ShadingModel is ShadingModel.Lit )
-	//		{
-	//			shader_tempalte = ShaderTemplateLit.Code;
-	//		}
-	//		else
-	//		{
-	//			shader_tempalte = ShaderTemplateUnlit.Code;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		var postprocessing_material = GeneratePostprocessingMaterial();
-	//
-    //        shaderCode = string.Format( ShaderTemplatePostProcessing.Code,
-	//			Graph.Description,  // {0}
-	//			IndentString( GenerateGlobals(), 1 ), // {1}
-	//			IndentString( GenerateLocals(), 2 ), // {2}
-	//			IndentString( postprocessing_material, 2 ), // {3}
-	//			IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
-	//		);
-	//
-	//		var postProcessClass = "";
-	//
-	//
-	//		if (Graph.postProcessComponentInfo.GenerateClass is true)
-	//		{
-	//			postProcessClass = GeneratePostProcessingComponent(
-	//			Graph.postProcessComponentInfo,
-	//			$"{CleanName(_Asset.Name)}_PostProcess",
-	//			$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
-	//			);
-	//		}
-    //   
-	//		return (shaderCode, postProcessClass);
-    //    }
-	//
-	//	var material = GenerateMaterial();
-	//
-    //     shaderCode = string.Format( shader_tempalte,
-	//	Graph.Description,
-	//	IndentString( GenerateFeatures(), 1 ),
-	//	IndentString( GenerateCommon(), 1 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateLocals(), 2 ),
-	//	IndentString( material, 2 ),
-	//	IndentString( GenerateVertex(), 2 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateVertexComboRules(), 1 ),
-	//	IndentString( GeneratePixelComboRules(), 1 ),
-	//	IndentString( GenerateFunctions( PixelResult ), 1 ),
-	//	IndentString( GenerateFunctions( VertexResult ), 1 ) );
-	//
-	//
-	//	return ( shaderCode , string.Empty );
-	//}
-
-	/// <summary>
-	/// Generate shader code, will evaluate the graph if it hasn't already.
-	/// Different code is generated for preview and not preview.
-	/// </summary>
-	public string Generate()
+    public (string,string) Generate()
 	{
 		// May have already evaluated and there's errors
+		if (Errors.Any())
+			return (string.Empty, string.Empty); //null;
+
+		// If we have any errors after evaluating, no point going further
 		if ( Errors.Any() )
-			return null;
+			return (string.Empty, string.Empty);
 
-		var material = GenerateMaterial();
-        var pixelOutput = GeneratePixelOutput();
+		var shader_tempalte = "";
+		var shaderCode = "";
 
-        // If we have any errors after evaluating, no point going further
-        if ( Errors.Any() )
-			return null;
-
-		string template = ShaderTemplate.Code;
-
-		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+        // Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
+        if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+        {
+            shader_tempalte = ShaderTemplateBlending.Code;
+        }
+        else if ( Graph.MaterialDomain is MaterialDomain.Surface || Graph.MaterialDomain is MaterialDomain.Glass )
 		{
-			template = ShaderTemplateBlending.Code;
+			if ( Graph.ShadingModel is ShadingModel.Lit )
+			{
+				shader_tempalte = ShaderTemplateLit.Code;
+			}
+			else
+			{
+				shader_tempalte = ShaderTemplateUnlit.Code;
+			}
+		}
+		else
+		{
+			var postprocessing_material = GeneratePostprocessingMaterial();
+
+            shaderCode = string.Format( ShaderTemplatePostProcessing.Code,
+				Graph.Description,  // {0}
+				IndentString( GenerateGlobals(), 1 ), // {1}
+				IndentString( GenerateLocals(), 2 ), // {2}
+				IndentString( postprocessing_material, 2 ), // {3}
+				IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
+			);
+
+			var postProcessClass = "";
+
+
+			if (Graph.postProcessComponentInfo.GenerateClass is true)
+			{
+				postProcessClass = GeneratePostProcessingComponent(
+				Graph.postProcessComponentInfo,
+				$"{CleanName(_Asset.Name)}_PostProcess",
+				$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
+				);
+			}
+       
+			return (shaderCode, postProcessClass);
         }
 
-		return string.Format( template,
-			Graph.Description,
-			IndentString( GenerateFeatures(), 1),
-			IndentString( GenerateCommon(), 1 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateLocals(), 2 ),
-			IndentString( material, 2 ),
-			IndentString( GenerateVertex(), 2 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateVertexComboRules(), 1 ),
-			IndentString( GeneratePixelComboRules(), 1 ),
-			IndentString( GenerateFunctions( PixelResult ), 1 ),
-			IndentString( GenerateFunctions( VertexResult ), 1 ),
-			IndentString( GeneratePixelInit(), 2 ),
-			IndentString( pixelOutput, 2 )
-		);
+		var material = GenerateMaterial();
+
+         shaderCode = string.Format( shader_tempalte,
+		Graph.Description,
+		IndentString( GenerateFeatures(), 1 ),
+		IndentString( GenerateCommon(), 1 ),
+		IndentString( GenerateGlobals(), 1 ),
+		IndentString( GenerateLocals(), 2 ),
+		IndentString( material, 2 ),
+		IndentString( GenerateVertex(), 2 ),
+		IndentString( GenerateGlobals(), 1 ),
+		IndentString( GenerateVertexComboRules(), 1 ),
+		IndentString( GeneratePixelComboRules(), 1 ),
+		IndentString( GenerateFunctions( PixelResult ), 1 ),
+		IndentString( GenerateFunctions( VertexResult ), 1 ) );
+
+		return ( shaderCode , string.Empty );
 	}
 
 	private static string GenerateFunctions( CompileResult result )
@@ -1101,100 +814,16 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 
         sb.AppendLine();
+		sb.AppendLine( "DynamicComboRule( Allow0( D_BAKED_LIGHTING_FROM_LIGHTMAP ) );" );
 		sb.AppendLine( "DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );" );
 		sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
 
 		return sb.ToString();
 	}
 
-    private string GeneratePixelInit()
-    {
-        Stage = ShaderStage.Pixel;
-        if (Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess)
-            return ShaderTemplate.Material_init;
-        return "";
-    }
-
-    private string GeneratePixelOutput()
-    {
-        Stage = ShaderStage.Pixel;
-
-		Subgraph = null;
-		SubgraphStack.Clear();
-
-		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
-		{
-			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-			if ( resultNode == null )
-				return null;
-			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
-			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-			return $"return float4( {albedo}, {opacity} );";
-		}
-		else if ( Graph.ShadingModel == ShadingModel.Lit )
-		{
-			return ShaderTemplate.Material_output;
-		}
-
-		return null;
-    }
-
-    private string GetPropertyValue(PropertyInfo property, Result resultNode)
-    {
-        NodeResult result;
-        var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-        var componentCount = GetComponentCount( inputAttribute.Type );
-
-        if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
-        {
-            result = Result( connection );
-        }
-        else
-        {
-            var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-            if ( editorAttribute == null )
-                return null;
-
-            var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
-            if ( valueProperty == null )
-                return null;
-
-            result = ResultValue( valueProperty.GetValue( resultNode ), previewOverride: true );
-        }
-
-        if ( Errors.Any() )
-            return null;
-
-        if ( !result.IsValid() )
-            return null;
-
-        if ( string.IsNullOrWhiteSpace( result.Code ) )
-            return null;
-
-        return $"{result.Cast( componentCount )}";
-    }
-
-    private string GenerateGlobals()
+	private string GenerateGlobals()
 	{
 		var sb = new StringBuilder();
-
-		
-        if ( Graph.MaterialDomain is not MaterialDomain.PostProcess )
-        {
-            if ( IsPs )
-            {
-                sb.AppendLine( "BoolAttribute( bWantsFBCopyTexture, true ); ");
-
-				if ( Graph.BlendMode is BlendMode.Translucent )
-				{
-					//sb.AppendLine( "BoolAttribute( translucent, true );" );
-				}
-
-            }
-        }
-
 
         // Static & Dynamic shader feature combos
         foreach ( var feature in ShaderResult.ShaderFeatures )
@@ -1211,21 +840,19 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
-			if ( IsPs )
-			{
-				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
-				sb.AppendLine();
-			}
+			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"ColorBuffer\" ); SrgbRead( true ); Filter( MIN_MAG_LINEAR_MIP_POINT ); AddressU( MIRROR ); AddressV( MIRROR ); >;" );
+			sb.AppendLine();
 		}
-        else
+		
+		if ( Graph.MaterialDomain == MaterialDomain.Glass )
 		{
-            sb.AppendLine("Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;");
-            sb.AppendLine();
-        }
-
-
+			sb.AppendLine( "BoolAttribute( bWantsFBCopyTexture, true );");
+			sb.AppendLine( "CreateTexture2D( g_tColorBuffer ) < Attribute( \"FrameBufferCopyTexture\" );     SrgbRead( true ); Filter( MIN_MAG_MIP_LINEAR ); AddressU( CLAMP  ); AddressV( CLAMP  ); >;" );
+			sb.AppendLine();
+		}
+		
 
 		foreach ( var Sampler in ShaderResult.SamplerStates )
 		{
@@ -1301,12 +928,6 @@ public sealed partial class GraphCompiler
 				}
 			}
 
-			if ( !string.IsNullOrWhiteSpace( ShaderResult.RepresentativeTexture ) )
-			{
-				sb.AppendLine( $"TextureAttribute( LightSim_DiffuseAlbedoTexture, {ShaderResult.RepresentativeTexture} )" );
-				sb.AppendLine( $"TextureAttribute( RepresentativeTexture, {ShaderResult.RepresentativeTexture} )" );
-			}
-
 			foreach ( var parameter in ShaderResult.Parameters )
 			{
 				sb.AppendLine( $"{parameter.Value.Result.TypeName} {parameter.Key} < {parameter.Value.Options} >;" );
@@ -1329,7 +950,9 @@ public sealed partial class GraphCompiler
 		{
 			sb.AppendLine();
 		}
-        
+
+
+
 		if ( Debug )
 		{
             if (IsPreview)
@@ -1341,6 +964,7 @@ public sealed partial class GraphCompiler
                 Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
             }
         }
+
 
         foreach (var gradient in ShaderResult.Gradients)
         {
@@ -1364,12 +988,12 @@ public sealed partial class GraphCompiler
 				}
 
 				// All good with time as the 4th component?
-                sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );");
+                sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4({color.Value.r},{color.Value.g},{color.Value.b},{color.Time});");
             }
         
             foreach ( var alpha in gradient.Value.Alphas )
             {
-                sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );");
+                sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float({alpha.Value});");
             }
 
             sb.AppendLine();
@@ -1403,16 +1027,16 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-					//if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-					//{
-					//	sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-					//	sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-					//}
-					//else
-					//{
+					if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
+					{
 						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-                    //}
+					}
+					else
+					{
+						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
+                    }
                 }
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
@@ -1464,34 +1088,101 @@ public sealed partial class GraphCompiler
             }
 		}
 
-        return sb.ToString();
+		return sb.ToString();
+	}
+
+	private string GeneratePostprocessingMaterial()
+	{
+		Stage = ShaderStage.Pixel;
+
+		var PostProcessingResultNode = Graph.Nodes.OfType<PostProcessingResult>().FirstOrDefault();
+		
+		if ( PostProcessingResultNode == null )
+		{
+			Log.Info( "Cant find PostProcessingResultNode" );
+			return null;
+		}
+
+		var sb = new StringBuilder();
+
+		foreach ( var property in GetNodeInputProperties( PostProcessingResultNode.GetType() ) )
+		{
+			NodeResult result;
+
+			if ( property.GetValue( PostProcessingResultNode ) is NodeInput connection && connection.IsValid() )
+			{
+				result = Result( connection );
+			}
+			else
+			{
+				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+				if ( editorAttribute == null )
+				{
+					// If there is no input to PostProcessingResultNode. Then default to un-modified SceneColor.
+					sb.AppendLine( $"FinalColor = Tex2D( g_tColorBuffer, i.vPositionSs.xy / g_vRenderTargetSize );" );
+					continue;
+				}
+
+
+				var valueProperty = PostProcessingResultNode.GetType().GetProperty( editorAttribute.ValueName );
+				if ( valueProperty == null )
+				{
+					continue;
+				}
+
+				result = ResultValue( valueProperty.GetValue( PostProcessingResultNode ) );
+			}
+
+			if ( Errors.Any() )
+				return null;
+
+			if ( !result.IsValid() )
+				continue;
+
+			if ( string.IsNullOrWhiteSpace( result.Code ) )
+				continue;
+
+			var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+			var componentCount = GetComponentCount( inputAttribute.Type );
+
+			sb.AppendLine( $"FinalColor = {result.Cast( componentCount )};" );
+		}
+
+		return sb.ToString();
 	}
 
 	private string GenerateMaterial()
 	{
-        Stage = ShaderStage.Pixel;
-        Subgraph = null;
-        SubgraphStack.Clear();
+		Stage = ShaderStage.Pixel;
 
-        if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+		BaseNodePlus resultNode;
 
 
-        var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-        if ( resultNode == null )
+		resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
+
+		if ( resultNode == null )
 			return null;
 
-        var sb = new StringBuilder();
-        var visited = new HashSet<string>();
+		var sb = new StringBuilder();
 
-        foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
+		foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
 			if ( property.Name == "PositionOffset" )
 				continue;
 
-			CurrentResultInput = property.Name;
-			visited.Add( property.Name );
+            if (Graph.ShadingModel is ShadingModel.Unlit)
+			{
+                if (property.Name == "Roughness")
+                    continue;
 
-			NodeResult result;
+                if (property.Name == "Metalness")
+                    continue;
+
+                if (property.Name == "AmbientOcclusion")
+                    continue;
+            }
+
+            NodeResult result;
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
@@ -1525,98 +1216,55 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
-        if ( resultNode is FunctionResult functionResult )
-		{
-			functionResult.AddMaterialOutputs( this, sb, visited );
-		}
-
-        visited.Clear();
-
-        CurrentResultInput = null;
-
-        return sb.ToString();
+		return sb.ToString();
 	}
 
-    private string GenerateVertex()
-    {
-        Stage = ShaderStage.Vertex;
+	private string GenerateVertex()
+	{
+		Stage = ShaderStage.Vertex;
 
-        var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-        if (resultNode == null)
-            return null;
+		var resultNode = Graph.Nodes.OfType<Result>().FirstOrDefault();
+		if ( resultNode == null )
+			return null;
 
-        var positionOffsetInput = resultNode.GetPositionOffset();
+		var property = GetNodeInputProperties( resultNode.GetType() )
+			.FirstOrDefault( x => x.Name == "PositionOffset" );
 
-        var sb = new StringBuilder();
+		var sb = new StringBuilder();
 
-        switch (Graph.MaterialDomain)
-        {
-            case MaterialDomain.Surface:
-                sb.AppendLine(@"
-PixelInput i = ProcessVertex( v );
-i.vPositionOs = v.vPositionOs.xyz;
-i.vColor = v.vColor;
+		NodeResult result;
 
-ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
-i.vTintColor = extraShaderData.vTint;
+		if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
+		{
+			result = Result( connection );
+		}
+		else
+		{
+			return null;
+		}
 
-VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );");
-                break;
-case MaterialDomain.BlendingSurface:
-                sb.AppendLine(@"
-PixelInput i = ProcessVertex( v );
-i.vBlendValues = v.vColorBlendValues;
-i.vPaintValues = v.vColorPaintValues;
-");
-                break;
-case MaterialDomain.PostProcess:
-                sb.AppendLine(@"
-PixelInput i;
-i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
-i.vPositionWs = float3(v.vTexCoord, 0.0f);
-");
-                break;
-        }
+		if ( Errors.Any() )
+			return null;
 
-        NodeResult result;
+		if ( !result.IsValid() )
+			return null;
 
-        if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
-        {
-            result = Result(connection);
+		if ( string.IsNullOrWhiteSpace( result.Code ) )
+			return null;
 
-            if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
-            {
-				var componentCount = GetComponentCount( typeof( Vector3 ) );
+		var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+		var componentCount = GetComponentCount( inputAttribute.Type );
 
+		sb.AppendLine();
 
-               //var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-               //var componentCount = GetComponentCount( inputAttribute.Type );
-			   
-               sb.AppendLine();
-			   
-               foreach ( var local in ShaderResult.Results )
-               {
-                   sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
-               }
+		foreach ( var local in ShaderResult.Results )
+		{
+			sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
+		}
 
-                sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
-                sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
-            }
-        }
+		sb.AppendLine( $"i.vPositionWs.xyz += {result.Cast( componentCount )};" );
+		sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );
 
-        switch ( Graph.MaterialDomain )
-        {
-            case MaterialDomain.Surface:
-                sb.AppendLine("return FinalizeVertex( i );");
-                break;
-            case MaterialDomain.BlendingSurface:
-                sb.AppendLine("return FinalizeVertex( i );");
-                break;
-            case MaterialDomain.PostProcess:
-                sb.AppendLine("return i;");
-                break;
-        }
-
-        return sb.ToString();
-    }
+		return sb.ToString();
+	}
 }
