@@ -38,9 +38,9 @@ public sealed class SceneColorNode : ShaderNodePlus
 		{
 			compiler.RegisterGlobal( "BoolAttribute( bWantsFBCopyTexture, true );" );
 			compiler.RegisterGlobal( "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
-			
-			return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv}")} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")})" );
-		}
+
+            return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")}")})");
+        }
 	};
 }
 
