@@ -3,7 +3,7 @@
   "Description": null,
   "BlendMode": "Translucent",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Glass",
+  "MaterialDomain": "Surface",
   "postProcessComponentInfo": {
     "Order": 10
   },
@@ -52,7 +52,7 @@
       "_class": "SceneColorNode",
       "Identifier": "3",
       "Position": "-336,276",
-      "ScreenUVs": {
+      "UV": {
         "Identifier": "2",
         "Output": "Result"
       }
