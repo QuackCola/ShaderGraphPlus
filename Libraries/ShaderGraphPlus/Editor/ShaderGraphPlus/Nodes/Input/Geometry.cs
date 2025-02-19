@@ -109,6 +109,20 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 }
 
 /// <summary>
+/// Return the projected screen space as texture coordinates
+/// </summary>
+[Title( "Projected Screen Space" ), Category( "Variables" )]
+public sealed class ProjectedScreenCoordinate : ShaderNodePlus
+{
+	[Output( typeof( Vector2 ) ), Title( "UV" )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+		compiler.IsVs ?
+		new( ResultType.Vector2, $"CalculateViewportUv( i.vPositionPs.xy ) * g_vFrameBufferCopyInvSizeAndUvScale.zw" ) :
+		new( ResultType.Vector2, $"CalculateViewportUv( i.vPositionSs.xy ) * g_vFrameBufferCopyInvSizeAndUvScale.zw" );
+}
+
+/// <summary>
 /// Return the current world space position
 /// </summary>
 [Title( "World Space Position" ), Category( "Variables" )]

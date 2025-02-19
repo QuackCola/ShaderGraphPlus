@@ -60,13 +60,15 @@ public sealed partial class GraphCompiler
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
 		public Dictionary<string, Sampler> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
-        public Dictionary<string, Gradient> Gradients = new();
-        public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
-        public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
+		public Dictionary<string, Gradient> Gradients = new();
+		public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
+		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public Dictionary<string, string> Functions { get; private set; } = new ();
-
-        public string RepresentativeTexture { get; set; }
+		
+		public HashSet<string> Globals { get; private set; } = new();
+		
+		public string RepresentativeTexture { get; set; }
     }
 
 	public enum ShaderStage
@@ -163,9 +165,23 @@ public sealed partial class GraphCompiler
     }
 
 	/// <summary>
-	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
+	/// Register some generic global parameter for a node to use.
 	/// </summary>
-	public Gradient GetGradient( string gradient_name )
+	/// <param name="global"></param>
+    public void RegisterGlobal( string global )
+    {
+        var result = ShaderResult;
+
+        if ( !result.Globals.Contains( global ) )
+        {
+            result.Globals.Add( global );
+        }
+    }
+
+    /// <summary>
+    /// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
+    /// </summary>
+    public Gradient GetGradient( string gradient_name )
 	{
 		var result = ShaderResult;
 
@@ -1180,22 +1196,6 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-		
-        if ( Graph.MaterialDomain is not MaterialDomain.PostProcess )
-        {
-            if ( IsPs )
-            {
-                sb.AppendLine( "BoolAttribute( bWantsFBCopyTexture, true ); ");
-
-				if ( Graph.BlendMode is BlendMode.Translucent )
-				{
-					//sb.AppendLine( "BoolAttribute( translucent, true );" );
-				}
-
-            }
-        }
-
-
         // Static & Dynamic shader feature combos
         foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
@@ -1211,21 +1211,27 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
+		// TODO : Should i just put this in the common block or have a way so
+		// you can specify if a global gets appended in the `vertex shader` or `pixel shader` sections.
+		foreach ( var global in ShaderResult.Globals )
 		{
-			if ( IsPs )
-			{
-				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
-				sb.AppendLine();
-			}
-		}
-        else
-		{
-            sb.AppendLine("Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;");
+            sb.AppendLine( global );
             sb.AppendLine();
         }
 
-
+		//foreach ( var global in ShaderResult.Globals )
+		//{
+		//	if ( global.Value && IsVs )
+		//	{
+		//        sb.AppendLine( global.Key );
+		//    }
+		//	else
+		//	{
+		//        sb.AppendLine( global.Key );
+		//  }
+		//
+		//    sb.AppendLine();
+		//}
 
 		foreach ( var Sampler in ShaderResult.SamplerStates )
 		{
@@ -1235,7 +1241,7 @@ public sealed partial class GraphCompiler
 			  .Append( $" AddressV( {Sampler.Value.AddressV.ToString().ToUpper()} ); >;" )
 			  .AppendLine();
 		}
-
+		
 		if ( IsPreview )
 		{
 			foreach ( var result in ShaderResult.TextureInputs )
@@ -1332,7 +1338,7 @@ public sealed partial class GraphCompiler
         
 		if ( Debug )
 		{
-            if (IsPreview)
+            if ( IsPreview )
             {
                 Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
             }
@@ -1562,7 +1568,7 @@ i.vTintColor = extraShaderData.vTint;
 
 VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );");
                 break;
-case MaterialDomain.BlendingSurface:
+            case MaterialDomain.BlendingSurface:
                 sb.AppendLine(@"
 PixelInput i = ProcessVertex( v );
 i.vBlendValues = v.vColorBlendValues;
