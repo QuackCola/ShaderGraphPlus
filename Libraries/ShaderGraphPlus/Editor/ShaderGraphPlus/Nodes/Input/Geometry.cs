@@ -111,7 +111,7 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 /// <summary>
 /// Return the projected screen space as texture coordinates
 /// </summary>
-[Title( "Projected screen space" ), Category( "Variables" )]
+[Title( "Projected Screen Space" ), Category( "Variables" )]
 public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 {
 	[Output( typeof( Vector2 ) ), Title( "UV" )]
