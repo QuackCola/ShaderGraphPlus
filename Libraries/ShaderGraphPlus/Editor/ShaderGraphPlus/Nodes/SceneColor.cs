@@ -47,32 +47,11 @@ public sealed class SceneColorNode : ShaderNodePlus
 [Title( "Frame Buffer Copy Inv Size And Uv Scale" ), Category( "Variables" )]
 public sealed class FrameBufferCopyInvSizeAndUvScaleNode : ShaderNodePlus
 {
-	[Output( typeof( float ) )]
+	[Output( typeof( Vector2 ) )]
 	[Hide]
-	public NodeResult.Func X => (GraphCompiler compiler) =>
+	public NodeResult.Func Result => (GraphCompiler compiler) =>
 	{
-	    return new NodeResult( ResultType.Float, $"g_vFrameBufferCopyInvSizeAndUvScale.x" );
-	};
-	
-	[Output( typeof( float ) )]
-	[Hide]
-	public NodeResult.Func Y => (GraphCompiler compiler) =>
-	{
-	    return new NodeResult( ResultType.Float, $"g_vFrameBufferCopyInvSizeAndUvScale.y" );
-	};
-	
-	[Output( typeof( float ) )]
-	[Hide]
-	public NodeResult.Func Z => (GraphCompiler compiler) =>
-	{
-	    return new NodeResult( ResultType.Float, $"g_vFrameBufferCopyInvSizeAndUvScale.z" );
-	};
-	
-	[Output( typeof( float ) )]
-	[Hide]
-	public NodeResult.Func W => ( GraphCompiler compiler ) =>
-	{
-	    return new NodeResult( ResultType.Float, $"g_vFrameBufferCopyInvSizeAndUvScale.w" );
+	    return new NodeResult( ResultType.Vector2, $"g_vFrameBufferCopyInvSizeAndUvScale.zw" );
 	};
 
 }
