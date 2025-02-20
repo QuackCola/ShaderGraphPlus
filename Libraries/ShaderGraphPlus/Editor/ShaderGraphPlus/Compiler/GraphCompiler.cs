@@ -39,6 +39,7 @@ public sealed partial class GraphCompiler
 	/// Current SubGraph
 	/// </summary>
     private ShaderGraphPlus Subgraph = null;
+    private SubgraphNode SubgraphNode = null;
     private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
     /// <summary>
@@ -91,7 +92,7 @@ public sealed partial class GraphCompiler
 	public Action<string, object> OnAttribute { get; set; }
 
 	public List<BaseNodePlus> Nodes { get; private set; } = new();
-	private List<BaseNodePlus> NodeStack = new();
+	private List<NodeInput> InputStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
@@ -408,7 +409,7 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public NodeResult Result( NodeInput input )
 	{
-		if (!input.IsValid)
+		if ( !input.IsValid )
 			return default;
 
 		BaseNodePlus node = null;
@@ -416,11 +417,13 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
+				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
 				return Result( new()
 				{
 					Identifier = input.Identifier,
 					Output = input.Output,
-					Subgraph = Subgraph.Path
+					Subgraph = Subgraph.Path,
+					SubgraphNode = nodeId
 				} );
 			}
 			node = Graph.FindNode( input.Identifier );
@@ -433,12 +436,14 @@ public sealed partial class GraphCompiler
 				node = subgraph.FindNode( input.Identifier );
 			}
 		}
-
-		if (ShaderResult.InputResults.TryGetValue(input, out var result))
+		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+		{
 			return result;
-
-		if (node == null)
+		}
+		if ( node == null )
+		{
 			return default;
+		}
 
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty( input.Output );
@@ -466,11 +471,13 @@ public sealed partial class GraphCompiler
 
         object value = null;
 
-        if ( node is not IRerouteNode && NodeStack.Contains( node ) )
+
+		if ( node is not IRerouteNode && InputStack.Contains( input ) )
 		{
-		    NodeErrors.Add( node, new List<string> { "Circular reference detected" } );
-		    return default;
+			NodeErrors[node] = new List<string> { "Circular reference detected" };
+			return default;
 		}
+		InputStack.Add( input );
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
@@ -487,8 +494,10 @@ public sealed partial class GraphCompiler
 		if ( node is SubgraphNode subgraphNode )
 		{
 			var newStack = (subgraphNode, Subgraph);
+			var lastNode = SubgraphNode;
 			SubgraphStack.Add( newStack );
 			Subgraph = subgraphNode.Subgraph;
+			SubgraphNode = subgraphNode;
 			if ( !Subgraphs.Contains( Subgraph ) )
 			{
 				Subgraphs.Add( Subgraph );
@@ -498,20 +507,27 @@ public sealed partial class GraphCompiler
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
 			{
+				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
 				var newConnection = new NodeInput()
 				{
 					Identifier = resultInput.ConnectedOutput.Node.Identifier,
 					Output = resultInput.ConnectedOutput.Identifier,
-					Subgraph = Subgraph.Path
+					Subgraph = Subgraph.Path,
+					SubgraphNode = nodeId
 				};
 				var newResult = Result( newConnection );
+				InputStack.Remove( input );
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				Subgraph = newStack.Item2;
+				SubgraphNode = lastNode;
 				return newResult;
 			}
 			else
 			{
 				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );
+				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+				Subgraph = newStack.Item2;
+				SubgraphNode = lastNode;
 			}
 		}
 		else
@@ -522,16 +538,21 @@ public sealed partial class GraphCompiler
 				{
 					var newResult = ResolveParameterNode( parameterNode, ref value );
 					if ( newResult.IsValid )
+					{
+						InputStack.Remove( input );
 						return newResult;
+					}
 				}
 			}
-			else
+			else if ( Graph.IsSubgraph )
 			{
 				if ( node is IParameterNode parameterNode )
 				{
 					if ( parameterNode.PreviewInput.IsValid )
 					{
-						return Result( parameterNode.PreviewInput );
+						var paramResult = Result( parameterNode.PreviewInput );
+						InputStack.Remove( input );
+						return paramResult;
 					}
 				}
 			}
@@ -539,32 +560,42 @@ public sealed partial class GraphCompiler
 			if ( value is null )
 			{
 				if ( property == null )
+				{
+					InputStack.Remove( input );
 					return default;
+				}
 
 				value = property.GetValue( node );
 			}
 
 			if ( value == null )
+			{
+				InputStack.Remove( input );
 				return default;
+			}
 		}
 
 		if ( value is NodeResult nodeResult )
 		{
-			NodeStack.Remove( node );
+			InputStack.Remove( input );
 			return nodeResult;
 		}
 		else if ( value is NodeInput nodeInput )
 		{
+			if ( nodeInput == input )
+			{
+				InputStack.Remove( input );
+				return default;
+			}
 			var newResult = Result( nodeInput );
-			NodeStack.Remove( node );
+			InputStack.Remove( input );
 			return newResult;
 		}
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			// only enter this if IsComponentLess is is false
-			if ( !funcResult.IsValid && !funcResult.IsComponentLess )
+			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
 				{
@@ -572,47 +603,46 @@ public sealed partial class GraphCompiler
 					NodeErrors.Add( node, errors );
 				}
 
-				if (funcResult.Errors is null || funcResult.Errors.Length == 0)
+				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
 				{
-					errors.Add($"Missing input");
+					errors.Add( $"Missing input" );
 				}
 				else
 				{
-					foreach (var error in funcResult.Errors)
-						errors.Add(error);
+					foreach ( var error in funcResult.Errors )
+						errors.Add( error );
 				}
 
+				InputStack.Remove( input );
 				return default;
 			}
 
-			if (funcResult.ResultType is ResultType.Gradient) // Gradient will be internal to the shader and cannot be changed externally by the material editor.
-			{
-				return funcResult;
-			}
-
-			// We can return this result without making it a local variable because it's constant & or isnt somethign that is directly put into the graph.
+			// We can return this result without making it a local variable because it's constant
 			if ( funcResult.Constant )
 			{
+				InputStack.Remove( input );
 				return funcResult;
 			}
 
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult( funcResult.ResultType, varName) ;
+			var localResult = new NodeResult( funcResult.ResultType, varName );
 
 			ShaderResult.InputResults.Add( input, localResult );
-			ShaderResult.Results.Add( ( localResult, funcResult ) );
+			ShaderResult.Results.Add( (localResult, funcResult) );
 
 			if ( IsPreview )
 			{
 				Nodes.Add( node );
 			}
 
-			NodeStack.Remove( node );
+			InputStack.Remove( input );
 			return localResult;
 		}
 
-		return ResultValue( value );
+		var resultVal = ResultValue( value );
+		InputStack.Remove( input );
+		return resultVal;
 	}
 
 	/// <summary>
@@ -825,25 +855,34 @@ public sealed partial class GraphCompiler
 			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
 			if ( parentInput.Key is not null )
 			{
+				var lastSubgraph = Subgraph;
+				var lastNode = SubgraphNode;
+				Subgraph = lastStack.Item2;
+				SubgraphNode = (Subgraph is null) ? null : lastNodeEntered;
+				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+
 				var connectedPlug = parentInput.Key.ConnectedOutput;
 				if ( connectedPlug is not null )
 				{
-					var lastSubgraph = Subgraph;
-					Subgraph = lastStack.Item2;
-					SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+					var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
 					var newResult = Result( new()
 					{
 						Identifier = connectedPlug.Node.Identifier,
 						Output = connectedPlug.Identifier,
-						Subgraph = Subgraph?.Path
+						Subgraph = Subgraph?.Path,
+						SubgraphNode = nodeId
 					} );
 					SubgraphStack.Add( lastStack );
 					Subgraph = lastSubgraph;
+					SubgraphNode = lastNode;
 					return newResult;
 				}
 				else
 				{
 					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );
+					SubgraphStack.Add( lastStack );
+					Subgraph = lastSubgraph;
+					SubgraphNode = lastNode;
 				}
 			}
 		}
@@ -1126,7 +1165,7 @@ public sealed partial class GraphCompiler
     private string GeneratePixelInit()
     {
         Stage = ShaderStage.Pixel;
-        if (Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess)
+        if ( Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess )
             return ShaderTemplate.Material_init;
         return "";
     }
