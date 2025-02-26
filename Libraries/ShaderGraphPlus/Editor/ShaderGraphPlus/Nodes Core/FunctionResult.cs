@@ -53,7 +53,7 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 		}
 		else
 		{
-			foreach ( var output in FunctionOutputs )
+			foreach ( var output in FunctionOutputs.OrderBy( x => x.Priority ) )
 			{
 				if ( output.Type is null ) continue;
 				var info = new PlugInfo()
@@ -84,6 +84,7 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 			InternalInputs = plugs;
 		}
 	}
+
 
 	public List<string> GetErrors()
 	{
@@ -305,9 +306,11 @@ public class FunctionOutput
 
 	public PreviewType Preview { get; set; }
 
-	public override int GetHashCode()
+    public int Priority { get; set; }
+
+    public override int GetHashCode()
 	{
-		return System.HashCode.Combine( Id, Name, TypeName );
+		return System.HashCode.Combine( Id, Name, TypeName, Priority );
 	}
 
 	public enum PreviewType

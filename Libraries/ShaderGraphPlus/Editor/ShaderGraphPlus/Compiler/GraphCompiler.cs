@@ -212,7 +212,7 @@ public sealed partial class GraphCompiler
         //Log.Info($"Shader feature : {feature.ToFeatureName()} result true : {trueResult}");
         //Log.Info($"Shader feature : {feature.ToFeatureName()} defualt result : {falseResult}");
 
-        if (feature.IsValid)
+        if ( feature.IsValid )
         {
 			var featureDeclaration = "";
 			var featureDeclarationOptionAmount = 0;
