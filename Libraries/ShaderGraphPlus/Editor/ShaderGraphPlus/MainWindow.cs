@@ -1139,7 +1139,7 @@ public class MainWindow : DockWindow
 		
 		AddToRecentFiles( savePath );
 		
-		EditorEvent.Run("shadergraphplus.update.subgraph", _asset.RelativePath);
+		EditorEvent.Run( "shadergraphplus.update.subgraph", _asset.RelativePath );
 		
 		return true;
 	}
@@ -1395,14 +1395,15 @@ public class MainWindow : DockWindow
 	[Event( "shadergraphplus.update.subgraph" )]
 	public void OnSubgraphUpdate( string updatedPath )
 	{
-		if ( !_graph.Nodes.Any( x => x is SubgraphNode subgraphNode && subgraphNode.SubgraphPath == updatedPath ) )
+		foreach ( var node in _graph.Nodes )
 		{
-			return;
+			if ( node is SubgraphNode subgraphNode )
+			{
+				subgraphNode.Subgraph = null;
+				subgraphNode.OnNodeCreated();
+			}
 		}
-		
-		DockManager.Clear();
-		MenuBar.Clear();
-		
-		CreateUI();
+
+		GeneratePreviewCode();
 	}
 }

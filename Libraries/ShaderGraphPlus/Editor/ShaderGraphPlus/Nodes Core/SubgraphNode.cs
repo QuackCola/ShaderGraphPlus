@@ -58,6 +58,8 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 					texNode.Image = defaultTexVal.ToString();
 				}
 			}
+
+			Update();
 		}
 	}
 
@@ -67,44 +69,55 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	{
 		var plugs = new List<IPlugIn>();
 		var defaults = new Dictionary<Type, int>();
-		foreach ( var node in Subgraph.Nodes )
-		{
-			if ( node is IParameterNode parameterNode )
-			{
-				var name = parameterNode.Name;
-				if ( string.IsNullOrWhiteSpace( name ) ) continue;
-				var type = node.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object );
-				if ( type == typeof( object ) ) type = node.GetType().BaseType.GenericTypeArguments.FirstOrDefault() ?? typeof( object );
-				if ( string.IsNullOrEmpty( name ) )
-				{
-					if ( !defaults.ContainsKey( type ) )
-					{
-						defaults[type] = 0;
-					}
-					name = $"{type.Name}_{defaults[type]}";
-					defaults[type]++;
-				}
+		InputReferences.Clear();
 
-				var info = new PlugInfo()
+		var parameterNodes = Subgraph.Nodes.OfType<IParameterNode>().OrderBy( x => x.UI.Priority );
+
+		foreach ( var parameterNode in parameterNodes )
+		{
+			var name = parameterNode.Name;
+			if ( string.IsNullOrWhiteSpace( name ) ) continue;
+			var type = parameterNode.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object );
+			if ( type == typeof( object ) ) type = parameterNode.GetType().BaseType.GenericTypeArguments.FirstOrDefault() ?? typeof( object );
+			if ( string.IsNullOrEmpty( name ) )
+			{
+				if ( !defaults.ContainsKey( type ) )
+				{
+					defaults[type] = 0;
+				}
+				name = $"{type.Name}_{defaults[type]}";
+				defaults[type]++;
+			}
+
+			var info = new PlugInfo()
+			{
+				Name = name,
+				Type = type,
+				DisplayInfo = new DisplayInfo()
 				{
 					Name = name,
-					Type = type,
-					DisplayInfo = new DisplayInfo()
-					{
-						Name = name,
-						Fullname = type.FullName
-					}
-				};
-				var plug = new BasePlugIn( this, info, type );
-				plugs.Add( plug );
-				InputReferences[plug] = (parameterNode, type);
-
-				if ( !DefaultValues.ContainsKey( plug.Identifier ) )
-				{
-					DefaultValues[plug.Identifier] = parameterNode.GetValue();
+					Fullname = type.FullName
 				}
+			};
+			var plug = new BasePlugIn( this, info, type );
+			var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == info.Name && plugIn.Info.Type == info.Type ) as BasePlugIn;
+			if ( oldPlug is not null )
+			{
+				oldPlug.Info.Name = info.Name;
+				oldPlug.Info.Type = info.Type;
+				oldPlug.Info.DisplayInfo = info.DisplayInfo;
+				plug = oldPlug;
 			}
+			plugs.Add( plug );
+			InputReferences[plug] = (parameterNode, type);
+
+			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
+			{
+				DefaultValues[plug.Identifier] = parameterNode.GetValue();
+			}
+
 		}
+
 		InternalInputs = plugs;
 	}
 
@@ -116,7 +129,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 		if ( resultNode is null ) return;
 
 		var plugs = new List<IPlugOut>();
-		foreach ( var output in resultNode.FunctionOutputs )
+		foreach ( var output in resultNode.FunctionOutputs.OrderBy( x => x.Priority ) )
 		{
 			if ( output.Type is null ) continue;
 			var info = new PlugInfo()
@@ -130,7 +143,18 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 				}
 			};
 			var plug = new BasePlugOut( this, info, output.Type );
-			plugs.Add( plug );
+			var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Name == info.Name && plugOut.Info.Type == info.Type ) as BasePlugOut;
+			if ( oldPlug is not null )
+			{
+				oldPlug.Info.Name = info.Name;
+				oldPlug.Info.Type = info.Type;
+				oldPlug.Info.DisplayInfo = info.DisplayInfo;
+				plugs.Add( oldPlug );
+			}
+			else
+			{
+				plugs.Add( plug );
+			}
 		}
 		InternalOutputs = plugs;
 	}

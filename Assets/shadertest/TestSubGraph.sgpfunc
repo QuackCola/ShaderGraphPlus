@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "8a5127c2-cccb-46d4-ad0f-df5aa4cd50d4",
+          "Id": "6e870415-645d-4b88-aa73-cb84b301d886",
           "Name": "A",
           "Type": "Color",
           "Preview": "Albedo"
@@ -46,7 +46,7 @@
         "Type": "Color"
       },
       "Identifier": "1",
-      "Position": "-648,48",
+      "Position": "-708,48",
       "HandleOffsets": {}
     }
   ]
