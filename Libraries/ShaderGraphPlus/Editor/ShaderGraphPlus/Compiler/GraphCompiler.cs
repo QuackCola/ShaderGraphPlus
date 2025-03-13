@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 
+
 namespace Editor.ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
@@ -68,7 +69,8 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Functions { get; private set; } = new ();
 		
 		public HashSet<string> Globals { get; private set; } = new();
-		
+		public List<(string,string)> VoidLocals { get; private set; } = new();
+
 		public string RepresentativeTexture { get; set; }
     }
 
@@ -189,6 +191,44 @@ public sealed partial class GraphCompiler
 
         return $"{func.Item2}({args})";
 
+    }
+
+	public string RegisterVoidFunctionResults(List<(string, string)> values)
+	{
+		var result = ShaderResult;
+		var sb = new StringBuilder();
+
+		int index = 0;
+
+        foreach (var value in values)
+        {
+			 var id = ShaderResult.VoidLocals.Count;
+			 var varName = $"vl_{id}";
+			
+			 (string, string) func = (value.Item1, varName);
+
+			if (!result.VoidLocals.Contains(func))
+			{
+				result.VoidLocals.Add(func);
+				
+				if (index == 0)
+				{
+				    sb.Append($" {varName}, ");
+				    index++;
+				}
+				else if (index != (ShaderResult.VoidLocals.Count - 1))
+				{
+				    sb.Append($" {varName}, ");
+				    index++;
+				}
+				else
+				{
+				    sb.Append($" {varName} ");
+				}
+			}
+        }
+
+		return sb.ToString();
     }
 
     /// <summary>
@@ -523,6 +563,13 @@ public sealed partial class GraphCompiler
 
         if ( node is CustomCodeNode customcodeNode )
 		{
+
+
+			Log.Info(input.Output);
+
+
+
+
 			return customcodeNode.BuildFunction( this );
         }
 
@@ -1518,7 +1565,43 @@ public sealed partial class GraphCompiler
         
         }
 
-		string TrueIndex = "0";
+		foreach ( var voidLocal in ShaderResult.VoidLocals )
+		{
+
+			var initialValue = "";
+
+
+            if (voidLocal.Item1 == "bool")
+            {
+                initialValue = "false";
+            }
+            else if (voidLocal.Item1 == "int")
+            {
+                initialValue = "0";
+            }
+            else if (voidLocal.Item1 == "float")
+			{
+				initialValue = "0.0f";
+            }
+            else if (voidLocal.Item1 == "float2")
+            {
+                initialValue = "float2(0.0f,0.0f)";
+            }
+            else if (voidLocal.Item1 == "float3")
+            {
+                initialValue = "float2(0.0f,0.0f,0.0f)";
+            }
+            else if (voidLocal.Item1 == "float4")
+            {
+                initialValue = "float2(0.0f,0.0f,0.0f,0.0f)";
+            }
+
+            sb.AppendLine($"{voidLocal.Item1} {voidLocal.Item2} = {initialValue};");
+        }
+
+        sb.AppendLine();
+
+        string TrueIndex = "0";
 
         if ( IsPreview )
 		{

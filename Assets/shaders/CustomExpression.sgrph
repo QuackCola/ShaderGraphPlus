@@ -40,34 +40,30 @@
       "ResultType": "Color",
       "ExpressionInputs": [
         {
-          "Id": "27195326-ceee-4dc5-95a3-a87a1eb4ce63",
+          "Id": "b80eb2c7-de9e-4e48-ae82-cd560c876a65",
           "Name": "uv",
-          "Type": "Vector2",
-          "TypeNameTest": "float2"
+          "Type": "Vector2"
         },
         {
-          "Id": "6e62cdac-7433-4e58-8d43-e4e53624ba52",
+          "Id": "a6fb26b5-b72f-47f3-84eb-593c5bd21335",
           "Name": "speed",
-          "Type": "float",
-          "TypeNameTest": "float"
+          "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "bfb309c0-59a0-4c96-86b8-2d57db619ab9",
+          "Id": "c10243f6-c9f1-406a-85b5-2de7abee0909",
           "Name": "resulta",
-          "Type": "float",
-          "TypeNameTest": "float"
+          "Type": "float"
         },
         {
-          "Id": "4da93225-96d8-4e3c-8c36-a76071a47353",
+          "Id": "ef918056-41e7-45cf-8449-1fc4dd1e414d",
           "Name": "resultb",
-          "Type": "float",
-          "TypeNameTest": "float"
+          "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-360,-240",
+      "Position": "-336,-228",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
