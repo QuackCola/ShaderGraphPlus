@@ -165,6 +165,13 @@ public sealed partial class GraphCompiler
 
     }
 
+    /// <summary>
+    /// Slightly tweaked version of the original. Only used by the Custom Expression node.
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="functionName"></param>
+    /// <param name="args"></param>
+    /// <returns></returns>
     public string ResultFunctionCustomExpression(string code, string functionName, string args = "")
     {
         var result = ShaderResult;
