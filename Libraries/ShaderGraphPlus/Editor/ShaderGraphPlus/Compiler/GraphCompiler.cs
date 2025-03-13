@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 
+
 namespace Editor.ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
@@ -475,9 +476,6 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public NodeResult Result(NodeInput input)
 	{
-
-
-
 		if (!input.IsValid)
 			return default;
 
@@ -563,14 +561,23 @@ public sealed partial class GraphCompiler
 
         if ( node is CustomCodeNode customcodeNode )
 		{
+			var funcResult = customcodeNode.BuildFunction( this );
 
+            var id = ShaderResult.InputResults.Count;
+            var varName = $"l_{id}";
+            var localResult = new NodeResult( funcResult.ResultType, varName );
 
-			Log.Info(input.Output);
+            ShaderResult.InputResults.Add( input, localResult );
+            ShaderResult.Results.Add( ( localResult, funcResult ) );
 
+            if ( IsPreview )
+            {
+                Nodes.Add( node );
+            }
 
-
-
-			return customcodeNode.BuildFunction( this );
+            InputStack.Remove( input );
+            
+			return localResult;
         }
 
         if ( node is SubgraphNode subgraphNode )

@@ -119,8 +119,9 @@ PS
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.199999 ) );
 		float l_2 = g_fltestfloat;
+		float4 l_3 = Func(l_1, l_2,  vl_0,  vl_1 );
 		
-		m.Albedo = Func(l_1, l_2,  vl_0,  vl_1 ).xyz;
+		m.Albedo = l_3.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
