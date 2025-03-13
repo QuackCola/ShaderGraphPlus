@@ -455,81 +455,85 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result( NodeInput input )
+	public NodeResult Result(NodeInput input)
 	{
-		if ( !input.IsValid )
+
+
+
+		if (!input.IsValid)
 			return default;
 
 		BaseNodePlus node = null;
-		if ( string.IsNullOrEmpty( input.Subgraph ) )
+		if (string.IsNullOrEmpty(input.Subgraph))
 		{
-			if ( Subgraph is not null )
+			if (Subgraph is not null)
 			{
-				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
-				return Result( new()
+				var nodeId = string.Join(',', SubgraphStack.Select(x => x.Item1.Identifier));
+				return Result(new()
 				{
 					Identifier = input.Identifier,
 					Output = input.Output,
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
-				} );
+				});
 			}
-			node = Graph.FindNode( input.Identifier );
+			node = Graph.FindNode(input.Identifier);
 		}
 		else
 		{
-			var subgraph = Subgraphs.FirstOrDefault( x => x.Path == input.Subgraph );
-			if ( subgraph is not null )
+			var subgraph = Subgraphs.FirstOrDefault(x => x.Path == input.Subgraph);
+			if (subgraph is not null)
 			{
-				node = subgraph.FindNode( input.Identifier );
+				node = subgraph.FindNode(input.Identifier);
 			}
 		}
-		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+		if (ShaderResult.InputResults.TryGetValue(input, out var result))
 		{
 			return result;
 		}
-		if ( node == null )
+		if (node == null)
 		{
 			return default;
 		}
 
 		var nodeType = node.GetType();
-		var property = nodeType.GetProperty( input.Output );
+		var property = nodeType.GetProperty(input.Output);
 
-		if ( property == null )
+
+		if (property == null)
 		{
 			// Search for alias
 			var allProperties = nodeType.GetProperties();
-			foreach ( var prop in allProperties )
+			foreach (var prop in allProperties)
 			{
 				var alias = prop.GetCustomAttribute<AliasAttribute>();
-				if ( alias is null ) continue;
-				foreach ( var al in alias.Value )
+				if (alias is null) continue;
+				foreach (var al in alias.Value)
 				{
-					if ( al == input.Output )
+					if (al == input.Output)
 					{
 						property = prop;
 						break;
 					}
 				}
-				if ( property != null )
+				if (property != null)
 					break;
 			}
 		}
 
-        object value = null;
+		object value = null;
 
 
-		if ( node is not IRerouteNode && InputStack.Contains( input ) )
+		if (node is not IRerouteNode && InputStack.Contains(input))
 		{
 			NodeErrors[node] = new List<string> { "Circular reference detected" };
 			return default;
 		}
-		InputStack.Add( input );
+		InputStack.Add(input);
 
-		if ( Subgraph is not null && node.Graph != Subgraph )
+		if (Subgraph is not null && node.Graph != Subgraph)
 		{
-			if ( node.Graph != Graph )
+			if (node.Graph != Graph)
 			{
 				Subgraph = node.Graph as ShaderGraphPlus;
 			}
@@ -539,7 +543,70 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( node is SubgraphNode subgraphNode )
+		//if (node is CustomCodeNode customcodeNode)
+		//{
+		//
+		//
+		//
+		//   
+		//   
+		//	var resultInput = customcodeNode.Outputs.FirstOrDefault( x => x.Identifier == input.Output);
+		//    var resultInput2 = customcodeNode.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
+		//
+		//
+		//    Log.Info($"resultInput `{resultInput.DisplayInfo.Name}` from source `{resultInput.Node.DisplayInfo.Name}`");
+		//
+		//    Log.Info($"Target `{input.Output}` ");
+		//
+		//    //if (resultInput is not null)
+		//    //{
+		//    //	Log.Info($"From : {resultInput.Identifier}");
+		//    //   Log.Info($"To : {resultInput.DisplayInfo.Name}");
+		//    //
+		//    //   var newConnection = new NodeInput()
+		//    //   {
+		//    //       Identifier = resultInput.Node.Identifier,
+		//    //       Output = resultInput.Identifier,
+		//    //   };
+		//    //
+		//    //
+		//    //   Log.Info($"connection : {newConnection.Identifier}");
+		//    //
+		//    //   var newResult = Result(newConnection);
+		//    //
+		//    //
+		//    //   Log.Info($"Custom Code Resulttype is : {newResult.ResultType}");
+		//    //
+		//    //
+		//    //   InputStack.Remove(input);
+		//    //
+		//    //   return newResult;
+		//    //}
+		//}
+
+
+
+
+
+        if ( node is CustomCodeNode customcodeNode )
+		{
+			//var l_1 = customcodeNode.Outputs;
+			//
+			//foreach (var output in l_1)
+			//{
+			//	Log.Info($"output `{output.Identifier}`");
+			//}
+			//
+			//Log.Info($"i `{input.Identifier}`");
+
+
+			return customcodeNode.BuildFunction(this);
+
+
+
+        }
+
+        if ( node is SubgraphNode subgraphNode )
 		{
 			var newStack = (subgraphNode, Subgraph);
 			var lastNode = SubgraphNode;
@@ -580,7 +647,8 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( Subgraph is not null )
+            
+            if ( Subgraph is not null )
 			{
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
@@ -610,10 +678,11 @@ public sealed partial class GraphCompiler
 				if ( property == null )
 				{
 					InputStack.Remove( input );
-					return default;
+                    Log.Info($"property == null ");
+                    return default;
 				}
-
-				value = property.GetValue( node );
+     
+                value = property.GetValue( node );
 			}
 
 			if ( value == null )
@@ -1271,7 +1340,12 @@ public sealed partial class GraphCompiler
 			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
 			var opacityResult = resultNode.GetOpacityResult( this );
 			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-			return $"return float4( {albedo}, {opacity} );";
+
+
+        
+
+
+            return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
 		{
@@ -1612,7 +1686,7 @@ public sealed partial class GraphCompiler
 
         var sb = new StringBuilder();
         var visited = new HashSet<string>();
-
+    
         foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
 			if ( property.Name == "PositionOffset" )
@@ -1625,6 +1699,7 @@ public sealed partial class GraphCompiler
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
+				
 				result = Result( connection );
 			}
 			else
@@ -1636,9 +1711,10 @@ public sealed partial class GraphCompiler
 				var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
 				if ( valueProperty == null )
 					continue;
-
-				result = ResultValue( valueProperty.GetValue( resultNode ) );
-			}
+               
+                result = ResultValue( valueProperty.GetValue( resultNode ) );
+             
+            }
 
 			if ( Errors.Any() )
 				return null;

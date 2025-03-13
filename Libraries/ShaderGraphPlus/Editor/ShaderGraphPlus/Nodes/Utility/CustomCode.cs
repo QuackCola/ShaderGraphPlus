@@ -1,3 +1,4 @@
+using Sandbox;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
@@ -31,35 +32,70 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 	[Hide]
 	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
-	[Hide, JsonIgnore]
-	int _lastHashCode = 0;
+    public List<ExpressionInputs> ExpressionOutputs { get; set; }
 
-	[Output]
-	[Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-        if ( !string.IsNullOrWhiteSpace( Name ) )
-		{
+    [Hide]
+    private List<IPlugOut> InternalOutputs = new();
+
+    [Hide]
+    public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
+
+
+    [Hide, JsonIgnore]
+	int _lastHashCodeInputs = 0;
+
+    [Hide, JsonIgnore]
+    int _lastHashCodeOutputs = 0;
+
+    //[Output]
+	//[Hide]
+	//public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	//{
+    //    if ( !string.IsNullOrWhiteSpace( Name ) )
+	//	{
+    //        var sb = new StringBuilder();
+	//		sb.AppendLine();
+	//			sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
+	//			sb.AppendLine( "{" );
+	//			sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
+	//			sb.AppendLine( "}" );
+    //        sb.AppendLine();
+    //
+    //        var results = GetResults( compiler );
+    //        
+    //        Log.Info( $"Gatherd results `{results}`" );
+    //
+    //        return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results ));
+    //    }
+	//	else
+	//	{
+    //        return new(ResultType, $"1" );
+    //    }
+	//};
+	
+    public NodeResult BuildFunction( GraphCompiler compiler )
+    {
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
             var sb = new StringBuilder();
-			sb.AppendLine();
-				sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
-				sb.AppendLine( "{" );
-				sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
-				sb.AppendLine( "}" );
+            sb.AppendLine();
+            sb.AppendLine($"{GetFuncReturnType()} {Name}({GetFunctionInputs()})");
+            sb.AppendLine("{");
+            sb.AppendLine(GraphCompiler.IndentString(Body, 1));
+            sb.AppendLine("}");
             sb.AppendLine();
 
-            var results = GetResults( compiler );
-            
-            Log.Info( $"Gatherd results `{results}`" );
+            var results = GetResults(compiler);
 
-            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results ));
+            Log.Info($"Gatherd results `{results}`");
+
+            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results));
         }
-		else
-		{
-            return new(ResultType, $"1" );
+        else
+        {
+            return new(ResultType, $"1");
         }
-	};
-	
+    }
 
     private string GetResults( GraphCompiler compiler )
     {
@@ -199,17 +235,34 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
     public override void OnFrame()
     {
-        var hashCode = 0;
-        foreach ( var output in ExpressionInputs )
+        var hashCodeInput = 0;
+        var hashCodeOutput = 0;
+
+        foreach ( var input in ExpressionInputs )
         {
-        	hashCode += output.GetHashCode();
+        	hashCodeInput += input.GetHashCode();
         }
-        if ( hashCode != _lastHashCode )
+
+        foreach ( var output in ExpressionOutputs )
         {
-        	_lastHashCode = hashCode;
+            hashCodeOutput += output.GetHashCode();
+        }
+
+
+        if ( hashCodeInput != _lastHashCodeInputs )
+        {
+        	_lastHashCodeInputs = hashCodeInput;
         
         	CreateInputs();
         	Update();
+        }
+
+        if ( hashCodeOutput != _lastHashCodeOutputs )
+        {
+            _lastHashCodeOutputs = hashCodeOutput;
+
+            CreateOutputs();
+            Update();
         }
     }
 
@@ -253,6 +306,51 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         	InternalInputs = plugs;
         }
     }
+
+    [Hide, JsonIgnore]
+    internal Dictionary<IPlugOut, IPlugIn> OutputReferences = new();
+
+    public void CreateOutputs()
+    {
+        var plugs = new List<IPlugOut>();
+        if (ExpressionOutputs == null)
+        {
+            InternalOutputs = new();
+        }
+        else
+        {
+            foreach (var output in ExpressionOutputs.OrderBy(x => x.Priority))
+            {
+                if (output.Type is null) continue;
+                var info = new PlugInfo()
+                {
+                    Id = output.Id,
+                    Name = output.Name,
+                    Type = output.Type,
+                    DisplayInfo = new()
+                    {
+                        Name = output.Name,
+                        Fullname = output.Type.FullName
+                    }
+                };
+                var plug = new BasePlugOut(this, info, info.Type);
+                var oldPlug = InternalOutputs.FirstOrDefault(x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id) as BasePlugOut;
+                if (oldPlug is not null)
+                {
+                    oldPlug.Info.Name = info.Name;
+                    oldPlug.Info.Type = info.Type;
+                    oldPlug.Info.DisplayInfo = info.DisplayInfo;
+                    plugs.Add(oldPlug);
+                }
+                else
+                {
+                    plugs.Add(plug);
+                }
+            };
+            InternalOutputs = plugs;
+        }
+    }
+
 }
 
 public class ExpressionInputs

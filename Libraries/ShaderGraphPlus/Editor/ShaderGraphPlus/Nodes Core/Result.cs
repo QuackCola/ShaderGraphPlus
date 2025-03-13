@@ -173,8 +173,13 @@ public abstract class BaseResult : ShaderNodePlus
 	public NodeResult GetAlbedoResult( GraphCompiler compiler )
 	{
 		var albedoInput = GetAlbedo();
-		if ( albedoInput.IsValid )
-			return compiler.ResultValue( albedoInput );
+		if (albedoInput.IsValid)
+		{
+            Log.Info($"connection : {albedoInput.Identifier}");
+            return compiler.ResultValue(albedoInput);
+        }
+		
+
 		return compiler.ResultValue( GetDefaultAlbedo() );
 	}
 
