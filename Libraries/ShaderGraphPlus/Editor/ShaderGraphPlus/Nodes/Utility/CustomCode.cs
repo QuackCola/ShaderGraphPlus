@@ -1,6 +1,3 @@
-
-using Sandbox;
-using System.Numerics;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
@@ -19,13 +16,11 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
 	public string Name { get; set; }
 
-	//public string FunctionHeader { get; set; }
-
 	[TextArea]
 	public string Body { get; set; }
+
     //[Hide]
     public ResultType ResultType { get; set; } = ResultType.Float;
-
 
 	[Title( "Inputs" )]
 	public List<ExpressionInputs> ExpressionInputs { get; set; }
@@ -38,9 +33,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
 	[Hide, JsonIgnore]
 	int _lastHashCode = 0;
-
-    [Hide]
-    private List<NodeResult> _inputResults = new();
 
 	[Output]
 	[Hide]
@@ -72,26 +64,27 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     private string GetResults( GraphCompiler compiler )
     {
         var sb = new StringBuilder();
-        int resindex = 0;
-        foreach (var input in Inputs)
+        int index = 0;
+
+        foreach ( IPlugIn input in Inputs )
         {
             NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
         
             var result = compiler.Result(nodeInput);
         
-            if (resindex == 0)
+            if ( index == 0 )
             {
-                sb.Append($"{result}, ");
-                resindex++;
+                sb.Append( $"{result}, " );
+                index++;
             }
-            else if (resindex != (Inputs.Count() - 1))
+            else if ( index != (Inputs.Count() - 1) )
             {
-                sb.Append($"{result}, ");
-                resindex++;
+                sb.Append( $"{result}, " );
+                index++;
             }
             else
             {
-                sb.Append($"{result}");
+                sb.Append( $"{result}" );
             }
         }
     
@@ -101,20 +94,19 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     private string GetFunctionInputs()
     {
         var sb = new StringBuilder();
+        int index = 0;
         
-        int inputIndex = 0;
-        
-        foreach ( var input in ExpressionInputs)
+        foreach ( ExpressionInputs input in ExpressionInputs )
         {
-            if (inputIndex == 0)
+            if ( index == 0 )
             {
             	sb.Append( $" {input.TypeNameTest} {input.Name}," );
-            	inputIndex++;
+            	index++;
             }
-            else if ( inputIndex != (ExpressionInputs.Count - 1) )
+            else if ( index != (ExpressionInputs.Count - 1) )
             {
                 sb.Append( $" {input.TypeNameTest} {input.Name}," );
-                inputIndex++;
+                index++;
             }
             else
             {
