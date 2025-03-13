@@ -543,67 +543,9 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		//if (node is CustomCodeNode customcodeNode)
-		//{
-		//
-		//
-		//
-		//   
-		//   
-		//	var resultInput = customcodeNode.Outputs.FirstOrDefault( x => x.Identifier == input.Output);
-		//    var resultInput2 = customcodeNode.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
-		//
-		//
-		//    Log.Info($"resultInput `{resultInput.DisplayInfo.Name}` from source `{resultInput.Node.DisplayInfo.Name}`");
-		//
-		//    Log.Info($"Target `{input.Output}` ");
-		//
-		//    //if (resultInput is not null)
-		//    //{
-		//    //	Log.Info($"From : {resultInput.Identifier}");
-		//    //   Log.Info($"To : {resultInput.DisplayInfo.Name}");
-		//    //
-		//    //   var newConnection = new NodeInput()
-		//    //   {
-		//    //       Identifier = resultInput.Node.Identifier,
-		//    //       Output = resultInput.Identifier,
-		//    //   };
-		//    //
-		//    //
-		//    //   Log.Info($"connection : {newConnection.Identifier}");
-		//    //
-		//    //   var newResult = Result(newConnection);
-		//    //
-		//    //
-		//    //   Log.Info($"Custom Code Resulttype is : {newResult.ResultType}");
-		//    //
-		//    //
-		//    //   InputStack.Remove(input);
-		//    //
-		//    //   return newResult;
-		//    //}
-		//}
-
-
-
-
-
         if ( node is CustomCodeNode customcodeNode )
 		{
-			//var l_1 = customcodeNode.Outputs;
-			//
-			//foreach (var output in l_1)
-			//{
-			//	Log.Info($"output `{output.Identifier}`");
-			//}
-			//
-			//Log.Info($"i `{input.Identifier}`");
-
-
-			return customcodeNode.BuildFunction(this);
-
-
-
+			return customcodeNode.BuildFunction( this );
         }
 
         if ( node is SubgraphNode subgraphNode )
