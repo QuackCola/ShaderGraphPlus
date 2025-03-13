@@ -1,13 +1,13 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/customexpression.sgrph",
-  "Model": null,
+  "Model": "models/dev/plane.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": false,
-  "BlendMode": "Opaque",
+  "BlendMode": "Masked",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "Metadata": {},
@@ -28,28 +28,39 @@
       "Position": "-156,-72",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "1",
-        "Output": "Result",
+        "Identifier": "3",
+        "Output": "Out",
         "Subgraph": null
       }
     },
     {
       "_class": "CustomCodeNode",
-      "Name": "Test",
-      "FunctionHeader": "float FunctionTest( float inputa )",
-      "Code": "\nif ( inputa == 0 )\n{\n   return 1;\n}\nelse\n{\n  return 0;\n}",
-      "ResultType": "Vector2",
+      "Name": "Func",
+      "Body": "float3 col1 = float3(0,0,0);\n\nuv = uv * 2 \u002B -.8;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*.1)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\n\n}\n\nreturn float4((col1),1);",
+      "ResultType": "Color",
       "ExpressionInputs": [
         {
-          "Id": "cc34c75d-90ba-446c-971b-7123395a8a29",
-          "Name": "inputa",
-          "Type": "float"
+          "Id": "fe728123-cbf8-41fd-885a-6289a81d396d",
+          "Name": "uv",
+          "Type": "Vector2",
+          "TypeNameTest": "float2"
+        },
+        {
+          "Id": "59918a0a-28fd-401a-bddc-a3417c3302f6",
+          "Name": "inputb",
+          "Type": "float",
+          "TypeNameTest": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-444,-120",
+      "Position": "-444,-144",
       "HandleOffsets": {},
-      "inputa": {
+      "uv": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "inputb": {
         "Identifier": "2",
         "Output": "Result",
         "Subgraph": null
@@ -64,7 +75,26 @@
       "IsAttribute": true,
       "UI": {},
       "Identifier": "2",
-      "Position": "-612,-120",
+      "Position": "-636,-120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Negate",
+      "Identifier": "3",
+      "Position": "-264,-132",
+      "HandleOffsets": {},
+      "In": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "4,4",
+      "Identifier": "4",
+      "Position": "-636,-192",
       "HandleOffsets": {}
     }
   ]
