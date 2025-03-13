@@ -20,7 +20,7 @@ MODES
 COMMON
 {
 	#ifndef S_ALPHA_TEST
-	#define S_ALPHA_TEST 1
+	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
 	#define S_TRANSLUCENT 0
@@ -74,15 +74,17 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	float4 Func( float2 uv, float inputb )
+	float g_fltestfloat < Attribute( "testfloat" ); Default1( 0 ); >;
+		
+	float4 Func( float2 uv, float speed )
 	{
 		float3 col1 = float3(0,0,0);
 		
-		uv = uv * 2 + -.8;
+		
 		
 		for(float i=0.; i<.5; i+=.01)
 		{
-		uv.x+= clamp(sin(2.*g_flTime*.1)*.1,-.5,.5)*.15;
+		uv.x+= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;
 		uv.y+= clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
 		float d = length(uv);
 		float s = step(d,i)*.01;
@@ -98,41 +100,14 @@ PS
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
+
 		
-		Material m = Material::Init();
-		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
-		m.Opacity = 1;
-		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
+		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
+		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.1999993 ) );
+		float l_2 = g_fltestfloat;
+		float4 l_3 = Func(l_1, l_2);
 		
-		float4 l_0 = Func(i.vTextureCoords.xy,1);
-		float4 l_1 = -1 * l_0;
-		
-		m.Albedo = l_1.xyz;
-		m.Opacity = 1;
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		
-		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
-		m.Opacity = saturate( m.Opacity );
-		
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-		m.TextureCoords = i.vTextureCoords.xy;
-				
-		return ShadingModelStandard::Shade( i, m );
+
+		return float4( l_3.xyz, 1 );
     }
 }

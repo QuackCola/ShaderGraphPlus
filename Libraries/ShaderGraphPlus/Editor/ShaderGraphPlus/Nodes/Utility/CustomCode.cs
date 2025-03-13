@@ -46,36 +46,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-
-		//foreach (var input in Inputs)
-		//{
-		//	//Log.Info(input.ConnectedOutput.Node.Identifier);
-		//	//
-		//	//var result = compiler.GetByIdentifier( input.ConnectedOutput.Node.Identifier );
-		//	//
-		//	//if (!_inputResults.Contains(result))
-		//	//{
-		//	//	_inputResults.Add( result );
-		//	//}
-		//
-		//	NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
-		//
-		//	//if (nodeInput.IsValid)
-		//	//{
-		//	//
-		//	//	var result = compiler.Result( nodeInput );
-		//	//
-		//	//	if (result.IsValid)
-		//	//	{
-        //    //        Log.Info($"Input NodeResult is valid `{result}`");
-        //    //    }
-		//	//
-		//	//	
-		//	//}
-		//
-		//}
-
-		if ( !string.IsNullOrWhiteSpace( Name ) )
+        if ( !string.IsNullOrWhiteSpace( Name ) )
 		{
             var sb = new StringBuilder();
 			sb.AppendLine();
@@ -85,8 +56,11 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 				sb.AppendLine( "}" );
             sb.AppendLine();
 
+            var results = GetResults( compiler );
+            
+            Log.Info( $"Gatherd results `{results}`" );
 
-            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: $"i.vTextureCoords.xy,1"));
+            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results ));
         }
 		else
 		{
@@ -95,21 +69,50 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 	};
 	
 
-	private string GetFunctionInputs()
-	{
-		var sb = new StringBuilder();
+    private string GetResults( GraphCompiler compiler )
+    {
+        var sb = new StringBuilder();
+        int resindex = 0;
+        foreach (var input in Inputs)
+        {
+            NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+        
+            var result = compiler.Result(nodeInput);
+        
+            if (resindex == 0)
+            {
+                sb.Append($"{result}, ");
+                resindex++;
+            }
+            else if (resindex != (Inputs.Count() - 1))
+            {
+                sb.Append($"{result}, ");
+                resindex++;
+            }
+            else
+            {
+                sb.Append($"{result}");
+            }
+        }
+    
+        return sb.ToString();
+    }
 
-		int inputIndex = 0;
-
-		foreach ( var input in ExpressionInputs)
-		{
-			if (inputIndex == 0)
-			{
-				sb.Append( $" {input.TypeNameTest} {input.Name}," );
-				inputIndex++;
-			}
-			else if ( inputIndex != (ExpressionInputs.Count - 1) )
-			{
+    private string GetFunctionInputs()
+    {
+        var sb = new StringBuilder();
+        
+        int inputIndex = 0;
+        
+        foreach ( var input in ExpressionInputs)
+        {
+            if (inputIndex == 0)
+            {
+            	sb.Append( $" {input.TypeNameTest} {input.Name}," );
+            	inputIndex++;
+            }
+            else if ( inputIndex != (ExpressionInputs.Count - 1) )
+            {
                 sb.Append( $" {input.TypeNameTest} {input.Name}," );
                 inputIndex++;
             }
@@ -118,14 +121,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
                 sb.Append( $" {input.TypeNameTest} {input.Name} " );
             }
         }
-
+        
         return sb.ToString();
-	}
+    }
 
-	private string GetFuncReturnType()
-	{
-
-
+    private string GetFuncReturnType()
+    {
         if (ResultType is ResultType.Int)
         {
             return $"float"; // Just identify as a float.
@@ -162,14 +163,14 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             return "Gradient";
         }
-
+        
         return "float";
     }
 
     private int Components()
     {
         int components = 0;
-
+        
         switch (ResultType)
         {
             case ResultType.Int:
@@ -200,97 +201,96 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
                 Log.Warning($"Result type: '{ResultType}' has no components.");
                 break;
         }
-
+        
         return components;
     }
 
     public override void OnFrame()
-	{
-		var hashCode = 0;
-		foreach ( var output in ExpressionInputs )
-		{
-			hashCode += output.GetHashCode();
-		}
-		if ( hashCode != _lastHashCode )
-		{
-			_lastHashCode = hashCode;
+    {
+        var hashCode = 0;
+        foreach ( var output in ExpressionInputs )
+        {
+        	hashCode += output.GetHashCode();
+        }
+        if ( hashCode != _lastHashCode )
+        {
+        	_lastHashCode = hashCode;
+        
+        	CreateInputs();
+        	Update();
+        }
+    }
 
-			CreateInputs();
-			Update();
-		}
-	}
-
-	public void CreateInputs()
-	{
-		var plugs = new List<IPlugIn>();
-		if ( ExpressionInputs == null )
-		{
-			InternalInputs = new();
-		}
-		else
-		{
-			foreach ( var output in ExpressionInputs.OrderBy( x => x.Priority ) )
-			{
-				if ( output.Type is null ) continue;
-				var info = new PlugInfo()
-				{
-					Id = output.Id,
-					Name = output.Name,
-					Type = output.Type,
-					DisplayInfo = new()
-					{
-						Name = output.Name,
-						Fullname = output.Type.FullName
-					}
-				};
-				var plug = new BasePlugIn( this, info, info.Type );
-				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
-				if ( oldPlug is not null )
-				{
-					oldPlug.Info.Name = info.Name;
-					oldPlug.Info.Type = info.Type;
-					oldPlug.Info.DisplayInfo = info.DisplayInfo;
-					plugs.Add( oldPlug );
-				}
-				else
-				{
-					plugs.Add( plug );
-				}
-			};
-			InternalInputs = plugs;
-		}
-	}
-	
-	
+    public void CreateInputs()
+    {
+        var plugs = new List<IPlugIn>();
+        if ( ExpressionInputs == null )
+        {
+        	InternalInputs = new();
+        }
+        else
+        {
+        	foreach ( var output in ExpressionInputs.OrderBy( x => x.Priority ) )
+        	{
+        		if ( output.Type is null ) continue;
+        		var info = new PlugInfo()
+        		{
+        			Id = output.Id,
+        			Name = output.Name,
+        			Type = output.Type,
+        			DisplayInfo = new()
+        			{
+        				Name = output.Name,
+        				Fullname = output.Type.FullName
+        			}
+        		};
+        		var plug = new BasePlugIn( this, info, info.Type );
+        		var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
+        		if ( oldPlug is not null )
+        		{
+        			oldPlug.Info.Name = info.Name;
+        			oldPlug.Info.Type = info.Type;
+        			oldPlug.Info.DisplayInfo = info.DisplayInfo;
+        			plugs.Add( oldPlug );
+        		}
+        		else
+        		{
+        			plugs.Add( plug );
+        		}
+        	};
+        	InternalInputs = plugs;
+        }
+    }
 }
+
 public class ExpressionInputs
 {
-	[Hide]
-	public Guid Id { get; } = Guid.NewGuid();
-
-	[KeyProperty]
-	public string Name { get; set; }
-
-	[Hide, JsonIgnore]
-	public Type Type
-	{
-		get
-		{
-			if ( string.IsNullOrEmpty( TypeName ) ) return null;
-			var typeName = TypeName;
-			if ( typeName == "float" ) typeName = typeof( float ).FullName;
-			if ( typeName == "int" ) typeName = typeof( int ).FullName;
-			if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
-			var type = TypeLibrary.GetType( typeName ).TargetType;
-			return type;
-		}
-	}
-
-	[KeyProperty, Editor( "shadertype" ), JsonPropertyName( "Type" )]
-	public string TypeName { get; set; }
-
+    [Hide]
+    public Guid Id { get; } = Guid.NewGuid();
+    
+    [KeyProperty]
+    public string Name { get; set; }
+    
+    [Hide, JsonIgnore]
+    public Type Type
+    {
+    	get
+    	{
+    		if ( string.IsNullOrEmpty( TypeName ) ) return null;
+    		var typeName = TypeName;
+    		if ( typeName == "float" ) typeName = typeof( float ).FullName;
+    		if ( typeName == "int" ) typeName = typeof( int ).FullName;
+    		if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
+    		var type = TypeLibrary.GetType( typeName ).TargetType;
+    		return type;
+    	}
+    }
+    
+    [KeyProperty, Editor( "shadertype" ), JsonPropertyName( "Type" )]
+    public string TypeName { get; set; }
+    
     public int Priority { get; set; }
-
+    
     public string TypeNameTest
     {
         get
@@ -323,13 +323,13 @@ public class ExpressionInputs
             {
                 return "bool";
             }
-
+        
             return "float";
         }
     }
-
+    
     public override int GetHashCode()
-	{
-		return System.HashCode.Combine( Id, Name, TypeName, Priority );
-	}
+    {
+    	return System.HashCode.Combine( Id, Name, TypeName, Priority );
+    }
 }
