@@ -25,7 +25,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-216,-156",
+      "Position": "12,-156",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
@@ -36,17 +36,17 @@
     {
       "_class": "CustomCodeNode",
       "Name": "Func",
-      "Body": "float3 col1 = float3(0,0,0);\n\n\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\n\n}\n\nreturn float4((col1),1);",
+      "Body": "float3 col1 = float3(0,0,0);\n\n//resulta = 0.0f;\n//resultb = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\n\n}\n\nreturn float4((col1),1);",
       "ResultType": "Color",
       "ExpressionInputs": [
         {
-          "Id": "a99cd964-92ea-4d73-9842-8987e223ad36",
+          "Id": "27195326-ceee-4dc5-95a3-a87a1eb4ce63",
           "Name": "uv",
           "Type": "Vector2",
           "TypeNameTest": "float2"
         },
         {
-          "Id": "b4aab9bf-9cac-4c24-be26-d29f47f5e930",
+          "Id": "6e62cdac-7433-4e58-8d43-e4e53624ba52",
           "Name": "speed",
           "Type": "float",
           "TypeNameTest": "float"
@@ -54,20 +54,20 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "5a7f5b6b-b159-4d7e-9ad5-bbe9ca4f966a",
+          "Id": "bfb309c0-59a0-4c96-86b8-2d57db619ab9",
           "Name": "resulta",
           "Type": "float",
           "TypeNameTest": "float"
         },
         {
-          "Id": "de5f597f-6276-4025-9949-a1a4e5d8f907",
+          "Id": "4da93225-96d8-4e3c-8c36-a76071a47353",
           "Name": "resultb",
           "Type": "float",
           "TypeNameTest": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-420,-216",
+      "Position": "-360,-240",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
@@ -89,7 +89,7 @@
       "IsAttribute": true,
       "UI": {},
       "Identifier": "2",
-      "Position": "-636,-108",
+      "Position": "-624,-108",
       "HandleOffsets": {}
     },
     {
