@@ -84,25 +84,25 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
     public NodeResult BuildFunction( GraphCompiler compiler )
     {
-        if (!string.IsNullOrWhiteSpace(Name))
+        if ( !string.IsNullOrWhiteSpace( Name ) )
         {
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine($"{compiler.GetDataType( ResultType )} {Name}({GetFunctionInputs()})");
-            sb.AppendLine("{");
-            sb.AppendLine(GraphCompiler.IndentString(Body, 1));
-            sb.AppendLine("}");
+            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({GetFunctionInputs()})" );
+            sb.AppendLine( "{" );
+            sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
+            sb.AppendLine( "}" );
             sb.AppendLine();
 
-            var results = GetResults(compiler);
+            var results = GetResults( compiler );
 
-            Log.Info($"Gatherd results `{results}`");
+            Log.Info( $"Gatherd results `{results}`" );
 
-            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results));
+            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: results ) );
         }
         else
         {
-            return new(ResultType, $"1");
+            return new( ResultType, $"1" );
         }
     }
 
