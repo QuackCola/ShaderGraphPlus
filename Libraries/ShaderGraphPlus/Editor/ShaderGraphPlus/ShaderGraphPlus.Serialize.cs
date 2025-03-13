@@ -101,35 +101,35 @@ partial class ShaderGraphPlus
 			{
 				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 				DeserializeObject( node, element, options );
-
+				
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-                if (node is CustomCodeNode customCode )
-                {
+				if ( node is CustomCodeNode customCode )
+				{
 					customCode.OnNodeCreated();
-                }
-
-                if (node is FunctionResult funcResult)
-                {
-                    funcResult.CreateInputs();
-                }
-
-                if ( node is SubgraphNode subgraphNode )
+				}
+				
+				if ( node is FunctionResult funcResult )
+				{
+				    funcResult.CreateInputs();
+				}
+				
+				if ( node is SubgraphNode subgraphNode )
 				{
 					subgraphNode.OnNodeCreated();
 				}
-
-                foreach ( var input in node.Inputs )
+				
+				foreach ( var input in node.Inputs )
 				{
 					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
 						continue;
-
+				
 					var connected = connectedElem
 						.Deserialize<NodeInput?>();
-
+				
 					if ( connected is { IsValid: true } )
 					{
 						var connection = connected.Value;
