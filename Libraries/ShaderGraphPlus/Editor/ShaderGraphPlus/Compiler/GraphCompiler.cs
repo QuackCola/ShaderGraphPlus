@@ -191,28 +191,6 @@ public sealed partial class GraphCompiler
 
     }
 
-
-
-    public void ResultFunctionTest(string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "")
-    {
-        var result = ShaderResult;
-
-        (string, string) func = (code, propertyName);
-
-        if (!result.Functions.ContainsKey(func.Item2))
-        {
-            result.Functions.Add(func.Item2, func.Item1);
-        }
-        else
-        {
-            result.Functions[func.Item2] = func.Item1;
-        }
-
-        //return $"{func.Item2}({args})";
-
-    }
-
-
     /// <summary>
     /// Register some generic global parameter for a node to use.
     /// </summary>
