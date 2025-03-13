@@ -20,7 +20,7 @@ MODES
 COMMON
 {
 	#ifndef S_ALPHA_TEST
-	#define S_ALPHA_TEST 0
+	#define S_ALPHA_TEST 1
 	#endif
 	#ifndef S_TRANSLUCENT
 	#define S_TRANSLUCENT 0
@@ -74,17 +74,27 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	float FunctionTest( float inputa )
-	{	
-		if ( inputa == 0 )
+	float4 Func( float2 uv, float inputb )
+	{
+		float3 col1 = float3(0,0,0);
+		
+		uv = uv * 2 + -.8;
+		
+		for(float i=0.; i<.5; i+=.01)
 		{
-		   return 1;
+		uv.x+= clamp(sin(2.*g_flTime*.1)*.1,-.5,.5)*.15;
+		uv.y+= clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
+		float d = length(uv);
+		float s = step(d,i)*.01;
+		col1+=s;
+		
+		
+		
 		}
-		else
-		{
-		  return 0;
-		}
+		
+		return float4((col1),1);
 	}
+	
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -100,9 +110,10 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float2 l_0 = 0;
+		float4 l_0 = Func(i.vTextureCoords.xy,1);
+		float4 l_1 = -1 * l_0;
 		
-		m.Albedo = float3( l_0, 0 );
+		m.Albedo = l_1.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

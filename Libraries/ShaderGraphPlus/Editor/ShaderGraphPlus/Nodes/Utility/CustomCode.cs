@@ -86,7 +86,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             sb.AppendLine();
 
 
-            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: $"1,1"));
+            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: $"i.vTextureCoords.xy,1"));
         }
 		else
 		{
