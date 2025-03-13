@@ -48,18 +48,26 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     [Hide, JsonIgnore]
     int _lastHashCodeOutputs = 0;
 
+    public void OnNodeCreated()
+    {
+        CreateInputs();
+        CreateOutputs();
+
+        Update();
+    }
+
     //[Output]
-	//[Hide]
-	//public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	//{
+    //[Hide]
+    //public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+    //{
     //    if ( !string.IsNullOrWhiteSpace( Name ) )
-	//	{
+    //	{
     //        var sb = new StringBuilder();
-	//		sb.AppendLine();
-	//			sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
-	//			sb.AppendLine( "{" );
-	//			sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
-	//			sb.AppendLine( "}" );
+    //		sb.AppendLine();
+    //			sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
+    //			sb.AppendLine( "{" );
+    //			sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
+    //			sb.AppendLine( "}" );
     //        sb.AppendLine();
     //
     //        var results = GetResults( compiler );
@@ -68,12 +76,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     //
     //        return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results ));
     //    }
-	//	else
-	//	{
+    //	else
+    //	{
     //        return new(ResultType, $"1" );
     //    }
-	//};
-	
+    //};
+
     public NodeResult BuildFunction( GraphCompiler compiler )
     {
         if (!string.IsNullOrWhiteSpace(Name))
@@ -96,14 +104,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             return new(ResultType, $"1");
         }
-    }
-
-    public void OnNodeCreated()
-    {
-        CreateInputs();
-        CreateOutputs();
-
-        Update();
     }
 
     private string GetResults( GraphCompiler compiler )
