@@ -1,0 +1,71 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/customexpression.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-156,-72",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomCodeNode",
+      "Name": "Test",
+      "FunctionHeader": "float FunctionTest( float inputa )",
+      "Code": "\nif ( inputa == 0 )\n{\n   return 1;\n}\nelse\n{\n  return 0;\n}",
+      "ResultType": "Vector2",
+      "ExpressionInputs": [
+        {
+          "Id": "cc34c75d-90ba-446c-971b-7123395a8a29",
+          "Name": "inputa",
+          "Type": "float"
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-444,-120",
+      "HandleOffsets": {},
+      "inputa": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 12,
+      "Name": "testfloat",
+      "IsAttribute": true,
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-612,-120",
+      "HandleOffsets": {}
+    }
+  ]
+}

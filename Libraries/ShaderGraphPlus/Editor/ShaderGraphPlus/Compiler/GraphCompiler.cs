@@ -165,10 +165,51 @@ public sealed partial class GraphCompiler
 
     }
 
-	/// <summary>
-	/// Register some generic global parameter for a node to use.
-	/// </summary>
-	/// <param name="global"></param>
+    public string ResultFunctionCustomExpression(string code, string functionName, string args = "")
+    {
+        var result = ShaderResult;
+
+        (string, string) func = (code, functionName);
+
+        if (!result.Functions.ContainsKey(func.Item2))
+        {
+            result.Functions.Add(func.Item2, func.Item1);
+        }
+        else
+        {
+            result.Functions[func.Item2] = func.Item1;
+        }
+
+        return $"{func.Item2}({args})";
+
+    }
+
+
+
+    public void ResultFunctionTest(string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "")
+    {
+        var result = ShaderResult;
+
+        (string, string) func = (code, propertyName);
+
+        if (!result.Functions.ContainsKey(func.Item2))
+        {
+            result.Functions.Add(func.Item2, func.Item1);
+        }
+        else
+        {
+            result.Functions[func.Item2] = func.Item1;
+        }
+
+        //return $"{func.Item2}({args})";
+
+    }
+
+
+    /// <summary>
+    /// Register some generic global parameter for a node to use.
+    /// </summary>
+    /// <param name="global"></param>
     public void RegisterGlobal( string global )
     {
         var result = ShaderResult;
@@ -1067,6 +1108,31 @@ public sealed partial class GraphCompiler
 	//	return ( shaderCode , string.Empty );
 	//}
 
+	public NodeResult GetByIdentifier( string identifier )
+	{
+
+        foreach (var nr in ShaderResult.InputResults)
+        {
+            Log.Info( $"test : ");
+            //if (identifier == nr.Key.Identifier)
+			//{
+			//	Log.Info("Match!");
+			//	return nr.Value;
+			//}
+			//else
+			//{
+			//	continue;
+			//}
+           // Log.Info($"Node Input : `{nr.Key.Identifier}`");
+        }
+
+
+        return default( NodeResult );
+
+    }
+
+
+
 	/// <summary>
 	/// Generate shader code, will evaluate the graph if it hasn't already.
 	/// Different code is generated for preview and not preview.
@@ -1077,9 +1143,21 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return null;
 
+
+
 		var material = GenerateMaterial();
         var pixelOutput = GeneratePixelOutput();
 
+		//foreach (var nr in ShaderResult.InputResults )
+		//{
+		//	Log.Info($"Node Input : `{nr.Key.Identifier}`");
+        //    Log.Info($"Node Input Type : `{nr.Value.ResultType}`");
+        //}
+
+        //foreach (var nr in ShaderResult.Results )
+        //{
+        //    Log.Info($"Node Input R : `{nr.Item2}`");
+        //}
         // If we have any errors after evaluating, no point going further
         if ( Errors.Any() )
 			return null;
@@ -1121,7 +1199,7 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	private static string IndentString( string input, int tabCount )
+	public static string IndentString( string input, int tabCount )
 	{
 		if ( string.IsNullOrWhiteSpace( input ) )
 			return input;

@@ -451,11 +451,13 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
+			
+
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
-
-			var componentType = result.ComponentType;
+            //Log.Info($"t : {result.ResultType}");
+            var componentType = result.ComponentType;
 			if ( componentType == null )
 				continue;
 
