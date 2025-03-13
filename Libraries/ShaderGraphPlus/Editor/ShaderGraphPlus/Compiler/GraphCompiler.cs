@@ -68,8 +68,13 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Functions { get; private set; } = new ();
 		
 		public HashSet<string> Globals { get; private set; } = new();
-		
-		public string RepresentativeTexture { get; set; }
+
+
+        public Dictionary<(string,string), IPlugOut> CustomCodeNodeOutputs { get; private set; } = new();
+
+
+
+        public string RepresentativeTexture { get; set; }
     }
 
 	public enum ShaderStage
@@ -190,6 +195,27 @@ public sealed partial class GraphCompiler
         return $"{func.Item2}({args})";
 
     }
+
+
+	public void RegisterCustomCodeNodeOutputs( IPlugOut plugOut , string linked )
+	{
+		var result = ShaderResult;
+
+        Log.Info($"newlocal `{plugOut.DisplayInfo.Name}` belongs to `{linked}`");
+
+
+
+
+        if ( !result.CustomCodeNodeOutputs.ContainsKey( new (plugOut.DisplayInfo.Name, linked) ))
+		{
+			result.CustomCodeNodeOutputs.Add(new(plugOut.DisplayInfo.Name, linked), plugOut);
+		}
+
+	}
+
+
+
+
 
     /// <summary>
     /// Register some generic global parameter for a node to use.
@@ -522,8 +548,53 @@ public sealed partial class GraphCompiler
 		}
 
         if ( node is CustomCodeNode customcodeNode )
-		{
-			return customcodeNode.BuildFunction( this );
+        {
+			var activeResult = input.Output;
+
+
+            Log.Info($"active input : {input.Output}");
+
+            //var Lresult = customcodeNode.BuildFunction(this);
+            var Lresult = customcodeNode.BuildFunction(this);
+            var function = customcodeNode.BuildFunctionTest(this);
+            //compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: results ), iscustomcode: true);
+
+            var LresultTest = new NodeResult(customcodeNode.ResultType, ResultFunctionCustomExpression(function, customcodeNode.Name, args: $"{customcodeNode.GetResults(this)},resulta,resultb"), iscustomcode: true);
+
+			var id = ShaderResult.InputResults.Count;
+			var varName = $"l_{id}";
+	
+            foreach (var o in customcodeNode.Outputs)
+            {
+                Log.Info($"o is {o.DisplayInfo.Name}");
+
+
+                RegisterCustomCodeNodeOutputs(o, varName);
+		
+            }
+
+            //if (id == 0)
+            //{
+            //    Log.Info($"varname cc_{varName}");
+            //}
+
+
+            var localResult = new NodeResult( LresultTest.ResultType, varName, iscustomcode: true );
+
+
+
+            ShaderResult.InputResults.Add(input, localResult);
+            ShaderResult.Results.Add((localResult, LresultTest));
+
+            if ( IsPreview )
+            {
+                Nodes.Add(node);
+            }
+
+            InputStack.Remove(input);
+
+
+            return localResult;
         }
 
         if ( node is SubgraphNode subgraphNode )
@@ -598,7 +669,6 @@ public sealed partial class GraphCompiler
 				if ( property == null )
 				{
 					InputStack.Remove( input );
-                    Log.Info($"property == null ");
                     return default;
 				}
      
@@ -1104,31 +1174,6 @@ public sealed partial class GraphCompiler
 	//	return ( shaderCode , string.Empty );
 	//}
 
-	public NodeResult GetByIdentifier( string identifier )
-	{
-
-        foreach (var nr in ShaderResult.InputResults)
-        {
-            Log.Info( $"test : ");
-            //if (identifier == nr.Key.Identifier)
-			//{
-			//	Log.Info("Match!");
-			//	return nr.Value;
-			//}
-			//else
-			//{
-			//	continue;
-			//}
-           // Log.Info($"Node Input : `{nr.Key.Identifier}`");
-        }
-
-
-        return default( NodeResult );
-
-    }
-
-
-
 	/// <summary>
 	/// Generate shader code, will evaluate the graph if it hasn't already.
 	/// Different code is generated for preview and not preview.
@@ -1445,6 +1490,27 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
+	private string GetTypeTest(IPlugOut plugOut)
+	{
+		var name = plugOut.DisplayInfo.Name;
+
+
+        return plugOut.Type switch
+        {
+            Type t when plugOut.Type == typeof(System.Single) => $"float {name} = 0.0f;",
+            Type t when plugOut.Type == typeof(Vector2) => $"float2 {name} = float2(0.0f,0.0f);",
+            Type t when plugOut.Type == typeof(Vector3) => $"float3 {name} = float3(0.0f,0.0f,0.0f);",
+            Type t when plugOut.Type == typeof(Vector4) => $"float4 {name} = float4(0.0f,0.0f,0.0f,0.0f);",
+            _ => $"float {name} = 0.0f;"
+        };
+
+
+
+
+      
+	}
+
+
 	private string GenerateLocals()
 	{
 		var sb = new StringBuilder();
@@ -1502,12 +1568,34 @@ public sealed partial class GraphCompiler
 
 		string TrueIndex = "0";
 
+
+
+
         if ( IsPreview )
 		{
 			int localId = 1;
 
             foreach (var result in ShaderResult.Results)
 			{
+
+				if (result.Item1.IsCustomCodeNodeResult)
+				{
+					foreach (var t in ShaderResult.CustomCodeNodeOutputs)
+					{
+						if (t.Key.Item2 == result.Item1.ToString())
+						{
+                            Log.Info($"CusomCode Local {result.Item1} : {t.Key.Item1} : {t.Value.Type}");
+				
+				
+							var d = GetTypeTest(t.Value);
+				
+							sb.AppendLine(d);
+                            sb.AppendLine("//d");
+                        }
+                     
+                    }
+                }
+
                 if (result.Item2.ResultType is ResultType.TextureObject)
 				{
 					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
@@ -1553,7 +1641,29 @@ public sealed partial class GraphCompiler
 		{
 			foreach ( var result in ShaderResult.Results )
 			{
-				if ( result.Item2.ResultType is ResultType.TextureObject )
+                if (result.Item1.IsCustomCodeNodeResult)
+                {
+                    foreach (var t in ShaderResult.CustomCodeNodeOutputs)
+                    {
+                        if (t.Key.Item2 == result.Item1.ToString())
+                        {
+                            Log.Info($"CusomCode Local {result.Item1} : {t.Key.Item1} : {t.Value.Type}");
+
+
+                            var d = GetTypeTest(t.Value);
+
+                            sb.AppendLine(d);
+                            sb.AppendLine("//d");
+                        }
+
+                    }
+                }
+
+
+
+
+
+                if ( result.Item2.ResultType is ResultType.TextureObject )
 				{
 					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
                 }
@@ -1574,7 +1684,8 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-					sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+                   // sb.AppendLine("//a");
+                    sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
                 }
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
