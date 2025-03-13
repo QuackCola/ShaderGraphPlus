@@ -86,19 +86,26 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     {
         if ( !string.IsNullOrWhiteSpace( Name ) )
         {
+
+            
+
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({GetFunctionInputs()})" );
+            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({GetFunctionInputs()}, {GetFunctionOutputs()})" );
             sb.AppendLine( "{" );
             sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
             sb.AppendLine( "}" );
             sb.AppendLine();
 
             var results = GetResults( compiler );
+            //var functionOutputs = GetFunctionOutputs();
+            //Log.Info( $" `{functionOutputs}`" );
 
-            Log.Info( $"Gatherd results `{results}`" );
 
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: results ) );
+            var funcoutputs = compiler.RegisterVoidFunctionResults(GetFunctionLocals());
+
+
+            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $"{results}, {funcoutputs}" ) );
         }
         else
         {
@@ -161,6 +168,19 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         
         return sb.ToString();
     }
+
+    public List<(string,string)> GetFunctionLocals()
+    {
+        List<(string, string)> result = new();
+
+        foreach (ExpressionInputs output in ExpressionOutputs)
+        {
+            result.Add( new ( output.HLSLDataType, output.Name ) );
+        }
+
+        return result;
+    }
+
 
     private string GetFunctionOutputs()
     {
