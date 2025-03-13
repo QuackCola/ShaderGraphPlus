@@ -42,9 +42,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     [Hide]
     private List<NodeResult> _inputResults = new();
 
-    [Hide, JsonIgnore]
-    private string FunctionTest { get; set; } = string.Empty;
-
 	[Output]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -82,16 +79,14 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 		{
             var sb = new StringBuilder();
 			sb.AppendLine();
-				sb.AppendLine($"{GetFuncType()} {Name}({GetFunctionInputs()})");
-				sb.AppendLine("{" );
-				sb.AppendLine(GraphCompiler.IndentString( Body, 1));
-				sb.AppendLine("}");
+				sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
+				sb.AppendLine( "{" );
+				sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
+				sb.AppendLine( "}" );
             sb.AppendLine();
 
-            FunctionTest = sb.ToString();
 
-
-            return new(ResultType, compiler.ResultFunctionCustomExpression(FunctionTest, Name, args: $"1,1"));
+            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: $"1,1"));
         }
 		else
 		{
@@ -127,7 +122,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         return sb.ToString();
 	}
 
-	private string GetFuncType()
+	private string GetFuncReturnType()
 	{
 
 
