@@ -1,5 +1,4 @@
 using Sandbox;
-using System;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
@@ -75,83 +74,31 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     //    }
 	//};
 	
-    public List<string> GetOutputNames()
-    {
-        List<string> outputNames = new List<string>();
-        foreach (ExpressionInputs output in ExpressionOutputs)
-        {
-            outputNames.Add( output.Name );
-        }
-        return outputNames;
-    }
-
-
     public NodeResult BuildFunction( GraphCompiler compiler )
     {
-        if ( !string.IsNullOrWhiteSpace( Name ) )
+        if (!string.IsNullOrWhiteSpace(Name))
         {
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()},{GetFunctionOutputs()})" );
-            sb.AppendLine( "{" );
-            sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
-            sb.AppendLine( "}" );
+            sb.AppendLine($"{GetFuncReturnType()} {Name}({GetFunctionInputs()})");
+            sb.AppendLine("{");
+            sb.AppendLine(GraphCompiler.IndentString(Body, 1));
+            sb.AppendLine("}");
             sb.AppendLine();
 
-            //Log.Info( GetFunctionOutputs() );
+            var results = GetResults(compiler);
 
+            Log.Info($"Gatherd results `{results}`");
 
-
-
-
-
-
-            var results = GetResults( compiler );
-
-            //Log.Info($"Gatherd results `{results}`");
-
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: results ), iscustomcode: true);
+            return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results));
         }
         else
         {
-            return new( ResultType, $"1" );
+            return new(ResultType, $"1");
         }
     }
 
-    public string BuildFunctionTest( GraphCompiler compiler )
-    {
-        if ( !string.IsNullOrWhiteSpace( Name ) )
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()},{GetFunctionOutputs()})" );
-            sb.AppendLine( "{" );
-            sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
-            sb.AppendLine( "}" );
-            sb.AppendLine();
-
-            //Log.Info( GetFunctionOutputs() );
-
-
-
-
-
-
-
-            var results = GetResults( compiler );
-
-            //Log.Info($"Gatherd results `{results}`");
-
-            return sb.ToString();//new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: results ), iscustomcode: true);
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-
-    public string GetResults( GraphCompiler compiler )
+    private string GetResults( GraphCompiler compiler )
     {
         var sb = new StringBuilder();
         int index = 0;
@@ -200,39 +147,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             }
             else
             {
-                sb.Append( $" {input.TypeNameTest} {input.Name}" );
+                sb.Append( $" {input.TypeNameTest} {input.Name} " );
             }
         }
         
         return sb.ToString();
     }
-
-    private string GetFunctionOutputs()
-    {
-        var sb = new StringBuilder();
-        int index = 0;
-        
-        foreach ( ExpressionInputs output in ExpressionOutputs )
-        {
-            if ( index == 0 )
-            {
-            	sb.Append( $" out {output.TypeNameTest} {output.Name}," );
-            	index++;
-            }
-            else if ( index != (ExpressionOutputs.Count - 1) )
-            {
-                sb.Append( $" out {output.TypeNameTest} {output.Name}," );
-                index++;
-            }
-            else
-            {
-                sb.Append( $" out {output.TypeNameTest} {output.Name} " );
-            }
-        }
-        
-        return sb.ToString();
-    }
-
 
     private string GetFuncReturnType()
     {
