@@ -166,57 +166,55 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     {
         var sb = new StringBuilder();
         int index = 0;
-
+        
         foreach ( ExpressionInputs output in ExpressionOutputs )
         {
-            if (index == 0)
+            if ( index == 0 )
             {
-                sb.Append($" out {output.HLSLDataType} {output.Name},");
+                sb.Append($" out {output.HLSLDataType} {output.Name}," );
                 index++;
             }
-            else if (index != (ExpressionOutputs.Count - 1))
+            else if ( index != ( ExpressionOutputs.Count - 1 ) )
             {
-                sb.Append($" out {output.HLSLDataType} {output.Name},");
+                sb.Append( $" out {output.HLSLDataType} {output.Name}," );
                 index++;
             }
             else
             {
-                sb.Append($" out {output.HLSLDataType} {output.Name} ");
+                sb.Append( $" out {output.HLSLDataType} {output.Name} " );
             }
         }
-
+        
         return sb.ToString();
     }
-
 
     public override void OnFrame()
     {
         var hashCodeInput = 0;
         var hashCodeOutput = 0;
-
+    
         foreach ( var input in ExpressionInputs )
         {
-        	hashCodeInput += input.GetHashCode();
+            hashCodeInput += input.GetHashCode();
         }
-
+    
         foreach ( var output in ExpressionOutputs )
         {
             hashCodeOutput += output.GetHashCode();
         }
-
-
+    
         if ( hashCodeInput != _lastHashCodeInputs )
         {
-        	_lastHashCodeInputs = hashCodeInput;
-        
-        	CreateInputs();
-        	Update();
+            _lastHashCodeInputs = hashCodeInput;
+            
+            CreateInputs();
+            Update();
         }
-
+        
         if ( hashCodeOutput != _lastHashCodeOutputs )
         {
             _lastHashCodeOutputs = hashCodeOutput;
-
+            
             CreateOutputs();
             Update();
         }
