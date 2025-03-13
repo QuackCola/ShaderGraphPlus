@@ -76,12 +76,11 @@ PS
 	
 	float g_fltestfloat < Attribute( "testfloat" ); Default1( 0 ); >;
 		
-	float4 Func( float2 uv, float speed, out float resulta, out float resultb )
+	float4 Func( float2 uv, float speed )
 	{
 		float3 col1 = float3(0,0,0);
 		
-		resulta = 0.0f;
-		resultb = 0.0f;
+		
 		
 		for(float i=0.; i<.5; i+=.01)
 		{
@@ -116,13 +115,8 @@ PS
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.199999 ) );
 		float l_2 = g_fltestfloat;
-		float resulta = 0.0f;
-		//d
-		float resultb = 0.0f;
-		//d
-		float4 l_3 = Func(l_1, l_2,resulta,resultb);
 		
-		m.Albedo = l_3.xyz;
+		m.Albedo = Func(l_1, l_2).xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
