@@ -842,7 +842,7 @@ public sealed partial class GraphCompiler
 		return prefix;
     }
 
-	public string GetDataType( ResultType resultType )
+	public string GetHLSLDataType( ResultType resultType )
 	{
 		return resultType switch
 		{
