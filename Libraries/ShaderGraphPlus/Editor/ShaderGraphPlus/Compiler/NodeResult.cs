@@ -54,8 +54,8 @@ public struct NodeResult : IValid
 	public string[] Warnings { get; private init; }
 	public bool IsComponentLess { get; set; }
 	public bool IsDepreciated { get; set; }
-
-	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
+	public bool IsCustomCodeNodeResult { get; private set; }
+    public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 
 	public readonly string TypeName
 	{
@@ -126,12 +126,13 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false)
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, bool iscustomcode = false )
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
+		IsCustomCodeNodeResult = iscustomcode;
 	}
 
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
