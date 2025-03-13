@@ -32,6 +32,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 	[Hide]
 	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
+    [Title( "Outputs" )]
     public List<ExpressionInputs> ExpressionOutputs { get; set; }
 
     [Hide]
