@@ -1,14 +1,14 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/customexpression.sgrph",
-  "Model": "models/dev/plane.vmdl",
+  "Model": "models/dev/dev_hires_plane128x128.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": false,
-  "BlendMode": "Masked",
-  "ShadingModel": "Lit",
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
@@ -25,42 +25,42 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-156,-72",
+      "Position": "144,-36",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "3",
-        "Output": "Out",
+        "Identifier": "1",
+        "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CustomCodeNode",
       "Name": "Func",
-      "Body": "float3 col1 = float3(0,0,0);\n\nuv = uv * 2 \u002B -.8;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*.1)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\n\n}\n\nreturn float4((col1),1);",
+      "Body": "float3 col1 = float3(0,0,0);\n\n\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\n\n}\n\nreturn float4((col1),1);",
       "ResultType": "Color",
       "ExpressionInputs": [
         {
-          "Id": "fe728123-cbf8-41fd-885a-6289a81d396d",
+          "Id": "14875f39-1f98-40bf-aeec-2d1f65f7e4b0",
           "Name": "uv",
           "Type": "Vector2",
           "TypeNameTest": "float2"
         },
         {
-          "Id": "59918a0a-28fd-401a-bddc-a3417c3302f6",
-          "Name": "inputb",
+          "Id": "451f8c9b-6486-4c87-ac7b-f307ba9e9e6f",
+          "Name": "speed",
           "Type": "float",
           "TypeNameTest": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-444,-144",
+      "Position": "-444,-156",
       "HandleOffsets": {},
       "uv": {
-        "Identifier": "4",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null
       },
-      "inputb": {
+      "speed": {
         "Identifier": "2",
         "Output": "Result",
         "Subgraph": null
@@ -70,7 +70,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 1,
-      "Value": 12,
+      "Value": 0,
       "Name": "testfloat",
       "IsAttribute": true,
       "UI": {},
@@ -81,7 +81,7 @@
     {
       "_class": "Negate",
       "Identifier": "3",
-      "Position": "-264,-132",
+      "Position": "-120,-180",
       "HandleOffsets": {},
       "In": {
         "Identifier": "1",
@@ -92,10 +92,48 @@
     {
       "_class": "TextureCoord",
       "UseSecondaryCoord": false,
-      "Tiling": "4,4",
+      "Tiling": "1,1",
       "Identifier": "4",
-      "Position": "-636,-192",
+      "Position": "-888,-288",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "TileAndOffset",
+      "DefaultTile": "8,8",
+      "DefaultOffset": "-3.199998,-4.199999",
+      "WrapTo01": false,
+      "Identifier": "5",
+      "Position": "-660,-276",
+      "HandleOffsets": {},
+      "UV": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SplitVector",
+      "Identifier": "6",
+      "Position": "-324,-0",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 25.199965,
+      "Identifier": "7",
+      "Position": "-96,72",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "6",
+        "Output": "Z",
+        "Subgraph": null
+      }
     }
   ]
 }
