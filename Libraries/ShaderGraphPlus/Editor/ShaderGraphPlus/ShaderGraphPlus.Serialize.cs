@@ -107,6 +107,11 @@ partial class ShaderGraphPlus
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
+                if (node is CustomCodeNode customCode )
+                {
+                    customCode.CreateInputs();
+                }
+
                 if (node is FunctionResult funcResult)
                 {
                     funcResult.CreateInputs();
