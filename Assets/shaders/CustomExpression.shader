@@ -80,7 +80,8 @@ PS
 	{
 		float3 col1 = float3(0,0,0);
 		
-		
+		//resulta = 0.0f;
+		//resultb = 0.0f;
 		
 		for(float i=0.; i<.5; i+=.01)
 		{
