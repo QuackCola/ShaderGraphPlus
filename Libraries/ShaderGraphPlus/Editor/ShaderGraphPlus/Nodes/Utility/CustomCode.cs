@@ -80,7 +80,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine($"{GetFuncReturnType()} {Name}({GetFunctionInputs()})");
+            sb.AppendLine($"{compiler.GetDataType( ResultType )} {Name}({GetFunctionInputs()})");
             sb.AppendLine("{");
             sb.AppendLine(GraphCompiler.IndentString(Body, 1));
             sb.AppendLine("}");
@@ -145,102 +145,49 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             if ( index == 0 )
             {
-            	sb.Append( $" {input.TypeNameTest} {input.Name}," );
+            	sb.Append( $" {input.HLSLDataType} {input.Name}," );
             	index++;
             }
             else if ( index != (ExpressionInputs.Count - 1) )
             {
-                sb.Append( $" {input.TypeNameTest} {input.Name}," );
+                sb.Append( $" {input.HLSLDataType} {input.Name}," );
                 index++;
             }
             else
             {
-                sb.Append( $" {input.TypeNameTest} {input.Name} " );
+                sb.Append( $" {input.HLSLDataType} {input.Name} " );
             }
         }
         
         return sb.ToString();
     }
 
-    private string GetFuncReturnType()
+    private string GetFunctionOutputs()
     {
-        if (ResultType is ResultType.Int)
+        var sb = new StringBuilder();
+        int index = 0;
+
+        foreach ( ExpressionInputs output in ExpressionOutputs )
         {
-            return $"float"; // Just identify as a float.
+            if (index == 0)
+            {
+                sb.Append($" out {output.HLSLDataType} {output.Name},");
+                index++;
+            }
+            else if (index != (ExpressionOutputs.Count - 1))
+            {
+                sb.Append($" out {output.HLSLDataType} {output.Name},");
+                index++;
+            }
+            else
+            {
+                sb.Append($" out {output.HLSLDataType} {output.Name} ");
+            }
         }
-        else if (ResultType is ResultType.Float)
-        {
-            return $"float";
-        }
-        else if (ResultType is ResultType.Vector2 or ResultType.Vector3 or ResultType.Color)
-        {
-            return $"float{Components()}";
-        }
-        else if (ResultType is ResultType.Float2x2)
-        {
-            return "float2x2";
-        }
-        else if (ResultType is ResultType.Float3x3)
-        {
-            return "float3x3";
-        }
-        else if (ResultType is ResultType.Float4x4)
-        {
-            return "float4x4";
-        }
-        else if (ResultType is ResultType.Bool)
-        {
-            return "bool";
-        }
-        else if (ResultType is ResultType.String)
-        {
-            return "";
-        }
-        else if (ResultType is ResultType.Gradient)
-        {
-            return "Gradient";
-        }
-        
-        return "float";
+
+        return sb.ToString();
     }
 
-    private int Components()
-    {
-        int components = 0;
-        
-        switch (ResultType)
-        {
-            case ResultType.Int:
-                components = 1;
-                break;
-            case ResultType.Float:
-                components = 1;
-                break;
-            case ResultType.Vector2:
-                components = 2;
-                break;
-            case ResultType.Vector3:
-                components = 3;
-                break;
-            case ResultType.Color:
-                components = 4;
-                break;
-            case ResultType.Float2x2:
-                components = 4;
-                break;
-            case ResultType.Float3x3:
-                components = 9;
-                break;
-            case ResultType.Float4x4:
-                components = 16;
-                break;
-            default:
-                Log.Warning($"Result type: '{ResultType}' has no components.");
-                break;
-        }
-        
-        return components;
-    }
 
     public override void OnFrame()
     {
@@ -373,24 +320,25 @@ public class ExpressionInputs
     [Hide, JsonIgnore]
     public Type Type
     {
-    	get
-    	{
-    		if ( string.IsNullOrEmpty( TypeName ) ) return null;
-    		var typeName = TypeName;
-    		if ( typeName == "float" ) typeName = typeof( float ).FullName;
-    		if ( typeName == "int" ) typeName = typeof( int ).FullName;
-    		if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
-    		var type = TypeLibrary.GetType( typeName ).TargetType;
-    		return type;
-    	}
+        get
+        {
+            if ( string.IsNullOrEmpty( TypeName ) ) return null;
+            var typeName = TypeName;
+            if ( typeName == "float" ) typeName = typeof( float ).FullName;
+            if ( typeName == "int" ) typeName = typeof( int ).FullName;
+            if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
+            var type = TypeLibrary.GetType( typeName ).TargetType;
+            return type;
+        }
     }
     
-    [KeyProperty, Editor( "shadertype" ), JsonPropertyName( "Type" )]
+    [KeyProperty, Editor( "shadertypeplus" ), JsonPropertyName( "Type" )]
     public string TypeName { get; set; }
     
     public int Priority { get; set; }
-    
-    public string TypeNameTest
+
+    [Hide, JsonIgnore]
+    public string HLSLDataType
     {
         get
         {
@@ -398,32 +346,32 @@ public class ExpressionInputs
             {
                 return $"float"; // Just identify as a float.
             }
-            else if (TypeName is "float")
+            else if ( TypeName is "float" )
             {
                 return $"float";
             }
-            else if (TypeName is "Vector2" )
+            else if ( TypeName is "Vector2" )
             {
                 return $"float2";
             }
-            else if (TypeName is "Vector3")
+            else if ( TypeName is "Vector3" )
             {
                 return $"float3";
             }
-            else if (TypeName is "Vector4")
+            else if ( TypeName is "Vector4" )
             {
                 return $"float4";
             }
-            else if (TypeName is "Color")
+            else if ( TypeName is "Color" )
             {
                 return $"float4";
             }
-            else if (TypeName is "bool")
+            else if ( TypeName is "bool" )
             {
                 return "bool";
             }
-        
-            return "float";
+            
+            throw new ArgumentException("Unsupported value type", nameof( TypeName ) );
         }
     }
     
