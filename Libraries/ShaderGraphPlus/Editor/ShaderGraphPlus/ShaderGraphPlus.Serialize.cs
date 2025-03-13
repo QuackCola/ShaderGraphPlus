@@ -109,8 +109,7 @@ partial class ShaderGraphPlus
 
                 if (node is CustomCodeNode customCode )
                 {
-                    customCode.CreateInputs();
-                    customCode.CreateOutputs();
+					customCode.OnNodeCreated();
                 }
 
                 if (node is FunctionResult funcResult)

@@ -98,6 +98,14 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         }
     }
 
+    public void OnNodeCreated()
+    {
+        CreateInputs();
+        CreateOutputs();
+
+        Update();
+    }
+
     private string GetResults( GraphCompiler compiler )
     {
         var sb = new StringBuilder();
