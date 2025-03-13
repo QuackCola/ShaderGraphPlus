@@ -100,14 +100,42 @@ PS
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
-
+		
+		Material m = Material::Init();
+		m.Albedo = float3( 1, 1, 1 );
+		m.Normal = float3( 0, 0, 1 );
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		m.TintMask = 1;
+		m.Opacity = 1;
+		m.Emission = float3( 0, 0, 0 );
+		m.Transmission = 0;
 		
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
-		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.1999993 ) );
+		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.199999 ) );
 		float l_2 = g_fltestfloat;
-		float4 l_3 = Func(l_1, l_2);
 		
-
-		return float4( l_3.xyz, 1 );
+		m.Albedo = Func(l_1, l_2).xyz;
+		m.Opacity = 1;
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		
+		
+		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
+		m.Roughness = saturate( m.Roughness );
+		m.Metalness = saturate( m.Metalness );
+		m.Opacity = saturate( m.Opacity );
+		
+		// Result node takes normal as tangent space, convert it to world space now
+		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		
+		// for some toolvis shit
+		m.WorldTangentU = i.vTangentUWs;
+		m.WorldTangentV = i.vTangentVWs;
+		m.TextureCoords = i.vTextureCoords.xy;
+				
+		return ShadingModelStandard::Shade( i, m );
     }
 }

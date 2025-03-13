@@ -8,7 +8,7 @@
   "Icon": null,
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
-  "ShadingModel": "Unlit",
+  "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
@@ -25,11 +25,11 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "144,-36",
+      "Position": "-216,-156",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
-        "Output": "Result",
+        "Output": "resulta",
         "Subgraph": null
       }
     },
@@ -40,23 +40,37 @@
       "ResultType": "Color",
       "ExpressionInputs": [
         {
-          "Id": "14875f39-1f98-40bf-aeec-2d1f65f7e4b0",
+          "Id": "a99cd964-92ea-4d73-9842-8987e223ad36",
           "Name": "uv",
           "Type": "Vector2",
           "TypeNameTest": "float2"
         },
         {
-          "Id": "451f8c9b-6486-4c87-ac7b-f307ba9e9e6f",
+          "Id": "b4aab9bf-9cac-4c24-be26-d29f47f5e930",
           "Name": "speed",
           "Type": "float",
           "TypeNameTest": "float"
         }
       ],
+      "ExpressionOutputs": [
+        {
+          "Id": "5a7f5b6b-b159-4d7e-9ad5-bbe9ca4f966a",
+          "Name": "resulta",
+          "Type": "float",
+          "TypeNameTest": "float"
+        },
+        {
+          "Id": "de5f597f-6276-4025-9949-a1a4e5d8f907",
+          "Name": "resultb",
+          "Type": "float",
+          "TypeNameTest": "float"
+        }
+      ],
       "Identifier": "1",
-      "Position": "-444,-156",
+      "Position": "-420,-204",
       "HandleOffsets": {},
       "uv": {
-        "Identifier": "5",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       },
@@ -75,26 +89,15 @@
       "IsAttribute": true,
       "UI": {},
       "Identifier": "2",
-      "Position": "-636,-120",
+      "Position": "-636,-108",
       "HandleOffsets": {}
-    },
-    {
-      "_class": "Negate",
-      "Identifier": "3",
-      "Position": "-120,-180",
-      "HandleOffsets": {},
-      "In": {
-        "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
-      }
     },
     {
       "_class": "TextureCoord",
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "4",
-      "Position": "-888,-288",
+      "Identifier": "3",
+      "Position": "-804,-252",
       "HandleOffsets": {}
     },
     {
@@ -102,36 +105,12 @@
       "DefaultTile": "8,8",
       "DefaultOffset": "-3.199998,-4.199999",
       "WrapTo01": false,
-      "Identifier": "5",
-      "Position": "-660,-276",
+      "Identifier": "4",
+      "Position": "-612,-240",
       "HandleOffsets": {},
       "UV": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "SplitVector",
-      "Identifier": "6",
-      "Position": "-324,-0",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "Multiply",
-      "DefaultA": 0,
-      "DefaultB": 25.199965,
-      "Identifier": "7",
-      "Position": "-96,72",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "6",
-        "Output": "Z",
         "Subgraph": null
       }
     }
