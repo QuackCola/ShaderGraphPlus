@@ -102,17 +102,21 @@ PS
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
+
 		
-		Material m = Material::Init();
-		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
-		m.Opacity = 1;
-		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
+		Gradient Gradient0 = Gradient::Init();
+		
+		Gradient0.colorsLength = 7;
+		Gradient0.alphasLength = 2;
+		Gradient0.colors[0] = float4( 1, 0, 0, 0 );
+		Gradient0.colors[1] = float4( 1, 0.49804, 0, 0.17 );
+		Gradient0.colors[2] = float4( 1, 1, 0, 0.33 );
+		Gradient0.colors[3] = float4( 0, 1, 0, 0.5 );
+		Gradient0.colors[4] = float4( 0, 0, 1, 0.67 );
+		Gradient0.colors[5] = float4( 0.29412, 0, 0.5098, 0.83 );
+		Gradient0.colors[6] = float4( 0.5451, 0, 1, 1 );
+		Gradient0.alphas[0] = float( 1 );
+		Gradient0.alphas[1] = float( 1 );
 		
 		float2 vl_0 = float2(0.0f,0.0f);
 		float vl_1 = 0.0f;
@@ -127,28 +131,21 @@ PS
 		// IsVertexStage? : False
 		Func( l_1, l_2, vl_0, vl_1, vl_2 );
 		// IsVertexStage? : False
-		float l_4 = VoronoiNoise( vl_0, 3.1415925, 10 );
+		float2 l_4 = (i.vTextureCoords.xy + g_flTime * float2( 6.599998, -9.8 ));
+		// IsVertexStage? : False
+		float l_5 = l_4.x;
+		// IsVertexStage? : False
+		float l_6 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, l_5 );
+		// IsVertexStage? : False
+		float l_7 = clamp( l_6, 0, 0.8000005 );
+		// IsVertexStage? : False
+		float4 l_8 = Gradient::SampleGradient( Gradient0, l_7 );
+		// IsVertexStage? : False
+		float l_9 = saturate( l_6 );
+		// IsVertexStage? : False
+		float4 l_10 = saturate( lerp( l_8, max( 0.0f, (l_8) - (float4( 1, 1, 1, 1 )) ), l_9 ) );
 		
-		m.Albedo = float3( l_4, l_4, l_4 );
-		m.Opacity = 1;
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		
-		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
-		m.Opacity = saturate( m.Opacity );
-		
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-		m.TextureCoords = i.vTextureCoords.xy;
-				
-		return ShadingModelStandard::Shade( i, m );
+
+		return float4( l_10.xyz, 1 );
     }
 }
