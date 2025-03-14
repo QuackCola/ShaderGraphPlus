@@ -137,7 +137,7 @@ PS
 		// IsVertexStage? : False
 		float l_6 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, l_5 );
 		// IsVertexStage? : False
-		float l_7 = clamp( l_6, 0, 0.8000005 );
+		float l_7 = clamp( l_6, 0, 1 );
 		// IsVertexStage? : False
 		float4 l_8 = Gradient::SampleGradient( Gradient0, l_7 );
 		// IsVertexStage? : False
