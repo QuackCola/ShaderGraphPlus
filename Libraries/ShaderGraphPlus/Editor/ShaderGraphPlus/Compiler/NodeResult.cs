@@ -42,6 +42,10 @@ public enum ResultType
 	TextureObject,
 	String,
 	Gradient,
+	/// <summary>
+	/// Dosen't return normally. uses `out` instead.
+	/// </summary>
+	Void,
 }
 
 public struct NodeResult : IValid
@@ -53,9 +57,10 @@ public struct NodeResult : IValid
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
 	public bool IsComponentLess { get; set; }
-	public bool IsDepreciated { get; set; }
+	public bool IsDepreciated { get; private set; }
+    public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 
-	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
+	public int VoidComponents { get; private set; }
 
 	public readonly string TypeName
 	{
@@ -126,12 +131,13 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false)
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0  )
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
+		VoidComponents = voidComponents;
 	}
 
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
@@ -142,23 +148,49 @@ public struct NodeResult : IValid
 	/// <summary>
 	/// "Cast" this result to different float types
 	/// </summary>
-	public string Cast( int components, float defaultValue = 0.0f )
+	public string Cast( int components, float defaultValue = 0.0f)
 	{
-		if ( Components() == components)
-            return Code;
 
-		if ( Components() > components )
-        {
-			return $"{Code}.{"xyzw"[..components]}";
-		}
-		else if (Components() == 1 )
+        if ( ResultType is ResultType.Void )
 		{
-			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
-		}
-		else
+			Log.Info($"Result has `{VoidComponents}` void components");
+            if ( VoidComponents == components )
+                return Code;
+
+            if ( VoidComponents > components )
+            {
+                return $"{Code}.{"xyzw"[..components]}";
+            }
+            else if ( VoidComponents == 1 )
+            {
+                return $"float{components}( {string.Join(", ", Enumerable.Repeat(Code, components))} )";
+            }
+            else
+            {
+                return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - VoidComponents))} )";
+            }
+
+
+        }
+        else
 		{
-			return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - Components()) )} )";
-		}
+            if (Components() == components)
+                return Code;
+
+            if (Components() > components)
+            {
+                return $"{Code}.{"xyzw"[..components]}";
+            }
+            else if (Components() == 1)
+            {
+                return $"float{components}( {string.Join(", ", Enumerable.Repeat(Code, components))} )";
+            }
+            else
+            {
+                return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - Components()))} )";
+            }
+        }
+
 	}
 
 	/// <summary>
@@ -169,7 +201,7 @@ public struct NodeResult : IValid
 	{
         int components = 0;
 
-		switch (ResultType)
+		switch ( ResultType )
 		{
             case ResultType.Int:
                 components = 1;

@@ -1,6 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static Sandbox.Resources.ResourceGenerator;
 
 
 
@@ -194,67 +197,81 @@ public sealed partial class GraphCompiler
 
     }
 
-	public string RegisterVoidFunctionResults(List<(string, string)> values)
+    public void RegisterVoidFunctionResults(List<(string, string)> values, out string functionOutputs, out List<ExpressionOutputData> outputDataList )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
-
-		int index = 0;
-
-        foreach (var value in values)
-        {
-			 var id = ShaderResult.VoidLocals.Count;
-			 var varName = $"vl_{id}";
+		
+		functionOutputs = "";
+		outputDataList = new List < ExpressionOutputData >();
+		
+		foreach (var value in values)
+		{
+			var id = ShaderResult.VoidLocals.Count;
+			var varName = $"vl_{id}";
 			
 			 (string, string) func = (value.Item1, varName);
-
-			if (!result.VoidLocals.Contains(func))
+			
+			ExpressionOutputData outputData = new ExpressionOutputData();
+			outputData.CompilerName = varName;
+			outputData.FreindlyName = value.Item2;
+			outputData.ComponentCount = GetComponentCountFromHLSLDataType( value.Item1 );
+			
+			outputDataList.Add( outputData );
+			
+			if ( !result.VoidLocals.Contains( func ) )
 			{
 				result.VoidLocals.Add(func);
-				
-				if (index == 0)
-				{
-				    sb.Append($" {varName}, ");
-				    index++;
-				}
-				else if (index != (ShaderResult.VoidLocals.Count - 1))
-				{
-				    sb.Append($" {varName}, ");
-				    index++;
-				}
-				else
-				{
-				    sb.Append($" {varName} ");
-				}
+			
 			}
-        }
-
-		return sb.ToString();
+		}
+		
+		int count = 0;
+		
+		foreach (var v in result.VoidLocals)
+		{
+			if (count == 0) // first option starts at 0 :)
+			{
+			    sb.Append($"{v.Item2}, ");
+			    count++;
+			}
+			else if (count != (result.VoidLocals.Count - 1))  // These options dont get the privilege of being the first >:)
+			{
+			    sb.Append($"{v.Item2}, ");
+			    count++;
+			}
+			else // Last option in the list oh well...:(
+			{
+			    sb.Append($"{v.Item2} ");
+			}
+		}
+		
+		functionOutputs = sb.ToString();
     }
 
-    /// <summary>
-    /// Register some generic global parameter for a node to use.
-    /// </summary>
-    /// <param name="global"></param>
-    public void RegisterGlobal( string global )
-    {
-        var result = ShaderResult;
-
-        if ( !result.Globals.Contains( global ) )
-        {
-            result.Globals.Add( global );
-        }
-    }
-
-    /// <summary>
-    /// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
-    /// </summary>
-    public Gradient GetGradient( string gradient_name )
+	/// <summary>
+	/// Register some generic global parameter for a node to use.
+	/// </summary>
+	/// <param name="global"></param>
+	public void RegisterGlobal( string global )
 	{
 		var result = ShaderResult;
+		
+		if ( !result.Globals.Contains( global ) )
+		{
+		    result.Globals.Add( global );
+		}
+	}
 
+	/// <summary>
+	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
+	/// </summary>
+	public Gradient GetGradient( string gradient_name )
+	{
+		var result = ShaderResult;
+		
 		Gradient gradient = new();
-
+		
 		foreach ( var g in result.Gradients )
 		{
 			if ( g.Key == gradient_name )
@@ -262,7 +279,7 @@ public sealed partial class GraphCompiler
 				gradient = g.Value;
 			}
 		}
-
+		
 		return gradient;
 	}
 
@@ -563,9 +580,39 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = customcodeNode.BuildFunction( this );
 
+
+
             var id = ShaderResult.InputResults.Count;
             var varName = $"l_{id}";
-            var localResult = new NodeResult( funcResult.ResultType, varName );
+
+
+            //Log.Info($"mapping result a = {mapping.Key}:{mapping.Value}");
+
+            foreach (var mapping in customcodeNode.OutputData)
+            {
+                if (mapping.FreindlyName == input.Output)
+                {
+                    //Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
+                    varName = mapping.CompilerName;
+                }
+               
+            }
+
+			var data = customcodeNode.OutputData;
+
+			int componetCount = 0;
+
+            foreach (var output in data)
+            {
+				if ( output.FreindlyName == input.Output )
+				{
+					componetCount = output.ComponentCount;
+				}
+            }
+
+
+
+            var localResult = new NodeResult( funcResult.ResultType, varName, voidComponents: componetCount);
 
             ShaderResult.InputResults.Add( input, localResult );
             ShaderResult.Results.Add( ( localResult, funcResult ) );
@@ -576,8 +623,15 @@ public sealed partial class GraphCompiler
             }
 
             InputStack.Remove( input );
-            
-			return localResult;
+
+            //Log.Info($"Active OutputName:{input.Output}");
+            //Log.Info($"input:{localResult.Code}");
+
+       
+
+
+
+            return localResult;
         }
 
         if ( node is SubgraphNode subgraphNode )
@@ -652,7 +706,6 @@ public sealed partial class GraphCompiler
 				if ( property == null )
 				{
 					InputStack.Remove( input );
-                    Log.Info($"property == null ");
                     return default;
 				}
      
@@ -910,6 +963,7 @@ public sealed partial class GraphCompiler
             ResultType r when r == ResultType.Float2x2 => "float2x2",
             ResultType r when r == ResultType.Float3x3 => "float3x3",
             ResultType r when r == ResultType.Float4x4 => "float4x4",
+            ResultType r when r == ResultType.Void => "void",
             _ => throw new ArgumentException("Unsupported value type", nameof(resultType))
         };
 	}
@@ -1014,7 +1068,21 @@ public sealed partial class GraphCompiler
 		};
 	}
 
-	private static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
+    private static int GetComponentCountFromHLSLDataType( string DataType )
+    {
+		return DataType switch
+		{
+			"bool" => 0,
+			"int" => 1,
+			"float" => 1,
+			"float2" => 2,
+			"float3" => 3,
+			"float4" => 4,
+			_ => throw new ArgumentException("DataType is not valid : ", DataType )
+		};
+    }
+
+    private static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
 	{
 		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( property => property.GetSetMethod() != null &&
@@ -1176,31 +1244,6 @@ public sealed partial class GraphCompiler
 	//	return ( shaderCode , string.Empty );
 	//}
 
-	public NodeResult GetByIdentifier( string identifier )
-	{
-
-        foreach (var nr in ShaderResult.InputResults)
-        {
-            Log.Info( $"test : ");
-            //if (identifier == nr.Key.Identifier)
-			//{
-			//	Log.Info("Match!");
-			//	return nr.Value;
-			//}
-			//else
-			//{
-			//	continue;
-			//}
-           // Log.Info($"Node Input : `{nr.Key.Identifier}`");
-        }
-
-
-        return default( NodeResult );
-
-    }
-
-
-
 	/// <summary>
 	/// Generate shader code, will evaluate the graph if it hasn't already.
 	/// Different code is generated for preview and not preview.
@@ -1211,21 +1254,9 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return null;
 
-
-
 		var material = GenerateMaterial();
         var pixelOutput = GeneratePixelOutput();
 
-		//foreach (var nr in ShaderResult.InputResults )
-		//{
-		//	Log.Info($"Node Input : `{nr.Key.Identifier}`");
-        //    Log.Info($"Node Input Type : `{nr.Value.ResultType}`");
-        //}
-
-        //foreach (var nr in ShaderResult.Results )
-        //{
-        //    Log.Info($"Node Input R : `{nr.Item2}`");
-        //}
         // If we have any errors after evaluating, no point going further
         if ( Errors.Any() )
 			return null;
@@ -1537,7 +1568,7 @@ public sealed partial class GraphCompiler
                 Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
             }
         }
-
+     
         foreach (var gradient in ShaderResult.Gradients)
         {
             //Log.Info($"Found Gradient : {gradient.Key}");
@@ -1596,11 +1627,11 @@ public sealed partial class GraphCompiler
             }
             else if (voidLocal.Item1 == "float3")
             {
-                initialValue = "float2(0.0f,0.0f,0.0f)";
+                initialValue = "float3(0.0f,0.0f,0.0f)";
             }
             else if (voidLocal.Item1 == "float4")
             {
-                initialValue = "float2(0.0f,0.0f,0.0f,0.0f)";
+                initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
             }
 
             sb.AppendLine($"{voidLocal.Item1} {voidLocal.Item2} = {initialValue};");
@@ -1634,17 +1665,17 @@ public sealed partial class GraphCompiler
 					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
 				}
 				else
-				{
-					//if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-					//{
-					//	sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-					//	sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-					//}
-					//else
-					//{
-						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-                    //}
+                {
+                    if ( result.Item2.ResultType is ResultType.Void )
+					{
+						//Log.Info( $"isvoidresult" );
+                        sb.AppendLine( $"{result.Item2.Code};" );
+                    }
+					else
+					{
+                        sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+                        sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};" );
+                    }
                 }
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
@@ -1681,8 +1712,17 @@ public sealed partial class GraphCompiler
 					//Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
 				}
 				else
-				{
-					sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+                {
+                    sb.AppendLine($"// IsVertexStage? : {(IsVs ? true : false)}");
+                    if ( result.Item2.ResultType is ResultType.Void )
+                    {
+					
+                        sb.AppendLine($"{result.Item2.Code};");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
+                    }
                 }
 
                 foreach ( var feature in ShaderResult.ShaderFeatures )
@@ -1812,29 +1852,71 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
                 break;
         }
 
-        NodeResult result;
-
-        if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
-        {
-            result = Result(connection);
-
-            if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
-            {
+		NodeResult result;
+		
+		if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
+		{
+			result = Result(connection);
+			
+			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
+			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
+				
+				
+				//var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+				//var componentCount = GetComponentCount( inputAttribute.Type );
+				
+				sb.AppendLine();
+
+				foreach (var voidLocal in ShaderResult.VoidLocals)
+				{
+					
+					var initialValue = "";
+					
+					
+					if (voidLocal.Item1 == "bool")
+					{
+					    initialValue = "false";
+					}
+					else if (voidLocal.Item1 == "int")
+					{
+					    initialValue = "0";
+					}
+					else if (voidLocal.Item1 == "float")
+					{
+					    initialValue = "0.0f";
+					}
+					else if (voidLocal.Item1 == "float2")
+					{
+					    initialValue = "float2(0.0f,0.0f)";
+					}
+					else if (voidLocal.Item1 == "float3")
+					{
+					    initialValue = "float3(0.0f,0.0f,0.0f)";
+					}
+					else if (voidLocal.Item1 == "float4")
+					{
+					    initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
+					}
+					
+					sb.AppendLine($"{voidLocal.Item1} {voidLocal.Item2} = {initialValue};");
+				}
 
 
-               //var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-               //var componentCount = GetComponentCount( inputAttribute.Type );
-			   
-               sb.AppendLine();
-			   
-               foreach ( var local in ShaderResult.Results )
-               {
-                   sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
-               }
+				foreach ( var local in ShaderResult.Results)
+				{
+					if ( local.Item2.ResultType is ResultType.Void )
+					{
+					    sb.AppendLine($"{local.Item2.Code};");
+					}
+					else
+					{
+					    sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
+					}
+				}
 
-                sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
-                sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
+				sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
+				sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
             }
         }
 

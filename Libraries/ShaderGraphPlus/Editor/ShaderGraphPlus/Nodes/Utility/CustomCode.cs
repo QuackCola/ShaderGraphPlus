@@ -1,4 +1,7 @@
+using Editor.ShaderGraph;
 using Sandbox;
+using System;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
@@ -20,8 +23,8 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 	[TextArea]
 	public string Body { get; set; }
 
-    //[Hide]
-    public ResultType ResultType { get; set; } = ResultType.Float;
+    [Hide]
+    public ResultType ResultType = ResultType.Void;
 
 	[Title( "Inputs" )]
 	public List<ExpressionInputs> ExpressionInputs { get; set; }
@@ -47,6 +50,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
     [Hide, JsonIgnore]
     int _lastHashCodeOutputs = 0;
+
+    [Hide, JsonIgnore]
+    public Dictionary<string, string> _OutputMappings { get; set; } = new();
+
+    [Hide, JsonIgnore]
+    public List<ExpressionOutputData> OutputData { get; set; } = new();
 
     public void OnNodeCreated()
     {
@@ -86,9 +95,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     {
         if ( !string.IsNullOrWhiteSpace( Name ) )
         {
-
-            
-
             var sb = new StringBuilder();
             sb.AppendLine();
             sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({GetFunctionInputs()}, {GetFunctionOutputs()})" );
@@ -98,20 +104,89 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             sb.AppendLine();
 
             var results = GetResults( compiler );
-            //var functionOutputs = GetFunctionOutputs();
-            //Log.Info( $" `{functionOutputs}`" );
+            OutputData = new List<ExpressionOutputData>();
 
+            compiler.RegisterVoidFunctionResults( GetFunctionLocals(), out string functionOutputs, out List<ExpressionOutputData> outputData );
+            OutputData = outputData;
 
-            var funcoutputs = compiler.RegisterVoidFunctionResults(GetFunctionLocals());
-
-
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $"{results}, {funcoutputs}" ) );
+            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {results}, {functionOutputs}" ), voidComponents: 0);
         }
         else
         {
             return new( ResultType, $"1" );
         }
     }
+
+    private int GetComponentCount()
+    {
+        int count = 0;
+        foreach (ExpressionInputs output in ExpressionOutputs)
+        {
+            if ( output.HLSLDataType is "int" )
+            {
+                count =  1; // Just identify as a float.
+            }
+            else if ( output.HLSLDataType is "float" )
+            {
+                count = 1;
+            }
+            else if ( output.HLSLDataType is "Vector2" )
+            {
+                count = 2;
+            }
+            else if ( output.HLSLDataType is "Vector3" )
+            {
+                count = 3;
+            }
+            else if ( output.HLSLDataType is "Vector4" )
+            {
+                count = 4;
+            }
+            else if ( output.HLSLDataType is "Color" )
+            {
+                count = 4;
+            }
+            else if ( output.HLSLDataType is "bool" )
+            {
+                count = 0;
+
+            }
+        }
+
+        return count;
+
+
+    }
+
+
+    private string GetFreindlyLocalNames()
+    {
+        var sb = new StringBuilder();
+        int index = 0;
+
+        foreach (ExpressionInputs output in ExpressionOutputs)
+        {
+
+            if (index == 0)
+            {
+                sb.Append($" {output.Name},");
+                index++;
+            }
+            else if (index != (ExpressionOutputs.Count - 1))
+            {
+                sb.Append($" {output.Name},");
+                index++;
+            }
+            else
+            {
+                sb.Append($" {output.Name} ");
+            }
+        }
+
+
+        return sb.ToString();
+    }
+
 
     private string GetResults( GraphCompiler compiler )
     {
@@ -323,6 +398,25 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             };
             InternalOutputs = plugs;
         }
+    }
+
+}
+
+public struct ExpressionOutputData
+{
+    public string FreindlyName { get; set; }
+    public string CompilerName { get; set; }
+
+    public int ComponentCount { get; set; }
+
+    public ExpressionOutputData()
+    {
+
+    }
+
+    public ExpressionOutputData( int components )
+    {
+        ComponentCount = components;
     }
 
 }
