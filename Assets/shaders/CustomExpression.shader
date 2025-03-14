@@ -74,14 +74,15 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	float g_fltestfloat < Attribute( "testfloat" ); Default1( 0 ); >;
+	float g_fltestfloat < Attribute( "testfloat" ); Default1( 1 ); >;
 		
-	float4 Func( float2 uv, float speed ,  out float resulta, out float resultb )
+	void Func( float2 uv, float speed ,  out float2 resulta, out float resultb, out float4 resultc )
 	{
-		float3 col1 = float3(0,0,0);
+		float3 col1 = float3(1,0,1);
 		
-		//resulta = 0.0f;
-		//resultb = 0.0f;
+		resulta = 1.0f;
+		resultb = 0.0f;
+		resultc = float4(col1,1);
 		
 		for(float i=0.; i<.5; i+=.01)
 		{
@@ -92,10 +93,10 @@ PS
 		col1+=s;
 		
 		
-		
+		resultb = col1.y ;
 		}
-		
-		return float4((col1),1);
+		 
+		resulta = uv;
 	}
 	
 	
@@ -113,15 +114,22 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
-		float vl_0 = 0.0f;
+		float2 vl_0 = float2(0.0f,0.0f);
 		float vl_1 = 0.0f;
+		float4 vl_2 = float4(0.0f,0.0f,0.0f,0.0f);
 		
+		// IsVertexStage? : False
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
-		float2 l_1 = TileAndOffsetUv( l_0, float2( 8, 8 ), float2( -3.199998, -4.199999 ) );
+		// IsVertexStage? : False
+		float2 l_1 = TileAndOffsetUv( l_0, float2( 4, 4 ), float2( -2, -2 ) );
+		// IsVertexStage? : False
 		float l_2 = g_fltestfloat;
-		float4 l_3 = Func(l_1, l_2,  vl_0,  vl_1 );
+		// IsVertexStage? : False
+		Func( l_1, l_2, vl_0, vl_1, vl_2 );
+		// IsVertexStage? : False
+		float l_4 = VoronoiNoise( vl_0, 3.1415925, 10 );
 		
-		m.Albedo = l_3.xyz;
+		m.Albedo = float3( l_4, l_4, l_4 );
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
