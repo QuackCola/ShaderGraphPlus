@@ -1668,7 +1668,6 @@ public sealed partial class GraphCompiler
                 {
                     if ( result.Item2.ResultType is ResultType.Void )
 					{
-						//Log.Info( $"isvoidresult" );
                         sb.AppendLine( $"{result.Item2.Code};" );
                     }
 					else
@@ -1713,7 +1712,6 @@ public sealed partial class GraphCompiler
 				}
 				else
                 {
-                    sb.AppendLine($"// IsVertexStage? : {(IsVs ? true : false)}");
                     if ( result.Item2.ResultType is ResultType.Void )
                     {
 					
