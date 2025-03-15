@@ -178,7 +178,7 @@ public sealed partial class GraphCompiler
     /// <param name="functionName"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public string ResultFunctionCustomExpression(string code, string functionName, string args = "")
+    internal string ResultFunctionCustomExpression(string code, string functionName, string args = "")
     {
         var result = ShaderResult;
 
