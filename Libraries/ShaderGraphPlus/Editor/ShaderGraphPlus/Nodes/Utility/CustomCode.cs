@@ -12,84 +12,60 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Custom Expression" ), Category( "Utility" )]
 public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 {
-
-	[Hide]
-	public override string Title => string.IsNullOrEmpty( Name ) ?
-	$"{DisplayInfo.For( this ).Name}" :
-	$"{DisplayInfo.For( this ).Name} ({Name})";
-
-	public string Name { get; set; }
-
-	[TextArea]
-	public string Body { get; set; }
-
+    [Hide]
+    public override string Title => string.IsNullOrEmpty( Name ) ?
+    $"{DisplayInfo.For( this ).Name}" :
+    $"{DisplayInfo.For( this ).Name} ({Name})";
+    
+    public string Name { get; set; }
+    
+    [TextArea]
+    public string Body { get; set; }
+    
     [Hide]
     public ResultType ResultType = ResultType.Void;
-
-	[Title( "Inputs" )]
-	public List<ExpressionInputs> ExpressionInputs { get; set; }
-
-	[Hide]
-	private List<IPlugIn> InternalInputs = new();
-
-	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
-
+    
+    [Title( "Inputs" )]
+    public List<ExpressionPorts> ExpressionInputs { get; set; }
+    
+    [Hide]
+    private List<IPlugIn> InternalInputs = new();
+    
+    [Hide]
+    public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+    
     [Title( "Outputs" )]
-    public List<ExpressionInputs> ExpressionOutputs { get; set; }
-
+    public List<ExpressionPorts> ExpressionOutputs { get; set; }
+    
     [Hide]
     private List<IPlugOut> InternalOutputs = new();
-
+    
     [Hide]
     public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
-
-
+    
+    
     [Hide, JsonIgnore]
-	int _lastHashCodeInputs = 0;
-
+    int _lastHashCodeInputs = 0;
+    
     [Hide, JsonIgnore]
     int _lastHashCodeOutputs = 0;
-
+    
     [Hide, JsonIgnore]
     public Dictionary<string, string> _OutputMappings { get; set; } = new();
-
+    
     [Hide, JsonIgnore]
     public List<ExpressionOutputData> OutputData { get; set; } = new();
+    
+    [Hide, JsonIgnore]
+    public bool AlreadyGeneratedFunc { get; set; } = false;
 
     public void OnNodeCreated()
     {
         CreateInputs();
         CreateOutputs();
-
+    
         Update();
     }
-
-    //[Output]
-    //[Hide]
-    //public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-    //{
-    //    if ( !string.IsNullOrWhiteSpace( Name ) )
-    //	{
-    //        var sb = new StringBuilder();
-    //		sb.AppendLine();
-    //			sb.AppendLine( $"{GetFuncReturnType()} {Name}({GetFunctionInputs()})" );
-    //			sb.AppendLine( "{" );
-    //			sb.AppendLine( GraphCompiler.IndentString( Body, 1) );
-    //			sb.AppendLine( "}" );
-    //        sb.AppendLine();
-    //
-    //        var results = GetResults( compiler );
-    //        
-    //        Log.Info( $"Gatherd results `{results}`" );
-    //
-    //        return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: results ));
-    //    }
-    //	else
-    //	{
-    //        return new(ResultType, $"1" );
-    //    }
-    //};
 
     public NodeResult BuildFunction( GraphCompiler compiler )
     {
@@ -97,18 +73,18 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({GetFunctionInputs()}, {GetFunctionOutputs()})" );
+            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({ConstructFunctionInputs()}, {ConstructFunctionOutputs()})" );
             sb.AppendLine( "{" );
             sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
             sb.AppendLine( "}" );
             sb.AppendLine();
-
-            var results = GetResults( compiler );
+    
+            var results = GetInputResults( compiler );
             OutputData = new List<ExpressionOutputData>();
-
-            compiler.RegisterVoidFunctionResults( GetFunctionLocals(), out string functionOutputs, out List<ExpressionOutputData> outputData );
+    
+            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<ExpressionOutputData> outputData );
             OutputData = outputData;
-
+    
             return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {results}, {functionOutputs}" ), voidComponents: 0);
         }
         else
@@ -117,170 +93,75 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         }
     }
 
-    private int GetComponentCount()
-    {
-        int count = 0;
-        foreach (ExpressionInputs output in ExpressionOutputs)
-        {
-            if ( output.HLSLDataType is "int" )
-            {
-                count =  1; // Just identify as a float.
-            }
-            else if ( output.HLSLDataType is "float" )
-            {
-                count = 1;
-            }
-            else if ( output.HLSLDataType is "Vector2" )
-            {
-                count = 2;
-            }
-            else if ( output.HLSLDataType is "Vector3" )
-            {
-                count = 3;
-            }
-            else if ( output.HLSLDataType is "Vector4" )
-            {
-                count = 4;
-            }
-            else if ( output.HLSLDataType is "Color" )
-            {
-                count = 4;
-            }
-            else if ( output.HLSLDataType is "bool" )
-            {
-                count = 0;
-
-            }
-        }
-
-        return count;
-
-
-    }
-
-
-    private string GetFreindlyLocalNames()
+    /// <summary>
+    /// Fetches the results from the user defined node inputs.
+    /// </summary>
+    /// <param name="compiler"></param>
+    /// <returns></returns>
+    private string GetInputResults( GraphCompiler compiler )
     {
         var sb = new StringBuilder();
         int index = 0;
-
-        foreach (ExpressionInputs output in ExpressionOutputs)
-        {
-
-            if (index == 0)
-            {
-                sb.Append($" {output.Name},");
-                index++;
-            }
-            else if (index != (ExpressionOutputs.Count - 1))
-            {
-                sb.Append($" {output.Name},");
-                index++;
-            }
-            else
-            {
-                sb.Append($" {output.Name} ");
-            }
-        }
-
-
-        return sb.ToString();
-    }
-
-
-    private string GetResults( GraphCompiler compiler )
-    {
-        var sb = new StringBuilder();
-        int index = 0;
-
+        
         foreach ( IPlugIn input in Inputs )
         {
             NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
-        
+            
             var result = compiler.Result(nodeInput);
-        
-            if ( index == 0 )
+            
+            if ( index < Inputs.Count() - 1 )
             {
-                sb.Append( $"{result}, " );
-                index++;
-            }
-            else if ( index != (Inputs.Count() - 1) )
-            {
-                sb.Append( $"{result}, " );
-                index++;
+                sb.Append($"{result}, ");
             }
             else
             {
-                sb.Append( $"{result}" );
+                sb.Append($"{result}");
             }
+            
+            index++;
         }
-    
+        
         return sb.ToString();
     }
 
-    private string GetFunctionInputs()
+    private string ConstructFunctionInputs()
     {
         var sb = new StringBuilder();
-        int index = 0;
         
-        foreach ( ExpressionInputs input in ExpressionInputs )
+        for ( int index = 0; index < ExpressionInputs.Count; index++ )
         {
-            if ( index == 0 )
-            {
-            	sb.Append( $" {input.HLSLDataType} {input.Name}," );
-            	index++;
-            }
-            else if ( index != (ExpressionInputs.Count - 1) )
-            {
-                sb.Append( $" {input.HLSLDataType} {input.Name}," );
-                index++;
-            }
-            else
-            {
-                sb.Append( $" {input.HLSLDataType} {input.Name} " );
-            }
+            var input = ExpressionInputs[index];
+            
+            sb.Append(index == ExpressionInputs.Count - 1 ? $" {input.HLSLDataType} {input.Name} " : $" {input.HLSLDataType} {input.Name},");
         }
         
         return sb.ToString();
     }
 
-    public List<(string,string)> GetFunctionLocals()
+    private string ConstructFunctionOutputs()
+    {
+        var sb = new StringBuilder();
+        
+        for ( int index = 0; index < ExpressionOutputs.Count; index++ )
+        {
+            var input = ExpressionOutputs[index];
+            
+            sb.Append( index == ExpressionOutputs.Count - 1 ? $" out {input.HLSLDataType} {input.Name} " : $" out {input.HLSLDataType} {input.Name}," );
+        }
+        
+        return sb.ToString();
+    }
+
+    public List<(string,string)> GetFunctionVoidLocals()
     {
         List<(string, string)> result = new();
 
-        foreach (ExpressionInputs output in ExpressionOutputs)
+        foreach ( ExpressionPorts output in ExpressionOutputs )
         {
             result.Add( new ( output.HLSLDataType, output.Name ) );
         }
 
         return result;
-    }
-
-
-    private string GetFunctionOutputs()
-    {
-        var sb = new StringBuilder();
-        int index = 0;
-        
-        foreach ( ExpressionInputs output in ExpressionOutputs )
-        {
-            if ( index == 0 )
-            {
-                sb.Append($" out {output.HLSLDataType} {output.Name}," );
-                index++;
-            }
-            else if ( index != ( ExpressionOutputs.Count - 1 ) )
-            {
-                sb.Append( $" out {output.HLSLDataType} {output.Name}," );
-                index++;
-            }
-            else
-            {
-                sb.Append( $" out {output.HLSLDataType} {output.Name} " );
-            }
-        }
-        
-        return sb.ToString();
     }
 
     public override void OnFrame()
@@ -292,12 +173,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             hashCodeInput += input.GetHashCode();
         }
-    
+        
         foreach ( var output in ExpressionOutputs )
         {
             hashCodeOutput += output.GetHashCode();
         }
-    
+        
         if ( hashCodeInput != _lastHashCodeInputs )
         {
             _lastHashCodeInputs = hashCodeInput;
@@ -399,29 +280,27 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             InternalOutputs = plugs;
         }
     }
-
 }
 
 public struct ExpressionOutputData
 {
     public string FreindlyName { get; set; }
     public string CompilerName { get; set; }
-
+    
     public int ComponentCount { get; set; }
-
+    
     public ExpressionOutputData()
     {
-
+    
     }
-
+    
     public ExpressionOutputData( int components )
     {
         ComponentCount = components;
     }
-
 }
 
-public class ExpressionInputs
+public class ExpressionPorts
 {
     [Hide]
     public Guid Id { get; } = Guid.NewGuid();
@@ -448,7 +327,7 @@ public class ExpressionInputs
     public string TypeName { get; set; }
     
     public int Priority { get; set; }
-
+    
     [Hide, JsonIgnore]
     public string HLSLDataType
     {
@@ -489,6 +368,6 @@ public class ExpressionInputs
     
     public override int GetHashCode()
     {
-    	return System.HashCode.Combine( Id, Name, TypeName, Priority );
+        return System.HashCode.Combine( Id, Name, TypeName, Priority );
     }
 }
