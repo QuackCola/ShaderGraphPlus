@@ -39,35 +39,35 @@
       "Body": "float3 col1 = float3(1,0,1);\n\nresulta = 1.0f;\nresultb = 0.0f;\nresultc = float4(col1,1);\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\nresultb = col1.y ;\n}\n \nresulta = uv;",
       "ExpressionInputs": [
         {
-          "Id": "48841662-e044-4351-a396-31c556873f15",
+          "Id": "507069da-b1ee-44af-aefc-e01adf6c3885",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "826017dd-6b72-4b68-a6d7-c5e1c62e109e",
+          "Id": "8e64b557-9947-40b7-bbcf-63e4abd59969",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "aea29240-2742-4700-91f7-a79c4501319c",
+          "Id": "a05bb9d5-331a-4116-901e-7347e758b096",
           "Name": "resulta",
           "Type": "Vector2"
         },
         {
-          "Id": "5e25fb3e-7f30-453b-8ce3-820afd1100d1",
+          "Id": "422a4385-e780-4211-aa33-def6156c1470",
           "Name": "resultb",
           "Type": "float"
         },
         {
-          "Id": "2b2c1165-bc17-4e09-992c-7b1fe7da54c8",
+          "Id": "955b41be-7067-400a-b21c-6c9e37b35b2c",
           "Name": "resultc",
           "Type": "Color"
         }
       ],
       "Identifier": "1",
-      "Position": "-396,-216",
+      "Position": "-408,-240",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
@@ -120,7 +120,7 @@
       "CellDensity": 23.228842,
       "Worley": false,
       "Identifier": "5",
-      "Position": "-72,-204",
+      "Position": "-96,-204",
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "1",
