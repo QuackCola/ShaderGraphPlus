@@ -3,7 +3,7 @@ using System.Text;
 namespace Editor.ShaderGraphPlus.Nodes;
 
 /// <summary>
-/// Simple container for custom expressions.
+/// Container for custom code.
 /// </summary>
 [Title( "Custom Expression" ), Category( "Utility" )]
 public class CustomCodeNode : ShaderNodePlus//, IErroringNode
