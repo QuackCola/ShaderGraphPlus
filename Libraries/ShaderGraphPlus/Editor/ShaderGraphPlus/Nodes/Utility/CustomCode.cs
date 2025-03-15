@@ -147,7 +147,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         return sb.ToString();
     }
 
-    public List<(string,string)> GetFunctionVoidLocals()
+    private List<(string,string)> GetFunctionVoidLocals()
     {
         List<(string, string)> result = new();
 
