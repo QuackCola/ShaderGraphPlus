@@ -279,7 +279,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 
 public struct ExpressionOutputData
 {
-    public string FreindlyName { get; set; }
+    public string FriendlyName { get; set; }
     public string CompilerName { get; set; }
     
     public int ComponentCount { get; set; }
