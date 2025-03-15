@@ -122,27 +122,16 @@ PS
 		float vl_1 = 0.0f;
 		float4 vl_2 = float4(0.0f,0.0f,0.0f,0.0f);
 		
-		// IsVertexStage? : False
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
-		// IsVertexStage? : False
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 4, 4 ), float2( -2, -2 ) );
-		// IsVertexStage? : False
 		float l_2 = g_fltestfloat;
-		// IsVertexStage? : False
 		Func( l_1, l_2, vl_0, vl_1, vl_2 );
-		// IsVertexStage? : False
 		float2 l_4 = (i.vTextureCoords.xy + g_flTime * float2( 6.599998, -9.8 ));
-		// IsVertexStage? : False
 		float l_5 = l_4.x;
-		// IsVertexStage? : False
 		float l_6 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, l_5 );
-		// IsVertexStage? : False
 		float l_7 = clamp( l_6, 0, 1 );
-		// IsVertexStage? : False
 		float4 l_8 = Gradient::SampleGradient( Gradient0, l_7 );
-		// IsVertexStage? : False
 		float l_9 = saturate( l_6 );
-		// IsVertexStage? : False
 		float4 l_10 = saturate( lerp( l_8, max( 0.0f, (l_8) - (float4( 1, 1, 1, 1 )) ), l_9 ) );
 		
 
