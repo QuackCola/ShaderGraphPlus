@@ -58,7 +58,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     {
         CreateInputs();
         CreateOutputs();
-    
+        
         Update();
     }
 
