@@ -5,7 +5,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Container for custom code.
 /// </summary>
-[Title( "Custom Expression" ), Category( "Utility" )]
+[Title( "Custom Code" ), Category( "Utility" )]
 public class CustomCodeNode : ShaderNodePlus//, IErroringNode
 {
     [Hide]
