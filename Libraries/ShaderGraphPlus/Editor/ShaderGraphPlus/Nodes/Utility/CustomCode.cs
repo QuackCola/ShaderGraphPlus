@@ -62,7 +62,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         Update();
     }
 
-    public NodeResult BuildFunction( GraphCompiler compiler )
+    public NodeResult ConstructFunction( GraphCompiler compiler )
     {
         if ( !string.IsNullOrWhiteSpace( Name ) )
         {
