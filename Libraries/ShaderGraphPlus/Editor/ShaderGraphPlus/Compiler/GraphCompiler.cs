@@ -284,7 +284,7 @@ public sealed partial class GraphCompiler
 	}
 
     /// <summary>
-    /// Register & Build a Shader Feature.
+    /// Register and Build a Shader Feature.
     /// </summary>
     public void RegisterShaderFeature(ShaderFeature feature, string falseResult, string trueResult, bool previewToggle)
     {
@@ -895,7 +895,7 @@ public sealed partial class GraphCompiler
 
     /// <summary>
     /// Get result of a value, in preview mode an attribute will be registered and returned
-    /// Only supports float, Vector2, Vector3, Vector4, Color, Float2x2, Float3x3, Float4x4, Sampler & bool.
+    /// Only supports float, Vector2, Vector3, Vector4, Color, Float2x2, Float3x3, Float4x4, Sampler and bool.
     /// </summary>
     public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
 	{
@@ -1164,10 +1164,10 @@ public sealed partial class GraphCompiler
         return ppcb.Finish( className, shaderPath );
 	}
 
-    /// <summary>
-    /// Generate shader code, will evaluate the graph if it hasn't already.
-    /// Different code is generated for preview and not preview.
-    /// </summary>
+    // <summary>
+    // Generate shader code, will evaluate the graph if it hasn't already.
+    // Different code is generated for preview and not preview.
+    // </summary>
     //public (string,string) Generate()
 	//{
 	//	// May have already evaluated and there's errors
