@@ -1,11 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static Sandbox.Resources.ResourceGenerator;
-
-
 
 namespace Editor.ShaderGraphPlus;
 
