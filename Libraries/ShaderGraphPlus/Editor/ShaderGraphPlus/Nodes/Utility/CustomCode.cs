@@ -74,13 +74,13 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             sb.AppendLine( "}" );
             sb.AppendLine();
     
-            var results = GetInputResults( compiler );
+            var functionInputs = GetInputResults( compiler );
             OutputData = new List<CustomCodeOutputData>();
     
             compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
     
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {results}, {functionOutputs}" ), voidComponents: 0);
+            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs}, {functionOutputs}" ), voidComponents: 0);
         }
         else
         {
