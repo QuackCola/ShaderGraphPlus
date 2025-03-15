@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -68,7 +69,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Functions { get; private set; } = new ();
 		
 		public HashSet<string> Globals { get; private set; } = new();
-		public List<(string,string)> VoidLocals { get; private set; } = new();
+		public Dictionary<string, CustomCodeOutputData> VoidLocals { get; private set; } = new();
 
 		public string RepresentativeTexture { get; set; }
     }
@@ -195,41 +196,64 @@ public sealed partial class GraphCompiler
 
 	public bool test = false;
 
-    public void RegisterVoidFunctionResults(List<(string, string)> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
+    public void RegisterVoidFunctionResults(CustomCodeNode node, Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
 		
 		functionOutputs = "";
 		outputDataList = new List < CustomCodeOutputData >();
-		
-		foreach ( var value in values )
+
+        foreach ( var value in values )
 		{
-			var id = ShaderResult.VoidLocals.Count;
-			var varName = $"vl_{id}";
-			
-			 (string, string) func = (value.Item1, varName);
-			
-			CustomCodeOutputData outputData = new CustomCodeOutputData();
+			if ( result.VoidLocals.ContainsKey( value.Key ) )
+				continue;
+
+			if ( IsNotPreview )
+			{
+                Log.Info( $"Starting Processing of incoming output result `{value.Key}` Which has a Data Type of `{value.Value}`" );
+            }
+
+            var id = ShaderResult.VoidLocals.Count();
+            var varName = $"vl_{id}";
+			var dataType = value.Value;
+
+            CustomCodeOutputData outputData = new CustomCodeOutputData();
 			outputData.CompilerName = varName;
-			outputData.FriendlyName = value.Item2;
-			outputData.ComponentCount = GetComponentCountFromHLSLDataType( value.Item1 );
+			outputData.FriendlyName = value.Key;
+			outputData.DataType = dataType;
+            outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
 			
 			outputDataList.Add( outputData );
 			
-			if ( !result.VoidLocals.Contains( func ) )
+			//if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
 			{
-				result.VoidLocals.Add(func);
 			
+				if ( IsNotPreview )
+				{
+					Log.Info($"Adding new VL : `{varName}` which has a Data Type of `{dataType}`");
+				}
+
+				result.VoidLocals.Add( outputData.FriendlyName, outputData);
 			}
 		}
 
-        for ( int index = 0; index < result.VoidLocals.Count; index++ )
-        {
-            var vl = result.VoidLocals[index];
 
-            sb.Append( index == result.VoidLocals.Count - 1 ? $"{vl.Item2} " : $"{vl.Item2}, " );
+        foreach (var voidLocal in result.VoidLocals)
+        {
+            var key = voidLocal.Key;
+
+            sb.Append( key == result.VoidLocals.Keys.Max() ? $"{voidLocal.Value.CompilerName} " : $"{voidLocal.Value.CompilerName}, ");
         }
+
+
+        //Log.Info($"Current Void Local Count is : `{ShaderResult.VoidLocals.Count()}` ");
+
+        if (IsNotPreview)
+        {
+            Log.Info($"functionOutputs == {sb.ToString()}");
+        }
+
 
         functionOutputs = sb.ToString();
     }
@@ -561,71 +585,9 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-        //{
-        if (IsNotPreview)
-        {
-			if (node is VoronoiNoise noise)
-			{
-                //var resultInput = noise.Inputs.FirstOrDefault(x => x.Identifier == input.Output);
-
-
-                Log.Info($" resultInput  Name : {input.Identifier}");
-                //Log.Info($" PlugOut ID : {plugout.Node.Outputs.Count()}");
-
-            }
-
-        }
-
 
         if ( node is CustomCodeNode customcodeNode )
 		{
-			if (customcodeNode.AlreadyGeneratedFunc)
-			{
-				if (IsNotPreview)
-				{
-				    //Log.Info($"Already Generated function");
-				}	
-			}
-
-            var plugout = customcodeNode.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
-           
-
-			var tst = plugout?.Node.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
-
-
-            //if ( is not null)
-            //{
-			if (IsNotPreview)
-			{
-                //Log.Info($" PlugOut Name : {plugout.DisplayInfo.Name}");
-                //Log.Info($" PlugOut ID : {plugout.Node.Outputs.Count()}");
-
-
-
-				foreach (var a in plugout.Node.Outputs)
-				{
-          
-                }
-            }
-
-
-
-
-            //
-            //}
-
-
-
-
-            //var newResult = Result(input);
-            //
-            //Log.Info($" newResult : {newResult.Code}");
-
-
-
-
-
-
             var funcResult = customcodeNode.ConstructFunction( this );
 			
 			var id = ShaderResult.InputResults.Count;
@@ -664,7 +626,6 @@ public sealed partial class GraphCompiler
 
 			InputStack.Remove( input );
 			
-			customcodeNode.AlreadyGeneratedFunc = true;
 			return localResult;
         }
 
@@ -1643,32 +1604,32 @@ public sealed partial class GraphCompiler
 			var initialValue = "";
 
 
-            if (voidLocal.Item1 == "bool")
+            if (voidLocal.Value.DataType == "bool")
             {
                 initialValue = "false";
             }
-            else if (voidLocal.Item1 == "int")
+            else if (voidLocal.Value.DataType == "int")
             {
                 initialValue = "0";
             }
-            else if (voidLocal.Item1 == "float")
+            else if (voidLocal.Value.DataType == "float")
 			{
 				initialValue = "0.0f";
             }
-            else if (voidLocal.Item1 == "float2")
+            else if (voidLocal.Value.DataType == "float2")
             {
                 initialValue = "float2(0.0f,0.0f)";
             }
-            else if (voidLocal.Item1 == "float3")
+            else if (voidLocal.Value.DataType == "float3")
             {
                 initialValue = "float3(0.0f,0.0f,0.0f)";
             }
-            else if (voidLocal.Item1 == "float4")
+            else if (voidLocal.Value.DataType == "float4")
             {
                 initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
             }
 
-            sb.AppendLine($"{voidLocal.Item1} {voidLocal.Item2} = {initialValue};");
+            sb.AppendLine($"{voidLocal.Value.DataType} {voidLocal.Value.CompilerName} = {initialValue};");
         }
 
         sb.AppendLine();
@@ -1906,32 +1867,32 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 					var initialValue = "";
 					
 					
-					if (voidLocal.Item1 == "bool")
+					if (voidLocal.Value.DataType == "bool")
 					{
 					    initialValue = "false";
 					}
-					else if (voidLocal.Item1 == "int")
+					else if (voidLocal.Value.DataType == "int")
 					{
 					    initialValue = "0";
 					}
-					else if (voidLocal.Item1 == "float")
+					else if (voidLocal.Value.DataType == "float")
 					{
 					    initialValue = "0.0f";
 					}
-					else if (voidLocal.Item1 == "float2")
+					else if (voidLocal.Value.DataType == "float2")
 					{
 					    initialValue = "float2(0.0f,0.0f)";
 					}
-					else if (voidLocal.Item1 == "float3")
+					else if (voidLocal.Value.DataType == "float3")
 					{
 					    initialValue = "float3(0.0f,0.0f,0.0f)";
 					}
-					else if (voidLocal.Item1 == "float4")
+					else if (voidLocal.Value.DataType == "float4")
 					{
 					    initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
 					}
 					
-					sb.AppendLine($"{voidLocal.Item1} {voidLocal.Item2} = {initialValue};");
+					sb.AppendLine($"{voidLocal.Value.DataType} {voidLocal.Value.CompilerName} = {initialValue};");
 				}
 
 
