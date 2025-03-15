@@ -192,7 +192,10 @@ public sealed partial class GraphCompiler
 
     }
 
-    public void RegisterVoidFunctionResults(List<(string, string)> values, out string functionOutputs, out List<ExpressionOutputData> outputDataList )
+
+	public bool test = false;
+
+    public void RegisterVoidFunctionResults(List<(string, string)> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
@@ -200,7 +203,7 @@ public sealed partial class GraphCompiler
 		functionOutputs = "";
 		outputDataList = new List < CustomCodeOutputData >();
 		
-		foreach (var value in values)
+		foreach ( var value in values )
 		{
 			var id = ShaderResult.VoidLocals.Count;
 			var varName = $"vl_{id}";
@@ -558,62 +561,111 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-        if ( node is CustomCodeNode customcodeNode )
-		{
-			var funcResult = customcodeNode.BuildFunction( this );
+        //{
+        if (IsNotPreview)
+        {
+			if (node is VoronoiNoise noise)
+			{
+                //var resultInput = noise.Inputs.FirstOrDefault(x => x.Identifier == input.Output);
 
 
+                Log.Info($" resultInput  Name : {input.Identifier}");
+                //Log.Info($" PlugOut ID : {plugout.Node.Outputs.Count()}");
 
-            var id = ShaderResult.InputResults.Count;
-            var varName = $"l_{id}";
-
-
-            //Log.Info($"mapping result a = {mapping.Key}:{mapping.Value}");
-
-            foreach (var mapping in customcodeNode.OutputData)
-            {
-                if (mapping.FreindlyName == input.Output)
-                {
-                    //Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
-                    varName = mapping.CompilerName;
-                }
-               
             }
 
+        }
+
+
+        if ( node is CustomCodeNode customcodeNode )
+		{
+			if (customcodeNode.AlreadyGeneratedFunc)
+			{
+				if (IsNotPreview)
+				{
+				    //Log.Info($"Already Generated function");
+				}	
+			}
+
+            var plugout = customcodeNode.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
+           
+
+			var tst = plugout?.Node.Outputs.FirstOrDefault(x => x.Identifier == input.Output);
+
+
+            //if ( is not null)
+            //{
+			if (IsNotPreview)
+			{
+                //Log.Info($" PlugOut Name : {plugout.DisplayInfo.Name}");
+                //Log.Info($" PlugOut ID : {plugout.Node.Outputs.Count()}");
+
+
+
+				foreach (var a in plugout.Node.Outputs)
+				{
+          
+                }
+            }
+
+
+
+
+            //
+            //}
+
+
+
+
+            //var newResult = Result(input);
+            //
+            //Log.Info($" newResult : {newResult.Code}");
+
+
+
+
+
+
+            var funcResult = customcodeNode.ConstructFunction( this );
+			
+			var id = ShaderResult.InputResults.Count;
+			var varName = $"l_{id}";
+			
+			foreach (var mapping in customcodeNode.OutputData)
+			{
+				if (mapping.FriendlyName == input.Output)
+				{
+					//Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
+					varName = mapping.CompilerName;
+				}
+			}
+
 			var data = customcodeNode.OutputData;
-
+			
 			int componetCount = 0;
-
-            foreach (var output in data)
-            {
-				if ( output.FreindlyName == input.Output )
+			
+			foreach (var output in data)
+			{
+				if ( output.FriendlyName == input.Output )
 				{
 					componetCount = output.ComponentCount;
 				}
-            }
+			}
 
+			var localResult = new NodeResult( funcResult.ResultType, varName, voidComponents: componetCount);
+			
+			ShaderResult.InputResults.Add( input, localResult );
+			ShaderResult.Results.Add( ( localResult, funcResult ) );
 
+			if ( IsPreview )
+			{
+			    Nodes.Add( node );
+			}
 
-            var localResult = new NodeResult( funcResult.ResultType, varName, voidComponents: componetCount);
-
-            ShaderResult.InputResults.Add( input, localResult );
-            ShaderResult.Results.Add( ( localResult, funcResult ) );
-
-            if ( IsPreview )
-            {
-                Nodes.Add( node );
-            }
-
-            InputStack.Remove( input );
-
-            //Log.Info($"Active OutputName:{input.Output}");
-            //Log.Info($"input:{localResult.Code}");
-
-       
-
-
-
-            return localResult;
+			InputStack.Remove( input );
+			
+			customcodeNode.AlreadyGeneratedFunc = true;
+			return localResult;
         }
 
         if ( node is SubgraphNode subgraphNode )
