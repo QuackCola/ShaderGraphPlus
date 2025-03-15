@@ -220,26 +220,13 @@ public sealed partial class GraphCompiler
 			
 			}
 		}
-		
-		int count = 0;
-		
-		foreach (var v in result.VoidLocals)
-		{
-			if (count == 0) // first option starts at 0 :)
-			{
-			    sb.Append($"{v.Item2}, ");
-			    count++;
-			}
-			else if (count != (result.VoidLocals.Count - 1))  // These options dont get the privilege of being the first >:)
-			{
-			    sb.Append($"{v.Item2}, ");
-			    count++;
-			}
-			else // Last option in the list oh well...:(
-			{
-			    sb.Append($"{v.Item2} ");
-			}
-		}
+
+        for ( int index = 0; index < result.VoidLocals.Count; index++ )
+        {
+            var vl = result.VoidLocals[index];
+
+            sb.Append( index == result.VoidLocals.Count - 1 ? $"{vl.Item2} " : $"{vl.Item2}, " );
+        }
 
         functionOutputs = sb.ToString();
     }
