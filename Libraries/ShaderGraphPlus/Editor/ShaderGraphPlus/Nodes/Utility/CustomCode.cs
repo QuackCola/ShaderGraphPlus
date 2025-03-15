@@ -80,7 +80,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
     
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs}, {functionOutputs}" ), voidComponents: 0);
+            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0);
         }
         else
         {
@@ -127,7 +127,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         {
             var input = ExpressionInputs[index];
             
-            sb.Append(index == ExpressionInputs.Count - 1 ? $" {input.HLSLDataType} {input.Name} " : $" {input.HLSLDataType} {input.Name},");
+            sb.Append(index == ExpressionInputs.Count - 1 ? $" {input.HLSLDataType} {input.Name}" : $" {input.HLSLDataType} {input.Name},");
         }
         
         return sb.ToString();
