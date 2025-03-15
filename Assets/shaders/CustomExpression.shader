@@ -76,7 +76,7 @@ PS
 	
 	float g_fltestfloat < Attribute( "testfloat" ); Default1( 1 ); >;
 		
-	void Func( float2 uv, float speed ,  out float2 resulta, out float resultb, out float4 resultc )
+	void Func( float2 uv, float speed,  out float2 resulta, out float resultb, out float4 resultc )
 	{
 		float3 col1 = float3(1,0,1);
 		
@@ -125,7 +125,7 @@ PS
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 4, 4 ), float2( -2, -2 ) );
 		float l_2 = g_fltestfloat;
-		Func( l_1, l_2, vl_0, vl_1, vl_2 );
+		Func( l_1, l_2,vl_0, vl_1, vl_2 );
 		float2 l_4 = (i.vTextureCoords.xy + g_flTime * float2( 6.599998, -9.8 ));
 		float l_5 = l_4.x;
 		float l_6 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, l_5 );
