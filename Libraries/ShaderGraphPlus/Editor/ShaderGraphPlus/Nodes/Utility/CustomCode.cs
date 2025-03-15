@@ -17,8 +17,8 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     
     [TextArea]
     public string Body { get; set; }
-    
-    [Hide]
+
+    [Hide, JsonIgnore]
     public ResultType ResultType = ResultType.Void;
     
     [Title( "Inputs" )]
@@ -38,8 +38,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     
     [Hide]
     public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
-    
-    
+
     [Hide, JsonIgnore]
     int _lastHashCodeInputs = 0;
     
