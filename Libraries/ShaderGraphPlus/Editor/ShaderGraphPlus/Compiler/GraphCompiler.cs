@@ -203,7 +203,7 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 		
 		functionOutputs = "";
-		outputDataList = new List < ExpressionOutputData >();
+		outputDataList = new List < CustomCodeOutputData >();
 		
 		foreach (var value in values)
 		{
@@ -212,9 +212,9 @@ public sealed partial class GraphCompiler
 			
 			 (string, string) func = (value.Item1, varName);
 			
-			ExpressionOutputData outputData = new ExpressionOutputData();
+			CustomCodeOutputData outputData = new CustomCodeOutputData();
 			outputData.CompilerName = varName;
-			outputData.FreindlyName = value.Item2;
+			outputData.FriendlyName = value.Item2;
 			outputData.ComponentCount = GetComponentCountFromHLSLDataType( value.Item1 );
 			
 			outputDataList.Add( outputData );
@@ -245,8 +245,8 @@ public sealed partial class GraphCompiler
 			    sb.Append($"{v.Item2} ");
 			}
 		}
-		
-		functionOutputs = sb.ToString();
+
+        functionOutputs = sb.ToString();
     }
 
 	/// <summary>

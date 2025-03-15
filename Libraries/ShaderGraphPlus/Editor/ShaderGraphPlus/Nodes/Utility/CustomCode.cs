@@ -22,7 +22,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     public ResultType ResultType = ResultType.Void;
     
     [Title( "Inputs" )]
-    public List<ExpressionPorts> ExpressionInputs { get; set; }
+    public List<CustomCodeNodePorts> ExpressionInputs { get; set; }
     
     [Hide]
     private List<IPlugIn> InternalInputs = new();
@@ -31,7 +31,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     public override IEnumerable<IPlugIn> Inputs => InternalInputs;
     
     [Title( "Outputs" )]
-    public List<ExpressionPorts> ExpressionOutputs { get; set; }
+    public List<CustomCodeNodePorts> ExpressionOutputs { get; set; }
     
     [Hide]
     private List<IPlugOut> InternalOutputs = new();
@@ -49,7 +49,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     public Dictionary<string, string> _OutputMappings { get; set; } = new();
     
     [Hide, JsonIgnore]
-    public List<ExpressionOutputData> OutputData { get; set; } = new();
+    public List<CustomCodeOutputData> OutputData { get; set; } = new();
     
     [Hide, JsonIgnore]
     public bool AlreadyGeneratedFunc { get; set; } = false;
@@ -75,9 +75,9 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             sb.AppendLine();
     
             var results = GetInputResults( compiler );
-            OutputData = new List<ExpressionOutputData>();
+            OutputData = new List<CustomCodeOutputData>();
     
-            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<ExpressionOutputData> outputData );
+            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
     
             return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {results}, {functionOutputs}" ), voidComponents: 0);
@@ -151,7 +151,7 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     {
         List<(string, string)> result = new();
 
-        foreach ( ExpressionPorts output in ExpressionOutputs )
+        foreach ( CustomCodeNodePorts output in ExpressionOutputs )
         {
             result.Add( new ( output.HLSLDataType, output.Name ) );
         }
@@ -277,25 +277,25 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     }
 }
 
-public struct ExpressionOutputData
+public struct CustomCodeOutputData
 {
     public string FriendlyName { get; set; }
     public string CompilerName { get; set; }
     
     public int ComponentCount { get; set; }
     
-    public ExpressionOutputData()
+    public CustomCodeOutputData()
     {
     
     }
     
-    public ExpressionOutputData( int components )
+    public CustomCodeOutputData( int components )
     {
         ComponentCount = components;
     }
 }
 
-public class ExpressionPorts
+public class CustomCodeNodePorts
 {
     [Hide]
     public Guid Id { get; } = Guid.NewGuid();
