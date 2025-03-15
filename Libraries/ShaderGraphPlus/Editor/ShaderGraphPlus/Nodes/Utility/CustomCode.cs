@@ -77,7 +77,8 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             var functionInputs = GetInputResults( compiler );
             OutputData = new List<CustomCodeOutputData>();
     
-            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
+
+            compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
     
             return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0);
@@ -147,13 +148,13 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         return sb.ToString();
     }
 
-    private List<(string,string)> GetFunctionVoidLocals()
+    private Dictionary<string, string> GetFunctionVoidLocals()
     {
-        List<(string, string)> result = new();
+        Dictionary<string, string> result = new();
 
         foreach ( CustomCodeNodePorts output in ExpressionOutputs )
         {
-            result.Add( new ( output.HLSLDataType, output.Name ) );
+            result.Add( output.Name, output.HLSLDataType );
         }
 
         return result;
@@ -281,7 +282,7 @@ public struct CustomCodeOutputData
 {
     public string FriendlyName { get; set; }
     public string CompilerName { get; set; }
-    
+    public string DataType { get; set; }
     public int ComponentCount { get; set; }
     
     public CustomCodeOutputData()
