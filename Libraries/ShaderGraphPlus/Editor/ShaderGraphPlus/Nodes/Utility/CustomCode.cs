@@ -62,8 +62,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
         Update();
     }
 
-   // public int ConsturctFunctionCallCount { get; private set; } = 0;
-
     public NodeResult   ConstructFunction( GraphCompiler compiler )
     {
         if ( !string.IsNullOrWhiteSpace( Name ) )
@@ -83,20 +81,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
 
-            //if (compiler.IsNotPreview)
-            //{
-            //    if (OutputData.Count is 0)
-            //    {
-            //        Log.Error($"OutputData is empty!");
-            //    }
-            //
-            //    foreach (var outp in OutputData)
-            //    {
-            //        Log.Info($"have : {outp.CompilerName}");
-            //    }
-            //}
-
-            //ConsturctFunctionCallCount++;
             return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0);
         }
         else
