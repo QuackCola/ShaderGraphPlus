@@ -204,6 +204,8 @@ public sealed partial class GraphCompiler
 		functionOutputs = "";
 		outputDataList = new List < CustomCodeOutputData >();
 
+
+
         foreach ( var value in values )
 		{
 			//if ( result.VoidLocals.ContainsKey( value.Key ) )
@@ -212,11 +214,23 @@ public sealed partial class GraphCompiler
 			if ( IsNotPreview )
 			{
                 Log.Info( $"Starting Processing of incoming output result `{value.Key}` Which has a Data Type of `{value.Value}`" );
+
             }
 
             var id = ShaderResult.VoidLocals.Count();
+
             var varName = $"vl_{id}";
-			var dataType = value.Value;
+            var dataType = value.Value;
+
+			// Stop it from creating a phantom void local.
+            foreach (var i in result.VoidLocals)
+			{
+				if (i.Value.FriendlyName == value.Key)
+				{
+                    varName = i.Value.CompilerName;
+					break;
+				}
+			}
 
             CustomCodeOutputData outputData = new CustomCodeOutputData();
 			outputData.CompilerName = varName;
@@ -238,6 +252,12 @@ public sealed partial class GraphCompiler
 				result.VoidLocals.Add( outputData.FriendlyName, outputData);
 			}
 		}
+
+
+        if (IsNotPreview)
+        {
+            Log.Info($"VoidLocal Count : `{ShaderResult.VoidLocals.Count()}`");
+        }
 
         // Construct function outputs, for example : out float output01, out float2 output02
         foreach (var voidLocal in result.VoidLocals)
