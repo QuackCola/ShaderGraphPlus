@@ -74,7 +74,7 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	float g_fltestfloat < Attribute( "testfloat" ); Default1( 1 ); >;
+	float g_fltestfloat < Attribute( "testfloat" ); Default1( 2.3999999 ); >;
 		
 	void Func( float2 uv, float speed,  out float mask, out float thing )
 	{
@@ -85,7 +85,7 @@ PS
 		for(float i=0.; i<.5; i+=.01)
 		{
 			uv.x+= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;
-			uv.y+= clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
+			uv.y+= -clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
 			float d = length(uv);
 			float s = step(d,i)*.01;
 			col1+=s;

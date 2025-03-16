@@ -36,7 +36,7 @@
     {
       "_class": "CustomCodeNode",
       "Name": "Func",
-      "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
+      "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= -clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
       "ExpressionInputs": [
         {
           "Id": "7fe00af9-6b4b-4f78-a3b0-9b1e2a2eb5e5",
@@ -79,7 +79,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 1,
-      "Value": 1,
+      "Value": 2.3999999,
       "Name": "testfloat",
       "IsAttribute": true,
       "UI": {},
