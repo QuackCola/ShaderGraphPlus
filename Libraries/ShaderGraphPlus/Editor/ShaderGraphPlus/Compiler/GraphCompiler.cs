@@ -494,7 +494,7 @@ public sealed partial class GraphCompiler
 	{
 		if (!input.IsValid)
 			return default;
-
+		
 		BaseNodePlus node = null;
 		if (string.IsNullOrEmpty(input.Subgraph))
 		{
@@ -527,11 +527,11 @@ public sealed partial class GraphCompiler
 		{
 			return default;
 		}
-
+		
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty(input.Output);
-
-
+		
+		
 		if (property == null)
 		{
 			// Search for alias
@@ -552,17 +552,17 @@ public sealed partial class GraphCompiler
 					break;
 			}
 		}
-
+		
 		object value = null;
-
-
+		
+		
 		if (node is not IRerouteNode && InputStack.Contains(input))
 		{
 			NodeErrors[node] = new List<string> { "Circular reference detected" };
 			return default;
 		}
 		InputStack.Add(input);
-
+		
 		if (Subgraph is not null && node.Graph != Subgraph)
 		{
 			if (node.Graph != Graph)
@@ -574,11 +574,11 @@ public sealed partial class GraphCompiler
 				Subgraph = null;
 			}
 		}
-
-
-        if ( node is CustomCodeNode customcodeNode )
+		
+		
+		if ( node is CustomCodeNode customcodeNode )
 		{
-            var funcResult = customcodeNode.ConstructFunction( this );
+			var funcResult = customcodeNode.ConstructFunction( this );
 			
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
@@ -589,15 +589,13 @@ public sealed partial class GraphCompiler
 				{
 					//Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
 					varName = mapping.CompilerName;
-                    break;
-                }
+			        break;
+			    }
 			}
-
-			var data = customcodeNode.OutputData;
 			
 			int componetCount = 0;
 			
-			foreach (var output in data)
+			foreach (var output in customcodeNode.OutputData)
 			{
 				if ( output.FriendlyName == input.Output )
 				{
@@ -605,36 +603,36 @@ public sealed partial class GraphCompiler
 					break;
 				}
 			}
-
-            var resultType = componetCount switch
-            {
-                0 => ResultType.Bool,
-                1 => ResultType.Float,
-                2 => ResultType.Vector2,
-                3 => ResultType.Vector3,
-                4 => ResultType.Color,
-                _ => throw new ArgumentException( "Unknown result type", $"{componetCount}")
-            };
-
-
-
-
-            var localResult = new NodeResult( resultType, varName, voidComponents: componetCount);
+			
+			var resultType = componetCount switch
+			{
+			    0 => ResultType.Bool,
+			    1 => ResultType.Float,
+			    2 => ResultType.Vector2,
+			    3 => ResultType.Vector3,
+			    4 => ResultType.Color,
+			    _ => throw new ArgumentException( "Unknown result type", $"{componetCount}")
+			};
+			
+			
+			
+			
+			var localResult = new NodeResult( resultType, varName, voidComponents: componetCount);
 			
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( ( localResult, funcResult ) );
-
+			
 			if ( IsPreview )
 			{
 			    Nodes.Add( node );
 			}
-
+			
 			InputStack.Remove( input );
 			
 			return localResult;
-        }
-
-        if ( node is SubgraphNode subgraphNode )
+		}
+		
+		if ( node is SubgraphNode subgraphNode )
 		{
 			var newStack = (subgraphNode, Subgraph);
 			var lastNode = SubgraphNode;
@@ -645,7 +643,7 @@ public sealed partial class GraphCompiler
 			{
 				Subgraphs.Add( Subgraph );
 			}
-
+		
 			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
@@ -675,8 +673,8 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-            
-            if ( Subgraph is not null )
+		    
+		    if ( Subgraph is not null )
 			{
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
@@ -700,25 +698,25 @@ public sealed partial class GraphCompiler
 					}
 				}
 			}
-
+		
 			if ( value is null )
 			{
 				if ( property == null )
 				{
 					InputStack.Remove( input );
-                    return default;
+		            return default;
 				}
-     
-                value = property.GetValue( node );
+		
+		        value = property.GetValue( node );
 			}
-
+		
 			if ( value == null )
 			{
 				InputStack.Remove( input );
 				return default;
 			}
 		}
-
+		
 		if ( value is NodeResult nodeResult )
 		{
 			InputStack.Remove( input );
@@ -738,7 +736,7 @@ public sealed partial class GraphCompiler
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
-
+		
 			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
@@ -746,7 +744,7 @@ public sealed partial class GraphCompiler
 					errors = new();
 					NodeErrors.Add( node, errors );
 				}
-
+		
 				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
 				{
 					errors.Add( $"Missing input" );
@@ -756,34 +754,34 @@ public sealed partial class GraphCompiler
 					foreach ( var error in funcResult.Errors )
 						errors.Add( error );
 				}
-
+		
 				InputStack.Remove( input );
 				return default;
 			}
-
+		
 			// We can return this result without making it a local variable because it's constant
 			if ( funcResult.Constant )
 			{
 				InputStack.Remove( input );
 				return funcResult;
 			}
-
+		
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
 			var localResult = new NodeResult( funcResult.ResultType, varName );
-
+		
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( (localResult, funcResult) );
-
+		
 			if ( IsPreview )
 			{
 				Nodes.Add( node );
 			}
-
+		
 			InputStack.Remove( input );
 			return localResult;
 		}
-
+		
 		var resultVal = ResultValue( value );
 		InputStack.Remove( input );
 		return resultVal;
