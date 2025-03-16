@@ -51,9 +51,6 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     [Hide, JsonIgnore]
     public List<CustomCodeOutputData> OutputData { get; set; } = new();
     
-    [Hide, JsonIgnore]
-    public bool AlreadyGeneratedFunc { get; set; } = false;
-
     public void OnNodeCreated()
     {
         CreateInputs();
