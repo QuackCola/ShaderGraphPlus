@@ -601,6 +601,7 @@ public sealed partial class GraphCompiler
 				if ( output.FriendlyName == input.Output )
 				{
 					componetCount = output.ComponentCount;
+					break;
 				}
 			}
 
