@@ -40,11 +40,8 @@ public abstract class Unary : ShaderNodePlus
 	[Hide]
 	public virtual NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		
 		var result = compiler.ResultOrDefault( Input, 0.0f );
-		
-		//Log.Info( $"input {nameof(Input)} of {DisplayInfo.Name} type is : {result.GetResultType()}" );
-		
+
 		ResultType resulttype = result.ResultType;
 		
 		if ( Components is not null )
