@@ -589,7 +589,8 @@ public sealed partial class GraphCompiler
 				{
 					//Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
 					varName = mapping.CompilerName;
-				}
+                    break;
+                }
 			}
 
 			var data = customcodeNode.OutputData;
