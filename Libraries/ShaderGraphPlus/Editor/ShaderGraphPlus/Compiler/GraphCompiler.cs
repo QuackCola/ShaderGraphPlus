@@ -604,7 +604,20 @@ public sealed partial class GraphCompiler
 				}
 			}
 
-			var localResult = new NodeResult( funcResult.ResultType, varName, voidComponents: componetCount);
+            var resultType = componetCount switch
+            {
+                0 => ResultType.Bool,
+                1 => ResultType.Float,
+                2 => ResultType.Vector2,
+                3 => ResultType.Vector3,
+                4 => ResultType.Color,
+                _ => throw new ArgumentException( "Unknown result type", $"{componetCount}")
+            };
+
+
+
+
+            var localResult = new NodeResult( resultType, varName, voidComponents: componetCount);
 			
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( ( localResult, funcResult ) );
