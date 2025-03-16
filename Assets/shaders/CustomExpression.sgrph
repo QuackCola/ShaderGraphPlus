@@ -25,7 +25,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "816,-228",
+      "Position": "840,-192",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "9",
@@ -36,38 +36,33 @@
     {
       "_class": "CustomCodeNode",
       "Name": "Func",
-      "Body": "float3 col1 = float3(1,0,1);\n\nresulta = 1.0f;\nresultb = 0.0f;\nresultc = float4(col1,1);\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\nuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\nuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\nfloat d = length(uv);\nfloat s = step(d,i)*.01;\ncol1\u002B=s;\n\n\nresultb = col1.y ;\n}\n \nresulta = uv;",
+      "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
       "ExpressionInputs": [
         {
-          "Id": "507069da-b1ee-44af-aefc-e01adf6c3885",
+          "Id": "7fe00af9-6b4b-4f78-a3b0-9b1e2a2eb5e5",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "8e64b557-9947-40b7-bbcf-63e4abd59969",
+          "Id": "f8334dab-91fb-462f-8e24-d92a446fb36b",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "a05bb9d5-331a-4116-901e-7347e758b096",
-          "Name": "resulta",
-          "Type": "Vector2"
-        },
-        {
-          "Id": "422a4385-e780-4211-aa33-def6156c1470",
-          "Name": "resultb",
+          "Id": "ba70db13-7246-42d7-9f2c-92d898f07a6f",
+          "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "955b41be-7067-400a-b21c-6c9e37b35b2c",
-          "Name": "resultc",
-          "Type": "Color"
+          "Id": "ac97a193-878b-4a50-af60-01fd7bdce5d4",
+          "Name": "thing",
+          "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-408,-240",
+      "Position": "-396,-240",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
@@ -106,7 +101,7 @@
       "DefaultOffset": "-2,-2",
       "WrapTo01": false,
       "Identifier": "4",
-      "Position": "-612,-240",
+      "Position": "-624,-240",
       "HandleOffsets": {},
       "UV": {
         "Identifier": "3",
@@ -120,16 +115,11 @@
       "CellDensity": 23.228842,
       "Worley": false,
       "Identifier": "5",
-      "Position": "-96,-204",
+      "Position": "-120,-264",
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "1",
-        "Output": "resultb",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "14",
-        "Output": "X",
+        "Output": "thing",
         "Subgraph": null
       }
     },
@@ -177,13 +167,13 @@
         ]
       },
       "Identifier": "6",
-      "Position": "168,-276",
+      "Position": "180,-372",
       "HandleOffsets": {}
     },
     {
       "_class": "SampleGradientNode",
       "Identifier": "7",
-      "Position": "444,-228",
+      "Position": "408,-288",
       "HandleOffsets": {},
       "Gradient": {
         "Identifier": "6",
@@ -201,7 +191,7 @@
       "DefaultMin": 0,
       "DefaultMax": 1,
       "Identifier": "8",
-      "Position": "144,-204",
+      "Position": "168,-276",
       "HandleOffsets": {},
       "InputA": {
         "Identifier": "5",
@@ -215,7 +205,7 @@
       "BlendMode": "Subtract",
       "Clamp": true,
       "Identifier": "9",
-      "Position": "624,-228",
+      "Position": "612,-192",
       "HandleOffsets": {},
       "A": {
         "Identifier": "7",
@@ -223,59 +213,35 @@
         "Subgraph": null
       },
       "C": {
-        "Identifier": "10",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "Saturate",
-      "Identifier": "10",
-      "Position": "408,-96",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "12",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "UVScrollNode",
-      "DefaultScrollSpeed": "6.599998,-9.8",
-      "Identifier": "11",
-      "Position": "-444,-24",
-      "HandleOffsets": {},
-      "Time": {
-        "Identifier": "13",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "Comment": null,
-      "Identifier": "12",
-      "Position": "144,-60",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "5",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "Time",
-      "Identifier": "13",
-      "Position": "-636,-24",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "SplitVector",
-      "Identifier": "14",
-      "Position": "-276,-36",
-      "HandleOffsets": {},
-      "Input": {
         "Identifier": "11",
+        "Output": "Out",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "RemapValue",
+      "In": 0.5,
+      "InMin": 0,
+      "InMax": 0,
+      "OutMin": 0,
+      "OutMax": 1,
+      "Clamp": true,
+      "Identifier": "10",
+      "Position": "-120,-144",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "mask",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "11",
+      "Position": "84,-144",
+      "HandleOffsets": {},
+      "In": {
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       }
