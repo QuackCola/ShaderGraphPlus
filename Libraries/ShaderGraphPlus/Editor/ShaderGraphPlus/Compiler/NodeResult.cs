@@ -60,6 +60,7 @@ public struct NodeResult : IValid
 	public bool IsDepreciated { get; private set; }
     public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 
+    public bool IsVoidResult { get; private set; }
 	public int VoidComponents { get; private set; }
 
 	public readonly string TypeName
@@ -111,36 +112,54 @@ public struct NodeResult : IValid
 	{
 		get
 		{
-			return ResultType switch
+			if (ResultType is ResultType.Void)
 			{
-				ResultType.Bool => typeof( bool ),
-                ResultType.Int => typeof( int ),
-                ResultType.Float => typeof( float ),
-				ResultType.Vector2 => typeof( Vector2 ),
-				ResultType.Vector3 => typeof( Vector3 ),
-				ResultType.Color => typeof( Color ),
-				ResultType.Float2x2 => typeof( Float2x2 ),
-				ResultType.Float3x3 => typeof( Float3x3 ),
-				ResultType.Float4x4 => typeof( Float4x4 ),
-				ResultType.Sampler => typeof( Sampler ),
-				ResultType.TextureObject => typeof( TextureObject ),
-				ResultType.String => typeof( string ), // Generic Result
-				ResultType.Gradient => typeof( Gradient ),
-				_ => throw new System.NotImplementedException(),
-			};
+                return VoidComponents switch
+                {
+                    int r when r == 0 => typeof(bool),
+                    //int r when r == 1 => typeof(int),
+                    int r when r == 0 => typeof(float),
+                    int r when r == 2 => typeof(Vector2),
+                    int r when r == 3 => typeof(Vector3),
+                    int r when r == 4 => typeof(Color),
+                    _ => throw new System.NotImplementedException(),
+                };
+            }
+			else
+			{
+                return ResultType switch
+                {
+                    ResultType.Bool => typeof(bool),
+                    ResultType.Int => typeof(int),
+                    ResultType.Float => typeof(float),
+                    ResultType.Vector2 => typeof(Vector2),
+                    ResultType.Vector3 => typeof(Vector3),
+                    ResultType.Color => typeof(Color),
+                    ResultType.Float2x2 => typeof(Float2x2),
+                    ResultType.Float3x3 => typeof(Float3x3),
+                    ResultType.Float4x4 => typeof(Float4x4),
+                    ResultType.Sampler => typeof(Sampler),
+                    ResultType.TextureObject => typeof(TextureObject),
+                    ResultType.String => typeof(string), // Generic Result
+                    ResultType.Gradient => typeof(Gradient),
+                    _ => throw new System.NotImplementedException(),
+                };
+            }
+
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0  )
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0, bool isVoidResult = false)
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-	}
+        IsVoidResult = isVoidResult;
+    }
 
-	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
+    public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
@@ -153,7 +172,7 @@ public struct NodeResult : IValid
 
         if ( ResultType is ResultType.Void )
 		{
-			Log.Info($"Result has `{VoidComponents}` void components");
+			//Log.Info($"Result has `{VoidComponents}` void components");
             if ( VoidComponents == components )
                 return Code;
 
@@ -200,8 +219,13 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
         int components = 0;
-
-		switch ( ResultType )
+		if ( ResultType is ResultType.Void )
+		{
+			return VoidComponents;
+		}
+        else
+        {
+            switch ( ResultType )
 		{
             case ResultType.Int:
                 components = 1;
@@ -232,7 +256,9 @@ public struct NodeResult : IValid
 			break;
 		}
 
-		return components;
+		return components;        
+        }
+
     }
 
 	public override readonly string ToString()
