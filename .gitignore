@@ -37,3 +37,7 @@ code/Properties/*
 
 # Exported / standalone games
 Exports/
+
+
+# Other
+Libraries/TextEditor/
