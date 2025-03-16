@@ -611,7 +611,7 @@ public sealed partial class GraphCompiler
 			    2 => ResultType.Vector2,
 			    3 => ResultType.Vector3,
 			    4 => ResultType.Color,
-			    _ => throw new ArgumentException( "Unknown result type", $"{componetCount}")
+			    _ => throw new ArgumentException( "Unknown ResultType", $"{componetCount}")
 			};
 			
 			
