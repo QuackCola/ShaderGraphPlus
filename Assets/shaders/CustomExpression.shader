@@ -76,27 +76,25 @@ PS
 	
 	float g_fltestfloat < Attribute( "testfloat" ); Default1( 1 ); >;
 		
-	void Func( float2 uv, float speed,  out float2 resulta, out float resultb, out float4 resultc )
+	void Func( float2 uv, float speed,  out float mask, out float thing )
 	{
 		float3 col1 = float3(1,0,1);
-		
-		resulta = 1.0f;
-		resultb = 0.0f;
-		resultc = float4(col1,1);
+		mask = 0.0f;
+		thing = 0.0f;
 		
 		for(float i=0.; i<.5; i+=.01)
 		{
-		uv.x+= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;
-		uv.y+= clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
-		float d = length(uv);
-		float s = step(d,i)*.01;
-		col1+=s;
+			uv.x+= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;
+			uv.y+= clamp(cos(g_flTime+i*5.)*.1,-.5,.5)*.15;
+			float d = length(uv);
+			float s = step(d,i)*.01;
+			col1+=s;
 		
-		
-		resultb = col1.y ;
+			mask = s;
+			thing = col1.y;
 		}
 		 
-		resulta = uv;
+		
 	}
 	
 	
@@ -118,21 +116,20 @@ PS
 		Gradient0.alphas[0] = float( 1 );
 		Gradient0.alphas[1] = float( 1 );
 		
-		float2 vl_0 = float2(0.0f,0.0f);
+		float vl_0 = 0.0f;
 		float vl_1 = 0.0f;
-		float4 vl_2 = float4(0.0f,0.0f,0.0f,0.0f);
 		
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 4, 4 ), float2( -2, -2 ) );
 		float l_2 = g_fltestfloat;
-		Func( l_1, l_2,vl_0, vl_1, vl_2 );
-		float2 l_4 = (i.vTextureCoords.xy + g_flTime * float2( 6.599998, -9.8 ));
-		float l_5 = l_4.x;
-		float l_6 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, l_5 );
-		float l_7 = clamp( l_6, 0, 1 );
-		float4 l_8 = Gradient::SampleGradient( Gradient0, l_7 );
-		float l_9 = saturate( l_6 );
-		float4 l_10 = saturate( lerp( l_8, max( 0.0f, (l_8) - (float4( 1, 1, 1, 1 )) ), l_9 ) );
+		Func( l_1, l_2,vl_0, vl_1 );
+		float l_4 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, 23.228842 );
+		float l_5 = clamp( l_4, 0, 1 );
+		float4 l_6 = Gradient::SampleGradient( Gradient0, l_5 );
+		Func( l_1, l_2,vl_0, vl_1 );
+		float l_8 = (saturate( ( vl_0 - 0 ) / ( 0 - 0 ) ) * ( 1 - 0 )) + 0;
+		float l_9 = 1 - l_8;
+		float4 l_10 = saturate( lerp( l_6, max( 0.0f, (l_6) - (float4( 1, 1, 1, 1 )) ), l_9 ) );
 		
 
 		return float4( l_10.xyz, 1 );
