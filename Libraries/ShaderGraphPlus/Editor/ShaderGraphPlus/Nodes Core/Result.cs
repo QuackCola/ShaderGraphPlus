@@ -175,7 +175,6 @@ public abstract class BaseResult : ShaderNodePlus
 		var albedoInput = GetAlbedo();
 		if (albedoInput.IsValid)
 		{
-            Log.Info($"connection : {albedoInput.Identifier}");
             return compiler.ResultValue(albedoInput);
         }
 		
