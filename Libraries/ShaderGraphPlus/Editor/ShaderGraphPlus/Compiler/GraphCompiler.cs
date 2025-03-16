@@ -193,91 +193,60 @@ public sealed partial class GraphCompiler
 
     }
 
-
-	public bool test = false;
-
-    public void RegisterVoidFunctionResults(CustomCodeNode node, Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
+	public void RegisterVoidFunctionResults(CustomCodeNode node, Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
 		
 		functionOutputs = "";
 		outputDataList = new List < CustomCodeOutputData >();
-
-
-
-        foreach ( var value in values )
+		
+		foreach ( var value in values )
 		{
-			//if ( result.VoidLocals.ContainsKey( value.Key ) )
-			//	continue;
-
-			if ( IsNotPreview )
-			{
-                Log.Info( $"Starting Processing of incoming output result `{value.Key}` Which has a Data Type of `{value.Value}`" );
-
-            }
-
-            var id = ShaderResult.VoidLocals.Count();
-
-            var varName = $"vl_{id}";
-            var dataType = value.Value;
-
+			var id = ShaderResult.VoidLocals.Count();
+			
+			var varName = $"vl_{id}";
+			var dataType = value.Value;
+			
 			// Stop it from creating a phantom void local.
-            foreach (var i in result.VoidLocals)
+			foreach (var i in result.VoidLocals)
 			{
 				if (i.Value.FriendlyName == value.Key)
 				{
-                    varName = i.Value.CompilerName;
+			        varName = i.Value.CompilerName;
 					break;
 				}
 			}
-
-            CustomCodeOutputData outputData = new CustomCodeOutputData();
+			
+			CustomCodeOutputData outputData = new CustomCodeOutputData();
 			outputData.CompilerName = varName;
 			outputData.FriendlyName = value.Key;
 			outputData.DataType = dataType;
-            outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
+			outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
 			
 			outputDataList.Add( outputData );
-
-            // Check if the VoidLocal Dict already contains one that we have processed and if not add new void local to the list.
-            if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
-			{
 			
-				if ( IsNotPreview )
-				{
-					Log.Info($"Adding new VL : `{varName}` which has a Data Type of `{dataType}`");
-				}
-
+			// Check if the VoidLocal Dict already contains one that we have processed and if not add new void local to the list.
+			if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
+			{
+				//if ( IsNotPreview )
+				//{
+				//	Log.Info($"Adding new VL : `{varName}` which has a Data Type of `{dataType}`");
+				//}
 				result.VoidLocals.Add( outputData.FriendlyName, outputData);
 			}
 		}
-
-
-        if (IsNotPreview)
-        {
-            Log.Info($"VoidLocal Count : `{ShaderResult.VoidLocals.Count()}`");
-        }
-
-        // Construct function outputs, for example : out float output01, out float2 output02
-        foreach (var voidLocal in result.VoidLocals)
-        {
-            var key = voidLocal.Key;
-
-            sb.Append( key == result.VoidLocals.Keys.Max() ? $"{voidLocal.Value.CompilerName} " : $"{voidLocal.Value.CompilerName}, ");
-        }
-
-
-        //Log.Info($"Current Void Local Count is : `{ShaderResult.VoidLocals.Count()}` ");
-
-        if (IsNotPreview)
-        {
-            Log.Info($"functionOutputs == {sb.ToString()}");
-        }
-
-
-        functionOutputs = sb.ToString();
-    }
+	
+		// Construct function outputs, for example : out float output01, out float2 output02
+		foreach ( var voidLocal in result.VoidLocals )
+		{
+			var key = voidLocal.Key;
+			
+			sb.Append( key == result.VoidLocals.Keys.Max() ? $"{voidLocal.Value.CompilerName} " : $"{voidLocal.Value.CompilerName}, ");
+		}
+		
+		functionOutputs = sb.ToString();
+	}
 
 	/// <summary>
 	/// Register some generic global parameter for a node to use.
