@@ -206,8 +206,8 @@ public sealed partial class GraphCompiler
 
         foreach ( var value in values )
 		{
-			if ( result.VoidLocals.ContainsKey( value.Key ) )
-				continue;
+			//if ( result.VoidLocals.ContainsKey( value.Key ) )
+			//	continue;
 
 			if ( IsNotPreview )
 			{
@@ -225,8 +225,9 @@ public sealed partial class GraphCompiler
             outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
 			
 			outputDataList.Add( outputData );
-			
-			//if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
+
+            // Check if the VoidLocal Dict already contains one that we have processed and if not add new void local to the list.
+            if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
 			{
 			
 				if ( IsNotPreview )
@@ -238,7 +239,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-
+        // Construct function outputs, for example : out float output01, out float2 output02
         foreach (var voidLocal in result.VoidLocals)
         {
             var key = voidLocal.Key;
