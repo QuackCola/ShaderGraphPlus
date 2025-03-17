@@ -39,24 +39,24 @@
       "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= -clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
       "ExpressionInputs": [
         {
-          "Id": "81111aed-dd85-43d7-9a64-df268dd903f8",
+          "Id": "32c24ac4-40e6-4931-914f-eb1d66b727bc",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "bec2b9a1-dfb9-4240-89d0-4ff7b72fba15",
+          "Id": "ddd65d48-ce99-48b2-b762-9f7157813778",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "49a13e25-8ebe-4e6c-86e1-2b942ffeb8e8",
+          "Id": "adb42b11-f91a-4b8f-95f7-31de69fc0c3a",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "ded6f682-f3c6-4b16-a727-7528cdc3bdaf",
+          "Id": "d3d25fed-0322-44d9-85d2-71e5df649eaf",
           "Name": "thing",
           "Type": "float"
         }
