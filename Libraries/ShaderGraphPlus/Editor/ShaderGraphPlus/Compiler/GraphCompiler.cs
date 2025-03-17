@@ -170,26 +170,30 @@ public sealed partial class GraphCompiler
     /// <summary>
     /// Slightly tweaked version of the original. Only used by the Custom Expression node.
     /// </summary>
-    /// <param name="code"></param>
-    /// <param name="functionName"></param>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    internal string ResultFunctionCustomExpression(string code, string functionName, string args = "")
+    internal string ResultFunctionCustomExpression(string code, string functionName, string args = "", bool includeFile = false)
     {
         var result = ShaderResult;
 
         (string, string) func = (code, functionName);
 
-        if (!result.Functions.ContainsKey(func.Item2))
-        {
-            result.Functions.Add(func.Item2, func.Item1);
-        }
-        else
-        {
-            result.Functions[func.Item2] = func.Item1;
-        }
+		if ( !includeFile )
+		{
+			if (!result.Functions.ContainsKey(func.Item2))
+			{
+				result.Functions.Add(func.Item2, func.Item1);
+			}
+			else
+			{
+				result.Functions[func.Item2] = func.Item1;
+			}
+		}
+		else
+		{
+			RegisterGlobal( $"#include \"{code}\"" );
+		}
 
-        return $"{func.Item2}({args})";
+
+		return $"{func.Item2}({args})";
 
     }
 
@@ -574,7 +578,7 @@ public sealed partial class GraphCompiler
 		
 		if ( node is CustomCodeNode customCodeNode )
 		{
-			var funcResult = customCodeNode.ConstructFunction( this );
+			var funcResult = customCodeNode.GetResult( this );
 			
 			CustomCodeOutputData outputDataEntry = new();
 			

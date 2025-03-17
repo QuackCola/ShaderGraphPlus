@@ -25,7 +25,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "840,-192",
+      "Position": "840,-168",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "9",
@@ -36,35 +36,35 @@
     {
       "_class": "CustomCodeNode",
       "Name": "TestFunc",
-      "CodeType": "ExternalFile",
+      "Mode": "ExternalFile",
       "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= -clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
-      "ExternalFIle": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.txt",
+      "ExternalFile": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "dc26dafa-7e09-493c-8f5d-31bc7a7eda7c",
+          "Id": "70873cb1-9741-4e2d-b241-879b6c079841",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "a9b782de-06b8-4d4b-b5e9-2c7df1a74070",
+          "Id": "1473c991-49ac-4a06-a803-ee0c5c93248c",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "3a9666bb-d403-47c4-bcfd-661f2a7ed5d0",
+          "Id": "bc39d9d1-5444-405e-b0a5-f9993771ecf2",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "311e2e2d-bb29-4ac8-8b2b-3c93f9b84d92",
+          "Id": "6ed0bbe6-f491-4c99-adb0-cc8c8dffb905",
           "Name": "thing",
           "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-396,-216",
+      "Position": "-396,-240",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
@@ -207,7 +207,7 @@
       "BlendMode": "Subtract",
       "Clamp": true,
       "Identifier": "9",
-      "Position": "612,-192",
+      "Position": "600,-252",
       "HandleOffsets": {},
       "A": {
         "Identifier": "7",
@@ -240,9 +240,21 @@
     {
       "_class": "OneMinus",
       "Identifier": "11",
-      "Position": "84,-144",
+      "Position": "156,-168",
       "HandleOffsets": {},
       "In": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Opacity Mask",
+      "Identifier": "12",
+      "Position": "600,-108",
+      "HandleOffsets": {},
+      "Input": {
         "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
