@@ -26,8 +26,9 @@ public sealed partial class GraphCompiler
 		{ typeof( Vector3 ), "float3" },
 		{ typeof( Vector2 ), "float2" },
 		{ typeof( float ), "float" },
-		{ typeof( bool ), "bool" }
-	};
+		{ typeof( bool ), "bool" },
+		//{ typeof( TextureObject ), "Texture2D" }
+    };
 
 	public bool Debug { get; private set; } = false;
 	
