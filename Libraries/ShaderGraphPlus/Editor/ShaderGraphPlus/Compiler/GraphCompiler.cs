@@ -577,7 +577,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 		
-		if ( node is CustomCodeNode customCodeNode )
+		if ( node is CustomFunctionNode customCodeNode )
 		{
 			var funcResult = customCodeNode.GetResult( this );
 			
