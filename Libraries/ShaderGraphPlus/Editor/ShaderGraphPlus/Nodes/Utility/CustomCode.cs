@@ -281,6 +281,7 @@ public struct CustomCodeOutputData : IValid
     public string CompilerName { get; set; }
     public string DataType { get; set; }
     public int ComponentCount { get; set; }
+    public ResultType ResultType { get; set; }
 
     public readonly bool IsValid => !string.IsNullOrWhiteSpace( FriendlyName );
 

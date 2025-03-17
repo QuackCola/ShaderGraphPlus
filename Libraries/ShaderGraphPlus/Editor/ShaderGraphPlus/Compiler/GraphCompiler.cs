@@ -223,16 +223,13 @@ public sealed partial class GraphCompiler
 			outputData.FriendlyName = value.Key;
 			outputData.DataType = dataType;
 			outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
-			
+			outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
+
 			outputDataList.Add( outputData );
 			
 			// Check if the VoidLocal Dict already contains one that we have processed and if not add new void local to the list.
 			if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
 			{
-				//if ( IsNotPreview )
-				//{
-				//	Log.Info($"Adding new VL : `{varName}` which has a Data Type of `{dataType}`");
-				//}
 				result.VoidLocals.Add( outputData.FriendlyName, outputData);
 			}
 		}
@@ -599,17 +596,7 @@ public sealed partial class GraphCompiler
                 return default;
             }
 
-            var resultType = outputDataEntry.ComponentCount switch
-			{
-			    0 => ResultType.Bool,
-			    1 => ResultType.Float,
-			    2 => ResultType.Vector2,
-			    3 => ResultType.Vector3,
-			    4 => ResultType.Color,
-			    _ => throw new ArgumentException( "Unknown ResultType : ", $"`{outputDataEntry.ComponentCount}`")
-			};
-
-			var localResult = new NodeResult( resultType, outputDataEntry.CompilerName, voidComponents: outputDataEntry.ComponentCount);
+			var localResult = new NodeResult( outputDataEntry.ResultType, outputDataEntry.CompilerName, voidComponents: outputDataEntry.ComponentCount);
 			
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( ( localResult, funcResult ) );
@@ -1057,6 +1044,22 @@ public sealed partial class GraphCompiler
             _ => 0
 		};
 	}
+
+
+    
+    private static ResultType GetResultTypeFromHLSLDataType(string DataType)
+    {
+        return DataType switch
+        {
+            "bool" => ResultType.Bool,
+            "int" => ResultType.Int,
+            "float" => ResultType.Float,
+            "float2" => ResultType.Vector2,
+            "float3" => ResultType.Vector3,
+            "float4" => ResultType.Color,
+            _ => throw new ArgumentException( "Unknown ResultType" )
+        };
+    }
 
     private static int GetComponentCountFromHLSLDataType( string DataType )
     {
