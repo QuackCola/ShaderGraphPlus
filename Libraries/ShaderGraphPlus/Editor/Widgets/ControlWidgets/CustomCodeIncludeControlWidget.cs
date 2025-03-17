@@ -11,7 +11,7 @@ internal class HLSLAssetPathAttribute : Attribute
 }
 
 [CustomEditor( typeof(string), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
-internal class HLSLIncludeStringControlWidget : ControlWidget
+internal class HLSLAssetPathControlWidget : ControlWidget
 {
     public override bool IsControlButton => true;
     public override bool SupportsMultiEdit => true;
@@ -23,7 +23,7 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
     CustomFunctionNode Node;
     SerializedProperty FunctionNameProperty;
     
-    public HLSLIncludeStringControlWidget( SerializedProperty property ) : base( property )
+    public HLSLAssetPathControlWidget( SerializedProperty property ) : base( property )
     {
         FilePath = property.GetValue<string>();
         
@@ -106,59 +106,36 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
         {
             Dialog.AskString((string name) => {
                 FunctionNameProperty.SetValue(name);
-                Continue(name);
-            }, "Please input Function Name.");
+                Generate(name);
+            }, "What would you like to call your function?", title: "Function Name");
         }
         else
         {
-            Continue( Node.Name );
+            Generate( Node.Name );
         }
     }
     
-    private void Continue( string functionName )
+    private void Generate( string functionName )
     {
-        var funcHeader = $"{GetHLSLDataType(Node.ResultType)} {functionName}({Node.ConstructFunctionInputs()}, {Node.ConstructFunctionOutputs()})";
-    
-    
         var sb = new StringBuilder();
-    
-    
+        
+        var funcHeader = $"{GetHLSLDataType(Node.ResultType)} {functionName}({Node.ConstructFunctionInputs()}, {Node.ConstructFunctionOutputs()})";
         var template = HLSLTemplate.Contents;
-    
+        
         var result = string.Format( HLSLTemplate.Contents,
             functionName.ToUpper(),
             funcHeader,
             ""
         );
-    
-        var fd = new FileDialog(null)
-        {
-            Title = $"Select Path To Save HLSL File",
-            DefaultSuffix = $".hlsl"
         
-        };
-    
-        fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
+        var absolutePath = SaveFile( result );
         
-        fd.SetNameFilter($"Shader Include (*.hlsl)");
-        
-        if ( !Directory.Exists( $"{Project.Current.GetAssetsPath()}/shaders" ) )
-        {
-            Directory.CreateDirectory( $"{Project.Current.GetAssetsPath()}/shaders" );
-        }
-        
-        if (!fd.Execute())
+        if ( absolutePath is null ) 
             return;
-    
-        System.IO.File.WriteAllText( fd.SelectedFile, result);
         
-        FilePath = Path.GetRelativePath( Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0, 8);
-        
-        UpdateProperty();
-    
         Process.Start(new ProcessStartInfo
         {
-            FileName = fd.SelectedFile,
+            FileName = absolutePath,
             UseShellExecute = true
         });
     }
@@ -181,9 +158,7 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
             _ => throw new ArgumentException("Unsupported value type", nameof(resultType))
         };
     }
-    
-    
-    
+
     protected override void OnMouseClick( MouseEvent e )
     {
         base.OnMouseClick( e);
@@ -192,38 +167,42 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
         {
             GenerateHLSLIncludeBase();
         }
-        else
-        {
-            OpenFileDialog();
-        }
+        //else
+        //{
+        //    OpenFileDialog();
+        //}
     }
     
-    private void OpenFileDialog()
+    private string SaveFile( string generatedFile )
     {
         var fd = new FileDialog(null)
         {
-            Title = $"Select HLSL File",
+            Title = $"Select Path To Save HLSL File",
             DefaultSuffix = $".hlsl"
             
         };
-    
+        
         fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
-    
+        
         fd.SetNameFilter($"Shader Include (*.hlsl)");
-    
+        
         if ( !Directory.Exists( $"{Project.Current.GetAssetsPath()}/shaders" ) )
         {
             Directory.CreateDirectory( $"{Project.Current.GetAssetsPath()}/shaders" );
         }
         
         if (!fd.Execute())
-            return;
+            return null;
+        
+        System.IO.File.WriteAllText(fd.SelectedFile, generatedFile);
         
         FilePath = Path.GetRelativePath(Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0,8);
         
         UpdateProperty();
+        
+        return fd.SelectedFile;
     }
-    
+
     private void UpdateProperty()
     {
         SerializedProperty.SetValue( FilePath );
