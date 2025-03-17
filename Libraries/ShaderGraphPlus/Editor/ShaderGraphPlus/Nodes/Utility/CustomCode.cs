@@ -94,7 +94,7 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
                 
                 sb.AppendLine();
                 sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({ConstructFunctionInputs()}, {ConstructFunctionOutputs()})" );
-                sb.AppendLine("{");
+                sb.AppendLine( "{" );
                 sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
                 sb.AppendLine( "}" );
                 sb.AppendLine();
