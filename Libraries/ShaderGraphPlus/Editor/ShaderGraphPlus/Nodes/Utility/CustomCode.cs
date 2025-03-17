@@ -275,13 +275,15 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
     }
 }
 
-public struct CustomCodeOutputData
+public struct CustomCodeOutputData : IValid
 {
     public string FriendlyName { get; set; }
     public string CompilerName { get; set; }
     public string DataType { get; set; }
     public int ComponentCount { get; set; }
-    
+
+    public readonly bool IsValid => !string.IsNullOrWhiteSpace( FriendlyName );
+
     public CustomCodeOutputData()
     {
     
