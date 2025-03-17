@@ -6,7 +6,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// Container for custom code.
 /// </summary>
 [Title( "Custom Code" ), Category( "Utility" )]
-public class CustomCodeNode : ShaderNodePlus//, IErroringNode
+public class CustomCodeNode : ShaderNodePlus, IErroringNode
 {
     [Hide]
     public override string Title => string.IsNullOrEmpty( Name ) ?
@@ -70,14 +70,12 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
             sb.AppendLine( "}" );
             sb.AppendLine();
-    
+            
             var functionInputs = GetInputResults( compiler );
-            //OutputData = new List<CustomCodeOutputData>();
-    
-
+            
             compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
-
+            
             return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0);
         }
         else
@@ -272,6 +270,24 @@ public class CustomCodeNode : ShaderNodePlus//, IErroringNode
             };
             InternalOutputs = plugs;
         }
+    }
+
+    public List<string> GetErrors()
+    {
+        OnNodeCreated();
+        var errors = new List<string>();
+        
+        if ( string.IsNullOrWhiteSpace( Name ) )
+        {
+            return new List<string> { $"`{DisplayInfo.Name}` Cannot generate a function with no name!" };
+        }
+        
+        if ( !ExpressionOutputs.Any() )
+        {
+            errors.Add( $"`{DisplayInfo.Name}` has no outputs." );
+        }
+        
+        return errors;
     }
 }
 
