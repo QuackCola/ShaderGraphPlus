@@ -591,7 +591,7 @@ public sealed partial class GraphCompiler
 			{
 				Utilities.EdtiorSound.OhFiddleSticks();
 			
-			    NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for : {node.DisplayInfo.Name}" };
+			    NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
 			
 			    return default;
 			}
