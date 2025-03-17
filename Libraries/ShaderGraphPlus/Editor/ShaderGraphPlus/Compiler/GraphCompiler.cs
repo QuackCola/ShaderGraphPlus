@@ -575,27 +575,27 @@ public sealed partial class GraphCompiler
 		if ( node is CustomCodeNode customCodeNode )
 		{
 			var funcResult = customCodeNode.ConstructFunction( this );
-
+			
 			CustomCodeOutputData outputDataEntry = new();
-
+			
 			foreach ( var outputData in customCodeNode.OutputData )
 			{
 				if ( outputData.FriendlyName == input.Output )
 				{
-                    outputDataEntry = outputData;
+			        outputDataEntry = outputData;
 					break;
 				}
 			}
 			
-            if ( !outputDataEntry.IsValid )
-            {
-            	Utilities.EdtiorSound.OhFiddleSticks();
-            
-                NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for : {node.DisplayInfo.Name}" };
-            
-                return default;
-            }
-
+			if ( !outputDataEntry.IsValid )
+			{
+				Utilities.EdtiorSound.OhFiddleSticks();
+			
+			    NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for : {node.DisplayInfo.Name}" };
+			
+			    return default;
+			}
+			
 			var localResult = new NodeResult( outputDataEntry.ResultType, outputDataEntry.CompilerName, voidComponents: outputDataEntry.ComponentCount);
 			
 			ShaderResult.InputResults.Add( input, localResult );
