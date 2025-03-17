@@ -577,13 +577,13 @@ public sealed partial class GraphCompiler
 			}
 		}
 		
-		if ( node is CustomFunctionNode customCodeNode )
+		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			var funcResult = customCodeNode.GetResult( this );
+			var funcResult = customFunctionNode.GetResult( this );
 			
 			CustomCodeOutputData outputDataEntry = new();
 			
-			foreach ( var outputData in customCodeNode.OutputData )
+			foreach ( var outputData in customFunctionNode.OutputData )
 			{
 				if ( outputData.FriendlyName == input.Output )
 				{
