@@ -41,24 +41,24 @@
       "ExternalFile": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "70873cb1-9741-4e2d-b241-879b6c079841",
+          "Id": "8ac1718a-050a-4074-8dbc-620e228bdb88",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "1473c991-49ac-4a06-a803-ee0c5c93248c",
+          "Id": "80a64a39-422d-4385-947a-9a55b57c6b67",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "bc39d9d1-5444-405e-b0a5-f9993771ecf2",
+          "Id": "1373cda9-5272-47b4-9815-71dc1766e9db",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "6ed0bbe6-f491-4c99-adb0-cc8c8dffb905",
+          "Id": "0afff311-a9b3-4288-846a-576754cfee34",
           "Name": "thing",
           "Type": "float"
         }

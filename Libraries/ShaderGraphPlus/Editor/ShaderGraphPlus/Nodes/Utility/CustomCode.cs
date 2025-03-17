@@ -34,7 +34,7 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
     public ResultType ResultType = ResultType.Void;
     
     [HideIf( nameof( Mode ), CustomCodeMode.Text )]
-    //[HLSLAssetPath]
+    [HLSLAssetPath]
     public string ExternalFile { get; set; }
     
     [Title( "Inputs" )]
