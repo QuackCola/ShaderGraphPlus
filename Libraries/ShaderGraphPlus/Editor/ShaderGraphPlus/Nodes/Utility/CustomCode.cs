@@ -319,7 +319,7 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
         {
             if ( string.IsNullOrWhiteSpace( Source ) )
             {
-                errors.Add( $"Source path is empty!" );
+                errors.Add( $"`{DisplayInfo.Name}` Source path is empty!" );
             }
             
             if ( !Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
