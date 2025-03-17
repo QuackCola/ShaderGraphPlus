@@ -936,7 +936,7 @@ public sealed partial class GraphCompiler
 		return resultType switch
 		{
             ResultType r when r == ResultType.Bool => "bool",
-            ResultType r when r == ResultType.Int => "int",
+            //ResultType r when r == ResultType.Int => "int",
             ResultType r when r == ResultType.Float => "float",
             ResultType r when r == ResultType.Vector2 => "float2",
             ResultType r when r == ResultType.Vector3 => "float3",
@@ -1057,7 +1057,7 @@ public sealed partial class GraphCompiler
         return DataType switch
         {
             "bool" => ResultType.Bool,
-            "int" => ResultType.Int,
+            //"int" => ResultType.Int,
             "float" => ResultType.Float,
             "float2" => ResultType.Vector2,
             "float3" => ResultType.Vector3,

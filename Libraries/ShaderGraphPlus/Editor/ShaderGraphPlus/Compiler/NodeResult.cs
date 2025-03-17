@@ -6,10 +6,8 @@ public enum ResultType
 	/// No Components, just True or False.
 	/// </summary>
 	Bool,
-    /// <summary>
-    /// Single Int32 Value. Internally will be generated as a float.
-    /// </summary>
-    Int,
+
+   // Int,
     /// <summary>
     /// 1 Component
     /// </summary>
@@ -63,50 +61,50 @@ public struct NodeResult : IValid
     public bool IsVoidResult { get; private set; }
 	public int VoidComponents { get; private set; }
 
-	public readonly string TypeName
-	{
-		get
-		{
-            if ( ResultType is ResultType.Int )
+    public readonly string TypeName
+    {
+        get
+        {
+            //if ( ResultType is ResultType.Int )
+            //{
+            //    return $"float"; // Just identify as a float.
+            //}	
+            if ( ResultType is ResultType.Float )
             {
-                return $"float"; // Just identify as a float.
-            }	
-            else if ( ResultType is ResultType.Float )
-			{
-				return $"float";
-			}
-			else if ( ResultType is ResultType.Vector2 or ResultType.Vector3 or ResultType.Color )
-			{
-				return $"float{Components()}";
-			}
-			else if ( ResultType is ResultType.Float2x2 )
-			{
-				return "float2x2";
-			}
-			else if ( ResultType is ResultType.Float3x3 )
-			{
-				return "float3x3";
-			}
-			else if ( ResultType is ResultType.Float4x4 )
-			{
-				return "float4x4";
-			}
-			else if ( ResultType is ResultType.Bool )
-			{
-				return "bool";
-			}
-			else if ( ResultType is ResultType.String )
-			{
-				return "";
-			}
+            	return $"float";
+            }
+            else if ( ResultType is ResultType.Vector2 or ResultType.Vector3 or ResultType.Color )
+            {
+            	return $"float{Components()}";
+            }
+            else if ( ResultType is ResultType.Float2x2 )
+            {
+            	return "float2x2";
+            }
+            else if ( ResultType is ResultType.Float3x3 )
+            {
+            	return "float3x3";
+            }
+            else if ( ResultType is ResultType.Float4x4 )
+            {
+            	return "float4x4";
+            }
+            else if ( ResultType is ResultType.Bool )
+            {
+            	return "bool";
+            }
+            else if ( ResultType is ResultType.String )
+            {
+            	return "";
+            }
             else if (ResultType is ResultType.Gradient)
             {
                 return "Gradient";
             }
-
+            
             return "float";
-		}
-	}
+        }
+    }
 
 	public readonly Type ComponentType
 	{
@@ -118,7 +116,7 @@ public struct NodeResult : IValid
                 {
                     int r when r == 0 => typeof(bool),
                     //int r when r == 1 => typeof(int),
-                    int r when r == 0 => typeof(float),
+                    int r when r == 1 => typeof(float),
                     int r when r == 2 => typeof(Vector2),
                     int r when r == 3 => typeof(Vector3),
                     int r when r == 4 => typeof(Color),
@@ -130,7 +128,7 @@ public struct NodeResult : IValid
                 return ResultType switch
                 {
                     ResultType.Bool => typeof(bool),
-                    ResultType.Int => typeof(int),
+                    //ResultType.Int => typeof(int),
                     ResultType.Float => typeof(float),
                     ResultType.Vector2 => typeof(Vector2),
                     ResultType.Vector3 => typeof(Vector3),
@@ -219,17 +217,17 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
         int components = 0;
-		if ( ResultType is ResultType.Void )
-		{
-			return VoidComponents;
-		}
-        else
+        //if ( ResultType is ResultType.Void )
+        //{
+        //	return VoidComponents;
+        //}
+        //else
+        //{
+        switch ( ResultType )
         {
-            switch ( ResultType )
-		{
-            case ResultType.Int:
-                components = 1;
-                break;
+            //case ResultType.Int:
+            //    components = 1;
+            //    break;
             case ResultType.Float:
                 components = 1;
                 break;
@@ -250,15 +248,14 @@ public struct NodeResult : IValid
                 break;
             case ResultType.Float4x4:
                 components = 16;
-				break;
-			default:
+            	break;
+            default:
                 Log.Warning($"Result type: '{ResultType}' has no components.");
-			break;
-		}
-
-		return components;        
+            break;
         }
-
+        
+        return components;        
+        //}
     }
 
 	public override readonly string ToString()
