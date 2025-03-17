@@ -220,8 +220,6 @@
       "_class": "SubgraphNode",
       "SubgraphPath": "shaders/material functions/weirdthing.sgpfunc",
       "DefaultValues": {
-        "uv_4": "0,0",
-        "speed_2": 0,
         "UV": "0,0",
         "Speed": 0
       },
