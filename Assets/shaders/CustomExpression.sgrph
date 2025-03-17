@@ -41,24 +41,24 @@
       "ExternalFile": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "03daa421-0221-4674-9910-de05f56d14ca",
+          "Id": "9e50dd27-9b97-43dd-90da-b923ad542e4e",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "274880da-ed50-4689-8683-89fd0ae18bc9",
+          "Id": "bb4b13c3-3c23-47db-b505-808a33585336",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "e33a0d49-f5bf-4226-af5e-b72ad03d6ed5",
+          "Id": "075a5bcb-d1cb-4e96-99ba-688d7fd0db85",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "c253e657-bcfa-437a-b91e-b1c537e27e71",
+          "Id": "e74d603a-ed02-4acf-ad9d-5721a02f9f72",
           "Name": "thing",
           "Type": "float"
         }
@@ -252,7 +252,7 @@
       "_class": "ReroutePlus",
       "Comment": "Opacity Mask",
       "Identifier": "12",
-      "Position": "600,-108",
+      "Position": "660,-84",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "10",
