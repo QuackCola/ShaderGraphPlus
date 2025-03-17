@@ -197,7 +197,7 @@ public sealed partial class GraphCompiler
 
     }
 
-	public void RegisterVoidFunctionResults(CustomCodeNode node, Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
+	public void RegisterVoidFunctionResults( Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
@@ -212,10 +212,10 @@ public sealed partial class GraphCompiler
 			var varName = $"vl_{id}";
 			var dataType = value.Value;
 			
-			// Stop it from creating a phantom void local.
-			foreach (var i in result.VoidLocals)
+			// Stop it from creating more void locals than we are actually using.
+			foreach ( var i in result.VoidLocals )
 			{
-				if (i.Value.FriendlyName == value.Key)
+				if ( i.Value.FriendlyName == value.Key )
 				{
 			        varName = i.Value.CompilerName;
 					break;
@@ -231,7 +231,7 @@ public sealed partial class GraphCompiler
 
 			outputDataList.Add( outputData );
 			
-			// Check if the VoidLocal Dict already contains one that we have processed and if not add new void local to the list.
+			// Check if the VoidLocal Dictionary already contains one that we have processed and if not add the new void local to the list.
 			if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
 			{
 				result.VoidLocals.Add( outputData.FriendlyName, outputData);

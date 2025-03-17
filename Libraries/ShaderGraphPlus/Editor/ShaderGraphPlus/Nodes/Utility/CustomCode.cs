@@ -81,7 +81,7 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
         {
             var functionInputs = GetInputResults(compiler);
             
-            compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
+            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
             
             if ( Mode is CustomCodeMode.ExternalFile )
