@@ -369,12 +369,13 @@ public class CustomCodeNodePorts
             if ( typeName == "float" ) typeName = typeof( float ).FullName;
             if ( typeName == "int" ) typeName = typeof( int ).FullName;
             if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
+            if ( typeName == "Texture2D" ) typeName = typeof( TextureObject ).FullName;
             var type = TypeLibrary.GetType( typeName ).TargetType;
             return type;
         }
     }
     
-    [KeyProperty, Editor( "shadertypeplus" ), JsonPropertyName( "Type" )]
+    [KeyProperty, Editor( "portType" ), JsonPropertyName( "Type" )]
     public string TypeName { get; set; }
     
     public int Priority { get; set; }
@@ -412,7 +413,11 @@ public class CustomCodeNodePorts
             {
                 return "bool";
             }
-            
+            else if (TypeName is "Texture2D" )
+            {
+                return "Texture2D";
+            }
+
             throw new ArgumentException("Unsupported value type", nameof( TypeName ) );
         }
     }
