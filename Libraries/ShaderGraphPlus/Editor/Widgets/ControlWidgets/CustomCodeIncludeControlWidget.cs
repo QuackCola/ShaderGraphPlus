@@ -1,5 +1,4 @@
-﻿using Sandbox;
-using System.Text;
+﻿using System.Text;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -20,17 +19,21 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
     string FilePath;
     
     IconButton PreviewButton;
-
+    
     CustomFunctionNode Node;
-
+    SerializedProperty FunctionNameProperty;
+    
     public HLSLIncludeStringControlWidget( SerializedProperty property ) : base( property )
     {
         FilePath = property.GetValue<string>();
         
         Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
-
+    
+        FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
+    
         if ( Node is null )
             return;
+    
         HorizontalSizeMode = SizeMode.CanGrow | SizeMode.Expand;
         Cursor = CursorShape.Finger;
         MouseTracking = true;
@@ -96,12 +99,13 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
         
         DrawContent(rect, $"", FilePath);
     }
-
+    
     public void GenerateHLSLIncludeBase()
     {
         if ( string.IsNullOrWhiteSpace( Node.Name ))
         {
-            Dialog.AskString((string name) => { 
+            Dialog.AskString((string name) => {
+                FunctionNameProperty.SetValue(name);
                 Continue(name);
             }, "Please input Function Name.");
         }
@@ -110,30 +114,30 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
             Continue( Node.Name );
         }
     }
-
+    
     private void Continue( string functionName )
     {
         var funcHeader = $"{GetHLSLDataType(Node.ResultType)} {functionName}({Node.ConstructFunctionInputs()}, {Node.ConstructFunctionOutputs()})";
-
-
+    
+    
         var sb = new StringBuilder();
-
-
+    
+    
         var template = HLSLTemplate.Contents;
-
+    
         var result = string.Format( HLSLTemplate.Contents,
             functionName.ToUpper(),
             funcHeader,
             ""
         );
-
+    
         var fd = new FileDialog(null)
         {
             Title = $"Select Path To Save HLSL File",
             DefaultSuffix = $".hlsl"
         
         };
-
+    
         fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
         
         fd.SetNameFilter($"Shader Include (*.hlsl)");
@@ -145,20 +149,20 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
         
         if (!fd.Execute())
             return;
-
+    
         System.IO.File.WriteAllText( fd.SelectedFile, result);
         
         FilePath = Path.GetRelativePath( Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0, 8);
         
         UpdateProperty();
-
+    
         Process.Start(new ProcessStartInfo
         {
             FileName = fd.SelectedFile,
             UseShellExecute = true
         });
     }
-
+    
     private string GetHLSLDataType( ResultType resultType )
     {
         return resultType switch
@@ -177,27 +181,23 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
             _ => throw new ArgumentException("Unsupported value type", nameof(resultType))
         };
     }
-
-
-
+    
+    
+    
     protected override void OnMouseClick( MouseEvent e )
     {
         base.OnMouseClick( e);
-
-        //if (string.IsNullOrWhiteSpace(FilePath))
+        
+        if ( string.IsNullOrWhiteSpace( FilePath ) )
         {
-            //Dialog.AskConfirm(GenerateHLSLIncludeBase, () => { OpenFileDialog(); }, "Do you want to generate a base HLSL Include?");
             GenerateHLSLIncludeBase();
         }
-        //else
-        //{
-        //    OpenFileDialog();
-        //}
-
-
-
+        else
+        {
+            OpenFileDialog();
+        }
     }
-
+    
     private void OpenFileDialog()
     {
         var fd = new FileDialog(null)
@@ -206,18 +206,15 @@ internal class HLSLIncludeStringControlWidget : ControlWidget
             DefaultSuffix = $".hlsl"
             
         };
-
+    
         fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
-
+    
         fd.SetNameFilter($"Shader Include (*.hlsl)");
-
+    
         if ( !Directory.Exists( $"{Project.Current.GetAssetsPath()}/shaders" ) )
         {
             Directory.CreateDirectory( $"{Project.Current.GetAssetsPath()}/shaders" );
         }
-        
- 
-        
         
         if (!fd.Execute())
             return;
