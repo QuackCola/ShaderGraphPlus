@@ -76,7 +76,7 @@ PS
 	
 	float g_fltestfloat < Attribute( "testfloat" ); Default1( 2.3999999 ); >;
 		
-	void Func( float2 uv, float speed,  out float mask, out float thing )
+	void TestFunc( float2 uv, float speed,  out float mask, out float thing )
 	{
 		float3 col1 = float3(1,0,1);
 		mask = 0.0f;
@@ -122,11 +122,11 @@ PS
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float2 l_1 = TileAndOffsetUv( l_0, float2( 4, 4 ), float2( -2, -2 ) );
 		float l_2 = g_fltestfloat;
-		Func( l_1, l_2,vl_0, vl_1 );
+		TestFunc( l_1, l_2,vl_0, vl_1 );
 		float l_4 = VoronoiNoise( float2( vl_1, vl_1 ), 3.1415925, 23.228842 );
 		float l_5 = clamp( l_4, 0, 1 );
 		float4 l_6 = Gradient::SampleGradient( Gradient0, l_5 );
-		Func( l_1, l_2,vl_0, vl_1 );
+		TestFunc( l_1, l_2,vl_0, vl_1 );
 		float l_8 = (saturate( ( vl_0 - 0 ) / ( 0 - 0 ) ) * ( 1 - 0 )) + 0;
 		float l_9 = 1 - l_8;
 		float4 l_10 = saturate( lerp( l_6, max( 0.0f, (l_6) - (float4( 1, 1, 1, 1 )) ), l_9 ) );
