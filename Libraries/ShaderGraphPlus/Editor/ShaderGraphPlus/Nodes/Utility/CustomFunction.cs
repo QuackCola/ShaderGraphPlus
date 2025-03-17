@@ -116,12 +116,31 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         var sb = new StringBuilder();
         int index = 0;
         
+
         foreach ( IPlugIn input in Inputs )
         {
+            //if (compiler.IsNotPreview)
+            //{
+            //    Log.Info($"Processing Input : {input.DisplayInfo.Name}");
+            //}
+
             NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
             
+
             var result = compiler.Result(nodeInput);
             
+
+            if ( !nodeInput.IsValid )
+            {
+                result = new NodeResult(result.ResultType, $"0");
+                Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
+            }
+
+            //if (result.IsValid)
+            //{
+            //    Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
+            //}
+
             if ( index < Inputs.Count() - 1 )
             {
                 sb.Append($"{result}, ");
