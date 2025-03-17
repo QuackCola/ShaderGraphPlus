@@ -75,8 +75,7 @@ PS
     #include "common/pixel.hlsl"
 	
 	float g_fltestfloat < Attribute( "testfloat" ); Default1( 2.3999999 ); >;
-		
-	void TestFunc( float2 uv, float speed,  out float mask, out float thing )
+		void TestFunc( float2 uv, float speed,  out float mask, out float thing )
 	{
 		float3 col1 = float3(1,0,1);
 		mask = 0.0f;
@@ -96,8 +95,6 @@ PS
 		 
 		
 	}
-	
-	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
 
