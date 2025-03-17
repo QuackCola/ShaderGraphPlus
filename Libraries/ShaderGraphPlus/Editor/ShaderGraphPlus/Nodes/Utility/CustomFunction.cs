@@ -137,7 +137,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         return sb.ToString();
     }
 
-    private string ConstructFunctionInputs()
+    internal string ConstructFunctionInputs()
     {
         var sb = new StringBuilder();
         
@@ -151,7 +151,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         return sb.ToString();
     }
 
-    private string ConstructFunctionOutputs()
+    internal string ConstructFunctionOutputs()
     {
         var sb = new StringBuilder();
         
