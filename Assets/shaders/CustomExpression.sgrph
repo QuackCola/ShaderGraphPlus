@@ -35,34 +35,34 @@
     },
     {
       "_class": "CustomCodeNode",
-      "Name": "Func",
+      "Name": "TestFunc",
       "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= -clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
       "ExpressionInputs": [
         {
-          "Id": "32c24ac4-40e6-4931-914f-eb1d66b727bc",
+          "Id": "dc26dafa-7e09-493c-8f5d-31bc7a7eda7c",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "ddd65d48-ce99-48b2-b762-9f7157813778",
+          "Id": "a9b782de-06b8-4d4b-b5e9-2c7df1a74070",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "adb42b11-f91a-4b8f-95f7-31de69fc0c3a",
+          "Id": "3a9666bb-d403-47c4-bcfd-661f2a7ed5d0",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "d3d25fed-0322-44d9-85d2-71e5df649eaf",
+          "Id": "311e2e2d-bb29-4ac8-8b2b-3c93f9b84d92",
           "Name": "thing",
           "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-396,-240",
+      "Position": "-396,-216",
       "HandleOffsets": {},
       "uv": {
         "Identifier": "4",
