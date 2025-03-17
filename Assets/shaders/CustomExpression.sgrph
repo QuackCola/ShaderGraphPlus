@@ -28,51 +28,7 @@
       "Position": "840,-168",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "9",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "CustomCodeNode",
-      "Name": "TestFunc",
-      "Type": "File",
-      "Body": "float3 col1 = float3(1,0,1);\nmask = 0.0f;\nthing = 0.0f;\n\nfor(float i=0.; i\u003C.5; i\u002B=.01)\n{\n\tuv.x\u002B= clamp(sin(2.*g_flTime*speed)*.1,-.5,.5)*.15;\n\tuv.y\u002B= -clamp(cos(g_flTime\u002Bi*5.)*.1,-.5,.5)*.15;\n\tfloat d = length(uv);\n\tfloat s = step(d,i)*.01;\n\tcol1\u002B=s;\n\n\tmask = s;\n\tthing = col1.y;\n}\n \n",
-      "Source": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.hlsl",
-      "ExpressionInputs": [
-        {
-          "Id": "9e50dd27-9b97-43dd-90da-b923ad542e4e",
-          "Name": "uv",
-          "Type": "Vector2"
-        },
-        {
-          "Id": "bb4b13c3-3c23-47db-b505-808a33585336",
-          "Name": "speed",
-          "Type": "float"
-        }
-      ],
-      "ExpressionOutputs": [
-        {
-          "Id": "075a5bcb-d1cb-4e96-99ba-688d7fd0db85",
-          "Name": "mask",
-          "Type": "float"
-        },
-        {
-          "Id": "e74d603a-ed02-4acf-ad9d-5721a02f9f72",
-          "Name": "thing",
-          "Type": "float"
-        }
-      ],
-      "Identifier": "1",
-      "Position": "-408,-240",
-      "HandleOffsets": {},
-      "uv": {
-        "Identifier": "4",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "speed": {
-        "Identifier": "2",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null
       }
@@ -85,7 +41,7 @@
       "Name": "testfloat",
       "IsAttribute": true,
       "UI": {},
-      "Identifier": "2",
+      "Identifier": "1",
       "Position": "-624,-108",
       "HandleOffsets": {}
     },
@@ -93,7 +49,7 @@
       "_class": "TextureCoord",
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "-804,-252",
       "HandleOffsets": {}
     },
@@ -102,11 +58,11 @@
       "DefaultTile": "4,4",
       "DefaultOffset": "-2,-2",
       "WrapTo01": false,
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "-624,-240",
       "HandleOffsets": {},
       "UV": {
-        "Identifier": "3",
+        "Identifier": "2",
         "Output": "Result",
         "Subgraph": null
       }
@@ -116,12 +72,12 @@
       "AngleOffset": 3.1415925,
       "CellDensity": 23.228842,
       "Worley": false,
-      "Identifier": "5",
-      "Position": "-120,-264",
+      "Identifier": "4",
+      "Position": "-36,-276",
       "HandleOffsets": {},
       "Coords": {
-        "Identifier": "1",
-        "Output": "thing",
+        "Identifier": "12",
+        "Output": "Thing",
         "Subgraph": null
       }
     },
@@ -168,22 +124,22 @@
           }
         ]
       },
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "180,-372",
       "HandleOffsets": {}
     },
     {
       "_class": "SampleGradientNode",
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "408,-288",
       "HandleOffsets": {},
       "Gradient": {
-        "Identifier": "6",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null
       },
       "Time": {
-        "Identifier": "8",
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       }
@@ -192,11 +148,11 @@
       "_class": "Clamp",
       "DefaultMin": 0,
       "DefaultMax": 1,
-      "Identifier": "8",
+      "Identifier": "7",
       "Position": "168,-276",
       "HandleOffsets": {},
       "InputA": {
-        "Identifier": "5",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
@@ -206,16 +162,16 @@
       "Fraction": 0.5016494,
       "BlendMode": "Subtract",
       "Clamp": true,
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "600,-252",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "7",
+        "Identifier": "6",
         "Output": "Result",
         "Subgraph": null
       },
       "C": {
-        "Identifier": "11",
+        "Identifier": "10",
         "Output": "Out",
         "Subgraph": null
       }
@@ -228,22 +184,22 @@
       "OutMin": 0,
       "OutMax": 1,
       "Clamp": true,
-      "Identifier": "10",
+      "Identifier": "9",
       "Position": "-132,-120",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "1",
-        "Output": "mask",
+        "Identifier": "12",
+        "Output": "Mask",
         "Subgraph": null
       }
     },
     {
       "_class": "OneMinus",
-      "Identifier": "11",
+      "Identifier": "10",
       "Position": "156,-168",
       "HandleOffsets": {},
       "In": {
-        "Identifier": "10",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null
       }
@@ -251,13 +207,36 @@
     {
       "_class": "ReroutePlus",
       "Comment": "Opacity Mask",
-      "Identifier": "12",
+      "Identifier": "11",
       "Position": "660,-84",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "10",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphNode",
+      "SubgraphPath": "shaders/material functions/weirdthing.sgpfunc",
+      "DefaultValues": {
+        "uv_4": "0,0",
+        "speed_2": 0,
+        "UV": "0,0",
+        "Speed": 0
+      },
+      "Identifier": "12",
+      "Position": "-396,-240",
+      "HandleOffsets": {},
+      "UV": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": "shaders/material functions/weirdthing.sgpfunc"
+      },
+      "Speed": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": "shaders/material functions/weirdthing.sgpfunc"
       }
     }
   ]
