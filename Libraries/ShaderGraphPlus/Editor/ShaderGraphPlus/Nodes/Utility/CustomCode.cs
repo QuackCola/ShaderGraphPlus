@@ -303,7 +303,14 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
         
         if ( string.IsNullOrWhiteSpace( Name ) )
         {
-            return new List<string> { $"`{DisplayInfo.Name}` Cannot generate a function with no name!" };
+            if ( Mode is CustomCodeMode.ExternalFile )
+            {
+                return new List<string> { $"`{DisplayInfo.Name}` Cannot call function with no name!" };
+            }
+            else
+            {
+                return new List<string> { $"`{DisplayInfo.Name}` Cannot generate a function with no name!" };
+            }
         }
         
         if ( Mode is CustomCodeMode.ExternalFile )
