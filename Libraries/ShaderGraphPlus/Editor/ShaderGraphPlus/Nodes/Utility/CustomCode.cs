@@ -2,11 +2,7 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-public enum CustomCodeMode
-{
-    Text,
-    ExternalFile,
-}
+
 
 
 
@@ -16,6 +12,12 @@ public enum CustomCodeMode
 [Title( "Custom Code" ), Category( "Utility" )]
 public class CustomCodeNode : ShaderNodePlus, IErroringNode
 {
+    public enum CustomCodeNodeMode
+    {
+        String,
+        File,
+    }
+
     [Hide]
     public override string Title => string.IsNullOrEmpty( Name ) ?
     $"{DisplayInfo.For( this ).Name}" :
@@ -23,19 +25,19 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
     
     public string Name { get; set; }
     
-    public CustomCodeMode Mode { get; set; } = CustomCodeMode.Text;
+    public CustomCodeNodeMode Type { get; set; } = CustomCodeNodeMode.String;
     
     
     [TextArea]
-    [HideIf( nameof( Mode ), CustomCodeMode.ExternalFile )]
+    [HideIf( nameof( Type ), CustomCodeNodeMode.File )]
     public string Body { get; set; }
     
     [Hide, JsonIgnore]
     public ResultType ResultType = ResultType.Void;
     
-    [HideIf( nameof( Mode ), CustomCodeMode.Text )]
+    [HideIf( nameof( Type ), CustomCodeNodeMode.String )]
     [HLSLAssetPath]
-    public string ExternalFile { get; set; }
+    public string Source { get; set; }
     
     [Title( "Inputs" )]
     public List<CustomCodeNodePorts> ExpressionInputs { get; set; }
@@ -84,9 +86,9 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
             compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
             OutputData = outputData;
             
-            if ( Mode is CustomCodeMode.ExternalFile )
+            if ( Type is CustomCodeNodeMode.File )
             {
-                return new( ResultType, compiler.ResultFunctionCustomExpression( $"{ExternalFile}", Name, args: $" {functionInputs},{functionOutputs}", true ), voidComponents: 0 );
+                return new( ResultType, compiler.ResultFunctionCustomExpression( $"{Source}", Name, args: $" {functionInputs},{functionOutputs}", true ), voidComponents: 0 );
             }
             else
             {
@@ -303,7 +305,7 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
         
         if ( string.IsNullOrWhiteSpace( Name ) )
         {
-            if ( Mode is CustomCodeMode.ExternalFile )
+            if ( Type is CustomCodeNodeMode.File )
             {
                 return new List<string> { $"`{DisplayInfo.Name}` Cannot call function with no name!" };
             }
@@ -313,11 +315,11 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
             }
         }
         
-        if ( Mode is CustomCodeMode.ExternalFile )
+        if ( Type is CustomCodeNodeMode.File )
         {
-            if ( !Editor.FileSystem.Content.FileExists( $"shaders/{ExternalFile}" ) )
+            if ( !Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
             {
-                errors.Add( $"Include file `shaders/{ExternalFile}` does not exist." );
+                errors.Add( $"Include file `shaders/{Source}` does not exist." );
             }
         }
         
