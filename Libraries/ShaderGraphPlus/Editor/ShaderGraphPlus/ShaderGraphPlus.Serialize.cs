@@ -107,7 +107,7 @@ partial class ShaderGraphPlus
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-				if ( node is CustomCodeNode customCode )
+				if ( node is CustomFunctionNode customCode )
 				{
 					customCode.OnNodeCreated();
 				}

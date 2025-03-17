@@ -2,15 +2,11 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
-
-
-
-
 /// <summary>
 /// Container for custom code.
 /// </summary>
-[Title( "Custom Code" ), Category( "Utility" )]
-public class CustomCodeNode : ShaderNodePlus, IErroringNode
+[Title( "Custom Function" ), Category( "Utility" )]
+public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 {
     public enum CustomCodeNodeMode
     {
