@@ -2,6 +2,14 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
+public enum CodeType
+{
+    Text,
+    ExternalFile,
+}
+
+
+
 /// <summary>
 /// Container for custom code.
 /// </summary>
@@ -15,12 +23,21 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
     
     public string Name { get; set; }
     
+    public CodeType CodeType { get; set; } = CodeType.Text;
+
+
     [TextArea]
+    [HideIf( nameof( CodeType ), CodeType.ExternalFile )]
     public string Body { get; set; }
 
     [Hide, JsonIgnore]
     public ResultType ResultType = ResultType.Void;
-    
+
+    [HideIf( nameof( CodeType ), CodeType.Text )]
+    //[HLSLAssetPath]
+    public string ExternalFIle { get; set; }
+
+
     [Title( "Inputs" )]
     public List<CustomCodeNodePorts> ExpressionInputs { get; set; }
     
@@ -59,28 +76,50 @@ public class CustomCodeNode : ShaderNodePlus, IErroringNode
         Update();
     }
 
-    public NodeResult   ConstructFunction( GraphCompiler compiler )
+    public NodeResult   ConstructFunction( GraphCompiler compiler)
     {
-        if ( !string.IsNullOrWhiteSpace( Name ) )
+        if (!string.IsNullOrWhiteSpace(Name))
         {
-            var sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({ConstructFunctionInputs()}, {ConstructFunctionOutputs()})" );
-            sb.AppendLine( "{" );
-            sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
-            sb.AppendLine( "}" );
-            sb.AppendLine();
-            
-            var functionInputs = GetInputResults( compiler );
-            
-            compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
-            OutputData = outputData;
-            
-            return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0);
+            if (CodeType is CodeType.ExternalFile || compiler.IsNotPreview)
+            {
+                var file = ShaderGraphPlusFileSystem.Content.GetFullPath($"shaders/{ExternalFIle}");
+
+                if (!string.IsNullOrWhiteSpace(file))
+                {
+                    Log.Info($"Found file : {file}");
+                }
+
+                var filecontents = System.IO.File.ReadAllText(file);
+
+
+                var functionInputs = GetInputResults(compiler);
+
+                compiler.RegisterVoidFunctionResults(this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData);
+                OutputData = outputData;
+
+                return new(ResultType, compiler.ResultFunctionCustomExpression(filecontents, Name, args: $" {functionInputs},{functionOutputs}"), voidComponents: 0);
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine();
+                sb.AppendLine($"{compiler.GetHLSLDataType(ResultType)} {Name}({ConstructFunctionInputs()}, {ConstructFunctionOutputs()})");
+                sb.AppendLine("{");
+                sb.AppendLine(GraphCompiler.IndentString(Body, 1));
+                sb.AppendLine("}");
+                sb.AppendLine();
+
+                var functionInputs = GetInputResults(compiler);
+
+                compiler.RegisterVoidFunctionResults(this, GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData);
+                OutputData = outputData;
+
+                return new(ResultType, compiler.ResultFunctionCustomExpression(sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}"), voidComponents: 0);
+            }
         }
         else
         {
-            return new( ResultType, $"1" );
+            return default;
         }
     }
 
