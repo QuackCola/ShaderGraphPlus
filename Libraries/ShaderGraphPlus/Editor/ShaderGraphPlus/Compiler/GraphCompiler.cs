@@ -575,49 +575,41 @@ public sealed partial class GraphCompiler
 			}
 		}
 		
-		
-		if ( node is CustomCodeNode customcodeNode )
+		if ( node is CustomCodeNode customCodeNode )
 		{
-			var funcResult = customcodeNode.ConstructFunction( this );
-			
-			var id = ShaderResult.InputResults.Count;
-			var varName = $"l_{id}";
-			
-			foreach (var mapping in customcodeNode.OutputData)
+			var funcResult = customCodeNode.ConstructFunction( this );
+
+			CustomCodeOutputData outputDataEntry = new();
+
+			foreach ( var outputData in customCodeNode.OutputData )
 			{
-				if (mapping.FriendlyName == input.Output)
+				if ( outputData.FriendlyName == input.Output )
 				{
-					//Log.Info($"mapping result a = {mapping.CompilerName}:{mapping.FreindlyName}");
-					varName = mapping.CompilerName;
-			        break;
-			    }
-			}
-			
-			int componetCount = 0;
-			
-			foreach (var output in customcodeNode.OutputData)
-			{
-				if ( output.FriendlyName == input.Output )
-				{
-					componetCount = output.ComponentCount;
+                    outputDataEntry = outputData;
 					break;
 				}
 			}
 			
-			var resultType = componetCount switch
+            if ( !outputDataEntry.IsValid )
+            {
+            	Utilities.EdtiorSound.OhFiddleSticks();
+            
+                NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for : {node.DisplayInfo.Name}" };
+            
+                return default;
+            }
+
+            var resultType = outputDataEntry.ComponentCount switch
 			{
 			    0 => ResultType.Bool,
 			    1 => ResultType.Float,
 			    2 => ResultType.Vector2,
 			    3 => ResultType.Vector3,
 			    4 => ResultType.Color,
-			    _ => throw new ArgumentException( "Unknown ResultType : ", $"`{componetCount}`")
+			    _ => throw new ArgumentException( "Unknown ResultType : ", $"`{outputDataEntry.ComponentCount}`")
 			};
-			
-			
-			
-			
-			var localResult = new NodeResult( resultType, varName, voidComponents: componetCount);
+
+			var localResult = new NodeResult( resultType, outputDataEntry.CompilerName, voidComponents: outputDataEntry.ComponentCount);
 			
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( ( localResult, funcResult ) );
