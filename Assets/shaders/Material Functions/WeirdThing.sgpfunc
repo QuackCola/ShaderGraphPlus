@@ -26,24 +26,24 @@
       "Source": "ShaderGraphPlus/CustomCodeFunctions/TestFunc.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "1bd67464-790d-45ea-b6ac-3cd9e7caaccb",
+          "Id": "1d63786b-2367-4619-9c85-9cbbc23b5d96",
           "Name": "uv",
           "Type": "Vector2"
         },
         {
-          "Id": "8c5b44c6-5b84-4fa9-9532-419777fa43d7",
+          "Id": "4fcc359b-449b-481f-9a25-3dfd1f133cac",
           "Name": "speed",
           "Type": "float"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "88cee23f-9fff-4253-864f-e371a4fac123",
+          "Id": "ee65ee69-d414-4f8f-9498-96b842edcc4e",
           "Name": "mask",
           "Type": "float"
         },
         {
-          "Id": "b2fdd92a-aa77-4cd7-a06e-a3212785db16",
+          "Id": "2152f729-18ee-4137-9f53-dfe384ab3ad4",
           "Name": "thing",
           "Type": "float"
         }
@@ -124,12 +124,12 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "79c7e144-fcff-4cf2-8fc0-108018d9b74a",
+          "Id": "ac34f6ac-845a-48f0-a463-4f480ff6928b",
           "Name": "Mask",
           "Type": "float"
         },
         {
-          "Id": "3df09584-bd09-4d08-9793-588e23a86478",
+          "Id": "62f820b7-a005-4b34-ab63-0bb14b362c9c",
           "Name": "Thing",
           "Type": "float",
           "Preview": "Albedo"
