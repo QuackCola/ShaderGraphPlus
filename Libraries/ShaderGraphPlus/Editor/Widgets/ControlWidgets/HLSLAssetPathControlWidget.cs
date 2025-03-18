@@ -171,17 +171,20 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         {
             if ( e.RightMouseButton ) 
             {
-                FilePathAbsolute = Editor.FileSystem.Content.GetFullPath( $"shaders/{Node.Source}" );
+                if ( !string.IsNullOrWhiteSpace( Node.Source ) )
+                {
+                    FilePathAbsolute = Editor.FileSystem.Content.GetFullPath($"shaders/{Node.Source}");
 
-                menu?.Close();
-                menu = new ContextMenu();
+                    menu?.Close();
+                    menu = new ContextMenu();
 
-                menu.AddOption( "Open include", "file_open", action: () => OpenFile() );
-                menu.AddOption( "Clear...", "delete", action: () => ClearFile());
+                    menu.AddOption("Open include", "file_open", action: () => OpenFile());
+                    menu.AddOption("Clear...", "delete", action: () => ClearFile());
 
-                menu.OpenAt( ScreenRect.BottomLeft );
+                    menu.OpenAt(ScreenRect.BottomLeft);
 
-                e.Accepted = true;
+                    e.Accepted = true;
+                }
             }
         }
     }
