@@ -120,9 +120,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         {
             if ( compiler.IsNotPreview )
             {
-                if (compiler.Debug)
+                if ( compiler.Debug )
                 {
-                    Log.Info($"Input {input.DisplayInfo.Name} : {input.ConnectedOutput}");
+                    Log.Info( $"Evaluating Input `{input.DisplayInfo.Name}` from `{input.ConnectedOutput}`" );
                 }
             }
             
