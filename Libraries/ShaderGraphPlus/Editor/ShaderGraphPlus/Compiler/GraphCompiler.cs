@@ -594,14 +594,16 @@ public sealed partial class GraphCompiler
 			
 			if ( !customFunctionNode.ExpressionOutputs.Any() )
 			{
-			    NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
+                //Utilities.EdtiorSound.OhFiddleSticks();
+
+                NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
 			
 			    return default;
 			}
 			
 			if ( !outputDataEntry.IsValid )
 			{
-				Utilities.EdtiorSound.OhFiddleSticks();
+				//Utilities.EdtiorSound.OhFiddleSticks();
 			
 			    NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
 			
