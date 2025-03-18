@@ -14,12 +14,14 @@ internal class HLSLAssetPathAttribute : Attribute
 internal class HLSLAssetPathControlWidget : ControlWidget
 {
     public override bool IsControlButton => true;
-    public override bool SupportsMultiEdit => true;
+    public override bool SupportsMultiEdit => false;
     
     string FilePath;
-    
+    string FilePathAbsolute;
+
     IconButton PreviewButton;
-    
+    private ContextMenu menu;
+
     CustomFunctionNode Node;
     SerializedProperty FunctionNameProperty;
     
@@ -45,7 +47,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
     {
         base.DoLayout();
         
-        if (PreviewButton.IsValid())
+        if ( PreviewButton.IsValid() )
         {
             PreviewButton.FixedSize = Height - 2;
             PreviewButton.Position = new Vector2(Width - Height + 1, 1);
@@ -132,12 +134,10 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         
         if ( absolutePath is null ) 
             return;
-        
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = absolutePath,
-            UseShellExecute = true
-        });
+
+        FilePathAbsolute = absolutePath;
+
+        OpenFile();
     }
     
     private string GetHLSLDataType( ResultType resultType )
@@ -159,7 +159,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         };
     }
 
-    protected override void OnMouseClick( MouseEvent e )
+    protected override void OnMousePress( MouseEvent e )
     {
         base.OnMouseClick( e);
         
@@ -167,12 +167,42 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         {
             GenerateHLSLIncludeBase();
         }
-        //else
-        //{
-        //    OpenFileDialog();
-        //}
+        else
+        {
+            if ( e.RightMouseButton ) 
+            {
+                FilePathAbsolute = Editor.FileSystem.Content.GetFullPath( $"shaders/{Node.Source}" );
+
+                menu?.Close();
+                menu = new ContextMenu();
+
+                menu.AddOption( "Open include...", "file_open", action: () => OpenFile() );
+                menu.AddOption( "Clear...", "delete", action: () => ClearFile());
+
+                menu.OpenAt( ScreenRect.BottomLeft );
+
+                e.Accepted = true;
+            }
+        }
     }
     
+    private void OpenFile()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = FilePathAbsolute,
+            UseShellExecute = true
+        });
+    }
+
+    private void ClearFile()
+    {
+        FilePathAbsolute = "";
+        FilePath = "";
+
+        UpdateProperty();
+    }
+
     private string SaveFile( string generatedFile )
     {
         var fd = new FileDialog(null)
