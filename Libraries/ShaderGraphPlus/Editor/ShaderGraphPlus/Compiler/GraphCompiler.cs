@@ -592,6 +592,13 @@ public sealed partial class GraphCompiler
 				}
 			}
 			
+			if ( !customFunctionNode.ExpressionOutputs.Any() )
+			{
+			    NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
+			
+			    return default;
+			}
+			
 			if ( !outputDataEntry.IsValid )
 			{
 				Utilities.EdtiorSound.OhFiddleSticks();
