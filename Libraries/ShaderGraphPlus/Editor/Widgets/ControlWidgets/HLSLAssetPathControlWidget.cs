@@ -176,7 +176,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
                 menu?.Close();
                 menu = new ContextMenu();
 
-                menu.AddOption( "Open include...", "file_open", action: () => OpenFile() );
+                menu.AddOption( "Open include", "file_open", action: () => OpenFile() );
                 menu.AddOption( "Clear...", "delete", action: () => ClearFile());
 
                 menu.OpenAt( ScreenRect.BottomLeft );
