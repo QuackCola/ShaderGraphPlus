@@ -121,7 +121,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
     {
         var sb = new StringBuilder();
         
-        var funcHeader = $"{GetHLSLDataType(Node.ResultType)} {functionName}({Node.ConstructFunctionInputs()}, {Node.ConstructFunctionOutputs()})";
+        var funcHeader = $"{GetHLSLDataType(Node.ResultType)} {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
         var template = HLSLTemplate.Contents;
         
         var result = string.Format( HLSLTemplate.Contents,
