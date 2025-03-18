@@ -25,7 +25,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "-1008,24",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
@@ -42,13 +42,13 @@
       "ExpressionInputs": [],
       "ExpressionOutputs": [
         {
-          "Id": "20e0ec41-fa0d-4b5e-bf8a-bf9467e9002c",
+          "Id": "4d450cf3-fe44-419c-b052-44ecdd57a93f",
           "Name": "Result",
           "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-1140,-12",
+      "Position": "-1248,24",
       "HandleOffsets": {}
     }
   ]
