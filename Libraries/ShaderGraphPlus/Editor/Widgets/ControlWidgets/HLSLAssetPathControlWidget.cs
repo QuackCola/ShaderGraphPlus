@@ -156,7 +156,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
             functionBody.AppendLine( $"{output.Name} = {initialValue};" );
         }
 
-        string result = string.Format( HLSLFunctionTemplate.Contents,
+        string result = string.Format( HLSLIncludeTemplate.Contents,
             functionName.ToUpper(),
             functionHeader,
             GraphCompiler.IndentString( functionBody.ToString(), 2 )

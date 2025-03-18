@@ -1,6 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-public static class HLSLFunctionTemplate
+public static class HLSLIncludeTemplate
 {
 public static string Contents => @"
 #ifndef {0}_H
