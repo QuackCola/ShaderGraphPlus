@@ -127,14 +127,14 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
             
 
-            var result = compiler.Result(nodeInput);
-            
+            var result = compiler.ResultOrDefault(nodeInput, 0.0f);
+            //var result = new NodeResult(ResultType.Float, $"0");
 
-            if ( !nodeInput.IsValid )
-            {
-                result = new NodeResult(result.ResultType, $"0");
-                Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
-            }
+            //if ( !nodeInput.IsValid )
+            //{
+            //    result = new NodeResult(result.ResultType, $"0");
+            //    Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
+            //}
 
             //if (result.IsValid)
             //{
@@ -155,6 +155,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         
         return sb.ToString();
     }
+
 
     internal string ConstructFunctionInputs()
     {
@@ -228,9 +229,18 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         }
     }
 
+
+    [Hide, JsonIgnore]
+    internal Dictionary<IPlugIn, (IParameterNode, Type)> InputReferences = new();
+
     public void CreateInputs()
     {
         var plugs = new List<IPlugIn>();
+
+        var defaults = new Dictionary<Type, int>();
+        InputReferences.Clear();
+
+
         if ( ExpressionInputs == null )
         {
         	InternalInputs = new();
