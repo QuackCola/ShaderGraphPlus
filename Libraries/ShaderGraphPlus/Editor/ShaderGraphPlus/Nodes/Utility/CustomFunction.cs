@@ -116,31 +116,29 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         var sb = new StringBuilder();
         int index = 0;
         
-
         foreach ( IPlugIn input in Inputs )
         {
-            //if (compiler.IsNotPreview)
-            //{
-            //    Log.Info($"Processing Input : {input.DisplayInfo.Name}");
-            //}
-
-            NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+            if ( compiler.IsNotPreview )
+            {
+                if (compiler.Debug)
+                {
+                    Log.Info($"Input {input.DisplayInfo.Name} : {input.ConnectedOutput}");
+                }
+            }
             
-
-            var result = compiler.ResultOrDefault(nodeInput, 0.0f);
-            //var result = new NodeResult(ResultType.Float, $"0");
-
-            //if ( !nodeInput.IsValid )
-            //{
-            //    result = new NodeResult(result.ResultType, $"0");
-            //    Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
-            //}
-
-            //if (result.IsValid)
-            //{
-            //    Log.Error($"Invalid Result on {input.DisplayInfo.Name}");
-            //}
-
+            var result = new NodeResult();
+            
+            if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
+            {
+                result = new NodeResult( ResultType.Float, $"0", constant: true );
+            }
+            else
+            {
+                NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+            
+                result = compiler.Result(nodeInput);
+            }
+            
             if ( index < Inputs.Count() - 1 )
             {
                 sb.Append($"{result}, ");
@@ -155,7 +153,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         
         return sb.ToString();
     }
-
 
     internal string ConstructFunctionInputs()
     {
@@ -230,15 +227,15 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     }
 
 
-    [Hide, JsonIgnore]
-    internal Dictionary<IPlugIn, (IParameterNode, Type)> InputReferences = new();
+    //[Hide, JsonIgnore]
+    //internal Dictionary<IPlugIn, (IParameterNode, Type)> InputReferences = new();
 
     public void CreateInputs()
     {
         var plugs = new List<IPlugIn>();
 
-        var defaults = new Dictionary<Type, int>();
-        InputReferences.Clear();
+        //var defaults = new Dictionary<Type, int>();
+        //InputReferences.Clear();
 
 
         if ( ExpressionInputs == null )
@@ -247,18 +244,18 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         }
         else
         {
-        	foreach ( var output in ExpressionInputs.OrderBy( x => x.Priority ) )
+        	foreach ( var input in ExpressionInputs.OrderBy( x => x.Priority ) )
         	{
-        		if ( output.Type is null ) continue;
+        		if ( input.Type is null ) continue;
         		var info = new PlugInfo()
         		{
-        			Id = output.Id,
-        			Name = output.Name,
-        			Type = output.Type,
+        			Id = input.Id,
+        			Name = input.Name,
+        			Type = input.Type,
         			DisplayInfo = new()
         			{
-        				Name = output.Name,
-        				Fullname = output.Type.FullName
+        				Name = input.Name,
+        				Fullname = input.Type.FullName
         			}
         		};
         		var plug = new BasePlugIn( this, info, info.Type );
