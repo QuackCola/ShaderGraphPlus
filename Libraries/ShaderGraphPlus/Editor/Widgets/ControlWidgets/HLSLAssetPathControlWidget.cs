@@ -119,24 +119,56 @@ internal class HLSLAssetPathControlWidget : ControlWidget
     
     private void Generate( string functionName )
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         
-        var funcHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
-        var template = HLSLTemplate.Contents;
+        string functionHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
+        StringBuilder functionBody = new StringBuilder();
         
-        var result = string.Format( HLSLTemplate.Contents,
+        foreach ( var output in Node.ExpressionOutputs )
+        {
+            var initialValue = "0";
+        
+            if ( output.HLSLDataType == "bool" )
+            {
+                initialValue = "false";
+            }
+            else if ( output.HLSLDataType == "int" )
+            {
+                initialValue = "0";
+            }
+            else if ( output.HLSLDataType == "float" )
+            {
+            	initialValue = "0.0f";
+            }
+            else if ( output.HLSLDataType == "float2" )
+            {
+                initialValue = "float2( 0.0f, 0.0f )";
+            }
+            else if ( output.HLSLDataType == "float3" )
+            {
+                initialValue = "float3( 0.0f, 0.0f, 0.0f )";
+            }
+            else if ( output.HLSLDataType == "float4" )
+            {
+                initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+            }
+        
+            functionBody.AppendLine( $"{output.Name} = {initialValue};" );
+        }
+
+        string result = string.Format( HLSLFunctionTemplate.Contents,
             functionName.ToUpper(),
-            funcHeader,
-            ""
+            functionHeader,
+            GraphCompiler.IndentString( functionBody.ToString(), 2 )
         );
         
-        var absolutePath = SaveFile( result );
+        string absolutePath = SaveFile( result );
         
         if ( absolutePath is null ) 
             return;
-
+        
         FilePathAbsolute = absolutePath;
-
+        
         OpenFile();
     }
     
