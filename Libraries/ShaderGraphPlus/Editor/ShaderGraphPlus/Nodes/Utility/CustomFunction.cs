@@ -277,15 +277,15 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     public void CreateOutputs()
     {
         var plugs = new List<IPlugOut>();
-        if (ExpressionOutputs == null)
+        if ( ExpressionOutputs == null )
         {
             InternalOutputs = new();
         }
         else
         {
-            foreach (var output in ExpressionOutputs.OrderBy(x => x.Priority))
+            foreach ( var output in ExpressionOutputs.OrderBy( x => x.Priority ) )
             {
-                if (output.Type is null) continue;
+                if ( output.Type is null ) continue;
                 var info = new PlugInfo()
                 {
                     Id = output.Id,
@@ -297,18 +297,18 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
                         Fullname = output.Type.FullName
                     }
                 };
-                var plug = new BasePlugOut(this, info, info.Type);
-                var oldPlug = InternalOutputs.FirstOrDefault(x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id) as BasePlugOut;
+                var plug = new BasePlugOut( this, info, info.Type );
+                var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id ) as BasePlugOut;
                 if (oldPlug is not null)
                 {
                     oldPlug.Info.Name = info.Name;
                     oldPlug.Info.Type = info.Type;
                     oldPlug.Info.DisplayInfo = info.DisplayInfo;
-                    plugs.Add(oldPlug);
+                    plugs.Add( oldPlug );
                 }
                 else
                 {
-                    plugs.Add(plug);
+                    plugs.Add( plug );
                 }
             };
             InternalOutputs = plugs;
@@ -319,6 +319,11 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     {
         OnNodeCreated();
         var errors = new List<string>();
+        
+        if ( !ExpressionOutputs.Any() )
+        {
+            errors.Add( $"`{DisplayInfo.Name}` has no outputs." );
+        }
         
         if ( string.IsNullOrWhiteSpace( Name ) )
         {
@@ -343,11 +348,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             {
                 errors.Add( $"Include file `shaders/{Source}` does not exist." );
             }
-        }
-        
-        if ( !ExpressionOutputs.Any() )
-        {
-            errors.Add( $"`{DisplayInfo.Name}` has no outputs." );
         }
         
         return errors;
