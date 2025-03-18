@@ -111,7 +111,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     /// </summary>
     private string GetInputResults( GraphCompiler compiler )
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         int index = 0;
         
         foreach ( IPlugIn input in Inputs )
@@ -124,7 +124,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
                 }
             }
             
-            var result = new NodeResult();
+            NodeResult result = new NodeResult();
             
             if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
             {
