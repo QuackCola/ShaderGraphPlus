@@ -109,8 +109,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     /// <summary>
     /// Fetches the results from the user defined node inputs.
     /// </summary>
-    /// <param name="compiler"></param>
-    /// <returns></returns>
     private string GetInputResults( GraphCompiler compiler )
     {
         var sb = new StringBuilder();
@@ -136,7 +134,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             {
                 NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
             
-                result = compiler.Result(nodeInput);
+                result = compiler.Result( nodeInput );
             }
             
             if ( index < Inputs.Count() - 1 )
