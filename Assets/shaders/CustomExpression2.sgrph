@@ -1,0 +1,83 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/customexpression2.sgrph",
+  "Model": "models/dev/plane.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Out",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "Name": "FuncTest4",
+      "Type": "File",
+      "Body": "Out = 0.0f;",
+      "Source": "Test/FuncTest4.hlsl",
+      "ExpressionInputs": [
+        {
+          "Id": "acffbe95-abc8-4286-a692-77e140b6b528",
+          "Name": "A",
+          "Type": "float"
+        },
+        {
+          "Id": "6177934e-f2e4-4986-8c6a-22b117e3e604",
+          "Name": "B",
+          "Type": "float"
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "07bb3a98-9232-4d8d-be0f-aabbe3d3fd4f",
+          "Name": "Out",
+          "Type": "float"
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-420,-24",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 12,
+      "Name": "Speed",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-612,-24",
+      "HandleOffsets": {}
+    }
+  ]
+}
