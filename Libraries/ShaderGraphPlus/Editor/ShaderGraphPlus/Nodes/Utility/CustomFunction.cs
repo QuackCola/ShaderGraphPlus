@@ -84,20 +84,20 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             
             if ( Type is CustomCodeNodeMode.File )
             {
-                return new( ResultType, compiler.ResultFunctionCustomExpression( $"{Source}", Name, args: $" {functionInputs},{functionOutputs}", true ), voidComponents: 0 );
+                return new( ResultType, compiler.ResultFunctionCustomExpression( $"{Source}", Name, args: $" {functionInputs}{( ExpressionInputs.Any() ? "," : "" )}{functionOutputs}", true ), voidComponents: 0 );
             }
             else
             {
                 var sb = new StringBuilder();
                 
                 sb.AppendLine();
-                sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({ConstructFunctionInputs()}, {ConstructFunctionOutputs()})" );
+                sb.AppendLine( $"{compiler.GetHLSLDataType( ResultType )} {Name}({ConstructFunctionInputs()}{( ExpressionInputs.Any() ? "," : "" )}{ConstructFunctionOutputs()})" );
                 sb.AppendLine( "{" );
                 sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
                 sb.AppendLine( "}" );
                 sb.AppendLine();
                 
-                return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs},{functionOutputs}" ), voidComponents: 0 );
+                return new( ResultType, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs}{( ExpressionInputs.Any() ? "," : "" )}{functionOutputs}" ), voidComponents: 0 );
             }
         }
         else
