@@ -215,7 +215,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         if ( hashCodeOutput != _lastHashCodeOutputs )
         {
             _lastHashCodeOutputs = hashCodeOutput;
-            
+
+            //Log.Info($"Updating Outputs!");
+
             CreateOutputs();
             Update();
         }
