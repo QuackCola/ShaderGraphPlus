@@ -12,7 +12,7 @@ FEATURES
 
 MODES
 {
-    VrForward();
+    Forward();
     Depth();
     ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
@@ -53,10 +53,7 @@ struct PixelInput
 VS
 {
     #include "common/vertex.hlsl"
-	
-	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
-	
-	
+
     PixelInput MainVs( VertexInput v )
     {
 		
@@ -76,9 +73,6 @@ VS
 PS
 {
     #include "common/pixel.hlsl"
-	
-	BoolAttribute( bWantsFBCopyTexture, true ); 
-	Texture2D g_tFrameBufferCopyTexture < Attribute( "FrameBufferCopyTexture" ); SrgbRead( false ); >;
 	
 	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -128,6 +122,7 @@ PS
     float4 MainPs( PixelInput i ) : SV_Target0
     {
 
+		
 		
 		float l_0 = g_flSliceCount;
 		float l_1 = g_flSliceDistance;

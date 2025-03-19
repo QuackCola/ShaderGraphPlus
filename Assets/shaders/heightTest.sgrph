@@ -1,11 +1,21 @@
 {
+  "IsSubgraph": false,
+  "Path": "shaders/heighttest.sgrph",
   "Model": null,
+  "Title": null,
   "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
-  "postProcessComponentInfo": {
-    "Order": 500
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
   },
   "nodes": [
     {
@@ -16,13 +26,16 @@
       "DefaultAmbientOcclusion": 0,
       "Identifier": "0",
       "Position": "-84,-48",
+      "HandleOffsets": {},
       "Albedo": {
         "Identifier": "6",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "Normal": {
         "Identifier": "1",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -31,13 +44,16 @@
       "DefaultStrength": 0.1,
       "Identifier": "1",
       "Position": "-480,-60",
+      "HandleOffsets": {},
       "Height": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "Strength": {
         "Identifier": "7",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -46,23 +62,27 @@
       "CellDensity": 24,
       "Worley": false,
       "Identifier": "2",
-      "Position": "-768,-156"
+      "Position": "-768,-156",
+      "HandleOffsets": {}
     },
     {
       "_class": "WorldPosition",
       "NoHighPrecisionLightingOffsets": false,
       "Identifier": "3",
-      "Position": "-768,24"
+      "Position": "-768,24",
+      "HandleOffsets": {}
     },
     {
       "_class": "WorldNormal",
       "Identifier": "4",
-      "Position": "-768,96"
+      "Position": "-768,96",
+      "HandleOffsets": {}
     },
     {
       "_class": "ObjectSpaceNormal",
       "Identifier": "5",
-      "Position": "-768,204"
+      "Position": "-768,204",
+      "HandleOffsets": {}
     },
     {
       "_class": "Float4",
@@ -73,7 +93,8 @@
         "Type": "Color"
       },
       "Identifier": "6",
-      "Position": "-288,-276"
+      "Position": "-288,-276",
+      "HandleOffsets": {}
     },
     {
       "_class": "Float",
@@ -84,7 +105,8 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "7",
-      "Position": "-768,-48"
+      "Position": "-768,-48",
+      "HandleOffsets": {}
     },
     {
       "_class": "TextureSampler",
@@ -96,15 +118,18 @@
         "SrgbRead": true
       },
       "Identifier": "8",
-      "Position": "-948,-444"
+      "Position": "-948,-444",
+      "HandleOffsets": {}
     },
     {
       "_class": "OneMinus",
       "Identifier": "9",
       "Position": "-660,-444",
+      "HandleOffsets": {},
       "In": {
         "Identifier": "8",
-        "Output": "R"
+        "Output": "R",
+        "Subgraph": null
       }
     },
     {
@@ -113,13 +138,16 @@
       "DefaultStrength": 0.1,
       "Identifier": "10",
       "Position": "-480,156",
+      "HandleOffsets": {},
       "Height": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "Strength": {
         "Identifier": "7",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -129,13 +157,16 @@
       "Clamp": false,
       "Identifier": "11",
       "Position": "-480,-288",
+      "HandleOffsets": {},
       "A": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       },
       "B": {
         "Identifier": "8",
-        "Output": "R"
+        "Output": "R",
+        "Subgraph": null
       }
     }
   ]
