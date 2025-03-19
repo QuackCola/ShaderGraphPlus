@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/customexpression_noinputs.sgrph",
-  "Model": null,
+  "Model": "models/dev/plane.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
@@ -42,13 +42,13 @@
       "ExpressionInputs": [],
       "ExpressionOutputs": [
         {
-          "Id": "4d450cf3-fe44-419c-b052-44ecdd57a93f",
+          "Id": "14f66bdb-67c9-4fd1-b567-e81c9df06739",
           "Name": "Result",
           "Type": "float"
         }
       ],
       "Identifier": "1",
-      "Position": "-1248,24",
+      "Position": "-1260,24",
       "HandleOffsets": {}
     }
   ]
