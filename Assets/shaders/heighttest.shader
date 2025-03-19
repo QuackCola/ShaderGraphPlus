@@ -1,22 +1,20 @@
 
 HEADER
 {
-	Description = "";
+    Description = "";
 }
 
 FEATURES
 {
-	#include "common/features.hlsl"
+    #include "common/features.hlsl"
 
 }
 
 MODES
 {
-	VrForward();
-	Depth(); 
-	ToolsVis( S_MODE_TOOLS_VIS );
-	ToolsWireframe( "vr_tools_wireframe.shader" );
-	ToolsShadingComplexity( "tools_shading_complexity.shader" );
+    Forward();
+    Depth();
+    ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
 
 COMMON
@@ -28,52 +26,53 @@ COMMON
 	#define S_TRANSLUCENT 0
 	#endif
 	
-	#include "common/shared.hlsl"
-	#include "common/gradient.hlsl"
-	#include "procedural.hlsl"
-	
-	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
+    #include "common/shared.hlsl"
+    #include "common/gradient.hlsl"
+    #include "procedural.hlsl"
+    
+    #define S_UV2 1
+    #define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
 {
-	#include "common/vertexinput.hlsl"
-	float4 vColor : COLOR0 < Semantic( Color ); >;
+    #include "common/vertexinput.hlsl"
+    float4 vColor : COLOR0 < Semantic( Color ); >;
 };
 
 struct PixelInput
 {
-	#include "common/pixelinput.hlsl"
-	float3 vPositionOs : TEXCOORD14;
-	float3 vNormalOs : TEXCOORD15;
-	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
-	float4 vColor : COLOR0;
-	float4 vTintColor : COLOR1;
+    #include "common/pixelinput.hlsl"
+    float3 vPositionOs : TEXCOORD14;
+    float3 vNormalOs : TEXCOORD15;
+    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+    float4 vColor : COLOR0;
+    float4 vTintColor : COLOR1;
 };
 
 VS
 {
-	#include "common/vertex.hlsl"
+    #include "common/vertex.hlsl"
 
-	PixelInput MainVs( VertexInput v )
-	{
+    PixelInput MainVs( VertexInput v )
+    {
+		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
 		i.vColor = v.vColor;
-
+		
 		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
 		i.vTintColor = extraShaderData.vTint;
-
+		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
-
 		return FinalizeVertex( i );
-	}
+		
+    }
 }
 
 PS
 {
-	#include "common/pixel.hlsl"
+    #include "common/pixel.hlsl"
 	
 	float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float3 vNormal )
 	{
@@ -96,8 +95,9 @@ PS
 	    return normalize(vNormal - (flStrength * surfGrad));
 	}
 	
-	float4 MainPs( PixelInput i ) : SV_Target0
-	{
+    float4 MainPs( PixelInput i ) : SV_Target0
+    {
+		
 		Material m = Material::Init();
 		m.Albedo = float3( 1, 1, 1 );
 		m.Normal = float3( 0, 0, 1 );
@@ -108,6 +108,7 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
+		
 		
 		float4 l_0 = float4( 1, 1, 1, 1 );
 		float l_1 = VoronoiNoise( i.vTextureCoords.xy, 4, 24 );
@@ -120,19 +121,20 @@ PS
 		m.Metalness = 0;
 		m.AmbientOcclusion = 0;
 		
+		
 		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
 		m.Roughness = saturate( m.Roughness );
 		m.Metalness = saturate( m.Metalness );
 		m.Opacity = saturate( m.Opacity );
-
+		
 		// Result node takes normal as tangent space, convert it to world space now
 		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-
+		
 		// for some toolvis shit
 		m.WorldTangentU = i.vTangentUWs;
 		m.WorldTangentV = i.vTangentVWs;
-        m.TextureCoords = i.vTextureCoords.xy;
-		
+		m.TextureCoords = i.vTextureCoords.xy;
+				
 		return ShadingModelStandard::Shade( i, m );
-	}
+    }
 }
