@@ -1356,11 +1356,11 @@ public sealed partial class GraphCompiler
 
     private string GeneratePixelOutput()
     {
-        Stage = ShaderStage.Pixel;
-
+		Stage = ShaderStage.Pixel;
+		
 		Subgraph = null;
 		SubgraphStack.Clear();
-
+		
 		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
@@ -1370,18 +1370,14 @@ public sealed partial class GraphCompiler
 			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
 			var opacityResult = resultNode.GetOpacityResult( this );
 			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-
-
-        
-
-
-            return $"return float4( {albedo}, {opacity} );";
+		
+		    return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
 		{
 			return ShaderTemplate.Material_output;
 		}
-
+		
 		return null;
     }
 
