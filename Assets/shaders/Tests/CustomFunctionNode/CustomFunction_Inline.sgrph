@@ -1,0 +1,192 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/customfunctionnode/customfunction_inline.sgrph",
+  "Model": "models/dev/plane.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-240,-108",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "Name": "Function0",
+      "Type": "Inline",
+      "Body": "\tOut0 = float4(1,0,0,1);\n\tOut1 =  float4(1,0,1,1);",
+      "Source": null,
+      "ExpressionInputs": [
+        {
+          "Id": "8cbbccf3-f1b2-4d48-9dc7-164c80410a74",
+          "Name": "In0",
+          "Type": "float"
+        },
+        {
+          "Id": "d6e09c3f-2312-415c-bf2e-646325ed4ed7",
+          "Name": "In1",
+          "Type": "Vector2"
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "7361490b-4830-4e5d-a48d-fba87b57f5eb",
+          "Name": "Out0",
+          "Type": "Color"
+        },
+        {
+          "Id": "7ed557f4-ce67-457e-8bbd-9b268dc3066a",
+          "Name": "Out1",
+          "Type": "Color"
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-912,-108",
+      "HandleOffsets": {},
+      "In0": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "In1": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Name": "TestFloat0",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-1140,-108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "3",
+      "Position": "-1140,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Lerp",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Fraction": 0.45001286,
+      "Identifier": "4",
+      "Position": "-468,-108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "C": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "Name": "Function0",
+      "Type": "Inline",
+      "Body": "\tOut0 = float4(1,0,0,1);\n\tOut1 =  float4(1,0,1,1);",
+      "Source": null,
+      "ExpressionInputs": [
+        {
+          "Id": "882541f7-650a-4acc-81a8-60af4d1c9c89",
+          "Name": "In0",
+          "Type": "float"
+        },
+        {
+          "Id": "3a89661e-2036-402a-b26e-4dabebf86f10",
+          "Name": "In1",
+          "Type": "Vector2"
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "497a0593-6acb-4e11-a26a-47c9d7428570",
+          "Name": "Out0",
+          "Type": "Color"
+        },
+        {
+          "Id": "64d0e1b0-cbe5-4daa-8501-b5669ea1b6f9",
+          "Name": "Out1",
+          "Type": "Color"
+        }
+      ],
+      "Identifier": "5",
+      "Position": "-912,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "6",
+      "Position": "-660,-48",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "5",
+        "Output": "Out1",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "7",
+      "Position": "-660,-72",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "Out0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 10,
+      "Worley": false,
+      "Identifier": "8",
+      "Position": "-660,-24",
+      "HandleOffsets": {}
+    }
+  ]
+}

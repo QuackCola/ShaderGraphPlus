@@ -44,13 +44,15 @@ public enum ResultType
 	/// Dosen't return normally. uses `out` instead.
 	/// </summary>
 	Void,
+    Inline,
 }
 
 public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
-	public ResultType ResultType { get; private set; }
+    public string Code2 { get; private set; }
+    public ResultType ResultType { get; private set; }
 	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
@@ -147,7 +149,7 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0, bool isVoidResult = false)
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0, bool isVoidResult = false, string code2 = "" )
 	{
 		ResultType = resulttype;
 		Code = code;
@@ -155,6 +157,7 @@ public struct NodeResult : IValid
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
         IsVoidResult = isVoidResult;
+        Code2 = code2;
     }
 
     public static NodeResult Error( params string[] errors ) => new() { Errors = errors };

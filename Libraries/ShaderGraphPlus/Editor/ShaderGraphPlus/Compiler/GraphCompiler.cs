@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -70,10 +69,24 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Functions { get; private set; } = new ();
 		
 		public HashSet<string> Globals { get; private set; } = new();
-		public Dictionary<string, CustomCodeOutputData> VoidLocals { get; private set; } = new();
 
-		public string RepresentativeTexture { get; set; }
-    }
+		/// <summary>
+		/// A group of Void Locals that belongs to a Custom Function Node
+		/// </summary>
+		public Dictionary<string, CustomCodeOutputData> VoidLocalGroups { get; private set; } = new();
+
+        /// <summary>
+        /// Key = Node Identifier, Value.Item1 == void local ref name, Value.Item2 OutputData
+        /// </summary>
+        public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroupsTest { get; private set; } = new();
+
+        public HashSet<CustomCodeOutputData> VoidLocalGroupsTest0 { get; private set; } = new();
+
+
+        public string RepresentativeTexture { get; set; }
+
+		public int VoidLocalCount { get; set; } = 0;
+	}
 
 	public enum ShaderStage
 	{
@@ -117,7 +130,6 @@ public sealed partial class GraphCompiler
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
         Subgraphs = new();
-
         AddSubgraphs( Graph );
     }
 
@@ -171,84 +183,84 @@ public sealed partial class GraphCompiler
     /// <summary>
     /// Slightly tweaked version of the original. Only used by the Custom Expression node.
     /// </summary>
-    internal string ResultFunctionCustomExpression(string code, string functionName, string args = "", bool includeFile = false)
+    internal string ResultFunctionCustomExpression( BaseNodePlus node, string code, string functionName, string args = "", bool includeFile = false )
     {
-        var result = ShaderResult;
-
-        (string, string) func = (code, functionName);
-
+		var result = ShaderResult;
+		
+		(string, string) func = (code, functionName);
+		
 		if ( !includeFile )
 		{
-			if (!result.Functions.ContainsKey(func.Item2))
+			if ( !result.Functions.ContainsKey( func.Item2 ) )
 			{
-				result.Functions.Add(func.Item2, func.Item1);
+			    //SGPLog.Info($"Adding Func : `{functionName}` ");
+			
+			    result.Functions.Add(func.Item2, func.Item1);
 			}
 			else
 			{
-				result.Functions[func.Item2] = func.Item1;
+			    //SGPLog.Warning( $"Function `{functionName}` already registerd..." );
 			}
 		}
 		else
 		{
 			RegisterGlobal( $"#include \"{code}\"" );
 		}
-
-
+		
 		return $"{func.Item2}({args})";
-
     }
 
-	public void RegisterVoidFunctionResults( Dictionary<string, string> values, out string functionOutputs, out List<CustomCodeOutputData> outputDataList )
+	public void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
 		
-		functionOutputs = "";
 		outputDataList = new List < CustomCodeOutputData >();
+		functionOutputs = new List < string >();
 		
-		foreach ( var value in values )
+		//SGPLog.Info( $" RV : AlreadyEvaluated? = {!result.VoidLocalGroupsTest.Any(x => x.Key == node.Identifier)}");
+		
+		if ( !result.VoidLocalGroupsTest.Any( x => x.Key == node.Identifier ) )
 		{
-			var id = ShaderResult.VoidLocals.Count();
-			
-			var varName = $"vl_{id}";
-			var dataType = value.Value;
-			
-			// Stop it from creating more void locals than we are actually using.
-			foreach ( var i in result.VoidLocals )
+			foreach ( var value in values )
 			{
-				if ( i.Value.FriendlyName == value.Key )
-				{
-			        varName = i.Value.CompilerName;
-					break;
-				}
+				//SGPLog.Info($" RV : Starting to process `{value.Key}`:`{value.Value}`");
+				
+				var varName = $"vl_{result.VoidLocalCount++}";
+				var dataType = value.Value;
+				
+				//SGPLog.Info( $" RV : Created compiler name `{varName}` for freindly name `{value.Key}`" );
+				
+				CustomCodeOutputData outputData = new CustomCodeOutputData();
+				outputData.CompilerName = varName;
+				outputData.FriendlyName = value.Key;
+				outputData.DataType = dataType;
+				outputData.ComponentCount = GetComponentCountFromHLSLDataType(dataType);
+				outputData.ResultType = GetResultTypeFromHLSLDataType(dataType);
+				outputData.NodeId = node.Identifier;
+				
+				
+				//SGPLog.Info( $" RV : Created outputData for `{value.Key}`" );
+				
+				outputDataList.Add( outputData);
+				functionOutputs.Add( outputData.CompilerName );
 			}
 			
-			CustomCodeOutputData outputData = new CustomCodeOutputData();
-			outputData.CompilerName = varName;
-			outputData.FriendlyName = value.Key;
-			outputData.DataType = dataType;
-			outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
-			outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
-
-			outputDataList.Add( outputData );
-			
-			// Check if the VoidLocal Dictionary already contains one that we have processed and if not add the new void local to the list.
-			if ( !result.VoidLocals.ContainsKey( outputData.FriendlyName ) )
+			if ( !result.VoidLocalGroupsTest.ContainsKey(node.Identifier ) )
 			{
-				result.VoidLocals.Add( outputData.FriendlyName, outputData);
+			    //SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
+			    result.VoidLocalGroupsTest.Add(node.Identifier, outputDataList);
+			}
+			else
+			{
+			    //SGPLog.Warning($" RV : NodeID `{node.Identifier}` already exists in Dict... ");
 			}
 		}
-	
-		// Construct function outputs, for example : out float output01, out float2 output02
-		foreach ( var voidLocal in result.VoidLocals )
+		else
 		{
-			var key = voidLocal.Key;
-			
-			sb.Append( key == result.VoidLocals.Keys.Max() ? $"{voidLocal.Value.CompilerName} " : $"{voidLocal.Value.CompilerName}, ");
+			//SGPLog.Warning( $" RV : We have already registerd the outputs for this node..." );
 		}
-		
-		functionOutputs = sb.ToString();
-	}
+    }
 
 	/// <summary>
 	/// Register some generic global parameter for a node to use.
@@ -554,20 +566,20 @@ public sealed partial class GraphCompiler
 					break;
 			}
 		}
-		
+
 		object value = null;
-		
-		
-		if (node is not IRerouteNode && InputStack.Contains(input))
+
+		if ( node is not IRerouteNode && node is not CustomFunctionNode && InputStack.Contains( input ) )
 		{
 			NodeErrors[node] = new List<string> { "Circular reference detected" };
 			return default;
 		}
-		InputStack.Add(input);
+
+		InputStack.Add( input );
 		
-		if (Subgraph is not null && node.Graph != Subgraph)
+		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
-			if (node.Graph != Graph)
+			if ( node.Graph != Graph )
 			{
 				Subgraph = node.Graph as ShaderGraphPlus;
 			}
@@ -580,37 +592,49 @@ public sealed partial class GraphCompiler
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
 			var funcResult = customFunctionNode.GetResult( this );
+			var outputData = new CustomCodeOutputData();
 			
-			CustomCodeOutputData outputDataEntry = new();
-			
-			foreach ( var outputData in customFunctionNode.OutputData )
+			foreach ( var entry in customFunctionNode.OutputData )
 			{
-				if ( outputData.FriendlyName == input.Output )
+
+				if ( entry.FriendlyName == input.Output )
 				{
-			        outputDataEntry = outputData;
-					break;
+				    outputData = entry;
+				    break;
 				}
 			}
 			
 			if ( !customFunctionNode.ExpressionOutputs.Any() )
 			{
-			    //Utilities.EdtiorSound.OhFiddleSticks();
-			
-			    NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
-			
-			    return default;
+				//Utilities.EdtiorSound.OhFiddleSticks();
+				
+				NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
+				
+				return default;
 			}
 			
-			if ( !outputDataEntry.IsValid )
+			if ( !outputData.IsValid )
 			{
 				//Utilities.EdtiorSound.OhFiddleSticks();
-			
-			    NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
-			
-			    return default;
+				
+				NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
+				
+				return default;
 			}
 			
-			var localResult = new NodeResult( outputDataEntry.ResultType, outputDataEntry.CompilerName, voidComponents: outputDataEntry.ComponentCount);
+			// Output Magenta for now while i cleanup the logic.
+			var localResult = new NodeResult(outputData.ResultType, $"{outputData.CompilerName}", voidComponents: outputData.ComponentCount );
+			
+			
+			// return the localResult if we are getting a result from a node that we have already evaluated. 
+			foreach ( var inputResult in ShaderResult.InputResults )
+			{
+				if ( inputResult.Key.Identifier == input.Identifier )
+				{
+				    InputStack.Remove( input );
+				    return localResult;
+				}
+			}
 			
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( ( localResult, funcResult ) );
@@ -1554,107 +1578,110 @@ public sealed partial class GraphCompiler
 	private string GenerateLocals()
 	{
 		var sb = new StringBuilder();
-
+		
 		if ( ShaderResult.Results.Any() )
 		{
 			sb.AppendLine();
 		}
-        
+		
 		if ( Debug )
 		{
-            if ( IsPreview )
-            {
-                Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
-            }
-            else
-            {
-                Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
-            }
-        }
-     
-        foreach (var gradient in ShaderResult.Gradients)
-        {
-            //Log.Info($"Found Gradient : {gradient.Key}");
-            //Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
-    
-            sb.AppendLine($"Gradient {gradient.Key} = Gradient::Init();");
-            sb.AppendLine();
-  
-            var colorindex = 0;
-            var alphaindex = 0;
-
-            sb.AppendLine($"{gradient.Key}.colorsLength = {gradient.Value.Colors.Count};");
-            sb.AppendLine($"{gradient.Key}.alphasLength = {gradient.Value.Alphas.Count};");
-
-            foreach (var color in gradient.Value.Colors)
-        	{
+		    if ( IsPreview )
+		    {
+		        Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
+		    }
+		    else
+		    {
+		        Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
+		    }
+		}
+		
+		foreach (var gradient in ShaderResult.Gradients)
+		{
+		    //Log.Info($"Found Gradient : {gradient.Key}");
+		    //Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
+		
+		    sb.AppendLine($"Gradient {gradient.Key} = Gradient::Init();");
+		    sb.AppendLine();
+		
+		    var colorindex = 0;
+		    var alphaindex = 0;
+		
+		    sb.AppendLine($"{gradient.Key}.colorsLength = {gradient.Value.Colors.Count};");
+		    sb.AppendLine($"{gradient.Key}.alphasLength = {gradient.Value.Alphas.Count};");
+		
+		    foreach (var color in gradient.Value.Colors)
+			{
 				if ( Debug )
 				{
 					Log.Info($"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}");
 				}
-
+		
 				// All good with time as the 4th component?
-                sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );");
-            }
-        
-            foreach ( var alpha in gradient.Value.Alphas )
-            {
-                sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );");
-            }
-
-            sb.AppendLine();
-        
-        }
-
-		foreach ( var voidLocal in ShaderResult.VoidLocals )
+		        sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );");
+		    }
+		
+		    foreach ( var alpha in gradient.Value.Alphas )
+		    {
+		        sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );");
+		    }
+		
+		    sb.AppendLine();
+		
+		}
+		
+		foreach ( var voidLocal in ShaderResult.VoidLocalGroupsTest )
 		{
-
-			var initialValue = "";
-
-
-            if (voidLocal.Value.DataType == "bool")
-            {
-                initialValue = "false";
-            }
-            else if (voidLocal.Value.DataType == "int")
-            {
-                initialValue = "0";
-            }
-            else if (voidLocal.Value.DataType == "float")
+			sb.AppendLine();
+			
+			foreach ( var data in voidLocal.Value )
 			{
-				initialValue = "0.0f";
-            }
-            else if (voidLocal.Value.DataType == "float2")
-            {
-                initialValue = "float2(0.0f,0.0f)";
-            }
-            else if (voidLocal.Value.DataType == "float3")
-            {
-                initialValue = "float3(0.0f,0.0f,0.0f)";
-            }
-            else if (voidLocal.Value.DataType == "float4")
-            {
-                initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
-            }
-
-            sb.AppendLine($"{voidLocal.Value.DataType} {voidLocal.Value.CompilerName} = {initialValue};");
-        }
-
-        sb.AppendLine();
-
-        string TrueIndex = "0";
-
-        if ( IsPreview )
+				var initialValue = "";
+				
+				if (data.DataType == "bool")
+				{
+				    initialValue = "false";
+				}
+				else if (data.DataType == "int")
+				{
+				    initialValue = "0";
+				}
+				else if (data.DataType == "float")
+				{
+				    initialValue = "0.0f";
+				}
+				else if (data.DataType == "float2")
+				{
+				    initialValue = "float2(0.0f,0.0f)";
+				}
+				else if (data.DataType == "float3")
+				{
+				    initialValue = "float3(0.0f,0.0f,0.0f)";
+				}
+				else if (data.DataType == "float4")
+				{
+				    initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
+				}
+				
+				sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
+			}
+		}
+		
+		sb.AppendLine();
+		
+		string TrueIndex = "0";
+		
+		if ( IsPreview )
 		{
 			int localId = 1;
-
-            foreach (var result in ShaderResult.Results)
+			
+			foreach (var result in ShaderResult.Results)
 			{
-                if (result.Item2.ResultType is ResultType.TextureObject)
+				if (result.Item2.ResultType is ResultType.TextureObject)
 				{
 					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
 					sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );");
-                }
+				}
 				else if (result.Item2.ResultType is ResultType.Float2x2)
 				{
 					sb.AppendLine($"float2x2 {result.Item1} = float2x2({result.Item2.Code});");
@@ -1668,28 +1695,32 @@ public sealed partial class GraphCompiler
 					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
 				}
 				else
-                {
-                    if ( result.Item2.ResultType is ResultType.Void )
+				{
+					if ( result.Item2.ResultType is ResultType.Void )
 					{
-                        sb.AppendLine( $"{result.Item2.Code};" );
-                    }
+						sb.AppendLine();
+		
+		                sb.AppendLine( $"{result.Item2.Code}" );
+		
+		                sb.AppendLine();
+					}
 					else
 					{
-                        sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-                        sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};" );
-                    }
-                }
-
-                foreach ( var feature in ShaderResult.ShaderFeatures )
-                {
-                    if ( result.Item1.Code == feature.Value.Item1.TrueResult )
-                    {
+					    sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
+					    sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};" );
+					}
+				}
+				
+				foreach ( var feature in ShaderResult.ShaderFeatures )
+				{
+					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
+					{
 						TrueIndex = feature.Value.Item2 ? "0" : "1";
-                        sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
-                    }
-                }
-            }
-        }
+					    sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
+					}
+				}
+			}
+		}
 		else
 		{
 			foreach ( var result in ShaderResult.Results )
@@ -1697,7 +1728,7 @@ public sealed partial class GraphCompiler
 				if ( result.Item2.ResultType is ResultType.TextureObject )
 				{
 					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-                }
+				}
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
 					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
@@ -1714,30 +1745,32 @@ public sealed partial class GraphCompiler
 					//Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
 				}
 				else
-                {
-                    if ( result.Item2.ResultType is ResultType.Void )
-                    {
-					
-                        sb.AppendLine($"{result.Item2.Code};");
-                    }
-                    else
-                    {
-                        sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-                    }
-                }
-
-                foreach ( var feature in ShaderResult.ShaderFeatures )
-                {
-                    if ( result.Item1.Code == feature.Value.Item1.TrueResult )
-                    {
-                        sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
-                    }
-                }
-
-            }
+				{
+					if ( result.Item2.ResultType is ResultType.Void )
+					{
+						sb.AppendLine();
+		
+		                sb.AppendLine( $"{result.Item2.Code}" );
+		
+		                sb.AppendLine();
+					}
+					else
+					{
+						sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
+					}
+				}
+				
+				foreach ( var feature in ShaderResult.ShaderFeatures )
+				{
+					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
+					{
+					    sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
+					}
+				}
+			}
 		}
-
-        return sb.ToString();
+		
+		return sb.ToString();
 	}
 
 	private string GenerateMaterial()
@@ -1869,7 +1902,7 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 				
 				sb.AppendLine();
 
-				foreach (var voidLocal in ShaderResult.VoidLocals)
+				foreach (var voidLocal in ShaderResult.VoidLocalGroups)
 				{
 					
 					var initialValue = "";
