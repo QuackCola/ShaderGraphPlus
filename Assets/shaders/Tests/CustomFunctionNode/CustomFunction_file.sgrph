@@ -53,24 +53,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "9d080bdf-d01a-45d2-91fd-7cd3c32fc68f",
+          "Id": "905bdbf5-8ad8-4dca-8d09-99a6cc1b95b5",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "c5add037-9fdc-46b4-94e3-6c2f3dfa1396",
+          "Id": "fb4162fd-4bf1-4867-98a7-ed32899aae4e",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "eeaa54ce-3423-493e-81a7-1d3f8ffc2b31",
+          "Id": "51faead5-8b89-46ae-8a21-7f0a02f86ad5",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "bd9c1d67-dfad-4650-82a0-9c59c049465a",
+          "Id": "b635115b-194d-48af-8cbc-09e96a147fcf",
           "Name": "Out1",
           "Type": "Color"
         }
@@ -141,24 +141,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "d5463c5c-61c9-4f09-97a1-b15da5c7fd5f",
+          "Id": "5d3dc0be-48f6-4f0c-8d30-28624bbffcc2",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "5296229e-2185-46e4-99b8-f23b05da8a97",
+          "Id": "af9d4ab4-e5a1-4c8f-9564-9320c23c950f",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "29bfe7c9-33f8-4c24-8e33-92cc5ce0ffb5",
+          "Id": "0e6689aa-0f73-4d56-984d-c3abef71ff81",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "d7a6602f-e0e5-4063-9020-da53cc13106e",
+          "Id": "271dda7a-58d2-4e88-b2f6-89de45dc9bf6",
           "Name": "Out1",
           "Type": "Color"
         }
@@ -169,8 +169,8 @@
     },
     {
       "_class": "VoronoiNoise",
-      "AngleOffset": 3.1415925,
-      "CellDensity": 10,
+      "AngleOffset": 3.4754598,
+      "CellDensity": 30.780893,
       "Worley": false,
       "Identifier": "7",
       "Position": "-660,48",
@@ -192,7 +192,7 @@
       "_class": "ReroutePlus",
       "Comment": null,
       "Identifier": "9",
-      "Position": "-660,0",
+      "Position": "-660,-0",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "2",
