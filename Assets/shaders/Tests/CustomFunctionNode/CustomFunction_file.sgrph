@@ -53,24 +53,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "905bdbf5-8ad8-4dca-8d09-99a6cc1b95b5",
+          "Id": "9b7e23f0-4877-43d4-ae84-e1b881174ea2",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "fb4162fd-4bf1-4867-98a7-ed32899aae4e",
+          "Id": "07e98697-341a-401c-ae9c-1fb662c111e5",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "51faead5-8b89-46ae-8a21-7f0a02f86ad5",
+          "Id": "0d812391-1869-4c9b-a663-ec7444dae26d",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "b635115b-194d-48af-8cbc-09e96a147fcf",
+          "Id": "a07d7794-c99a-4157-a29b-04297d5a87ef",
           "Name": "Out1",
           "Type": "Color"
         }
@@ -141,24 +141,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "5d3dc0be-48f6-4f0c-8d30-28624bbffcc2",
+          "Id": "c2922490-7e69-455f-8f55-d7bc5643b1ea",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "af9d4ab4-e5a1-4c8f-9564-9320c23c950f",
+          "Id": "25a7b3f4-5b51-4a4e-90bf-f22663de09f2",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "0e6689aa-0f73-4d56-984d-c3abef71ff81",
+          "Id": "800cfecd-1b16-426b-a29a-252505c08d01",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "271dda7a-58d2-4e88-b2f6-89de45dc9bf6",
+          "Id": "fb123873-4fe2-4ddc-95d8-682b22e41b20",
           "Name": "Out1",
           "Type": "Color"
         }
@@ -192,7 +192,7 @@
       "_class": "ReroutePlus",
       "Comment": null,
       "Identifier": "9",
-      "Position": "-660,-0",
+      "Position": "-660,0",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "2",

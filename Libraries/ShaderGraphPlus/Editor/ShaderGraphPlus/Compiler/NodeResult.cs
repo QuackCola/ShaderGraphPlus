@@ -40,11 +40,7 @@ public enum ResultType
 	TextureObject,
 	String,
 	Gradient,
-	/// <summary>
-	/// Dosen't return normally. uses `out` instead.
-	/// </summary>
 	Void,
-    Inline,
 }
 
 public struct NodeResult : IValid
