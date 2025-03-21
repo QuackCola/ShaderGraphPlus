@@ -164,7 +164,6 @@ public struct NodeResult : IValid
 
         if ( ResultType is ResultType.Void )
 		{
-			//Log.Info($"Result has `{VoidComponents}` void components");
             if ( VoidComponents == components )
                 return Code;
 
@@ -174,34 +173,31 @@ public struct NodeResult : IValid
             }
             else if ( VoidComponents == 1 )
             {
-                return $"float{components}( {string.Join(", ", Enumerable.Repeat(Code, components))} )";
+                return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
             }
             else
             {
-                return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - VoidComponents))} )";
+                return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - VoidComponents ) )} )";
             }
-
-
         }
         else
 		{
-            if (Components() == components)
+            if ( Components() == components )
                 return Code;
 
-            if (Components() > components)
+            if ( Components() > components )
             {
                 return $"{Code}.{"xyzw"[..components]}";
             }
-            else if (Components() == 1)
+            else if ( Components() == 1 )
             {
-                return $"float{components}( {string.Join(", ", Enumerable.Repeat(Code, components))} )";
+                return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
             }
             else
             {
                 return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - Components()))} )";
             }
         }
-
 	}
 
 	/// <summary>
@@ -211,12 +207,7 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
         int components = 0;
-        //if ( ResultType is ResultType.Void )
-        //{
-        //	return VoidComponents;
-        //}
-        //else
-        //{
+
         switch ( ResultType )
         {
             //case ResultType.Int:
@@ -249,7 +240,6 @@ public struct NodeResult : IValid
         }
         
         return components;        
-        //}
     }
 
 	public override readonly string ToString()
