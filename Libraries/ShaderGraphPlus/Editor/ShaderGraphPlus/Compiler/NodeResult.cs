@@ -47,7 +47,6 @@ public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
-    public string Code2 { get; private set; }
     public ResultType ResultType { get; private set; }
 	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
@@ -55,8 +54,6 @@ public struct NodeResult : IValid
 	public bool IsComponentLess { get; set; }
 	public bool IsDepreciated { get; private set; }
     public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
-
-    public bool IsVoidResult { get; private set; }
 	public int VoidComponents { get; private set; }
 
     public readonly string TypeName
@@ -145,15 +142,13 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0, bool isVoidResult = false, string code2 = "" )
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-        IsVoidResult = isVoidResult;
-        Code2 = code2;
     }
 
     public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
