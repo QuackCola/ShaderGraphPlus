@@ -83,11 +83,11 @@ PS
 
 		
 		
-		float4 vl_0 = float4(0.0f,0.0f,0.0f,0.0f);
-		float4 vl_1 = float4(0.0f,0.0f,0.0f,0.0f);
+		float4 vl_0 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+		float4 vl_1 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 		
-		float4 vl_2 = float4(0.0f,0.0f,0.0f,0.0f);
-		float4 vl_3 = float4(0.0f,0.0f,0.0f,0.0f);
+		float4 vl_2 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+		float4 vl_3 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 		
 		float l_0 = g_flTestFloat;
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
@@ -97,7 +97,7 @@ PS
 		
 		Function0( 0, 0, vl_2, vl_3 );
 		
-		float l_4 = VoronoiNoise( i.vTextureCoords.xy, 3.1415925, 10 );
+		float l_4 = VoronoiNoise( i.vTextureCoords.xy, 3.4754598, 30.780893 );
 		float4 l_5 = lerp( vl_0, vl_3, l_4 );
 		
 

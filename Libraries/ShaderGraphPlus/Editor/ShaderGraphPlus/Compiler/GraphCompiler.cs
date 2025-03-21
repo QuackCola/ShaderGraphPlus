@@ -70,22 +70,12 @@ public sealed partial class GraphCompiler
 		
 		public HashSet<string> Globals { get; private set; } = new();
 
-		/// <summary>
-		/// A group of Void Locals that belongs to a Custom Function Node
-		/// </summary>
-		public Dictionary<string, CustomCodeOutputData> VoidLocalGroups { get; private set; } = new();
-
-        /// <summary>
-        /// Key = Node Identifier, Value.Item1 == void local ref name, Value.Item2 OutputData
+        /// A group of Void Locals that belongs to a Custom Function Node
         /// </summary>
-        public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroupsTest { get; private set; } = new();
-
-        public HashSet<CustomCodeOutputData> VoidLocalGroupsTest0 { get; private set; } = new();
-
+        public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
+        public int VoidLocalCount { get; set; } = 0;
 
         public string RepresentativeTexture { get; set; }
-
-		public int VoidLocalCount { get; set; } = 0;
 	}
 
 	public enum ShaderStage
@@ -220,7 +210,7 @@ public sealed partial class GraphCompiler
 		
 		//SGPLog.Info( $" RV : AlreadyEvaluated? = {!result.VoidLocalGroupsTest.Any(x => x.Key == node.Identifier)}");
 		
-		if ( !result.VoidLocalGroupsTest.Any( x => x.Key == node.Identifier ) )
+		if ( !result.VoidLocalGroups.Any( x => x.Key == node.Identifier ) )
 		{
 			foreach ( var value in values )
 			{
@@ -235,21 +225,21 @@ public sealed partial class GraphCompiler
 				outputData.CompilerName = varName;
 				outputData.FriendlyName = value.Key;
 				outputData.DataType = dataType;
-				outputData.ComponentCount = GetComponentCountFromHLSLDataType(dataType);
-				outputData.ResultType = GetResultTypeFromHLSLDataType(dataType);
+				outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
+				outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
 				outputData.NodeId = node.Identifier;
 				
 				
 				//SGPLog.Info( $" RV : Created outputData for `{value.Key}`" );
 				
-				outputDataList.Add( outputData);
+				outputDataList.Add( outputData );
 				functionOutputs.Add( outputData.CompilerName );
 			}
 			
-			if ( !result.VoidLocalGroupsTest.ContainsKey(node.Identifier ) )
+			if ( !result.VoidLocalGroups.ContainsKey( node.Identifier ) )
 			{
 			    //SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
-			    result.VoidLocalGroupsTest.Add(node.Identifier, outputDataList);
+			    result.VoidLocalGroups.Add(node.Identifier, outputDataList);
 			}
 			else
 			{
@@ -1630,7 +1620,7 @@ public sealed partial class GraphCompiler
 		
 		}
 		
-		foreach ( var voidLocal in ShaderResult.VoidLocalGroupsTest )
+		foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
 		{
 			sb.AppendLine();
 			
@@ -1638,29 +1628,29 @@ public sealed partial class GraphCompiler
 			{
 				var initialValue = "";
 				
-				if (data.DataType == "bool")
+				if ( data.DataType == "bool" )
 				{
 				    initialValue = "false";
 				}
-				else if (data.DataType == "int")
+				else if ( data.DataType == "int" )
 				{
 				    initialValue = "0";
 				}
-				else if (data.DataType == "float")
+				else if ( data.DataType == "float" )
 				{
 				    initialValue = "0.0f";
 				}
-				else if (data.DataType == "float2")
+				else if ( data.DataType == "float2" )
 				{
-				    initialValue = "float2(0.0f,0.0f)";
+				    initialValue = "float2( 0.0f, 0.0f )";
 				}
-				else if (data.DataType == "float3")
+				else if ( data.DataType == "float3" )
 				{
-				    initialValue = "float3(0.0f,0.0f,0.0f)";
+				    initialValue = "float3( 0.0f, 0.0f, 0.0f )";
 				}
-				else if (data.DataType == "float4")
+				else if ( data.DataType == "float4" )
 				{
-				    initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
+				    initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
 				}
 				
 				sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
@@ -1901,42 +1891,44 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 				//var componentCount = GetComponentCount( inputAttribute.Type );
 				
 				sb.AppendLine();
-
-				foreach (var voidLocal in ShaderResult.VoidLocalGroups)
+				
+				foreach ( var group in ShaderResult.VoidLocalGroups )
 				{
+					sb.AppendLine();
 					
-					var initialValue = "";
-					
-					
-					if (voidLocal.Value.DataType == "bool")
+					foreach ( var data in group.Value )
 					{
-					    initialValue = "false";
+						var initialValue = "";
+						
+						if ( data.DataType == "bool" )
+						{
+						    initialValue = "false";
+						}
+						else if ( data.DataType == "int" )
+						{
+						    initialValue = "0";
+						}
+						else if ( data.DataType == "float" )
+						{
+						    initialValue = "0.0f";
+						}
+						else if ( data.DataType == "float2" )
+						{
+						    initialValue = "float2( 0.0f, 0.0f )";
+						}
+						else if ( data.DataType == "float3" )
+						{
+						    initialValue = "float3( 0.0f, 0.0f, 0.0f )";
+						}
+						else if ( data.DataType == "float4" )
+						{
+						    initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+						}
+						
+						sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
 					}
-					else if (voidLocal.Value.DataType == "int")
-					{
-					    initialValue = "0";
-					}
-					else if (voidLocal.Value.DataType == "float")
-					{
-					    initialValue = "0.0f";
-					}
-					else if (voidLocal.Value.DataType == "float2")
-					{
-					    initialValue = "float2(0.0f,0.0f)";
-					}
-					else if (voidLocal.Value.DataType == "float3")
-					{
-					    initialValue = "float3(0.0f,0.0f,0.0f)";
-					}
-					else if (voidLocal.Value.DataType == "float4")
-					{
-					    initialValue = "float4(0.0f,0.0f,0.0f,0.0f)";
-					}
-					
-					sb.AppendLine($"{voidLocal.Value.DataType} {voidLocal.Value.CompilerName} = {initialValue};");
 				}
-
-
+				
 				foreach ( var local in ShaderResult.Results)
 				{
 					if ( local.Item2.ResultType is ResultType.Void )
@@ -1948,7 +1940,7 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 					    sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
 					}
 				}
-
+				
 				sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
 				sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
             }

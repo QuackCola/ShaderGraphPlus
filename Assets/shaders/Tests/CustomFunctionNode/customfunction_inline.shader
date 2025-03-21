@@ -81,11 +81,11 @@ PS
 
 		
 		
-		float4 vl_0 = float4(0.0f,0.0f,0.0f,0.0f);
-		float4 vl_1 = float4(0.0f,0.0f,0.0f,0.0f);
+		float4 vl_0 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+		float4 vl_1 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 		
-		float4 vl_2 = float4(0.0f,0.0f,0.0f,0.0f);
-		float4 vl_3 = float4(0.0f,0.0f,0.0f,0.0f);
+		float4 vl_2 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+		float4 vl_3 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 		
 		float l_0 = g_flTestFloat;
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
