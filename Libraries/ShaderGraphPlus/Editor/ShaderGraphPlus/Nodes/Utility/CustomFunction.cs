@@ -5,12 +5,18 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Container for HLSL code.
 /// </summary>
-[Title( "Custom Function" ), Category( "Utility" )]
+[Title( "Custom Function" ), Category( "Utility" ), Icon( "code" )]
 public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 {
     public enum CustomCodeNodeMode
     {
-        String,
+        /// <summary>
+        /// Inlines the code within body, into the generated shader.
+        /// </summary>
+        Inline,
+        /// <summary>
+        /// Retrive the function from an external hlsl include file.
+        /// </summary>
         File,
     }
 
@@ -21,14 +27,14 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     
     public string Name { get; set; }
     
-    public CustomCodeNodeMode Type { get; set; } = CustomCodeNodeMode.String;
+    public CustomCodeNodeMode Type { get; set; } = CustomCodeNodeMode.Inline;
     
     
     [TextArea]
     [HideIf( nameof( Type ), CustomCodeNodeMode.File )]
     public string Body { get; set; }
     
-    [HideIf( nameof( Type ), CustomCodeNodeMode.String )]
+    [HideIf( nameof( Type ), CustomCodeNodeMode.Inline )]
     [HLSLAssetPath]
     public string Source { get; set; }
     
@@ -55,10 +61,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     
     [Hide, JsonIgnore]
     int _lastHashCodeOutputs = 0;
-    
-    [Hide, JsonIgnore]
-    public Dictionary<string, string> _OutputMappings { get; set; } = new();
-    
+
     [Hide, JsonIgnore]
     public List<CustomCodeOutputData> OutputData { get; set; } = new();
     
@@ -70,37 +73,75 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         Update();
     }
 
-    public NodeResult GetResult( GraphCompiler compiler)
+    [Hide, JsonIgnore]
+    public string id2;
+
+
+    public NodeResult GetResult( GraphCompiler compiler )
     {
-        if ( !string.IsNullOrWhiteSpace( Name ) )
+        if ( Type is CustomCodeNodeMode.File )
         {
-            var functionInputs = GetInputResults(compiler);
-            
-            compiler.RegisterVoidFunctionResults( GetFunctionVoidLocals(), out string functionOutputs, out List<CustomCodeOutputData> outputData );
-            OutputData = outputData;
-            
-            if ( Type is CustomCodeNodeMode.File )
+            compiler.RegisterVoidFunctionResults(this, GetFunctionVoidLocals(), out List<CustomCodeOutputData> outputData, out List<string> functionOutputs);
+
+            var sb = new StringBuilder();
+
+            // Construct function outputs, for example : out float output01, out float2 output02
+            foreach ( var voidLocal in functionOutputs)
             {
-                return new( ResultType.Void, compiler.ResultFunctionCustomExpression( $"{Source}", Name, args: $" {functionInputs}{( ExpressionInputs.Any() ? "," : "" )}{functionOutputs}", true ), voidComponents: 0 );
+                sb.Append( voidLocal == functionOutputs.Max() ? $"{voidLocal} " : $" {voidLocal}, ");
+            }
+
+            if ( !OutputData.Any() )
+            {
+                OutputData = outputData;
             }
             else
             {
-                var sb = new StringBuilder();
-                
-                sb.AppendLine();
-                sb.AppendLine( $"void {Name}({ConstructFunctionInputs()}{( ExpressionInputs.Any() ? "," : "" )}{ConstructFunctionOutputs()})" );
-                sb.AppendLine( "{" );
-                sb.AppendLine( GraphCompiler.IndentString( Body, 1 ) );
-                sb.AppendLine( "}" );
-                sb.AppendLine();
-                
-                return new( ResultType.Void, compiler.ResultFunctionCustomExpression( sb.ToString(), Name, args: $" {functionInputs}{( ExpressionInputs.Any() ? "," : "" )}{functionOutputs}" ), voidComponents: 0 );
+                //SGPLog.Warning( "Output Data was already generated!" );
             }
+
+            var functionInputs = GetInputResults(compiler);
+            var funcCall = compiler.ResultFunctionCustomExpression(this, $"{Source}", Name, args: $" {functionInputs}{(ExpressionInputs.Any() ? "," : "")}{sb.ToString()}", true) + ";";
+
+            return new NodeResult( ResultType.Void, $"{funcCall}", voidComponents: 0 );
         }
-        else
+        else if ( Type is CustomCodeNodeMode.Inline )
         {
-            return default;
+            compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out List<CustomCodeOutputData> outputData, out List<string> functionOutputs, true );
+            
+            if ( !OutputData.Any() )
+            {
+                OutputData = outputData;
+            }
+            else
+            {
+                //SGPLog.Warning( "Output Data was already generated!" );
+            }
+            
+            var sb = new StringBuilder();
+            var inputs = GetInputResultsInline( compiler );
+            
+            sb.AppendLine( "{" );
+            sb.AppendLine( Body );
+            sb.AppendLine( "};" );
+            
+            // Relpace the user defined input names with the compiler assigned names.
+            foreach ( var inp in inputs )
+            {
+                sb.Replace( inp.Item1, inp.Item2 );
+            }
+            
+            // Relpace the user defined output names with the compiler assigned names.
+            foreach ( var data in OutputData )
+            {
+                sb.Replace( data.FriendlyName, data.CompilerName );
+            }
+            
+            return new( ResultType.Void, sb.ToString(), voidComponents: 0 );
         }
+
+
+        return default(NodeResult);
     }
 
     /// <summary>
@@ -147,6 +188,45 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         }
         
         return sb.ToString();
+    }
+
+    private List<(string, string)> GetInputResultsInline( GraphCompiler compiler )
+    {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        List<(string, string)> inputResults = new List<(string,string)>();
+        
+        foreach ( IPlugIn input in Inputs )
+        {
+            if ( compiler.IsNotPreview )
+            {
+                if ( compiler.Debug )
+                {
+                    Log.Info( $"Evaluating Input `{input.DisplayInfo.Name}` from `{input.ConnectedOutput}`" );
+                }
+            }
+            
+            NodeResult result = new NodeResult();
+            
+            if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
+            {
+                result = new NodeResult( ResultType.Float, $"0", constant: true );
+            }
+            else
+            {
+                NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+            
+                result = compiler.Result( nodeInput );
+            }
+            
+            //Log.Info($" Result : {result.Code}");
+            
+            inputResults.Add( ( input.DisplayInfo.Name, result.Code )  );
+            
+            index++;
+        }
+        
+        return inputResults;
     }
 
     internal string ConstructFunctionInputs()
@@ -363,6 +443,7 @@ public struct CustomCodeOutputData : IValid
     public string DataType { get; set; }
     public int ComponentCount { get; set; }
     public ResultType ResultType { get; set; }
+    public string NodeId { get; set; }
 
     public readonly bool IsValid => !string.IsNullOrWhiteSpace( FriendlyName );
 
