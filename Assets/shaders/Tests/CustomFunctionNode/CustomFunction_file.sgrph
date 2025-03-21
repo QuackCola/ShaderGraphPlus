@@ -53,24 +53,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "9b7e23f0-4877-43d4-ae84-e1b881174ea2",
+          "Id": "66c7f418-5387-47ce-8ffc-b034dba9b8c2",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "07e98697-341a-401c-ae9c-1fb662c111e5",
+          "Id": "985acc47-d98e-4c68-8075-15c13fb756e0",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "0d812391-1869-4c9b-a663-ec7444dae26d",
+          "Id": "cb700f66-0c6b-4a9f-9c03-bd0a635e9d76",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "a07d7794-c99a-4157-a29b-04297d5a87ef",
+          "Id": "2cf557c3-d05e-4a03-a472-a91384216d56",
           "Name": "Out1",
           "Type": "Color"
         }
@@ -141,24 +141,24 @@
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "c2922490-7e69-455f-8f55-d7bc5643b1ea",
+          "Id": "11d83f13-41d3-440e-a833-fba9f0373caa",
           "Name": "In0",
           "Type": "float"
         },
         {
-          "Id": "25a7b3f4-5b51-4a4e-90bf-f22663de09f2",
+          "Id": "a42630ac-1c45-4dcf-9771-065d84d447a2",
           "Name": "In1",
           "Type": "Vector2"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "800cfecd-1b16-426b-a29a-252505c08d01",
+          "Id": "b268ac84-2249-4da5-8236-b8893a927c62",
           "Name": "Out0",
           "Type": "Color"
         },
         {
-          "Id": "fb123873-4fe2-4ddc-95d8-682b22e41b20",
+          "Id": "0e4d79c2-611a-45e2-a4fb-677f57abac04",
           "Name": "Out1",
           "Type": "Color"
         }
