@@ -68,7 +68,7 @@ public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 /// <summary>
 /// Bool value for use in the material editor.
 /// </summary>
-[Title( "Bool" ), Category( "Constants" )]
+[Title( "Bool" ), Category( "Constants" ), Icon( "check_box" )]
 public sealed class Bool : ParameterNode<bool>
 {
 	[Output( typeof( bool ) ), Title( "Value" )]

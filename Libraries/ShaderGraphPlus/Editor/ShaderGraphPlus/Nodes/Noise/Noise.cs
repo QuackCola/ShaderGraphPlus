@@ -33,7 +33,7 @@ public abstract class NoiseNode : ShaderNodePlus
 /// <summary>
 /// Fuzzy noise is identical to the noise of TV static
 /// </summary>
-[Title( "Fuzzy Noise" ), Category( "Noise" )]
+[Title( "Fuzzy Noise" ), Category( "Noise" ), Icon( "blur_on" )]
 public sealed class FuzzyNoise : NoiseNode
 {
 	protected override string Func => "FuzzyNoise";
@@ -44,7 +44,7 @@ public sealed class FuzzyNoise : NoiseNode
 /// random values on a grid. It typically is used to create patchy
 /// areas
 /// </summary>
-[Title( "Value Noise" ), Category( "Noise" )]
+[Title( "Value Noise" ), Category( "Noise" ), Icon( "dashboard" )]
 public sealed class ValueNoise : NoiseNode
 {
 	protected override string Func => "ValueNoise";
@@ -54,7 +54,7 @@ public sealed class ValueNoise : NoiseNode
 /// Simplex noise is a type of noise that generates smooth and natural looking patterns.
 /// This is an improvement to Perlin Noise and is typically used for textures and terrains.
 /// </summary>
-[Title( "Simplex Noise" ), Category( "Noise" )]
+[Title( "Simplex Noise" ), Category( "Noise" ), Icon( "waves" )]
 public sealed class SimplexNoise : NoiseNode
 {
 	protected override string Func => "Simplex2D";
@@ -64,7 +64,7 @@ public sealed class SimplexNoise : NoiseNode
 /// Voronoi noise generates a collection of cells or cracks.
 /// This node can also be used to generate Worley noise, a type of noise which looks more cloud like.
 /// </summary>
-[Title( "Voronoi Noise" ), Category( "Noise" )]
+[Title( "Voronoi Noise" ), Category( "Noise" ), Icon( "ssid_chart" )]
 public sealed class VoronoiNoise : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]

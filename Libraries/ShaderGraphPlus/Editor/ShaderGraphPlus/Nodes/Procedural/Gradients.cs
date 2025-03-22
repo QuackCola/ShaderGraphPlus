@@ -8,7 +8,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Basic round gradient.
 /// </summary>
-[Title( "Round Gradient" ), Category( "Procedural/Gradients" )]
+[Title( "Round Gradient" ), Category( "Procedural/Gradients" ), Icon( "gradient" )]
 public sealed class RoundGradientNode : ShaderNodePlus
 {
 

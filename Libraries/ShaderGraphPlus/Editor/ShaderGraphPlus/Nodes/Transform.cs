@@ -27,7 +27,7 @@ public enum BlendNodeMode
 /// <summary>
 /// Normalize a vector to have a length of 1 unit
 /// </summary>
-[Title( "Normalize" ), Category( "Transform" )]
+[Title( "Normalize" ), Category( "Transform" ), Icon( "arrow_forward" )]
 public sealed class Normalize : Unary
 {
 	protected override string Op => "normalize";
@@ -46,7 +46,7 @@ public enum OutputNormalSpace
 	World
 }
 
-[Title( "Invert Colors" ), Category( "Transform" )]
+[Title( "Invert Colors" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class InvertColorsNode : ShaderNodePlus
 {
 
@@ -76,7 +76,7 @@ float3 InvertColors(float3 vInput )
 /// <summary>
 /// Transforms a normal from tangent or object space into world space
 /// </summary>
-[Title( "Transform Normal" ), Category( "Transform" )]
+[Title( "Transform Normal" ), Category( "Transform" ), Icon( "shortcut" )]
 public sealed class TransformNormal : ShaderNodePlus
 {
 	[Hide]
@@ -165,7 +165,7 @@ float3 Vec3OsToTs( float3 vVectorOs, float3 vNormalOs, float3 vTangentUOs, float
 /// <summary>
 /// Translate, rotate and scale a <see cref="Vector3"/>.
 /// </summary>
-[Title( "Apply TRS" ), Category( "Transform" )]
+[Title( "Apply TRS" ), Category( "Transform" ), Icon( "3d_rotation" )]
 public sealed class ApplyTrs : ShaderNodePlus
 {
 
@@ -359,7 +359,7 @@ float4x4 Matrix_FromTranslation( float3 vTranslation )
 /// <summary>
 /// Convert from Cartesian coordinates to polar coordinates.
 /// </summary>
-[Title( "Polar Coordinates" ), Category( "Transform" )]
+[Title( "Polar Coordinates" ), Category( "Transform" ), Icon( "explore" )]
 public sealed class PolarCoordinates : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]
@@ -828,7 +828,7 @@ float4 Divide_blend( float4 a, float4 b, bool blendAlpha = false )
 	};
 }
 
-[Title( "RGB to HSV" ), Category( "Transform" )]
+[Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class RGBtoHSV : ShaderNodePlus
 {
 
@@ -857,7 +857,7 @@ float3 RGB2HSV( float3 c )
 	};
 }
 
-[Title( "HSV to RGB" ), Category( "Transform" )]
+[Title( "HSV to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoRGB : ShaderNodePlus
 {
 	public static string HSV2RGB => @"
@@ -881,7 +881,7 @@ float3 HSV2RGB( float3 c )
 	};
 }
 
-[Title("RGB to Linear"), Category("Transform")]
+[Title("RGB to Linear"), Category("Transform"), Icon( "invert_colors" )]
 public sealed class RGBtoLinear : ShaderNodePlus
 {
 
@@ -895,11 +895,11 @@ float3 RGB2Linear( float3 c )
 }
 ";
 
-    [Input(typeof(Vector3))]
+    [Input( typeof( Vector3 ) )]
     [Hide]
     public NodeInput In { get; set; }
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
     [Hide]
     public NodeResult.Func Out => (GraphCompiler compiler) =>
     {
@@ -907,7 +907,7 @@ float3 RGB2Linear( float3 c )
     };
 }
 
-[Title("Linear to RGB"), Category("Transform")]
+[Title( "Linear to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoRGB : ShaderNodePlus
 {
 
@@ -921,19 +921,19 @@ float3 Linear2RGB( float3 c )
 }
 ";
 
-    [Input(typeof(Vector3))]
+    [Input( typeof( Vector3 ) )]
     [Hide]
     public NodeInput In { get; set; }
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
     [Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
     {
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(Linear2RGB, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( Linear2RGB, args: $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
     };
 }
 
-[Title("Linear to HSV"), Category("Transform")]
+[Title( "Linear to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoHSV : ShaderNodePlus
 {
 
@@ -955,19 +955,19 @@ float3 Linear2HSV( float3 c )
 }
 ";
 
-    [Input(typeof(Vector3))]
+    [Input( typeof( Vector3 ) )]
     [Hide]
     public NodeInput In { get; set; }
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
     [Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
     {
         return new NodeResult(ResultType.Vector3, compiler.ResultFunction(Linear2HSV, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
     };
 }
 
-[Title("HSV to Linear"), Category("Transform")]
+[Title( "HSV to Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoLinear : ShaderNodePlus
 {
 
@@ -985,19 +985,19 @@ float3 HSV2Linear( float3 c )
 }
 ";
 
-    [Input(typeof(Vector3))]
+    [Input( typeof( Vector3 ) )]
     [Hide]
     public NodeInput In { get; set; }
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
     [Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
+    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
     {
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(HSV2Linear, args: $"{compiler.ResultOrDefault(In, Vector3.One)}"));
+        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( HSV2Linear, args: $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
     };
 }
 
-[Title("Height to Normal"), Category("Transform")]
+[Title( "Height to Normal" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HeightToNormal : ShaderNodePlus
 {
 
@@ -1039,14 +1039,14 @@ float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float
     /// <summary>
     /// The height to be converted into a normal.
     /// </summary>
-    [Input(typeof(float))]
+    [Input( typeof( float ) )]
     [Hide]
     public NodeInput Height { get; set; }
 
     /// <summary>
     /// How strong you want the normal map effect to be.
     /// </summary>
-    [Input(typeof(float))]
+    [Input( typeof( float ) )]
     [Hide]
     public NodeInput Strength { get; set; }
 
@@ -1061,19 +1061,19 @@ float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float
 
     public float DefaultStrength { get; set; } = 0.1f;
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
     [Hide]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
+    public NodeResult.Func Result => ( GraphCompiler compiler ) =>
     {
 
-        var height = compiler.Result(Height);
-        var strength = compiler.ResultOrDefault(Strength, DefaultStrength);
+        var height = compiler.Result( Height );
+        var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
         var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
         var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
 
-        if (!height.IsValid())
+        if ( !height.IsValid() )
         {
-            return NodeResult.MissingInput(nameof(Height));
+            return NodeResult.MissingInput( nameof( Height ) );
         }
         //if (!worldpos.IsValid())
         //{
@@ -1084,19 +1084,19 @@ float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float
         //    return NodeResult.MissingInput(nameof(Normal));
         //}
 
-        string result = compiler.ResultFunction(Height2Normal, args: $"{height}, {strength}, {worldpos}, {worldnormal}");
+        string result = compiler.ResultFunction( Height2Normal, args: $"{height}, {strength}, {worldpos}, {worldnormal}" );
 
-        if (OutputSpace == OutputNormalSpace.Tangent)
+        if ( OutputSpace == OutputNormalSpace.Tangent )
         {
             result = $"Vec3WsToTs( {result}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs )";
         }
 
-        return new NodeResult(ResultType.Vector3, result);
+        return new NodeResult( ResultType.Vector3, result );
     };
 
 }
 
-[Title( "Make Greyscale" ), Category( "Transform" )]
+[Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class MakeGreyscaleNode : ShaderNodePlus
 {
 
