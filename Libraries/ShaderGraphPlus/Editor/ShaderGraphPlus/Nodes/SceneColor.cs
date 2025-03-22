@@ -3,7 +3,7 @@
 /// <summary>
 /// Color of the scene.
 /// </summary>
-[Title( "Scene Color" ), Category( "Variables" )]
+[Title( "Scene Color" ), Category( "Variables" ), Icon( "palette" )]
 public sealed class SceneColorNode : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]

@@ -11,7 +11,7 @@ public enum SwizzleChannel
 /// <summary>
 /// Split value into individual components
 /// </summary>
-[Title( "Split" ), Category( "Channel" )]
+[Title( "Split" ), Category( "Channel" ), Icon( "call_split" )]
 public sealed class SplitVector : ShaderNodePlus
 {
 	[Input, Hide]
@@ -53,7 +53,7 @@ public sealed class SplitVector : ShaderNodePlus
 /// <summary>
 /// Combine input values into 3 separate vectors
 /// </summary>
-[Title( "Combine" ), Category( "Channel" )]
+[Title( "Combine" ), Category( "Channel" ), Icon( "call_merge" )]
 public sealed class CombineVector : ShaderNodePlus
 {
 	[Input( typeof( float ) )]
@@ -114,7 +114,7 @@ public sealed class CombineVector : ShaderNodePlus
 /// <summary>
 /// Swap components of a color around
 /// </summary>
-[Title( "Swizzle" ), Category( "Channel" )]
+[Title( "Swizzle" ), Category( "Channel" ), Icon( "swap_horiz" )]
 public sealed class SwizzleVector : ShaderNodePlus
 {
 	[Input, Hide]

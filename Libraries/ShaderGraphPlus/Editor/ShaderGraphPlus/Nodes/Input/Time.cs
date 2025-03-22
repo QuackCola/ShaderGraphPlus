@@ -4,7 +4,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Current time
 /// </summary>
-[Title( "Time" ), Category( "Variables" )]
+[Title( "Time" ), Category( "Variables" ), Icon( "timer" )]
 public sealed class Time : ShaderNodePlus
 {
 	[JsonIgnore]

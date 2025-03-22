@@ -3,7 +3,7 @@
 /// <summary>
 /// Basic procedural box shape
 /// </summary>
-[Title( "Box Shape" ), Category( "Procedural/Shapes" )]
+[Title( "Box Shape" ), Category( "Procedural/Shapes" ), Icon( "check_box_outline_blank" )]
 public sealed class BoxShapeNode : ShaderNodePlus
 {
 [Hide]

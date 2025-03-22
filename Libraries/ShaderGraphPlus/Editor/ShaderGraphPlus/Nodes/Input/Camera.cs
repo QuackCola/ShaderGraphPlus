@@ -4,7 +4,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Camera position and shit
 /// </summary>
-[Title( "Camera" ), Category( "Variables" )]
+[Title( "Camera" ), Category( "Variables" ), Icon( "photo_camera" )]
 public sealed class Camera : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) ), Title( "Position" )]

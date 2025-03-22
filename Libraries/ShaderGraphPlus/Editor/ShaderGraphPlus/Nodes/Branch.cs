@@ -6,7 +6,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// Give it a name to use a bool attribute.
 /// Use no name to use condition from A and B inputs.
 /// </summary>
-[Title( "Branch" ), Category( "Logic" )]
+[Title( "Branch" ), Category( "Logic" ), Icon( "alt_route" )]
 public sealed class Branch : ShaderNodePlus
 {
 	[Hide]

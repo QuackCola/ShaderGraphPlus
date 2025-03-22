@@ -6,7 +6,7 @@ namespace Editor.ShaderGraphPlus.Nodes;
 /// <summary>
 /// Rotate your texture coordinates.
 /// </summary>
-[Title( "UV Rotation" ), Category( "UV" )]
+[Title( "UV Rotation" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVRotationNode : ShaderNodePlus
 {
 
@@ -77,7 +77,7 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 /// <summary>
 /// Scale your texture coordinates.
 /// </summary>
-[Title( "UV Scale" ), Category( "UV" )]
+[Title( "UV Scale" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScaleNode : ShaderNodePlus
 {
 
@@ -129,7 +129,7 @@ public sealed class UVScaleNode : ShaderNodePlus
 /// <summary>
 /// Scale your texture coordinates by a specified center point.
 /// </summary>
-[Title( "UV Scale By Point" ), Category( "UV" )]
+[Title( "UV Scale By Point" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScaleByPointNode : ShaderNodePlus
 {
 
@@ -195,7 +195,7 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 /// <summary>
 /// Scroll your texture coordinates in a particular direction.
 /// </summary>
-[Title( "UV Scroll" ), Category( "UV" )]
+[Title( "UV Scroll" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScrollNode : ShaderNodePlus
 {
 
@@ -268,7 +268,7 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 /// Tile or shift your texture coordinates. Tile works by scaling the texture up
 /// and down. Offset works by adding or subtracting from the texture coordinates
 /// </summary>
-[Title( "UV Tile And Offset" ), Category( "UV" )]
+[Title( "UV Tile And Offset" ), Category( "UV" ), Icon( "texture" )]
 public sealed class TileAndOffset : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]
@@ -328,7 +328,7 @@ public sealed class TileAndOffset : ShaderNodePlus
 	};
 }
 
-[Title( "FlipBook" ), Category( "UV" )]
+[Title( "FlipBook" ), Category( "UV" ), Icon( "texture" )]
 public sealed class FlipBookNode : ShaderNodePlus
 {
 

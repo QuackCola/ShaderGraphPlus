@@ -140,7 +140,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 /// <summary>
 /// Ment for use when you want to pass a Texture2D into a node which happens to have a hlsl function that makes use of .Sample().
 /// </summary>
-[Title( "Texture Object" ), Category( "Textures" )]
+[Title( "Texture Object" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
     /// <summary>
@@ -299,7 +299,7 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 /// <summary>
 /// Sample a 2D Texture
 /// </summary>
-[Title( "Texture 2D" ), Category( "Textures" )]
+[Title( "Texture 2D" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureSampler : TextureSamplerBase
 {
 	/// <summary>
@@ -378,7 +378,7 @@ public sealed class TextureSampler : TextureSamplerBase
 /// <summary>
 /// Sample a Cube Texture
 /// </summary>
-[Title( "Texture Cube" ), Category( "Textures" )]
+[Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
 public sealed class TextureCube : ShaderNodePlus
 {
 	/// <summary>
@@ -495,7 +495,7 @@ public sealed class TextureCube : ShaderNodePlus
 /// <summary>
 /// Sample a 2D texture from 3 directions, then blend based on a normal vector.
 /// </summary>
-[Title( "Texture Triplanar" ), Category( "Textures" )]
+[Title( "Texture Triplanar" ), Category( "Textures" ), Icon( "photo_library" )]
 public sealed class TextureTriplanar : TextureSamplerBase
 {
 
@@ -626,7 +626,7 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 /// <summary>
 /// Sample a 2D texture from 3 directions, then blend based on a normal vector.
 /// </summary>
-[Title( "Normal Map Triplanar" ), Category( "Textures" )]
+[Title( "Normal Map Triplanar" ), Category( "Textures" ), Icon( "texture" )]
 public sealed class NormapMapTriplanar : TextureSamplerBase
 {
 	public static string TexTriplanar_Normal => @"
@@ -760,7 +760,7 @@ float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 
 /// <summary>
 /// Texture Coordinate from vertex data
 /// </summary>
-[Title( "Texture Coordinate" ), Category( "Variables" )]
+[Title( "Texture Coordinate" ), Category( "Variables" ), Icon( "texture" )]
 public sealed class TextureCoord : ShaderNodePlus
 {
 	/// <summary>

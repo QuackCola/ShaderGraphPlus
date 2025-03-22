@@ -3,7 +3,7 @@
 /// <summary>
 /// Vertex normal in world space
 /// </summary>
-[Title( "World Normal" ), Category( "Variables" )]
+[Title( "World Normal" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldNormal : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -14,7 +14,7 @@ public sealed class WorldNormal : ShaderNodePlus
 /// <summary>
 /// Vertex tangents in world space
 /// </summary>
-[Title( "World Tangent" ), Category( "Variables" )]
+[Title( "World Tangent" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldTangent : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -29,7 +29,7 @@ public sealed class WorldTangent : ShaderNodePlus
 /// <summary>
 /// Vertex normal in object space
 /// </summary>
-[Title( "Object Space Normal" ), Category( "Variables" )]
+[Title( "Object Space Normal" ), Category( "Variables" ), Icon( "view_in_ar" )]
 public sealed class ObjectSpaceNormal : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -42,7 +42,7 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 /// <summary>
 /// Return the current screen position of the object
 /// </summary>
-[Title( "Screen Position" ), Category( "Variables" )]
+[Title( "Screen Position" ), Category( "Variables" ), Icon( "install_desktop" )]
 public sealed class ScreenPosition : ShaderNodePlus
 {
     // Note: We could make all of these constants but I don't like the situation where it can generated something like
@@ -97,7 +97,7 @@ public sealed class ScreenPosition : ShaderNodePlus
 /// <summary>
 /// Return the current screen uvs of the object
 /// </summary>
-[Title( "Screen Coordinate" ), Category( "Variables" )]
+[Title( "Screen Coordinate" ), Category( "Variables" ), Icon( "tv" )]
 public sealed class ScreenCoordinate : ShaderNodePlus
 {
 	[Output( typeof( Vector2 ) )]
@@ -125,7 +125,7 @@ public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 /// <summary>
 /// Return the current world space position
 /// </summary>
-[Title( "World Space Position" ), Category( "Variables" )]
+[Title( "World Space Position" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldPosition : ShaderNodePlus
 {
 	public bool NoHighPrecisionLightingOffsets { get; set; } = false;
@@ -141,7 +141,7 @@ public sealed class WorldPosition : ShaderNodePlus
 /// <summary>
 /// Return the current object space position of the pixel
 /// </summary>
-[Title( "Object Space Position" ), Category( "Variables" )]
+[Title( "Object Space Position" ), Category( "Variables" ), Icon( "view_in_ar" )]
 public sealed class ObjectPosition : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -152,7 +152,7 @@ public sealed class ObjectPosition : ShaderNodePlus
 /// <summary>
 /// Return the current view direction of the pixel
 /// </summary>
-[Title( "View Direction" ), Category( "Variables" )]
+[Title( "View Direction" ), Category( "Variables" ), Icon( "cameraswitch" )]
 public sealed class ViewDirection : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -166,7 +166,7 @@ public sealed class ViewDirection : ShaderNodePlus
 /// <summary>
 /// Color of the vertex
 /// </summary>
-[Title( "Vertex Color" ), Category( "Variables" )]
+[Title( "Vertex Color" ), Category( "Variables" ), Icon( "format_color_fill" )]
 public sealed class VertexColor : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -181,7 +181,7 @@ public sealed class VertexColor : ShaderNodePlus
 /// <summary>
 /// Blend of the vertex
 /// </summary>
-[Title( "Vertex Blend" ), Category( "Variables" )]
+[Title( "Vertex Blend" ), Category( "Variables" ), Icon( "blender" )]
 public sealed class VertexBlend : ShaderNodePlus
 {
 	[Output( typeof( float ) )]
@@ -204,7 +204,7 @@ public sealed class VertexBlend : ShaderNodePlus
 /// <summary>
 /// Paint of the vertex
 /// </summary>
-[Title( "Vertex Paint" ), Category( "Variables" )]
+[Title( "Vertex Paint" ), Category( "Variables" ), Icon( "brush" )]
 public sealed class VertexPaint : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]
@@ -219,7 +219,7 @@ public sealed class VertexPaint : ShaderNodePlus
 /// <summary>
 /// Tint of the scene object
 /// </summary>
-[Title( "Tint" ), Category( "Variables" )]
+[Title( "Tint" ), Category( "Variables" ), Icon( "palette" )]
 public sealed class Tint : ShaderNodePlus
 {
 	[Hide, Output( typeof( Color ) )]
