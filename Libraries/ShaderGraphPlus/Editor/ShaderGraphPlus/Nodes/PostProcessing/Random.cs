@@ -26,7 +26,8 @@ float2 Random(float2 vUv)
 	{
 		var coords = compiler.Result( ScreenUVs );
 		
-		string funcCall = $"{compiler.RegisterFunction( Random )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")} );";
+		string func = compiler.RegisterFunction( Random );
+		string funcCall = compiler.ResultFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" );
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};

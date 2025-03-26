@@ -161,23 +161,12 @@ public sealed partial class GraphCompiler
 		return $"{name}( {string.Join( ", ", args )} )";
 	}
 
-	/// <summary>
-	/// Register a function and its code from an externally created node.
-	/// </summary>
-	/// <param name="code"></param>
-	/// <param name="propertyName"></param>
-	/// <returns></returns>
 	public string RegisterFunction( string code, [CallerArgumentExpression( "code" )] string propertyName = "" )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( propertyName ) )
 		{
 		    GraphHLSLFunctions.RegisterFunction( propertyName, code );
 		}
-
-		var result = ShaderResult;
-		if ( !result.Functions.Contains( propertyName ) )
-			result.Functions.Add( propertyName );
-
 		return propertyName;
 	}
 

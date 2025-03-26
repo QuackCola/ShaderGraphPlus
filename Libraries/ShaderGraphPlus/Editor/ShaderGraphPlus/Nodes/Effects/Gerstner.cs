@@ -129,7 +129,9 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 		var numwaves = compiler.ResultOrDefault( NumWaves, DefaultNumWaves );
 		var gravityconstant = compiler.ResultOrDefault( GravityConstant, DefaultGravityConstant );
 		
-		string funcCall = $"{compiler.RegisterFunction( GerstnerWaves )}( {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant} );";
+		
+		string func = compiler.RegisterFunction( GerstnerWaves );
+		string funcCall = compiler.ResultFunction( func, $" {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant}" );
 		
 		return new NodeResult( ResultType.Vector3, funcCall );
     };

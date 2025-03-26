@@ -75,22 +75,23 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Output( typeof( Color ) ), Title( "Result" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-        var textureobject = compiler.Result(TexObject);
+		var textureobject = compiler.Result(TexObject);
 		var coords = compiler.Result( Coords );
 		var Grid = compiler.ResultOrDefault( GridSize, DefaultGridSize );
 		var Boarder = compiler.ResultOrDefault( BoarderThickness, DefaultBoarderThickness );
-
-        if ( !textureobject.IsValid )
-        {
-            return NodeResult.MissingInput( nameof( TextureObject ) );
-        }
-        else if ( textureobject.ResultType is not ResultType.TextureObject )
-        {
-            return NodeResult.Error($"Input to TexObject is not a texture object!");
-        }
-
-		string funcCall = $"{compiler.RegisterFunction( PixelPlot )}( {textureobject}, {compiler.ResultSamplerOrDefault( Sampler, DefaultSampler )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder} );";
-
-        return new NodeResult( ResultType.Color, funcCall );
+		
+		if ( !textureobject.IsValid )
+		{
+		    return NodeResult.MissingInput( nameof( TextureObject ) );
+		}
+		else if ( textureobject.ResultType is not ResultType.TextureObject )
+		{
+		    return NodeResult.Error($"Input to TexObject is not a texture object!");
+		}
+		
+		string func = compiler.RegisterFunction( PixelPlot );
+		string funcCall = compiler.ResultFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, DefaultSampler )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
+		
+		return new NodeResult( ResultType.Color, funcCall );
     };
 }

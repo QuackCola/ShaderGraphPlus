@@ -327,58 +327,33 @@ float3 crtFilter(
 		var clipwarp = compiler.ResultOrDefault( ClipWarp, DefaultClipWarp );
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
-
-		var inp = @$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")},
-		{overlay},
-        {scanlineopacity},
-        {scanlinewidth},
-        {grilleopacity},
-        {resolution},
-        {pixelate},
-        {roll},
-        {rollspeed},
-        {rollsize},
-        {rollvariation},
-        {distortintensity},
-        {noiseopacity},
-        {noisespeed},
-        {staticnoiseintensity},
-        {aberration},
-        {brigtness},
-        {discolor},
-        {warpamount},
-        {clipwarp},
-        {vignetteintensity},
-        {vignetteopacity}
-		";
-
-		var funcCall = @$"{compiler.RegisterFunction( crtFilter )}(
+		
+		string func = compiler.RegisterFunction(  crtFilter );
+		string funcCall = compiler.ResultFunction( func, @$"
 		 {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")},
 		 {overlay},
-         {scanlineopacity},
-         {scanlinewidth},
-         {grilleopacity},
-         {resolution},
-         {pixelate},
-         {roll},
-         {rollspeed},
-         {rollsize},
-         {rollvariation},
-         {distortintensity},
-         {noiseopacity},
-         {noisespeed},
-         {staticnoiseintensity},
-         {aberration},
-         {brigtness},
-         {discolor},
-         {warpamount},
-         {clipwarp},
-         {vignetteintensity},
-         {vignetteopacity}
-		);
-		";
-
-		// Output Result. Be sure to account for when the bool inputs have a connection or not. to make the result of them all lowercase for true or false..
+		 {scanlineopacity},
+		 {scanlinewidth},
+		 {grilleopacity},
+		 {resolution},
+		 {pixelate},
+		 {roll},
+		 {rollspeed},
+		 {rollsize},
+		 {rollvariation},
+		 {distortintensity},
+		 {noiseopacity},
+		 {noisespeed},
+		 {staticnoiseintensity},
+		 {aberration},
+		 {brigtness},
+		 {discolor},
+		 {warpamount},
+		 {clipwarp},
+		 {vignetteintensity},
+		 {vignetteopacity}
+		");
+		
 		return new NodeResult( ResultType.Vector3, funcCall );
 	};
 }
