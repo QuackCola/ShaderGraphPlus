@@ -53,7 +53,8 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
         
         var depthoffset = compiler.ResultOrDefault(DepthOffset, DefaultDepthOffset);
         
-        string funcCall = $"{compiler.RegisterFunction( DepthIntersect )}( {worldpos}, {coords}, {depthoffset} );";
+        string func = compiler.RegisterFunction( DepthIntersect );
+        string funcCall = compiler.ResultFunction( func, $"{worldpos}, {coords}, {depthoffset}" );
         
         return new NodeResult( ResultType.Float, funcCall );
     };
