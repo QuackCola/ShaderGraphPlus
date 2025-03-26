@@ -8,7 +8,7 @@ public sealed class DepthIntersectionNode : ShaderNodePlus
 {
 
 [Hide]
-public string DepthIntersect => @"
+    public static string DepthIntersect => @"
 float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 {
 	float3 l_1 = vWorldPos - g_vCameraPositionWs;

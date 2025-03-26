@@ -173,6 +173,11 @@ public sealed partial class GraphCompiler
 		{
 		    GraphHLSLFunctions.RegisterFunction( propertyName, code );
 		}
+
+		var result = ShaderResult;
+		if ( !result.Functions.Contains( propertyName ) )
+			result.Functions.Add( propertyName );
+
 		return propertyName;
 	}
 

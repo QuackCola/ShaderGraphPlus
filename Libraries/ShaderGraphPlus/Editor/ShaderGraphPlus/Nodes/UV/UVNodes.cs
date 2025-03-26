@@ -137,7 +137,7 @@ public sealed class UVScaleByPointNode : ShaderNodePlus
 {
 
 [Hide]
-public string UVScaleByPoint => @"
+public static string UVScaleByPoint => @"
 //  vUv - UV coordinates input.
 //  flCenter - Center point to scale from. A flCenter 0f 0.5 would let you scale by the center. 
 //  flScale - Amount to scale the UVs by in both the X & Y.
@@ -197,6 +197,44 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 
 }
 
+[Title( "My Custom Node" ), Category( "Custom" ), Icon( "invert_colors" )]
+public class MyCustomNode : ShaderNodePlus
+{
+    [Hide]
+    public static string MyCustomFunction => @"
+float3 MyCustomFunction( float3 vColor )
+{
+	return float3( 1.0 - vColor.r, 1.0 - vColor.g, 1.0 - vColor.b );
+}
+";
+
+    [Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput Color { get; set; }
+	
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		string funcCall = $"{compiler.RegisterFunction( MyCustomFunction )}( {$"{compiler.ResultOrDefault( Color, Vector3.One )}"} );";
+
+		// Avalible Result Types
+		/*
+			ResultType.Bool
+			ResultType.Float
+			ResultType.Vector2
+			ResultType.Vector3
+			ResultType.Color
+			ResultType.Float2x2
+			ResultType.Float3x3
+			ResultType.Float4x4
+			ResultType.Sampler
+			ResultType.TextureObject
+		*/
+        return new NodeResult( ResultType.Vector3, funcCall );
+	};
+}
+
 /// <summary>
 /// Scroll your texture coordinates in a particular direction.
 /// </summary>
@@ -205,7 +243,7 @@ public sealed class UVScrollNode : ShaderNodePlus
 {
 
 [Hide]
-public string UVScroll => @"
+public static string UVScroll => @"
 float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 {
     return vUv + flTime * vScrollSpeed;
