@@ -32,30 +32,30 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
     /// <summary>
     /// Coordinates to use.
     /// </summary>
-    //[Title("ScreenUVs")]
-    //[Input(typeof(Vector2))]
+    //[Title( "ScreenUVs" )]
+    //[Input( typeof( Vector2 ) )]
     //[Hide]
     //public NodeInput Coords { get; set; }
 
-    [Input(typeof(float))]
+    [Input( typeof( float ) )]
     [Hide]
     public NodeInput DepthOffset { get; set; }
 
     public float DefaultDepthOffset { get; set; } = 1.0f;
 
 
-    [Output(typeof(float))]
+    [Output( typeof( float ) )]
     [Hide]
     public NodeResult.Func Result => (GraphCompiler compiler) =>
     {
-
         var coords = "i.vPositionSs.xy";
         var worldpos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
-
+        
         var depthoffset = compiler.ResultOrDefault(DepthOffset, DefaultDepthOffset);
-
-        var result = compiler.ResultFunction(DepthIntersect, args: $"{worldpos}, {coords}, {depthoffset}");
-        return new NodeResult(ResultType.Float, result);
+        
+        string funcCall = $"{compiler.RegisterFunction( DepthIntersect )}( {worldpos}, {coords}, {depthoffset} );";
+        
+        return new NodeResult( ResultType.Float, funcCall );
     };
 
 }

@@ -11,23 +11,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Round Gradient" ), Category( "Procedural/Gradients" ), Icon( "gradient" )]
 public sealed class RoundGradientNode : ShaderNodePlus
 {
-
-[Hide]
-public string RoundGradient => @"
-float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensity, bool bInvert )
-{
-	float distance = length(vUV - flCenter);
-	float Result = pow(saturate( distance / flRadius), flDensity);
-
-	if( bInvert )
-	{
-		return 1 - Result;
-	}
-
-	return Result;
-}
-";
-
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -81,9 +64,8 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( RoundGradient, 
-			args:
-			$"{coords}, {center}, {radius}, {density}, {invert}" 
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( "RoundGradient", $"{coords}", 
+			$"{center}", $"{radius}", $"{density}", $"{invert}" 
 		));
 	};
 

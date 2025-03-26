@@ -7,20 +7,6 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Get Tangent View Vector" ), Category( "Utility" )]
 public sealed class GetTangentViewVectorNode : ShaderNodePlus
 {
- 
-[Hide]
-public static string GetTangentViewVector => @"
-float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs)
-{
-    float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
-    vNormalWs = normalize( vNormalWs.xyz );
-   	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
-	
-	// Result
-	return vTangentViewVector.xyz;
-}
-";
-
 	[Title( "World Pos" )]
 	[Description("")]
 	[Input( typeof( Vector3 ) )]
@@ -55,13 +41,13 @@ float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangent
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
-
+		
 		var worldspaceposition = compiler.Result( WorldSpacePosition );
 		var worldnormal = compiler.Result( WorldNormal );
 		var tangentuws = compiler.Result( TangentUWs );
 		var tangentvws = compiler.Result( TangentVWs );
-
-
+		
+		
 		if ( !worldspaceposition.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( WorldSpacePosition ) );
@@ -76,15 +62,18 @@ float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangent
 		{
 			return NodeResult.MissingInput( nameof( TangentUWs ) );
 		}
-
+		
 		if ( !tangentvws.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( TangentVWs ) );
 		}
-
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( GetTangentViewVector,
-			args:
-			$"{worldspaceposition}, {worldnormal}, {tangentuws}, {tangentvws}" 
-		) );
+		
+		var result = compiler.ResultFunction( "GetTangentViewVector", $"{worldspaceposition}",
+				$"{worldnormal}",
+				$"{tangentuws}",
+				$"{tangentvws}" 
+		);
+		
+		return new NodeResult( ResultType.Vector3, $"{result}" );
 	};
 }

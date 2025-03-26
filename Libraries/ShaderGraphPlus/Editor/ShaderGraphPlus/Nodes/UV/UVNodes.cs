@@ -69,7 +69,9 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVRotation, args: $"{coords}, {rotationcenter}, {rotation}" ));
+		string funcCall = $"{compiler.RegisterFunction( UVRotation )}( {coords}, {rotationcenter}, {rotation} );";
+
+		return new NodeResult( ResultType.Vector2, funcCall );
 	};
 
 }
@@ -108,9 +110,9 @@ public sealed class UVScaleNode : ShaderNodePlus
 	{
 		var incoords = compiler.Result( Coords );
 		var scale = compiler.ResultOrDefault( Scale, DefaultScale );
-
+		
 		var coords = "";
-
+		
 		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
@@ -119,8 +121,9 @@ public sealed class UVScaleNode : ShaderNodePlus
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
-
-		//return new NodeResult( ResultType.Vector2, compiler.ResultFunction( compiler.GetFunction( UVScale ), $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}", $"{scale}" ) );
+		
+		//string funcCall = $"{compiler.RegisterFunction( UVScale )}( {coords}, {scale} );";
+		
 		return new NodeResult( ResultType.Vector2, $"({coords} * {scale})" );
 	};
 
@@ -175,9 +178,9 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 		var incoords = compiler.Result( Coords );
 		var center = compiler.ResultOrDefault( Center, DefaultCenter );
 		var scale = compiler.ResultOrDefault( Scale, DefaultScale );
-
+		
 		var coords = "";
-
+		
 		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
@@ -186,8 +189,10 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
-
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( UVScaleByPoint, args: $"{coords}, {center}, {scale}" ));
+		
+		string funcCall = $"{compiler.RegisterFunction( UVScaleByPoint )}( {coords}, {center}, {scale} );";
+		
+		return new NodeResult( ResultType.Vector2, funcCall );
 	};
 
 }
@@ -236,8 +241,8 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 		var result_time = compiler.Result( Time );
 		var time = "";
 		var scrollspeed = compiler.ResultOrDefault( ScrollSpeed, DefaultScrollSpeed );
-
-
+		
+		
 		if ( Time.IsValid() )
 		{
 			time = result_time.Code;
@@ -246,9 +251,9 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 		{
 			time = "g_flTime";
 		}
-
+		
 		var coords = "";
-
+		
 		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
@@ -257,8 +262,8 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
-
-		//return new NodeResult( ResultType.Vector2, compiler.ResultFunction( compiler.GetFunction( UVScroll ), $"{time}", $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}", $"{scrollspeed}" ) );
+		
+		//string funcCall = $"{compiler.RegisterFunction( UVScroll )}( {time}, {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, {scrollspeed} );";
 		return new NodeResult( ResultType.Vector2, $"({coords} + {time} * {scrollspeed})");
 	};
 }
@@ -381,15 +386,14 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
-
+		
 		var coords = compiler.Result( Coords );
 		var width = compiler.ResultOrDefault( Width, DefaultWidth );
 		var height = compiler.ResultOrDefault(  Height, DefaultHeight );
 		var tileindex = compiler.ResultOrDefault( TileIndex, DefaultTileIndex );
-
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( FlipBook,
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, {width}, {height}, {tileindex}, float2({(Invertx ? 1 : 0)},{(Inverty ? 1 : 0)})" 
-		) );
+		
+		string funcCall = $"{compiler.RegisterFunction( FlipBook )}( {( coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy" )}, {width}, {height}, {tileindex}, float2( {(Invertx ? 1 : 0)}, {(Inverty ? 1 : 0)} );";
+		
+		return new NodeResult( ResultType.Vector2, funcCall );
 	};
 }

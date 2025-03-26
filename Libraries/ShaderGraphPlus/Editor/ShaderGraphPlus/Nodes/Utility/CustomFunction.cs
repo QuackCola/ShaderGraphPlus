@@ -83,7 +83,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         {
             compiler.RegisterVoidFunctionResults(this, GetFunctionVoidLocals(), out List<CustomCodeOutputData> outputData, out List<string> functionOutputs);
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             // Construct function outputs, for example : out float output01, out float2 output02
             foreach ( var voidLocal in functionOutputs)
@@ -101,9 +101,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             }
 
             var functionInputs = GetInputResults(compiler);
-            var funcCall = compiler.ResultFunctionCustomExpression(this, $"{Source}", Name, args: $" {functionInputs}{(ExpressionInputs.Any() ? "," : "")}{sb.ToString()}", true) + ";";
+            string funcCall = compiler.ResultFunctionCustomExpression( this, $"{Source}", Name, args: $" {functionInputs}{(ExpressionInputs.Any() ? "," : "")}{sb.ToString()}", true ) + ";";
 
-            return new NodeResult( ResultType.Void, $"{funcCall}", voidComponents: 0 );
+            return new NodeResult( ResultType.Void, funcCall, voidComponents: 0 );
         }
         else if ( Type is CustomCodeNodeMode.Inline )
         {
@@ -118,7 +118,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
                 //SGPLog.Warning( "Output Data was already generated!" );
             }
             
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             var inputs = GetInputResultsInline( compiler );
             
             sb.AppendLine( "{" );
@@ -126,9 +126,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             sb.AppendLine( "};" );
             
             // Relpace the user defined input names with the compiler assigned names.
-            foreach ( var inp in inputs )
+            foreach ( var input in inputs )
             {
-                sb.Replace( inp.Item1, inp.Item2 );
+                sb.Replace( input.Item1, input.Item2 );
             }
             
             // Relpace the user defined output names with the compiler assigned names.
@@ -141,7 +141,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         }
 
 
-        return default(NodeResult);
+        return NodeResult.Error( $"{DisplayInfo.Name}( {Name} ) Something is fucked!" );
     }
 
     /// <summary>

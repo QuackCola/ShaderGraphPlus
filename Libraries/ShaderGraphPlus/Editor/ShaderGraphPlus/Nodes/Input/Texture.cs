@@ -498,31 +498,6 @@ public sealed class TextureCube : ShaderNodePlus
 [Title( "Texture Triplanar" ), Category( "Textures" ), Icon( "photo_library" )]
 public sealed class TextureTriplanar : TextureSamplerBase
 {
-
-	public static string TexTriplanar_Color => @"
-float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 vPosition, float3 vNormal, float BlendFactor )
-{
-	float2 uvX = vPosition.zy;
-	float2 uvY = vPosition.xz;
-	float2 uvZ = vPosition.xy;
-
-	float3 triblend = saturate(pow(abs(vNormal), BlendFactor));
-	triblend /= max(dot(triblend, half3(1,1,1)), 0.0001);
-
-	half3 axisSign = vNormal < 0 ? -1 : 1;
-
-	uvX.x *= axisSign.x;
-	uvY.x *= axisSign.y;
-	uvZ.x *= -axisSign.z;
-
-	float4 colX = Tex2DS( tTex, sSampler, uvX );
-	float4 colY = Tex2DS( tTex, sSampler, uvY );
-	float4 colZ = Tex2DS( tTex, sSampler, uvZ );
-
-	return colX * triblend.x + colY * triblend.y + colZ * triblend.z;
-}
-";
-
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -590,10 +565,13 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 		var normal = compiler.Result(Normal);
         var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
 
-        var result = compiler.ResultFunction( TexTriplanar_Color,
-            args:
-            $" {tex}, {sampler}, ({(coords.IsValid ? $"{coords.Cast(3)}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}) * {tile}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")}, {blendfactor}"
-        );
+		var result = compiler.ResultFunction( "TexTriplanar_Color",
+		tex,
+		sampler,
+		coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+		normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )", 
+		$"{blendfactor}"
+		);
 
 		return new NodeResult( ResultType.Color, result );
 	};
@@ -629,42 +607,6 @@ float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 v
 [Title( "Normal Map Triplanar" ), Category( "Textures" ), Icon( "texture" )]
 public sealed class NormapMapTriplanar : TextureSamplerBase
 {
-	public static string TexTriplanar_Normal => @"
-float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 vPosition, float3 vNormal, float BlendFactor )
-{
-	float2 uvX = vPosition.zy;
-	float2 uvY = vPosition.xz;
-	float2 uvZ = vPosition.xy;
-
-	float3 triblend = saturate( pow( abs( vNormal ), BlendFactor ) );
-	triblend /= max( dot( triblend, half3( 1, 1, 1 ) ), 0.0001 );
-
-	half3 axisSign = vNormal < 0 ? -1 : 1;
-
-	uvX.x *= axisSign.x;
-	uvY.x *= axisSign.y;
-	uvZ.x *= -axisSign.z;
-
-	float3 tnormalX = DecodeNormal( Tex2DS( tTex, sSampler, uvX ).xyz );
-	float3 tnormalY = DecodeNormal( Tex2DS( tTex, sSampler, uvY ).xyz );
-	float3 tnormalZ = DecodeNormal( Tex2DS( tTex, sSampler, uvZ ).xyz );
-
-	tnormalX.x *= axisSign.x;
-	tnormalY.x *= axisSign.y;
-	tnormalZ.x *= -axisSign.z;
-
-	tnormalX = half3( tnormalX.xy + vNormal.zy, vNormal.x );
-	tnormalY = half3( tnormalY.xy + vNormal.xz, vNormal.y );
-	tnormalZ = half3( tnormalZ.xy + vNormal.xy, vNormal.z );
-
-	return normalize(
-		tnormalX.zyx * triblend.x +
-		tnormalY.xzy * triblend.y +
-		tnormalZ.xyz * triblend.z +
-		vNormal
-	);
-}
-";
 
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
@@ -748,10 +690,13 @@ float3 TexTriplanar_Normal( in Texture2D tTex, in SamplerState sSampler, float3 
         var normal = compiler.Result( Normal );
         var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
 
-        var result = compiler.ResultFunction( TexTriplanar_Normal ,
-			args:
-			$"{tex}, {sampler}, ({(coords.IsValid ? $"{coords.Cast( 3 )}" : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701")}) * {tile}, {(normal.IsValid ? $"{normal.Cast(3)}" : "normalize( i.vNormalWs.xyz )")}, {blendfactor}"
-        );
+		var result = compiler.ResultFunction( "TexTriplanar_Normal",
+		tex,
+        sampler,
+		coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+		normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )", 
+		$"{blendfactor}"
+		);
 
         return new NodeResult( ResultType.Vector3, result );
 	};

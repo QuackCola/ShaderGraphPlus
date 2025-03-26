@@ -45,9 +45,8 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 		var scenecolor = compiler.ResultOrDefault( SceneColor, Vector3.One );
 		var curvature = compiler.ResultOrDefault( Curveature, DefaultCurvature );
 
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( CRTBoarder , 
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {scenecolor}, {curvature}" 
-		));
+		string funcCall = $"{compiler.RegisterFunction( CRTBoarder )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {scenecolor}, {curvature} );";
+
+        return new NodeResult( ResultType.Vector3, funcCall );
 	};
 }

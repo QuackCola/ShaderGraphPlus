@@ -328,32 +328,57 @@ float3 crtFilter(
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
 
+		var inp = @$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")},
+		{overlay},
+        {scanlineopacity},
+        {scanlinewidth},
+        {grilleopacity},
+        {resolution},
+        {pixelate},
+        {roll},
+        {rollspeed},
+        {rollsize},
+        {rollvariation},
+        {distortintensity},
+        {noiseopacity},
+        {noisespeed},
+        {staticnoiseintensity},
+        {aberration},
+        {brigtness},
+        {discolor},
+        {warpamount},
+        {clipwarp},
+        {vignetteintensity},
+        {vignetteopacity}
+		";
+
+		var funcCall = @$"{compiler.RegisterFunction( crtFilter )}(
+		 {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")},
+		 {overlay},
+         {scanlineopacity},
+         {scanlinewidth},
+         {grilleopacity},
+         {resolution},
+         {pixelate},
+         {roll},
+         {rollspeed},
+         {rollsize},
+         {rollvariation},
+         {distortintensity},
+         {noiseopacity},
+         {noisespeed},
+         {staticnoiseintensity},
+         {aberration},
+         {brigtness},
+         {discolor},
+         {warpamount},
+         {clipwarp},
+         {vignetteintensity},
+         {vignetteopacity}
+		);
+		";
 
 		// Output Result. Be sure to account for when the bool inputs have a connection or not. to make the result of them all lowercase for true or false..
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( crtFilter, 
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" +
-			$",{overlay}" +
-            $",{scanlineopacity}" +
-            $",{scanlinewidth}" +
-            $",{grilleopacity}" +
-            $",{resolution}" +
-            $",{pixelate}" +
-            $",{roll}" +
-            $",{rollspeed}" +
-            $",{rollsize}" +
-            $",{rollvariation}" +
-            $",{distortintensity}" +
-            $",{noiseopacity}" +
-            $",{noisespeed}" +
-            $",{staticnoiseintensity}" +
-            $",{aberration}" +
-            $",{brigtness}" +
-            $",{discolor}" +
-            $",{warpamount}" +
-            $",{clipwarp}" +
-            $",{vignetteintensity}" +
-            $",{vignetteopacity}"
-			));
+		return new NodeResult( ResultType.Vector3, funcCall );
 	};
 }

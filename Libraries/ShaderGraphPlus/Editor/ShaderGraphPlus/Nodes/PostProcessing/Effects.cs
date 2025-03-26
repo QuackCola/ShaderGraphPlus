@@ -38,12 +38,10 @@ float2 Warp(float2 vUv , float flWarp_amount)
 	{
 		var coords = compiler.Result( ScreenUVs );
 		var warpamount = compiler.ResultOrDefault( WarpAmount , DefaultWarpAmount );
-
-
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( Warp , 
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")} , {warpamount} " 
-		));
+		
+		string funcCall = $"{compiler.RegisterFunction( Warp )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount} );";
+		
+		return new NodeResult( ResultType.Vector2, funcCall );
 	};
 }
 
@@ -85,11 +83,10 @@ float Vignette(float2 vUv , float flVignette_intensity, float flVignette_opacity
 		var coords = compiler.Result( ScreenUVs );
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
-
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( Vignette, 
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {vignetteintensity}, {vignetteopacity}" 
-		));
+		
+		string funcCall = $"{compiler.RegisterFunction( Vignette )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {vignetteintensity}, {vignetteopacity} );";
+		
+		return new NodeResult( ResultType.Float, funcCall );
 	};
 }
 
@@ -127,10 +124,9 @@ float Border(float2 vUv , float flWarp_amount)
 	{
 		var coords = compiler.Result( ScreenUVs );
 		var warpamount = compiler.ResultOrDefault( WarpAmount, DefaultWarpAmount );
-
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( Border, 
-			args:
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount}" 
-		));
+		
+		string funcCall = $"{compiler.RegisterFunction( Border )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount} );";
+		
+		return new NodeResult( ResultType.Float, funcCall );
 	};
 }
