@@ -1,0 +1,103 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/my project 1.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Masked",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 0,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-228,276",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Opacity": {
+        "Identifier": "2",
+        "Output": "A",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "FlipBookNode",
+      "DefaultWidth": 4,
+      "DefaultHeight": 4,
+      "DefaultTileIndex": 35,
+      "InvertX": false,
+      "InvertY": false,
+      "Identifier": "1",
+      "Position": "-672,288",
+      "HandleOffsets": {},
+      "TileIndex": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/dev/vgui/hud/gameinstructor_iconsheet1_color.tga",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "2",
+      "Position": "-468,288",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "4",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 15,
+      "Value": 0,
+      "Name": "IconIndex",
+      "IsAttribute": true,
+      "UI": {
+        "Step": 1
+      },
+      "Identifier": "3",
+      "Position": "-888,444",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {},
+      "Identifier": "4",
+      "Position": "-672,432",
+      "HandleOffsets": {}
+    }
+  ]
+}
