@@ -54,7 +54,7 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 		var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
 		var result_time = compiler.Result( Time );
 		var time = "";
-
+		
 		if ( Time.IsValid() )
 		{
 			time = result_time.Code;
@@ -63,7 +63,9 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 		{
 			time = "g_flTime";
 		}
-
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( Oscillator, args: $"{time}, {frequency}, {phase}, {strength}" ) );
+		
+		string funcCall = $"{compiler.RegisterFunction( Oscillator )}( {time}, {frequency}, {phase}, {strength} );";
+		
+		return new NodeResult( ResultType.Float, funcCall );
 	};
 }

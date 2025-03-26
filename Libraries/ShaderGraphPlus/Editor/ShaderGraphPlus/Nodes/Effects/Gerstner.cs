@@ -113,14 +113,14 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
-
+		
 		var worldspaceposition = compiler.Result( WorldSpacePosition );
-
+		
 		if ( !worldspaceposition.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( WorldSpacePosition ) );
 		}
-
+		
 		var	direction = compiler.ResultOrDefault( Direction, DefaultDirection );
 		var wavelength = compiler.ResultOrDefault( WaveLength, DefaultWaveLength );
 		var speed = compiler.ResultOrDefault( Speed, DefaultSpeed );
@@ -128,10 +128,9 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 		var steepness = compiler.ResultOrDefault( Steepness, DefaultSteepness );
 		var numwaves = compiler.ResultOrDefault( NumWaves, DefaultNumWaves );
 		var gravityconstant = compiler.ResultOrDefault( GravityConstant, DefaultGravityConstant );
-
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction(GerstnerWaves,
-            args:
-            $" {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant} "
-        ));
+		
+		string funcCall = $"{compiler.RegisterFunction( GerstnerWaves )}( {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant} );";
+		
+		return new NodeResult( ResultType.Vector3, funcCall );
     };
 }

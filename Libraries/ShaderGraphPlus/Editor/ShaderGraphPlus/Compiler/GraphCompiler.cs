@@ -66,16 +66,14 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
-		public Dictionary<string, string> Functions { get; private set; } = new ();
-		
+		public HashSet<string> Functions { get; private set; } = new();
 		public HashSet<string> Globals { get; private set; } = new();
-
-        /// A group of Void Locals that belongs to a Custom Function Node
-        /// </summary>
-        public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
-        public int VoidLocalCount { get; set; } = 0;
-
-        public string RepresentativeTexture { get; set; }
+		public string RepresentativeTexture { get; set; }
+		
+		/// A group of Void Locals that belongs to a Custom Function Node
+		/// </summary>
+		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
+		public int VoidLocalCount { get; set; } = 0;
 	}
 
 	public enum ShaderStage
@@ -151,24 +149,32 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-    public string ResultFunction( string code, [CallerArgumentExpression("code")] string propertyName = "", string args = "" )
-    {
-        var result = ShaderResult;
+	public string ResultFunction( string name, params string[] args )
+	{
+		if ( !GraphHLSLFunctions.HasFunction( name ) )
+			return null;
+		
+		var result = ShaderResult;
+		if ( !result.Functions.Contains( name ) )
+			result.Functions.Add( name );
+		
+		return $"{name}( {string.Join( ", ", args )} )";
+	}
 
-        (string, string) func = (code, propertyName);
-
-        if (!result.Functions.ContainsKey( func.Item2 ) )
-        {
-            result.Functions.Add( func.Item2, func.Item1 );
-        }
-        else
-        {
-            result.Functions[func.Item2] = func.Item1;
-        }
-
-        return $"{func.Item2}({args})";
-
-    }
+	/// <summary>
+	/// Register a function and its code from an externally created node.
+	/// </summary>
+	/// <param name="code"></param>
+	/// <param name="propertyName"></param>
+	/// <returns></returns>
+	public string RegisterFunction( string code, [CallerArgumentExpression( "code" )] string propertyName = "" )
+	{
+		if ( !GraphHLSLFunctions.HasFunction( propertyName ) )
+		{
+		    GraphHLSLFunctions.RegisterFunction( propertyName, code );
+		}
+		return propertyName;
+	}
 
     /// <summary>
     /// Slightly tweaked version of the original. Only used by the Custom Expression node.
@@ -177,27 +183,23 @@ public sealed partial class GraphCompiler
     {
 		var result = ShaderResult;
 		
-		(string, string) func = (code, functionName);
-		
 		if ( !includeFile )
 		{
-			if ( !result.Functions.ContainsKey( func.Item2 ) )
+			if ( !GraphHLSLFunctions.HasFunction( functionName ) )
 			{
-			    //SGPLog.Info($"Adding Func : `{functionName}` ");
-			
-			    result.Functions.Add(func.Item2, func.Item1);
+			    GraphHLSLFunctions.RegisterFunction( functionName, code );
 			}
-			else
-			{
-			    //SGPLog.Warning( $"Function `{functionName}` already registerd..." );
-			}
+		    else
+		    {
+		        //SGPLog.Warning( $"Function `{functionName}` already registerd..." );
+		    }
 		}
 		else
 		{
 			RegisterGlobal( $"#include \"{code}\"" );
 		}
 		
-		return $"{func.Item2}({args})";
+		return $"{functionName}( {args} )";
     }
 
 	public void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
@@ -1307,17 +1309,36 @@ public sealed partial class GraphCompiler
 		);
 	}
 
+	//private static string GenerateFunctions( CompileResult result )
+	//{
+	//	var sb = new StringBuilder();
+	//
+	//	foreach ( var entry in result.Functions )
+	//	{
+	//		sb.Append( entry.Value );
+	//	}
+	//
+	//	return sb.ToString();
+	//}
+
 	private static string GenerateFunctions( CompileResult result )
 	{
-		var sb = new StringBuilder();
+		if ( !result.Functions.Any() )
+			return null;
 
-		foreach ( var entry in result.Functions )
+		var sb = new StringBuilder();
+		foreach ( var function in result.Functions )
 		{
-			sb.Append( entry.Value );
+			if ( GraphHLSLFunctions.TryGetFunction( function, out var code ) )
+			{
+				sb.Append( code );
+			}
 		}
 
 		return sb.ToString();
 	}
+
+
 
 	public static string IndentString( string input, int tabCount )
 	{

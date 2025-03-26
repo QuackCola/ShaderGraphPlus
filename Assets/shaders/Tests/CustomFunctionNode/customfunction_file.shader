@@ -92,10 +92,10 @@ PS
 		float l_0 = g_flTestFloat;
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
 		
-		Function0( l_0, l_1, vl_0, vl_1 );
+		Function0(  l_0, l_1, vl_0, vl_1  );
 		
 		
-		Function0( 0, 0, vl_2, vl_3 );
+		Function0(  0, 0, vl_2, vl_3  );
 		
 		float l_4 = VoronoiNoise( i.vTextureCoords.xy, 3.4754598, 30.780893 );
 		float4 l_5 = lerp( vl_0, vl_3, l_4 );

@@ -25,12 +25,9 @@ float2 Random(float2 vUv)
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var coords = compiler.Result( ScreenUVs );
-
-		return new NodeResult( ResultType.Vector2, compiler.ResultFunction( Random, 
-			args: 
-			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}" 
-		));
+		
+		string funcCall = $"{compiler.RegisterFunction( Random )}( {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")} );";
+		
+		return new NodeResult( ResultType.Vector2, funcCall );
 	};
-
-
 }

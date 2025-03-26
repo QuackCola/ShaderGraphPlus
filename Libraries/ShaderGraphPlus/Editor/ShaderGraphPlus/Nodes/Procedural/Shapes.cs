@@ -6,16 +6,6 @@
 [Title( "Box Shape" ), Category( "Procedural/Shapes" ), Icon( "check_box_outline_blank" )]
 public sealed class BoxShapeNode : ShaderNodePlus
 {
-[Hide]
-public string BoxShape => @"
-float BoxShape( float2 UV, float Width, float Height )
-{
-	float2 d = abs(UV * 2 - 1) - float2(Width, Height);
-    d = 1 - d / fwidth(d);
-	return saturate(min(d.x, d.y));
-}
-";
-
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -56,7 +46,7 @@ float BoxShape( float2 UV, float Width, float Height )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( BoxShape, args: $"{coords}, {width}, {height}" ));
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( "BoxShape", $"{coords}", $"{width}", $"{height}" ) );
 	};
 
 }
@@ -67,15 +57,6 @@ float BoxShape( float2 UV, float Width, float Height )
 [Title( "Elipse Shape" ), Category( "Procedural/Shapes" )]
 public sealed class ElipseShapeNode : ShaderNodePlus
 {
-[Hide]
-public string ElipseShape => @"
-float ElipseShape( float2 UV, float Width, float Height )
-{
-    float d = length((UV * 2 - 1) / float2(Width, Height));
-    return saturate((1 - d) / fwidth(d));
-}
-";
-
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -116,7 +97,7 @@ float ElipseShape( float2 UV, float Width, float Height )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( ElipseShape, args: $"{coords}, {width}, {height}" ));
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( "ElipseShape", $"{coords}", $"{width}", $"{height}" ) );
 	};
 
 }
@@ -127,22 +108,6 @@ float ElipseShape( float2 UV, float Width, float Height )
 [Title( "Polygon Shape" ), Category( "Procedural/Shapes" )]
 public sealed class PolygonShapeNode : ShaderNodePlus
 {
-[Hide]
-public string PolygonShape => @"
-float PolygonShape( float2 UV, float Sides, float Width, float Height )
-{
-    float pi = 3.14159265359;
-    float aWidth = Width * cos(pi / Sides);
-    float aHeight = Height * cos(pi / Sides);
-    float2 uv = (UV * 2 - 1) / float2(aWidth, aHeight);
-    uv.y *= -1;
-    float pCoord = atan2(uv.x, uv.y);
-    float r = 2 * pi / Sides;
-    float distance = cos(floor(0.5 + pCoord / r) * r - pCoord) * length(uv);
-    return saturate((1 - distance) / fwidth(distance));
-}
-";
-
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -192,7 +157,7 @@ float PolygonShape( float2 UV, float Sides, float Width, float Height )
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( PolygonShape, args: $"{coords}, {sides}, {width}, {height}" ));
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( "PolygonShape", $"{coords}", $"{sides}", $"{width}", $"{height}" ) );
 	};
 
 }
