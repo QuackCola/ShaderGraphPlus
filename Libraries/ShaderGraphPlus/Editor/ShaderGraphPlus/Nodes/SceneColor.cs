@@ -25,21 +25,21 @@ public sealed class SceneColorNode : ShaderNodePlus
 			return NodeResult.Error($"Graph `{nameof( BlendMode )}` must be set to `{nameof( BlendMode.Translucent )}` in order to use `{DisplayInfo.Name}`");
 		}
 	
-		var uv = ( UseScreenUVs ? $"CalculateViewportUv( i.vPositionSs.xy )" : $"i.vTextureCoords.xy");
+		var uv = ( UseScreenUVs ? $"CalculateViewportUv( i.vPositionSs.xy )" : $"i.vTextureCoords.xy" );
 	
 	
 		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			compiler.RegisterGlobal( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
 			
-			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )")} )");
+			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )" )} )" );
 		}
 		else
 		{
 			compiler.RegisterGlobal( "BoolAttribute( bWantsFBCopyTexture, true );" );
 			compiler.RegisterGlobal( "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
 
-            return new NodeResult(ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{(coords.IsValid ? $"{coords.Cast(2)}" : $"{uv} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")}")})");
+            return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : $"{uv} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} )" );
         }
 	};
 }
