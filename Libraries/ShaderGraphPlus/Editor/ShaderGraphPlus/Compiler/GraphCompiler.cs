@@ -1363,15 +1363,17 @@ public sealed partial class GraphCompiler
 
 	private string GeneratePixelComboRules()
 	{
-		if ( IsNotPreview )
-			return null;
-
 		var sb = new StringBuilder();
-
-        sb.AppendLine();
+		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
+		{
+			sb.AppendLine( "#include \"postprocess/functions.hlsl\"" );
+			sb.AppendLine( "#include \"postprocess/common.hlsl\"" );
+		}
+		
+		sb.AppendLine();
 		sb.AppendLine( "DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );" );
 		sb.AppendLine( "RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );" );
-
+		
 		return sb.ToString();
 	}
 
