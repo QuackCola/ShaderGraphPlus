@@ -1703,24 +1703,24 @@ public sealed partial class GraphCompiler
 		{
 			int localId = 1;
 			
-			foreach (var result in ShaderResult.Results)
+			foreach ( var result in ShaderResult.Results )
 			{
-				if (result.Item2.ResultType is ResultType.TextureObject)
+				if ( result.Item2.ResultType is ResultType.TextureObject )
 				{
-					sb.AppendLine($"Texture2D {result.Item1} = {result.Item2.Code};");
-					sb.AppendLine($"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );");
+					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
+					sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );" );
 				}
-				else if (result.Item2.ResultType is ResultType.Float2x2)
+				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
-					sb.AppendLine($"float2x2 {result.Item1} = float2x2({result.Item2.Code});");
+					sb.AppendLine( $"float2x2 {result.Item1} = float2x2( {result.Item2.Code} );" );
 				}
-				else if (result.Item2.ResultType is ResultType.Float3x3)
+				else if ( result.Item2.ResultType is ResultType.Float3x3 )
 				{
-					sb.AppendLine($"float3x3 {result.Item1} = float3x3({result.Item2.Code});");
+					sb.AppendLine( $"float3x3 {result.Item1} = float3x3( {result.Item2.Code} );" );
 				}
-				else if (result.Item2.ResultType is ResultType.Float4x4)
+				else if ( result.Item2.ResultType is ResultType.Float4x4 )
 				{
-					sb.AppendLine($"float4x4 {result.Item1} = float4x4({result.Item2.Code});");
+					sb.AppendLine( $"float4x4 {result.Item1} = float4x4( {result.Item2.Code} );" );
 				}
 				else
 				{
@@ -1735,7 +1735,7 @@ public sealed partial class GraphCompiler
 					else
 					{
 					    sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-					    sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast(4, 1.0f)};" );
+					    sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
 					}
 				}
 				
