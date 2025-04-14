@@ -240,7 +240,7 @@ public sealed class PolarCoordinates : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.Domain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}

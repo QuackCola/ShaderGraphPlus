@@ -1,6 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
-
 namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
@@ -89,16 +86,11 @@ public partial class ShaderGraphPlus : IGraph
 
 	public BlendMode BlendMode { get; set; }
 
-	[ShowIf( nameof( ShowShadingModel ), true )]
-	public ShadingModel ShadingModel { get; set; }
-	[Hide] private bool ShowShadingModel => Domain != MaterialDomain.PostProcess;
+    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.PostProcess )]
+    public ShadingModel ShadingModel { get; set; }
 
-	public MaterialDomain Domain { get; set; }
+	public MaterialDomain MaterialDomain { get; set; }
 
-    [Hide, Obsolete( "Use Domain instead." )]
-    [EditorBrowsable( EditorBrowsableState.Never )]
-    public MaterialDomain MaterialDomain { get; set; }
-   
     //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
     //[InlineEditor]
     //[Group("Post Processing")]
@@ -244,6 +236,7 @@ public partial class ShaderGraphPlus : IGraph
         Metadata[keyname] = outvalue;
         return true;
     }
+
 }
 
 
