@@ -1829,7 +1829,6 @@ public sealed partial class GraphCompiler
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
-				
 				result = Result( connection );
 			}
 			else
@@ -1924,10 +1923,6 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
 				
-				
-				//var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-				//var componentCount = GetComponentCount( inputAttribute.Type );
-				
 				sb.AppendLine();
 				
 				foreach ( var group in ShaderResult.VoidLocalGroups )
@@ -1971,29 +1966,29 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 				{
 					if ( local.Item2.ResultType is ResultType.Void )
 					{
-					    sb.AppendLine($"{local.Item2.Code};");
+					    sb.AppendLine( $"{local.Item2.Code};" );
 					}
 					else
 					{
-					    sb.AppendLine($"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};");
+					    sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
 					}
 				}
 				
-				sb.AppendLine($"i.vPositionWs.xyz += { result.Cast( componentCount ) };");
-				sb.AppendLine("i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );");
+				sb.AppendLine( $"i.vPositionWs.xyz += { result.Cast( componentCount ) };" );
+				sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );
             }
         }
 
         switch ( Graph.MaterialDomain )
         {
             case MaterialDomain.Surface:
-                sb.AppendLine("return FinalizeVertex( i );");
+                sb.AppendLine( "return FinalizeVertex( i );" );
                 break;
             case MaterialDomain.BlendingSurface:
-                sb.AppendLine("return FinalizeVertex( i );");
+                sb.AppendLine( "return FinalizeVertex( i );" );
                 break;
             case MaterialDomain.PostProcess:
-                sb.AppendLine("return i;");
+                sb.AppendLine( "return i;" );
                 break;
         }
 
