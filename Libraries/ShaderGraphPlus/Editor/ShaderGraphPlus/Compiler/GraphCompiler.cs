@@ -159,7 +159,21 @@ public sealed partial class GraphCompiler
 		list.Add( path );
 	}
 
-	public string ResultFunction( string name, params string[] args )
+    /// <summary>
+    /// Register some generic global parameter for a node to use.
+    /// </summary>
+    /// <param name="global"></param>
+    public void RegisterGlobal(string global)
+    {
+        var result = ShaderResult;
+
+        if (!result.Globals.Contains(global))
+        {
+            result.Globals.Add(global);
+        }
+    }
+
+    public string ResultFunction( string name, params string[] args )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( name ) )
 			return null;
@@ -257,20 +271,6 @@ public sealed partial class GraphCompiler
 			//SGPLog.Warning( $" RV : We have already registerd the outputs for this node..." );
 		}
     }
-
-	/// <summary>
-	/// Register some generic global parameter for a node to use.
-	/// </summary>
-	/// <param name="global"></param>
-	public void RegisterGlobal( string global )
-	{
-		var result = ShaderResult;
-		
-		if ( !result.Globals.Contains( global ) )
-		{
-		    result.Globals.Add( global );
-		}
-	}
 
 	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
