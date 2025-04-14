@@ -506,27 +506,27 @@ public sealed partial class GraphCompiler
 			return default;
 		
 		BaseNodePlus node = null;
-		if (string.IsNullOrEmpty(input.Subgraph))
+		if ( string.IsNullOrEmpty( input.Subgraph ) )
 		{
-			if (Subgraph is not null)
+			if ( Subgraph is not null )
 			{
-				var nodeId = string.Join(',', SubgraphStack.Select(x => x.Item1.Identifier));
-				return Result(new()
+				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
+				return Result( new()
 				{
 					Identifier = input.Identifier,
 					Output = input.Output,
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
-				});
+				} );
 			}
-			node = Graph.FindNode(input.Identifier);
+			node = Graph.FindNode( input.Identifier );
 		}
 		else
 		{
-			var subgraph = Subgraphs.FirstOrDefault(x => x.Path == input.Subgraph);
-			if (subgraph is not null)
+			var subgraph = Subgraphs.FirstOrDefault( x => x.Path == input.Subgraph );
+			if ( subgraph is not null )
 			{
-				node = subgraph.FindNode(input.Identifier);
+				node = subgraph.FindNode( input.Identifier );
 			}
 		}
 		if (ShaderResult.InputResults.TryGetValue(input, out var result))
@@ -540,8 +540,7 @@ public sealed partial class GraphCompiler
 		
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty(input.Output);
-		
-		
+
 		if (property == null)
 		{
 			// Search for alias
@@ -618,10 +617,8 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 			
-			// Output Magenta for now while i cleanup the logic.
 			var localResult = new NodeResult(outputData.ResultType, $"{outputData.CompilerName}", voidComponents: outputData.ComponentCount );
-			
-			
+
 			// return the localResult if we are getting a result from a node that we have already evaluated. 
 			foreach ( var inputResult in ShaderResult.InputResults )
 			{
@@ -656,7 +653,7 @@ public sealed partial class GraphCompiler
 			{
 				Subgraphs.Add( Subgraph );
 			}
-		
+
 			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
@@ -686,8 +683,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-		    
-		    if ( Subgraph is not null )
+			if ( Subgraph is not null )
 			{
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
@@ -711,18 +707,18 @@ public sealed partial class GraphCompiler
 					}
 				}
 			}
-		
+
 			if ( value is null )
 			{
 				if ( property == null )
 				{
 					InputStack.Remove( input );
-		            return default;
+					return default;
 				}
-		
-		        value = property.GetValue( node );
+
+				value = property.GetValue( node );
 			}
-		
+
 			if ( value == null )
 			{
 				InputStack.Remove( input );
