@@ -1489,8 +1489,6 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		// TODO : Should i just put this in the common block or have a way so
-		// you can specify if a global gets appended in the `vertex shader` or `pixel shader` sections.
 		foreach ( var global in ShaderResult.Globals )
 		{
             sb.AppendLine( global );
