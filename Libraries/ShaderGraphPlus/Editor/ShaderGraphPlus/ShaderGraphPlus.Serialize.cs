@@ -1,12 +1,20 @@
 ﻿using System.Text.Json.Nodes;
+using static Sandbox.Spline;
 
 namespace Editor.ShaderGraphPlus;
+
+internal static class ObsoleteMapping
+{
+    public static Dictionary<string, string> Mapping => new()
+    {
+        { "MaterialDomain", "Domain" }
+    };
 
 }
 
 partial class ShaderGraphPlus
 {
-    private static JsonSerializerOptions SerializerOptions(bool indented = false)
+    private static JsonSerializerOptions SerializerOptions( bool indented = false )
     {
         var options = new JsonSerializerOptions
         {
@@ -17,7 +25,7 @@ partial class ShaderGraphPlus
             ReadCommentHandling = JsonCommentHandling.Skip,
         };
 
-        options.Converters.Add(new JsonStringEnumConverter(null, true));
+        options.Converters.Add( new JsonStringEnumConverter( null, true ) );
 
         return options;
     }
@@ -39,32 +47,37 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 
-		DeserializeObject( this, root, options );
+		Dictionary<(string, string), (string, string)> mapping = new();
+
+		foreach ( var entry in ObsoleteMapping.Mapping )
+		{
+			FetchObsolete( this, root, options, entry, out var newPropData, out var oldPropData );
+
+			if ( newPropData.Item2 != oldPropData.Item2 )
+			{
+                mapping.Add(newPropData, oldPropData);
+            }
+		}
+
+		DeserializeObject( this, root, options, mapping);
 		DeserializeNodes( root, options, subgraphPath );
 	}
 
-    public IEnumerable<BaseNodePlus> DeserializeNodes(string json)
+    private void FetchObsolete( object obj, JsonElement doc, JsonSerializerOptions options, KeyValuePair<string,string> mappingEntry, out (string, string) newPropData, out (string,string) oldPropData )
     {
-        using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
-        return DeserializeNodes( doc.RootElement, SerializerOptions() );
-    }
-
- 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
-	{
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-		
-		foreach ( var nodeProperty in doc.EnumerateObject() )
+
+        oldPropData = new();
+		newPropData = new();
+
+        foreach ( var nodeProperty in doc.EnumerateObject() )
 		{
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
 			
-			    if ( propName == "MaterialDomain" && x.PropertyType == typeof( MaterialDomain ) )
-			    {
-			
-			    }
 			
 			    if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
 					propName = jpna.Name;
@@ -75,17 +88,92 @@ partial class ShaderGraphPlus
 			
 			if ( prop == null )
 				continue;
-			
-			
-			
+
 			if ( prop.CanWrite == false )
 				continue;
 			
 			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
+            
+            if ( prop.IsDefined( typeof( ObsoleteAttribute ) ) )
+			{
+                if ( prop.Name == mappingEntry.Key )
+                {
+                    oldPropData.Item1 = prop.Name;
+                    oldPropData.Item2 = nodeProperty.Value.GetRawText();
+                }
+				else
+				{
+					throw new Exception( $"Cannot find property with name `{mappingEntry.Key}`" );
+				}
+            }
+            else if (prop.Name == mappingEntry.Value)
+            {
+                newPropData.Item1 = prop.Name;
+                newPropData.Item2 = nodeProperty.Value.GetRawText();
+            }
+        }
+    }
+
+    public IEnumerable<BaseNodePlus> DeserializeNodes(string json)
+    {
+        using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
+        return DeserializeNodes( doc.RootElement, SerializerOptions() );
+    }
+
+ 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options, Dictionary<(string, string), (string, string)> oldToNewMapping = null)
+	{
+		var type = obj.GetType();
+		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( x => x.GetSetMethod() != null );
+	
+		foreach ( var nodeProperty in doc.EnumerateObject() )
+		{
+            (string, string) newData = new();
+  
+            var prop = properties.FirstOrDefault( x =>
+			{
+				var propName = x.Name;
 			
-			prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
-		}
+			
+			    if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
+					propName = jpna.Name;
+			
+				return string.Equals( propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase );
+			} );
+			
+			
+			if ( prop == null )
+				continue;
+
+			if ( prop.CanWrite == false )
+				continue;
+			
+			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
+				continue;
+
+			if ( oldToNewMapping != null && oldToNewMapping.Any())
+			{
+				foreach (var entry in oldToNewMapping)
+				{
+				    if ( prop.Name == entry.Key.Item1 )
+				    {
+				        SGPLog.Info( $"Cloning data from obsolete property `{entry.Value.Item1}` to `{entry.Key.Item1}`" );
+				        newData.Item1 = entry.Value.Item1;
+						newData.Item2 = entry.Value.Item2;
+				    }
+				}
+            }
+
+			if ( newData.Item1 != null )
+			{
+                prop.SetValue( obj, JsonSerializer.Deserialize( newData.Item2, prop.PropertyType, options ) );
+            }
+			else
+			{
+                prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
+            }
+        }
 	}
 
     private IEnumerable<BaseNodePlus> DeserializeNodes(JsonElement doc, JsonSerializerOptions options, string subgraphPath = null )
@@ -106,12 +194,12 @@ partial class ShaderGraphPlus
 			{
 				var missingNode = new MissingNode( typeName, element );
 				node = missingNode;
-				DeserializeObject( node, element, options );
+				DeserializeObject( node, element, options, null );
 			}
 			else
 			{
 				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
-				DeserializeObject( node, element, options );
+				DeserializeObject( node, element, options, null );
 				
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
