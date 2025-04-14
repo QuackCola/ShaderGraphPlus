@@ -1624,34 +1624,34 @@ public sealed partial class GraphCompiler
 		    }
 		}
 		
-		foreach (var gradient in ShaderResult.Gradients)
+		foreach ( var gradient in ShaderResult.Gradients )
 		{
 		    //Log.Info($"Found Gradient : {gradient.Key}");
 		    //Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
 		
-		    sb.AppendLine($"Gradient {gradient.Key} = Gradient::Init();");
+		    sb.AppendLine( $"Gradient {gradient.Key} = Gradient::Init();" );
 		    sb.AppendLine();
 		
 		    var colorindex = 0;
 		    var alphaindex = 0;
 		
-		    sb.AppendLine($"{gradient.Key}.colorsLength = {gradient.Value.Colors.Count};");
-		    sb.AppendLine($"{gradient.Key}.alphasLength = {gradient.Value.Alphas.Count};");
+		    sb.AppendLine( $"{gradient.Key}.colorsLength = {gradient.Value.Colors.Count};" );
+		    sb.AppendLine( $"{gradient.Key}.alphasLength = {gradient.Value.Alphas.Count};" );
 		
-		    foreach (var color in gradient.Value.Colors)
+		    foreach ( var color in gradient.Value.Colors )
 			{
 				if ( Debug )
 				{
-					Log.Info($"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}");
+					Log.Info( $"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}" );
 				}
 		
 				// All good with time as the 4th component?
-		        sb.AppendLine($"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );");
+		        sb.AppendLine( $"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );" );
 		    }
 		
 		    foreach ( var alpha in gradient.Value.Alphas )
 		    {
-		        sb.AppendLine($"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );");
+		        sb.AppendLine( $"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );" );
 		    }
 		
 		    sb.AppendLine();
