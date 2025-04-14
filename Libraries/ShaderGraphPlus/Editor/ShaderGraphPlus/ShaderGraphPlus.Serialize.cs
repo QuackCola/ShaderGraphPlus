@@ -2,6 +2,8 @@
 
 namespace Editor.ShaderGraphPlus;
 
+}
+
 partial class ShaderGraphPlus
 {
     private static JsonSerializerOptions SerializerOptions(bool indented = false)

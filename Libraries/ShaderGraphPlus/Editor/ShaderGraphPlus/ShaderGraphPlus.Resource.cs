@@ -95,10 +95,10 @@ public partial class ShaderGraphPlus : IGraph
 
 	public MaterialDomain Domain { get; set; }
 
-    [System.Obsolete( "Use Domain  instead." )]
-    [Hide]
+    [Hide, Obsolete( "Use Domain instead." )]
+    [EditorBrowsable( EditorBrowsableState.Never )]
     public MaterialDomain MaterialDomain { get; set; }
-
+   
     //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
     //[InlineEditor]
     //[Group("Post Processing")]
