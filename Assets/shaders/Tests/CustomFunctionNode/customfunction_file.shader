@@ -73,9 +73,11 @@ VS
 PS
 {
     #include "common/pixel.hlsl"
-	
 	#include "Tests/CustomFunctionNode/Function0.hlsl"
 	
+	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
+	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
 	float g_flTestFloat < UiGroup( ",0/,0/0" ); Default1( 0 ); Range1( 0, 1 ); >;
 	
     float4 MainPs( PixelInput i ) : SV_Target0
