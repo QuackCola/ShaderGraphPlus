@@ -1,0 +1,49 @@
+{
+  "IsSubgraph": true,
+  "Path": "shaders/tests/subgraph/subgraph_test.sgpfunc",
+  "Model": null,
+  "Title": "Sub Graph Test",
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "a83a77c6-e8cf-4548-b6ac-b54006233b6b",
+          "Name": "OutputA",
+          "Type": "float"
+        }
+      ],
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "OutputA": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 10,
+      "Worley": true,
+      "Identifier": "1",
+      "Position": "-312,36",
+      "HandleOffsets": {}
+    }
+  ]
+}
