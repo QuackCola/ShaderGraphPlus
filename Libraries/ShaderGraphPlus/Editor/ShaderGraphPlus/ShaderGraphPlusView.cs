@@ -90,6 +90,25 @@ public class ShaderGraphPlusView : GraphView
 
 	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
 	{
+		if ( ev.Data.Assets.FirstOrDefault() is { } asset )
+		{
+			if ( asset.IsInstalled )
+			{
+				if ( string.Equals( Path.GetExtension( asset.AssetPath ), ".sgpfunc", StringComparison.OrdinalIgnoreCase ) )
+				{
+					return new SubgraphNodeType( asset.AssetPath, EditorTypeLibrary.GetType<SubgraphNode>() );
+				}
+				else
+				{
+					var realAsset = asset.GetAssetAsync().Result;
+					if ( realAsset.AssetType == AssetType.ImageFile )
+					{
+						return new TextureNodeType( EditorTypeLibrary.GetType<TextureSampler>(), asset.AssetPath );
+					}
+				}
+			}
+		}
+
 		return AvailableNodes.TryGetValue( ev.Data.Text, out var type )
 			? type
 			: null;
@@ -126,10 +145,10 @@ public class ShaderGraphPlusView : GraphView
         { typeof(Color), new HandleConfig( "Color", Color.Parse( "#c7ae32" ).Value ) },
 	};
 
-    protected override HandleConfig OnGetHandleConfig(Type type)
-    {
-        return HandleConfigs.TryGetValue(type, out var config) ? config : base.OnGetHandleConfig(type);
-    }
+	protected override HandleConfig OnGetHandleConfig( Type type )
+	{
+		return HandleConfigs.TryGetValue( type, out var config ) ? config : base.OnGetHandleConfig( type );
+	}
 
     public override void ChildValuesChanged( Widget source )
 	{
@@ -383,13 +402,13 @@ public class ShaderGraphPlusView : GraphView
 			.OrderByDescending( n => n is CommentUI )
 			.FirstOrDefault();
 
-		if ( item is null )
+		if ( !item.IsValid() )
 		{
 			_window.OnNodeSelected( null );
 			return;
 		}
 
-		_window.OnNodeSelected( (BaseNodePlus) item.Node );
+		_window.OnNodeSelected( (BaseNodePlus)item.Node );
 	}
 
 	protected override void OnNodeCreated( INode node )
