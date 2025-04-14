@@ -86,10 +86,12 @@ public partial class ShaderGraphPlus : IGraph
 
 	public BlendMode BlendMode { get; set; }
 
-    [HideIf( nameof( this.MaterialDomain ), MaterialDomain.PostProcess )]
+    [ShowIf( nameof( ShowShadingModel ), true )]
     public ShadingModel ShadingModel { get; set; }
 
-	public MaterialDomain MaterialDomain { get; set; }
+    [Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
+
+    public MaterialDomain MaterialDomain { get; set; }
 
     //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
     //[InlineEditor]
