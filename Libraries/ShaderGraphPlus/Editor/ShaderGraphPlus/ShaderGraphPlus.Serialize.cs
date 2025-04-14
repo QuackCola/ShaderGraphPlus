@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Nodes;
-using static Sandbox.Spline;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -129,9 +128,9 @@ partial class ShaderGraphPlus
 		
 		foreach ( var nodeProperty in doc.EnumerateObject() )
 		{
-		    (string, string) newData = new();
-		
-		    var prop = properties.FirstOrDefault( x =>
+			(string, string) newData = new();
+			
+			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
 			
@@ -145,34 +144,35 @@ partial class ShaderGraphPlus
 			
 			if ( prop == null )
 				continue;
-		
+			
 			if ( prop.CanWrite == false )
 				continue;
 			
 			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
-		
-			if ( oldToNewMapping != null && oldToNewMapping.Any())
+			
+			if ( oldToNewMapping != null && oldToNewMapping.Any() )
 			{
-				foreach (var entry in oldToNewMapping)
+				foreach ( var entry in oldToNewMapping )
 				{
-				    if ( prop.Name == entry.Key.Item1 )
-				    {
-				        SGPLog.Info( $"Cloning data from obsolete property `{entry.Value.Item1}` to `{entry.Key.Item1}`" );
-				        newData.Item1 = entry.Value.Item1;
+					if ( prop.Name == entry.Key.Item1 )
+					{
+						SGPLog.Info( $"Cloning data from obsolete property `{entry.Value.Item1}` to `{entry.Key.Item1}`" );
+			
+						newData.Item1 = entry.Value.Item1;
 						newData.Item2 = entry.Value.Item2;
-				    }
-				}
-		    }
-		
+			        }
+			    }
+			}
+			
 			if ( newData.Item1 != null )
 			{
-		        prop.SetValue( obj, JsonSerializer.Deserialize( newData.Item2, prop.PropertyType, options ) );
-		    }
+			    prop.SetValue( obj, JsonSerializer.Deserialize( newData.Item2, prop.PropertyType, options ) );
+			}
 			else
 			{
-		        prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
-		    }
+			    prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
+			}
 		}
 	}
 
