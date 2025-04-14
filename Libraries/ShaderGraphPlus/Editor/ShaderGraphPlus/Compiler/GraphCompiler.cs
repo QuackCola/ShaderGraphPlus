@@ -1121,7 +1121,7 @@ public sealed partial class GraphCompiler
 		// Register any Graph level Shader Features...
 		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
 		
-		if (Graph.Domain is MaterialDomain.BlendingSurface)
+		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
 		{
 		    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
 		}
@@ -1286,7 +1286,7 @@ public sealed partial class GraphCompiler
 
 		string template = ShaderTemplate.Code;
 
-		if ( Graph.Domain is MaterialDomain.BlendingSurface )
+		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
 		{
 			template = ShaderTemplateBlending.Code;
         }
@@ -1378,7 +1378,7 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 		var pixelIncludes = new HashSet<string>(PixelIncludes);
 		
-		if ( Graph.Domain == MaterialDomain.PostProcess )
+		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
 		    pixelIncludes.Add( "postprocess/functions.hlsl" );
 		    pixelIncludes.Add( "postprocess/common.hlsl" );
@@ -1399,7 +1399,7 @@ public sealed partial class GraphCompiler
     private string GeneratePixelInit()
     {
         Stage = ShaderStage.Pixel;
-        if ( Graph.ShadingModel == ShadingModel.Lit && Graph.Domain != MaterialDomain.PostProcess )
+        if ( Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess )
             return ShaderTemplate.Material_init;
         return "";
     }
@@ -1411,7 +1411,7 @@ public sealed partial class GraphCompiler
 		Subgraph = null;
 		SubgraphStack.Clear();
 		
-		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.Domain == MaterialDomain.PostProcess )
+		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 			if ( resultNode == null )
@@ -1803,7 +1803,7 @@ public sealed partial class GraphCompiler
         Subgraph = null;
         SubgraphStack.Clear();
 
-        if (Graph.ShadingModel != ShadingModel.Lit || Graph.Domain == MaterialDomain.PostProcess) return "";
+        if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
 
 
         var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
@@ -1880,7 +1880,7 @@ public sealed partial class GraphCompiler
 
         var sb = new StringBuilder();
 
-        switch (Graph.Domain)
+        switch (Graph.MaterialDomain)
         {
             case MaterialDomain.Surface:
                 sb.AppendLine(@"
@@ -1975,7 +1975,7 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
             }
         }
 
-        switch ( Graph.Domain )
+        switch ( Graph.MaterialDomain )
         {
             case MaterialDomain.Surface:
                 sb.AppendLine( "return FinalizeVertex( i );" );

@@ -8,10 +8,10 @@ namespace Editor.ShaderGraphPlus;
 public sealed class Result : BaseResult
 {
     [Hide]
-    private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.Domain != MaterialDomain.PostProcess);
+    private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 
     [Hide]
-    private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.Domain == MaterialDomain.PostProcess);
+    private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
 
 
     [Hide]
@@ -66,7 +66,7 @@ public sealed class Result : BaseResult
 		if ( Graph is ShaderGraphPlus shaderGraph )
 		{
 			hashCode.Add( shaderGraph.ShadingModel );
-			hashCode.Add( shaderGraph.Domain );
+			hashCode.Add( shaderGraph.MaterialDomain );
 		}
 		var hc = hashCode.ToHashCode();
 		if ( hc != _lastHashCode )
