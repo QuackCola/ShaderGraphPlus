@@ -4,6 +4,25 @@ using Editor.ShaderGraph;
 
 namespace Editor.ShaderGraphPlus;
 
+public class TextureNodeType : ClassNodeType
+{
+	string ImagePath;
+
+	public TextureNodeType( TypeDescription type, string imagePath ) : base( type )
+	{
+		ImagePath = imagePath;
+	}
+	public override INode CreateNode( IGraph graph )
+	{
+		var node = base.CreateNode( graph );
+		if ( node is ITextureParameterNode textureNode )
+		{
+			textureNode.Image = ImagePath;
+		}
+		return node;
+	}
+}
+
 public class ClassNodeType : INodeType
 {
 	public virtual string Identifier => Type.FullName;
