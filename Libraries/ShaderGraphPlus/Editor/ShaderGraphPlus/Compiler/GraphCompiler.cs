@@ -1364,9 +1364,9 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 		
-		foreach (var include in VertexIncludes)
+		foreach ( var include in VertexIncludes )
 		{
-		    sb.AppendLine($"#include \"{include}\"");
+		    sb.AppendLine( $"#include \"{include}\"" );
 		}
 		
 		if ( IsNotPreview )
@@ -1384,8 +1384,8 @@ public sealed partial class GraphCompiler
 		
 		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
-		    pixelIncludes.Add("postprocess/functions.hlsl");
-		    pixelIncludes.Add("postprocess/common.hlsl");
+		    pixelIncludes.Add( "postprocess/functions.hlsl" );
+		    pixelIncludes.Add( "postprocess/common.hlsl" );
 		}
 		
 		foreach ( var include in pixelIncludes )
