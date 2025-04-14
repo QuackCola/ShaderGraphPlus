@@ -94,7 +94,7 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is MaterialDomain.PostProcess )
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}

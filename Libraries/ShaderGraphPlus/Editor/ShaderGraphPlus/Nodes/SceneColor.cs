@@ -20,7 +20,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 		
 		var graph = compiler.Graph;
 		
-		if ( graph.MaterialDomain != MaterialDomain.PostProcess && graph.BlendMode != BlendMode.Translucent )
+		if ( graph.Domain != MaterialDomain.PostProcess && graph.BlendMode != BlendMode.Translucent )
 		{
 			return NodeResult.Error($"Graph `{nameof( BlendMode )}` must be set to `{nameof( BlendMode.Translucent )}` in order to use `{DisplayInfo.Name}`");
 		}
@@ -28,7 +28,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 		var uv = ( UseScreenUVs ? $"CalculateViewportUv( i.vPositionSs.xy )" : $"i.vTextureCoords.xy" );
 	
 	
-		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( graph.Domain is MaterialDomain.PostProcess )
 		{
 			compiler.RegisterGlobal( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
 			
