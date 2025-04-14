@@ -47,6 +47,8 @@ public sealed partial class GraphCompiler
     /// The loaded sub-graphs
     /// </summary>
     public List<ShaderGraphPlus> Subgraphs { get; private set; }
+    public HashSet<string> PixelIncludes { get; private set; } = new();
+    public HashSet<string> VertexIncludes { get; private set; } = new();
 
     public Asset _Asset { get; private set; }
 
@@ -149,6 +151,14 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
+	public void RegisterInclude( string path )
+	{
+		var list = IsVs ? VertexIncludes : PixelIncludes;
+		if ( list.Contains( path ) )
+			return;
+		list.Add( path );
+	}
+
 	public string ResultFunction( string name, params string[] args )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( name ) )
@@ -190,7 +200,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			RegisterGlobal( $"#include \"{code}\"" );
+			RegisterInclude( code );
 		}
 		
 		return $"{functionName}( {args} )";
@@ -1352,10 +1362,16 @@ public sealed partial class GraphCompiler
 
 	private string GenerateVertexComboRules()
 	{
+		var sb = new StringBuilder();
+		
+		foreach (var include in VertexIncludes)
+		{
+		    sb.AppendLine($"#include \"{include}\"");
+		}
+		
 		if ( IsNotPreview )
 			return null;
-
-		var sb = new StringBuilder();
+		
 		sb.AppendLine();
 		sb.AppendLine( "DynamicComboRule( Allow0( D_MORPH ) );" );
 		return sb.ToString();
@@ -1364,10 +1380,17 @@ public sealed partial class GraphCompiler
 	private string GeneratePixelComboRules()
 	{
 		var sb = new StringBuilder();
+		var pixelIncludes = new HashSet<string>(PixelIncludes);
+		
 		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
-			sb.AppendLine( "#include \"postprocess/functions.hlsl\"" );
-			sb.AppendLine( "#include \"postprocess/common.hlsl\"" );
+		    pixelIncludes.Add("postprocess/functions.hlsl");
+		    pixelIncludes.Add("postprocess/common.hlsl");
+		}
+		
+		foreach ( var include in pixelIncludes )
+		{
+		    sb.AppendLine($"#include \"{include}\"");
 		}
 		
 		sb.AppendLine();
