@@ -718,8 +718,8 @@ public class MainWindow : DockWindow
 		toolBar.AddSeparator();
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
-		toolBar.AddOption( "Open Generated Shader", "txtedit/appicon.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
-        toolBar.AddOption("Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
+		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
+        toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
 
 
         _undoOption.Enabled = false;
@@ -756,8 +756,8 @@ public class MainWindow : DockWindow
 
 		var debug = MenuBar.AddMenu( "Debug" );
 		debug.AddSeparator();
-		debug.AddOption( "Open Temp Shader", "txtedit/appicon.png", OpenTempGeneratedShader );
-        debug.AddOption("Open ShaderGraph Project in text editor", "txtedit/appicon.png", OpenShaderGraphProjectTxt);
+		debug.AddOption( "Open Temp Shader", "common/edit.png", OpenTempGeneratedShader );
+        debug.AddOption("Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt);
 
         RefreshRecentFiles();
 
