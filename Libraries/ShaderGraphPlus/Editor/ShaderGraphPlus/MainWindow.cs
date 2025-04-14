@@ -451,8 +451,6 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-			
-
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
@@ -1347,13 +1345,13 @@ public class MainWindow : DockWindow
 
 	private void OnPropertyUpdated()
 	{
-		 //Log.Info($"Property Updated: {_properties.Target}");
-		 if (_properties.Target is BaseNodePlus node)
-		 {
-		     _graphView.UpdateNode(node);
-		 }
+		//Log.Info($"Property Updated: {_properties.Target}");
+		if ( _properties.Target is BaseNodePlus node )
+		{
+			_graphView.UpdateNode( node );
+		}
 		
-		 SetDirty();
+		SetDirty();
 	}
 
 	protected override void RestoreDefaultDockLayout()
