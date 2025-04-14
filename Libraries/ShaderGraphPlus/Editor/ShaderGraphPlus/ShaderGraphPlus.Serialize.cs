@@ -52,27 +52,36 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-
+		
 		foreach ( var nodeProperty in doc.EnumerateObject() )
 		{
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
-				if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
+			
+			    if ( propName == "MaterialDomain" && x.PropertyType == typeof( MaterialDomain ) )
+			    {
+			
+			    }
+			
+			    if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
 					propName = jpna.Name;
-
+			
 				return string.Equals( propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
-
+			
+			
 			if ( prop == null )
 				continue;
-
+			
+			
+			
 			if ( prop.CanWrite == false )
 				continue;
-
+			
 			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
-
+			
 			prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
 		}
 	}
@@ -126,10 +135,10 @@ partial class ShaderGraphPlus
 				{
 					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
 						continue;
-				
+
 					var connected = connectedElem
 						.Deserialize<NodeInput?>();
-				
+
 					if ( connected is { IsValid: true } )
 					{
 						var connection = connected.Value;
@@ -184,7 +193,7 @@ partial class ShaderGraphPlus
 
     public string SerializeNodes()
     {
-        return SerializeNodes(Nodes);
+        return SerializeNodes( Nodes );
     }
 
     public string SerializeNodes(IEnumerable<BaseNodePlus> nodes)
@@ -197,46 +206,62 @@ partial class ShaderGraphPlus
         return doc.ToJsonString(options);
     }
 
-    private static void SerializeObject(object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null)
-    {
-        var type = obj.GetType();
-        var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(x => x.GetSetMethod() != null);
+	private static void SerializeObject( object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null )
+	{
+		var type = obj.GetType();
+		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( x => x.GetSetMethod() != null );
 
-        foreach (var property in properties)
-        {
-            if (!property.CanRead)
-                continue;
+		foreach ( var property in properties )
+		{
+			if ( !property.CanRead )
+				continue;
 
-            if (property.PropertyType == typeof(NodeInput))
-                continue;
+			if ( property.PropertyType == typeof( NodeInput ) )
+				continue;
 
-            if (property.IsDefined(typeof(JsonIgnoreAttribute)))
-                continue;
+			if ( property.IsDefined( typeof( JsonIgnoreAttribute ) ) )
+				continue;
 
-            var propertyName = property.Name;
-            if (property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna)
-                propertyName = jpna.Name;
+			var propertyName = property.Name;
+			if ( property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna )
+				propertyName = jpna.Name;
 
-            var propertyValue = property.GetValue(obj);
-            if (propertyName == "Identifier" && propertyValue is string identifier)
-            {
-                if (identifiers.TryGetValue(identifier, out var newIdentifier))
-                {
-                    propertyValue = newIdentifier;
-                }
-            }
+			var propertyValue = property.GetValue( obj );
+			if ( propertyName == "Identifier" && propertyValue is string identifier )
+			{
+				if ( identifiers.TryGetValue( identifier, out var newIdentifier ) )
+				{
+					propertyValue = newIdentifier;
+				}
+			}
 
-            doc.Add(propertyName, JsonSerializer.SerializeToNode(propertyValue, options));
-        }
+			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
+		}
+
+		//if ( obj is INode node )
+		//{
+		//	string subgraphPath = null;
+		//	if ( obj is SubgraphNode subgraphNode )
+		//	{
+		//		subgraphPath = subgraphNode.SubgraphPath;
+		//	}
+		//	foreach ( var input in node.Inputs )
+		//	{
+		//		if ( input.ConnectedOutput is not { } output )
+		//			continue;
+		//
+		//		doc.Add( input.Identifier, JsonSerializer.SerializeToNode( new NodeInput
+		//		{
+		//			Identifier = identifiers?.TryGetValue( output.Node.Identifier, out var newIdent ) ?? false ? newIdent : output.Node.Identifier,
+		//			Output = output.Identifier,
+		//			Subgraph = subgraphPath
+		//		} ) );
+		//	}
+		//}
 
 		if ( obj is INode node )
 		{
-			string subgraphPath = null;
-			if ( obj is SubgraphNode subgraphNode )
-			{
-				subgraphPath = subgraphNode.SubgraphPath;
-			}
 			foreach ( var input in node.Inputs )
 			{
 				if ( input.ConnectedOutput is not { } output )
@@ -245,33 +270,32 @@ partial class ShaderGraphPlus
 				doc.Add( input.Identifier, JsonSerializer.SerializeToNode( new NodeInput
 				{
 					Identifier = identifiers?.TryGetValue( output.Node.Identifier, out var newIdent ) ?? false ? newIdent : output.Node.Identifier,
-					Output = output.Identifier,
-					Subgraph = subgraphPath
+					Output = output.Identifier
 				} ) );
 			}
 		}
     }
 
-    private static void SerializeNodes(IEnumerable<BaseNodePlus> nodes, JsonObject doc, JsonSerializerOptions options)
+    private static void SerializeNodes( IEnumerable<BaseNodePlus> nodes, JsonObject doc, JsonSerializerOptions options )
     {
         var identifiers = new Dictionary<string, string>();
-        foreach (var node in nodes)
+        foreach ( var node in nodes )
         {
-            identifiers.Add(node.Identifier, $"{identifiers.Count}");
+            identifiers.Add( node.Identifier, $"{identifiers.Count}" );
         }
 
         var nodeArray = new JsonArray();
 
-        foreach (var node in nodes)
+        foreach ( var node in nodes )
         {
             var type = node.GetType();
             var nodeObject = new JsonObject { { "_class", type.Name } };
 
-            SerializeObject(node, nodeObject, options, identifiers);
+            SerializeObject( node, nodeObject, options, identifiers );
 
-            nodeArray.Add(nodeObject);
+            nodeArray.Add( nodeObject );
         }
 
-        doc.Add("nodes", nodeArray);
+        doc.Add( "nodes", nodeArray );
     }
 }

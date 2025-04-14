@@ -109,7 +109,7 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is MaterialDomain.PostProcess )
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
