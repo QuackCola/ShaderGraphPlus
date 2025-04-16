@@ -30,14 +30,14 @@ public sealed class SceneColorNode : ShaderNodePlus
 	
 		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
-			compiler.RegisterGlobal( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
+			//compiler.RegisterGlobal( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
 			
 			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )" )} )" );
 		}
 		else
 		{
-			compiler.RegisterGlobal( "BoolAttribute( bWantsFBCopyTexture, true );" );
-			compiler.RegisterGlobal( "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
+			compiler.RegisterGlobal( "bWantsFBCopyTexture", "BoolAttribute( bWantsFBCopyTexture, true );" );
+			compiler.RegisterGlobal( "g_tFrameBufferCopyTexture", "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
 
             return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : $"{uv} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} )" );
         }
