@@ -370,7 +370,8 @@ public class MainWindow : DockWindow
 		}
 
 		_preview.IsCompiling = _isCompiling;
-
+		_preview.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
+		
 		_shaderCompileErrors.Clear();
 	}
 
@@ -1345,8 +1346,10 @@ public class MainWindow : DockWindow
 
 	private void OnPropertyUpdated()
 	{
-		//Log.Info($"Property Updated: {_properties.Target}");
-		if ( _properties.Target is BaseNodePlus node )
+        _preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
+
+
+        if ( _properties.Target is BaseNodePlus node )
 		{
 			_graphView.UpdateNode( node );
 		}
