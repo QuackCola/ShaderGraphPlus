@@ -8,7 +8,7 @@
   "Icon": null,
   "AddToNodeLibrary": true,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "a83a77c6-e8cf-4548-b6ac-b54006233b6b",
+          "Id": "082bf3dd-5db4-4929-986c-bb38d25e1aca",
           "Name": "OutputA",
           "Type": "float"
         }
@@ -38,8 +38,8 @@
     },
     {
       "_class": "VoronoiNoise",
-      "AngleOffset": 3.1415925,
-      "CellDensity": 10,
+      "AngleOffset": 2.663653,
+      "CellDensity": 24,
       "Worley": true,
       "Identifier": "1",
       "Position": "-312,36",
