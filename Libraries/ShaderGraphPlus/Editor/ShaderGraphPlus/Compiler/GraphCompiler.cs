@@ -69,7 +69,8 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public HashSet<string> Functions { get; private set; } = new();
-		public HashSet<string> Globals { get; private set; } = new();
+		public Dictionary<string,string> Globals { get; private set; } = new();
+		
 		public string RepresentativeTexture { get; set; }
 		
 		/// A group of Void Locals that belongs to a Custom Function Node
@@ -163,13 +164,13 @@ public sealed partial class GraphCompiler
     /// Register some generic global parameter for a node to use.
     /// </summary>
     /// <param name="global"></param>
-    public void RegisterGlobal(string global)
+    public void RegisterGlobal( string globalName, string globalString )
     {
         var result = ShaderResult;
 
-        if (!result.Globals.Contains(global))
+        if ( !result.Globals.ContainsKey( globalName ) )
         {
-            result.Globals.Add(global);
+            result.Globals.Add( globalName, globalString);
         }
     }
 
@@ -1466,12 +1467,12 @@ public sealed partial class GraphCompiler
         return $"{result.Cast( componentCount )}";
     }
 
-    private string GenerateGlobals()
+	private string GenerateGlobals()
 	{
 		var sb = new StringBuilder();
-
-        // Static & Dynamic shader feature combos
-        foreach ( var feature in ShaderResult.ShaderFeatures )
+		
+		// Static & Dynamic shader feature combos
+		foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
 			if ( feature.Value.Item1.IsDynamicCombo is not true )
 			{
@@ -1481,30 +1482,15 @@ public sealed partial class GraphCompiler
 			{
 				sb.Append( $"DynamicCombo( {feature.Value.Item1.ToDynamicComboString()}, 0..{feature.Value.Item1.OptionsCount}, Sys( PC ) )" );
 			}
-
+		
 			sb.AppendLine();
 		}
-
+		
 		foreach ( var global in ShaderResult.Globals )
 		{
-            sb.AppendLine( global );
-            sb.AppendLine();
-        }
-
-		//foreach ( var global in ShaderResult.Globals )
-		//{
-		//	if ( global.Value && IsVs )
-		//	{
-		//        sb.AppendLine( global.Key );
-		//    }
-		//	else
-		//	{
-		//        sb.AppendLine( global.Key );
-		//  }
-		//
-		//    sb.AppendLine();
-		//}
-
+		    sb.AppendLine( global.Value );
+		}
+		
 		foreach ( var Sampler in ShaderResult.SamplerStates )
 		{
 			sb.Append( $"{Sampler.Value.CreateSampler( Sampler.Key )} <" )
