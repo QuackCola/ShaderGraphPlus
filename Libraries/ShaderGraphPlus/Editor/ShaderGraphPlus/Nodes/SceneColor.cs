@@ -8,15 +8,13 @@ public sealed class SceneColorNode : ShaderNodePlus
 {
 	[Input( typeof( Vector2 ) )]
 	[Hide]
-	public NodeInput UV { get; set; }
-
-	public bool UseScreenUVs { get; set; } = true;
+	public NodeInput Coords { get; set; }
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func SceneColor => ( GraphCompiler compiler ) =>
 	{
-		var coords = compiler.Result( UV );
+		var coords = compiler.Result( Coords );
 		
 		var graph = compiler.Graph;
 		
@@ -24,22 +22,19 @@ public sealed class SceneColorNode : ShaderNodePlus
 		{
 			return NodeResult.Error($"Graph `{nameof( BlendMode )}` must be set to `{nameof( BlendMode.Translucent )}` in order to use `{DisplayInfo.Name}`");
 		}
-	
-		var uv = ( UseScreenUVs ? $"CalculateViewportUv( i.vPositionSs.xy )" : $"i.vTextureCoords.xy" );
-	
-	
+
 		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
 			//compiler.RegisterGlobal( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;" );
 			
-			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )" )} )" );
+			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : "CalculateViewportUv( i.vPositionSs.xy )" )} ).rgb" );
 		}
 		else
 		{
 			compiler.RegisterGlobal( "bWantsFBCopyTexture", "BoolAttribute( bWantsFBCopyTexture, true );" );
 			compiler.RegisterGlobal( "g_tFrameBufferCopyTexture", "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
 
-            return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso ,{( coords.IsValid ? $"{coords.Cast(2)}" : $"{uv} {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} )" );
+            return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso,{( coords.IsValid ? $"{coords.Cast(2)}" : $"CalculateViewportUv( i.vPositionSs.xy ) {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} ).rgb" );
         }
 	};
 }
