@@ -90,12 +90,21 @@ public class PreviewPanel : Widget
 		set => _preview.Tint = value;
 	}
 
-	public bool IsPostProcess
-	{
-	    set => _preview.IsPostProcess = value;
-	}
-	
-	private void UpdateAnimationCombo()
+    public bool PostProcessing
+    {
+        get => _preview.EnablePostProcessing;
+        set
+        {
+            if (_preview.EnablePostProcessing == value)
+                return;
+
+            _preview.EnablePostProcessing = value;
+            _preview.UpdateMaterial();
+            _preview.UpdatePostProcessing();
+        }
+    }
+
+    private void UpdateAnimationCombo()
 	{
 		_animationCombo.Clear();
 
@@ -247,17 +256,35 @@ public class PreviewPanel : Widget
 
 		toolBar.AddSeparator();
 
-		option = toolBar.AddOption( null, "lightbulb" );
-		option.Enabled = false;
-		option.ToolTip = "Coming Soon";
+        option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
+        option.ToolTip = "Light Settings";
+        option.StatusTip = "Light Settings";
 
-		toolBar.AddSeparator();
+        toolBar.AddSeparator();
 
 		option = toolBar.AddOption( null, "settings", OpenSettings );
 
 		Layout.Add( toolBar );
 		Layout.Add( _preview );
 	}
+
+    public void OpenLightSettings()
+    {
+        var popup = new PopupWidget(this);
+        popup.IsPopup = true;
+        popup.Layout = Layout.Column();
+        popup.Layout.Margin = 16;
+
+        var cs = new ControlSheet();
+        cs.AddProperty(_preview, x => x.SunAngle);
+        cs.AddProperty(_preview, x => x.SunColor);
+        cs.AddProperty(_preview, x => x.EnablePointLights);
+        cs.AddProperty(_preview, x => x.EnableShadows);
+
+        popup.Layout.Add(cs);
+        popup.MaximumWidth = 300;
+        popup.OpenAtCursor();
+    }
 
     public void OpenSettings()
     {
@@ -330,12 +357,12 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, bool> _boolAttributes = new();
 	private int _stageId;
 
-	// TODO
-	public bool EnablePostProcessing
-	{
-	    get { return false; }
-	    set { }
-	}
+    private bool _enablePostProcessing;
+    public bool EnablePostProcessing
+    {
+        get { return _enablePostProcessing; }
+        set { _enablePostProcessing = value; }
+    }
 
     private bool _enableNodePreview;
 	public bool EnableNodePreview
@@ -372,7 +399,7 @@ public class Preview : SceneRenderingWidget
         get => _sky.IsValid() && _sky.Enabled;
         set
         {
-            if (!_sky.IsValid())
+            if ( !_sky.IsValid() )
                 return;
 
             _sky.Enabled = value;
@@ -383,13 +410,6 @@ public class Preview : SceneRenderingWidget
 	{
 		get => _ground.RenderingEnabled;
 		set => _ground.RenderingEnabled = value;
-	}
-
-	private bool _ispostprocess;
-	public bool IsPostProcess
-	{
-	    get => _ispostprocess;
-	    set => _ispostprocess = value;
 	}
 
 	private bool _renderBackfaces;
@@ -419,13 +439,80 @@ public class Preview : SceneRenderingWidget
         }
     }
 
-	public void UpdateMaterial()
+	private DirectionalLight _sun;
+	private HashSet<PointLight> _pointLights = new();
+	private Angles _sunAngles = Rotation.FromPitch( 50 );
+	public Angles SunAngle
 	{
-		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
-			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { _material } );
+		get => _sunAngles;
+		set
+		{
+			_sunAngles = value;
+			if ( _sun.IsValid() )
+			{
+				_sun.WorldRotation = _sunAngles;
+			}
+		}
+	}
+	private Color _sunColor = new Color( 0.91f, 0.98f, 1.00f );
+	public Color SunColor
+	{
+		get => _sunColor;
+		set
+		{
+			_sunColor = value;
+			if ( _sun.IsValid() )
+			{
+				_sun.LightColor = _sunColor;
+			}
+		}
+	}
+	private bool _enablePointLights = true;
+	public bool EnablePointLights
+	{
+		get => _enablePointLights;
+		set
+		{
+			_enablePointLights = value;
+			foreach ( var light in _pointLights )
+			{
+				light.Enabled = _enablePointLights;
+			}
+		}
 	}
 
-    private Material _material;
+	public void UpdateMaterial()
+	{
+		var modelMaterial = _material;
+		if ( EnablePostProcessing )
+		{
+			modelMaterial = Material.Load( "materials/dev/reflectivity_50.vmat" );
+		}
+
+		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
+			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { modelMaterial } );
+	}
+
+	IDisposable _postProcessHook;
+	internal void UpdatePostProcessing()
+	{
+		_postProcessHook?.Dispose();
+		if ( !EnablePostProcessing )
+		{
+			_postProcessHook = null;
+			return;
+		}
+		_postProcessHook = Scene.Camera.AddHookBeforeOverlay( "ShadergraphPlusPostProcess", 1000, x =>
+		// Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;
+
+        {
+            Graphics.GrabFrameTexture( "ColorBuffer", _sceneObject.Attributes );
+
+            Graphics.Blit( _material, _sceneObject.Attributes );
+		} );
+	}
+    
+	private Material _material;
     public Material Material
     {
         get => _material;
@@ -433,6 +520,7 @@ public class Preview : SceneRenderingWidget
         {
             _material = value;
             UpdateMaterial();
+            UpdatePostProcessing();
         }
     }
 
