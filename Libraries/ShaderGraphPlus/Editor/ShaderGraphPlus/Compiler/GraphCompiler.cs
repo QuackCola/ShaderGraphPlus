@@ -1500,6 +1500,14 @@ public sealed partial class GraphCompiler
 			  .AppendLine();
 		}
 		
+		if ( IsPs )
+		{
+			if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
+			{
+				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
+			}
+		}
+		
 		if ( IsPreview )
 		{
 			foreach ( var result in ShaderResult.TextureInputs )
