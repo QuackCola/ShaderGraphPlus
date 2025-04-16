@@ -1517,7 +1517,7 @@ public sealed partial class GraphCompiler
 				  .Append( $" SrgbRead( {result.Value.SrgbRead} ); >;" )
 				  .AppendLine();
 			}
-
+		
 			foreach ( var result in ShaderResult.Attributes )
 			{
 				var typeName = result.Value switch
@@ -1527,17 +1527,17 @@ public sealed partial class GraphCompiler
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
 					float _ => "float",
-                    int _ => "float", // treat int internally as a float.
-                    bool _ => "bool",
+		            int _ => "float", // treat int internally as a float.
+		            bool _ => "bool",
 					Float2x2 _ => "float2x2",
 					Float3x3 _ => "float3x3",
 					Float4x4 _ => "float4x4",
 					_ => null
 				};
-
+		
 				sb.AppendLine( $"{typeName} {result.Key} < Attribute( \"{result.Key}\" ); >;" );
 			}
-
+		
 			sb.AppendLine( "float g_flPreviewTime < Attribute( \"g_flPreviewTime\" ); >;" );
 			sb.AppendLine( $"int g_iStageId < Attribute( \"g_iStageId\" ); >;" );
 		}
@@ -1584,12 +1584,12 @@ public sealed partial class GraphCompiler
 				sb.AppendLine( $"{parameter.Value.Result.TypeName} {parameter.Key} < {parameter.Value.Options} >;" );
 			}
 		}
-
+		
 		if ( sb.Length > 0 )
 		{
 			sb.Insert( 0, "\n" );
 		}
-
+		
 		return sb.ToString();
 	}
 
