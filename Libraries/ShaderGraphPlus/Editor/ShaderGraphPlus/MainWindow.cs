@@ -336,39 +336,39 @@ public class MainWindow : DockWindow
 	private void OnCompileFinished( int exitCode )
 	{
 		_isCompiling = false;
-
+		
 		if ( _isPendingCompile )
 		{
 			_isPendingCompile = false;
-
+		
 			Compile();
-
+		
 			return;
 		}
-
+		
 		if ( exitCode == 0 )
 		{
 			Log.Info( $"Compile finished in {_timeSinceCompile}" );
-
+		
 			var shaderPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-
+		
 			// Reload the shader otherwise it's gonna be the old wank
 			// Alternatively Material.Create could be made to force reload the shader
 			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
-
+		
 			_preview.Material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
 		}
 		else
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
-
+		
 			_output.Errors = _shaderCompileErrors.Select( x => new GraphCompiler.Error { Message = x } );
 			DockManager.RaiseDock( "Output" );
-
+		
 			RestoreShader();
 			ClearAttributes();
 		}
-
+		
 		_preview.IsCompiling = _isCompiling;
 		_preview.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
 		
