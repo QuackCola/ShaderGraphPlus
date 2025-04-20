@@ -32,94 +32,16 @@
       "Flags": 0,
       "Name": "TestObjects",
       "Enabled": true,
-      "Children": [
-        {
-          "__guid": "aea1438b-dd33-4a9a-8170-e16f84c09676",
-          "Flags": 0,
-          "Name": "Cube",
-          "Position": "-244.862,-1376.798,30.00339",
-          "Enabled": true,
-          "Components": [
-            {
-              "__type": "Sandbox.ModelRenderer",
-              "__guid": "34aede27-41fb-40d8-8a93-d968d2170750",
-              "BodyGroups": 18446744073709551615,
-              "CreateAttachments": false,
-              "MaterialGroup": null,
-              "MaterialOverride": "materials/parallaxtest.vmat",
-              "Model": "models/dev/box.vmdl",
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "RenderOptions": {
-                "GameLayer": true,
-                "OverlayLayer": false,
-                "BloomLayer": false,
-                "AfterUILayer": false
-              },
-              "RenderType": "On",
-              "Tint": "1,1,1,1"
-            },
-            {
-              "__type": "Sandbox.BoxCollider",
-              "__guid": "0f60b7f0-589e-44c7-ad55-6ff9e2d83731",
-              "Center": "0,0,0",
-              "Friction": null,
-              "IsTrigger": false,
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "OnObjectTriggerEnter": null,
-              "OnObjectTriggerExit": null,
-              "OnTriggerEnter": null,
-              "OnTriggerExit": null,
-              "Scale": "50,50,50",
-              "Static": false,
-              "Surface": null,
-              "SurfaceVelocity": "0,0,0"
-            },
-            {
-              "__type": "Sandbox.Rigidbody",
-              "__guid": "22916805-0bdf-4ff5-a1f2-dc31ea76ed34",
-              "AngularDamping": 0,
-              "Gravity": true,
-              "LinearDamping": 0,
-              "Locking": {
-                "X": false,
-                "Y": false,
-                "Z": false,
-                "Pitch": false,
-                "Yaw": false,
-                "Roll": false
-              },
-              "MassCenterOverride": "0,0,0",
-              "MassOverride": 0,
-              "MotionEnabled": true,
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "OverrideMassCenter": false,
-              "RigidbodyFlags": 0,
-              "StartAsleep": false
-            }
-          ]
-        }
-      ]
+      "Components": [],
+      "Children": []
     },
     {
       "__guid": "8a513be9-ef8a-4c4a-8c11-2d4be871b3ca",
       "Flags": 0,
       "Name": "GameObject",
-      "Enabled": true
+      "Enabled": true,
+      "Components": [],
+      "Children": []
     },
     {
       "__guid": "5e4edcc1-8b12-46a4-80d6-3855f51c4620",
@@ -130,17 +52,72 @@
       "Enabled": true,
       "__Prefab": "prefabs/testbed/player.prefab",
       "__PrefabVariables": {}
+    },
+    {
+      "__guid": "af98f8e4-7c7d-4d9f-b8f4-9e92bc796bc3",
+      "Flags": 0,
+      "Name": "Sphere",
+      "Position": "-448,-1538.693,32",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "0ccce72b-78ad-46b7-8e94-948bbcca1b83",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialGroup": null,
+          "MaterialOverride": "shaders/tests/customlighting/customlighting.vmat",
+          "Model": "models/dev/sphere.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "f3ee383b-0e41-4821-817c-544c2427dfd1",
+      "Flags": 0,
+      "Name": "Point Light",
+      "Position": "-371.0384,-1541.284,40.07784",
+      "Tags": "light_point,light",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.PointLight",
+          "__guid": "bfdd2d1d-e2cb-41a2-8a19-81f3f1ec2203",
+          "Attenuation": 1,
+          "FogMode": "Enabled",
+          "FogStrength": 1,
+          "LightColor": "0,0.67054,0.80465,1",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Radius": 112.099945,
+          "Shadows": true
+        }
+      ],
+      "Children": []
     }
   ],
   "SceneProperties": {
-    "FixedUpdateFrequency": 50,
-    "MaxFixedUpdates": 5,
-    "NetworkFrequency": 30,
     "NetworkInterpolation": true,
-    "PhysicsSubSteps": 1,
-    "ThreadedAnimation": true,
     "TimeScale": 1,
-    "UseFixedUpdate": true,
+    "WantsSystemScene": true,
     "Metadata": {},
     "NavMesh": {
       "Enabled": false,
