@@ -29,35 +29,36 @@ public class MainWindowShader : MainWindow, IAssetEditor
 
 public class MainWindow : DockWindow
 {
-    public virtual bool IsSubgraph => false;
-    public virtual string FileType => "Shader Graph Plus";
-    public virtual string FileExtension => "sgrph";
-
-    private ShaderGraphPlus _graph;
+	public virtual bool IsSubgraph => false;
+	public virtual string FileType => "Shader Graph Plus";
+	public virtual string FileExtension => "sgrph";
+	
+	private ShaderGraphPlus _graph;
+	private ShaderGraphPlus _lightingGraph;
 	private ShaderGraphPlusView _graphView;
 	private Asset _asset;
-
+	
 	public string AssetPath => _asset?.Path;
-
+	
 	private Widget _graphCanvas;
 	private Properties _properties;
 	private PreviewPanel _preview;
 	private Output _output;
 	private UndoHistory _undoHistory;
 	private PaletteWidget _palette;
-
+	
 	private readonly UndoStack _undoStack = new();
-
+	
 	private Option _undoOption;
 	private Option _redoOption;
-
+	
 	private Option _undoMenuOption;
 	private Option _redoMenuOption;
-
+	
 	public UndoStack UndoStack => _undoStack;
-
+	
 	private bool _dirty = false;
-
+	
 	private string _generatedCode;
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
 	private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
@@ -66,30 +67,30 @@ public class MainWindow : DockWindow
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-    //private readonly Dictionary<string, int> _intAttributes = new();
-    private readonly Dictionary<string, float> _floatAttributes = new();
+	//private readonly Dictionary<string, int> _intAttributes = new();
+	private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
-
+	
 	private readonly List<BaseNodePlus> _compiledNodes = new();
-
+	
 	private bool _isCompiling = false;
 	private bool _isPendingCompile = false;
 	private RealTimeSince _timeSinceCompile;
-
+	
 	private Menu _recentFilesMenu;
 	private readonly List<string> _recentFiles = new();
-    private Option _fileHistoryBack;
-    private Option _fileHistoryForward;
-    private Option _fileHistoryHome;
-   
+	private Option _fileHistoryBack;
+	private Option _fileHistoryForward;
+	private Option _fileHistoryHome;
 	private Option _LightingHome;
+	
 	private List<string> _fileHistory = new();
-    private int _fileHistoryPosition = 0;
-
-    private string _defaultDockState;
-
+	private int _fileHistoryPosition = 0;
+	
+	private string _defaultDockState;
+	
 	public bool CanOpenMultipleAssets => true;
-
+	
 	private ProjectCreator ProjectCreator { get; set; }
 
 	public MainWindow()
