@@ -16,6 +16,7 @@ public enum ShadingModel
 	Lit,
 	[Icon( "brightness_3" )]
 	Unlit,
+	Custom,
 }
 
 public enum MaterialDomain
@@ -50,8 +51,14 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
-    [Hide]
+	[Hide, JsonIgnore]
+	public IEnumerable<BaseNodePlus> LightingNodes { get; set; }
+
+	[Hide]
 	public bool IsSubgraph { get; set; }
+
+	[Hide]
+	public bool HasCustomLighting { get; set; }
 
 	[Hide]
 	public string Path { get; set; }
