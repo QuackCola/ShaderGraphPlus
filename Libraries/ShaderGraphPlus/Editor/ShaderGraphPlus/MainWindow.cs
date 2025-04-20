@@ -82,6 +82,7 @@ public class MainWindow : DockWindow
     private Option _fileHistoryForward;
     private Option _fileHistoryHome;
    
+	private Option _LightingHome;
 	private List<string> _fileHistory = new();
     private int _fileHistoryPosition = 0;
 
@@ -877,6 +878,36 @@ public class MainWindow : DockWindow
 		PromptSave( CreateNew );
 	}
 
+	private bool _isOnLightingPage = false;
+
+	public void ChangePage()
+	{
+		if ( !_isOnLightingPage )
+		{
+			if ( _lightingGraph is not null )
+			{
+				_graphView.Graph = _lightingGraph;
+			}
+			else
+			{
+				_lightingGraph = new();
+				_graphView.Graph = _lightingGraph;
+		
+		
+				var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
+				_graphView.Scale = 1;
+				_graphView.CenterOn( result.Size * 0.5f );
+			}
+		
+			_isOnLightingPage = true;
+		}
+		else
+		{
+			_graphView.Graph = _graph;
+			_isOnLightingPage = false;
+		}
+	}
+
 	public void CreateNew()
 	{
 		_asset = null;
@@ -1200,6 +1231,10 @@ public class MainWindow : DockWindow
 		_fileHistoryForward.Enabled = false;
 		_fileHistoryHome.Enabled = false;
 		
+		_LightingHome = graphToolBar.AddOption(null, "modeldoc_editor/view_controls_lighting_hover.png");
+		_LightingHome.Enabled = true;
+		_LightingHome.Triggered += ChangePage;
+		_LightingHome.ToolTip = "Lighting";
 		
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
