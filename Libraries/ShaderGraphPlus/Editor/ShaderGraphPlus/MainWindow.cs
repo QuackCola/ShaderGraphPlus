@@ -888,6 +888,7 @@ public class MainWindow : DockWindow
 			if ( _lightingGraph is not null )
 			{
 				_graphView.Graph = _lightingGraph;
+				_lightingGraph.LightingNodes = _graph.LightingNodes;
 			}
 			else
 			{
@@ -905,6 +906,8 @@ public class MainWindow : DockWindow
 		else
 		{
 			_graphView.Graph = _graph;
+			_graph.LightingNodes = _lightingGraph.Nodes;
+
 			_isOnLightingPage = false;
 		}
 	}
