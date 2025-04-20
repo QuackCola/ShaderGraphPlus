@@ -41,14 +41,15 @@ partial class ShaderGraphPlus
 		return doc.ToJsonString( options );
 	}
 	
-	public void Deserialize( string json, string subgraphPath = null )
+	public void Deserialize( string json, string subgraphPath = null, ShaderGraphPlus lightingGraph = null )
 	{
 		using var doc = JsonDocument.Parse( json );
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 		
 		DeserializeObject( this, root, options );
-		DeserializeNodes( root, options, subgraphPath );
+		DeserializeNodes( root, options, subgraphPath  );
+		DeserializeLightingNodes( root, options, null, lightingGraph );
 	}
 	
 	public IEnumerable<BaseNodePlus> DeserializeNodes( string json )
@@ -91,15 +92,135 @@ partial class ShaderGraphPlus
 	        prop.SetValue(obj, JsonSerializer.Deserialize(nodeProperty.Value.GetRawText(), prop.PropertyType, options));
 	    }
 	}
-	
-	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null )
+	private IEnumerable<BaseNodePlus> DeserializeLightingNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, ShaderGraphPlus lightingGraph = null )
+	{
+        var nodes = new Dictionary<string, BaseNodePlus>();
+        var identifiers = _lightingNodes.Count > 0 ? new Dictionary<string, string>() : null;
+        var connections = new List<(IPlugIn Plug, NodeInput Value)>();
+
+		Log.Info( doc.ToString() );
+
+
+		if ( !doc.TryGetProperty( "lighting_nodes", out var element1 ) )
+			return nodes.Values;
+
+		foreach (var element in element1.EnumerateArray())
+		{
+			var typeName = element.GetProperty( "_class" ).GetString();
+			var typeDesc = EditorTypeLibrary.GetType( typeName );
+			var type = new ClassNodeType( typeDesc );
+		
+			BaseNodePlus node;
+			if ( typeDesc is null )
+			{
+				var missingNode = new MissingNode( typeName, element );
+				node = missingNode;
+				DeserializeObject( node, element, options );
+			}
+			else
+			{
+				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
+				DeserializeObject( node, element, options );
+				
+				if ( identifiers != null && _lightingNodes.ContainsKey( node.Identifier ) )
+				{
+					identifiers.Add( node.Identifier, node.NewIdentifier() );
+				}
+		
+				if ( node is CustomFunctionNode customCode )
+				{
+					customCode.OnNodeCreated();
+				}
+				
+				if ( node is FunctionResult funcResult )
+				{
+				    funcResult.CreateInputs();
+				}
+				
+				if ( node is SubgraphNode subgraphNode )
+				{
+					subgraphNode.OnNodeCreated();
+				}
+				
+				foreach ( var input in node.Inputs )
+				{
+					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
+						continue;
+				
+					var connected = connectedElem
+						.Deserialize<NodeInput?>();
+				
+					if ( connected is { IsValid: true } )
+					{
+						var connection = connected.Value;
+						if ( !string.IsNullOrEmpty( subgraphPath ) )
+						{
+							connection = new()
+							{
+								Identifier = connection.Identifier,
+								Output = connection.Output,
+								Subgraph = subgraphPath
+							};
+						}
+						connections.Add( (input, connection) );
+					}
+				}
+			}
+		
+		    nodes.Add( node.Identifier, node );
+		
+		    AddNode( node, lightingGraph );
+		}
+		
+		foreach ( var (input, value) in connections )
+		{
+			var outputIdent = identifiers?.TryGetValue( value.Identifier, out var newIdent ) ?? false
+				? newIdent : value.Identifier;
+		
+			if ( nodes.TryGetValue( outputIdent, out var node ) )
+			{
+				var output = node.Outputs.FirstOrDefault( x => x.Identifier == value.Output );
+				if ( output is null )
+				{
+					// Check for Aliases
+					foreach ( var op in node.Outputs )
+					{
+						if ( op is not BasePlugOut plugOut ) continue;
+		
+						var aliasAttr = plugOut.Info.Property?.GetCustomAttribute<AliasAttribute>();
+						if ( aliasAttr is not null && aliasAttr.Value.Contains( value.Output ) )
+						{
+							output = plugOut;
+							break;
+						}
+					}
+				}
+				input.ConnectedOutput = output;
+			}
+		}
+
+		return nodes.Values;
+	}
+
+	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, ShaderGraphPlus lightingGraph = null, bool deserializingLighting = false )
     {
         var nodes = new Dictionary<string, BaseNodePlus>();
         var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
         var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 
-        var arrayProperty = doc.GetProperty("nodes");
-        foreach (var element in arrayProperty.EnumerateArray())
+		var arrayProperty = new JsonElement();
+
+		//if ( !deserializingLighting )
+		//{
+		//	arrayProperty = doc.GetProperty( "nodes" );
+		//}
+		//else
+		//{
+		//	arrayProperty = doc.GetProperty( "lighting_nodes" );
+		//}
+
+		arrayProperty = doc.GetProperty( "nodes" );
+		foreach (var element in arrayProperty.EnumerateArray())
         {
   			var typeName = element.GetProperty( "_class" ).GetString();
 			var typeDesc = EditorTypeLibrary.GetType( typeName );
@@ -164,7 +285,14 @@ partial class ShaderGraphPlus
 
             nodes.Add( node.Identifier, node );
 
-            AddNode( node );
+			//if ( !deserializingLighting )
+			//{
+				AddNode( node );
+			//}
+			//else
+			//{
+			//	AddNode( node, lightingGraph );
+			//}
         }
 
 		foreach ( var (input, value) in connections )
