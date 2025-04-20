@@ -1,5 +1,6 @@
 {
   "IsSubgraph": false,
+  "Path": "shaders/tests/customlighting/customlighting.sgrph",
   "Model": null,
   "Title": null,
   "Description": "",
@@ -38,32 +39,32 @@
       "Name": "LightingTest",
       "Type": "File",
       "Body": "",
-      "Source": "Tests/CustomFunctionNode/LightingTest.hlsl",
+      "Source": "ShaderGraphPlus/Functions/LightingTest.hlsl",
       "ExpressionInputs": [
         {
-          "Id": "fa3e2aa2-848d-4073-a3f5-76f9efad576e",
+          "Id": "199fe386-4762-4d0a-9df9-af74e0fb6a4f",
           "Name": "Albedo",
           "Type": "Vector3"
         },
         {
-          "Id": "a851b154-d0c3-448a-97de-e253f8df332b",
+          "Id": "41d3c14c-ca36-49cc-9b14-1e7360faec33",
           "Name": "Normal",
           "Type": "Vector3"
         },
         {
-          "Id": "acd3c2d0-fb76-4d31-9c21-00502a3ee678",
+          "Id": "f5eacdb3-b070-480d-98f2-7e059a0d8568",
           "Name": "ScreenPos",
           "Type": "Vector2"
         },
         {
-          "Id": "5cb92b27-7828-4bfd-9d0b-6eff8b0f4c8f",
+          "Id": "9bb43995-675f-40e4-a22a-2f5337317a78",
           "Name": "WorldPos",
           "Type": "Vector3"
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "0aae8be9-b478-46a7-bede-1c5b0e771aca",
+          "Id": "45cf2c13-e604-4eea-b641-c4767e006b67",
           "Name": "Result",
           "Type": "Color"
         }
