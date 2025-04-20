@@ -221,7 +221,7 @@ public sealed partial class GraphCompiler
 		return $"{functionName}( {args} )";
     }
 
-	public void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
+	internal void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
@@ -501,7 +501,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result(NodeInput input)
+	public NodeResult Result(NodeInput input, bool lightingPage = false)
 	{
 		if (!input.IsValid)
 			return default;
@@ -520,7 +520,9 @@ public sealed partial class GraphCompiler
 					SubgraphNode = nodeId
 				} );
 			}
-			node = Graph.FindNode( input.Identifier );
+
+
+			node = Graph.FindNode( input.Identifier, lightingPage );
 		}
 		else
 		{
@@ -1188,85 +1190,127 @@ public sealed partial class GraphCompiler
         return ppcb.Finish( className, shaderPath );
 	}
 
-    // <summary>
-    // Generate shader code, will evaluate the graph if it hasn't already.
-    // Different code is generated for preview and not preview.
-    // </summary>
-    //public (string,string) Generate()
-	//{
-	//	// May have already evaluated and there's errors
-	//	if (Errors.Any())
-	//		return (string.Empty, string.Empty); //null;
-	//
-	//	// If we have any errors after evaluating, no point going further
-	//	if ( Errors.Any() )
-	//		return (string.Empty, string.Empty);
-	//
-	//	var shader_tempalte = "";
-	//	var shaderCode = "";
-	//
-    //    // Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
-    //    if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
-    //    {
-    //        shader_tempalte = ShaderTemplateBlending.Code;
-    //    }
-    //    else if ( Graph.MaterialDomain is MaterialDomain.Surface )
-	//	{
-	//		if ( Graph.ShadingModel is ShadingModel.Lit )
-	//		{
-	//			shader_tempalte = ShaderTemplateLit.Code;
-	//		}
-	//		else
-	//		{
-	//			shader_tempalte = ShaderTemplateUnlit.Code;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		var postprocessing_material = GeneratePostprocessingMaterial();
-	//
-    //        shaderCode = string.Format( ShaderTemplatePostProcessing.Code,
-	//			Graph.Description,  // {0}
-	//			IndentString( GenerateGlobals(), 1 ), // {1}
-	//			IndentString( GenerateLocals(), 2 ), // {2}
-	//			IndentString( postprocessing_material, 2 ), // {3}
-	//			IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
-	//		);
-	//
-	//		var postProcessClass = "";
-	//
-	//
-	//		if (Graph.postProcessComponentInfo.GenerateClass is true)
-	//		{
-	//			postProcessClass = GeneratePostProcessingComponent(
-	//			Graph.postProcessComponentInfo,
-	//			$"{CleanName(_Asset.Name)}_PostProcess",
-	//			$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
-	//			);
-	//		}
-    //   
-	//		return (shaderCode, postProcessClass);
-    //    }
-	//
-	//	var material = GenerateMaterial();
-	//
-    //     shaderCode = string.Format( shader_tempalte,
-	//	Graph.Description,
-	//	IndentString( GenerateFeatures(), 1 ),
-	//	IndentString( GenerateCommon(), 1 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateLocals(), 2 ),
-	//	IndentString( material, 2 ),
-	//	IndentString( GenerateVertex(), 2 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateVertexComboRules(), 1 ),
-	//	IndentString( GeneratePixelComboRules(), 1 ),
-	//	IndentString( GenerateFunctions( PixelResult ), 1 ),
-	//	IndentString( GenerateFunctions( VertexResult ), 1 ) );
-	//
-	//
-	//	return ( shaderCode , string.Empty );
-	//}
+	// <summary>
+	// Generate shader code, will evaluate the graph if it hasn't already.
+	// Different code is generated for preview and not preview.
+	// </summary>
+	/*
+    public (string,string) Generate()
+	{
+		// May have already evaluated and there's errors
+		if (Errors.Any())
+			return (string.Empty, string.Empty); //null;
+	
+		// If we have any errors after evaluating, no point going further
+		if ( Errors.Any() )
+			return (string.Empty, string.Empty);
+	
+		var shader_tempalte = "";
+		var shaderCode = "";
+	
+        // Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
+        if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+        {
+            shader_tempalte = ShaderTemplateBlending.Code;
+        }
+        else if ( Graph.MaterialDomain is MaterialDomain.Surface )
+		{
+			if ( Graph.ShadingModel is ShadingModel.Lit )
+			{
+				shader_tempalte = ShaderTemplateLit.Code;
+			}
+			else
+			{
+				shader_tempalte = ShaderTemplateUnlit.Code;
+			}
+		}
+		else
+		{
+			var postprocessing_material = GeneratePostprocessingMaterial();
+	
+            shaderCode = string.Format( ShaderTemplatePostProcessing.Code,
+				Graph.Description,  // {0}
+				IndentString( GenerateGlobals(), 1 ), // {1}
+				IndentString( GenerateLocals(), 2 ), // {2}
+				IndentString( postprocessing_material, 2 ), // {3}
+				IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
+			);
+	
+			var postProcessClass = "";
+	
+	
+			if (Graph.postProcessComponentInfo.GenerateClass is true)
+			{
+				postProcessClass = GeneratePostProcessingComponent(
+				Graph.postProcessComponentInfo,
+				$"{CleanName(_Asset.Name)}_PostProcess",
+				$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
+				);
+			}
+       
+			return (shaderCode, postProcessClass);
+        }
+	
+		var material = GenerateMaterial();
+	
+         shaderCode = string.Format( shader_tempalte,
+		Graph.Description,
+		IndentString( GenerateFeatures(), 1 ),
+		IndentString( GenerateCommon(), 1 ),
+		IndentString( GenerateGlobals(), 1 ),
+		IndentString( GenerateLocals(), 2 ),
+		IndentString( material, 2 ),
+		IndentString( GenerateVertex(), 2 ),
+		IndentString( GenerateGlobals(), 1 ),
+		IndentString( GenerateVertexComboRules(), 1 ),
+		IndentString( GeneratePixelComboRules(), 1 ),
+		IndentString( GenerateFunctions( PixelResult ), 1 ),
+		IndentString( GenerateFunctions( VertexResult ), 1 ) );
+	
+	
+		return ( shaderCode , string.Empty );
+	}
+	*/
+
+	private string GenerateInternal()
+	{
+		// May have already evaluated and there's errors
+		if ( Errors.Any() )
+			return null;
+
+		var material = GenerateMaterialTest();
+		var locals = GenerateLocals();
+
+		if ( Errors.Any() )
+			return null;
+
+		var sb = new StringBuilder();
+		
+		sb.AppendLine( $"float3 Albedo = float3( 1, 0, 1 );" );
+		sb.AppendLine();
+		sb.AppendLine( $"for ( int index = 0; index < Light::Count( ScreenPos ); index++ )" );
+		sb.AppendLine( "{" );
+		sb.AppendLine( "Light light = Light::From( ScreenPos, WorldPos, index );" );
+		sb.AppendLine( locals );
+		sb.AppendLine( material	 );
+		sb.AppendLine( "}" );
+		sb.AppendLine();
+		sb.AppendLine( $"return Albedo;" );
+
+		Log.Info( sb.ToString() );
+
+		//var sb2 = new StringBuilder();
+		//
+		//foreach ( var r in ShaderResult.Results )
+		//{
+		//
+		//
+		//
+		//	sb2.AppendLine( $"{r.Item2.TypeName} {r.Item1} = {r.Item2.Code};" );
+		//}
+
+		return "";
+	}
 
 	/// <summary>
 	/// Generate shader code, will evaluate the graph if it hasn't already.
@@ -1428,9 +1472,43 @@ public sealed partial class GraphCompiler
 		{
 			return ShaderTemplate.Material_output;
 		}
-		
+		else if ( Graph.ShadingModel == ShadingModel.Custom ) // Grab the result from the Light Page graph.
+		{
+			var resultNode2 = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
+			//
+			if ( resultNode2 == null )
+				return null;
+			//
+			if ( resultNode2 is LightingResult lightingResult )
+			{
+				//Log.Info( "Found lighting result");
+
+				var lightResult = lightingResult.GetAlbedoResult( this, true );
+				//string albedo2 = lightResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+				//var opacityResult2 = lightingResult.GetOpacityResult( this );
+				//string opacity2 = opacityResult2.Cast( 1 ) ?? "1.00";
+
+				var compiler = new GraphCompiler( _Asset, Graph, false );
+				var resultstring = compiler.GenerateInternal();
+
+				
+			}
+
+			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+			if ( resultNode == null )
+				return null;
+			var albedoResult = resultNode.GetAlbedoResult( this );
+			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+			var opacityResult = resultNode.GetOpacityResult( this );
+			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
+
+			return $"return float4( {albedo}, {opacity} );";
+
+
+		}
+
 		return null;
-    }
+	}
 
     private string GetPropertyValue(PropertyInfo property, Result resultNode)
     {
@@ -1788,6 +1866,78 @@ public sealed partial class GraphCompiler
 			}
 		}
 		
+		return sb.ToString();
+	}
+
+	private string GenerateMaterialTest()
+	{
+        Stage = ShaderStage.Pixel;
+        Subgraph = null;
+        SubgraphStack.Clear();
+
+        //if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+
+
+        var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
+        if ( resultNode == null )
+			return null;
+
+        var sb = new StringBuilder();
+        var visited = new HashSet<string>();
+    
+        foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
+		{
+		
+			CurrentResultInput = property.Name;
+			visited.Add( property.Name );
+
+			NodeResult result;
+
+			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
+			{
+				result = Result( connection,true );
+				
+			}
+			else
+			{
+				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+				if ( editorAttribute == null )
+					continue;
+
+				var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
+				if ( valueProperty == null )
+					continue;
+               
+                result = ResultValue( valueProperty.GetValue( resultNode ) );
+				
+			}
+
+			if ( Errors.Any() )
+				return null;
+
+			if ( !result.IsValid() )
+				continue;
+
+			if ( string.IsNullOrWhiteSpace( result.Code ) )
+				continue;
+
+			var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+			var componentCount = GetComponentCount( inputAttribute.Type );
+
+			sb.AppendLine( $"float3 {property.Name} += {result.Cast( componentCount )};" );
+		}
+
+        //if ( resultNode is FunctionResult functionResult )
+		//{
+		//	functionResult.AddMaterialOutputs( this, sb, visited );
+		//}
+
+        visited.Clear();
+
+        CurrentResultInput = null;
+
+
+
 		return sb.ToString();
 	}
 

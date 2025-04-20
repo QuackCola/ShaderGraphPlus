@@ -46,16 +46,25 @@ public partial class ShaderGraphPlus : IGraph
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
 
 	[Hide, JsonIgnore]
-	private readonly Dictionary<string, BaseNodePlus> _nodes = new();
+	public readonly Dictionary<string, BaseNodePlus> _nodes = new();
 
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
 	[Hide, JsonIgnore]
-	public IEnumerable<BaseNodePlus> LightingNodes { get; set; }
+	public IEnumerable<BaseNodePlus> LightingNodes => _lightingNodes.Values;
+
+	[Hide, JsonIgnore]
+	public readonly Dictionary<string, BaseNodePlus> _lightingNodes = new();
+	
+	[Hide, JsonIgnore]
+	public ShaderGraphPlus OuterGraph { get; }
 
 	[Hide]
 	public bool IsSubgraph { get; set; }
+
+	[Hide, JsonIgnore]
+	public bool IsLightingPage { get; set; }
 
 	[Hide]
 	public bool HasCustomLighting { get; set; }
@@ -118,24 +127,75 @@ public partial class ShaderGraphPlus : IGraph
 	{
 	}
 
-	public void AddNode( BaseNodePlus node )
+	public ShaderGraphPlus( ShaderGraphPlus outerGraph )
 	{
-		node.Graph = this;
-		_nodes.Add( node.Identifier, node );
+		OuterGraph = outerGraph;
+	}
+
+	public void ClearLightingNodes()
+	{
+		_lightingNodes.Clear();
+	}
+
+	public void AddNode( BaseNodePlus node, ShaderGraphPlus lightingGraph = null )
+	{
+		if ( lightingGraph == null )
+		{
+			node.Graph = this;
+			_nodes.Add( node.Identifier, node );
+		}
+		else
+		{
+			node.Graph = lightingGraph;
+			_lightingNodes.Add( node.Identifier, node );
+		}
+	}
+
+	private void RemoveLightingNode( BaseNodePlus node )
+	{
+		//if ( node.Graph != this )
+		//	return;
+		_lightingNodes.Remove( node.Identifier );
 	}
 
 	public void RemoveNode( BaseNodePlus node )
 	{
-		if ( node.Graph != this )
-			return;
+		if ( IsLightingPage )
+		{
+			if ( node.Graph != this )
+				return;
 
-		_nodes.Remove( node.Identifier );
+			OuterGraph.RemoveLightingNode( node );
+			_nodes.Remove( node.Identifier ); 
+		}
+		else
+		{
+			if ( node.Graph != this )
+				return;
+
+			_nodes.Remove( node.Identifier );
+		}
 	}
 
-	public BaseNodePlus FindNode( string name )
+	public BaseNodePlus FindNode( string name, bool lightingPage = false )
 	{
-		_nodes.TryGetValue( name, out var node );
-		return node;
+
+
+		if ( !lightingPage )
+		{
+			_nodes.TryGetValue( name, out var node );
+			return node;
+		}
+		else
+		{
+			_lightingNodes.TryGetValue( name, out var node );
+			return node;
+		}
+
+
+
+
+		
 	}
 
 	public void ClearNodes()

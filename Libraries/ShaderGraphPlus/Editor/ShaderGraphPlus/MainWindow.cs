@@ -1,4 +1,8 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor.NodeEditor;
+using Facepunch.ActionGraphs;
+using Sandbox.UI;
+
+namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType("sgpfunc")]
 public class MainWindowFunc : MainWindow, IAssetEditor
@@ -887,27 +891,56 @@ public class MainWindow : DockWindow
 		{
 			if ( _lightingGraph is not null )
 			{
+				foreach ( var node in _graph._lightingNodes.Values )
+				{
+					_lightingGraph.AddNode( node );
+				}
+
+				
+
 				_graphView.Graph = _lightingGraph;
-				_lightingGraph.LightingNodes = _graph.LightingNodes;
 			}
 			else
 			{
-				_lightingGraph = new();
 				_graphView.Graph = _lightingGraph;
-		
-		
+				
 				var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
 				_graphView.Scale = 1;
 				_graphView.CenterOn( result.Size * 0.5f );
 			}
-		
+
+
+			var center = Vector2.Zero;
+			var resultNode = _lightingGraph.Nodes.OfType<BaseResult>().FirstOrDefault();
+			if ( resultNode != null )
+			{
+				var nodeUI = _graphView.FindNode( resultNode );
+				if ( nodeUI.IsValid() )
+				{
+					center = nodeUI.Position + nodeUI.Size * 0.5f;
+				}
+			}
+
+			_graphView.Scale = 1;
+			_graphView.CenterOn( center );
+			_graphView.RestoreViewFromCookie();
+
+
 			_isOnLightingPage = true;
 		}
 		else
 		{
-			_graphView.Graph = _graph;
-			_graph.LightingNodes = _lightingGraph.Nodes;
+			_graph.ClearLightingNodes();
+		
+			foreach ( var node in _lightingGraph.Nodes )
+			{
+				
+				_graph.AddNode( node, _lightingGraph );
+			}
 
+			_graphView.Graph = _graph;
+
+			_lightingGraph = new();
 			_isOnLightingPage = false;
 		}
 	}
@@ -916,6 +949,7 @@ public class MainWindow : DockWindow
 	{
 		_asset = null;
 		_graph = new();
+		_lightingGraph = new(_graph);
 		_dirty = false;
 		_graphView.Graph = _graph;
 		_graphCanvas.WindowTitle = "untitled";
@@ -997,7 +1031,7 @@ public class MainWindow : DockWindow
 		}
 
 		var graph = new ShaderGraphPlus();
-		graph.Deserialize( System.IO.File.ReadAllText( path ) );
+		graph.Deserialize( System.IO.File.ReadAllText( path ), null, _lightingGraph );
 		graph.Path = asset.RelativePath;
 		graph.IsSubgraph = IsSubgraph;
 
@@ -1008,6 +1042,7 @@ public class MainWindow : DockWindow
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
+		_lightingGraph = new( _graph );
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
@@ -1120,6 +1155,17 @@ public class MainWindow : DockWindow
 		
 		_preview.SaveSettings( _graph.PreviewSettings );
 		
+		if ( _isOnLightingPage )
+		{
+			_graph.ClearLightingNodes();
+
+			foreach ( var node in _lightingGraph.Nodes )
+			{
+				_graph.AddNode( node, _lightingGraph );
+			}
+		}
+
+
 		// Write serialized graph to asset file
 		System.IO.File.WriteAllText( savePath, _graph.Serialize() );
 		
@@ -1387,6 +1433,7 @@ public class MainWindow : DockWindow
 	{
         _preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
+		_graph.HasCustomLighting = _graph.ShadingModel == ShadingModel.Custom;
 
         if ( _properties.Target is BaseNodePlus node )
 		{

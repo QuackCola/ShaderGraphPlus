@@ -170,11 +170,14 @@ public abstract class BaseResult : ShaderNodePlus
 	public virtual float GetDefaultAmbientOcclusion() => 1.0f;
 	public virtual Vector3 GetDefaultPositionOffset() => new( 0, 0, 0 );
 
-	public NodeResult GetAlbedoResult( GraphCompiler compiler )
+	public NodeResult GetAlbedoResult( GraphCompiler compiler, bool customShading = false )
 	{
 		var albedoInput = GetAlbedo();
 		if (albedoInput.IsValid)
 		{
+			if ( customShading )
+			{ }
+
             return compiler.ResultValue(albedoInput);
         }
 		

@@ -14,9 +14,8 @@ public sealed class LightingResult : BaseResult
 	public override NodeInput GetAlbedo()
 	{
 		if ( Albedo.IsValid )
-		{
 			return Albedo;
-		}
+		
 		return default;
 	}
 }
