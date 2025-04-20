@@ -286,9 +286,7 @@ partial class ShaderGraphPlus
 	
 	        nodeArray.Add(nodeObject);
 	    }
-	
-	  
-	
+
 		if ( hasCustomLighting )
 		{
 			doc.Add( "lighting_nodes", nodeArray );
