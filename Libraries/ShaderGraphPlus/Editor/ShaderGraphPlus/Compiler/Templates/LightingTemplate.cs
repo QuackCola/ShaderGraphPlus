@@ -6,6 +6,7 @@ public static class LightingTemplate
 static float4 Shade( PixelInput i, Material m  )
 {{
 {0}
+	// Loop through all lights 
 	for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
 	{{
 		Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
@@ -20,7 +21,7 @@ static float4 Shade( PixelInput i, Material m  )
 	//if( ToolsVis::WantsToolsVis() )
 	//	return DoToolsVis( Albedo, m, lightingTerms );
 
-	return float4(Albedo.xyz, 0);
+	return float4(Albedo.xyz, m.Opacity);
 }}
 ";
 }
