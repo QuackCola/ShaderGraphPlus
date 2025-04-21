@@ -57,7 +57,7 @@
       "__guid": "af98f8e4-7c7d-4d9f-b8f4-9e92bc796bc3",
       "Flags": 0,
       "Name": "Sphere",
-      "Position": "-448,-1538.693,32",
+      "Position": "-288,-1536,32",
       "Enabled": true,
       "Components": [
         {
@@ -66,7 +66,7 @@
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialGroup": null,
-          "MaterialOverride": "shaders/tests/customlighting/customlighting.vmat",
+          "MaterialOverride": "shaders/tests/untitled.vmat",
           "Model": "models/dev/sphere.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -90,7 +90,7 @@
       "__guid": "f3ee383b-0e41-4821-817c-544c2427dfd1",
       "Flags": 0,
       "Name": "Point Light",
-      "Position": "-337.1208,-1606.081,61.09682",
+      "Position": "-320,-1536,72.7272",
       "Tags": "light_point,light",
       "Enabled": true,
       "Components": [
@@ -107,8 +107,152 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "Radius": 112.099945,
+          "Radius": 63.899857,
           "Shadows": true
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "8afee1fc-f886-434b-b388-f55f5fe30364",
+      "Flags": 0,
+      "Name": "Box",
+      "Position": "-402.5923,-1470.345,32",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "36aa47cb-e4e1-47c2-84de-88e3b62b5c84",
+          "Collision": "Mesh",
+          "Color": "1,1,1,1",
+          "Friction": null,
+          "HideInGame": false,
+          "IsTrigger": false,
+          "Mesh": {
+            "Topology": "H4sIAAAAAAAACl2QCQ7CMAwEp4Qj3NBy/f+laMRGsohUVbFn1+t04ANs+Z0VsM69AwfgBFyAKZ9MPXdgk3qLnsI+Um/h/me9i2ZXfFvYOazafTJN0XRgKZmPyWtfXvYVL73PZRd52WdYPa7xtC8veys7u6t17/7t6Tn0ZtFjvIXZR895zjKjPWf4NiOrGt+ivpXZ3XnozaOndVn9vvVkkTjEAQAA",
+            "Position": "-402.5923,-1470.345,32",
+            "Rotation": "0,0,0,1",
+            "Positions": [
+              "-55.95862,-113.6899,16",
+              "55.95862,-113.6899,16",
+              "55.95862,113.6899,16",
+              "-55.95862,113.6899,16",
+              "-55.95862,113.6899,-16",
+              "55.95862,113.6899,-16",
+              "55.95862,-113.6899,-16",
+              "-55.95862,-113.6899,-16"
+            ],
+            "TextureCoord": [
+              "0.4371767,0.8882027",
+              "-0.4371767,-0.125",
+              "0.4371767,-0.8882027",
+              "-0.8882027,-0.125",
+              "-0.4371767,-0.8882027",
+              "-0.4371767,-0.125",
+              "-0.4371767,0.8882027",
+              "-0.8882027,-0.125",
+              "0.4371767,-0.8882027",
+              "0.4371767,0.125",
+              "0.4371767,0.8882027",
+              "0.8882027,0.125",
+              "-0.4371767,0.8882027",
+              "0.4371767,0.125",
+              "-0.4371767,-0.8882027",
+              "0.8882027,0.125",
+              "0.8882027,-0.125",
+              "-0.4371767,0.125",
+              "-0.8882027,0.125",
+              "0.4371767,-0.125",
+              "-0.8882027,0.125",
+              "0.4371767,-0.125",
+              "0.8882027,-0.125",
+              "-0.4371767,0.125"
+            ],
+            "TextureUAxis": [
+              "1,0,0",
+              "1,0,-0",
+              "0,-1,0",
+              "0,1,0",
+              "-1,0,0",
+              "1,-0,0"
+            ],
+            "TextureVAxis": [
+              "0,-1,0",
+              "0,-1,0",
+              "0,0,-1",
+              "-0,0,-1",
+              "0,0,-1",
+              "-0,0,-1"
+            ],
+            "TextureScale": [
+              "0.25,0.25",
+              "0.25,0.25",
+              "0.25,0.25",
+              "0.25,0.25",
+              "0.25,0.25",
+              "0.25,0.25"
+            ],
+            "TextureOffset": [
+              "74.36914,262.6201",
+              "74.36914,262.6201",
+              "262.6201,128",
+              "249.3799,128",
+              "437.6309,128",
+              "74.36914,128"
+            ],
+            "MaterialIndex": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "EdgeFlags": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "Materials": [
+              "materials/dev/reflectivity_30.vmat"
+            ]
+          },
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "RenderType": "On",
+          "SmoothingAngle": 40,
+          "Static": true,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
         }
       ],
       "Children": []
