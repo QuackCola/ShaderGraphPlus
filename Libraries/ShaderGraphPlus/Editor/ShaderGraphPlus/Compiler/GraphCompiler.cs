@@ -1307,7 +1307,7 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return null;
 
-		var material = GenerateMaterialTest();
+		var material = GenerateLightingResult();
 		var locals = GenerateLocals();
 
 		if ( Errors.Any() )
@@ -1893,15 +1893,14 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	private string GenerateMaterialTest()
+	private string GenerateLightingResult()
 	{
 		Stage = ShaderStage.Pixel;
 		Subgraph = null;
 		SubgraphStack.Clear();
-		
+
 		//if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
-		
-		
+
 		var resultNode = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
 		if ( resultNode == null )
 			return null;
@@ -1911,7 +1910,6 @@ public sealed partial class GraphCompiler
 		
 		foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
-		
 			CurrentResultInput = property.Name;
 			visited.Add( property.Name );
 
@@ -1920,7 +1918,6 @@ public sealed partial class GraphCompiler
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
 				result = Result( connection );
-				
 			}
 			else
 			{
@@ -1933,7 +1930,6 @@ public sealed partial class GraphCompiler
 					continue;
 				
 				result = ResultValue( valueProperty.GetValue( resultNode ) );
-				
 			}
 
 			if ( Errors.Any() )
