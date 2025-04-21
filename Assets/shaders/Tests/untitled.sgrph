@@ -27,6 +27,23 @@
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "0,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0,1,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "1",
+      "Position": "-444,36",
       "HandleOffsets": {}
     }
   ],
@@ -51,7 +68,7 @@
     {
       "_class": "DotProduct",
       "Identifier": "2",
-      "Position": "-24,-168",
+      "Position": "-48,-264",
       "HandleOffsets": {},
       "InputA": {
         "Identifier": "1",

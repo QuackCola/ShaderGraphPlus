@@ -106,13 +106,15 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
+		
+		
+		float4 l_0 = float4( 0, 1, 0, 1 );
+		
 
-
-
-		//m.Albedo = float4( 1, 1, 1, 1 ).xyz
+		//m.Albedo = l_0.xyz
 		//m.Opacity = 1
 		
 		//return Shade( m );
-		return float4( float4( 1, 1, 1, 1 ).xyz, 1 );
+		return float4( l_0.xyz, 1 );
     }
 }
