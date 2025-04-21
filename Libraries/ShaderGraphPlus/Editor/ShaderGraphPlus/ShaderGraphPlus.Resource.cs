@@ -134,6 +134,11 @@ public partial class ShaderGraphPlus : IGraph
 		_lightingNodes.Clear();
 	}
 
+	public void ClearNodes()
+	{
+		_nodes.Clear();
+	}
+
 	public void AddNode( BaseNodePlus node, ShaderGraphPlus lightingGraph = null )
 	{
 		if ( lightingGraph == null )
@@ -168,11 +173,6 @@ public partial class ShaderGraphPlus : IGraph
 			_lightingNodes.TryGetValue( name, out var node );
 			return node;
 		}
-	}
-
-	public void ClearNodes()
-	{
-		_nodes.Clear();
 	}
 
 	string IGraph.SerializeNodes( IEnumerable<INode> nodes )
