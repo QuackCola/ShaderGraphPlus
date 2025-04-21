@@ -720,9 +720,9 @@ public class Preview : SceneRenderingWidget
 				camera.BackgroundColor = Color.White;
 			}
 			{
-				var sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
-				sun.WorldRotation = Rotation.FromPitch( 50 );
-				sun.LightColor = Color.White * 2.5f + Color.Cyan * 0.05f;
+				_sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
+				_sun.WorldRotation = SunAngle;
+				_sun.LightColor = SunColor;
 			}
 			{
 				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
@@ -730,6 +730,7 @@ public class Preview : SceneRenderingWidget
 				light.Radius = 500;
 				light.LightColor = Color.Orange * 3;
 				light.Enabled = true;
+				_pointLights.Add( light );
 			}
 			{
 				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
@@ -737,6 +738,7 @@ public class Preview : SceneRenderingWidget
 				light.Radius = 500;
 				light.LightColor = Color.Cyan * 3;
 				light.Enabled = true;
+				_pointLights.Add( light );
 			}
 			{
 				var cubemap = new GameObject( true, "cubemap" ).GetOrAddComponent<EnvmapProbe>();
