@@ -14,7 +14,6 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
-    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -27,7 +26,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "-12,0",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
@@ -56,7 +55,7 @@
       "Position": "588,-132",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "9",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null
       }
@@ -135,16 +134,10 @@
       }
     },
     {
-      "_class": "UnitAlbedoNode",
-      "Identifier": "8",
-      "Position": "96,-24",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "Add",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "408,-132",
       "HandleOffsets": {},
       "A": {
@@ -153,10 +146,16 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "8",
+        "Identifier": "9",
         "Output": "ResultA",
         "Subgraph": null
       }
+    },
+    {
+      "_class": "UnitPixelResultInfoNode",
+      "Identifier": "9",
+      "Position": "132,-24",
+      "HandleOffsets": {}
     }
   ]
 }

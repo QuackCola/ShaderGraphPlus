@@ -87,7 +87,7 @@ PS
 		float3 Albedo = float3( 0, 0, 0 );
 		
 		
-		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
+		for ( int index = 0; index < Light::Count(); index++ )
 		{
 			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
 			
@@ -106,7 +106,7 @@ PS
 		//if( ToolsVis::WantsToolsVis() )
 		//	return DoToolsVis( Albedo, m, lightingTerms );
 	
-		return float4(Albedo.xyz, 0);
+		return float4(Albedo.xyz, m.Opacity);
 	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
