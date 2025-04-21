@@ -1299,7 +1299,7 @@ public sealed partial class GraphCompiler
 
 		var sb = new StringBuilder();
 
-		sb.AppendLine( $"float3 Albedo = float3( 1, 0, 1 );" );
+		sb.AppendLine( $"float3 Albedo = float3( 0, 0, 0 );" );
 		sb.AppendLine();
 
 		var str =  string.Format( LightingTemplate.Contents,
