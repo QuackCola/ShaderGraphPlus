@@ -1492,14 +1492,14 @@ public sealed partial class GraphCompiler
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Custom ) // Grab the result from the Light Page graph.
 		{
-			var resultNode2 = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
+			var resultLighting = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
 
-			if ( resultNode2 == null )
+			if ( resultLighting == null )
 				return null;
 
 			string lightingFuncCall = "";
 
-			if ( resultNode2 is LightingResult lightingResult )
+			if ( resultLighting is LightingResult lightingResult )
 			{
 				var lightResult = lightingResult.GetAlbedoResult( this, true );
 				var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
@@ -1510,8 +1510,10 @@ public sealed partial class GraphCompiler
 			}
 
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+
 			if ( resultNode == null )
 				return null;
+
 			var albedoResult = resultNode.GetAlbedoResult( this );
 			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
 			var opacityResult = resultNode.GetOpacityResult( this );
