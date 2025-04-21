@@ -51,7 +51,7 @@
     {
       "_class": "DotProduct",
       "Identifier": "2",
-      "Position": "0,-264",
+      "Position": "-12,-120",
       "HandleOffsets": {},
       "InputA": {
         "Identifier": "1",

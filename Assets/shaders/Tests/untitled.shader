@@ -85,12 +85,9 @@ PS
 		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
 		{
 			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index);
-			
-			
-			float l_0 = dot( light.Direction, light.Direction );
-			
-			Albedo += float3( l_0, l_0, l_0 );
-			
+	
+	
+	
 		}
 	
 		return float4(Albedo.xyz, 0);
