@@ -18,7 +18,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
 	string FilePath;
 	string FilePathAbsolute;
 	
-	IconButton PreviewButton;
+	//IconButton PreviewButton;
 	private ContextMenu menu;
 	
 	CustomFunctionNode Node;
@@ -46,11 +46,11 @@ internal class HLSLAssetPathControlWidget : ControlWidget
 	{
 	    base.DoLayout();
 	    
-	    if ( PreviewButton.IsValid() )
-	    {
-	        PreviewButton.FixedSize = Height - 2;
-	        PreviewButton.Position = new Vector2(Width - Height + 1, 1);
-	    }
+	    //if ( PreviewButton.IsValid() )
+	    //{
+	    //    PreviewButton.FixedSize = Height - 2;
+	    //    PreviewButton.Position = new Vector2(Width - Height + 1, 1);
+	    //}
 	}
 	
 	private void DrawContent( Rect rect, string title, string path )
