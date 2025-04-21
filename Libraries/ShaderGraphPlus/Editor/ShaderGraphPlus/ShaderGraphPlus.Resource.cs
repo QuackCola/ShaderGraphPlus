@@ -179,8 +179,6 @@ public partial class ShaderGraphPlus : IGraph
 
 	public BaseNodePlus FindNode( string name, bool lightingPage = false )
 	{
-
-
 		if ( !lightingPage )
 		{
 			_nodes.TryGetValue( name, out var node );
@@ -191,11 +189,6 @@ public partial class ShaderGraphPlus : IGraph
 			_lightingNodes.TryGetValue( name, out var node );
 			return node;
 		}
-
-
-
-
-		
 	}
 
 	public void ClearNodes()
