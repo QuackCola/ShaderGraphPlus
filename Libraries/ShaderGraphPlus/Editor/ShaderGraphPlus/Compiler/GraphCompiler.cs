@@ -1532,40 +1532,40 @@ public sealed partial class GraphCompiler
 		return null;
 	}
 
-    private string GetPropertyValue(PropertyInfo property, Result resultNode)
-    {
-        NodeResult result;
-        var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-        var componentCount = GetComponentCount( inputAttribute.Type );
-
-        if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
-        {
-            result = Result( connection );
-        }
-        else
-        {
-            var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-            if ( editorAttribute == null )
-                return null;
-
-            var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
-            if ( valueProperty == null )
-                return null;
-
-            result = ResultValue( valueProperty.GetValue( resultNode ), previewOverride: true );
-        }
-
-        if ( Errors.Any() )
-            return null;
-
-        if ( !result.IsValid() )
-            return null;
-
-        if ( string.IsNullOrWhiteSpace( result.Code ) )
-            return null;
-
-        return $"{result.Cast( componentCount )}";
-    }
+	private string GetPropertyValue(PropertyInfo property, Result resultNode)
+	{
+	    NodeResult result;
+	    var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+	    var componentCount = GetComponentCount( inputAttribute.Type );
+	
+	    if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
+	    {
+	        result = Result( connection );
+	    }
+	    else
+	    {
+	        var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+	        if ( editorAttribute == null )
+	            return null;
+	
+	        var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
+	        if ( valueProperty == null )
+	            return null;
+	
+	        result = ResultValue( valueProperty.GetValue( resultNode ), previewOverride: true );
+	    }
+	
+	    if ( Errors.Any() )
+	        return null;
+	
+	    if ( !result.IsValid() )
+	        return null;
+	
+	    if ( string.IsNullOrWhiteSpace( result.Code ) )
+	        return null;
+	
+	    return $"{result.Cast( componentCount )}";
+	}
 
 	private string GenerateGlobals()
 	{
