@@ -559,14 +559,16 @@ public class MainWindow : DockWindow
 		_undoHistory.History = _undoStack.Names;
 	}
 
-	public void SetDirty()
+	public void SetDirty( bool evaluate = true )
 	{
-        Update();
+		Update();
 
-        _dirty = true;
+		_dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
-		GeneratePreviewCode();
+		if ( evaluate )
+			GeneratePreviewCode();
+
 	}
 
 	[EditorEvent.Frame]
@@ -1439,8 +1441,8 @@ public class MainWindow : DockWindow
 		{
 			_graphView.UpdateNode( node );
 		}
-		
-		SetDirty();
+
+		SetDirty( _properties.Target is not CommentNode ? true : false );
 	}
 
 	protected override void RestoreDefaultDockLayout()
