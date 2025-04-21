@@ -13,6 +13,13 @@ static float4 Shade( PixelInput i, Material m  )
 {2}
 	}}
 
+	if( DepthNormals::WantsDepthNormals() )
+		return DepthNormals::Output( m.Normal, m.Roughness );
+	
+	// TODO
+	//if( ToolsVis::WantsToolsVis() )
+	//	return DoToolsVis( Albedo, m, lightingTerms );
+
 	return float4(Albedo.xyz, 0);
 }}
 ";
