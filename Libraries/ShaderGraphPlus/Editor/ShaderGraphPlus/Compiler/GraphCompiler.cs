@@ -1457,6 +1457,24 @@ public sealed partial class GraphCompiler
 		return "";
 	}
 
+	private bool GetUnlitResult( out string albedo, out string opacity)
+	{
+		var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+		
+		albedo = "";
+		opacity = "";
+
+		if ( resultNode == null )
+			return false;
+		
+		var albedoResult = resultNode.GetAlbedoResult( this );
+		albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+		var opacityResult = resultNode.GetOpacityResult( this );
+		opacity = opacityResult.Cast( 1 ) ?? "1.00";
+
+		return true;
+	}
+
 	private string GeneratePixelOutput()
 	{
 		Stage = ShaderStage.Pixel;
@@ -1466,14 +1484,10 @@ public sealed partial class GraphCompiler
 		
 		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
 		{
-			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-			if ( resultNode == null )
+
+			if ( !GetUnlitResult( out string albedo, out string opacity ) )
 				return null;
-			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
-			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-			
+
 			return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
@@ -1484,41 +1498,44 @@ public sealed partial class GraphCompiler
 		{
 			var resultLighting = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
 
-			if ( resultLighting == null )
-				return null;
+			string pixelOutput = "";
 
-			string lightingFuncCall = "";
-
-			if ( resultLighting is LightingResult lightingResult )
+			if ( resultLighting != null )
 			{
-				var lightResult = lightingResult.GetAlbedoResult( this, true );
-				var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
-				var resultstring = compiler.GenerateLighting();
+				string lightingFuncCall = "";
 
-				var lightingFunc = RegisterLightFunction( resultstring, "Shade", "m" );
-				lightingFuncCall = ResultFunction( lightingFunc, "m" );
+				if ( resultLighting is LightingResult lightingResult )
+				{
+					var lightResult = lightingResult.GetAlbedoResult( this, true );
+					var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
+					var resultstring = compiler.GenerateLighting();
+
+					var lightingFunc = RegisterLightFunction( resultstring, "Shade", "m" );
+					lightingFuncCall = ResultFunction( lightingFunc, "m" );
+				}
+
+				if ( !GetUnlitResult( out string albedo, out string opacity ) )
+					return null;
+
+				var sb = new StringBuilder();
+
+				sb.AppendLine( $"//m.Albedo = {albedo}" );
+				sb.AppendLine( $"//m.Opacity = {opacity}" );
+				sb.AppendLine();
+				sb.AppendLine( $"//return Shade( m );" );
+				sb.Append( $"return float4( {albedo}, {opacity} );" );
+
+				pixelOutput = sb.ToString();
+			}
+			else
+			{
+				if ( !GetUnlitResult( out string albedo, out string opacity ) )
+					return null;
+
+				pixelOutput = $"return float4( {albedo}, {opacity} );";
 			}
 
-			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-
-			if ( resultNode == null )
-				return null;
-
-			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
-			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-
-
-			var sb = new StringBuilder();
-
-			sb.AppendLine( $"//m.Albedo = {albedo}" );
-			sb.AppendLine( $"//m.Opacity = {opacity}" );
-			sb.AppendLine();
-			sb.AppendLine( $"//return Shade( m );" );
-			sb.Append( $"return float4( {albedo}, {opacity} );" );
-
-			return sb.ToString();
+			return pixelOutput;
 		}
 
 		return null;
