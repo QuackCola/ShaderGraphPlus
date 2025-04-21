@@ -231,6 +231,16 @@ public sealed partial class GraphCompiler
 		return $"{functionName}( {args} )";
     }
 
+	internal string RegisterLightFunction( string code, string functionName, string args = "" )
+	{
+		if ( !GraphHLSLFunctions.HasFunction( functionName ) )
+		{
+			GraphHLSLFunctions.RegisterFunction( functionName, code );
+		}
+
+		return functionName;
+	}
+
 	internal void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
 	{
 		var result = ShaderResult;
@@ -1315,7 +1325,7 @@ public sealed partial class GraphCompiler
 		);
 		Log.Info( str );
 
-		return "";
+		return str;
 	}
 
 	/// <summary>
@@ -1452,11 +1462,13 @@ public sealed partial class GraphCompiler
         Stage = ShaderStage.Pixel;
         if ( Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess )
             return ShaderTemplate.Material_init;
+		if ( Graph.ShadingModel == ShadingModel.Custom )
+			return ShaderTemplate.Material_init;
         return "";
     }
 
-    private string GeneratePixelOutput()
-    {
+	private string GeneratePixelOutput()
+	{
 		Stage = ShaderStage.Pixel;
 		
 		Subgraph = null;
@@ -1471,8 +1483,8 @@ public sealed partial class GraphCompiler
 			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
 			var opacityResult = resultNode.GetOpacityResult( this );
 			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
-		
-		    return $"return float4( {albedo}, {opacity} );";
+			
+			return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
 		{
@@ -1481,25 +1493,20 @@ public sealed partial class GraphCompiler
 		else if ( Graph.ShadingModel == ShadingModel.Custom ) // Grab the result from the Light Page graph.
 		{
 			var resultNode2 = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
-			//
+
 			if ( resultNode2 == null )
 				return null;
-			//
+
+			string lightingFuncCall = "";
+
 			if ( resultNode2 is LightingResult lightingResult )
 			{
-				//Log.Info( "Found lighting result");
-
 				var lightResult = lightingResult.GetAlbedoResult( this, true );
-				//string albedo2 = lightResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
-				//var opacityResult2 = lightingResult.GetOpacityResult( this );
-				//string opacity2 = opacityResult2.Cast( 1 ) ?? "1.00";
-
-
-
 				var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
 				var resultstring = compiler.GenerateInternal();
 
-				
+				var lightingFunc = RegisterLightFunction( resultstring, "Shade", "m" );
+				lightingFuncCall = ResultFunction( lightingFunc, "m" );
 			}
 
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
@@ -1510,9 +1517,16 @@ public sealed partial class GraphCompiler
 			var opacityResult = resultNode.GetOpacityResult( this );
 			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
 
-			return $"return float4( {albedo}, {opacity} );";
 
+			var sb = new StringBuilder();
 
+			sb.AppendLine( $"//m.Albedo = {albedo}" );
+			sb.AppendLine( $"//m.Opacity = {opacity}" );
+			sb.AppendLine();
+			sb.AppendLine( $"//return Shade( m );" );
+			sb.Append( $"return float4( {albedo}, {opacity} );" );
+
+			return sb.ToString();
 		}
 
 		return null;
@@ -1932,7 +1946,7 @@ public sealed partial class GraphCompiler
 			var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
 			var componentCount = GetComponentCount( inputAttribute.Type );
 
-			sb.AppendLine( $"float3 {property.Name} += {result.Cast( componentCount )};" );
+			sb.AppendLine( $"{property.Name} += {result.Cast( componentCount )};" );
 		}
 
         //if ( resultNode is FunctionResult functionResult )

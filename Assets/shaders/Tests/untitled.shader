@@ -76,13 +76,46 @@ PS
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
+	static float4 Shade( Material m  )
+	{
+		float3 Albedo = float3( 1, 0, 1 );
+		
+		
+		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
+		{
+			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index);
+			
+			
+			float l_0 = dot( light.Direction, light.Direction );
+			
+			Albedo += float3( l_0, l_0, l_0 );
+			
+		}
+	
+		return float4(Albedo.xyz, 0);
+	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
+		
+		Material m = Material::Init();
+		m.Albedo = float3( 1, 1, 1 );
+		m.Normal = float3( 0, 0, 1 );
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		m.TintMask = 1;
+		m.Opacity = 1;
+		m.Emission = float3( 0, 0, 0 );
+		m.Transmission = 0;
 
 
 
-
+		//m.Albedo = float4( 1, 1, 1, 1 ).xyz
+		//m.Opacity = 1
+		
+		//return Shade( m );
 		return float4( float4( 1, 1, 1, 1 ).xyz, 1 );
     }
 }
