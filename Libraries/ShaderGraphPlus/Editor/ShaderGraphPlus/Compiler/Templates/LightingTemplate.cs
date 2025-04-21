@@ -3,7 +3,7 @@
 public static class LightingTemplate
 {
 	public static string Contents => @"
-static float4 Shade( Material m  )
+static float4 Shade( PixelInput i, Material m  )
 {{
 {0}
 	for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
