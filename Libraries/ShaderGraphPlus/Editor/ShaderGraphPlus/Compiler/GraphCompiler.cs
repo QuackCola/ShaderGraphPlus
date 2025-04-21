@@ -1490,7 +1490,7 @@ public sealed partial class GraphCompiler
 		{
 			return ShaderTemplate.Material_output;
 		}
-		else if ( Graph.ShadingModel == ShadingModel.Custom ) // Grab the result from the Light Page graph.
+		else if ( Graph.ShadingModel == ShadingModel.Custom )
 		{
 			var resultLighting = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
 
