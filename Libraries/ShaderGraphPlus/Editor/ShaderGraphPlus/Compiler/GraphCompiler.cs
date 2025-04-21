@@ -35,11 +35,15 @@ public sealed partial class GraphCompiler
 	/// Current graph we're compiling
 	/// </summary>
 	public ShaderGraphPlus Graph { get; private set; }
+	public ShaderGraphPlus LightingPageGraph { get; private set; }
+
+	public bool IsLightingPage { get; private set; }
+
 
 	/// <summary>
 	/// Current SubGraph
 	/// </summary>
-    private ShaderGraphPlus Subgraph = null;
+	private ShaderGraphPlus Subgraph = null;
     private SubgraphNode SubgraphNode = null;
     private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
@@ -114,14 +118,20 @@ public sealed partial class GraphCompiler
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
+
+
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview, ShaderGraphPlus lightingPageGraph, bool isLightingPage = false )
 	{
 		Graph = graph;
+		LightingPageGraph = lightingPageGraph;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
         Subgraphs = new();
-        AddSubgraphs( Graph );
+
+		IsLightingPage = isLightingPage;
+
+		AddSubgraphs( Graph );
     }
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
@@ -484,6 +494,9 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultOrDefault<T>( NodeInput input, T defaultValue )
 	{
 		var result = Result( input );
+
+		
+
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
@@ -501,11 +514,11 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result(NodeInput input, bool lightingPage = false)
+	public NodeResult Result( NodeInput input )
 	{
 		if (!input.IsValid)
 			return default;
-		
+	
 		BaseNodePlus node = null;
 		if ( string.IsNullOrEmpty( input.Subgraph ) )
 		{
@@ -521,8 +534,14 @@ public sealed partial class GraphCompiler
 				} );
 			}
 
-
-			node = Graph.FindNode( input.Identifier, lightingPage );
+			if ( !IsLightingPage )
+			{
+				node = Graph.FindNode( input.Identifier );
+			}
+			else
+			{
+				node = LightingPageGraph.FindNode( input.Identifier );
+			}
 		}
 		else
 		{
@@ -748,7 +767,7 @@ public sealed partial class GraphCompiler
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
-		
+
 			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
@@ -1285,29 +1304,16 @@ public sealed partial class GraphCompiler
 			return null;
 
 		var sb = new StringBuilder();
-		
+
 		sb.AppendLine( $"float3 Albedo = float3( 1, 0, 1 );" );
 		sb.AppendLine();
-		sb.AppendLine( $"for ( int index = 0; index < Light::Count( ScreenPos ); index++ )" );
-		sb.AppendLine( "{" );
-		sb.AppendLine( "Light light = Light::From( ScreenPos, WorldPos, index );" );
-		sb.AppendLine( locals );
-		sb.AppendLine( material	 );
-		sb.AppendLine( "}" );
-		sb.AppendLine();
-		sb.AppendLine( $"return Albedo;" );
 
-		Log.Info( sb.ToString() );
-
-		//var sb2 = new StringBuilder();
-		//
-		//foreach ( var r in ShaderResult.Results )
-		//{
-		//
-		//
-		//
-		//	sb2.AppendLine( $"{r.Item2.TypeName} {r.Item1} = {r.Item2.Code};" );
-		//}
+		var str =  string.Format( LightingTemplate.Contents,
+			IndentString( sb.ToString(), 1),
+			IndentString( locals, 2 ),
+			IndentString( material, 2 )
+		);
+		Log.Info( str );
 
 		return "";
 	}
@@ -1488,7 +1494,9 @@ public sealed partial class GraphCompiler
 				//var opacityResult2 = lightingResult.GetOpacityResult( this );
 				//string opacity2 = opacityResult2.Cast( 1 ) ?? "1.00";
 
-				var compiler = new GraphCompiler( _Asset, Graph, false );
+
+
+				var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
 				var resultstring = compiler.GenerateInternal();
 
 				
@@ -1871,21 +1879,21 @@ public sealed partial class GraphCompiler
 
 	private string GenerateMaterialTest()
 	{
-        Stage = ShaderStage.Pixel;
-        Subgraph = null;
-        SubgraphStack.Clear();
-
-        //if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
-
-
-        var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
-        if ( resultNode == null )
+		Stage = ShaderStage.Pixel;
+		Subgraph = null;
+		SubgraphStack.Clear();
+		
+		//if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+		
+		
+		var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
+		if ( resultNode == null )
 			return null;
-
-        var sb = new StringBuilder();
-        var visited = new HashSet<string>();
-    
-        foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
+		
+		var sb = new StringBuilder();
+		var visited = new HashSet<string>();
+		
+		foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
 		
 			CurrentResultInput = property.Name;
@@ -1895,7 +1903,7 @@ public sealed partial class GraphCompiler
 
 			if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
 			{
-				result = Result( connection,true );
+				result = Result( connection );
 				
 			}
 			else
@@ -1907,8 +1915,8 @@ public sealed partial class GraphCompiler
 				var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
 				if ( valueProperty == null )
 					continue;
-               
-                result = ResultValue( valueProperty.GetValue( resultNode ) );
+				
+				result = ResultValue( valueProperty.GetValue( resultNode ) );
 				
 			}
 

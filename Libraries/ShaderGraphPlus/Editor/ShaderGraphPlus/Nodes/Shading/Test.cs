@@ -9,7 +9,7 @@ public sealed class LightInfoNode : ShaderNodePlus
 	[Title( "Color" )]
 	public NodeResult.Func ResultA => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, $"light.Color" );
+		return new NodeResult( ResultType.Vector3, $"light.Color", constant: true );
 	};
 
 	[Output( typeof( Vector3 ) )]
@@ -17,7 +17,7 @@ public sealed class LightInfoNode : ShaderNodePlus
 	[Title( "Direction" )]
 	public NodeResult.Func ResultB => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, $"light.Direction" );
+		return new NodeResult( ResultType.Vector3, $"light.Direction", constant: true );
 	};
 
 	[Output( typeof( Vector3 ) )]
@@ -25,7 +25,7 @@ public sealed class LightInfoNode : ShaderNodePlus
 	[Title( "Position" )]
 	public NodeResult.Func ResultC => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, $"light.Position" );
+		return new NodeResult( ResultType.Vector3, $"light.Position", constant: true );
 	};
 
 	[Output( typeof( float ) )]
@@ -33,7 +33,7 @@ public sealed class LightInfoNode : ShaderNodePlus
 	[Title( "Attenuation" )]
 	public NodeResult.Func ResultD => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Float, $"light.Attenuation" );
+		return new NodeResult( ResultType.Float, $"light.Attenuation", constant: true );
 	};
 
 	[Output( typeof( float ) )]
@@ -41,6 +41,6 @@ public sealed class LightInfoNode : ShaderNodePlus
 	[Title( "Visibility" )]
 	public NodeResult.Func ResultE => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Float, $"light.Visibility" );
+		return new NodeResult( ResultType.Float, $"light.Visibility", constant: true );
 	};
 }
