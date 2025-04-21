@@ -24,7 +24,7 @@ public class ProjectCreator : Dialog
 	private Button OkayButton;
 	private LineEdit TitleEdit;
 	private FolderEdit FolderEdit;
-	private Layout headerLayout;
+	//private Layout headerLayout;
 
 	//private FieldSubtitle FolderFullPath;
 	private ProjectTemplate ActiveTemplate;

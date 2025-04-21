@@ -66,8 +66,6 @@ partial class ShaderGraphPlus
 		
 		foreach ( var nodeProperty in doc.EnumerateObject() )
 		{
-			(string, string) newData = new();
-			
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
