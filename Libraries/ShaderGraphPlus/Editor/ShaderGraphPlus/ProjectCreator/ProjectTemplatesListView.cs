@@ -2,85 +2,83 @@
 
 internal class ProjectTemplatesListView : ListView
 {
-    private const string TemplatesDirectory = "/templates";
+	private const string TemplatesDirectory = "/templates";
+	
+	private List<ProjectTemplate> Templates = new List<ProjectTemplate>();
+	
+	public ProjectTemplate Template { get; set; }
+	
+	public ProjectTemplate ChosenTemplate { get; set; }
+	
+	public ProjectTemplatesListView(Widget parent) : base(parent)
+	{
+		ItemSelected = OnItemClicked;
+		ItemSize = new Vector2(0f, 48f);
+		ItemSpacing = new Vector2( 4.0f, 4.0f);
+		
+		FindLocalTemplates();
+		
+		List<ProjectTemplate> orderedTemplates = Templates.OrderBy(x => x.Order).ToList();
+		
+		SetItems(orderedTemplates);
+		ChosenTemplate = orderedTemplates.FirstOrDefault();
+		
+		if ( ChosenTemplate != null )
+		{
+			SelectItem( ChosenTemplate, false, false );
+		}
+		else
+		{
+			SGPLog.Error( $"No templates found!!!" );
+		}
+	}
+	
+	public void OnItemClicked(object value)
+	{
+		if (value is ProjectTemplate pt)
+		{
+			ChosenTemplate = pt;
+			//Log.Info($"Selected ShadergraphPlus Template : {ChosenTemplate.TemplatePath}");
+			//Utilities.EdtiorSound.Success();
+		}
+	}
+	
+	protected void FindLocalTemplates()
+	{
+		var template_path = ShaderGraphPlusFileSystem.Root.GetFullPath("/templates");
 
-    private List<ProjectTemplate> Templates = new List<ProjectTemplate>();
-
-    public ProjectTemplate Template { get; set; }
-
-    public ProjectTemplate ChosenTemplate { get; set; }
-
-    public ProjectTemplatesListView(Widget parent) : base(parent)
-    {
-        ItemSelected = OnItemClicked;
-        ItemSize = new Vector2(0f, 48f);
-        ItemSpacing = new Vector2( 4.0f, 4.0f);
-
-        FindLocalTemplates();
-
-        List<ProjectTemplate> orderedTemplates = Templates.OrderBy(x => x.Order).ToList();
-
-        SetItems(orderedTemplates);
-        ChosenTemplate = orderedTemplates.FirstOrDefault();
-        
-		if (ChosenTemplate != null)
-        {
-            SelectItem(ChosenTemplate, false, false);
-        }
-        else
-        {
-            Log.Error($"ShaderGraphPlus : No templates found!!!");
-            // Do Nothing...
-        }
-    }
-
-    public void OnItemClicked(object value)
-    {
-        if (value is ProjectTemplate pt)
-        {
-            ChosenTemplate = pt;
-            //Log.Info($"Selected ShadergraphPlus Template : {ChosenTemplate.TemplatePath}");
-            //Utilities.EdtiorSound.Success();
-        }
-    }
-
-    protected void FindLocalTemplates()
-    {
-        var template_path = ShaderGraphPlusFileSystem.Root.GetFullPath("/templates");
-
-
-        if (!Directory.Exists(template_path))
-        {
-            return;
-        }
-
-        foreach (string template_folder in ShaderGraphPlusFileSystem.Root.FindDirectory("/templates", "*", false))
-        {
-            string templateRoot = "/templates/" + template_folder;
-            string addonPath = templateRoot + "/$name.sgrph";
-
-            if (ShaderGraphPlusFileSystem.Root.FileExists(addonPath))
-            {
-                ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.Root.ReadAllText(addonPath));
-                Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
-            }
-        }   
-    }
-
-    protected override void OnPaint()
-    {
-        base.OnPaint();
-        //Paint.ClearPen();
-        //Paint.SetBrush(Theme.WidgetBackground);
-        //Paint.DrawRect(LocalRect);
-    }
-
-    protected override void PaintItem( VirtualWidget v )
+		if (!Directory.Exists(template_path))
+		{
+			return;
+		}
+		
+		foreach (string template_folder in ShaderGraphPlusFileSystem.Root.FindDirectory("/templates", "*", false))
+		{
+			string templateRoot = "/templates/" + template_folder;
+			string addonPath = templateRoot + "/$name.sgrph";
+			
+			if (ShaderGraphPlusFileSystem.Root.FileExists(addonPath))
+			{
+				ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>(ShaderGraphPlusFileSystem.Root.ReadAllText(addonPath));
+				Templates.Add(new ProjectTemplate(shadergraphplusproject,templateRoot));
+			}
+		}
+	}
+	
+	protected override void OnPaint()
+	{
+		base.OnPaint();
+		//Paint.ClearPen();
+		//Paint.SetBrush(Theme.WidgetBackground);
+		//Paint.DrawRect(LocalRect);
+	}
+	
+	protected override void PaintItem( VirtualWidget v )
 	{
 		object @object = v.Object;
 		Rect rect = v.Rect;
-
-        if (@object is ProjectTemplate template)
+	
+		if (@object is ProjectTemplate template)
 		{
 			Rect r = rect;
 			Color fg = Theme.White;

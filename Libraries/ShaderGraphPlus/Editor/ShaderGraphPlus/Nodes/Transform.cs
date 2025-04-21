@@ -49,7 +49,7 @@ public enum OutputNormalSpace
 [Title( "Invert Colors" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class InvertColorsNode : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput Color { get; set; }
 	
@@ -57,7 +57,7 @@ public class InvertColorsNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "InvertColors", $"{compiler.ResultOrDefault( Color, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "InvertColors", $"{compiler.ResultOrDefault( Color, Vector3.One )}" ) );
 	};
 }
 
@@ -404,140 +404,139 @@ public sealed class HSVtoRGB : ShaderNodePlus
 [Title("RGB to Linear"), Category("Transform"), Icon( "invert_colors" )]
 public sealed class RGBtoLinear : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-    {
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Linear to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoRGB : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Linear to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoHSV : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "HSV to Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoLinear : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Height to Normal" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HeightToNormal : ShaderNodePlus
 {
-    public enum OutputNormalSpace
-    {
-        Tangent,
-        World
-    }
+	public enum OutputNormalSpace
+	{
+		Tangent,
+		World
+	}
 
-    /// <summary>
-    /// Should we output in world space or tangent space.
-    /// </summary>
-    public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
+	/// <summary>
+	/// Should we output in world space or tangent space.
+	/// </summary>
+	public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
 
-    /// <summary>
-    /// The height to be converted into a normal.
-    /// </summary>
-    [Input( typeof( float ) )]
-    [Hide]
-    public NodeInput Height { get; set; }
+	/// <summary>
+	/// The height to be converted into a normal.
+	/// </summary>
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Height { get; set; }
 
-    /// <summary>
-    /// How strong you want the normal map effect to be.
-    /// </summary>
-    [Input( typeof( float ) )]
-    [Hide]
-    public NodeInput Strength { get; set; }
+	/// <summary>
+	/// How strong you want the normal map effect to be.
+	/// </summary>
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Strength { get; set; }
 
-    //[Input(typeof(Vector3))]
-    //[Hide]
-    //[Title("Position")]
-    //public NodeInput WorldPos { get; set; }
+	//[Input( typeof( Vector3 ) )]
+	//[Hide]
+	//[Title( "Position" )]
+	//public NodeInput WorldPos { get; set; }
+	
+	//[Input( typeof( Vector3 ) )]
+	//[Hide]
+	//public NodeInput Normal { get; set; }
+	
+	public float DefaultStrength { get; set; } = 0.1f;
+	
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+	
+		var height = compiler.Result( Height );
+		var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
+		var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
+		var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
 
-    //[Input(typeof(Vector3))]
-    //[Hide]
-    //public NodeInput Normal { get; set; }
-
-    public float DefaultStrength { get; set; } = 0.1f;
-
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-    {
-
-        var height = compiler.Result( Height );
-        var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
-        var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
-        var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
-
-        if ( !height.IsValid() )
-        {
-            return NodeResult.MissingInput( nameof( Height ) );
-        }
-        //if (!worldpos.IsValid())
-        //{
-        //    return NodeResult.MissingInput(nameof(WorldPos));
-        //}
-        //if (!worldnormal.IsValid())
-        //{
-        //    return NodeResult.MissingInput(nameof(Normal));
-        //}
+		if ( !height.IsValid() )
+		{
+			return NodeResult.MissingInput( nameof( Height ) );
+		}
+		//if (!worldpos.IsValid())
+		//{
+		//	return NodeResult.MissingInput(nameof(WorldPos));
+		//}
+		//if (!worldnormal.IsValid())
+		//{
+		//	return NodeResult.MissingInput(nameof(Normal));
+		//}
 
 		var result = compiler.ResultFunction( "Height2Normal",
-            $"{height}", 
+			$"{height}", 
 			$"{strength}", 
 			$"{worldpos}", 
 			$"{worldnormal}"
-        );
+		);
 
-        if ( OutputSpace == OutputNormalSpace.Tangent )
-        {
-            result = $"Vec3WsToTs( {result}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs )";
-        }
-
-        return new NodeResult( ResultType.Vector3, result );
-    };
-
+		if ( OutputSpace == OutputNormalSpace.Tangent )
+		{
+			result = $"Vec3WsToTs( {result}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs )";
+		}
+	
+		return new NodeResult( ResultType.Vector3, result );
+	};
 }
 
 [Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]

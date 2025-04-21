@@ -4,57 +4,56 @@ namespace Editor.ShaderGraphPlus;
 
 internal class HLSLAssetPathAttribute : Attribute
 {
-    internal HLSLAssetPathAttribute()
-    {
-
-    }
+	internal HLSLAssetPathAttribute()
+	{
+	}
 }
 
 [CustomEditor( typeof(string), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
 internal class HLSLAssetPathControlWidget : ControlWidget
 {
-    public override bool IsControlButton => true;
-    public override bool SupportsMultiEdit => false;
-    
-    string FilePath;
-    string FilePathAbsolute;
-
-    IconButton PreviewButton;
-    private ContextMenu menu;
-
-    CustomFunctionNode Node;
-    SerializedProperty FunctionNameProperty;
-    
-    public HLSLAssetPathControlWidget( SerializedProperty property ) : base( property )
-    {
-        FilePath = property.GetValue<string>();
-        
-        Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
-    
-        FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
-    
-        if ( Node is null )
-            return;
-    
-        HorizontalSizeMode = SizeMode.CanGrow | SizeMode.Expand;
-        Cursor = CursorShape.Finger;
-        MouseTracking = true;
-        AcceptDrops = true;
-        IsDraggable = true;
-    }
-    
-    protected override void DoLayout()
-    {
-        base.DoLayout();
-        
-        if ( PreviewButton.IsValid() )
-        {
-            PreviewButton.FixedSize = Height - 2;
-            PreviewButton.Position = new Vector2(Width - Height + 1, 1);
-        }
-    }
-    
-    private void DrawContent( Rect rect, string title, string path )
+	public override bool IsControlButton => true;
+	public override bool SupportsMultiEdit => false;
+	
+	string FilePath;
+	string FilePathAbsolute;
+	
+	IconButton PreviewButton;
+	private ContextMenu menu;
+	
+	CustomFunctionNode Node;
+	SerializedProperty FunctionNameProperty;
+	
+	public HLSLAssetPathControlWidget( SerializedProperty property ) : base( property )
+	{
+	    FilePath = property.GetValue<string>();
+	    
+	    Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
+	
+	    FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
+	
+	    if ( Node is null )
+	        return;
+	
+	    HorizontalSizeMode = SizeMode.CanGrow | SizeMode.Expand;
+	    Cursor = CursorShape.Finger;
+	    MouseTracking = true;
+	    AcceptDrops = true;
+	    IsDraggable = true;
+	}
+	
+	protected override void DoLayout()
+	{
+	    base.DoLayout();
+	    
+	    if ( PreviewButton.IsValid() )
+	    {
+	        PreviewButton.FixedSize = Height - 2;
+	        PreviewButton.Position = new Vector2(Width - Height + 1, 1);
+	    }
+	}
+	
+	private void DrawContent( Rect rect, string title, string path )
     {
         bool multiline = Height > 32;
         Rect textRect = rect.Shrink( 0, 6 );
@@ -81,8 +80,8 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         Paint.SetDefaultFont( 7 );
         Theme.DrawFilename( textRect, path, multiline ? TextFlag.LeftCenter : TextFlag.LeftBottom, Color.White.WithAlpha( 0.5f * alpha ) );
     }
-    
-    protected override void PaintControl()
+	
+	protected override void PaintControl()
     {
         var rect = new Rect(0, Size);
         
@@ -101,78 +100,78 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         
         DrawContent(rect, $"", FilePath);
     }
-    
-    public void GenerateHLSLIncludeBase()
-    {
-        if ( string.IsNullOrWhiteSpace( Node.Name ))
-        {
-            Dialog.AskString((string name) => {
-                FunctionNameProperty.SetValue(name);
-                Generate(name);
-            }, "What would you like to call your function?", title: "Function Name");
-        }
-        else
-        {
-            Generate( Node.Name );
-        }
-    }
-    
-    private void Generate( string functionName )
-    {
-        StringBuilder sb = new StringBuilder();
-        
-        string functionHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
-        StringBuilder functionBody = new StringBuilder();
-        
-        foreach ( var output in Node.ExpressionOutputs )
-        {
-            var initialValue = "0";
-        
-            if ( output.HLSLDataType == "bool" )
-            {
-                initialValue = "false";
-            }
-            else if ( output.HLSLDataType == "int" )
-            {
-                initialValue = "0";
-            }
-            else if ( output.HLSLDataType == "float" )
-            {
-            	initialValue = "0.0f";
-            }
-            else if ( output.HLSLDataType == "float2" )
-            {
-                initialValue = "float2( 0.0f, 0.0f )";
-            }
-            else if ( output.HLSLDataType == "float3" )
-            {
-                initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-            }
-            else if ( output.HLSLDataType == "float4" )
-            {
-                initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-            }
-        
-            functionBody.AppendLine( $"{output.Name} = {initialValue};" );
-        }
-
-        string result = string.Format( HLSLIncludeTemplate.Contents,
-            functionName.ToUpper(),
-            functionHeader,
-            GraphCompiler.IndentString( functionBody.ToString(), 2 )
-        );
-        
-        string absolutePath = SaveFile( result );
-        
-        if ( absolutePath is null ) 
-            return;
-        
-        FilePathAbsolute = absolutePath;
-        
-        OpenFile();
-    }
-    
-    private string GetHLSLDataType( ResultType resultType )
+	
+	public void GenerateHLSLIncludeBase()
+	{
+	    if ( string.IsNullOrWhiteSpace( Node.Name ))
+	    {
+	        Dialog.AskString((string name) => {
+	            FunctionNameProperty.SetValue(name);
+	            Generate(name);
+	        }, "What would you like to call your function?", title: "Function Name");
+	    }
+	    else
+	    {
+	        Generate( Node.Name );
+	    }
+	}
+	
+	private void Generate( string functionName )
+	{
+		StringBuilder sb = new StringBuilder();
+		
+		string functionHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
+		StringBuilder functionBody = new StringBuilder();
+		
+		foreach ( var output in Node.ExpressionOutputs )
+		{
+			var initialValue = "0";
+			
+			if ( output.HLSLDataType == "bool" )
+			{
+				initialValue = "false";
+			}
+			else if ( output.HLSLDataType == "int" )
+			{
+				initialValue = "0";
+			}
+			else if ( output.HLSLDataType == "float" )
+			{
+				initialValue = "0.0f";
+			}
+			else if ( output.HLSLDataType == "float2" )
+			{
+				initialValue = "float2( 0.0f, 0.0f )";
+			}
+			else if ( output.HLSLDataType == "float3" )
+			{
+				initialValue = "float3( 0.0f, 0.0f, 0.0f )";
+			}
+			else if ( output.HLSLDataType == "float4" )
+			{
+				initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+			}
+		
+			functionBody.AppendLine( $"{output.Name} = {initialValue};" );
+		}
+		
+		string result = string.Format( HLSLIncludeTemplate.Contents,
+			functionName.ToUpper(),
+			functionHeader,
+			GraphCompiler.IndentString( functionBody.ToString(), 2 )
+		);
+		
+		string absolutePath = SaveFile( result );
+		
+		if ( absolutePath is null ) 
+			return;
+		
+		FilePathAbsolute = absolutePath;
+		
+		OpenFile();
+	}
+	
+	private string GetHLSLDataType( ResultType resultType )
     {
         return resultType switch
         {
@@ -191,85 +190,84 @@ internal class HLSLAssetPathControlWidget : ControlWidget
         };
     }
 
-    protected override void OnMousePress( MouseEvent e )
-    {
-        base.OnMouseClick( e);
-        
-        if ( string.IsNullOrWhiteSpace( FilePath ) )
-        {
-            GenerateHLSLIncludeBase();
-        }
-        else
-        {
-            if ( e.RightMouseButton ) 
-            {
-                if ( !string.IsNullOrWhiteSpace( Node.Source ) )
-                {
-                    FilePathAbsolute = Editor.FileSystem.Content.GetFullPath($"shaders/{Node.Source}");
+	protected override void OnMousePress( MouseEvent e )
+	{
+		base.OnMouseClick( e);
+		
+		if ( string.IsNullOrWhiteSpace( FilePath ) )
+		{
+			GenerateHLSLIncludeBase();
+		}
+		else
+		{
+			if ( e.RightMouseButton ) 
+			{
+				if ( !string.IsNullOrWhiteSpace( Node.Source ) )
+				{
+					FilePathAbsolute = Editor.FileSystem.Content.GetFullPath($"shaders/{Node.Source}");
 
-                    menu?.Close();
-                    menu = new ContextMenu();
+					menu?.Close();
+					menu = new ContextMenu();
 
-                    menu.AddOption("Open include", "file_open", action: () => OpenFile());
-                    menu.AddOption("Clear...", "delete", action: () => ClearFile());
+					menu.AddOption("Open include", "file_open", action: () => OpenFile());
+					menu.AddOption("Clear...", "delete", action: () => ClearFile());
 
-                    menu.OpenAt(ScreenRect.BottomLeft);
+					menu.OpenAt(ScreenRect.BottomLeft);
 
-                    e.Accepted = true;
-                }
-            }
-        }
-    }
-    
-    private void OpenFile()
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = FilePathAbsolute,
-            UseShellExecute = true
-        });
-    }
+					e.Accepted = true;
+				}
+			}
+		}
+	}
 
-    private void ClearFile()
-    {
-        FilePathAbsolute = "";
-        FilePath = "";
+	private void OpenFile()
+	{
+		Process.Start(new ProcessStartInfo
+		{
+			FileName = FilePathAbsolute,
+			UseShellExecute = true
+		});
+	}
 
-        UpdateProperty();
-    }
+	private void ClearFile()
+	{
+		FilePathAbsolute = "";
+		FilePath = "";
+		
+		UpdateProperty();
+	}
 
-    private string SaveFile( string generatedFile )
-    {
-        var fd = new FileDialog(null)
-        {
-            Title = $"Select Path To Save HLSL File",
-            DefaultSuffix = $".hlsl"
-            
-        };
-        
-        fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
-        
-        fd.SetNameFilter($"Shader Include (*.hlsl)");
-        
-        if ( !Directory.Exists( $"{Project.Current.GetAssetsPath()}/shaders" ) )
-        {
-            Directory.CreateDirectory( $"{Project.Current.GetAssetsPath()}/shaders" );
-        }
-        
-        if (!fd.Execute())
-            return null;
-        
-        System.IO.File.WriteAllText(fd.SelectedFile, generatedFile);
-        
-        FilePath = Path.GetRelativePath(Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0,8);
-        
-        UpdateProperty();
-        
-        return fd.SelectedFile;
-    }
+	private string SaveFile( string generatedFile )
+	{
+		var fd = new FileDialog(null)
+		{
+			Title = $"Select Path To Save HLSL File",
+			DefaultSuffix = $".hlsl"
+		};
+		
+		fd.Directory = $"{Project.Current.GetAssetsPath()}/shaders";
+		
+		fd.SetNameFilter($"Shader Include (*.hlsl)");
+		
+		if ( !Directory.Exists( $"{Project.Current.GetAssetsPath()}/shaders" ) )
+		{
+			Directory.CreateDirectory( $"{Project.Current.GetAssetsPath()}/shaders" );
+		}
+		
+		if (!fd.Execute())
+			return null;
+		
+		System.IO.File.WriteAllText(fd.SelectedFile, generatedFile);
+		
+		FilePath = Path.GetRelativePath(Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0,8);
+		
+		UpdateProperty();
+		
+		return fd.SelectedFile;
+	}
 
-    private void UpdateProperty()
-    {
-        SerializedProperty.SetValue( FilePath );
-    }
+	private void UpdateProperty()
+	{
+		SerializedProperty.SetValue( FilePath );
+	}
 }

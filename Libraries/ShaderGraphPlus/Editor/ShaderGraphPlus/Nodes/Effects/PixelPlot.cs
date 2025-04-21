@@ -16,8 +16,8 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 
 	float2 vUvGrid = floor(vUv * vGridSize) / vGridSize; // Divide By Gridsize so that uvspace is clamped to  0 to 1.
 
-	float2 vGridBoarder = step(0.5 - flBoarderThickness, frac(vUv / vGridBlock)) *
-						 step(frac(vUv / vGridBlock), 0.5 + flBoarderThickness);
+	float2 vGridBoarder = step(0.5 - flBoarderThickness, frac(vUv / vGridBlock)) * 
+		step(frac(vUv / vGridBlock), 0.5 + flBoarderThickness);
 
 	float4 result = vColor.Sample(sSampler,vUvGrid) * (vGridBoarder.x * vGridBoarder.y);
 
@@ -33,18 +33,18 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-    /// <summary>
-    /// Texture object to apply the effect to.
-    /// </summary>
-    [Title("TexObject")]
-    [Input( typeof( TextureObject ) )]
-    [Hide]
-    public NodeInput TexObject { get; set; }
-
-    /// <summary>
-    /// How the effect is filtered and wrapped when sampled
-    /// </summary>
-    [Title( "Sampler" )]
+	/// <summary>
+	/// Texture object to apply the effect to.
+	/// </summary>
+	[Title("TexObject")]
+	[Input( typeof( TextureObject ) )]
+	[Hide]
+	public NodeInput TexObject { get; set; }
+	
+	/// <summary>
+	/// How the effect is filtered and wrapped when sampled
+	/// </summary>
+	[Title( "Sampler" )]
 	[Input( typeof( Sampler ) )]
 	[Hide]
 	public NodeInput Sampler { get; set; }
@@ -57,10 +57,10 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput BoarderThickness { get; set; }
 
-    [InlineEditor]
-    [Group("Default Values")]
-    public Sampler DefaultSampler { get; set; } = new Sampler();
-    public Vector2 DefaultGridSize { get; set; } = new Vector2( 24.0f, 24.0f );
+	[InlineEditor]
+	[Group("Default Values")]
+	public Sampler DefaultSampler { get; set; } = new Sampler();
+	public Vector2 DefaultGridSize { get; set; } = new Vector2( 24.0f, 24.0f );
 	public float DefaultBoarderThickness { get; set; } = 0.420f;
 
 	public PixelPlotNode()
@@ -82,16 +82,16 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		
 		if ( !textureobject.IsValid )
 		{
-		    return NodeResult.MissingInput( nameof( TextureObject ) );
+			return NodeResult.MissingInput( nameof( TextureObject ) );
 		}
 		else if ( textureobject.ResultType is not ResultType.TextureObject )
 		{
-		    return NodeResult.Error($"Input to TexObject is not a texture object!");
+			return NodeResult.Error($"Input to TexObject is not a texture object!");
 		}
 		
 		string func = compiler.RegisterFunction( PixelPlot );
 		string funcCall = compiler.ResultFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, DefaultSampler )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
 		
 		return new NodeResult( ResultType.Color, funcCall );
-    };
+	};
 }

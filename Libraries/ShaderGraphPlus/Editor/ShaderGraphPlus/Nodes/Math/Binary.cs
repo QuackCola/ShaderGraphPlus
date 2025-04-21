@@ -13,11 +13,11 @@ public abstract class Binary : ShaderNodePlus
 	[Title( "" )]
 	public NodeInput B { get; set; }
 
-    [InputDefault( nameof( A ) )]
-    public float DefaultA { get; set; } = 0.0f;
+	[InputDefault( nameof( A ) )]
+	public float DefaultA { get; set; } = 0.0f;
 
-    [InputDefault( nameof( B ) )]
-    public float DefaultB { get; set; } = 1.0f;
+	[InputDefault( nameof( B ) )]
+	public float DefaultB { get; set; } = 1.0f;
 
 	protected virtual string Op { get; }
 
@@ -26,15 +26,15 @@ public abstract class Binary : ShaderNodePlus
 		ExpandSize = new Vector3( -85, 5 );
 	}
 
-    public override void OnPaint(Rect rect)
-    {
-        rect = rect.Shrink(0, 20, 0, 0);
-        Paint.SetPen(Theme.ControlText);
-        Paint.SetFont("Poppins Bold", 20);
-        Paint.DrawText(rect, Op);
-    }
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 0, 20, 0, 0 );
+		Paint.SetPen( Theme.ControlText );
+		Paint.SetFont( "Poppins Bold", 20 );
+		Paint.DrawText( rect, Op );
+	}
 
-    [Output]
+	[Output]
 	[Hide]
 	[Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -43,16 +43,16 @@ public abstract class Binary : ShaderNodePlus
 		return new NodeResult( results.Item1.ResultType, $"{results.Item1} {Op} {results.Item2}" );
 	};
 
-    [JsonIgnore, Hide, Browsable(false)]
-    public override DisplayInfo DisplayInfo
-    {
-        get
-        {
-            var info = base.DisplayInfo;
-            info.Icon = null;
-            return info;
-        }
-    }
+	[JsonIgnore, Hide, Browsable(false)]
+	public override DisplayInfo DisplayInfo
+	{
+		get
+		{
+			var info = base.DisplayInfo;
+			info.Icon = null;
+			return info;
+		}
+	}
 }
 
 /// <summary>
@@ -131,15 +131,15 @@ public sealed class Lerp : ShaderNodePlus
 	[Hide, Editor( nameof( Fraction ) )]
 	public NodeInput C { get; set; }
 
-    [InputDefault( nameof( A ) )]
-    public float DefaultA { get; set; } = 0.0f;
+	[InputDefault( nameof( A ) )]
+	public float DefaultA { get; set; } = 0.0f;
 
-    [InputDefault( nameof( B ) )]
-    public float DefaultB { get; set; } = 1.0f;
+	[InputDefault( nameof( B ) )]
+	public float DefaultB { get; set; } = 1.0f;
 
-    [MinMax( 0, 1 )]
-    [InputDefault( nameof( C ) )]
-    public float Fraction { get; set; } = 0.5f;
+	[MinMax( 0, 1 )]
+	[InputDefault( nameof( C ) )]
+	public float Fraction { get; set; } = 0.5f;
 
 	[Output]
 	[Hide]
@@ -173,22 +173,22 @@ public sealed class CrossProduct : ShaderNodePlus
 	[Hide]
 	public NodeInput B { get; set; }
 
-    /// <summary>
-    /// Default value for when A input is missing
-    /// </summary>
-    [InputDefault (nameof( A ) )]
-    public Vector3 DefaultA { get; set; }
+	/// <summary>
+	/// Default value for when A input is missing
+	/// </summary>
+	[InputDefault (nameof( A ) )]
+	public Vector3 DefaultA { get; set; }
 
-    /// <summary>
-    /// Default value for when B input is missing
-    /// </summary>
-    [InputDefault( nameof( B ) )]
-    public Vector3 DefaultB { get; set; }
+	/// <summary>
+	/// Default value for when B input is missing
+	/// </summary>
+	[InputDefault( nameof( B ) )]
+	public Vector3 DefaultB { get; set; }
 
-    /// <summary>
-    /// The result of the cross product
-    /// </summary>
-    [Output( typeof( Vector3 ) )]
+	/// <summary>
+	/// The result of the cross product
+	/// </summary>
+	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -239,11 +239,11 @@ public sealed class RemapValue : ShaderNodePlus
 	[Hide, Editor( nameof( OutMax ) )]
 	public NodeInput E { get; set; }
 
-    /// <summary>
-    /// Input value to be transformed
-    /// </summary>
-    [InputDefault( nameof( A ) )]
-    public float In { get; set; } = 0.5f;
+	/// <summary>
+	/// Input value to be transformed
+	/// </summary>
+	[InputDefault( nameof( A ) )]
+	public float In { get; set; } = 0.5f;
 
 	/// <summary>
 	/// The minimum range of the input

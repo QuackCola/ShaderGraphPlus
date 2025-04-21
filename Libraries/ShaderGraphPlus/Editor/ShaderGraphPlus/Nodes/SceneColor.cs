@@ -34,8 +34,8 @@ public sealed class SceneColorNode : ShaderNodePlus
 			compiler.RegisterGlobal( "bWantsFBCopyTexture", "BoolAttribute( bWantsFBCopyTexture, true );" );
 			compiler.RegisterGlobal( "g_tFrameBufferCopyTexture", "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\" ); SrgbRead( false ); >;" );
 
-            return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso,{( coords.IsValid ? $"{coords.Cast(2)}" : $"CalculateViewportUv( i.vPositionSs.xy ) {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} ).rgb" );
-        }
+			return new NodeResult( ResultType.Vector3, $"g_tFrameBufferCopyTexture.Sample( g_sAniso,{( coords.IsValid ? $"{coords.Cast(2)}" : $"CalculateViewportUv( i.vPositionSs.xy ) {(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "" )}")} ).rgb" );
+		}
 	};
 }
 
@@ -46,7 +46,7 @@ public sealed class FrameBufferCopyInvSizeAndUvScaleNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => (GraphCompiler compiler) =>
 	{
-	    return new NodeResult( ResultType.Vector2, $"g_vFrameBufferCopyInvSizeAndUvScale.zw" );
+		return new NodeResult( ResultType.Vector2, $"g_vFrameBufferCopyInvSizeAndUvScale.zw" );
 	};
 
 }

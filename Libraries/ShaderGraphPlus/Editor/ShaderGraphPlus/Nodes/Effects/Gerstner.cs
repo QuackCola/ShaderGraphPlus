@@ -100,10 +100,10 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	public float DefaultSteepness { get; set; } = 0.420f;
 	public float DefaultNumWaves { get; set; } = 1.0f;
 
-    /// <summary>
-    /// Gravitational constant to be used. Default is 385.827
-    /// </summary>
-    public float DefaultGravityConstant { get; set; } = 385.827f;
+	/// <summary>
+	/// Gravitational constant to be used. Default is 385.827
+	/// </summary>
+	public float DefaultGravityConstant { get; set; } = 385.827f;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]

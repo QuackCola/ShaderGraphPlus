@@ -14,18 +14,18 @@ public sealed class UVRotationNode : ShaderNodePlus
 public string UVRotation => @"
 float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 {
-    vUv = vUv.xy - vRotationCenter; // Offset incoming UV's by the specified Rotation Center. For example, the incoming uv's (0.0,0.0) could become (0.5,0.5).
+	vUv = vUv.xy - vRotationCenter; // Offset incoming UV's by the specified Rotation Center. For example, the incoming uv's (0.0,0.0) could become (0.5,0.5).
 
-    // Convert degrees to radians
-    flRotation = radians(flRotation);
+	// Convert degrees to radians
+	flRotation = radians(flRotation);
 
-    // U
-    float x = (vUv.x * cos(flRotation)) - (vUv.y * sin(flRotation));
+	// U
+	float x = (vUv.x * cos(flRotation)) - (vUv.y * sin(flRotation));
 
-    // V
-    float y = (vUv.x * sin(flRotation)) + (vUv.y * cos(flRotation));
+	// V
+	float y = (vUv.x * sin(flRotation)) + (vUv.y * cos(flRotation));
 
-    return (float2(x,y) - vRotationCenter); // Output the rotation result and then revert UV's 0,0 to its initial position.
+	return (float2(x,y) - vRotationCenter); // Output the rotation result and then revert UV's 0,0 to its initial position.
 }
 ";
 
@@ -145,10 +145,10 @@ public static string UVScaleByPoint => @"
 //  flScale - Amount to scale the UVs by in both the X & Y.
 float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 {
-    vUv = vUv - flCenter; // Offset the incoming UV so that 0,0 of the UV is now at the defined center.
-    float2 vScale = vUv * flScale;
-    float2 vResult = vScale + flCenter; // Return Uv's 0,0 to it's initial position.
-    return vResult;
+	vUv = vUv - flCenter; // Offset the incoming UV so that 0,0 of the UV is now at the defined center.
+	float2 vScale = vUv * flScale;
+	float2 vResult = vScale + flCenter; // Return Uv's 0,0 to it's initial position.
+	return vResult;
 }
 ";
 
@@ -212,7 +212,7 @@ public sealed class UVScrollNode : ShaderNodePlus
 public static string UVScroll => @"
 float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 {
-    return vUv + flTime * vScrollSpeed;
+	return vUv + flTime * vScrollSpeed;
 }
 ";
 
@@ -347,11 +347,11 @@ public sealed class FlipBookNode : ShaderNodePlus
 public static string FlipBook => @"
 float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 Invert)
 {
-    flTile = fmod(flTile, flWidth * flHeight);
-    float2 vtileCount = float2(1.0, 1.0) / float2(flWidth, flHeight);
-    float tileY = abs(Invert.y * flHeight - (floor(flTile * vtileCount.x) + Invert.y * 1));
-    float tileX = abs(Invert.x * flWidth - ((flTile - flWidth * floor(flTile * vtileCount.x)) + Invert.x * 1));
-    return (vUV + float2(tileX, tileY)) * vtileCount;
+	flTile = fmod(flTile, flWidth * flHeight);
+	float2 vtileCount = float2(1.0, 1.0) / float2(flWidth, flHeight);
+	float tileY = abs(Invert.y * flHeight - (floor(flTile * vtileCount.x) + Invert.y * 1));
+	float tileX = abs(Invert.x * flWidth - ((flTile - flWidth * floor(flTile * vtileCount.x)) + Invert.x * 1));
+	return (vUV + float2(tileX, tileY)) * vtileCount;
 }
 ";
 	

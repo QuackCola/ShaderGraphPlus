@@ -7,14 +7,14 @@ namespace Editor.ShaderGraphPlus;
 [Title( "Material" ), Icon( "tonality" )]
 public sealed class Result : BaseResult
 {
-    [Hide]
-    private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
+	[Hide]
+	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 
-    [Hide]
-    private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
+	[Hide]
+	private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
 
 
-    [Hide]
+	[Hide]
 	[Input( typeof( Vector3 ) )]
 	public NodeInput Albedo { get; set; }
 
@@ -87,14 +87,14 @@ public sealed class Result : BaseResult
 	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.White, 0.25f );
 
 
-    public override NodeInput GetAlbedo() => Albedo;
-    public override NodeInput GetEmission() => Emission;
-    public override NodeInput GetOpacity() => Opacity;
-    public override NodeInput GetNormal() => Normal;
-    public override NodeInput GetRoughness() => Roughness;
-    public override NodeInput GetMetalness() => Metalness;
-    public override NodeInput GetAmbientOcclusion() => AmbientOcclusion;
-    public override NodeInput GetPositionOffset() => PositionOffset;
+	public override NodeInput GetAlbedo() => Albedo;
+	public override NodeInput GetEmission() => Emission;
+	public override NodeInput GetOpacity() => Opacity;
+	public override NodeInput GetNormal() => Normal;
+	public override NodeInput GetRoughness() => Roughness;
+	public override NodeInput GetMetalness() => Metalness;
+	public override NodeInput GetAmbientOcclusion() => AmbientOcclusion;
+	public override NodeInput GetPositionOffset() => PositionOffset;
 
 	private void CreateInputs()
 	{
@@ -178,8 +178,8 @@ public abstract class BaseResult : ShaderNodePlus
 			if ( customShading )
 			{ }
 
-            return compiler.ResultValue(albedoInput);
-        }
+			return compiler.ResultValue(albedoInput);
+		}
 		
 
 		return compiler.ResultValue( GetDefaultAlbedo() );

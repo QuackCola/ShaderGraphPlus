@@ -28,8 +28,8 @@ public abstract class Unary : ShaderNodePlus
 
 	protected virtual string Op { get; }
 
-    [Hide]
-    protected virtual int? Components { get; set; } = null;
+	[Hide]
+	protected virtual int? Components { get; set; } = null;
 
 	public Unary() : base()
 	{
@@ -46,16 +46,15 @@ public abstract class Unary : ShaderNodePlus
 		
 		if ( Components is not null )
 		{
-		    switch ( Components )
-		    {
-		        case 1: resulttype = ResultType.Float; break;
-		        case 2: resulttype = ResultType.Vector2; break;
-		        case 3: resulttype = ResultType.Vector3; break;
-		        case 4: resulttype = ResultType.Color; break;
-		    }
+			switch ( Components )
+			{
+				case 1: resulttype = ResultType.Float; break;
+				case 2: resulttype = ResultType.Vector2; break;
+				case 3: resulttype = ResultType.Vector3; break;
+				case 4: resulttype = ResultType.Color; break;
+			}
 		}
-		
-		
+
 		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
 	};
 }
@@ -99,8 +98,8 @@ public abstract class UnaryCurve : Unary
 [Title( "Transpose" ), Category( "Unary" )]
 public sealed class Transpose : Unary
 {
-    [Hide]
-    protected override string Op => "transpose";
+	[Hide]
+	protected override string Op => "transpose";
 }
 
 /// <summary>
@@ -109,35 +108,34 @@ public sealed class Transpose : Unary
 [Title("Clamp"), Category("Unary")]
 public sealed class Clamp : ShaderNodePlus
 {
-    [Input]
-    [Hide]
-    [Title("Value")]
-    public NodeInput InputA { get; set; }
+	[Input]
+	[Hide]
+	[Title( "Value" )]
+	public NodeInput InputA { get; set; }
 
-    [Input]
-    [Hide]
-	[Title("Min")]
-    public NodeInput InputB { get; set; }
+	[Input]
+	[Hide]
+	[Title( "Min" )]
+	public NodeInput InputB { get; set; }
 
-    [Input]
-    [Hide]
-    [Title("Max")]
-    public NodeInput InputC { get; set; }
-
+	[Input]
+	[Hide]
+	[Title( "Max" )]
+	public NodeInput InputC { get; set; }
 
 	public float DefaultMin { get; set; } = 0.0f;
 	public float DefaultMax { get; set; } = 1.0f;
 
-    [Output]
-    [Hide]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        var resultA = compiler.ResultOrDefault(InputA, 0.0f);
-        var resultB = compiler.ResultOrDefault(InputB, DefaultMin);
-        var resultC = compiler.ResultOrDefault(InputC, DefaultMax).Cast(resultB.Components());
+	[Output]
+	[Hide]
+	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	{
+		var resultA = compiler.ResultOrDefault(InputA, 0.0f);
+		var resultB = compiler.ResultOrDefault(InputB, DefaultMin);
+		var resultC = compiler.ResultOrDefault(InputC, DefaultMax).Cast(resultB.Components());
 
-        return new NodeResult(ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )");
-    };
+		return new NodeResult(ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )");
+	};
 }
 
 /// <summary>
@@ -146,13 +144,13 @@ public sealed class Clamp : ShaderNodePlus
 [Title("Cosine"), Category("Unary")]
 public sealed class Cosine : UnaryCurve
 {
-    protected override float Evaluate(float x)
-    {
-        return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
-    }
-
-    [Hide]
-    protected override string Op => "cos";
+	protected override float Evaluate(float x)
+	{
+		return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
+	}
+	
+	[Hide]
+	protected override string Op => "cos";
 }
 
 /// <summary>
@@ -161,8 +159,8 @@ public sealed class Cosine : UnaryCurve
 [Title( "Abs" ), Category( "Unary" )]
 public sealed class Abs : Unary
 {
-    [Hide]
-    protected override string Op => "abs";
+	[Hide]
+	protected override string Op => "abs";
 }
 
 /// <summary>
@@ -203,9 +201,8 @@ public sealed class Rsqrt : Unary
 		Paint.DrawPolygon( points.ToArray() );
 	}
 
-
-    [Hide]
-    protected override string Op => "rsqrt";
+	[Hide]
+	protected override string Op => "rsqrt";
 }
 
 /// <summary>
@@ -246,9 +243,8 @@ public sealed class Sqrt : Unary
 		Paint.DrawPolygon( points.ToArray() );
 	}
 
-
-    [Hide]
-    protected override string Op => "sqrt";
+	[Hide]
+	protected override string Op => "sqrt";
 }
 
 /// <summary>
@@ -281,8 +277,8 @@ public sealed class DDX : Unary
 {
 	public DerivativePrecision Precision { get; set; }
 
-    [Hide]
-    protected override string Op
+	[Hide]
+	protected override string Op
 	{
 		get
 		{
@@ -301,8 +297,8 @@ public sealed class DDY : Unary
 {
 	public DerivativePrecision Precision { get; set; }
 
-    [Hide]
-    protected override string Op
+	[Hide]
+	protected override string Op
 	{
 		get
 		{
@@ -319,8 +315,8 @@ public sealed class DDY : Unary
 [Title( "DDXY" ), Category( "Unary" )]
 public sealed class DDXY : Unary
 {
-    [Hide]
-    protected override string Op => "fwidth";
+	[Hide]
+	protected override string Op => "fwidth";
 }
 
 [Title( "Exponential" ), Category( "Unary" )]
@@ -359,8 +355,8 @@ public sealed class Exponential : Unary
 [Title( "Frac" ), Category( "Unary" )]
 public sealed class Frac : Unary
 {
-    [Hide]
-    protected override string Op => "frac";
+	[Hide]
+	protected override string Op => "frac";
 }
 
 /// <summary>
@@ -369,8 +365,8 @@ public sealed class Frac : Unary
 [Title( "Floor" ), Category( "Unary" )]
 public sealed class Floor : Unary
 {
-    [Hide]
-    protected override string Op => "floor";
+	[Hide]
+	protected override string Op => "floor";
 }
 
 /// <summary>
@@ -379,11 +375,11 @@ public sealed class Floor : Unary
 [Title( "Length" ), Category( "Unary" )]
 public sealed class Length : Unary
 {
-    [Hide]
-    protected override int? Components => 1;
-
-    [Hide]
-    protected override string Op => "length";
+	[Hide]
+	protected override int? Components => 1;
+	
+	[Hide]
+	protected override string Op => "length";
 }
 
 
@@ -466,8 +462,8 @@ public sealed class Max : ShaderNodePlus
 [Title( "Saturate" ), Category( "Transform" )]
 public sealed class Saturate : Unary
 {
-    [Hide]
-    protected override string Op => "saturate";
+	[Hide]
+	protected override string Op => "saturate";
 }
 
 /// <summary>
@@ -476,13 +472,13 @@ public sealed class Saturate : Unary
 [Title("Sine"), Category("Unary")]
 public sealed class Sine : UnaryCurve
 {
-    protected override float Evaluate(float x)
-    {
-        return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
-    }
-
-    [Hide]
-    protected override string Op => "sin";
+	protected override float Evaluate(float x)
+	{
+		return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
+	}
+	
+	[Hide]
+	protected override string Op => "sin";
 }
 
 /// <summary>
@@ -567,8 +563,8 @@ public sealed class SmoothStep : ShaderNodePlus
 [Title( "Tangent" ), Category( "Unary" )]
 public sealed class Tan : Unary
 {
-    [Hide]
-    protected override string Op => "tan";
+	[Hide]
+	protected override string Op => "tan";
 }
 
 /// <summary>
@@ -577,8 +573,8 @@ public sealed class Tan : Unary
 [Title( "Arcsin" ), Category( "Unary" )]
 public sealed class Arcsin : Unary
 {
-    [Hide]
-    protected override string Op => "asin";
+	[Hide]
+	protected override string Op => "asin";
 }
 
 /// <summary>
@@ -587,8 +583,8 @@ public sealed class Arcsin : Unary
 [Title( "Arccos" ), Category( "Unary" )]
 public sealed class Arccos : Unary
 {
-    [Hide]
-    protected override string Op => "acos";
+	[Hide]
+	protected override string Op => "acos";
 }
 
 /// <summary>
@@ -607,8 +603,8 @@ public sealed class Round : Unary
 [Title( "Ceil" ), Category( "Unary" )]
 public sealed class Ceil : Unary
 {
-    [Hide]
-    protected override string Op => "ceil";
+	[Hide]
+	protected override string Op => "ceil";
 }
 
 /// <summary>
@@ -639,20 +635,20 @@ public sealed class OneMinus : ShaderNodePlus
 [Title("Negate"), Category("Unary")]
 public sealed class Negate : ShaderNodePlus
 {
-    [Input(typeof(float)), Hide, Title("")]
-    public NodeInput In { get; set; }
-
-    public Negate() : base()
-    {
-        ExpandSize = new Vector3(-85, 0);
-    }
-
-    [Output, Hide, Title("")]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-    {
-        var result = compiler.ResultOrDefault(In, 0.0f);
-        return new NodeResult(result.ResultType, $"-1 * {result}");
-    };
+	[Input(typeof(float)), Hide, Title("")]
+	public NodeInput In { get; set; }
+	
+	public Negate() : base()
+	{
+		ExpandSize = new Vector3(-85, 0);
+	}
+	
+	[Output, Hide, Title("")]
+	public NodeResult.Func Out => (GraphCompiler compiler) =>
+	{
+		var result = compiler.ResultOrDefault(In, 0.0f);
+		return new NodeResult(result.ResultType, $"-1 * {result}");
+	};
 }
 
 /// <summary>

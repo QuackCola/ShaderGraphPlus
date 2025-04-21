@@ -41,39 +41,39 @@ public sealed class GetTangentViewVectorNode : ShaderNodePlus
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
-		
+
 		var worldspaceposition = compiler.Result( WorldSpacePosition );
 		var worldnormal = compiler.Result( WorldNormal );
 		var tangentuws = compiler.Result( TangentUWs );
 		var tangentvws = compiler.Result( TangentVWs );
-		
-		
+
+
 		if ( !worldspaceposition.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( WorldSpacePosition ) );
 		}
-		
+
 		if ( !worldnormal.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( WorldNormal ) );
 		}
-		
+
 		if ( !tangentuws.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( TangentUWs ) );
 		}
-		
+
 		if ( !tangentvws.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( TangentVWs ) );
 		}
-		
+
 		var result = compiler.ResultFunction( "GetTangentViewVector", $"{worldspaceposition}",
 				$"{worldnormal}",
 				$"{tangentuws}",
 				$"{tangentvws}" 
 		);
-		
+
 		return new NodeResult( ResultType.Vector3, $"{result}" );
 	};
 }

@@ -2,12 +2,12 @@ namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
 {
-    [Icon("circle")]
-    Opaque,
-    [Icon("radio_button_unchecked")]
-    Masked,
-    [Icon("blur_on")]
-    Translucent,
+	[Icon("circle")]
+	Opaque,
+	[Icon("radio_button_unchecked")]
+	Masked,
+	[Icon("blur_on")]
+	Translucent,
 }
 
 public enum ShadingModel
@@ -21,22 +21,22 @@ public enum ShadingModel
 
 public enum MaterialDomain
 {
-    [Icon("view_in_ar")]
-    Surface,
+	[Icon("view_in_ar")]
+	Surface,
 	[Icon("brush")]
 	BlendingSurface,
-    [Icon("desktop_windows")]
-    PostProcess,
+	[Icon("desktop_windows")]
+	PostProcess,
 }
 
 public class PreviewSettings
 {
-    public bool RenderBackfaces { get; set; } = false;
-    public bool EnableShadows { get; set; } = true;
-    public bool ShowGround { get; set; } = false;
-    public bool ShowSkybox { get; set; } = true;
-    public Color BackgroundColor { get; set; } = Color.Black;
-    public Color Tint { get; set; } = Color.White;
+	public bool RenderBackfaces { get; set; } = false;
+	public bool EnableShadows { get; set; } = true;
+	public bool ShowGround { get; set; } = false;
+	public bool ShowSkybox { get; set; } = true;
+	public Color BackgroundColor { get; set; } = Color.Black;
+	public Color Tint { get; set; } = Color.White;
 }
 
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
@@ -75,7 +75,7 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide]
 	public string Model { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// The name of the Node when used in ShaderGraph
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
@@ -83,7 +83,7 @@ public partial class ShaderGraphPlus : IGraph
 
 	public string Description { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// The category of the Node when browsing the Node Library (optional)
 	/// </summary>
 	[ShowIf( nameof( AddToNodeLibrary ), true )]
@@ -92,7 +92,7 @@ public partial class ShaderGraphPlus : IGraph
 	[IconName, ShowIf( nameof( IsSubgraph ), true )]
 	public string Icon { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// Whether or not this Node should appear when browsing the Node Library.
 	/// Otherwise can only be referenced by dragging the Subgraph asset into the graph.
 	/// </summary>
@@ -102,28 +102,28 @@ public partial class ShaderGraphPlus : IGraph
 
 	public BlendMode BlendMode { get; set; }
 
-    [ShowIf( nameof( ShowShadingModel ), true )]
-    public ShadingModel ShadingModel { get; set; }
+	[ShowIf( nameof( ShowShadingModel ), true )]
+	public ShadingModel ShadingModel { get; set; }
 
-    [Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
+	[Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
 
-    public MaterialDomain MaterialDomain { get; set; }
+	public MaterialDomain MaterialDomain { get; set; }
 
-    //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
-    //[InlineEditor]
-    //[Group("Post Processing")]
-    //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
+	//[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
+	//[InlineEditor]
+	//[Group("Post Processing")]
+	//public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
 
-    //
-    // Summary:
-    //     Custom key-value storage for this project.
-    [Hide]
-    public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
+	//
+	// Summary:
+	//     Custom key-value storage for this project.
+	[Hide]
+	public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
 
-    [Hide]
-    public PreviewSettings PreviewSettings { get; set; } = new();
+	[Hide]
+	public PreviewSettings PreviewSettings { get; set; } = new();
 
-    public ShaderGraphPlus()
+	public ShaderGraphPlus()
 	{
 	}
 
@@ -216,88 +216,69 @@ public partial class ShaderGraphPlus : IGraph
 		RemoveNode( (BaseNodePlus)node );
 	}
 
-    //
-    // Summary:
-    //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
-    //
-    //
-    // Parameters:
-    //   keyname:
-    //     The key to retrieve the value of.
-    //
-    //   outvalue:
-    //     The value, if it was present in the metadata storage.
-    //
-    // Type parameters:
-    //   T:
-    //     Type of the value.
-    //
-    // Returns:
-    //     Whether the value was successfully retrieved.
-    public bool TryGetMeta<T>(string keyname, out T outvalue)
-    {
-        outvalue = default(T);
-        if (Metadata == null)
-        {
-            return false;
-        }
+	/// <summary>
+	/// Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="keyname"></param>
+	/// <param name="outvalue"></param>
+	/// <returns></returns>
+	public bool TryGetMeta<T>(string keyname, out T outvalue)
+	{
+		outvalue = default(T);
+		if (Metadata == null)
+		{
+			return false;
+		}
+		
+		if (!Metadata.TryGetValue(keyname, out var value))
+		{
+			return false;
+		}
+		
+		if (value is T val)
+		{
+			outvalue = val;
+			return true;
+		}
+		
+		if (value is JsonElement element)
+		{
+			try
+			{
+				T val2 = element.Deserialize<T>(new JsonSerializerOptions());
+				outvalue = ((val2 != null) ? val2 : default(T));
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+	
+		return true;
+	}
 
-        if (!Metadata.TryGetValue(keyname, out var value))
-        {
-            return false;
-        }
-
-        if (value is T val)
-        {
-            outvalue = val;
-            return true;
-        }
-
-        if (value is JsonElement element)
-        {
-            try
-            {
-                T val2 = element.Deserialize<T>(new JsonSerializerOptions());
-                outvalue = ((val2 != null) ? val2 : default(T));
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    //
-    // Summary:
-    //     Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
-    //
-    //
-    // Parameters:
-    //   keyname:
-    //     The key for the data.
-    //
-    //   outvalue:
-    //     The data itself to store.
-    //
-    // Returns:
-    //     Always true.
-    public bool SetMeta( string keyname, object outvalue )
-    {
-        if ( Metadata == null )
-        {
-            Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
-        }
-
-        if ( outvalue == null )
-        {
-            return Metadata.Remove(keyname);
-        }
-
-        Metadata[keyname] = outvalue;
-        return true;
-    }
+	/// <summary>
+	/// Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
+	/// </summary>
+	/// <param name="keyname"></param>
+	/// <param name="outvalue"></param>
+	/// <returns></returns>
+	public bool SetMeta( string keyname, object outvalue )
+	{
+		if ( Metadata == null )
+		{
+			Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
+		}
+		
+		if ( outvalue == null )
+		{
+		return Metadata.Remove(keyname);
+		}
+		
+		Metadata[keyname] = outvalue;
+		return true;
+	}
 
 }
 
@@ -308,4 +289,3 @@ public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
 
 
 }
-

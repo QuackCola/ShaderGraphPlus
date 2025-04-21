@@ -45,51 +45,50 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 [Title( "Screen Position" ), Category( "Variables" ), Icon( "install_desktop" )]
 public sealed class ScreenPosition : ShaderNodePlus
 {
-    // Note: We could make all of these constants but I don't like the situation where it can generated something like
-    // "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
+	// Note: We could make all of these constants but I don't like the situation where it can generated something like
+	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
 
-    public enum ScreenPositionMode
-    {
-        Raw,
-        Center,
-        //Tiled,
-        //Pixel
+	public enum ScreenPositionMode
+	{
+	Raw,
+	Center,
+	//Tiled,
+	//Pixel
+	}
 
-    }
-
-    [Hide]
-    public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
+	[Hide]
+	public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
 	private string GetMode( string components, GraphCompiler compiler)
 	{
-        string returnCall = string.Empty;
+		string returnCall = string.Empty;
 
-        switch (Mode)
-        {
-            case ScreenPositionMode.Raw:
-                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
-                break;
-            case ScreenPositionMode.Center:
-                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1")}";
-                break;
-        }
+		switch ( Mode )
+		{
+			case ScreenPositionMode.Raw:
+				returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
+				break;
+			case ScreenPositionMode.Center:
+				returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1")}";
+				break;
+		}
 
-        return returnCall;
-    }
+		return returnCall;
+	}
 
-    [Output(typeof(Vector3))]
+	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func XYZ => (GraphCompiler compiler) => new (ResultType.Vector3, GetMode("xyz", compiler));
  
-	[Output(typeof(Vector2))]
+	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func XY => ( GraphCompiler compiler ) => new(ResultType.Vector2, GetMode("xy", compiler));
 
-    [Output(typeof(float))]
+	[Output( typeof( float ) )]
 	[Hide]
 	public NodeResult.Func Z => ( GraphCompiler compiler ) => new(ResultType.Vector3, GetMode("z", compiler));
 
-    [Output(typeof(float))]
+	[Output( typeof( float ) )]
 	[Hide]
 	public NodeResult.Func W => (GraphCompiler compiler) => new(ResultType.Float, GetMode("w", compiler));
 }

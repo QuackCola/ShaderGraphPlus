@@ -42,17 +42,15 @@ public sealed class Depth : ShaderNodePlus
 		Linear
 	}
 
+	[Hide]
+	public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
 
+	[Input( typeof( Vector2 ) ), Hide]
+	public NodeInput UV { get; set; }
 
-    [Hide]
-    public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
-
-    [Input( typeof( Vector2 ) ), Hide]
-    public NodeInput UV { get; set; }
-
-    /// <summary>
-    /// What Mode to get 
-    /// </summary>
+	/// <summary>
+	/// What Mode to get 
+	/// </summary>
 	public DepthMode Mode { get; set; }
 
 
@@ -62,14 +60,14 @@ public sealed class Depth : ShaderNodePlus
 		var result = UV.IsValid() ? compiler.Result( UV ).Cast( 2 ) :
 			compiler.IsVs ? "i.vPositionPs.xy" : "i.vPositionSs.xy";
 
-        string returnCall = string.Empty;
+		string returnCall = string.Empty;
 
 		switch (Mode)
 		{
-            case DepthMode.Raw: returnCall = $"Depth::Get( {result} )"; break;
-            case DepthMode.Linear: returnCall = $"Depth::GetLinear( {result} )"; break;
-            case DepthMode.Normalized: returnCall = $"Depth::GetNormalized( {result} )"; break;
-        }
+			case DepthMode.Raw: returnCall = $"Depth::Get( {result} )"; break;
+			case DepthMode.Linear: returnCall = $"Depth::GetLinear( {result} )"; break;
+			case DepthMode.Normalized: returnCall = $"Depth::GetNormalized( {result} )"; break;
+		}
 
 		return new NodeResult( ResultType.Float, returnCall );
 	};
