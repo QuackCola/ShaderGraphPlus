@@ -900,8 +900,7 @@ public class MainWindow : DockWindow
 		PromptSave( CreateNew );
 	}
 
-
-	public void ChangePage( GraphPage lighting )
+	private void ChangePage( GraphPage lighting )
 	{
 		if ( CurrentPage is GraphPage.Main )
 		{
@@ -939,6 +938,8 @@ public class MainWindow : DockWindow
 			_graphView.RestoreViewFromCookie();
 
 			CurrentPage = GraphPage.Lighting;
+
+			UpdatePageButtonStates( GraphPage.Lighting );
 		}
 		else
 		{
@@ -955,7 +956,24 @@ public class MainWindow : DockWindow
 			_lightingGraph = new();
 
 			CurrentPage = GraphPage.Main;
+
+			UpdatePageButtonStates( GraphPage.Main );
 		}
+	}
+
+	private void UpdatePageButtonStates( GraphPage graphPage )
+	{
+		if ( graphPage is GraphPage.Main )
+		{
+			_MainGraphHome.Enabled = false;
+			_LightingHome.Enabled = true;
+		}
+		else if ( graphPage is GraphPage.Lighting )
+		{
+			_MainGraphHome.Enabled = true;
+			_LightingHome.Enabled = false;
+		}
+
 	}
 
 	public void CreateNew()
@@ -1300,15 +1318,15 @@ public class MainWindow : DockWindow
 		{
 			ChangePage( GraphPage.Lighting );
 		};
-		_LightingHome.ToolTip = "Lighting";
+		_LightingHome.ToolTip = "Lighting Page";
 		
-		_MainGraphHome = graphToolBar.AddOption( null, "common/image" );
-		_MainGraphHome.Enabled = true;
+		_MainGraphHome = graphToolBar.AddOption( null, "common/image.png" );
+		_MainGraphHome.Enabled = false;
 		_MainGraphHome.Triggered += () =>
 		{
 			ChangePage( GraphPage.Main );
 		};
-		_MainGraphHome.ToolTip = "Lighting";
+		_MainGraphHome.ToolTip = "Main Page";
 
 
 		var stretcher = new Widget( graphToolBar );
