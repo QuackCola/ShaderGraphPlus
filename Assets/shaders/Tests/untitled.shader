@@ -77,10 +77,14 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
+	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+		
 	
 	static float4 Shade( PixelInput i, Material m  )
 	{
-		float3 Albedo = float3( 1, 0, 1 );
+		float3 Albedo = float3( 0, 0, 0 );
 		
 		
 		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
@@ -88,13 +92,19 @@ PS
 			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
 			
 			
-			float3 l_0 = -1 * light.Direction;
-			float l_1 = dot( l_0, i.vNormalWs );
-			float3 l_2 = float3( l_1, l_1, l_1 ) + m.Albedo;
+			float l_0 = dot( i.vNormalWs, light.Direction );
+			float3 l_1 = float3( l_0, l_0, l_0 ) + m.Albedo;
 			
-			Albedo += l_2;
+			Albedo += l_1;
 			
 		}
+	
+		if( DepthNormals::WantsDepthNormals() )
+			return DepthNormals::Output( m.Normal, m.Roughness );
+		
+		// TODO
+		//if( ToolsVis::WantsToolsVis() )
+		//	return DoToolsVis( Albedo, m, lightingTerms );
 	
 		return float4(Albedo.xyz, 0);
 	}
@@ -114,7 +124,7 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = float4( 0.90698, 0.09281, 0.09281, 1 );
+		float4 l_0 = g_tTexture_ps_0.Sample( g_sSampler0,i.vTextureCoords.xy );
 		
 
 		m.Albedo = l_0.xyz;

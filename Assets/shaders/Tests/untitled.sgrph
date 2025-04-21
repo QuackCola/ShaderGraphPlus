@@ -14,6 +14,7 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
+    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -35,15 +36,16 @@
       }
     },
     {
-      "_class": "Float4",
-      "Value": "0.90698,0.09281,0.09281,1",
-      "Name": "",
-      "IsAttribute": false,
+      "_class": "TextureSampler",
+      "Image": "textures/sbox_logo.png",
+      "DefaultSampler": {},
       "UI": {
-        "Type": "Color"
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-444,36",
+      "Position": "-312,0",
       "HandleOffsets": {}
     }
   ],
@@ -51,10 +53,10 @@
     {
       "_class": "LightingResult",
       "Identifier": "0",
-      "Position": "456,-60",
+      "Position": "588,-132",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "7",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null
       }
@@ -62,7 +64,7 @@
     {
       "_class": "LightInfoNode",
       "Identifier": "1",
-      "Position": "-360,-252",
+      "Position": "-360,-276",
       "HandleOffsets": {}
     },
     {
@@ -71,37 +73,31 @@
       "Color": "Green",
       "Title": "",
       "Description": "All nodes connected to the Albedo input of Light Result will have their code generated inside a for loop in the resulting shader, looping over all lights in the scene.",
-      "Layer": 1,
+      "Layer": 2,
       "Identifier": "2",
       "Position": "-348,-528",
       "HandleOffsets": {}
     },
     {
-      "_class": "UnitAlbedoNode",
-      "Identifier": "3",
-      "Position": "84,-60",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "DotProduct",
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "72,-180",
       "HandleOffsets": {},
       "InputA": {
         "Identifier": "5",
-        "Output": "Out",
+        "Output": "Result",
         "Subgraph": null
       },
       "InputB": {
-        "Identifier": "6",
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "Negate",
-      "Identifier": "5",
-      "Position": "-48,-228",
+      "Identifier": "4",
+      "Position": "-96,-108",
       "HandleOffsets": {},
       "In": {
         "Identifier": "1",
@@ -111,24 +107,53 @@
     },
     {
       "_class": "WorldNormal",
+      "Identifier": "5",
+      "Position": "-108,-192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "412,224",
+      "Color": "Green",
+      "Title": "NdotL",
+      "Description": "",
+      "Layer": 1,
       "Identifier": "6",
-      "Position": "-120,-132",
+      "Position": "-156,-276",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "7",
+      "Position": "-84,-120",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "ResultB",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "UnitAlbedoNode",
+      "Identifier": "8",
+      "Position": "96,-24",
       "HandleOffsets": {}
     },
     {
       "_class": "Add",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "7",
-      "Position": "324,-60",
+      "Identifier": "9",
+      "Position": "408,-132",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "3",
+        "Identifier": "8",
         "Output": "ResultA",
         "Subgraph": null
       }
