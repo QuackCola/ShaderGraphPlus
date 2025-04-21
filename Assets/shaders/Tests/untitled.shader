@@ -80,11 +80,9 @@ PS
     float4 MainPs( PixelInput i ) : SV_Target0
     {
 
-		
-		
-		float4 l_0 = float4( 0, 0.34346, 0, 1 );
-		
 
-		return float4( l_0.xyz, 1 );
+
+
+		return float4( float4( 1, 1, 1, 1 ).xyz, 1 );
     }
 }
