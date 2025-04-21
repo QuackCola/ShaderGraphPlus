@@ -1902,7 +1902,7 @@ public sealed partial class GraphCompiler
 		//if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
 		
 		
-		var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
+		var resultNode = Graph.LightingNodes.OfType<BaseResult>().FirstOrDefault();
 		if ( resultNode == null )
 			return null;
 		
@@ -1951,17 +1951,15 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( $"{property.Name} += {result.Cast( componentCount )};" );
 		}
 
-        //if ( resultNode is FunctionResult functionResult )
-		//{
-		//	functionResult.AddMaterialOutputs( this, sb, visited );
-		//}
-
-        visited.Clear();
-
-        CurrentResultInput = null;
-
-
-
+		if ( resultNode is FunctionResult functionResult )
+		{
+			functionResult.AddMaterialOutputs( this, sb, visited );
+		}
+		
+		visited.Clear();
+		
+		CurrentResultInput = null;
+		
 		return sb.ToString();
 	}
 
