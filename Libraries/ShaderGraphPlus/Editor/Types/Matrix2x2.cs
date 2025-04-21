@@ -8,8 +8,8 @@ namespace Editor;
 [JsonConverter( typeof( Matrix2x2Converter ) )]
 public struct Float2x2
 {
-    [Hide]
-    internal System.Numerics.Matrix3x2 _mat3x2;
+	[Hide]
+	internal System.Numerics.Matrix3x2 _mat3x2;
 
 	public static readonly Float2x2 Identity = new Float2x2(
 		1f, 0f,

@@ -6,28 +6,28 @@
 /// </summary>
 public struct ShaderFeatureInfo
 { 
-    public string FeatureName{ get; set; }
-    public string FeatureDeclaration { get; set; }
-    public string FeatureBody { get; set; }
+	public string FeatureName{ get; set; }
+	public string FeatureDeclaration { get; set; }
+	public string FeatureBody { get; set; }
 	public int OptionsCount { get; set; }
-    public string TrueResult { get; set; }
-    public string FalseResult { get; set; }
+	public string TrueResult { get; set; }
+	public string FalseResult { get; set; }
 	public bool IsDynamicCombo { get; set; }
 
-    public readonly string ToFeatureName()
-    {
-        return $"F_{FeatureName.ToUpper()}";
-    }
+	public readonly string ToFeatureName()
+	{
+		return $"F_{FeatureName.ToUpper()}";
+	}
 
-    public readonly string ToStaticComboString()
-    {
-        return $"S_{FeatureName.ToUpper()}";
-    }
+	public readonly string ToStaticComboString()
+	{
+		return $"S_{FeatureName.ToUpper()}";
+	}
 
-    public readonly string ToDynamicComboString()
-    {
-        return $"D_{FeatureName.ToUpper()}";
-    }
+	public readonly string ToDynamicComboString()
+	{
+		return $"D_{FeatureName.ToUpper()}";
+	}
 }
 
 /// <summary>
@@ -50,10 +50,10 @@ public struct ShaderFeature : IValid
 	[Hide]
 	public bool IsDynamicCombo { get; set; }
 
-    [Hide]
-    public bool Preview { get; set; }
+	[Hide]
+	public bool Preview { get; set; }
 
-    [Hide]
+	[Hide]
 	public readonly bool IsValid
 	{
 		get

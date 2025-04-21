@@ -18,8 +18,8 @@ public sealed class SamplerNode : ShaderNodePlus
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
 	{
-        // Register sampler	with the compiler.
-        var result = compiler.ResultSampler( SamplerState );
+		// Register sampler	with the compiler.
+		var result = compiler.ResultSampler( SamplerState );
 
 		if ( !string.IsNullOrWhiteSpace( result ) )
 		{

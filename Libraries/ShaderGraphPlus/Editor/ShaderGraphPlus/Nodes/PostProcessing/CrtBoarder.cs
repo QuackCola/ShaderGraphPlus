@@ -13,11 +13,11 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 
 	vScreenUV = curveRemapUV( vScreenUV, vCurvature );
 
-    if (vScreenUV.x < 0.0 || vScreenUV.y < 0.0 || vScreenUV.x > 1.0 || vScreenUV.y > 1.0){
-        vResult = float3(0.0, 0.0, 0.0);
-    } else {
-        vResult = vSceneColor;
-    }
+	if (vScreenUV.x < 0.0 || vScreenUV.y < 0.0 || vScreenUV.x > 1.0 || vScreenUV.y > 1.0){
+		vResult = float3(0.0, 0.0, 0.0);
+	} else {
+		vResult = vSceneColor;
+	}
 
 	return vResult;
 }

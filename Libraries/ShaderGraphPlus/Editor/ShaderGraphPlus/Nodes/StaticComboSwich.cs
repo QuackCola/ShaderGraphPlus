@@ -53,7 +53,7 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 
 				// Register the shader feature with shadergraph. 
 				compiler.RegisterShaderFeature(Feature, result_default.Code, result_true.Code, PreviewToggle);
-            }
+			}
 			else
 			{
 				return NodeResult.Error( "Invalid Feature Option found!" );
@@ -64,9 +64,9 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-        // Return the default result with a variable result type.
-        return new NodeResult( result_default.ResultType, $"{result_default}", constant: false);
-    };
+		// Return the default result with a variable result type.
+		return new NodeResult( result_default.ResultType, $"{result_default}", constant: false);
+	};
 
 }
 */

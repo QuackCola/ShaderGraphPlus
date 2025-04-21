@@ -122,13 +122,13 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 		}
 
 		return new NodeResult( ResultType.Vector3, compiler.ResultFunction(  SimpleParallax ,
-        args:
-        $"{slicecount}" +
-		$",{slicedistance}" +
-        $",{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" +
-        $",{tangentviewdir}" +
-        $",{textureobject}" +
-        $",{(!UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}"
-		) );
+			args:
+			$"{slicecount}" +
+			$",{slicedistance}" +
+			$",{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}" +
+			$",{tangentviewdir}" +
+			$",{textureobject}" +
+			$",{(!UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}"
+		));
 	};
 }

@@ -306,9 +306,9 @@ public class FunctionOutput
 
 	public PreviewType Preview { get; set; }
 
-    public int Priority { get; set; }
+	public int Priority { get; set; }
 
-    public override int GetHashCode()
+	public override int GetHashCode()
 	{
 		return System.HashCode.Combine( Id, Name, TypeName, Priority );
 	}

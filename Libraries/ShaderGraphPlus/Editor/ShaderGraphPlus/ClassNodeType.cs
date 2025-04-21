@@ -54,20 +54,20 @@ public class ClassNodeType : INodeType
 		return name is not null;
 	}
 
-    public bool TryGetOutput(Type valueType, out string name)
-    {
-        var property = Type.Properties
-            .Select(x => (Property: x, Attrib: x.GetCustomAttribute<BaseNode.OutputAttribute>()))
-            .Where(x => x.Attrib != null)
-            .FirstOrDefault(x => x.Attrib.Type?.IsAssignableTo(valueType) ?? true)
-            .Property;
+	public bool TryGetOutput(Type valueType, out string name)
+	{
+		var property = Type.Properties
+			.Select(x => (Property: x, Attrib: x.GetCustomAttribute<BaseNode.OutputAttribute>()))
+			.Where(x => x.Attrib != null)
+			.FirstOrDefault(x => x.Attrib.Type?.IsAssignableTo(valueType) ?? true)
+			.Property;
 
-        name = property?.Name;
-        return name is not null;
-    }
+		name = property?.Name;
+		return name is not null;
+	}
 
-    public virtual INode CreateNode(IGraph graph)
-    {
+	public virtual INode CreateNode(IGraph graph)
+	{
 		var node = Type.Create<BaseNodePlus>();
 
 		node.Graph = graph;

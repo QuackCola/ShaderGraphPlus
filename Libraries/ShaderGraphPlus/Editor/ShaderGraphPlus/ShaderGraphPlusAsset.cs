@@ -6,26 +6,26 @@
 #if true
 public static class CreateShaderGraphPlusAsset
 {
-    internal static void AddShaderGraphPlusOption(Menu parent, DirectoryInfo folder)
-    {
-        parent.AddOption($"New Shader Graph Plus Asset...", "account_tree", () =>
-        {
-            var ProjectCreator = new ProjectCreator();
-            ProjectCreator.DeleteOnClose = true;
-            ProjectCreator.FolderEditPath = folder.FullName;
-            ProjectCreator.Show();
-        });
-    }
-
-    [Event("folder.contextmenu", Priority = 101)]
-    internal static void OnFolderContextMenu_BottomSection(FolderContextMenu e)
-    {
-        if (e.Target != null)
-        {
-            e.Menu.AddSeparator();
-            AddShaderGraphPlusOption(e.Menu, e.Target);
-        }
-    }
+	internal static void AddShaderGraphPlusOption(Menu parent, DirectoryInfo folder)
+	{
+		parent.AddOption($"New Shader Graph Plus Asset...", "account_tree", () =>
+		{
+			var ProjectCreator = new ProjectCreator();
+			ProjectCreator.DeleteOnClose = true;
+			ProjectCreator.FolderEditPath = folder.FullName;
+			ProjectCreator.Show();
+		});
+	}
+	
+	[Event("folder.contextmenu", Priority = 101)]
+	internal static void OnFolderContextMenu_BottomSection(FolderContextMenu e)
+	{
+		if (e.Target != null)
+		{
+			e.Menu.AddSeparator();
+			AddShaderGraphPlusOption(e.Menu, e.Target);
+		}
+	}
 }
 
 public static class CreateShaderGraphPlusSubgraphAsset
@@ -173,22 +173,22 @@ public static class CreateShaderGraphPlusAssetPP
 	{
 		parent.AddOption( $"New Shader Graph Plus PostProcessing Shader...", "account_tree", () =>
 		{
-            var extension = System.IO.Path.GetExtension( "$name.sgrph" ).Trim( '.' );
-            
-            var fd = new FileDialog( null );
-            fd.Title = $"Create Shader Graph Plus";
-            fd.Directory = folder.FullName;
-            fd.DefaultSuffix = $".{extension}";
-            fd.SelectFile( $"untitled.{extension}" );
-            fd.SetFindFile();
-            fd.SetModeSave();
-            fd.SetNameFilter( $"Shader Graph Plus (*.{extension})" );
-            
-            if ( !fd.Execute() )
-            	return;
-            
-            Create( fd.SelectedFile );
-        } );
+			var extension = System.IO.Path.GetExtension( "$name.sgrph" ).Trim( '.' );
+			
+			var fd = new FileDialog( null );
+			fd.Title = $"Create Shader Graph Plus";
+			fd.Directory = folder.FullName;
+			fd.DefaultSuffix = $".{extension}";
+			fd.SelectFile( $"untitled.{extension}" );
+			fd.SetFindFile();
+			fd.SetModeSave();
+			fd.SetNameFilter( $"Shader Graph Plus (*.{extension})" );
+			
+			if ( !fd.Execute() )
+				return;
+			
+			Create( fd.SelectedFile );
+		});
 	}
 
 	[Event( "folder.contextmenu", Priority = 101 )]

@@ -90,9 +90,9 @@ public struct TextureInput
 	/// </summary>
 	public string CustomExtension { get; set; }
 
-    public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
+	public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
 
-    [JsonIgnore, Hide]
+	[JsonIgnore, Hide]
 	public string ExtensionString
 	{
 		get

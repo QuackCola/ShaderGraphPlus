@@ -5,64 +5,62 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class MatrixParameterNode<T> : ShaderNodePlus
 {
-
-    public string Name { get; set; } = "";
-
-    [Hide]
-    public override string Title => string.IsNullOrWhiteSpace(Name) ?
-        $"{DisplayInfo.For(this).Name}" :
-        $"{DisplayInfo.For(this).Name} ({Name})";
-
-    [InlineEditor]
-
-    public T Value { get; set; }
-
-    /// <summary>
-    /// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
-    /// </summary>
-    //[Hide]
-    //public bool IsAttribute { get; set; } = false;
-
-    // Material Editor dosent have a Matrix Property Type.
-    //[Hide]
-    //public ParameterUI UI { get; set; }
-
+	public string Name { get; set; } = "";
+	
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace(Name) ?
+		$"{DisplayInfo.For(this).Name}" :
+		$"{DisplayInfo.For(this).Name} ({Name})";
+	
+	[InlineEditor]
+	
+	public T Value { get; set; }
+	
+	/// <summary>
+	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
+	/// </summary>
+	//[Hide]
+	//public bool IsAttribute { get; set; } = false;
+	
+	// Material Editor dosent have a Matrix Property Type.
+	//[Hide]
+	//public ParameterUI UI { get; set; }
 }
 
-[Title("Float 2x2"), Category("Constants")]
+[Title( "Float 2x2" ), Category( "Constants" )]
 public sealed class Float2x2Node : MatrixParameterNode<Float2x2>
 {
-    [Output(typeof(Float2x2)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
+	[Output(typeof(Float2x2)), Title("Value")]
+	[Hide]
+	[Editor(nameof(Value))]
+	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	{
+		return compiler.ResultParameter(Name, Value, default, default, false, false, default);
+	};
 }
 
-[Title("Float 3x3"), Category("Constants")]
+[Title( "Float 3x3" ), Category( "Constants" )]
 public sealed class Float3x3Node : MatrixParameterNode<Float3x3>
 {
-    [Output(typeof(Float3x3)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
+	[Output(typeof(Float3x3)), Title("Value")]
+	[Hide]
+	[Editor(nameof(Value))]
+	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	{
+		return compiler.ResultParameter(Name, Value, default, default, false, false, default);
+	};
 }
 
-[Title("Float 4x4"), Category("Constants")]
+[Title( "Float 4x4" ), Category( "Constants" )]
 public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 {
-    [Output(typeof(Float4x4)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
+	[Output(typeof(Float4x4)), Title("Value")]
+	[Hide]
+	[Editor(nameof(Value))]
+	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	{
+		return compiler.ResultParameter(Name, Value, default, default, false, false, default);
+	};
 }
 
 /// <summary>
@@ -85,21 +83,21 @@ public sealed class Bool : ParameterNode<bool>
 //[Title("Int"), Category("Constants"), Icon("looks_one")]
 //public sealed class Int : ParameterNode<int>
 //{
-//    [Output(typeof(float)), Title("Value")]
-//    [Hide, Range(nameof(Min), nameof(Max), nameof(Step))]
-//    public NodeResult.Func Result => (GraphCompiler compiler) =>
-//    {
-//        return compiler.ResultParameter(Name, Value, default, default, false, IsAttribute, UI);
-//    };
-//
-//    [Group("Range")] public int Min { get; set; }
-//    [Group("Range")] public int Max { get; set; }
-//
-//    public Int()
-//    {
-//        Min = 0;
-//        Max = 1;
-//    }
+//	[Output(typeof(float)), Title("Value")]
+//	[Hide, Range(nameof(Min), nameof(Max), nameof(Step))]
+//	public NodeResult.Func Result => (GraphCompiler compiler) =>
+//	{
+//		return compiler.ResultParameter(Name, Value, default, default, false, IsAttribute, UI);
+//	};
+//	
+//	[Group("Range")] public int Min { get; set; }
+//	[Group("Range")] public int Max { get; set; }
+//	
+//	public Int()
+//	{
+//		Min = 0;
+//		Max = 1;
+//	}
 //}
 
 /// <summary>

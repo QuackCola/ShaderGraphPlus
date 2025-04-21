@@ -5,11 +5,11 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
-    /// <summary>
-    /// Texture to sample in preview
-    /// </summary>
-    [ImageAssetPath]
-    public string Image
+	/// <summary>
+	/// Texture to sample in preview
+	/// </summary>
+	[ImageAssetPath]
+	public string Image
 	{
 		get => _image;
 		set
@@ -67,14 +67,14 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		}
 	}
 
-    [InlineEditor(Label = false), Group("Sampler")]
-    public Sampler DefaultSampler { get; set; } = new Sampler();
-
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	[InlineEditor(Label = false), Group("Sampler")]
+	public Sampler DefaultSampler { get; set; } = new Sampler();
+	
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -87,8 +87,8 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 	protected TextureSamplerBase() : base()
 	{
 		Image = "materials/dev/white_color.tga";
-        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
-    }
+		ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+	}
 
 	public override void OnPaint( Rect rect )
 	{
@@ -143,11 +143,11 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 [Title( "Texture Object" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
-    /// <summary>
-    /// Texture to sample in preview
-    /// </summary>
-   	[ImageAssetPath]
-    public string Image
+	/// <summary>
+	/// Texture to sample in preview
+	/// </summary>
+	[ImageAssetPath]
+	public string Image
 	{
 		get => _image;
 		set
@@ -161,8 +161,8 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		}
 	}
 
-    [Hide]
-    private Asset _asset;
+	[Hide]
+	private Asset _asset;
 	[Hide]
 	private string _texture;
 	[Hide]
@@ -209,11 +209,11 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		}
 	}
 
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -225,9 +225,9 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 	public TextureObjectNode() : base()
 	{
-        Image = "materials/dev/white_color.tga";
-        ExpandSize = new Vector2( 0, 128 );
-    }
+		Image = "materials/dev/white_color.tga";
+		ExpandSize = new Vector2( 0, 128 );
+	}
 
 	public override void OnPaint( Rect rect )
 	{
@@ -268,10 +268,10 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		return errors;
 	}
 
-    /// <summary>
-    /// Texture object result.
-    /// </summary>
-    [Hide]
+	/// <summary>
+	/// Texture object result.
+	/// </summary>
+	[Hide]
 	[Output( typeof( TextureObject ) ), Title( "Tex Object" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -407,11 +407,11 @@ public sealed class TextureCube : ShaderNodePlus
 	[InlineEditor]
 	public Sampler DefaultSampler { get; set; } = new Sampler();
 
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -421,32 +421,32 @@ public sealed class TextureCube : ShaderNodePlus
 	public TextureCube() : base()
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
-        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
-    }
+		ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+	}
 
-    public override void OnPaint(Rect rect)
-    {
-        rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
+	public override void OnPaint(Rect rect)
+	{
+		rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
+		
+		Paint.SetBrush("/image/transparent-small.png");
+		Paint.DrawRect(rect.Shrink(2), 2);
+		
+		Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
+		Paint.DrawRect(rect, 2);
+		
+		if (!string.IsNullOrEmpty(Texture))
+		{
+			var tex = Sandbox.Texture.Find(Texture);
+			if (tex is null) return;
+			var pixmap = Pixmap.FromTexture(tex);
+			Paint.Draw(rect.Shrink(2), pixmap);
+		}
+	}
 
-        Paint.SetBrush("/image/transparent-small.png");
-        Paint.DrawRect(rect.Shrink(2), 2);
-
-        Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
-        Paint.DrawRect(rect, 2);
-
-        if (!string.IsNullOrEmpty(Texture))
-        {
-            var tex = Sandbox.Texture.Find(Texture);
-            if (tex is null) return;
-            var pixmap = Pixmap.FromTexture(tex);
-            Paint.Draw(rect.Shrink(2), pixmap);
-        }
-    }
-
-    /// <summary>
-    /// RGBA color result
-    /// </summary>
-    [Hide]
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -518,36 +518,36 @@ public sealed class TextureTriplanar : TextureSamplerBase
 	/// How the texture is filtered and wrapped when sampled
 	/// </summary>
 	[Title( "Sampler" )]
-    [Input]
+	[Input]
 	[Hide]
 	public NodeInput Sampler { get; set; }
 
-    /// <summary>
-    /// How many times to file the coordinates.
-    /// </summary>
-    [Title("Tile")]
-    [Input(typeof(float))]
-    [Hide]
-    public NodeInput Tile { get; set; }
+	/// <summary>
+	/// How many times to file the coordinates.
+	/// </summary>
+	[Title("Tile")]
+	[Input(typeof(float))]
+	[Hide]
+	public NodeInput Tile { get; set; }
 
-    /// <summary>
-    /// Blend factor between different samples.
-    /// </summary>
-    [Title("Blend Factor")]
-    [Input(typeof(float))]
-    [Hide]
-    public NodeInput BlendFactor { get; set; }
+	/// <summary>
+	/// Blend factor between different samples.
+	/// </summary>
+	[Title("Blend Factor")]
+	[Input(typeof(float))]
+	[Hide]
+	public NodeInput BlendFactor { get; set; }
 
-    [Group("Default Values")]
-    public float DefaultTile { get; set; } = 1.0f;
+	[Group("Default Values")]
+	public float DefaultTile { get; set; } = 1.0f;
 
-    [Group("Default Values")]
-    public float DefaultBlendFactor { get; set; } = 4.0f;
+	[Group("Default Values")]
+	public float DefaultBlendFactor { get; set; } = 4.0f;
 
-    /// <summary>
-    /// RGBA color result
-    /// </summary>
-    [Hide]
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -563,7 +563,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 		var coords = compiler.Result(Coords);
 		var tile = compiler.ResultOrDefault(Tile, DefaultTile);
 		var normal = compiler.Result(Normal);
-        var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
+		var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
 
 		var result = compiler.ResultFunction( "TexTriplanar_Color",
 		tex,
@@ -647,32 +647,32 @@ public sealed class NormapMapTriplanar : TextureSamplerBase
 		};
 	}
 
-    /// <summary>
-    /// How many times to file the coordinates.
-    /// </summary>
-    [Title("Tile")]
-    [Input(typeof(float))]
-    [Hide]
-    public NodeInput Tile { get; set; }
+	/// <summary>
+	/// How many times to file the coordinates.
+	/// </summary>
+	[Title( "Tile" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Tile { get; set; }
 
-    /// <summary>
-    /// Blend factor between different samples.
-    /// </summary>
-    [Title("Blend Factor")]
-    [Input(typeof(float))]
-    [Hide]
-    public NodeInput BlendFactor { get; set; }
+	/// <summary>
+	/// Blend factor between different samples.
+	/// </summary>
+	[Title( "Blend Factor" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput BlendFactor { get; set; }
 
-    [Group("Default Values")]
-    public float DefaultTile { get; set; } = 1.0f;
+	[Group( "Default Values" )]
+	public float DefaultTile { get; set; } = 1.0f;
 
-    [Group("Default Values")]
-    public float DefaultBlendFactor { get; set; } = 4.0f;
+	[Group( "Default Values" )]
+	public float DefaultBlendFactor { get; set; } = 4.0f;
 
-    /// <summary>
-    /// RGBA color result
-    /// </summary>
-    [Hide]
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
 	[Output( typeof( Vector3 ) ), Title( "XYZ" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -686,19 +686,19 @@ public sealed class NormapMapTriplanar : TextureSamplerBase
 
 		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
 		var coords = compiler.Result( Coords );
-        var tile = compiler.ResultOrDefault(Tile, DefaultTile);
-        var normal = compiler.Result( Normal );
-        var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
+		var tile = compiler.ResultOrDefault(Tile, DefaultTile);
+		var normal = compiler.Result( Normal );
+		var blendfactor = compiler.ResultOrDefault(BlendFactor, DefaultBlendFactor);
 
 		var result = compiler.ResultFunction( "TexTriplanar_Normal",
-		tex,
-        sampler,
-		coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
-		normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )", 
-		$"{blendfactor}"
+			tex,
+			sampler,
+			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )", 
+			$"{blendfactor}"
 		);
 
-        return new NodeResult( ResultType.Vector3, result );
+		return new NodeResult( ResultType.Vector3, result );
 	};
 }
 
@@ -718,8 +718,8 @@ public sealed class TextureCoord : ShaderNodePlus
 	/// </summary>
 	public Vector2 Tiling { get; set; } = 1;
 
-    [Hide]
-    public override string Title => $"{DisplayInfo.For( this ).Name}{(UseSecondaryCoord ? " 2" : "")}";
+	[Hide]
+	public override string Title => $"{DisplayInfo.For( this ).Name}{(UseSecondaryCoord ? " 2" : "")}";
 
 	/// <summary>
 	/// Coordinate result

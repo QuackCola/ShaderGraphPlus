@@ -90,21 +90,21 @@ public class PreviewPanel : Widget
 		set => _preview.Tint = value;
 	}
 
-    public bool PostProcessing
-    {
-        get => _preview.EnablePostProcessing;
-        set
-        {
-            if (_preview.EnablePostProcessing == value)
-                return;
+	public bool PostProcessing
+	{
+		get => _preview.EnablePostProcessing;
+		set
+		{
+			if (_preview.EnablePostProcessing == value)
+				return;
+		
+			_preview.EnablePostProcessing = value;
+			_preview.UpdateMaterial();
+			_preview.UpdatePostProcessing();
+		}
+	}
 
-            _preview.EnablePostProcessing = value;
-            _preview.UpdateMaterial();
-            _preview.UpdatePostProcessing();
-        }
-    }
-
-    private void UpdateAnimationCombo()
+	private void UpdateAnimationCombo()
 	{
 		_animationCombo.Clear();
 
@@ -256,11 +256,11 @@ public class PreviewPanel : Widget
 
 		toolBar.AddSeparator();
 
-        option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
-        option.ToolTip = "Light Settings";
-        option.StatusTip = "Light Settings";
+		option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
+		option.ToolTip = "Light Settings";
+		option.StatusTip = "Light Settings";
 
-        toolBar.AddSeparator();
+		toolBar.AddSeparator();
 
 		option = toolBar.AddOption( null, "settings", OpenSettings );
 
@@ -268,43 +268,43 @@ public class PreviewPanel : Widget
 		Layout.Add( _preview );
 	}
 
-    public void OpenLightSettings()
-    {
-        var popup = new PopupWidget(this);
-        popup.IsPopup = true;
-        popup.Layout = Layout.Column();
-        popup.Layout.Margin = 16;
+	public void OpenLightSettings()
+	{
+		var popup = new PopupWidget(this);
+		popup.IsPopup = true;
+		popup.Layout = Layout.Column();
+		popup.Layout.Margin = 16;
+	
+		var cs = new ControlSheet();
+		cs.AddProperty(_preview, x => x.SunAngle);
+		cs.AddProperty(_preview, x => x.SunColor);
+		cs.AddProperty(_preview, x => x.EnablePointLights);
+		cs.AddProperty(_preview, x => x.EnableShadows);
 
-        var cs = new ControlSheet();
-        cs.AddProperty(_preview, x => x.SunAngle);
-        cs.AddProperty(_preview, x => x.SunColor);
-        cs.AddProperty(_preview, x => x.EnablePointLights);
-        cs.AddProperty(_preview, x => x.EnableShadows);
+		popup.Layout.Add(cs);
+		popup.MaximumWidth = 300;
+		popup.OpenAtCursor();
+	}
 
-        popup.Layout.Add(cs);
-        popup.MaximumWidth = 300;
-        popup.OpenAtCursor();
-    }
-
-    public void OpenSettings()
-    {
-        var popup = new PopupWidget(this);
-        popup.IsPopup = true;
-        popup.Layout = Layout.Column();
-        popup.Layout.Margin = 16;
-
-        var cs = new ControlSheet();
-        cs.AddProperty(_preview, x => x.RenderBackfaces);
-        cs.AddProperty(_preview, x => x.EnableShadows);
-        cs.AddProperty(_preview, x => x.ShowGround);
-        cs.AddProperty(_preview, x => x.ShowSkybox);
-        cs.AddProperty(_preview, x => x.BackgroundColor);
-        cs.AddProperty(_preview, x => x.Tint);
-
-        popup.Layout.Add(cs);
-        popup.MaximumWidth = 300;
-        popup.OpenAtCursor();
-    }
+	public void OpenSettings()
+	{
+		var popup = new PopupWidget(this);
+		popup.IsPopup = true;
+		popup.Layout = Layout.Column();
+		popup.Layout.Margin = 16;
+	
+		var cs = new ControlSheet();
+		cs.AddProperty(_preview, x => x.RenderBackfaces);
+		cs.AddProperty(_preview, x => x.EnableShadows);
+		cs.AddProperty(_preview, x => x.ShowGround);
+		cs.AddProperty(_preview, x => x.ShowSkybox);
+		cs.AddProperty(_preview, x => x.BackgroundColor);
+		cs.AddProperty(_preview, x => x.Tint);
+	
+		popup.Layout.Add(cs);
+		popup.MaximumWidth = 300;
+		popup.OpenAtCursor();
+	}
 
 	public void LoadSettings( PreviewSettings settings )
 	{
@@ -357,14 +357,14 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, bool> _boolAttributes = new();
 	private int _stageId;
 
-    private bool _enablePostProcessing;
-    public bool EnablePostProcessing
-    {
-        get { return _enablePostProcessing; }
-        set { _enablePostProcessing = value; }
-    }
+	private bool _enablePostProcessing;
+	public bool EnablePostProcessing
+	{
+	get { return _enablePostProcessing; }
+	set { _enablePostProcessing = value; }
+	}
 
-    private bool _enableNodePreview;
+	private bool _enableNodePreview;
 	public bool EnableNodePreview
 	{
 		get => _enableNodePreview;
@@ -394,19 +394,19 @@ public class Preview : SceneRenderingWidget
 		}
 	}
 
-    public bool ShowSkybox
-    {
-        get => _sky.IsValid() && _sky.Enabled;
-        set
-        {
-            if ( !_sky.IsValid() )
-                return;
+	public bool ShowSkybox
+	{
+		get => _sky.IsValid() && _sky.Enabled;
+		set
+		{
+			if ( !_sky.IsValid() )
+				return;
+		
+			_sky.Enabled = value;
+		}
+	}
 
-            _sky.Enabled = value;
-        }
-    }
-
-    public bool ShowGround
+	public bool ShowGround
 	{
 		get => _ground.RenderingEnabled;
 		set => _ground.RenderingEnabled = value;
@@ -415,29 +415,29 @@ public class Preview : SceneRenderingWidget
 	private bool _renderBackfaces;
 	public bool RenderBackfaces
 	{
-	    get => _renderBackfaces;
-	    set
-	    {
-	        _renderBackfaces = value;
-	
-	        if ( _sceneObject.IsValid() )
-	        {
-	            _sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
-	        }
-	    }
+		get => _renderBackfaces;
+		set
+		{
+			_renderBackfaces = value;
+		
+			if ( _sceneObject.IsValid() )
+			{
+				_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
+			}
+		}
 	}
 
-    public Color BackgroundColor
-    {
-        get => Scene.Camera.IsValid() ? Scene.Camera.BackgroundColor : default;
-        set
-        {
-            if (!Scene.Camera.IsValid())
-                return;
-
-            Scene.Camera.BackgroundColor = value;
-        }
-    }
+	public Color BackgroundColor
+	{
+		get => Scene.Camera.IsValid() ? Scene.Camera.BackgroundColor : default;
+		set
+		{
+			if (!Scene.Camera.IsValid())
+				return;
+		
+			Scene.Camera.BackgroundColor = value;
+		}
+	}
 
 	private DirectionalLight _sun;
 	private HashSet<PointLight> _pointLights = new();
@@ -505,38 +505,38 @@ public class Preview : SceneRenderingWidget
 		_postProcessHook = Scene.Camera.AddHookBeforeOverlay( "ShadergraphPlusPostProcess", 1000, x =>
 		// Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;
 
-        {
-            Graphics.GrabFrameTexture( "ColorBuffer", _sceneObject.Attributes );
-
-            Graphics.Blit( _material, _sceneObject.Attributes );
+		{
+			Graphics.GrabFrameTexture( "ColorBuffer", _sceneObject.Attributes );
+		
+			Graphics.Blit( _material, _sceneObject.Attributes );
 		} );
 	}
-    
+
 	private Material _material;
-    public Material Material
-    {
-        get => _material;
-        set
-        {
-            _material = value;
-            UpdateMaterial();
-            UpdatePostProcessing();
-        }
-    }
+	public Material Material
+	{
+		get => _material;
+		set
+		{
+			_material = value;
+			UpdateMaterial();
+			UpdatePostProcessing();
+		}
+	}
 
-    private Color _tint = Color.White;
-    public Color Tint
-    {
-        get => _tint;
-        set
-        {
-            _tint = value;
-            if (_sceneObject.IsValid())
-                _sceneObject.ColorTint = _tint;
-        }
-    }
+	private Color _tint = Color.White;
+	public Color Tint
+	{
+		get => _tint;
+		set
+		{
+			_tint = value;
+			if (_sceneObject.IsValid())
+				_sceneObject.ColorTint = _tint;
+		}
+	}
 
-    private Model _model;
+	private Model _model;
 	public Model Model
 	{
 		get => _model;
@@ -703,21 +703,21 @@ public class Preview : SceneRenderingWidget
 	public Model SphereModel { get; set; }
 	public Model GroundModel { get; set; }
 
-    private readonly SceneObject _ground;
-    private readonly SkyBox2D _sky;
+	private readonly SceneObject _ground;
+	private readonly SkyBox2D _sky;
 
-    public Preview( Widget parent, string model ) : base( parent )
+	public Preview( Widget parent, string model ) : base( parent )
 	{
 		MouseTracking = true;
 		FocusMode = FocusMode.Click;
 
-        Scene = Scene.CreateEditorScene();
+		Scene = Scene.CreateEditorScene();
 
 		using ( Scene.Push() )
 		{
 			{
 				var camera = new GameObject( true, "camera" ).GetOrAddComponent<CameraComponent>();
-                camera.BackgroundColor = Color.White;
+				camera.BackgroundColor = Color.White;
 			}
 			{
 				var sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
@@ -771,16 +771,16 @@ public class Preview : SceneRenderingWidget
 		_ground.RenderingEnabled = false;
 	}
 
-    public override void OnDestroyed()
-    {
-        base.OnDestroyed();
+	public override void OnDestroyed()
+	{
+		base.OnDestroyed();
 
-        Scene?.Destroy();
-        Scene = null;
-    }
+		Scene?.Destroy();
+		Scene = null;
+	}
 
-    // Application.CursorPosition is fucked for different DPI
-    private static Vector2 CursorPosition => Application.UnscaledCursorPosition;
+	// Application.CursorPosition is fucked for different DPI
+	private static Vector2 CursorPosition => Application.UnscaledCursorPosition;
 
 	public override void PreFrame()
 	{
@@ -850,7 +850,7 @@ public class Preview : SceneRenderingWidget
 		Scene.Camera.WorldRotation = new Angles( _angles.y, -_angles.x, 0 );
 		Scene.Camera.WorldPosition = (_origin + _model.RenderBounds.Center) * _sceneObject.Rotation + Scene.Camera.WorldRotation.Backward * _distance;
 	}
-    protected override void OnKeyPress( KeyEvent e )
+	protected override void OnKeyPress( KeyEvent e )
 	{
 		base.OnKeyPress( e );
 

@@ -7,10 +7,10 @@ public partial class PaletteWidget : Widget
 	private readonly TreeView _treeView;
 	private readonly Button _searchFilterClear;
 
-    private bool IsSubgraph { get; }
+	private bool IsSubgraph { get; }
 
-    public PaletteWidget(Widget parent, bool isSubgraph) : base(parent)
-    {
+	public PaletteWidget(Widget parent, bool isSubgraph) : base(parent)
+	{
 		Name = "Palette";
 		WindowTitle = "Palette";
 		SetWindowIcon( "palette" );
