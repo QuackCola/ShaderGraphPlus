@@ -116,6 +116,7 @@ public class MainWindow : DockWindow
         Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
+		_lightingGraph = new();
         _graph.IsSubgraph = IsSubgraph;
 		CurrentPage = GraphPage.Main;
 
@@ -1006,6 +1007,13 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( result.Size * 0.5f );
 		}
 
+		// Add a LightingResult node so when the user changes ShadingMode to Custom, there wont be any compile errors.
+		{
+			_graphView.Graph = _lightingGraph;
+			_graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
+			_graphView.Graph = _graph;
+		}
+
 		ClearAttributes();
 
 		RestoreShader();
@@ -1311,9 +1319,20 @@ public class MainWindow : DockWindow
 		_fileHistoryBack.Enabled = false;
 		_fileHistoryForward.Enabled = false;
 		_fileHistoryHome.Enabled = false;
-		
+
+		graphToolBar.AddSeparator();
+
 		_LightingHome = graphToolBar.AddOption(null, "modeldoc_editor/view_controls_lighting_hover.png");
-		_LightingHome.Enabled = true;
+		
+		if ( _graph.ShadingModel is ShadingModel.Custom )
+		{
+			_LightingHome.Enabled = true;
+		}
+		else
+		{
+			_LightingHome.Enabled = false;
+		}
+
 		_LightingHome.Triggered +=  () =>
 		{
 			ChangePage( GraphPage.Lighting );
@@ -1477,6 +1496,11 @@ public class MainWindow : DockWindow
 		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		_graph.HasCustomLighting = _graph.ShadingModel == ShadingModel.Custom;
+
+		if ( _graph.ShadingModel is ShadingModel.Custom )
+		{
+			_LightingHome.Enabled = true;
+		}
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
