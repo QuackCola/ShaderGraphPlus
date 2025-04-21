@@ -86,8 +86,11 @@ public class MainWindow : DockWindow
 	private Option _fileHistoryBack;
 	private Option _fileHistoryForward;
 	private Option _fileHistoryHome;
+	private Option _MainGraphHome;
 	private Option _LightingHome;
 	
+	private GraphPage CurrentPage;
+
 	private List<string> _fileHistory = new();
 	private int _fileHistoryPosition = 0;
 	
@@ -96,6 +99,14 @@ public class MainWindow : DockWindow
 	public bool CanOpenMultipleAssets => true;
 	
 	private ProjectCreator ProjectCreator { get; set; }
+
+
+	public enum GraphPage
+	{
+		Main,
+		Lighting
+	}
+
 
 	public MainWindow()
 	{
@@ -106,8 +117,10 @@ public class MainWindow : DockWindow
 
 		_graph = new();
         _graph.IsSubgraph = IsSubgraph;
+		CurrentPage = GraphPage.Main;
 
-        CreateToolBar();
+
+		CreateToolBar();
 		
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
 		    .Where(x => System.IO.File.Exists(x)).ToList();
@@ -887,11 +900,10 @@ public class MainWindow : DockWindow
 		PromptSave( CreateNew );
 	}
 
-	private bool _isOnLightingPage = false;
 
-	public void ChangePage()
+	public void ChangePage( GraphPage lighting )
 	{
-		if ( !_isOnLightingPage )
+		if ( CurrentPage is GraphPage.Main )
 		{
 			if ( _lightingGraph is not null )
 			{
@@ -900,19 +912,16 @@ public class MainWindow : DockWindow
 					_lightingGraph.AddNode( node );
 				}
 
-				
-
 				_graphView.Graph = _lightingGraph;
 			}
 			else
 			{
 				_graphView.Graph = _lightingGraph;
-				
+
 				var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
 				_graphView.Scale = 1;
 				_graphView.CenterOn( result.Size * 0.5f );
 			}
-
 
 			var center = Vector2.Zero;
 			var resultNode = _lightingGraph.Nodes.OfType<BaseResult>().FirstOrDefault();
@@ -929,8 +938,7 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( center );
 			_graphView.RestoreViewFromCookie();
 
-
-			_isOnLightingPage = true;
+			CurrentPage = GraphPage.Lighting;
 		}
 		else
 		{
@@ -945,7 +953,8 @@ public class MainWindow : DockWindow
 			_graphView.Graph = _graph;
 
 			_lightingGraph = new();
-			_isOnLightingPage = false;
+
+			CurrentPage = GraphPage.Main;
 		}
 	}
 
@@ -1159,7 +1168,7 @@ public class MainWindow : DockWindow
 		
 		_preview.SaveSettings( _graph.PreviewSettings );
 		
-		if ( _isOnLightingPage )
+		if ( CurrentPage is GraphPage.Lighting )
 		{
 			_graph.ClearLightingNodes();
 
@@ -1287,9 +1296,21 @@ public class MainWindow : DockWindow
 		
 		_LightingHome = graphToolBar.AddOption(null, "modeldoc_editor/view_controls_lighting_hover.png");
 		_LightingHome.Enabled = true;
-		_LightingHome.Triggered += ChangePage;
+		_LightingHome.Triggered +=  () =>
+		{
+			ChangePage( GraphPage.Lighting );
+		};
 		_LightingHome.ToolTip = "Lighting";
 		
+		_MainGraphHome = graphToolBar.AddOption( null, "common/image" );
+		_MainGraphHome.Enabled = true;
+		_MainGraphHome.Triggered += () =>
+		{
+			ChangePage( GraphPage.Main );
+		};
+		_MainGraphHome.ToolTip = "Lighting";
+
+
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
 		stretcher.Layout.AddStretchCell( 1 );
