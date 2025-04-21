@@ -63,9 +63,6 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide]
 	public bool IsSubgraph { get; set; }
 
-	[Hide, JsonIgnore]
-	public bool IsLightingPage { get; set; }
-
 	[Hide]
 	public bool HasCustomLighting { get; set; }
 
@@ -151,30 +148,12 @@ public partial class ShaderGraphPlus : IGraph
 		}
 	}
 
-	private void RemoveLightingNode( BaseNodePlus node )
-	{
-		//if ( node.Graph != this )
-		//	return;
-		_lightingNodes.Remove( node.Identifier );
-	}
-
 	public void RemoveNode( BaseNodePlus node )
 	{
-		if ( IsLightingPage )
-		{
-			if ( node.Graph != this )
-				return;
+		if ( node.Graph != this )
+			return;
 
-			OuterGraph.RemoveLightingNode( node );
-			_nodes.Remove( node.Identifier ); 
-		}
-		else
-		{
-			if ( node.Graph != this )
-				return;
-
-			_nodes.Remove( node.Identifier );
-		}
+		_nodes.Remove( node.Identifier );
 	}
 
 	public BaseNodePlus FindNode( string name, bool lightingPage = false )
