@@ -1301,7 +1301,7 @@ public sealed partial class GraphCompiler
 	}
 	*/
 
-	private string GenerateInternal()
+	private string GenerateLighting()
 	{
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
@@ -1503,7 +1503,7 @@ public sealed partial class GraphCompiler
 			{
 				var lightResult = lightingResult.GetAlbedoResult( this, true );
 				var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
-				var resultstring = compiler.GenerateInternal();
+				var resultstring = compiler.GenerateLighting();
 
 				var lightingFunc = RegisterLightFunction( resultstring, "Shade", "m" );
 				lightingFuncCall = ResultFunction( lightingFunc, "m" );
