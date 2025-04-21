@@ -977,6 +977,14 @@ public class MainWindow : DockWindow
 
 	}
 
+	private void UpdatePageButtonStates( ShadingModel shadingModel )
+	{
+		if ( shadingModel is ShadingModel.Custom )
+		{
+			_LightingHome.Enabled = true;
+		}
+	}
+
 	public void CreateNew()
 	{
 		_asset = null;
@@ -1087,6 +1095,8 @@ public class MainWindow : DockWindow
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
 		_properties.Target = _graph;
+
+		UpdatePageButtonStates( _graph.ShadingModel );
 
 		if ( addToPath )
 			AddFileHistory( path );
@@ -1323,16 +1333,7 @@ public class MainWindow : DockWindow
 		graphToolBar.AddSeparator();
 
 		_LightingHome = graphToolBar.AddOption(null, "modeldoc_editor/view_controls_lighting_hover.png");
-		
-		if ( _graph.ShadingModel is ShadingModel.Custom )
-		{
-			_LightingHome.Enabled = true;
-		}
-		else
-		{
-			_LightingHome.Enabled = false;
-		}
-
+		_LightingHome.Enabled = false;
 		_LightingHome.Triggered +=  () =>
 		{
 			ChangePage( GraphPage.Lighting );
