@@ -84,7 +84,7 @@ PS
 		
 		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
 		{
-			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index);
+			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
 	
 	
 	

@@ -34,7 +34,7 @@
     {
       "_class": "LightingResult",
       "Identifier": "0",
-      "Position": "228,-240",
+      "Position": "228,-168",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -45,17 +45,17 @@
     {
       "_class": "LightInfoNode",
       "Identifier": "1",
-      "Position": "-264,-264",
+      "Position": "-360,-264",
       "HandleOffsets": {}
     },
     {
       "_class": "DotProduct",
       "Identifier": "2",
-      "Position": "-12,-120",
+      "Position": "-24,-168",
       "HandleOffsets": {},
       "InputA": {
         "Identifier": "1",
-        "Output": "ResultB",
+        "Output": "ResultA",
         "Subgraph": null
       },
       "InputB": {
