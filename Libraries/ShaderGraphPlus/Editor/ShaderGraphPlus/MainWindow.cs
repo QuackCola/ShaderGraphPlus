@@ -907,6 +907,8 @@ public class MainWindow : DockWindow
 		{
 			if ( _lightingGraph is not null )
 			{
+				_lightingGraph.ClearNodes();
+
 				foreach ( var node in _graph._lightingNodes.Values )
 				{
 					_lightingGraph.AddNode( node );
@@ -954,7 +956,6 @@ public class MainWindow : DockWindow
 
 			_graphView.Graph = _graph;
 
-			_lightingGraph = new();
 
 			CurrentPage = GraphPage.Main;
 
@@ -1089,7 +1090,14 @@ public class MainWindow : DockWindow
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
+
 		_lightingGraph = new( _graph );
+
+		foreach ( var node in _graph._lightingNodes.Values )
+		{
+			_lightingGraph.AddNode( node );
+		}
+
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
