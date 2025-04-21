@@ -83,6 +83,8 @@ public sealed partial class GraphCompiler
 		/// </summary>
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
 		public int VoidLocalCount { get; set; } = 0;
+
+		public string LightingFunctionCode  = "";
 	}
 
 	public enum ShaderStage
@@ -119,6 +121,8 @@ public sealed partial class GraphCompiler
 
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
+
+	
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview, ShaderGraphPlus lightingPageGraph, bool isLightingPage = false )
 	{
@@ -229,16 +233,6 @@ public sealed partial class GraphCompiler
 		}
 		
 		return $"{functionName}( {args} )";
-	}
-
-	internal string RegisterLightFunction( string code, string functionName, string args = "" )
-	{
-		if ( !GraphHLSLFunctions.HasFunction( functionName ) )
-		{
-			GraphHLSLFunctions.RegisterFunction( functionName, code );
-		}
-
-		return functionName;
 	}
 
 	internal void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
@@ -1313,7 +1307,8 @@ public sealed partial class GraphCompiler
 			IndentString( locals, 2 ),
 			IndentString( material, 2 )
 		);
-		Log.Info( str );
+
+		
 
 		return str;
 	}
@@ -1374,7 +1369,7 @@ public sealed partial class GraphCompiler
 
 	private static string GenerateFunctions( CompileResult result )
 	{
-		if ( !result.Functions.Any() )
+		if ( !result.Functions.Any() && string.IsNullOrWhiteSpace( result.LightingFunctionCode ) )
 			return null;
 
 		var sb = new StringBuilder();
@@ -1384,6 +1379,13 @@ public sealed partial class GraphCompiler
 			{
 				sb.Append( code );
 			}
+		}
+
+		sb.AppendLine();
+
+		if ( !string.IsNullOrWhiteSpace( result.LightingFunctionCode ) )
+		{
+			sb.Append( result.LightingFunctionCode );
 		}
 
 		return sb.ToString();
@@ -1475,6 +1477,11 @@ public sealed partial class GraphCompiler
 		return true;
 	}
 
+	private void SetLightingFunction( string function )
+	{
+		ShaderResult.LightingFunctionCode = function;
+	}
+
 	private string GeneratePixelOutput()
 	{
 		Stage = ShaderStage.Pixel;
@@ -1503,6 +1510,7 @@ public sealed partial class GraphCompiler
 			if ( resultLighting != null )
 			{
 				string lightingFuncCall = "";
+				string lightingFuncBody = "";
 
 				if ( resultLighting is LightingResult lightingResult )
 				{
@@ -1510,8 +1518,9 @@ public sealed partial class GraphCompiler
 					var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
 					var resultstring = compiler.GenerateLighting();
 
-					var lightingFunc = RegisterLightFunction( resultstring, "Shade", "m" );
-					lightingFuncCall = ResultFunction( lightingFunc, "m" );
+
+					lightingFuncCall = "Shade( i, m )";
+					SetLightingFunction( resultstring );
 				}
 
 				if ( !GetUnlitResult( out string albedo, out string opacity ) )
@@ -1519,11 +1528,11 @@ public sealed partial class GraphCompiler
 
 				var sb = new StringBuilder();
 
-				sb.AppendLine( $"//m.Albedo = {albedo}" );
-				sb.AppendLine( $"//m.Opacity = {opacity}" );
+				sb.AppendLine( $"m.Albedo = {albedo};" );
+				sb.AppendLine( $"m.Opacity = {opacity};" );
 				sb.AppendLine();
-				sb.AppendLine( $"//return Shade( m );" );
-				sb.Append( $"return float4( {albedo}, {opacity} );" );
+				sb.AppendLine( $"return {lightingFuncCall};" );
+				sb.Append( $"//return float4( {albedo}, {opacity} );" );
 
 				pixelOutput = sb.ToString();
 			}
