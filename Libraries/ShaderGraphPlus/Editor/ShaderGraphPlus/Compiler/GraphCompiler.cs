@@ -112,7 +112,6 @@ public sealed partial class GraphCompiler
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
 
-
 	/// <summary>
 	/// Error list, doesn't give you much information currently
 	/// </summary>
@@ -121,8 +120,6 @@ public sealed partial class GraphCompiler
 
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
-
-	
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview, ShaderGraphPlus lightingPageGraph, bool isLightingPage = false )
 	{
@@ -177,7 +174,6 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register some generic global parameter for a node to use.
 	/// </summary>
-	/// <param name="global"></param>
 	public void RegisterGlobal( string globalName, string globalString )
 	{
 		var result = ShaderResult;
@@ -973,25 +969,6 @@ public sealed partial class GraphCompiler
 		};
 
 		return prefix;
-	}
-
-	public string GetHLSLDataType( ResultType resultType )
-	{
-		return resultType switch
-		{
-			ResultType r when r == ResultType.Bool => "bool",
-			//ResultType r when r == ResultType.Int => "int",
-			ResultType r when r == ResultType.Float => "float",
-			ResultType r when r == ResultType.Vector2 => "float2",
-			ResultType r when r == ResultType.Vector3 => "float3",
-			ResultType r when r == ResultType.Color => "float4",
-			ResultType r when r == ResultType.Gradient => "Gradient",
-			ResultType r when r == ResultType.Float2x2 => "float2x2",
-			ResultType r when r == ResultType.Float3x3 => "float3x3",
-			ResultType r when r == ResultType.Float4x4 => "float4x4",
-			ResultType r when r == ResultType.Void => "void",
-			_ => throw new ArgumentException("Unsupported value type", nameof(resultType))
-		};
 	}
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
