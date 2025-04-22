@@ -454,7 +454,7 @@ public class MainWindow : DockWindow
 		ClearAttributes();
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-		var compiler = new GraphCompiler( _asset, _graph, true, _lightingGraph );
+		var compiler = new GraphCompiler( _asset, _graph, _lightingGraph, true );
 		compiler.OnAttribute = OnAttribute;
 
 		// Evaluate all nodes
@@ -562,7 +562,7 @@ public class MainWindow : DockWindow
 
 	private string GenerateShaderCode()
 	{
-		var compiler = new GraphCompiler( _asset, _graph, false, _lightingGraph );
+		var compiler = new GraphCompiler( _asset, _graph, _lightingGraph, false );
 		return compiler.Generate();
 	}
 

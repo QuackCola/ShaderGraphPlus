@@ -35,7 +35,7 @@ public sealed partial class GraphCompiler
 	/// Current graph we're compiling
 	/// </summary>
 	public ShaderGraphPlus Graph { get; private set; }
-	public ShaderGraphPlus LightingPageGraph { get; private set; }
+	public ShaderGraphPlus LightingGraph { get; private set; }
 
 	/// <summary>
 	/// Are we on the lightingPage?
@@ -121,10 +121,10 @@ public sealed partial class GraphCompiler
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview, ShaderGraphPlus lightingPageGraph, bool isLightingPage = false )
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, ShaderGraphPlus lightingPageGraph, bool preview, bool isLightingPage = false )
 	{
 		Graph = graph;
-		LightingPageGraph = lightingPageGraph;
+		LightingGraph = lightingPageGraph;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
@@ -533,7 +533,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				node = LightingPageGraph.FindNode( input.Identifier );
+				node = LightingGraph.FindNode( input.Identifier );
 			}
 		}
 		else
@@ -1486,17 +1486,12 @@ public sealed partial class GraphCompiler
 
 			if ( resultLighting != null )
 			{
-				string lightingFuncCall = "";
-				string lightingFuncBody = "";
-
 				if ( resultLighting is LightingResult lightingResult )
 				{
 					var lightResult = lightingResult.GetAlbedoResult( this, true );
-					var compiler = new GraphCompiler( _Asset, Graph, false, LightingPageGraph, true );
+					var compiler = new GraphCompiler( _Asset, Graph, LightingGraph, false, true );
 					var resultstring = compiler.GenerateLighting();
 
-
-					lightingFuncCall = "Shade( i, m )";
 					SetLightingFunction( resultstring );
 				}
 
@@ -1508,7 +1503,7 @@ public sealed partial class GraphCompiler
 				sb.AppendLine( $"m.Albedo = {albedo};" );
 				sb.AppendLine( $"m.Opacity = {opacity};" );
 				sb.AppendLine();
-				sb.AppendLine( $"return {lightingFuncCall};" );
+				sb.AppendLine( $"return Shade( i, m );" );
 				sb.Append( $"//return float4( {albedo}, {opacity} );" );
 
 				pixelOutput = sb.ToString();
