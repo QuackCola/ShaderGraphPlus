@@ -39,6 +39,7 @@
       "Image": "textures/sbox_logo.png",
       "DefaultSampler": {},
       "UI": {
+        "Name": "Color",
         "Default": "1,1,1,1",
         "ShowExtension": true,
         "SrgbRead": true

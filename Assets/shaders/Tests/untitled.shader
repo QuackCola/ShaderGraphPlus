@@ -78,8 +78,8 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 		
 	
 	static float4 Shade( PixelInput i, Material m  )
@@ -87,7 +87,8 @@ PS
 		float3 Albedo = float3( 0, 0, 0 );
 		
 		
-		for ( int index = 0; index < Light::Count(); index++ )
+		// Loop through all lights 
+		for ( int index = 0; index < Light::Count( m.ScreenPosition.xy ); index++ )
 		{
 			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
 			
@@ -124,7 +125,7 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = g_tTexture_ps_0.Sample( g_sSampler0,i.vTextureCoords.xy );
+		float4 l_0 = g_tColor.Sample( g_sSampler0,i.vTextureCoords.xy );
 		
 
 		m.Albedo = l_0.xyz;
