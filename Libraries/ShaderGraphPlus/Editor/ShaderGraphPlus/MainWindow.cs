@@ -1,8 +1,4 @@
-﻿using Editor.NodeEditor;
-using Facepunch.ActionGraphs;
-using Sandbox.UI;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 [EditorForAssetType("sgpfunc")]
 public class MainWindowFunc : MainWindow, IAssetEditor
@@ -990,7 +986,7 @@ public class MainWindow : DockWindow
 	{
 		_asset = null;
 		_graph = new();
-		_lightingGraph = new(_graph);
+		_lightingGraph = new();
 		_dirty = false;
 		_graphView.Graph = _graph;
 		_graphCanvas.WindowTitle = "untitled";
@@ -1090,13 +1086,9 @@ public class MainWindow : DockWindow
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
+		_lightingGraph = new();
 
-		_lightingGraph = new( _graph );
-
-		foreach ( var node in _graph._lightingNodes.Values )
-		{
-			_lightingGraph.AddNode( node );
-		}
+		InitLightingGraph();
 
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
@@ -1134,6 +1126,13 @@ public class MainWindow : DockWindow
 		GeneratePreviewCode();
 	}
 
+	private void InitLightingGraph()
+	{
+		foreach ( var node in _graph._lightingNodes.Values )
+		{
+			_lightingGraph.AddNode( node );
+		}
+	}
 
 	[Shortcut( "editor.save-as", "CTRL+SHIFT+S" )]
 	public void SaveAs()
