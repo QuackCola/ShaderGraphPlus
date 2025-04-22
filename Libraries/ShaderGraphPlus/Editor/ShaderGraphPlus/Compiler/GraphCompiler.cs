@@ -78,8 +78,9 @@ public sealed partial class GraphCompiler
 		public Dictionary<string,string> Globals { get; private set; } = new();
 		
 		public string RepresentativeTexture { get; set; }
-		
-		/// A group of Void Locals that belongs to a Custom Function Node
+
+		/// <summary>
+		/// A group of Void Locals that belongs to a Custom Function Node.
 		/// </summary>
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
 		public int VoidLocalCount { get; set; } = 0;
