@@ -57,7 +57,7 @@
       "__guid": "af98f8e4-7c7d-4d9f-b8f4-9e92bc796bc3",
       "Flags": 0,
       "Name": "Sphere",
-      "Position": "-288,-1536,32",
+      "Position": "-260.6578,-1461.757,32",
       "Enabled": true,
       "Components": [
         {
@@ -90,7 +90,7 @@
       "__guid": "f3ee383b-0e41-4821-817c-544c2427dfd1",
       "Flags": 0,
       "Name": "Point Light",
-      "Position": "-320,-1536,72.7272",
+      "Position": "-266.7643,-1536,72.7272",
       "Tags": "light_point,light",
       "Enabled": true,
       "Components": [
