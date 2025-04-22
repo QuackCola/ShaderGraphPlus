@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "HasCustomLighting": true,
-  "Path": "shaders/tests/untitled.sgrph",
+  "Path": "shaders/tests/customlighting/custom_lighting.sgrph",
   "Model": null,
   "Title": null,
   "Description": null,
