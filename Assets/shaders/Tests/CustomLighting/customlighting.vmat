@@ -1,6 +1,0 @@
-
-Layer0
-{
-	shader "shaders/tests/customlighting/customlighting.shader_c"
-
-}

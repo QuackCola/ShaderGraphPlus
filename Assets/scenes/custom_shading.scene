@@ -499,7 +499,7 @@
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialGroup": null,
-          "MaterialOverride": "shaders/tests/untitled.vmat",
+          "MaterialOverride": "materials/error.vmat",
           "Model": "models/dev/sphere.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
