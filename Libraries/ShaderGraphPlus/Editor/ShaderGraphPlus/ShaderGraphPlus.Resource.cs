@@ -57,9 +57,6 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	public readonly Dictionary<string, BaseNodePlus> _lightingNodes = new();
 	
-	[Hide, JsonIgnore]
-	public ShaderGraphPlus OuterGraph { get; }
-
 	[Hide]
 	public bool IsSubgraph { get; set; }
 
@@ -122,11 +119,6 @@ public partial class ShaderGraphPlus : IGraph
 
 	public ShaderGraphPlus()
 	{
-	}
-
-	public ShaderGraphPlus( ShaderGraphPlus outerGraph )
-	{
-		OuterGraph = outerGraph;
 	}
 
 	public void ClearLightingNodes()
