@@ -6,7 +6,7 @@ public enum ResultType
 	/// No Components, just True or False.
 	/// </summary>
 	Bool,
-	Int,
+	//Int,
 	/// <summary>
 	/// 1 Component
 	/// </summary>
