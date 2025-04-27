@@ -14,6 +14,7 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
+    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
