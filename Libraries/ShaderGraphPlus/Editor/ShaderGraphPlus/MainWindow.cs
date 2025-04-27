@@ -48,15 +48,24 @@ public class MainWindow : DockWindow
 	private PaletteWidget _palette;
 	
 	private readonly UndoStack _undoStack = new();
-	
+	private readonly UndoStack _lightingUndoStack = new();
+
 	private Option _undoOption;
 	private Option _redoOption;
 	
 	private Option _undoMenuOption;
 	private Option _redoMenuOption;
-	
-	public UndoStack UndoStack => _undoStack;
-	
+
+	public UndoStack UndoStack
+	{
+		get
+		{
+			return CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
+		}
+	}
+
+	//public UndoStack LightingUndoStack => _lightingUndoStack;
+
 	private bool _dirty = false;
 	
 	private string _generatedCode;
@@ -568,7 +577,23 @@ public class MainWindow : DockWindow
 
 	public void OnUndoPushed()
 	{
-		_undoHistory.History = _undoStack.Names;
+		UndoStack undoStack = CurrentPage == GraphPage.Main ? _undoStack : _lightingUndoStack;
+
+		_undoHistory.History = undoStack.Names;
+
+		//if (  CurrentPage is GraphPage.Main )
+		//{
+		//	_undoHistory.History = undoStack.Names;
+		//}
+		//else if ( CurrentPage is GraphPage.Lighting )
+		//{
+		//
+		//	List<string> strings = (List<string>)_undoStack.Names;
+		//
+		//	strings.AddRange( _lightingUndoStack.Names );
+		//
+		//	_undoHistory.History = strings;
+		//}
 	}
 
 	public void SetDirty( bool evaluate = true )
@@ -586,22 +611,28 @@ public class MainWindow : DockWindow
 	[EditorEvent.Frame]
 	protected void Frame()
 	{
-		_undoOption.Enabled = _undoStack.CanUndo;
-		_redoOption.Enabled = _undoStack.CanRedo;
-		_undoMenuOption.Enabled = _undoStack.CanUndo;
-		_redoMenuOption.Enabled = _undoStack.CanRedo;
+		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
 
-		_undoOption.Text = _undoStack.UndoName;
-		_redoOption.Text = _undoStack.RedoName;
-		_undoMenuOption.Text = _undoStack.UndoName ?? "Undo";
-		_redoMenuOption.Text = _undoStack.RedoName ?? "Redo";
+		//SGPLog.Info( $"Current Page : {CurrentPage}" );
 
-		_undoOption.StatusTip = _undoStack.UndoName;
-		_redoOption.StatusTip = _undoStack.RedoName;
-		_undoMenuOption.StatusTip = _undoStack.UndoName;
-		_redoMenuOption.StatusTip = _undoStack.RedoName;
+		SGPLog.Info( $"LightingHistory Undo Level : {_lightingUndoStack.UndoLevel}" );
 
-		_undoHistory.UndoLevel = _undoStack.UndoLevel;
+		_undoOption.Enabled = undoStack.CanUndo;
+		_redoOption.Enabled = undoStack.CanRedo;
+		_undoMenuOption.Enabled = undoStack.CanUndo;
+		_redoMenuOption.Enabled = undoStack.CanRedo;
+
+		_undoOption.Text = undoStack.UndoName;
+		_redoOption.Text = undoStack.RedoName;
+		_undoMenuOption.Text = undoStack.UndoName ?? "Undo";
+		_redoMenuOption.Text = undoStack.RedoName ?? "Redo";
+
+		_undoOption.StatusTip = undoStack.UndoName;
+		_redoOption.StatusTip = undoStack.RedoName;
+		_undoMenuOption.StatusTip = undoStack.UndoName;
+		_redoMenuOption.StatusTip = undoStack.RedoName;
+
+		_undoHistory.UndoLevel = undoStack.UndoLevel;
 
 		CheckForChanges();
 	}
@@ -626,31 +657,51 @@ public class MainWindow : DockWindow
 	[Shortcut( "editor.undo", "CTRL+Z" )]
 	private void Undo()
 	{
-		if ( _undoStack.Undo() is UndoOp op )
+		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
+
+		if ( undoStack.Undo() is UndoOp op )
 		{
-			Log.Info( $"Undo ({op.name})" );
+			_redoOption.Enabled = undoStack.CanUndo;
 
-			_redoOption.Enabled = _undoStack.CanUndo;
+			if ( CurrentPage is GraphPage.Main )
+			{
+				_graph.ClearNodes();
+				_graph.DeserializeNodes( op.undoBuffer );
+			}
+			else
+			{
+				_lightingGraph.ClearNodes();
+				_lightingGraph.DeserializeNodes( op.undoBuffer );
+			}
 
-			_graph.ClearNodes();
-			_graph.DeserializeNodes( op.undoBuffer );
+
 			_graphView.RebuildFromGraph();
-
+			
 			SetDirty();
 		}
+
 	}
 
 	[Shortcut( "editor.redo", "CTRL+Y" )]
 	private void Redo()
 	{
-		if ( _undoStack.Redo() is UndoOp op )
+		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
+
+		if ( undoStack.Redo() is UndoOp op )
 		{
-			Log.Info( $"Redo ({op.name})" );
+			_redoOption.Enabled = undoStack.CanUndo;
 
-			_redoOption.Enabled = _undoStack.CanRedo;
+			if ( CurrentPage is GraphPage.Main )
+			{
+				_graph.ClearNodes();
+				_graph.DeserializeNodes( op.redoBuffer );
+			}
+			else
+			{
+				_lightingGraph.ClearNodes();
+				_lightingGraph.DeserializeNodes( op.redoBuffer );
+			}
 
-			_graph.ClearNodes();
-			_graph.DeserializeNodes( op.redoBuffer );
 			_graphView.RebuildFromGraph();
 
 			SetDirty();
@@ -659,12 +710,23 @@ public class MainWindow : DockWindow
 
 	private void SetUndoLevel( int level )
 	{
-		if ( _undoStack.SetUndoLevel( level ) is UndoOp op )
+		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
+
+		if ( undoStack.SetUndoLevel( level ) is UndoOp op )
 		{
 			Log.Info( $"SetUndoLevel ({op.name})" );
 
-			_graph.ClearNodes();
-			_graph.DeserializeNodes( op.redoBuffer );
+			if ( CurrentPage is GraphPage.Main )
+			{
+				_graph.ClearNodes();
+				_graph.DeserializeNodes( op.redoBuffer );
+			}
+			else
+			{
+				_lightingGraph.ClearNodes();
+				_lightingGraph.DeserializeNodes( op.redoBuffer );
+			}
+
 			_graphView.RebuildFromGraph();
 
 			SetDirty();
@@ -936,9 +998,14 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( center );
 			_graphView.RestoreViewFromCookie();
 
+			_graphView.UndoStack = _lightingUndoStack;
+
 			CurrentPage = GraphPage.Lighting;
 
 			UpdatePageButtonStates( GraphPage.Lighting );
+			_undoHistory.History = _lightingUndoStack.Names;
+			_undoHistory.UndoStack = _lightingUndoStack;
+
 		}
 		else
 		{
@@ -951,12 +1018,18 @@ public class MainWindow : DockWindow
 			}
 
 			_graphView.Graph = _graph;
-
+			_graphView.UndoStack = _undoStack;
 
 			CurrentPage = GraphPage.Main;
 
 			UpdatePageButtonStates( GraphPage.Main );
+			_undoHistory.History = _undoStack.Names;
+			_undoHistory.UndoStack = _undoStack;
 		}
+
+
+		//_undoHistory.UndoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
+		
 	}
 
 	private void UpdatePageButtonStates( GraphPage graphPage )
@@ -993,6 +1066,7 @@ public class MainWindow : DockWindow
 		_preview.Model = null;
 		_preview.Tint = Color.White;
 		_undoStack.Clear();
+		_lightingUndoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
 		_properties.Target = _graph;
@@ -1092,6 +1166,7 @@ public class MainWindow : DockWindow
 
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
+		_lightingUndoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
 		_properties.Target = _graph;

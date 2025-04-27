@@ -3,7 +3,17 @@
 public class ShaderGraphPlusView : GraphView
 {
 	private readonly MainWindow _window;
-	private readonly UndoStack _undoStack;
+	private  UndoStack _undoStack;
+
+	public UndoStack UndoStack
+	{
+		get => _undoStack;
+
+		set
+		{
+			_undoStack = value;
+		}
+	}
 
 	protected override string ClipboardIdent => "shadergraphplus";
 
