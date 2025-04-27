@@ -45,7 +45,7 @@
         "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-348,180",
+      "Position": "-384,-72",
       "HandleOffsets": {}
     }
   ],
@@ -64,7 +64,7 @@
     {
       "_class": "LightInfoNode",
       "Identifier": "1",
-      "Position": "-468,-408",
+      "Position": "-444,-468",
       "HandleOffsets": {}
     },
     {
