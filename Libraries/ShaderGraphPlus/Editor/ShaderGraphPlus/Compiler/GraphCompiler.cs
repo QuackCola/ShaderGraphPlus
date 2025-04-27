@@ -1278,7 +1278,7 @@ public sealed partial class GraphCompiler
 	*/
 
 
-	private bool GenerateLighting( bool isPreview, out string globals,out string result )
+	private bool GenerateLighting( bool isPreview, bool compositeAtmospherics, out string globals,out string result )
 	{
 		globals = ""; 
 		result = "";
@@ -1307,7 +1307,8 @@ public sealed partial class GraphCompiler
 		var str =  string.Format( LightingTemplate.Contents,
 			IndentString( sb.ToString(), 1),
 			IndentString( locals, 2 ),
-			IndentString( material, 2 )
+			IndentString( material, 2 ),
+			IndentString( GenerateAtmospherics(), 2 )
 		);
 
 		result = str;
@@ -1973,6 +1974,15 @@ public sealed partial class GraphCompiler
 		
 		CurrentResultInput = null;
 		
+		return sb.ToString();
+	}
+
+	private string GenerateAtmospherics()
+	{
+		var sb = new StringBuilder();
+
+		sb.AppendLine( "//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );" );
+
 		return sb.ToString();
 	}
 
