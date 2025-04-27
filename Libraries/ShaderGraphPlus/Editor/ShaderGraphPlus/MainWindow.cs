@@ -897,7 +897,7 @@ public class MainWindow : DockWindow
 		PromptSave( CreateNew );
 	}
 
-	private void ChangePage( GraphPage lighting )
+	private void ChangeGraphPage( GraphPage lighting )
 	{
 		if ( CurrentPage is GraphPage.Main )
 		{
@@ -1343,7 +1343,7 @@ public class MainWindow : DockWindow
 		_LightingHome.Enabled = false;
 		_LightingHome.Triggered +=  () =>
 		{
-			ChangePage( GraphPage.Lighting );
+			ChangeGraphPage( GraphPage.Lighting );
 		};
 		_LightingHome.ToolTip = "Lighting Page";
 		
@@ -1351,7 +1351,7 @@ public class MainWindow : DockWindow
 		_MainGraphHome.Enabled = false;
 		_MainGraphHome.Triggered += () =>
 		{
-			ChangePage( GraphPage.Main );
+			ChangeGraphPage( GraphPage.Main );
 		};
 		_MainGraphHome.ToolTip = "Main Page";
 
