@@ -125,7 +125,6 @@ public class MainWindow : DockWindow
 		_graph.IsSubgraph = IsSubgraph;
 		CurrentPage = GraphPage.Main;
 
-
 		CreateToolBar();
 		
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
@@ -1042,14 +1041,6 @@ public class MainWindow : DockWindow
 
 	}
 
-	private void UpdatePageButtonStates( ShadingModel shadingModel )
-	{
-		if ( shadingModel is ShadingModel.Custom )
-		{
-			_LightingHome.Enabled = true;
-		}
-	}
-
 	public void CreateNew()
 	{
 		_asset = null;
@@ -1081,7 +1072,7 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( result.Size * 0.5f );
 		}
 
-		// Add a LightingResult node so when the user changes ShadingMode to Custom, there wont be any compile errors.
+		// Add a LightingResult node to the internal _lightingGraph.
 		{
 			_graphView.Graph = _lightingGraph;
 			_graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
@@ -1172,7 +1163,10 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_properties.Target = _graph;
 
-		UpdatePageButtonStates( _graph.ShadingModel );
+		if ( _graph.ShadingModel is ShadingModel.Custom )
+		{
+			_LightingHome.Enabled = true;
+		}
 
 		if ( addToPath )
 			AddFileHistory( path );
