@@ -963,24 +963,26 @@ public class MainWindow : DockWindow
 	{
 		if ( CurrentPage is GraphPage.Main )
 		{
-			if ( _lightingGraph is not null )
+			_lightingGraph.ClearNodes();
+
+			foreach ( var node in _graph._lightingNodes.Values )
 			{
-				_lightingGraph.ClearNodes();
+				_lightingGraph.AddNode( node );
+			}
 
-				foreach ( var node in _graph._lightingNodes.Values )
-				{
-					_lightingGraph.AddNode( node );
-				}
+			_graphView.Graph = _lightingGraph;
 
-				_graphView.Graph = _lightingGraph;
+			if ( _lightingGraph is null )
+			{
+				var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
+				_graphView.Scale = 1;
+				_graphView.CenterOn( result.Size * 0.5f );
 			}
 			else
 			{
 				_graphView.Graph = _lightingGraph;
 
-				var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( LightingResult ) ), 0 );
-				_graphView.Scale = 1;
-				_graphView.CenterOn( result.Size * 0.5f );
+
 			}
 
 			var center = Vector2.Zero;
@@ -1008,7 +1010,6 @@ public class MainWindow : DockWindow
 		
 			foreach ( var node in _lightingGraph.Nodes )
 			{
-				
 				_graph.AddNode( node, _lightingGraph );
 			}
 
@@ -1156,7 +1157,13 @@ public class MainWindow : DockWindow
 		_graphView.Graph = _graph;
 		_lightingGraph = new();
 
-		InitLightingGraph();
+		if ( _graph._lightingNodes.Any() )
+		{
+			foreach ( var node in _graph._lightingNodes.Values )
+			{
+				_lightingGraph.AddNode( node );
+			}
+		}
 
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
@@ -1193,14 +1200,6 @@ public class MainWindow : DockWindow
 
 
 		GeneratePreviewCode();
-	}
-
-	private void InitLightingGraph()
-	{
-		foreach ( var node in _graph._lightingNodes.Values )
-		{
-			_lightingGraph.AddNode( node );
-		}
 	}
 
 	[Shortcut( "editor.save-as", "CTRL+SHIFT+S" )]
