@@ -4,8 +4,8 @@ Layer0
 {
 	shader "shaders/tests/customlighting/custom_lighting.shader"
 
-	Color "[0.098039 0.576471 0.247059 1.000000]"
+	Color "[0.000000 0.000000 0.000000 1.000000]"
 	g_flLightThreshold "0.500"
-	g_vLitColor "[0.752941 0.752941 0.752941 1.000000]"
+	g_vLitColor "[0.662745 0.662745 0.662745 1.000000]"
 	g_vShadeColor "[0.501961 0.501961 0.501961 1.000000]"
 }
