@@ -53,7 +53,9 @@ struct PixelInput
 VS
 {
     #include "common/vertex.hlsl"
-
+	
+	float g_flTest < UiGroup( ",0/,0/0" ); Default1( 0.25806516 ); Range1( 0, 1 ); >;
+	
     PixelInput MainVs( VertexInput v )
     {
 		
@@ -65,6 +67,10 @@ VS
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
+		
+		float l_0 = g_flTest;
+		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
+		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
     }
@@ -79,8 +85,8 @@ PS
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	
-	float4 g_vLitColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.90, 0.31, 0.31, 1.00 ); >;
-	float4 g_vShadeColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.73, 0.73, 0.79, 1.00 ); >;
+	float4 g_vLitColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.81, 0.81, 0.81, 1.00 ); >;
+	float4 g_vShadeColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.41, 0.41, 0.41, 1.00 ); >;
 	float g_flLightThreshold < UiType( Slider ); UiGroup( ",0/,0/0" ); Default1( 0.5 ); Range1( 0, 1 ); >;
 	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
