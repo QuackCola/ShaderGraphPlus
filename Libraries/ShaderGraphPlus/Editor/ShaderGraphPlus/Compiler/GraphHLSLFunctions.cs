@@ -758,6 +758,15 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 		return true;
 	}
 
+
+	internal static void RemoveFunction( string name )
+	{
+		if ( Functions.ContainsKey( name ) )
+		{
+			Functions.Remove( name );
+		}
+	}
+
 	static GraphHLSLFunctions()
 	{
 		CreateFunctions();

@@ -78,10 +78,13 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	
+	float4 g_vLitColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.90, 0.31, 0.31, 1.00 ); >;
+	float4 g_vShadeColor < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.73, 0.73, 0.79, 1.00 ); >;
+	float g_flLightThreshold < UiType( Slider ); UiGroup( ",0/,0/0" ); Default1( 0.5 ); Range1( 0, 1 ); >;
 	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 		
-	
 	static float4 Shade( PixelInput i, Material m  )
 	{
 		float3 Albedo = float3( 0, 0, 0 );
@@ -93,10 +96,20 @@ PS
 			Light light = Light::From( m.ScreenPosition.xy, m.WorldPosition, index );
 			
 			
-			float l_0 = dot( i.vNormalWs, light.Direction );
-			float3 l_1 = float3( l_0, l_0, l_0 ) + m.Albedo;
+			float4 l_0 = g_vLitColor;
+			float4 l_1 = g_vShadeColor;
+			float l_2 = light.Visibility * light.Attenuation;
+			float l_3 = dot( i.vNormalWs, light.Direction );
+			float l_4 = l_3 * 0.5;
+			float l_5 = l_4 + 0.5;
+			float l_6 = l_2 * l_5;
+			float l_7 = g_flLightThreshold;
+			float l_8 = step( l_6, l_7 );
+			float4 l_9 = lerp( l_0, l_1, l_8 );
+			float4 l_10 = l_9 * float4( light.Color, 0 );
+			float4 l_11 = l_10 + float4( m.Albedo, 0 );
 			
-			Albedo += l_1;
+			Albedo += l_11.xyz;
 			
 		}
 	
