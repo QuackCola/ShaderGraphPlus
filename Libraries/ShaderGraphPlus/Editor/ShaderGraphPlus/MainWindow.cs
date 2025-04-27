@@ -612,10 +612,6 @@ public class MainWindow : DockWindow
 	{
 		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
 
-		//SGPLog.Info( $"Current Page : {CurrentPage}" );
-
-		SGPLog.Info( $"LightingHistory Undo Level : {_lightingUndoStack.UndoLevel}" );
-
 		_undoOption.Enabled = undoStack.CanUndo;
 		_redoOption.Enabled = undoStack.CanRedo;
 		_undoMenuOption.Enabled = undoStack.CanUndo;
