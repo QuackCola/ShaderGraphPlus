@@ -998,14 +998,9 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( center );
 			_graphView.RestoreViewFromCookie();
 
-			_graphView.UndoStack = _lightingUndoStack;
-
 			CurrentPage = GraphPage.Lighting;
 
 			UpdatePageButtonStates( GraphPage.Lighting );
-			_undoHistory.History = _lightingUndoStack.Names;
-			_undoHistory.UndoStack = _lightingUndoStack;
-
 		}
 		else
 		{
@@ -1018,18 +1013,17 @@ public class MainWindow : DockWindow
 			}
 
 			_graphView.Graph = _graph;
-			_graphView.UndoStack = _undoStack;
 
 			CurrentPage = GraphPage.Main;
 
 			UpdatePageButtonStates( GraphPage.Main );
-			_undoHistory.History = _undoStack.Names;
-			_undoHistory.UndoStack = _undoStack;
 		}
 
+		UndoStack undoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
 
-		//_undoHistory.UndoStack = CurrentPage is GraphPage.Main ? _undoStack : _lightingUndoStack;
-		
+		_graphView.UndoStack = undoStack;
+		_undoHistory.History = undoStack.Names;
+		_undoHistory.UndoStack = undoStack;
 	}
 
 	private void UpdatePageButtonStates( GraphPage graphPage )
