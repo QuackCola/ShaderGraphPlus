@@ -1505,7 +1505,7 @@ public sealed partial class GraphCompiler
 					var lightResult = lightingResult.GetAlbedoResult( this, true );
 					var compiler = new GraphCompiler( _Asset, Graph, LightingGraph, false, true );
 		
-					if ( compiler.GenerateLighting( IsPreview, out string lightingGlobals, out string lightingFunctionResult ) )
+					if ( compiler.GenerateLighting( IsPreview, true, out string lightingGlobals, out string lightingFunctionResult ) )
 					{
 						Shade = lightingFunctionResult;
 						
