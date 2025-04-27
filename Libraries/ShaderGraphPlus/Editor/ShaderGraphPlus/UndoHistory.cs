@@ -30,11 +30,20 @@ public class UndoHistory : Widget
 
 	private readonly UndoHistoryListView _listView;
 
-	private UndoStack _undoStack;
 	private Option _undoOption;
 	private Option _redoOption;
 	private Option _clearOption;
 
+	private UndoStack _undoStack;
+	public UndoStack UndoStack
+	{
+		get => _undoStack;
+		set
+		{
+			_undoStack = value;
+			Update();
+		}
+	}
 	public Action OnUndo { get; set; }
 	public Action OnRedo { get; set; }
 	public Action<int> OnHistorySelected { get; set; }
