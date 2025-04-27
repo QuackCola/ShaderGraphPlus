@@ -32,11 +32,6 @@
         "Identifier": "1",
         "Output": "Result",
         "Subgraph": null
-      },
-      "PositionOffset": {
-        "Identifier": "2",
-        "Output": "Result",
-        "Subgraph": null
       }
     },
     {

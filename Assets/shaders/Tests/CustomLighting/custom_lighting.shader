@@ -53,9 +53,7 @@ struct PixelInput
 VS
 {
     #include "common/vertex.hlsl"
-	
-	float g_flTest < UiGroup( ",0/,0/0" ); Default1( 0.25806516 ); Range1( 0, 1 ); >;
-	
+
     PixelInput MainVs( VertexInput v )
     {
 		
@@ -67,10 +65,6 @@ VS
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
-		
-		float l_0 = g_flTest;
-		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
-		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
     }
@@ -134,8 +128,8 @@ PS
 		//	return DoToolsVis( Albedo, m, lightingTerms );
 	
 		// Composite atmospherics after lighting
-			//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );
-			
+		//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );
+		
 	
 		return float4(Albedo.xyz, m.Opacity);
 	}

@@ -1308,7 +1308,7 @@ public sealed partial class GraphCompiler
 			IndentString( sb.ToString(), 1),
 			IndentString( locals, 2 ),
 			IndentString( material, 2 ),
-			IndentString( GenerateAtmospherics(), 2 )
+			IndentString( GenerateAtmospherics(), 1 )
 		);
 
 		result = str;
