@@ -117,26 +117,26 @@ public class MainWindow : DockWindow
 	{
 		DeleteOnClose = true;
 
-        Title = FileType;
-        Size = new Vector2( 1700, 1050 );
-
+		Title = FileType;
+		Size = new Vector2( 1700, 1050 );
+		
 		_graph = new();
 		_lightingGraph = new();
-        _graph.IsSubgraph = IsSubgraph;
+		_graph.IsSubgraph = IsSubgraph;
 		CurrentPage = GraphPage.Main;
 
 
 		CreateToolBar();
 		
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
-		    .Where(x => System.IO.File.Exists(x)).ToList();
+			.Where(x => System.IO.File.Exists(x)).ToList();
 		
 		CreateUI();
 		Show();
 		CreateNew();
 
-        OpenProjectCreationDialog();
-    }
+		OpenProjectCreationDialog();
+	}
 
 	private void OpenProjectCreationDialog()
 	{
@@ -146,7 +146,7 @@ public class MainWindow : DockWindow
 		ProjectCreator.Show();
 		ProjectCreator.OnProjectCreated += OpenProject;
 
-    }
+	}
 
 	public void AssetOpen( Asset asset )
 	{
