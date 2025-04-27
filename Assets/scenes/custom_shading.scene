@@ -24,14 +24,13 @@
           "Title": "minimal",
           "Version": null
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "bfc59c12-1ed2-4f91-8956-a95a315eac3c",
       "Flags": 0,
       "Name": "Sun",
-      "Rotation": "-0.0729315,0.4822396,0.1305433,0.8631827",
+      "Rotation": "-0.06948944,0.4594799,0.1324076,0.87551",
       "Tags": "light_directional,light",
       "Enabled": true,
       "Components": [
@@ -50,8 +49,7 @@
           "Shadows": true,
           "SkyColor": "0.2532,0.32006,0.35349,1"
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "00344a8c-fa5e-45ae-b12a-10bb781a1dc3",
@@ -100,8 +98,7 @@
           "ZFar": 4096,
           "ZNear": 16
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "6ad70641-3c6c-4402-9c85-9a4969af4764",
@@ -154,8 +151,7 @@
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "3c2490ef-54a0-49bb-8f13-490e40aa51d1",
@@ -237,8 +233,7 @@
           "RigidbodyFlags": 0,
           "StartAsleep": false
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "523e3e8f-a4ec-4ec1-af9a-d86ffc9c17e1",
@@ -320,8 +315,7 @@
           "RigidbodyFlags": 0,
           "StartAsleep": false
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "5b483a09-bbf2-4949-98c7-a73b789d0ee7",
@@ -403,15 +397,14 @@
           "RigidbodyFlags": 0,
           "StartAsleep": false
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "3ee1c9f4-07be-4e0b-8b23-67bee2d8ec8a",
       "Flags": 0,
       "Name": "Camera",
-      "Position": "-267.452,-379.653,297.7903",
-      "Rotation": "-0.1448582,0.2860239,0.4279631,0.8450171",
+      "Position": "-160,-128,96",
+      "Rotation": "-0.04818482,0.09134166,0.4640876,0.8797486",
       "Enabled": true,
       "Components": [
         {
@@ -482,15 +475,25 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "Scale": 0.2
+        },
+        {
+          "__type": "NoClip",
+          "__guid": "22573092-155f-4d31-b151-2ec40f942308",
+          "MoveSpeed": 600,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "51e89b67-fdf7-460c-81c0-a00ddd6cf09d",
       "Flags": 0,
       "Name": "Sphere",
-      "Position": "-9.000715,0,66.15166",
+      "Position": "-64,97.63226,64.00002",
       "Enabled": true,
       "Components": [
         {
@@ -499,7 +502,7 @@
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "MaterialGroup": null,
-          "MaterialOverride": "materials/error.vmat",
+          "MaterialOverride": "shaders/tests/customlighting/custom_lighting.vmat",
           "Model": "models/dev/sphere.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -516,14 +519,13 @@
           "RenderType": "On",
           "Tint": "1,1,1,1"
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "b21bfa3c-e8a6-47d6-a262-1d4718de5663",
       "Flags": 0,
       "Name": "Point Light",
-      "Position": "-160,96,64",
+      "Position": "-129.4471,-9.143906,79.35562",
       "Tags": "light_point,light",
       "Enabled": true,
       "Components": [
@@ -543,8 +545,7 @@
           "Radius": 400,
           "Shadows": true
         }
-      ],
-      "Children": []
+      ]
     },
     {
       "__guid": "33679995-d7a2-4908-8c76-0e96c66c2158",
@@ -570,14 +571,95 @@
           "Radius": 400,
           "Shadows": true
         }
-      ],
-      "Children": []
+      ]
+    },
+    {
+      "__guid": "48c44e27-84f2-4f03-b588-41c8a0f197ee",
+      "Flags": 0,
+      "Name": "citizen",
+      "Position": "-11.66981,75.01684,0.03532198",
+      "Rotation": "0,0,-0.9914449,0.1305263",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.SkinnedModelRenderer",
+          "__guid": "db096674-c4f5-490f-88d6-4a3cc6728856",
+          "AnimationGraph": "models/citizen/citizen.vanmgrph",
+          "BodyGroups": 341,
+          "BoneMergeTarget": null,
+          "CreateAttachments": false,
+          "CreateBoneObjects": false,
+          "MaterialGroup": null,
+          "MaterialOverride": "shaders/tests/customlighting/custom_lighting.vmat",
+          "Model": "models/citizen/citizen.vmdl",
+          "Morphs": {},
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Parameters": {
+            "bools": {},
+            "ints": {},
+            "floats": {},
+            "vectors": {},
+            "rotations": {}
+          },
+          "PlaybackRate": 1,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Sequence": {
+            "Name": "Dab"
+          },
+          "Tint": "1,1,1,1",
+          "UseAnimGraph": false
+        },
+        {
+          "__type": "Sandbox.ModelPhysics",
+          "__guid": "14db942d-1755-4efa-b333-1be68bd12145",
+          "__enabled": false,
+          "Locking": {
+            "X": false,
+            "Y": false,
+            "Z": false,
+            "Pitch": false,
+            "Yaw": false,
+            "Roll": false
+          },
+          "Model": "models/citizen/citizen.vmdl",
+          "MotionEnabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Renderer": {
+            "_type": "component",
+            "component_id": "db096674-c4f5-490f-88d6-4a3cc6728856",
+            "go": "48c44e27-84f2-4f03-b588-41c8a0f197ee",
+            "component_type": "SkinnedModelRenderer"
+          },
+          "RigidbodyFlags": 0
+        }
+      ]
     }
   ],
   "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 30,
     "NetworkInterpolation": true,
+    "PhysicsSubSteps": 1,
+    "ThreadedAnimation": true,
     "TimeScale": 1,
-    "WantsSystemScene": true,
+    "UseFixedUpdate": true,
     "Metadata": {
       "Title": "minimal"
     },
