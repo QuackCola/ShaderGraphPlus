@@ -1503,6 +1503,8 @@ public sealed partial class GraphCompiler
 
 			if ( resultLighting != null )
 			{
+				string funcCall = "";
+
 				if ( resultLighting is LightingResult lightingResult )
 				{
 					var lightResult = lightingResult.GetAlbedoResult( this, true );
@@ -1511,11 +1513,16 @@ public sealed partial class GraphCompiler
 					if ( compiler.GenerateLighting( IsPreview, out string lightingGlobals, out string lightingFunctionResult ) )
 					{
 						Shade = lightingFunctionResult;
+						
 						var func = RegisterFunction( Shade, forceRegister: true );
-						var funcCall = ResultFunction( "Shade", "i, m");
+						funcCall = ResultFunction( "Shade", "i, m");
+						
 						ShaderResult.LightingFunctionGlobals = lightingGlobals;
 					}
 				}
+
+				if ( string.IsNullOrWhiteSpace( funcCall ) )
+					return null;
 
 				if ( !GetUnlitResult( out string albedo, out string opacity ) )
 					return null;
@@ -1525,7 +1532,7 @@ public sealed partial class GraphCompiler
 				sb.AppendLine( $"m.Albedo = {albedo};" );
 				sb.AppendLine( $"m.Opacity = {opacity};" );
 				sb.AppendLine();
-				sb.AppendLine( $"return Shade( i, m );" );
+				sb.AppendLine( $"{funcCall};" );
 				sb.Append( $"//return float4( {albedo}, {opacity} );" );
 
 				pixelOutput = sb.ToString();
