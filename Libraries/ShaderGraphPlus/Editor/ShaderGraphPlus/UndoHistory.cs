@@ -44,6 +44,7 @@ public class UndoHistory : Widget
 			Update();
 		}
 	}
+
 	public Action OnUndo { get; set; }
 	public Action OnRedo { get; set; }
 	public Action<int> OnHistorySelected { get; set; }
