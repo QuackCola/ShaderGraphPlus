@@ -5,16 +5,6 @@ public class ShaderGraphPlusView : GraphView
 	private readonly MainWindow _window;
 	private  UndoStack _undoStack;
 
-	public UndoStack UndoStack
-	{
-		get => _undoStack;
-
-		set
-		{
-			_undoStack = value;
-		}
-	}
-
 	protected override string ClipboardIdent => "shadergraphplus";
 
 	protected override string ViewCookie => _window?.AssetPath;
@@ -33,6 +23,12 @@ public class ShaderGraphPlusView : GraphView
 	{
 		get => (ShaderGraphPlus)base.Graph;
 		set => base.Graph = value;
+	}
+
+	public UndoStack UndoStack
+	{
+		get => _undoStack;
+		set => _undoStack = value;
 	}
 
 	private readonly Dictionary<string, INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
