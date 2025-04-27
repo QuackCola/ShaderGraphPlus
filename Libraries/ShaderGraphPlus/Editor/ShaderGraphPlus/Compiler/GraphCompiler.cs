@@ -55,7 +55,12 @@ public sealed partial class GraphCompiler
 	public List<ShaderGraphPlus> Subgraphs { get; private set; }
 	public HashSet<string> PixelIncludes { get; private set; } = new();
 	public HashSet<string> VertexIncludes { get; private set; } = new();
-	
+
+	/// <summary>
+	///  Contains the generated lighting function if any.
+	/// </summary>
+	internal string Shade { get; set; }
+
 	public Asset _Asset { get; private set; }
 
 	/// <summary>
@@ -84,8 +89,8 @@ public sealed partial class GraphCompiler
 		/// </summary>
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
 		public int VoidLocalCount { get; set; } = 0;
-
-		public string LightingFunctionCode  = "";
+		
+		public string LightingFunctionGlobals { get; set; }
 	}
 
 	public enum ShaderStage
@@ -121,6 +126,8 @@ public sealed partial class GraphCompiler
 
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
+
+	public bool GeneratingLightingFunc { get; set; } = false;
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, ShaderGraphPlus lightingPageGraph, bool preview, bool isLightingPage = false )
 	{
@@ -197,12 +204,19 @@ public sealed partial class GraphCompiler
 		return $"{name}( {string.Join( ", ", args )} )";
 	}
 
-	public string RegisterFunction( string code, [CallerArgumentExpression( "code" )] string propertyName = "" )
+	public string RegisterFunction( string code, [CallerArgumentExpression( "code" )] string propertyName = "", bool forceRegister = false )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( propertyName ) )
 		{
 			GraphHLSLFunctions.RegisterFunction( propertyName, code );
 		}
+		else if ( forceRegister )
+		{
+			GraphHLSLFunctions.RemoveFunction( propertyName );
+			GraphHLSLFunctions.RegisterFunction( propertyName, code );
+		}
+
+
 		return propertyName;
 	}
 
@@ -1263,17 +1277,29 @@ public sealed partial class GraphCompiler
 	}
 	*/
 
-	private string GenerateLighting()
+
+	private bool GenerateLighting( bool isPreview, out string globals,out string result )
 	{
+		globals = ""; 
+		result = "";
+
+		GeneratingLightingFunc = isPreview;
+
+
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
-			return null;
+			return false;
 
 		var material = GenerateLightingResult();
+		
 		var locals = GenerateLocals();
+		globals = GenerateGlobals();
 
 		if ( Errors.Any() )
-			return null;
+			return false;
+
+
+		Log.Info( globals );
 
 		var sb = new StringBuilder();
 
@@ -1288,7 +1314,9 @@ public sealed partial class GraphCompiler
 
 		
 
-		return str;
+		result = str;
+
+		return true;
 	}
 
 	/// <summary>
@@ -1347,7 +1375,7 @@ public sealed partial class GraphCompiler
 
 	private static string GenerateFunctions( CompileResult result )
 	{
-		if ( !result.Functions.Any() && string.IsNullOrWhiteSpace( result.LightingFunctionCode ) )
+		if ( !result.Functions.Any() )
 			return null;
 
 		var sb = new StringBuilder();
@@ -1357,13 +1385,6 @@ public sealed partial class GraphCompiler
 			{
 				sb.Append( code );
 			}
-		}
-
-		sb.AppendLine();
-
-		if ( !string.IsNullOrWhiteSpace( result.LightingFunctionCode ) )
-		{
-			sb.Append( result.LightingFunctionCode );
 		}
 
 		return sb.ToString();
@@ -1455,11 +1476,6 @@ public sealed partial class GraphCompiler
 		return true;
 	}
 
-	private void SetLightingFunction( string function )
-	{
-		ShaderResult.LightingFunctionCode = function;
-	}
-
 	private string GeneratePixelOutput()
 	{
 		Stage = ShaderStage.Pixel;
@@ -1491,9 +1507,14 @@ public sealed partial class GraphCompiler
 				{
 					var lightResult = lightingResult.GetAlbedoResult( this, true );
 					var compiler = new GraphCompiler( _Asset, Graph, LightingGraph, false, true );
-					var resultstring = compiler.GenerateLighting();
-
-					SetLightingFunction( resultstring );
+		
+					if ( compiler.GenerateLighting( IsPreview, out string lightingGlobals, out string lightingFunctionResult ) )
+					{
+						Shade = lightingFunctionResult;
+						var func = RegisterFunction( Shade, forceRegister: true );
+						var funcCall = ResultFunction( "Shade", "i, m");
+						ShaderResult.LightingFunctionGlobals = lightingGlobals;
+					}
 				}
 
 				if ( !GetUnlitResult( out string albedo, out string opacity ) )
@@ -1598,7 +1619,15 @@ public sealed partial class GraphCompiler
 				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
 			}
 		}
-		
+
+		//if ( IsPs )
+		{
+			//if ( !string.IsNullOrWhiteSpace( ShaderResult.LightingFunctionGlobals ) )
+			{
+				sb.Append( ShaderResult.LightingFunctionGlobals );
+			}
+		}
+
 		if ( IsPreview )
 		{
 			foreach ( var result in ShaderResult.TextureInputs )

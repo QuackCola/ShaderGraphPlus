@@ -4,5 +4,8 @@ Layer0
 {
 	shader "shaders/tests/customlighting/custom_lighting.shader"
 
-	Color "textures/sbox_logo.png"
+	Color "[0.098039 0.576471 0.247059 1.000000]"
+	g_flLightThreshold "0.714"
+	g_vLitColor "[1.000000 1.000000 1.000000 1.000000]"
+	g_vShadeColor "[0.729412 0.729412 0.788235 1.000000]"
 }
