@@ -1532,7 +1532,7 @@ public sealed partial class GraphCompiler
 				sb.AppendLine( $"m.Albedo = {albedo};" );
 				sb.AppendLine( $"m.Opacity = {opacity};" );
 				sb.AppendLine();
-				sb.AppendLine( $"{funcCall};" );
+				sb.AppendLine( $"return {funcCall};" );
 				sb.Append( $"//return float4( {albedo}, {opacity} );" );
 
 				pixelOutput = sb.ToString();
