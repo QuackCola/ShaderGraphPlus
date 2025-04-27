@@ -1285,7 +1285,6 @@ public sealed partial class GraphCompiler
 
 		GeneratingLightingFunc = isPreview;
 
-
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
 			return false;
@@ -1297,7 +1296,6 @@ public sealed partial class GraphCompiler
 
 		if ( Errors.Any() )
 			return false;
-
 
 		Log.Info( globals );
 
@@ -1311,8 +1309,6 @@ public sealed partial class GraphCompiler
 			IndentString( locals, 2 ),
 			IndentString( material, 2 )
 		);
-
-		
 
 		result = str;
 
@@ -1389,8 +1385,6 @@ public sealed partial class GraphCompiler
 
 		return sb.ToString();
 	}
-
-
 
 	public static string IndentString( string input, int tabCount )
 	{
