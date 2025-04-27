@@ -1297,7 +1297,7 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return false;
 
-		Log.Info( globals );
+		//SGPLog.Info( globals );
 
 		var sb = new StringBuilder();
 
