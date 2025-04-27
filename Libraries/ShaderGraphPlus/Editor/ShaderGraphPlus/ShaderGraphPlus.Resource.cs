@@ -16,6 +16,7 @@ public enum ShadingModel
 	Lit,
 	[Icon( "brightness_3" )]
 	Unlit,
+	[Icon( "build" )]
 	Custom,
 }
 
