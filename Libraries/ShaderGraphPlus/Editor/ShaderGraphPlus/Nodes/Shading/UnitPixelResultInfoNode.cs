@@ -1,6 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title( "Unlit Pixel Result Info" ), Description( "the result of your pixel shader before lighting." ), Category( "" )]
+[Title( "Unlit Pixel Result Info" ), Description( "the result of your pixel shader before lighting." ), Category( "Shading" )]
 public sealed class UnitPixelResultInfoNode : ShaderNodePlus
 {
 	[Output( typeof( Vector3 ) )]

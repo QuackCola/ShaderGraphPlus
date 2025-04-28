@@ -1,6 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title( "Light Info" ), Description( "" ), Category( "" )]
+[Title( "Light Info" ), Description( "" ), Category( "Shading" )]
 public sealed class LightInfoNode : ShaderNodePlus
 {
 
