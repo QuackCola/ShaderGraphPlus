@@ -1981,7 +1981,15 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
-		sb.AppendLine( "//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );" );
+		var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
+		
+		if ( resultNode == null )
+			return null;
+
+		if ( resultNode.ApplyFog )
+		{
+			sb.AppendLine( "//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );" );
+		}
 
 		return sb.ToString();
 	}
