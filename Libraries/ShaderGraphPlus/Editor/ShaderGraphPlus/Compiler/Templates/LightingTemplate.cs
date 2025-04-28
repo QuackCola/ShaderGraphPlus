@@ -16,9 +16,9 @@ static float4 Shade( PixelInput i, Material m  )
 
 
 	// Calcuate Indirect Lighting
+	float3 indirectColor = 0;
 	{{
-
-
+{3}
 	}}
 
 	if( DepthNormals::WantsDepthNormals() )
@@ -29,7 +29,7 @@ static float4 Shade( PixelInput i, Material m  )
 	//	return DoToolsVis( Albedo, m, lightingTerms );
 
 	// Composite atmospherics after lighting
-{3}
+{4}
 
 	return float4(Albedo.xyz, m.Opacity);
 }}
