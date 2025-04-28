@@ -4,7 +4,7 @@ namespace Editor.ShaderGraphPlus;
 /// <summary>
 /// Final result of the lighting calcuations.
 /// </summary>
-[Title( "Light Result" ), Icon( "output" )]
+[Title( "Light Result" ), Icon( "output" ), Category( "Shading" )]
 public sealed class LightingResult : BaseResult
 {
 	[Hide]
