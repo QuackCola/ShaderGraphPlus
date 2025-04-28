@@ -432,9 +432,27 @@
           "ZNear": 10
         },
         {
+          "__type": "Sandbox.AmbientOcclusion",
+          "__guid": "c2de2401-f0b9-460c-8c0f-6d2a5e4afa29",
+          "__version": 1,
+          "DenoiseMode": "Temporal",
+          "FalloffRange": 0.75,
+          "Intensity": 0.15,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Quality": "High",
+          "Radius": 128,
+          "ThinCompensation": 0
+        },
+        {
           "__type": "Sandbox.Bloom",
           "__guid": "d73ef723-c888-41d4-802e-f797c79318be",
           "__version": 1,
+          "__enabled": false,
           "Gamma": 2.2,
           "Mode": "Additive",
           "OnComponentDestroy": null,
@@ -451,6 +469,7 @@
           "__type": "Sandbox.Tonemapping",
           "__guid": "9d76f362-7227-40eb-a189-69353c780c46",
           "__version": 3,
+          "__enabled": false,
           "AutoExposureEnabled": true,
           "ExposureCompensation": 0,
           "ExposureMethod": "RGB",
@@ -468,6 +487,7 @@
         {
           "__type": "Sandbox.Sharpen",
           "__guid": "0bffee5e-19f2-41c4-88f9-faefbcce6bf4",
+          "__enabled": false,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -577,7 +597,7 @@
       "__guid": "48c44e27-84f2-4f03-b588-41c8a0f197ee",
       "Flags": 0,
       "Name": "citizen",
-      "Position": "-11.66981,75.01684,0.03532198",
+      "Position": "-13.57774,79.40327,0.03532198",
       "Rotation": "0,0,-0.9914449,0.1305263",
       "Enabled": true,
       "Components": [
@@ -649,6 +669,162 @@
           "RigidbodyFlags": 0
         }
       ]
+    },
+    {
+      "__guid": "777e26b9-8161-4bf0-a162-df363c8637d7",
+      "Flags": 0,
+      "Name": "citizen (1)",
+      "Position": "-13.57774,35.98178,0.03532198",
+      "Rotation": "0,0,-0.9914449,0.1305263",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.SkinnedModelRenderer",
+          "__guid": "98036650-a735-4a45-8c53-58f6e4e71e31",
+          "AnimationGraph": "models/citizen/citizen.vanmgrph",
+          "BodyGroups": 341,
+          "BoneMergeTarget": null,
+          "CreateAttachments": false,
+          "CreateBoneObjects": false,
+          "MaterialGroup": null,
+          "MaterialOverride": "shaders/tests/customlighting/basic_ambient.vmat",
+          "Model": "models/citizen/citizen.vmdl",
+          "Morphs": {},
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Parameters": {
+            "bools": {},
+            "ints": {},
+            "floats": {},
+            "vectors": {},
+            "rotations": {}
+          },
+          "PlaybackRate": 1,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Sequence": {
+            "Name": "Dab"
+          },
+          "Tint": "1,1,1,1",
+          "UseAnimGraph": false
+        },
+        {
+          "__type": "Sandbox.ModelPhysics",
+          "__guid": "30fb3c3a-ad56-4f61-87dc-aa87239170e7",
+          "__enabled": false,
+          "Locking": {
+            "X": false,
+            "Y": false,
+            "Z": false,
+            "Pitch": false,
+            "Yaw": false,
+            "Roll": false
+          },
+          "Model": "models/citizen/citizen.vmdl",
+          "MotionEnabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Renderer": {
+            "_type": "component",
+            "component_id": "98036650-a735-4a45-8c53-58f6e4e71e31",
+            "go": "777e26b9-8161-4bf0-a162-df363c8637d7",
+            "component_type": "SkinnedModelRenderer"
+          },
+          "RigidbodyFlags": 0
+        }
+      ]
+    },
+    {
+      "__guid": "1931e455-a99d-4ccf-917a-04c7b5f4633a",
+      "Flags": 0,
+      "Name": "plastic_crate_04",
+      "Position": "15.45596,-26.56389,0.000001744735",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "__guid": "e526175b-e680-45fb-a46f-057f37906313",
+          "BodyGroups": 18446744073709551615,
+          "CreateAttachments": false,
+          "MaterialGroup": null,
+          "MaterialOverride": "shaders/tests/customlighting/basic_ambient.vmat",
+          "Model": "models/props/plastic_crate/plastic_crate_04.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "RenderOptions": {
+            "GameLayer": true,
+            "OverlayLayer": false,
+            "BloomLayer": false,
+            "AfterUILayer": false
+          },
+          "RenderType": "On",
+          "Tint": "1,1,1,1"
+        },
+        {
+          "__type": "Sandbox.ModelCollider",
+          "__guid": "d50ed63b-50f2-441a-a543-14b568d02cfe",
+          "Friction": null,
+          "IsTrigger": false,
+          "Model": "models/props/plastic_crate/plastic_crate_04.vmdl",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OnObjectTriggerEnter": null,
+          "OnObjectTriggerExit": null,
+          "OnTriggerEnter": null,
+          "OnTriggerExit": null,
+          "Static": false,
+          "Surface": null,
+          "SurfaceVelocity": "0,0,0"
+        },
+        {
+          "__type": "Sandbox.Rigidbody",
+          "__guid": "dc29288b-c9db-43e7-aaac-4fe3126faf1d",
+          "AngularDamping": 0,
+          "Gravity": true,
+          "LinearDamping": 0,
+          "Locking": {
+            "X": false,
+            "Y": false,
+            "Z": false,
+            "Pitch": false,
+            "Yaw": false,
+            "Roll": false
+          },
+          "MassCenterOverride": "0,0,0",
+          "MassOverride": 0,
+          "MotionEnabled": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "OverrideMassCenter": false,
+          "RigidbodyFlags": 0,
+          "StartAsleep": false
+        }
+      ]
     }
   ],
   "SceneProperties": {
@@ -679,6 +855,8 @@
   "ResourceVersion": 2,
   "Title": "minimal",
   "Description": null,
-  "__references": [],
+  "__references": [
+    "facepunch.plastic_crate_04#47052"
+  ],
   "__version": 2
 }
