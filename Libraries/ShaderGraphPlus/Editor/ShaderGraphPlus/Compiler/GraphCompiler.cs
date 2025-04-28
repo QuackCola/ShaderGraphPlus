@@ -97,18 +97,37 @@ public sealed partial class GraphCompiler
 	{
 		Vertex,
 		Pixel,
+		Indirect, 
 	}
 
 	public ShaderStage Stage { get; private set; }
 	public bool IsVs => Stage == ShaderStage.Vertex;
 	public bool IsPs => Stage == ShaderStage.Pixel;
+	public bool IsIndirect => Stage == ShaderStage.Indirect;
+
 	private string StageName => Stage == ShaderStage.Vertex ? "vs" : "ps";
 
 	private string CurrentResultInput;
 
 	private readonly CompileResult VertexResult = new();
 	private readonly CompileResult PixelResult = new();
-	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
+	private readonly CompileResult IndirectResult = new();
+	private CompileResult ShaderResult => GetCompileResult();//Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
+
+	private CompileResult GetCompileResult()
+	{
+		switch ( Stage )
+		{
+			case ShaderStage.Vertex:
+				return VertexResult;
+			case ShaderStage.Pixel:
+				return PixelResult;
+			case ShaderStage.Indirect:
+				return IndirectResult;
+			default:
+				return null;
+		}
+	}
 
 	public Action<string, object> OnAttribute { get; set; }
 
@@ -1308,6 +1327,7 @@ public sealed partial class GraphCompiler
 			IndentString( sb.ToString(), 1),
 			IndentString( locals, 2 ),
 			IndentString( material, 2 ),
+			IndentString( GenerateIndirect(), 2 ),
 			IndentString( GenerateAtmospherics(), 1 )
 		);
 
@@ -1928,6 +1948,9 @@ public sealed partial class GraphCompiler
 		
 		foreach ( var property in GetNodeInputProperties( resultNode.GetType() ) )
 		{
+			if ( property.Name == nameof( LightingResult.Indirect ) )
+				continue;
+
 			CurrentResultInput = property.Name;
 			visited.Add( property.Name );
 
@@ -1974,6 +1997,43 @@ public sealed partial class GraphCompiler
 		
 		CurrentResultInput = null;
 		
+		return sb.ToString();
+	}
+
+	private string GenerateIndirect()
+	{
+		Stage = ShaderStage.Indirect;
+
+		var resultNode = Graph.LightingNodes.OfType<LightingResult>().FirstOrDefault();
+		if ( resultNode == null )
+			return null;
+
+		var sb = new StringBuilder();
+
+		var indirectInput = resultNode.Indirect;
+
+		NodeResult result;
+
+		if ( indirectInput is NodeInput connection && connection.IsValid() )
+		{
+			result = Result( connection );
+			
+			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
+			{
+				var componentCount = GetComponentCount( typeof( Vector3 ) );
+				
+				sb.AppendLine();
+				
+				foreach ( var local in ShaderResult.Results)
+				{
+					sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
+				}
+				
+				sb.AppendLine( $"indirectColor = { result.Cast( componentCount ) };" );
+				sb.AppendLine( $"Albedo += indirectColor;" );
+			}
+		}
+
 		return sb.ToString();
 	}
 

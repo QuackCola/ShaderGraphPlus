@@ -11,6 +11,10 @@ public sealed class LightingResult : BaseResult
 	[Input( typeof( Vector3 ) )]
 	public NodeInput Albedo { get; set; }
 
+	[Hide]
+	[Input( typeof( Vector3 ) )]
+	public NodeInput Indirect { get; set; }
+
 	/// <summary>
 	/// If you want fog to be applied to your fragment, set this to true.
 	/// </summary>
