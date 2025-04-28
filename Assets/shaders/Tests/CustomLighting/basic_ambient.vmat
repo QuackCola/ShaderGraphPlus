@@ -5,7 +5,7 @@ Layer0
 	shader "shaders/tests/customlighting/basic_ambient.shader"
 
 	Color "[0.000000 0.000000 0.000000 1.000000]"
-	g_flLightThreshold "0.607"
+	g_flLightThreshold "0.500"
 	g_vLitColor "[0.811765 0.811765 0.811765 1.000000]"
 	g_vShadeColor "[0.411765 0.411765 0.411765 1.000000]"
 }
