@@ -1,0 +1,506 @@
+{
+  "IsSubgraph": false,
+  "HasCustomLighting": true,
+  "Path": "shaders/tests/customlighting/basic_ambient.sgrph",
+  "Model": "models/props/plastic_crate/plastic_crate_03.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Custom",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-12,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/sbox_logo.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Color",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "-348,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.25806516,
+      "Name": "Test",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-348,-84",
+      "HandleOffsets": {}
+    }
+  ],
+  "lighting_nodes": [
+    {
+      "_class": "LightingResult",
+      "ApplyFog": true,
+      "Identifier": "0",
+      "Position": "2604,-96",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "28",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Indirect": {
+        "Identifier": "32",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "LightInfoNode",
+      "Identifier": "1",
+      "Position": "-456,-504",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "300,240",
+      "Color": "Green",
+      "Title": "",
+      "Description": "All nodes connected to the Albedo input of Light Result will have their code generated inside a for loop in the resulting shader, looping over all lights in the scene.",
+      "Layer": 2,
+      "Identifier": "2",
+      "Position": "-324,-756",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "DotProduct",
+      "Identifier": "3",
+      "Position": "72,-180",
+      "HandleOffsets": {},
+      "InputA": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputB": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 0.5,
+      "Identifier": "4",
+      "Position": "696,-348",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "WorldNormal",
+      "Identifier": "5",
+      "Position": "-108,-192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "412,224",
+      "Color": "Green",
+      "Title": "NdotL",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "6",
+      "Position": "-156,-276",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "7",
+      "Position": "-84,-120",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "ResultB",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 0.5,
+      "Identifier": "8",
+      "Position": "840,-348",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "9",
+      "Position": "-108,-408",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "ResultE",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "10",
+      "Position": "-108,-372",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "ResultD",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Light Visibility",
+      "Identifier": "11",
+      "Position": "528,-420",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Light Attenuation",
+      "Identifier": "12",
+      "Position": "528,-372",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "13",
+      "Position": "792,-456",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "14",
+      "Position": "996,-372",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "13",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "448,284",
+      "Color": "Green",
+      "Title": "Light Intensity",
+      "Description": "",
+      "Layer": 3,
+      "Identifier": "15",
+      "Position": "648,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.5,
+      "Name": "LightThreshold",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Slider"
+      },
+      "Identifier": "16",
+      "Position": "1212,-456",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Step",
+      "DefaultInput": 0,
+      "DefaultEdge": 0,
+      "Identifier": "17",
+      "Position": "1404,-372",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "16",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Edge": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "412,260",
+      "Color": "Green",
+      "Title": "Toon Light",
+      "Description": "",
+      "Layer": 4,
+      "Identifier": "18",
+      "Position": "1176,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Lerp",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Fraction": 0.5,
+      "Identifier": "19",
+      "Position": "1872,-432",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "20",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "21",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "C": {
+        "Identifier": "17",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0.8093,0.8093,0.8093,1",
+      "Name": "LitColor",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "20",
+      "Position": "1644,-804",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "Value": "0.41395,0.41395,0.41395,1",
+      "Name": "ShadeColor",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "21",
+      "Position": "1644,-624",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "876,572",
+      "Color": "Green",
+      "Title": "Result Color",
+      "Description": "",
+      "Layer": 5,
+      "Identifier": "22",
+      "Position": "1608,-876",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "23",
+      "Position": "-120,-468",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "ResultA",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Light Color",
+      "Identifier": "24",
+      "Position": "600,-192",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "23",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": "Light Color",
+      "Identifier": "25",
+      "Position": "2100,-216",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "24",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "26",
+      "Position": "2172,-432",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "19",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "25",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "UnitPixelResultInfoNode",
+      "Identifier": "27",
+      "Position": "2136,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "28",
+      "Position": "2364,-168",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "26",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "27",
+        "Output": "ResultA",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ScreenPosition",
+      "Mode": "Raw",
+      "Identifier": "29",
+      "Position": "1548,-96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CombineVector",
+      "DefaultX": 0,
+      "DefaultY": 0,
+      "DefaultZ": 0,
+      "DefaultW": 0,
+      "Identifier": "30",
+      "Position": "1932,-96",
+      "HandleOffsets": {},
+      "X": {
+        "Identifier": "31",
+        "Output": "X",
+        "Subgraph": null
+      },
+      "Y": {
+        "Identifier": "31",
+        "Output": "Y",
+        "Subgraph": null
+      },
+      "Z": {
+        "Identifier": "31",
+        "Output": "Z",
+        "Subgraph": null
+      },
+      "W": {
+        "Identifier": "29",
+        "Output": "W",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SplitVector",
+      "Identifier": "31",
+      "Position": "1728,-132",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "29",
+        "Output": "XYZ",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SSAOSampleNode",
+      "Identifier": "32",
+      "Position": "2160,0",
+      "HandleOffsets": {},
+      "ScreenPosition": {
+        "Identifier": "30",
+        "Output": "XYZW",
+        "Subgraph": null
+      }
+    }
+  ]
+}
