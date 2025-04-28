@@ -15,6 +15,6 @@ public sealed class SSAOSampleNode : ShaderNodePlus
 	{
 		var screenposition = compiler.ResultOrDefault( ScreenPosition, Vector4.Zero );
 
-		return new NodeResult( ResultType.Float, $"ScreenSpaceAmbientOcclusion::Sample( {screenposition} )", constant: true );
+		return new NodeResult( ResultType.Float, $"ScreenSpaceAmbientOcclusion::Sample( {screenposition} )", constant: false );
 	};
 }
