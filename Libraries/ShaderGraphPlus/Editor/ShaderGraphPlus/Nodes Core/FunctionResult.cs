@@ -1,5 +1,6 @@
 ﻿
 using Editor.NodeEditor;
+using Sandbox.Resources;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -31,9 +32,11 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 	public override void OnFrame()
 	{
 		var hashCode = 0;
+		int index = 1;
+
 		foreach ( var output in FunctionOutputs )
 		{
-			hashCode += output.GetHashCode();
+			hashCode += output.GetHashCode() * index;
 		}
 		if ( hashCode != _lastHashCode )
 		{
@@ -55,16 +58,21 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 		{
 			foreach ( var output in FunctionOutputs.OrderBy( x => x.Priority ) )
 			{
-				if ( output.Type is null ) continue;
+				var outputType = output.Type;
+				if ( outputType == typeof( ColorTextureGenerator ) )
+				{
+					outputType = typeof( Color );
+				}
+				if ( outputType is null ) continue;
 				var info = new PlugInfo()
 				{
 					Id = output.Id,
 					Name = output.Name,
-					Type = output.Type,
+					Type = outputType,
 					DisplayInfo = new()
 					{
 						Name = output.Name,
-						Fullname = output.Type.FullName
+						Fullname = outputType.FullName
 					}
 				};
 				var plug = new BasePlugIn( this, info, info.Type );

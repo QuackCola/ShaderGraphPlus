@@ -1,4 +1,5 @@
 ﻿using Editor.NodeEditor;
+using Sandbox.Resources;
 using System.Text.Json.Serialization;
 
 namespace Editor.ShaderGraphPlus;
@@ -131,18 +132,23 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 		var plugs = new List<IPlugOut>();
 		foreach ( var output in resultNode.FunctionOutputs.OrderBy( x => x.Priority ) )
 		{
-			if ( output.Type is null ) continue;
+			var outputType = output.Type;
+			if ( outputType == typeof( ColorTextureGenerator ) )
+			{
+				outputType = typeof( Color );
+			}
+			if ( outputType is null ) continue;
 			var info = new PlugInfo()
 			{
 				Name = output.Name,
-				Type = output.Type,
+				Type = outputType,
 				DisplayInfo = new DisplayInfo()
 				{
 					Name = output.Name,
-					Fullname = output.Type.FullName
+					Fullname = outputType.FullName
 				}
 			};
-			var plug = new BasePlugOut( this, info, output.Type );
+			var plug = new BasePlugOut( this, info, outputType );
 			var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Name == info.Name && plugOut.Info.Type == info.Type ) as BasePlugOut;
 			if ( oldPlug is not null )
 			{

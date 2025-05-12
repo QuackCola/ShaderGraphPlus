@@ -11,6 +11,7 @@ public class MissingNode : BaseNodePlus
 	[Hide]
 	Vector2 ContentSize = new();
 
+	[Hide]
 	public override Color PrimaryColor => Theme.MultipleValues;
 
 	public MissingNode( string title, JsonElement json ) : base()
