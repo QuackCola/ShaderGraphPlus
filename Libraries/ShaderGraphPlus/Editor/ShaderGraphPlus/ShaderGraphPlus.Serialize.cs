@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+﻿	using System.Text.Json.Nodes;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -253,7 +253,16 @@ partial class ShaderGraphPlus
 				
 				if ( node is SubgraphNode subgraphNode )
 				{
-					subgraphNode.OnNodeCreated();
+					if ( !FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
+					{
+						var missingNode = new MissingNode( typeName, element );
+						node = missingNode;
+						DeserializeObject( node, element, options );
+					}
+					else
+					{
+						subgraphNode.OnNodeCreated();
+					}
 				}
 				
 				foreach ( var input in node.Inputs )
@@ -392,27 +401,27 @@ partial class ShaderGraphPlus
 			}
 		}
 	}
-	
-	private static void SerializeNodes(IEnumerable<BaseNodePlus> nodes, JsonObject doc, JsonSerializerOptions options, bool hasCustomLighting = false )
-	{
-		var identifiers = new Dictionary<string, string>();
-		foreach (var node in nodes)
-		{
-			identifiers.Add(node.Identifier, $"{identifiers.Count}");
-		}
-		
-		var nodeArray = new JsonArray();
-		
-		foreach (var node in nodes)
-		{
-			var type = node.GetType();
-			var nodeObject = new JsonObject { { "_class", type.Name } };
-			
-			SerializeObject(node, nodeObject, options, identifiers);
-			
-			nodeArray.Add(nodeObject);
-		}
 
+    private static void SerializeNodes(IEnumerable<BaseNodePlus> nodes, JsonObject doc, JsonSerializerOptions options, bool hasCustomLighting = false )
+    {
+        var identifiers = new Dictionary<string, string>();
+        foreach (var node in nodes)
+        {
+            identifiers.Add(node.Identifier, $"{identifiers.Count}");
+        }
+
+        var nodeArray = new JsonArray();
+
+        foreach (var node in nodes)
+        {
+            var type = node.GetType();
+            var nodeObject = new JsonObject { { "_class", type.Name } };
+
+            SerializeObject(node, nodeObject, options, identifiers);
+
+            nodeArray.Add(nodeObject);
+        }
+		
 		if ( hasCustomLighting )
 		{
 			doc.Add( "lighting_nodes", nodeArray );
@@ -421,5 +430,5 @@ partial class ShaderGraphPlus
 		{
 			doc.Add( "nodes", nodeArray );
 		}
-	}
+    }
 }

@@ -604,7 +604,6 @@ public class MainWindow : DockWindow
 
 		if ( evaluate )
 			GeneratePreviewCode();
-
 	}
 
 	[EditorEvent.Frame]
@@ -1573,7 +1572,9 @@ public class MainWindow : DockWindow
 			_graphView.UpdateNode( node );
 		}
 
-		SetDirty( _properties.Target is not CommentNode ? true : false );
+		var shouldEvaluate = _properties.Target is not CommentNode;
+		
+		SetDirty(shouldEvaluate);
 	}
 
 	protected override void RestoreDefaultDockLayout()
