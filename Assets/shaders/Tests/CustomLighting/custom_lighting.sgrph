@@ -65,6 +65,7 @@
   "lighting_nodes": [
     {
       "_class": "LightingResult",
+      "ApplyFog": false,
       "Identifier": "0",
       "Position": "2544,-216",
       "HandleOffsets": {},
