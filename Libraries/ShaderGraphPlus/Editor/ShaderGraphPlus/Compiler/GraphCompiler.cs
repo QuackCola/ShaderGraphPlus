@@ -120,9 +120,9 @@ public sealed partial class GraphCompiler
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
-        Subgraphs = new();
-        AddSubgraphs( Graph );
-    }
+		Subgraphs = new();
+		AddSubgraphs( Graph );
+	}
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
 	{
@@ -530,7 +530,7 @@ public sealed partial class GraphCompiler
 				node = subgraph.FindNode( input.Identifier );
 			}
 		}
-		if (ShaderResult.InputResults.TryGetValue(input, out var result))
+		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 		{
 			return result;
 		}
@@ -980,7 +980,23 @@ public sealed partial class GraphCompiler
 	{
 		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
 		{
-			return null;
+			switch ( type )
+			{
+				case Type t when t == typeof( Vector2 ):
+					return Vector2.Zero;
+				case Type t when t == typeof( Vector3 ):
+					return Vector3.Zero;
+				case Type t when t == typeof( Vector4 ):
+					return Vector4.Zero;
+				case Type t when t == typeof( Color ):
+					return Color.White;
+				case Type t when t == typeof( int ):
+					return 0;
+				case Type t when t == typeof( float ):
+					return 0.0f;
+				case Type t when t == typeof( bool ):
+					return false;
+			}
 		}
 		if ( value is JsonElement el )
 		{

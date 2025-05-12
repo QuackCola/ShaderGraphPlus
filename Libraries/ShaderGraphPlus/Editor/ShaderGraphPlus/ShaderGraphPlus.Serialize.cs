@@ -133,7 +133,16 @@ partial class ShaderGraphPlus
 				
 				if ( node is SubgraphNode subgraphNode )
 				{
-					subgraphNode.OnNodeCreated();
+					if ( !FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
+					{
+						var missingNode = new MissingNode( typeName, element );
+						node = missingNode;
+						DeserializeObject( node, element, options );
+					}
+					else
+					{
+						subgraphNode.OnNodeCreated();
+					}
 				}
 				
 				foreach ( var input in node.Inputs )
