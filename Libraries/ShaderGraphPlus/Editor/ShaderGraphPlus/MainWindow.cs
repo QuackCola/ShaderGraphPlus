@@ -553,14 +553,15 @@ public class MainWindow : DockWindow
 		_undoHistory.History = _undoStack.Names;
 	}
 
-	public void SetDirty()
+	public void SetDirty( bool evaluate = true )
 	{
         Update();
 
         _dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
-		GeneratePreviewCode();
+		if ( evaluate )
+			GeneratePreviewCode();
 	}
 
 	[EditorEvent.Frame]
@@ -1346,15 +1347,17 @@ public class MainWindow : DockWindow
 
 	private void OnPropertyUpdated()
 	{
-        _preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
+		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 
-        if ( _properties.Target is BaseNodePlus node )
+		if ( _properties.Target is BaseNodePlus node )
 		{
 			_graphView.UpdateNode( node );
 		}
+
+		var shouldEvaluate = _properties.Target is not CommentNode;
 		
-		SetDirty();
+		SetDirty(shouldEvaluate);
 	}
 
 	protected override void RestoreDefaultDockLayout()
