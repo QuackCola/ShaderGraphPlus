@@ -115,8 +115,8 @@ PS
 	
 	
 		// Calcuate Indirect Lighting
+		float3 indirectColor = 0;
 		{
-	
 	
 		}
 	
@@ -128,8 +128,7 @@ PS
 		//	return DoToolsVis( Albedo, m, lightingTerms );
 	
 		// Composite atmospherics after lighting
-		//Albedo.xyz = Fog::Apply( m.WorldPosition, m.ScreenPosition.xy, float4( Albedo.xyz, 0 ) );
-		
+	
 	
 		return float4(Albedo.xyz, m.Opacity);
 	}
