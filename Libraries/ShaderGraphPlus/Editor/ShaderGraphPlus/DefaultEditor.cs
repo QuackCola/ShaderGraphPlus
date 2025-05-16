@@ -13,12 +13,12 @@ public class DefaultEditor : ValueEditor
 	public override Rect BoundingRect => _boundingRect;
 	public override bool HideLabel => false;
 
-	public DefaultEditor(GraphicsItem parent) : base(parent)
+	public DefaultEditor( GraphicsItem parent ) : base( parent )
 	{
 		HoverEvents = true;
 		Cursor = CursorShape.Finger;
 
-		if (parent is Plug plug)
+		if ( parent is Plug plug )
 		{
 			Plug = plug;
 		}
@@ -28,26 +28,26 @@ public class DefaultEditor : ValueEditor
 
 	protected override void OnMousePressed(GraphicsMouseEvent e)
 	{
-		Plug.MousePressed(e);
+		Plug.MousePressed( e );
 	}
 
 	protected override void OnMouseReleased(GraphicsMouseEvent e)
 	{
-		Plug.MouseReleased(e);
+		Plug.MouseReleased( e );
 	}
 
 	protected override void OnMouseMove(GraphicsMouseEvent e)
 	{
-		Plug.MouseMove(e);
+		Plug.MouseMove( e );
 	}
 
 	protected override void OnPaint()
 	{
-		if (!Enabled) return;
-		if (Plug is null) return;
-		if (Plug?.Node?.Node is not ShaderNodePlus node) return;
-		if (Plug.Inner is IPlugOut plugOut) return;
-		if (Plug.Inner is IPlugIn plugIn)
+		if ( !Enabled ) return;
+		if ( Plug is null ) return;
+		if ( Plug?.Node?.Node is not ShaderNodePlus node ) return;
+		if ( Plug.Inner is IPlugOut plugOut ) return;
+		if ( Plug.Inner is IPlugIn plugIn )
 		{
 			if (plugIn.ConnectedOutput is not null) return;
 		}
@@ -80,10 +80,9 @@ public class DefaultEditor : ValueEditor
 		var shrink = 10f;
 		var extraWidth = 0f;
 		val = PaintHelper.FormatValue(type, rawVal, out extraWidth, out rawVal);
-		var textSize = Paint.MeasureText(val) + extraWidth;
+		var textSize = Paint.MeasureText( val ) + extraWidth;
 
-		var valueRect = new Rect(rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2,
-		rect.Height).Shrink(0f, 2f, 0f, 2f);
+		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2, rect.Height ).Shrink( 0f, 2f, 0f, 2f );
 
 		//if ( eventArgs.Icon is not null )
 		//{
@@ -91,30 +90,29 @@ public class DefaultEditor : ValueEditor
 		//}
 
 		var handleConfig = Plug.HandleConfig;
-		Paint.SetPen(handleConfig.Color, 4f);
-		Paint.DrawLine(rect.Center.WithX(rect.Left - 9f - 2f), rect.Center.WithX(rect.Left));
-		PaintHelper.DrawValue(handleConfig, valueRect, val, 1f, "", rawVal);
+		Paint.SetPen( handleConfig.Color, 4f );
+		Paint.DrawLine( rect.Center.WithX( rect.Left - 9f - 2f ), rect.Center.WithX( rect.Left ) );
+		PaintHelper.DrawValue( handleConfig, valueRect, val, 1f, "", rawVal );
 
-		_boundingRect = valueRect.Grow(24, 0);
+		_boundingRect = valueRect.Grow( 24, 0 );
 
 		_textHash = val.FastHash();
 		_labelWidth = valueRect.Width;
-		if (_textHash != lastTextHash || Math.Abs(_labelWidth - lastLabelWidth) > 0.01f)
+		if ( _textHash != lastTextHash || Math.Abs( _labelWidth - lastLabelWidth ) > 0.01f )
 		{
 			PrepareGeometryChange();
 		}
 	}
 }
 
-
 internal static class PaintHelper
 {
-	public static string FormatValue(Type type, object value, out float extraWidth, out object rawValue)
+	public static string FormatValue( Type type, object value, out float extraWidth, out object rawValue )
 	{
 		extraWidth = 0f;
 		rawValue = value;
 		
-		switch (rawValue)
+		switch ( rawValue )
 		{
 			case null when !type.IsValueType:
 				return "null";
@@ -131,7 +129,7 @@ internal static class PaintHelper
 
 				return color32.a >= 255
 					? color32.Hex
-					: $"{(color32 with { a = 255 }).Hex}, {color32.a * 100f / 255f:F0}%";
+					: $"{( color32 with { a = 255 } ).Hex}, {color32.a * 100f / 255f:F0}%";
 
 			case Color color:
 				extraWidth = 20f;
@@ -170,36 +168,36 @@ internal static class PaintHelper
 		}
 	}
 
-	public static void DrawValue(HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null)
+	public static void DrawValue( HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null )
 	{
 		var bg = Theme.ControlBackground;
 		var fg = Theme.TextControl;
 
 		var borderColor = handleConfig.Color.Desaturate(0.2f).Darken(0.3f);
 
-		if (pulseScale > 1f)
+		if ( pulseScale > 1f )
 		{
-			bg = Color.Lerp(bg, borderColor, (pulseScale - 1f) * 0.25f);
+			bg = Color.Lerp( bg, borderColor, (pulseScale - 1f) * 0.25f );
 		}
 
-		Paint.SetPen(borderColor, 2f * (pulseScale * 0.5f + 0.5f));
-		Paint.SetBrush(bg);
-		Paint.DrawRect(valueRect, 2);
+		Paint.SetPen( borderColor, 2f * ( pulseScale * 0.5f + 0.5f ) );
+		Paint.SetBrush( bg );
+		Paint.DrawRect( valueRect, 2 );
 
-		if (rawValue is Color color)
+		if ( rawValue is Color color )
 		{
-		    ColorPalette.PaintSwatch(color, new Rect(valueRect.Left + 3f, valueRect.Top + 3f, 14f, 14f), false, radius: 2, disabled: false);
-		    valueRect = valueRect.Shrink(14f, 0f, 0f, 0f);
+			ColorPalette.PaintSwatch( color, new Rect( valueRect.Left + 3f, valueRect.Top + 3f, 14f, 14f ), false, radius: 2, disabled: false );
+			valueRect = valueRect.Shrink(14f, 0f, 0f, 0f);
 		}
 
-		Paint.SetPen(fg);
+		Paint.SetPen( fg );
 
-		if (!string.IsNullOrEmpty(icon))
+		if ( !string.IsNullOrEmpty( icon ) )
 		{
-		    Paint.DrawIcon(new Rect(valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height), icon, 16f);
-		    valueRect = valueRect.Shrink(20f, 0f, 0f, 0f);
+			Paint.DrawIcon(	new Rect( valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height), icon, 16f );
+			valueRect = valueRect.Shrink( 20f, 0f, 0f, 0f );
 		}
 
-		Paint.DrawText(valueRect, text, TextFlag.Center);
+		Paint.DrawText( valueRect, text, TextFlag.Center );
 	}
 }
