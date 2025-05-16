@@ -112,13 +112,13 @@ public class WarningListView : ListView
 
 		var rect = item.Rect.Shrink( 48, 8, 0, 8 );
 
-		Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
+		Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
 		Paint.DrawText( rect, error.Message, (error.Node != null ? TextFlag.LeftTop : TextFlag.LeftCenter) | TextFlag.SingleLine );
 
 		if ( error.Node != null )
 		{
 			var nodeName = DisplayInfo.ForType( error.Node.GetType() ).Name;
-			Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
+			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
 			Paint.DrawText( rect, $"{nodeName}", TextFlag.LeftBottom | TextFlag.SingleLine );
 		}
 	}
@@ -200,13 +200,13 @@ public class ErrorListView : ListView
 
 		var rect = item.Rect.Shrink( 48, 8, 0, 8 );
 
-		Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
+		Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
 		Paint.DrawText( rect, error.Message, (error.Node != null ? TextFlag.LeftTop : TextFlag.LeftCenter) | TextFlag.SingleLine );
 
 		if ( error.Node != null )
 		{
 			var nodeName = DisplayInfo.ForType( error.Node.GetType() ).Name;
-			Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
+			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
 			Paint.DrawText( rect, $"{nodeName}", TextFlag.LeftBottom | TextFlag.SingleLine );
 		}
 	}
