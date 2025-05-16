@@ -54,7 +54,7 @@ public class Throbber : SceneCustomObject
 		mat = Matrix.CreateRotation( Rotation.From( 0, angle * speed, 0 ) );
 		mat *= Matrix.CreateTranslation( pos );
 		Graphics.Attributes.Set( "LayerMat", mat );
-		Graphics.DrawQuad( new Rect( -50, 100 ) * dpiScale, Material.UI.Basic, _enabled ? Theme.White : Theme.White.WithAlpha( 1.0f.LerpTo( 0.0f, delta ) ) );
+		Graphics.DrawQuad( new Rect( -50, 100 ) * dpiScale, Material.UI.Basic, _enabled ? Color.White : Color.White.WithAlpha( 1.0f.LerpTo( 0.0f, delta ) ) );
 	}
 }
 

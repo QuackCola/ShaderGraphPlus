@@ -174,7 +174,7 @@ internal static class PaintHelper
     public static void DrawValue(HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null)
     {
         var bg = Theme.ControlBackground;
-        var fg = Theme.ControlText;
+        var fg = Theme.TextControl;
 
         var borderColor = handleConfig.Color.Desaturate(0.2f).Darken(0.3f);
 

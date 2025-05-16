@@ -149,19 +149,19 @@ public partial class PaletteWidget : Widget
 
 			Paint.Antialiasing = true;
 
-			Color fg = Theme.White.Darken( 0.1f );
+			Color fg = Color.White.Darken( 0.1f );
 
 			if ( Paint.HasSelected )
 			{
-				fg = Theme.White;
+				fg = Color.White;
 				Paint.ClearPen();
 				Paint.SetBrush( Theme.Primary.WithAlpha( 0.9f ) );
-				Paint.SetPen( Theme.White );
+				Paint.SetPen( Color.White );
 			}
 			else
 			{
 				Paint.SetDefaultFont();
-				Paint.SetPen( Theme.White.Darken( 0.3f ) );
+				Paint.SetPen( Color.White.Darken( 0.3f ) );
 			}
 
 			var iconRect = rect.Shrink( 4, 4 );
