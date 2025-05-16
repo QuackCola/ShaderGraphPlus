@@ -10,7 +10,7 @@
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "texture",
-      "Order": 100,
+      "Order": 1,
       "Description": "You want to make a Unlit Shader"
 	}
   },
