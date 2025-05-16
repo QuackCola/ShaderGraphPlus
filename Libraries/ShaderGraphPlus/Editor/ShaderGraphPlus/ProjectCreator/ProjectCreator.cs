@@ -270,29 +270,33 @@ public class ProjectCreator : Dialog
         Validate();
     }
 
-    protected override void OnPaint()
-    {
+	protected override void OnPaint()
+	{
 #if false
-        Paint.BilinearFiltering = true;
-        Paint.ClearPen();
-
-        Rect rect = new Rect(new Vector2(0, 0), new Vector2(Width, headerLayout.InnerRect.Size.y));
-        var aPos = rect.TopLeft;
-        var bPos = rect.BottomLeft;
-        var aColor = Theme.Blue.WithAlpha(0);
-        var bColor = Theme.Blue.WithAlpha(0.5f);
-        Paint.SetBrushLinear(aPos, bPos, aColor, bColor);
-        Paint.DrawRect(rect);
-
-        Paint.RenderMode = RenderMode.Screen;
-        var pos = new Vector2(64 + 16 + 16, 16 + 8);
-
-        Paint.RenderMode = RenderMode.Normal;
-
-        Paint.SetPen(Color.White.WithAlpha(0.9f));
-        Paint.SetDefaultFont();
+		Paint.BilinearFiltering = true;
+		Paint.ClearPen();
+		
+		Rect rect = new Rect(new Vector2(0, 0), new Vector2(Width, headerLayout.InnerRect.Size.y));
+		var aPos = rect.TopLeft;
+		var bPos = rect.BottomLeft;
+		var aColor = Theme.Blue.WithAlpha(0);
+		var bColor = Theme.Blue.WithAlpha(0.5f);
+		Paint.SetBrushLinear(aPos, bPos, aColor, bColor);
+		Paint.DrawRect(rect);
+		
+		Paint.RenderMode = RenderMode.Screen;
+		var pos = new Vector2(64 + 16 + 16, 16 + 8);
+		
+		Paint.RenderMode = RenderMode.Normal;
+		
+		Paint.SetPen(Color.White.WithAlpha(0.9f));
+		Paint.SetDefaultFont();
+#else
+		Paint.ClearPen();
+		Paint.SetBrush( Theme.WindowBackground.Lighten( 0.4f ) );
+		Paint.DrawRect( LocalRect );
 #endif
-    }
+	}
 
     private static string DefaultProjectName()
     {
