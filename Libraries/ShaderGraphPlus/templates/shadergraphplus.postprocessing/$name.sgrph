@@ -10,7 +10,7 @@
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "camera",
-      "Order": 200,
+      "Order": 4,
       "Description": "You want to make a Post Processing Shader"
     }
   },
