@@ -754,9 +754,9 @@ public class Preview : SceneRenderingWidget
 		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
 		Scene.Camera.FieldOfView = 45;
 
-		SphereModel = Model.Builder
-			.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
-			.Create();
+		SphereModel = Model.Sphere;//Model.Builder
+			//.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
+			//.Create();
 
 		GroundModel = Model.Builder
 			.AddMesh( CreatePlane() )
