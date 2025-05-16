@@ -289,7 +289,7 @@ public class ProjectCreator : Dialog
 
         Paint.RenderMode = RenderMode.Normal;
 
-        Paint.SetPen(Theme.White.WithAlpha(0.9f));
+        Paint.SetPen(Color.White.WithAlpha(0.9f));
         Paint.SetDefaultFont();
 #endif
     }
