@@ -10,7 +10,7 @@
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "texture",
-      "Order": 150,
+      "Order": 2,
       "Description": "You want to make a Vertex Blending Shader"
     }
   },

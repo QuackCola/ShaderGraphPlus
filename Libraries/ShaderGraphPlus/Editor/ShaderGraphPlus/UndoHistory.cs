@@ -124,11 +124,11 @@ public class UndoHistoryListView : ListView
 		if ( item.Row >= _history.UndoLevel )
 		{
 			Paint.SetDefaultFont( italic: true );
-			Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
+			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
 		}
 		else
 		{
-			Paint.SetPen( Theme.White.WithAlpha( Paint.HasMouseOver ? 0.9f : 0.8f ), 3.0f );
+			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.9f : 0.8f ), 3.0f );
 		}
 
 		if ( item.Row == _history.UndoLevel - 1 )

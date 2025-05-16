@@ -8,7 +8,7 @@ public class Float3x3ControlWidget : ControlObjectWidget
     {
 		//property.TryGetAsObject( out SerializedObject so );
 
-		MinimumSize = ControlRowHeight * 2 + 2;
+		MinimumSize = Theme.RowHeight * 2 + 2;
 
         Layout = Layout.Column();
         Layout.Spacing = 2;
@@ -65,7 +65,7 @@ public class Float3x3ControlWidget : ControlObjectWidget
         var property = serializedObject.GetProperty( propertyName );
         var controlWidget = ControlWidget.Create( property );
         layout.Add( controlWidget );
-		layout.Add( new Label( propertyName ) { MinimumHeight = ControlRowHeight, FixedWidth = 25 } );
+		layout.Add( new Label( propertyName ) { MinimumHeight = Theme.RowHeight, FixedWidth = 25 } );
 		layout.AddSpacingCell( 4 );
 	}
 }

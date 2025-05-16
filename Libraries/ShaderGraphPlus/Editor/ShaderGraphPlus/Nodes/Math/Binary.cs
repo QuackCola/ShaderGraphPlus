@@ -29,7 +29,7 @@ public abstract class Binary : ShaderNodePlus
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 0, 20, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.SetFont( "Poppins Bold", 20 );
 		Paint.DrawText( rect, Op );
 	}
@@ -87,7 +87,7 @@ public sealed class Multiply : Binary
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 0, 20, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.SetFont( "Poppins Bold", 20 );
 		Paint.DrawText( rect, "x" );
 	}
@@ -405,7 +405,7 @@ public sealed class Power : ShaderNodePlus
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 0, 25, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.DrawIcon( rect, "^", 50 );
 	}
 }

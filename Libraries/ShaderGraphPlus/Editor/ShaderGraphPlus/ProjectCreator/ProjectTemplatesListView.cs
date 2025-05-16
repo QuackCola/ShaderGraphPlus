@@ -81,7 +81,7 @@ internal class ProjectTemplatesListView : ListView
 		if (@object is ProjectTemplate template)
 		{
 			Rect r = rect;
-			Color fg = Theme.White;
+			Color fg = Color.White;
 
 			if (Paint.HasSelected)
 			{
@@ -90,7 +90,7 @@ internal class ProjectTemplatesListView : ListView
 
 			Paint.Antialiasing = true;
 			Paint.ClearPen();
-			Paint.SetBrush(Theme.ButtonDefault.WithAlpha(0.1f));
+			Paint.SetBrush(Theme.TextButton.WithAlpha(0.1f));
 
 			if (Paint.HasSelected)
 			{
@@ -102,7 +102,7 @@ internal class ProjectTemplatesListView : ListView
 			if (Paint.HasMouseOver)
 			{
 				Paint.ClearPen();
-				Paint.SetBrush(Theme.White.WithAlpha(0.05f));
+				Paint.SetBrush( Color.White.WithAlpha( 0.05f ) );
 				Paint.DrawRect(in r, 4f);
 			}
 
@@ -128,7 +128,7 @@ internal class ProjectTemplatesListView : ListView
 			}
 			else
 			{
-				Paint.SetPen(Theme.ControlText.WithAlpha(0.5f), 0f, PenStyle.Solid);
+				Paint.SetPen(Theme.TextControl.WithAlpha(0.5f), 0f, PenStyle.Solid);
 			}
 
 			r.Right = rect.Width;
