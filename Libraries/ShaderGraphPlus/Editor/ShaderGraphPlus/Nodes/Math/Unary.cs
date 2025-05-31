@@ -78,8 +78,8 @@ public abstract class UnaryCurve : Unary
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 20, 28, 20, 6 );
-		Paint.SetBrush( Theme.ControlText );
-		Paint.SetPen( Theme.ControlText, 2 );
+		Paint.SetBrush( Theme.TextControl );
+		Paint.SetPen( Theme.TextControl, 2 );
 		var inc = 1f / 16f;
 		List<Vector2> points = new List<Vector2>();
 		for ( var i = 0f; i < 1f; i += inc )
@@ -185,7 +185,7 @@ public sealed class Rsqrt : Unary
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 2, 20, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.SetFont( "Poppins Bold", 12 );
 		Paint.DrawText( rect, " x" );
 		List<Vector2> points = new()
@@ -228,7 +228,7 @@ public sealed class Sqrt : Unary
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 2, 20, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.SetFont( "Poppins Bold", 12 );
 		Paint.DrawText( rect, " x" );
 		List<Vector2> points = new()
@@ -342,7 +342,7 @@ public sealed class Exponential : Unary
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Shrink( 0, 20, 0, 0 );
-		Paint.SetPen( Theme.ControlText );
+		Paint.SetPen( Theme.TextControl );
 		Paint.SetFont( "Poppins Bold", 16 );
 		Paint.DrawText( rect, (Base == ExponentBase.BaseE) ? "e" : "2" );
 		Paint.SetFont( "Poppins Bold", 8 );

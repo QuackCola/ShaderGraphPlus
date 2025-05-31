@@ -84,7 +84,7 @@ public sealed class Result : BaseResult
 	public NodeInput PositionOffset { get; set; }
 
 	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.White, 0.25f );
+	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
 
 
     public override NodeInput GetAlbedo() => Albedo;
