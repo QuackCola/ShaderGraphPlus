@@ -24,7 +24,7 @@ public class ColorEditorPlus : ValueEditor
 		Paint.TextAntialiasing = true;
 
 		var bg = Theme.ControlBackground.WithAlpha( 0.4f );
-		var fg = Theme.ControlText;
+		var fg = Theme.TextControl;
 
 		if ( !Paint.HasMouseOver )
 		{

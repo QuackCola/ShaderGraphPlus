@@ -54,7 +54,7 @@ public class Throbber : SceneCustomObject
 		mat = Matrix.CreateRotation( Rotation.From( 0, angle * speed, 0 ) );
 		mat *= Matrix.CreateTranslation( pos );
 		Graphics.Attributes.Set( "LayerMat", mat );
-		Graphics.DrawQuad( new Rect( -50, 100 ) * dpiScale, Material.UI.Basic, _enabled ? Theme.White : Theme.White.WithAlpha( 1.0f.LerpTo( 0.0f, delta ) ) );
+		Graphics.DrawQuad( new Rect( -50, 100 ) * dpiScale, Material.UI.Basic, _enabled ? Color.White : Color.White.WithAlpha( 1.0f.LerpTo( 0.0f, delta ) ) );
 	}
 }
 
@@ -754,9 +754,10 @@ public class Preview : SceneRenderingWidget
 		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
 		Scene.Camera.FieldOfView = 45;
 
-		SphereModel = Model.Builder
-			.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
-			.Create();
+		// FIXME
+		SphereModel = Model.Sphere;//Model.Builder
+			//.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
+			//.Create();
 
 		GroundModel = Model.Builder
 			.AddMesh( CreatePlane() )

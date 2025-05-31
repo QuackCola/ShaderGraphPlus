@@ -10,7 +10,7 @@
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "texture",
-      "Order": 50,
+      "Order": 0,
       "Description": "You want to make a Standard Material Shader"
     }
   },
