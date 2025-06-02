@@ -26,6 +26,19 @@ public sealed class WorldTangent : ShaderNodePlus
 	public static NodeResult.Func V => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vTangentVWs", compiler.IsNotPreview );
 }
 
+/// Whether or not the current pixel is a front-facing pixel.
+/// </summary>
+[Title( "Is Front Face" ), Category( "Variables" ), Icon( "start" )]
+public sealed class IsFrontFace : ShaderNodePlus
+{
+	[Output( typeof( int ) ), Title( "Result" )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Float, compiler.IsPs ? "i.vFrontFacing" : "0", compiler.IsNotPreview );
+	};
+}
+
 /// <summary>
 /// Vertex normal in object space
 /// </summary>

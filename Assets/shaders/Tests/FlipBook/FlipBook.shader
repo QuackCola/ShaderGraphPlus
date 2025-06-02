@@ -74,6 +74,9 @@ PS
 {
     #include "common/pixel.hlsl"
 	
+	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
+	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;

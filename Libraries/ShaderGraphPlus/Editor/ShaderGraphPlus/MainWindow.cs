@@ -224,14 +224,18 @@ public class MainWindow : DockWindow
 	{
 		if (_asset is null)
 			return;
-
+	
 		var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphs/{_asset.Name}.png");
 		System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
-
+	
 		_graphView.Capture($"screenshots/shadergraphs/{_asset.Name}.png");
-
+	
 		EditorUtility.OpenFileFolder(path);
 	}
+
+	protected virtual void Compile()
+	{
+		_shaderCompileErrors.Clear();
 
 	protected virtual void Compile()
 	{
