@@ -1,6 +1,6 @@
 {
   "IsSubgraph": false,
-  "Path": "shaders/tests/my project 1.sgrph",
+  "Path": "shaders/tests/flipbook/flipbook.sgrph",
   "Model": "models/dev/box.vmdl",
   "Title": null,
   "Description": "",
