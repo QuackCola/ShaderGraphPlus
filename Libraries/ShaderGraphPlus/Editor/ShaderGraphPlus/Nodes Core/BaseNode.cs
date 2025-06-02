@@ -15,10 +15,10 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool CanClone => true;
 
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool CanRemove => true;
+    [JsonIgnore, Hide, Browsable( false )]
+    public virtual bool CanRemove => true;
 
-	[Hide, Browsable( false )]
+    [Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 
     [JsonIgnore, Hide]
