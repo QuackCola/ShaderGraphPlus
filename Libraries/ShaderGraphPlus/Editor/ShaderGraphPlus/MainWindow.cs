@@ -180,35 +180,35 @@ public class MainWindow : DockWindow
 		asset?.OpenInEditor();
 	}
 
-    private void OpenShaderGraphProjectTxt()
-    {
-        if (_asset is null)
-        {
-            Save();
-        }
-        else
-        {
-            var path = _asset.AbsolutePath;
-            Utilities.Path.OpenInNotepad(path);
-        }
-    }
+	private void OpenShaderGraphProjectTxt()
+	{
+		if (_asset is null)
+		{
+			Save();
+		}
+		else
+		{
+			var path = _asset.AbsolutePath;
+			Utilities.Path.OpenInNotepad(path);
+		}
+	}
 
-    private void Screenshot()
-    {
-        if (_asset is null)
-            return;
+	private void Screenshot()
+	{
+		if (_asset is null)
+			return;
+	
+		var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphs/{_asset.Name}.png");
+		System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+	
+		_graphView.Capture($"screenshots/shadergraphs/{_asset.Name}.png");
+	
+		EditorUtility.OpenFileFolder(path);
+	}
 
-        var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphs/{_asset.Name}.png");
-        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
-
-        _graphView.Capture($"screenshots/shadergraphs/{_asset.Name}.png");
-
-        EditorUtility.OpenFileFolder(path);
-    }
-
-    protected virtual void Compile()
-    {
-        _shaderCompileErrors.Clear();
+	protected virtual void Compile()
+	{
+		_shaderCompileErrors.Clear();
 
 
 		var compileErrors = new List<GraphCompiler.Error>();
@@ -234,7 +234,7 @@ public class MainWindow : DockWindow
 		_output.Errors = compileErrors;
 
 
-        if ( string.IsNullOrWhiteSpace( _generatedCode ) )
+		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
 			RestoreShader();
 
@@ -248,21 +248,21 @@ public class MainWindow : DockWindow
 			return;
 		}
 
-        var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-        var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
+		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
+		var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
 
-        FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
-        FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
+		FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
+		FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
-        _isCompiling = true;
-        _preview.IsCompiling = _isCompiling;
+		_isCompiling = true;
+		_preview.IsCompiling = _isCompiling;
 
-        RestoreShader();
+		RestoreShader();
 
-        _timeSinceCompile = 0;
+		_timeSinceCompile = 0;
 
-        CompileAsync( resourcePath );
-    }
+		CompileAsync( resourcePath );
+	}
 
 	private async void CompileAsync( string path )
 	{
@@ -286,7 +286,7 @@ public class MainWindow : DockWindow
 		MainThread.Queue( () => OnCompileFinished( result.Success ? 0 : 1 ) );
 	}
 
-    private readonly List<string> _shaderCompileErrors = new();
+	private readonly List<string> _shaderCompileErrors = new();
 	//private readonly List<string> _Warnings = new();
 
 	private struct StatusMessage
@@ -398,11 +398,11 @@ public class MainWindow : DockWindow
 				_float2Attributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-            case int v: // 
-                _floatAttributes.Add(name, v);
-                _preview?.SetAttribute(name, v);
-                break;
-            case float v:
+			case int v: // 
+				_floatAttributes.Add(name, v);
+				_preview?.SetAttribute(name, v);
+				break;
+			case float v:
 				_floatAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
@@ -437,12 +437,12 @@ public class MainWindow : DockWindow
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, true );
-        compiler.OnAttribute = OnAttribute;
+		compiler.OnAttribute = OnAttribute;
 
-        // Evaluate all nodes
-        foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
+		// Evaluate all nodes
+		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
-            var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
+			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
 
 			if ( property == null )
@@ -455,8 +455,8 @@ public class MainWindow : DockWindow
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
-            //Log.Info($"t : {result.ResultType}");
-            var componentType = result.ComponentType;
+
+			var componentType = result.ComponentType;
 			if ( componentType == null )
 				continue;
 
@@ -546,7 +546,7 @@ public class MainWindow : DockWindow
 	{
 		var compiler = new GraphCompiler( _asset, _graph, false );
 		return compiler.Generate();
-    }
+	}
 
 	public void OnUndoPushed()
 	{
@@ -555,9 +555,9 @@ public class MainWindow : DockWindow
 
 	public void SetDirty( bool evaluate = true )
 	{
-        Update();
+		Update();
 
-        _dirty = true;
+		_dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
 		if ( evaluate )
@@ -584,27 +584,27 @@ public class MainWindow : DockWindow
 
 		_undoHistory.UndoLevel = _undoStack.UndoLevel;
 
-        CheckForChanges();
-    }
+		CheckForChanges();
+		}
 
 	private void CheckForChanges()
 	{
-	    bool wasDirty = false;
-	    foreach ( var node in _graph.Nodes )
-	    {
-	        if ( node is ShaderNodePlus shaderNode && shaderNode.IsDirty )
-	        {
-	            shaderNode.IsDirty = false;
-	            wasDirty = true;
-	        }
-	    }
-	    if ( wasDirty )
-	    {
-	        _graphView.ChildValuesChanged( null );
-	    }
+		bool wasDirty = false;
+		foreach ( var node in _graph.Nodes )
+		{
+			if ( node is ShaderNodePlus shaderNode && shaderNode.IsDirty )
+			{
+				shaderNode.IsDirty = false;
+				wasDirty = true;
+			}
+		}
+		if ( wasDirty )
+		{
+			_graphView.ChildValuesChanged( null );
+		}
 	}
 
-    [Shortcut( "editor.undo", "CTRL+Z" )]
+	[Shortcut( "editor.undo", "CTRL+Z" )]
 	private void Undo()
 	{
 		if ( _undoStack.Undo() is UndoOp op )
@@ -719,10 +719,10 @@ public class MainWindow : DockWindow
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
 		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
-        toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
+		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
 
 
-        _undoOption.Enabled = false;
+		_undoOption.Enabled = false;
 		_redoOption.Enabled = false;
 	}
 
@@ -757,9 +757,9 @@ public class MainWindow : DockWindow
 		var debug = MenuBar.AddMenu( "Debug" );
 		debug.AddSeparator();
 		debug.AddOption( "Open Temp Shader", "common/edit.png", OpenTempGeneratedShader );
-        debug.AddOption("Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt);
+		debug.AddOption("Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt);
 
-        RefreshRecentFiles();
+		RefreshRecentFiles();
 
 		var view = MenuBar.AddMenu( "View" );
 		view.AboutToShow += () => OnViewMenu( view );
@@ -810,16 +810,16 @@ public class MainWindow : DockWindow
 			o.Toggled += ( b ) => DockManager.SetDockState( dock.Title, b );
 		}
 
-        view.AddSeparator();
+		view.AddSeparator();
 
-        var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
-        style.Checkable = true;
-        style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
-        style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
+		var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+		style.Checkable = true;
+		style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
+		style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
 
-    }
+	}
 
-    private void ClearRecentFiles()
+	private void ClearRecentFiles()
 	{
 		if ( _recentFiles.Count == 0 )
 			return;
@@ -952,8 +952,8 @@ public class MainWindow : DockWindow
 	public void Open( string path, bool addToPath = true)
 	{
 		var asset = AssetSystem.FindByPath( path );
-      
-        if ( asset == null )
+
+		if ( asset == null )
 			return;
 
 		if ( asset == _asset )
@@ -970,7 +970,7 @@ public class MainWindow : DockWindow
 		_preview.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
 		_preview.LoadSettings( graph.PreviewSettings );
 
-        _asset = asset;
+		_asset = asset;
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
@@ -1395,7 +1395,7 @@ public class MainWindow : DockWindow
 		MenuBar.Clear();
 	
 		CreateUI();
-	    //Compile();
+		//Compile();
 	}
 
 	[Event( "shadergraphplus.update.subgraph" )]
