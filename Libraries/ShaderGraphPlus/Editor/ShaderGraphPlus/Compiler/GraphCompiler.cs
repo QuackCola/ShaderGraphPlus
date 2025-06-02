@@ -163,14 +163,13 @@ public sealed partial class GraphCompiler
     /// <summary>
     /// Register some generic global parameter for a node to use.
     /// </summary>
-    /// <param name="global"></param>
     public void RegisterGlobal( string globalName, string globalString )
     {
         var result = ShaderResult;
 
         if ( !result.Globals.ContainsKey( globalName ) )
         {
-            result.Globals.Add( globalName, globalString);
+            result.Globals.Add( globalName, globalString );
         }
     }
 
