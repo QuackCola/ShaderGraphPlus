@@ -370,6 +370,118 @@ public sealed class Blend : ShaderNodePlus
 	};
 }
 
+/// <summary>
+/// Blends two normal maps together, normalizing to return an appropriate normal.
+/// </summary>
+[Title( "Normal Blend" ), Category( "Transform" ), Icon( "gradient" )]
+public sealed class NormalBlend : ShaderNodePlus
+{
+	[Hide]
+	public static string NormalBlendVector => @"
+float3 NormalBlendVector( float3 a, float3 b)
+{
+	return normalize( float3( a.xy + b.xy, a.z * b.z ) );
+}
+";
+
+	[Hide]
+	public static string ReorientedNormalBlendVector => @"
+float3 ReorientedNormalBlendVector( float3 a, float3 b )
+{
+	float3 t = a.xyz + float3( 0.0, 0.0, 1.0 );
+	float3 u = b.xyz * float3( -1.0, -1.0, 1.0 );
+	return ( t / t.z ) * dot( t, u ) - u;
+}
+";
+
+
+	public enum BlendMode
+	{
+		Default,
+		Reoriented
+	}
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput A { get; set; }
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput B { get; set; }
+
+	public BlendMode Mode { get; set; } = BlendMode.Default;
+
+	[Hide]
+	[Output( typeof( Vector3 ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var a = compiler.Result( A );
+		var b = compiler.Result( B );
+
+		string func = compiler.RegisterFunction( NormalBlendVector );
+		if ( Mode == BlendMode.Reoriented )
+		{
+			func = compiler.RegisterFunction( ReorientedNormalBlendVector );
+		}
+
+
+
+		string funcResult = compiler.ResultFunction( func,
+			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
+			$"{(b.IsValid ? b.Cast( 3 ) : "1.0")}"
+		);
+
+		return new NodeResult( ResultType.Vector3, $"{funcResult}" );
+
+	};
+}
+
+/// <summary>
+/// Blends two normal maps together, normalizing to return an appropriate normal.
+/// </summary>
+[Title( "Reflection" ), Category( "Transform" ), Icon( "network_ping" )]
+public sealed class Reflection : ShaderNodePlus
+{
+	[Hide]
+	public static string ReflectVector => @"
+float3 ReflectVector( float3 a, float3 b)
+{
+	return reflect( a, b );
+}
+";
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput A { get; set; }
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput B { get; set; }
+
+
+	[InputDefault( nameof( A ) )]
+	public Vector3 DefaultA { get; set; } = Vector3.Zero;
+
+	[InputDefault( nameof( B ) )]
+	public Vector3 DefaultB { get; set; } = Vector3.One;
+
+	[Hide]
+	[Output( typeof( Vector3 ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var a = compiler.Result( A );
+		var b = compiler.Result( B );
+
+		string func = compiler.RegisterFunction( ReflectVector );
+		string funcResult = compiler.ResultFunction( func,
+			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
+			$"{(b.IsValid ? b.Cast( 3 ) : "1.0")}"
+		);
+
+		return new NodeResult( ResultType.Vector3, $"{funcResult}" );
+	};
+}
+
 [Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class RGBtoHSV : ShaderNodePlus
 {

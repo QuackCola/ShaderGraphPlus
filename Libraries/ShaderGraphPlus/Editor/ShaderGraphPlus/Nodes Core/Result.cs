@@ -152,6 +152,9 @@ public sealed class Result : BaseResult
 
 public abstract class BaseResult : ShaderNodePlus
 {
+	[JsonIgnore, Hide, Browsable( false )]
+	public override bool CanRemove => Graph.Nodes.Count( x => x is BaseResult ) > 1;
+
 	public virtual NodeInput GetAlbedo() => new();
 	public virtual NodeInput GetEmission() => new();
 	public virtual NodeInput GetOpacity() => new();

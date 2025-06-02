@@ -280,7 +280,7 @@ public class PreviewPanel : Widget
 		cs.AddProperty(_preview, x => x.SunColor);
 		cs.AddProperty(_preview, x => x.EnablePointLights);
 		cs.AddProperty(_preview, x => x.EnableShadows);
-
+	
 		popup.Layout.Add(cs);
 		popup.MaximumWidth = 300;
 		popup.OpenAtCursor();
@@ -419,7 +419,7 @@ public class Preview : SceneRenderingWidget
 		set
 		{
 			_renderBackfaces = value;
-		
+	
 			if ( _sceneObject.IsValid() )
 			{
 				_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
@@ -433,8 +433,8 @@ public class Preview : SceneRenderingWidget
 		set
 		{
 			if (!Scene.Camera.IsValid())
-				return;
-		
+			return;
+	
 			Scene.Camera.BackgroundColor = value;
 		}
 	}
@@ -503,8 +503,6 @@ public class Preview : SceneRenderingWidget
 			return;
 		}
 		_postProcessHook = Scene.Camera.AddHookBeforeOverlay( "ShadergraphPlusPostProcess", 1000, x =>
-		// Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;
-
 		{
 			Graphics.GrabFrameTexture( "ColorBuffer", _sceneObject.Attributes );
 		
@@ -777,7 +775,7 @@ public class Preview : SceneRenderingWidget
 	public override void OnDestroyed()
 	{
 		base.OnDestroyed();
-
+	
 		Scene?.Destroy();
 		Scene = null;
 	}

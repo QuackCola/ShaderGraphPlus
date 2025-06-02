@@ -48,18 +48,18 @@ public sealed partial class GraphCompiler
 	private ShaderGraphPlus Subgraph = null;
 	private SubgraphNode SubgraphNode = null;
 	private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
-	
+
+	/// <summary>
+	///  Contains the generated lighting function if any.
+	/// </summary>
+	internal string Shade { get; set; }
+
 	/// <summary>
 	/// The loaded sub-graphs
 	/// </summary>
 	public List<ShaderGraphPlus> Subgraphs { get; private set; }
 	public HashSet<string> PixelIncludes { get; private set; } = new();
 	public HashSet<string> VertexIncludes { get; private set; } = new();
-
-	/// <summary>
-	///  Contains the generated lighting function if any.
-	/// </summary>
-	internal string Shade { get; set; }
 
 	public Asset _Asset { get; private set; }
 
@@ -207,7 +207,7 @@ public sealed partial class GraphCompiler
 
 		if ( !result.Globals.ContainsKey( globalName ) )
 		{
-			result.Globals.Add( globalName, globalString);
+			result.Globals.Add( globalName, globalString );
 		}
 	}
 
@@ -303,19 +303,19 @@ public sealed partial class GraphCompiler
 			
 			if ( !result.VoidLocalGroups.ContainsKey( node.Identifier ) )
 			{
-			    //SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
-			    result.VoidLocalGroups.Add(node.Identifier, outputDataList);
+				//SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
+				result.VoidLocalGroups.Add(node.Identifier, outputDataList);
 			}
 			else
 			{
-			    //SGPLog.Warning($" RV : NodeID `{node.Identifier}` already exists in Dict... ");
+				//SGPLog.Warning($" RV : NodeID `{node.Identifier}` already exists in Dict... ");
 			}
 		}
 		else
 		{
 			//SGPLog.Warning( $" RV : We have already registerd the outputs for this node..." );
 		}
-    }
+	}
 
 	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
@@ -364,16 +364,17 @@ public sealed partial class GraphCompiler
 			{
 				var featureDeclarationName = $"F_{feature.FeatureName.ToUpper()}";
 				var featureDeclarationHeaderName = feature.HeaderName;
-					featureDeclarationOptionAmount = feature.Options.Count - 1;
+				featureDeclarationOptionAmount = feature.Options.Count - 1;
 				var featureDeclarationOptions = BuildFeatureOptions(feature.Options);
 
 				if (!string.IsNullOrWhiteSpace(featureDeclarationOptions))
 				{
 					featureDeclaration = $"Feature({featureDeclarationName}, 0..{featureDeclarationOptionAmount}({featureDeclarationOptions}), \"{featureDeclarationHeaderName}\");";
 					//if ( DebugSpew )
-					//{
-					//	 Log.Info($"Generated Static Combo Feature : {_feature}.");
-					//}
+					{
+						// Log.Info($"Generated Static Combo Feature : {_feature}.");
+					}
+				
 				}
 			}
 			else
@@ -395,18 +396,20 @@ public sealed partial class GraphCompiler
 			{
 				result.ShaderFeatures.Add( id, (sfinfo, previewToggle));
 			}
+
 		}
 		else
 		{
 			Log.Warning("invalid feature!");
 		}
+
 	}
 
 	private string BuildFeatureOptions( List<string> options )
 	{
 		var options_body = "";
 		int count = 0;
-		
+
 		foreach  (var option in options )
 		{
 			if ( count == 0 ) // first option starts at 0 :)
@@ -424,10 +427,10 @@ public sealed partial class GraphCompiler
 				options_body += $"{count}=\"{option}\"";
 			}
 		}
-		
+
 		//Log.Info($"Feature Options Count is : {options.Count}");
 		//Log.Info($"Feature Option Option String : {options_body}");
-		
+
 		return options_body;
 	}
 
@@ -1005,6 +1008,25 @@ public sealed partial class GraphCompiler
 		return prefix;
 	}
 
+	public string GetHLSLDataType( ResultType resultType )
+	{
+		return resultType switch
+		{
+			ResultType r when r == ResultType.Bool => "bool",
+			//ResultType r when r == ResultType.Int => "int",
+			ResultType r when r == ResultType.Float => "float",
+			ResultType r when r == ResultType.Vector2 => "float2",
+			ResultType r when r == ResultType.Vector3 => "float3",
+			ResultType r when r == ResultType.Color => "float4",
+			ResultType r when r == ResultType.Gradient => "Gradient",
+			ResultType r when r == ResultType.Float2x2 => "float2x2",
+			ResultType r when r == ResultType.Float3x3 => "float3x3",
+			ResultType r when r == ResultType.Float4x4 => "float4x4",
+			ResultType r when r == ResultType.Void => "void",
+			_ => throw new ArgumentException("Unsupported value type", nameof(resultType))
+		};
+	}
+
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
 	{
 		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
@@ -1167,7 +1189,7 @@ public sealed partial class GraphCompiler
 		
 		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
 		{
-		    sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
+			sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
 		}
 		
 		foreach (var feature in result.ShaderFeatures)
@@ -1228,7 +1250,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		return ppcb.Finish( className, shaderPath );
+			return ppcb.Finish( className, shaderPath );
 	}
 
 	// <summary>
@@ -1519,7 +1541,6 @@ public sealed partial class GraphCompiler
 
 			if ( !GetUnlitResult( out string albedo, out string opacity ) )
 				return null;
-
 			return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
@@ -1776,16 +1797,16 @@ public sealed partial class GraphCompiler
 		{
 			//Log.Info($"Found Gradient : {gradient.Key}");
 			//Log.Info($" Gradient Blend Mode : {gradient.Value.Blending}");
-			
+		
 			sb.AppendLine( $"Gradient {gradient.Key} = Gradient::Init();" );
 			sb.AppendLine();
-			
+		
 			var colorindex = 0;
 			var alphaindex = 0;
-			
+		
 			sb.AppendLine( $"{gradient.Key}.colorsLength = {gradient.Value.Colors.Count};" );
 			sb.AppendLine( $"{gradient.Key}.alphasLength = {gradient.Value.Alphas.Count};" );
-			
+		
 			foreach ( var color in gradient.Value.Colors )
 			{
 				if ( Debug )
@@ -1794,16 +1815,15 @@ public sealed partial class GraphCompiler
 				}
 				
 				// All good with time as the 4th component?
-				sb.AppendLine( $"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );" );
+			sb.AppendLine( $"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );" );
 			}
-			
+		
 			foreach ( var alpha in gradient.Value.Alphas )
 			{
 				sb.AppendLine( $"{gradient.Key}.alphas[{alphaindex++}] = float( {alpha.Value} );" );
 			}
-			
+
 			sb.AppendLine();
-		
 		}
 		
 		foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
@@ -1875,9 +1895,9 @@ public sealed partial class GraphCompiler
 					if ( result.Item2.ResultType is ResultType.Void )
 					{
 						sb.AppendLine();
-						
+		
 						sb.AppendLine( $"{result.Item2.Code}" );
-						
+		
 						sb.AppendLine();
 					}
 					else
@@ -1892,7 +1912,7 @@ public sealed partial class GraphCompiler
 					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
 					{
 						TrueIndex = feature.Value.Item2 ? "0" : "1";
-					    sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
+						sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
 					}
 				}
 			}
@@ -1938,7 +1958,7 @@ public sealed partial class GraphCompiler
 				{
 					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
 					{
-					    sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
+						sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
 					}
 				}
 			}
@@ -2144,18 +2164,18 @@ public sealed partial class GraphCompiler
 	private string GenerateVertex()
 	{
 		Stage = ShaderStage.Vertex;
-		
+
 		var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		if (resultNode == null)
-		    return null;
-		
+			return null;
+
 		var positionOffsetInput = resultNode.GetPositionOffset();
-		
+
 		var sb = new StringBuilder();
-		
+
 		switch (Graph.MaterialDomain)
 		{
-			case MaterialDomain.Surface:
+		case MaterialDomain.Surface:
 				sb.AppendLine(@"
 PixelInput i = ProcessVertex( v );
 i.vPositionOs = v.vPositionOs.xyz;
@@ -2260,7 +2280,6 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 				sb.AppendLine( "return i;" );
 				break;
 		}
-
 		return sb.ToString();
 	}
 }
