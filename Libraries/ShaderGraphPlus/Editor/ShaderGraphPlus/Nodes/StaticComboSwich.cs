@@ -2,6 +2,7 @@
 
 namespace Editor.ShaderGraphPlus.Nodes;
 
+/*
 /// <summary>
 /// If True, do this, if False, do that. Similar to the branch node but using a static combo instead. Note : I have no idea if this stuff is setup correctly.
 /// </summary>
@@ -68,3 +69,4 @@ public sealed class StaticComboSwitchNode : ShaderNodePlus
     };
 
 }
+*/
