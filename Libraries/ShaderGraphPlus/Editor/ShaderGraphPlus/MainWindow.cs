@@ -237,10 +237,6 @@ public class MainWindow : DockWindow
 	{
 		_shaderCompileErrors.Clear();
 
-	protected virtual void Compile()
-	{
-		_shaderCompileErrors.Clear();
-
 		var compileErrors = new List<GraphCompiler.Error>();
 		foreach ( var node in _graph.Nodes )
 		{
