@@ -17,6 +17,7 @@ Libraries/ShaderGraphPlus/Editor/Properties/*
 .vs/*
 .vscode/*
 *.csproj
+*.user
 obj
 bin
 Properties/*
@@ -38,6 +39,6 @@ code/Properties/*
 # Exported / standalone games
 Exports/
 
-
 # Other
 Libraries/TextEditor/
+
