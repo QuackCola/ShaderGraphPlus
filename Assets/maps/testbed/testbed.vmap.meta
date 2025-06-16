@@ -15,6 +15,7 @@
         "facepunch.floor_grass_dirt_leaves_blend_a#18755",
         "facepunch.inflatable_hs_2#9584"
       ],
+      "Mounts": null,
       "IsStandaloneOnly": false,
       "Metadata": {
         "SingleAssetSource": "maps/testbed/testbed.vmap"
