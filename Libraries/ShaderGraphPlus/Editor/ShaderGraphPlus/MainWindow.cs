@@ -949,7 +949,7 @@ public class MainWindow : DockWindow
 		Open( path );
 	}
 
-	public void Open( string path, bool addToPath = true)
+	public void Open( string path, bool addToPath = true )
 	{
 		var asset = AssetSystem.FindByPath( path );
 
