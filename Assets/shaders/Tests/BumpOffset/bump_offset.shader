@@ -88,8 +88,8 @@ PS
 	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tHeightMap )
 	TextureAttribute( RepresentativeTexture, g_tHeightMap )
-	float g_flReferencePlane < UiGroup( "Height,0/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
 	float g_flDepthScale < UiGroup( "Height,0/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
+	float g_flReferencePlane < UiGroup( "Height,0/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
 	bool g_bEnableBumpOffset < UiGroup( "Height,0/,0/3" ); Default( 1 ); >;
 	float g_flRoughness < UiGroup( "Roughness,0/,0/3" ); Default1( 2.5 ); Range1( 0, 8 ); >;
 		
@@ -101,6 +101,18 @@ PS
 		
 		// Result
 		return vTangentViewVector.xyz;
+	}
+	
+	float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane, float2 vTextureCoords, float3 vTangentViewVector )
+	{
+			float l_10 = flReferencePlane - flHeightMap;
+			float2 l_11 = vTangentViewVector.xy * float2( l_10, l_10 );
+		
+			float2 l_13 = l_11 * float2( flDepthScale, flDepthScale );
+			float2 l_14 = l_13 * float2( 0.1f, 0.1f );
+			float2 l_15 = vTextureCoords.xy + l_14;
+	
+			return l_15;
 	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
@@ -118,38 +130,25 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = float4( 0.39534885, 0.39534885, 0.39534885, 1 );
+		float4 l_0 = float4( 0.39535, 0.39535, 0.39535, 1 );
 		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float3 l_2 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
-		float3 l_3 = GetTangentViewVector( l_2, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		float l_4 = l_3.x;
-		float l_5 = l_3.y;
-		float2 l_6 = float2( l_4, l_5);
-		float l_7 = g_flReferencePlane;
-		float2 l_8 = i.vTextureCoords.xy * float2( 1, 1 );
-		float4 l_9 = g_tHeightMap.Sample( g_sSampler1,l_8 );
-		float l_10 = l_7 - l_9.r;
-		float2 l_11 = l_6 * float2( l_10, l_10 );
-		float l_12 = g_flDepthScale;
-		float2 l_13 = l_11 * float2( l_12, l_12 );
-		float2 l_14 = l_13 * float2( 0.1, 0.1 );
-		float2 l_15 = l_1 + l_14;
-		float l_16 = l_15.x;
-		float l_17 = l_15.y;
-		float2 l_18 = float2( l_16, l_17);
-		float2 l_19 = g_bEnableBumpOffset ? l_18 : l_8;
-		float4 l_20 = g_tColorMap.Sample( g_sSampler0,l_19 );
-		float l_21 = 1 - l_20.r;
-		float4 l_22 = l_0 * float4( l_21, l_21, l_21, l_21 );
-		float4 l_23 = g_tNormal.Sample( g_sSampler2,l_19 );
-		float3 l_24 = l_23.xyz;
-		float l_25 = g_flRoughness;
-		float l_26 = l_20.r * l_25;
+		float4 l_2 = g_tHeightMap.Sample( g_sSampler1,l_1 );
+		float l_3 = g_flDepthScale;
+		float l_4 = g_flReferencePlane;
+		float2 l_5 = BumpOffset( l_2.r, l_3, l_4, l_1, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) );
+		float2 l_6 = g_bEnableBumpOffset ? l_5 : l_1;
+		float4 l_7 = g_tColorMap.Sample( g_sSampler0,l_6 );
+		float l_8 = 1 - l_7.r;
+		float4 l_9 = l_0 * float4( l_8, l_8, l_8, l_8 );
+		float4 l_10 = g_tNormal.Sample( g_sSampler2,l_6 );
+		float3 l_11 = l_10.xyz;
+		float l_12 = g_flRoughness;
+		float l_13 = l_7.r * l_12;
 		
-		m.Albedo = l_22.xyz;
+		m.Albedo = l_9.xyz;
 		m.Opacity = 1;
-		m.Normal = l_24;
-		m.Roughness = l_26;
+		m.Normal = l_11;
+		m.Roughness = l_13;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
 		

@@ -1,6 +1,6 @@
 namespace Editor.ShaderGraphPlus.Nodes;
 
-[Title( "Oscillator" ), Category( "Utility" )]
+[Title( "Oscillator" ), Category( "Utility" ), Icon( "waves" )]
 public sealed class OscillatorNode : ShaderNodePlus
 {
 
