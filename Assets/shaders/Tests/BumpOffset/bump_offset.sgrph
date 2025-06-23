@@ -28,47 +28,19 @@
       "Position": "4188,576",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "6",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null
       },
       "Normal": {
-        "Identifier": "21",
+        "Identifier": "20",
         "Output": "Result",
         "Subgraph": null
       },
       "Roughness": {
-        "Identifier": "22",
+        "Identifier": "21",
         "Output": "Result",
         "Subgraph": null
-      }
-    },
-    {
-      "_class": "SubgraphNode",
-      "SubgraphPath": "shaders/bumpoffset.sgpfunc",
-      "DefaultValues": {
-        "Height": 0,
-        "Depth Scale": 0.49999848,
-        "Reference Plane": 0.5,
-        "Height Scalar": 0.1
-      },
-      "Identifier": "1",
-      "Position": "2736,684",
-      "HandleOffsets": {},
-      "Height": {
-        "Identifier": "2",
-        "Output": "R",
-        "Subgraph": "shaders/bumpoffset.sgpfunc"
-      },
-      "Depth Scale": {
-        "Identifier": "18",
-        "Output": "Result",
-        "Subgraph": "shaders/bumpoffset.sgpfunc"
-      },
-      "Reference Plane": {
-        "Identifier": "8",
-        "Output": "Result",
-        "Subgraph": "shaders/bumpoffset.sgpfunc"
       }
     },
     {
@@ -86,22 +58,22 @@
           "Name": "Height"
         }
       },
-      "Identifier": "2",
-      "Position": "2292,660",
+      "Identifier": "1",
+      "Position": "2280,660",
       "HandleOffsets": {},
       "Coords": {
-        "Identifier": "5",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "OneMinus",
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "3516,684",
       "HandleOffsets": {},
       "In": {
-        "Identifier": "15",
+        "Identifier": "14",
         "Output": "R",
         "Subgraph": null
       }
@@ -114,7 +86,7 @@
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "3432,516",
       "HandleOffsets": {}
     },
@@ -122,24 +94,24 @@
       "_class": "TextureCoord",
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "5",
-      "Position": "2064,864",
+      "Identifier": "4",
+      "Position": "2040,864",
       "HandleOffsets": {}
     },
     {
       "_class": "Multiply",
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "6",
+      "Identifier": "5",
       "Position": "3708,552",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "3",
+        "Identifier": "2",
         "Output": "Out",
         "Subgraph": null
       }
@@ -158,11 +130,11 @@
           "Name": "Normal"
         }
       },
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "3660,744",
       "HandleOffsets": {},
       "Coords": {
-        "Identifier": "19",
+        "Identifier": "18",
         "Output": "Result",
         "Subgraph": null
       }
@@ -180,19 +152,19 @@
           "Name": "Height"
         }
       },
-      "Identifier": "8",
-      "Position": "2508,816",
+      "Identifier": "7",
+      "Position": "2496,792",
       "HandleOffsets": {}
     },
     {
       "_class": "Multiply",
       "DefaultA": -0.20012712,
       "DefaultB": 0.00015349686,
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "2808,1080",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "17",
+        "Identifier": "16",
         "Output": "Out",
         "Subgraph": null
       }
@@ -201,11 +173,11 @@
       "_class": "HeightToNormal",
       "OutputSpace": "Tangent",
       "DefaultStrength": 0.20000017,
-      "Identifier": "10",
+      "Identifier": "9",
       "Position": "3876,660",
       "HandleOffsets": {},
       "Height": {
-        "Identifier": "3",
+        "Identifier": "2",
         "Output": "Out",
         "Subgraph": null
       }
@@ -213,11 +185,11 @@
     {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "11",
+      "Identifier": "10",
       "Position": "2664,900",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "5",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
@@ -226,16 +198,16 @@
       "_class": "Multiply",
       "DefaultA": 0,
       "DefaultB": 2.5,
-      "Identifier": "12",
+      "Identifier": "11",
       "Position": "3696,972",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "15",
+        "Identifier": "14",
         "Output": "R",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "14",
+        "Identifier": "13",
         "Output": "Result",
         "Subgraph": null
       }
@@ -243,11 +215,11 @@
     {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "13",
+      "Identifier": "12",
       "Position": "3912,876",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "12",
+        "Identifier": "11",
         "Output": "Result",
         "Subgraph": null
       }
@@ -265,7 +237,7 @@
           "Name": "Roughness"
         }
       },
-      "Identifier": "14",
+      "Identifier": "13",
       "Position": "3480,1032",
       "HandleOffsets": {}
     },
@@ -283,11 +255,11 @@
           "Name": "Color"
         }
       },
-      "Identifier": "15",
+      "Identifier": "14",
       "Position": "3144,648",
       "HandleOffsets": {},
       "Coords": {
-        "Identifier": "16",
+        "Identifier": "15",
         "Output": "Result",
         "Subgraph": null
       }
@@ -304,37 +276,37 @@
           "Name": "Height"
         }
       },
-      "Identifier": "16",
+      "Identifier": "15",
       "Position": "2916,840",
       "HandleOffsets": {},
       "True": {
-        "Identifier": "1",
-        "Output": "UV",
+        "Identifier": "22",
+        "Output": "Result",
         "Subgraph": null
       },
       "False": {
-        "Identifier": "11",
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       },
       "A": {
-        "Identifier": "20",
+        "Identifier": "19",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "20",
+        "Identifier": "19",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "OneMinus",
-      "Identifier": "17",
+      "Identifier": "16",
       "Position": "2568,1080",
       "HandleOffsets": {},
       "In": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "R",
         "Subgraph": null
       }
@@ -352,18 +324,18 @@
           "Name": "Height"
         }
       },
-      "Identifier": "18",
-      "Position": "2508,756",
+      "Identifier": "17",
+      "Position": "2496,732",
       "HandleOffsets": {}
     },
     {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "19",
+      "Identifier": "18",
       "Position": "3456,888",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "16",
+        "Identifier": "15",
         "Output": "Result",
         "Subgraph": null
       }
@@ -376,7 +348,7 @@
       "Name": "",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "20",
+      "Identifier": "19",
       "Position": "2640,972",
       "HandleOffsets": {}
     },
@@ -386,11 +358,11 @@
       "G": true,
       "B": true,
       "A": false,
-      "Identifier": "21",
+      "Identifier": "20",
       "Position": "3876,744",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "7",
+        "Identifier": "6",
         "Output": "Result",
         "Subgraph": null
       }
@@ -398,11 +370,40 @@
     {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "22",
+      "Identifier": "21",
       "Position": "4044,876",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "13",
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "BumpOffsetNode",
+      "DefaultHeight": 0,
+      "DefaultDepthScale": 0.125,
+      "DefaultReferencePlane": 0.42,
+      "Identifier": "22",
+      "Position": "2724,684",
+      "HandleOffsets": {},
+      "InputHeight": {
+        "Identifier": "1",
+        "Output": "R",
+        "Subgraph": null
+      },
+      "InputDepthScale": {
+        "Identifier": "17",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputReferencePlane": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputCoords": {
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       }
