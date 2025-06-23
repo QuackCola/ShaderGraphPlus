@@ -25,15 +25,20 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "4368,696",
+      "Position": "4188,576",
       "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
       "Normal": {
         "Identifier": "21",
         "Output": "Result",
         "Subgraph": null
       },
       "Roughness": {
-        "Identifier": "13",
+        "Identifier": "22",
         "Output": "Result",
         "Subgraph": null
       }
@@ -48,7 +53,7 @@
         "Height Scalar": 0.1
       },
       "Identifier": "1",
-      "Position": "2736,540",
+      "Position": "2736,684",
       "HandleOffsets": {},
       "Height": {
         "Identifier": "2",
@@ -82,7 +87,7 @@
         }
       },
       "Identifier": "2",
-      "Position": "2304,564",
+      "Position": "2292,660",
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "5",
@@ -93,7 +98,7 @@
     {
       "_class": "OneMinus",
       "Identifier": "3",
-      "Position": "3612,660",
+      "Position": "3516,684",
       "HandleOffsets": {},
       "In": {
         "Identifier": "15",
@@ -103,7 +108,7 @@
     },
     {
       "_class": "Float4",
-      "Value": "0,0,0,1",
+      "Value": "0.39535,0.39535,0.39535,1",
       "Name": "",
       "IsAttribute": false,
       "UI": {
@@ -176,7 +181,7 @@
         }
       },
       "Identifier": "8",
-      "Position": "2496,720",
+      "Position": "2508,816",
       "HandleOffsets": {}
     },
     {
@@ -184,7 +189,7 @@
       "DefaultA": -0.20012712,
       "DefaultB": 0.00015349686,
       "Identifier": "9",
-      "Position": "2868,1140",
+      "Position": "2808,1080",
       "HandleOffsets": {},
       "A": {
         "Identifier": "17",
@@ -197,7 +202,7 @@
       "OutputSpace": "Tangent",
       "DefaultStrength": 0.20000017,
       "Identifier": "10",
-      "Position": "3888,576",
+      "Position": "3876,660",
       "HandleOffsets": {},
       "Height": {
         "Identifier": "3",
@@ -220,13 +225,18 @@
     {
       "_class": "Multiply",
       "DefaultA": 0,
-      "DefaultB": 1.8999925,
+      "DefaultB": 2.5,
       "Identifier": "12",
-      "Position": "3672,996",
+      "Position": "3696,972",
       "HandleOffsets": {},
       "A": {
         "Identifier": "15",
         "Output": "R",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "14",
+        "Output": "Result",
         "Subgraph": null
       }
     },
@@ -234,7 +244,7 @@
       "_class": "ReroutePlus",
       "Comment": null,
       "Identifier": "13",
-      "Position": "3984,1020",
+      "Position": "3912,876",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "12",
@@ -243,15 +253,21 @@
       }
     },
     {
-      "_class": "Negate",
+      "_class": "Float",
+      "Min": 0,
+      "Max": 8,
+      "Value": 2.5,
+      "Name": "Roughness",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 3,
+        "PrimaryGroup": {
+          "Name": "Roughness"
+        }
+      },
       "Identifier": "14",
-      "Position": "3324,504",
-      "HandleOffsets": {},
-      "In": {
-        "Identifier": "15",
-        "Output": "R",
-        "Subgraph": null
-      }
+      "Position": "3480,1032",
+      "HandleOffsets": {}
     },
     {
       "_class": "TextureSampler",
@@ -268,7 +284,7 @@
         }
       },
       "Identifier": "15",
-      "Position": "3120,624",
+      "Position": "3144,648",
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "16",
@@ -289,7 +305,7 @@
         }
       },
       "Identifier": "16",
-      "Position": "2892,828",
+      "Position": "2916,840",
       "HandleOffsets": {},
       "True": {
         "Identifier": "1",
@@ -315,7 +331,7 @@
     {
       "_class": "OneMinus",
       "Identifier": "17",
-      "Position": "2412,1104",
+      "Position": "2568,1080",
       "HandleOffsets": {},
       "In": {
         "Identifier": "2",
@@ -337,7 +353,7 @@
         }
       },
       "Identifier": "18",
-      "Position": "2484,648",
+      "Position": "2508,756",
       "HandleOffsets": {}
     },
     {
@@ -371,10 +387,22 @@
       "B": true,
       "A": false,
       "Identifier": "21",
-      "Position": "3876,720",
+      "Position": "3876,744",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "22",
+      "Position": "4044,876",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "13",
         "Output": "Result",
         "Subgraph": null
       }
