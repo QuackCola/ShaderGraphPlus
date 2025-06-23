@@ -235,7 +235,7 @@ public struct NodeResult : IValid
                 components = 16;
             	break;
             default:
-                Log.Warning($"Result type: '{ResultType}' has no components.");
+                //Log.Warning($"Result type: '{ResultType}' has no components.");
             break;
         }
         
