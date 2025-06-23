@@ -18,10 +18,10 @@ public sealed class ComponentMask : ShaderNodePlus
 		{
 			List<string> components = new List<string>();
 
-			if ( R ) components.Add( "R" );
-			if ( G ) components.Add( "G" );
-			if ( B ) components.Add( "B" );
-			if ( A ) components.Add( "A" );
+			if ( R && _showR ) components.Add( "R" );
+			if ( G && _showG ) components.Add( "G" );
+			if ( B && _showB ) components.Add( "B" );
+			if ( A && _showA ) components.Add( "A" );
 
 			var suffix = components.Count > 0 ? $"{string.Join( " ", components )}" : "";
 
@@ -60,7 +60,7 @@ public sealed class ComponentMask : ShaderNodePlus
 
 		if ( !result.IsValid )
 		{
-			(_showR, _showG, _showB, _showA) = (true, true, true, true);
+			( _showR, _showG, _showB, _showA ) = ( true, true, true, true );
 
 			return new NodeResult( ResultType.Float, "0.0f" );
 		}
@@ -72,14 +72,14 @@ public sealed class ComponentMask : ShaderNodePlus
 			switch ( result.Components() )
 			{
 				case 2:
-					( _showR, _showG ) = ( true, true );
+					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
 
 					if ( R ) components += "x";
 					if ( G ) components += "y";
 					break;
 
 				case 3:
-					( _showR, _showG, _showB ) = ( true, true, true );
+					( _showR, _showG, _showB, _showA ) = ( true, true, true, false );
 
 					if ( R ) components += "x";
 					if ( G ) components += "y";
