@@ -642,7 +642,7 @@ float3 Vec3OsToTs( float3 vVectorOs, float3 vNormalOs, float3 vTangentUOs, float
 
     [Function( "GetTangentViewVector" )]
     public static string GetTangentViewVector => @"
-float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs)
+float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 {
     float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
     vNormalWs = normalize( vNormalWs.xyz );
