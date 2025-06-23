@@ -1,12 +1,13 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
 public enum ResultType
-{
+{ 
 	/// <summary>
 	/// No Components, just True or False.
 	/// </summary>
 	Bool,
-	//Int,
+
+	// Int,
 	/// <summary>
 	/// 1 Component
 	/// </summary>
@@ -147,9 +148,9 @@ public struct NodeResult : IValid
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-	}
+    }
 
-	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
+    public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
@@ -159,43 +160,43 @@ public struct NodeResult : IValid
 	/// </summary>
 	public string Cast( int components, float defaultValue = 0.0f)
 	{
-	if ( ResultType is ResultType.Void )
-	{
-		if ( VoidComponents == components )
-			return Code;
-		
-		if ( VoidComponents > components )
+		if ( ResultType is ResultType.Void )
 		{
-			return $"{Code}.{"xyzw"[..components]}";
-		}
-		else if ( VoidComponents == 1 )
-		{
-			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
-		}
-		else
-		{
-			return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - VoidComponents ) )} )";
-		}
-	}
-	else
-	{
-		if ( Components() == components )
-			return Code;
+			if ( VoidComponents == components )
+				return Code;
 
-		if ( Components() > components )
-		{
-			return $"{Code}.{"xyzw"[..components]}";
-		}
-		else if ( Components() == 1 )
-		{
-			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
+			if ( VoidComponents > components )
+			{
+				return $"{Code}.{"xyzw"[..components]}";
+			}
+			else if ( VoidComponents == 1 )
+			{
+				return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
+			}
+			else
+			{
+				return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - VoidComponents ) )} )";
+			}
 		}
 		else
 		{
-			return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - Components()))} )";
+			if ( Components() == components )
+			    return Code;
+
+			if ( Components() > components )
+			{
+				return $"{Code}.{"xyzw"[..components]}";
+			}
+			else if ( Components() == 1 )
+			{
+				return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
+			}
+			else
+			{
+				return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - Components()))} )";
+			}
 		}
 	}
-}
 
 	/// <summary>
 	/// Returns the components
@@ -204,7 +205,7 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
 		int components = 0;
-
+	
 		switch ( ResultType )
 		{
 			//case ResultType.Int:
