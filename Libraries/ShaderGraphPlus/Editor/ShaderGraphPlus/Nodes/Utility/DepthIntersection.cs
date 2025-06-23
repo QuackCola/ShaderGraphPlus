@@ -3,7 +3,7 @@
 /// <summary>
 /// WIP Depth Intersection Effect. May not be "Correct".
 /// </summary>
-[Title("Depth Intersection"), Category( "Utility" )]
+[Title("Depth Intersection"), Category( "Utility" ), Icon( "join_inner" )]
 public sealed class DepthIntersectionNode : ShaderNodePlus
 {
 
