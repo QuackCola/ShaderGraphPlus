@@ -8,6 +8,110 @@ public enum SwizzleChannel
 	Alpha = 3,
 }
 
+[Title( "Component Mask" ), Category( "Channel" ), Icon( "call_split" )]
+public sealed class ComponentMask : ShaderNodePlus
+{
+	[Hide]
+	public override string Title
+	{
+		get
+		{
+			List<string> components = new List<string>();
+
+			if ( R && _showR ) components.Add( "R" );
+			if ( G && _showG ) components.Add( "G" );
+			if ( B && _showB ) components.Add( "B" );
+			if ( A && _showA ) components.Add( "A" );
+
+			var suffix = components.Count > 0 ? $"{string.Join( " ", components )}" : "";
+
+			return !string.IsNullOrWhiteSpace( suffix ) ? $"{DisplayInfo.For( this ).Name} ( {suffix} )" : DisplayInfo.For( this ).Name;
+		}
+	}
+
+	[Input, Hide]
+	public NodeInput Input { get; set; }
+
+	[ShowIf( nameof( _showR ), true )]
+	public bool R { get; set; } = true;
+	
+	[ShowIf( nameof( _showG ), true )]
+	public bool G { get; set; } = true;
+	
+	[ShowIf( nameof( _showB ), true )]
+	public bool B { get; set; } = true;
+	
+	[ShowIf( nameof( _showA ), true )]
+	public bool A { get; set; } = true;
+
+	[Hide,JsonIgnore]
+	private bool _showR = false;
+	[Hide, JsonIgnore]
+	private bool _showG = false;
+	[Hide, JsonIgnore]
+	private bool _showB = false;
+	[Hide, JsonIgnore]
+	private bool _showA = false;
+
+	[Output, Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var result = compiler.Result( Input );
+
+		if ( !result.IsValid )
+		{
+			( _showR, _showG, _showB, _showA ) = ( true, true, true, true );
+
+			return new NodeResult( ResultType.Float, "0.0f" );
+		}
+		else
+		{
+			var resultType = ResultType.Float;
+			var components = string.Empty;
+
+			switch ( result.Components() )
+			{
+				case 2:
+					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
+
+					if ( R ) components += "x";
+					if ( G ) components += "y";
+					break;
+
+				case 3:
+					( _showR, _showG, _showB, _showA ) = ( true, true, true, false );
+
+					if ( R ) components += "x";
+					if ( G ) components += "y";
+					if ( B ) components += "z";
+					break;
+
+				case 4:
+					( _showR, _showG, _showB, _showA ) = ( true, true, true, true );
+
+					if ( R ) components += "x";
+					if ( G ) components += "y";
+					if ( B ) components += "z";
+					if ( A ) components += "w";
+					break;
+			}
+
+			if ( components == string.Empty )
+			{
+				return new NodeResult( ResultType.Float, "0.0f" );
+			}
+			
+			if ( components.Length == 1 ) resultType = ResultType.Float;
+			if ( components.Length == 2 ) resultType = ResultType.Vector2;
+			if ( components.Length == 3 ) resultType = ResultType.Vector3;
+			if ( components.Length == 4 ) resultType = ResultType.Color;
+
+			return new NodeResult( resultType, $"{result}.{components}" );
+		}
+	};
+}
+
+
 /// <summary>
 /// Split value into individual components
 /// </summary>
