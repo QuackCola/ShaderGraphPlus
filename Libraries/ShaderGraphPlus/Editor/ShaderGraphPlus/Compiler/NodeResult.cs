@@ -204,7 +204,7 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
 		int components = 0;
-		
+
 		switch ( ResultType )
 		{
 			//case ResultType.Int:
@@ -232,10 +232,10 @@ public struct NodeResult : IValid
 				components = 16;
 				break;
 			default:
-				Log.Warning($"Result type: '{ResultType}' has no components.");
+				//Log.Warning($"Result type: '{ResultType}' has no components.");
 			break;
 		}
-		
+
 		return components;
 	}
 
