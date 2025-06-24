@@ -42,3 +42,12 @@ Exports/
 # Other
 Libraries/TextEditor/
 
+# Sources
+thumb_resources/*
+appicon_ref.png
+appicon.psd
+thumb.psd
+thumb_root.psd
+thumb_square.psd
+thumb_tall.psd
+thumb_wide.psd
