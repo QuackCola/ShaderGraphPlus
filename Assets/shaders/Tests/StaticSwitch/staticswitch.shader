@@ -7,7 +7,7 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature(F_COLOR, 0..1, "A Color");
+	Feature(F_FRESNEL, 0..1, "Effects");
 	
 }
 
@@ -78,7 +78,7 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
-	StaticCombo( S_COLOR, F_COLOR, Sys( ALL ) );
+	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
 	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.00, 0.00, 0.00, 1.00 ); >;
 		
@@ -116,27 +116,30 @@ PS
 		
 		
 		float4 staticSwitch_0_result;
-		#if ( S_COLOR == 1 )
+		#if ( S_FRESNEL == 1 )
 		{
 			float4 l_0 = g_vColorOne;
-			float l_1 = Oscillator( g_flTime, 1, 0, l_0.r );
-			float l_2 = l_1 * 2;
-			staticSwitch_0_result = float4( l_2, l_2, l_2, l_2 );
+			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), 6.300008 );
+			float l_2 = Oscillator( g_flTime, 2.3, l_0.r, l_1 );
+			float4 l_3 = l_0 * float4( l_2, l_2, l_2, l_2 );
+			staticSwitch_0_result = l_0 * float4( l_2, l_2, l_2, l_2 );
+		
 		}
 		#else
 		{
-			float4 l_3 = g_vColorTwo;
-			float4 l_4 = l_3 * float4( 3, 3, 3, 3 );
-			staticSwitch_0_result = l_3 * float4( 3, 3, 3, 3 );
+			float4 l_4 = g_vColorTwo;
+			float4 l_5 = l_4 * float4( 3, 3, 3, 3 );
+			staticSwitch_0_result = l_4 * float4( 3, 3, 3, 3 );
 		}
 		#endif
 		
-		float4 l_5 = staticSwitch_0_result; 
-		float l_6 = VoronoiNoise( i.vTextureCoords.xy, 3.1415925, 10 ); 
+		float4 l_6 = staticSwitch_0_result; 
+		float4 l_7 = float4( 0, 0, 0, 1 ); 
+		float4 l_8 = lerp( l_6, min( 1.0f, (l_6) + (l_7) ), 1 ); 
 		
-		m.Albedo = l_5.xyz;
+		m.Albedo = l_8.xyz;
 		m.Opacity = 1;
-		m.Roughness = l_6;
+		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
 		

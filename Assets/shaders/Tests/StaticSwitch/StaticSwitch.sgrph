@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/tests/staticswitch/staticswitch.sgrph",
-  "Model": null,
+  "Model": "models/citizen/citizen.vmdl",
   "Title": null,
   "Description": "",
   "Category": null,
@@ -13,8 +13,7 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
-    "ShowSkybox": true,
-    "BackgroundColor": "1,1,1,1",
+    "BackgroundColor": "0,0,0,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -28,12 +27,7 @@
       "Position": "96,24",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "Roughness": {
-        "Identifier": "7",
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       }
@@ -42,8 +36,8 @@
       "_class": "StaticSwitchNode",
       "PreviewToggle": true,
       "Feature": {
-        "FeatureName": "Color",
-        "HeaderName": "A Color",
+        "FeatureName": "Fresnel",
+        "HeaderName": "Effects",
         "Options": [],
         "IsValid": true,
         "IsOptionsValid": true
@@ -71,7 +65,7 @@
         "Type": "Color"
       },
       "Identifier": "2",
-      "Position": "-1332,-168",
+      "Position": "-1332,-456",
       "HandleOffsets": {}
     },
     {
@@ -94,6 +88,11 @@
       "Position": "-684,-84",
       "HandleOffsets": {},
       "A": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
         "Identifier": "6",
         "Output": "Result",
         "Subgraph": null
@@ -114,25 +113,77 @@
     },
     {
       "_class": "OscillatorNode",
-      "DefaultFrequency": 1,
+      "DefaultFrequency": 2.3,
       "DefaultPhase": 0,
       "DefaultStrength": 10,
       "Identifier": "6",
       "Position": "-972,-300",
       "HandleOffsets": {},
-      "Strength": {
+      "Phase": {
         "Identifier": "2",
         "Output": "R",
+        "Subgraph": null
+      },
+      "Strength": {
+        "Identifier": "7",
+        "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "VoronoiNoise",
-      "AngleOffset": 3.1415925,
-      "CellDensity": 10,
-      "Worley": false,
+      "_class": "Fresnel",
+      "DefaultPower": 6.300008,
       "Identifier": "7",
-      "Position": "-492,108",
+      "Position": "-1344,-288",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Camera",
+      "Identifier": "8",
+      "Position": "-1596,-408",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "9",
+      "Position": "-744,-396",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 1,
+      "BlendMode": "Add",
+      "Clamp": false,
+      "Identifier": "10",
+      "Position": "-156,-84",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "11",
+      "Position": "-468,-228",
       "HandleOffsets": {}
     }
   ]
