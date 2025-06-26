@@ -181,6 +181,12 @@ public class PreviewPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
+	public void SetCombo( string id, int value )
+	{
+		_preview.SetCombo(id, value);
+	}
+
+
 	public void SetStage( int value )
 	{
 		_preview.SetStage( value );
@@ -355,6 +361,7 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Vector2> _float2Attributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
+	private Dictionary<string, int> _comboAttributes = new();
 	private int _stageId;
 
     private bool _enablePostProcessing;
@@ -439,7 +446,7 @@ public class Preview : SceneRenderingWidget
 		}
 	}
 
-	private DirectionalLight _sun;
+	private DirectionalLight _sun = null;
 	private HashSet<PointLight> _pointLights = new();
 	private Angles _sunAngles = Rotation.FromPitch( 50 );
 	public Angles SunAngle
@@ -491,6 +498,8 @@ public class Preview : SceneRenderingWidget
 
 		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
 			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { modelMaterial } );
+
+		
 	}
 
 	IDisposable _postProcessHook;
@@ -588,6 +597,11 @@ public class Preview : SceneRenderingWidget
 				_sceneObject.Attributes.Set( v.Key, v.Value );
 			}
 
+			foreach ( var v in _comboAttributes )
+			{
+				_sceneObject.Attributes.SetCombo( v.Key, v.Value );
+			}
+
 			if ( _enableNodePreview )
 			{
 				_sceneObject.Attributes.Set( "g_iStageId", _stageId );
@@ -661,6 +675,13 @@ public class Preview : SceneRenderingWidget
 		_sceneObject.Attributes.Set( id, value );
 	}
 
+	public void SetCombo( string id, int value )
+	{
+		Log.Info( $"setting static combo `{id}` : `{value}`" );
+		_comboAttributes.Add( id, value );
+		_sceneObject.Attributes.SetCombo( id, value );
+	}
+
 	public void SetStage( int value )
 	{
 		_stageId = value;
@@ -682,6 +703,7 @@ public class Preview : SceneRenderingWidget
 		_float2Attributes.Clear();
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
+		_comboAttributes.Clear();
 
 		if ( _sceneObject.IsValid() )
 		{

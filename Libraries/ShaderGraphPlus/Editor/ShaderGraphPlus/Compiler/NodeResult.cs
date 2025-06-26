@@ -43,10 +43,31 @@ public enum ResultType
 	Void,
 }
 
+public enum StaticSwitchState
+{
+	None,
+	Start,
+	Mid,
+	End,
+}
+
+public struct StaticSwitchData
+{
+	public StaticSwitchState State;
+}
+
+public enum StaticSwitchEntry
+{
+	None,
+	True,
+	False,
+}
+
 public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
+	public string Code2 { get; private set; }
 	public ResultType ResultType { get; private set; }
 	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
@@ -55,6 +76,15 @@ public struct NodeResult : IValid
 	public bool IsDepreciated { get; private set; }
 	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
+
+	public StaticSwitchState StaticSwitchState { get; set; }
+
+
+	public string BoundStaticSwitchComboName { get; set; }
+	public StaticSwitchEntry BoundStaticSwtichBlock { get; set; } = StaticSwitchEntry.None;
+
+	public string StaticSwitchNodeBody { get; set; }
+	public bool SkipLocalGeneration { get; set; } = false;
 
 	public readonly string TypeName
 	{
@@ -141,16 +171,54 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
+		StaticSwitchState staticSwitchState = StaticSwitchState.None )
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-    }
+		StaticSwitchState = staticSwitchState;
+	}
 
-    public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
+	public NodeResult( ResultType resulttype, string code , string switchBody, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
+	StaticSwitchState staticSwitchState = StaticSwitchState.None )
+	{
+		ResultType = resulttype;
+		Code = code;
+		Constant = constant;
+		IsComponentLess = iscomponentless;
+		VoidComponents = voidComponents;
+		StaticSwitchState = staticSwitchState;
+		StaticSwitchNodeBody = switchBody;
+	}
+
+	//public NodeResult( ResultType resulttype, string code, string code2, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
+	//StaticSwitchState staticSwitchState = StaticSwitchState.None, string switchBody  )
+	//{
+	//	ResultType = resulttype;
+	//	Code = code;
+	//	Constant = constant;
+	//	IsComponentLess = iscomponentless;
+	//	VoidComponents = voidComponents;
+	//	StaticSwitchState = staticSwitchState;
+	//	StaticSwitchNodeBody = switchBody;
+	//}
+
+	//public NodeResult( ResultType resulttype, string code, string code2, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
+	//	StaticSwitchState staticSwitchState = StaticSwitchState.None )
+	//{
+	//	ResultType = resulttype;
+	//	Code = code;
+	//	Code2 = code2;
+	//	Constant = constant;
+	//	IsComponentLess = iscomponentless;
+	//	VoidComponents = voidComponents;
+	//	StaticSwitchState = staticSwitchState;
+	//}
+
+	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
