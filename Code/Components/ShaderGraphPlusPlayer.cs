@@ -60,7 +60,7 @@ public sealed class ShaderGraphPlusPlayer : Component
 	{
 		EyeAngles += Input.AnalogLook;
 		EyeAngles = EyeAngles.WithPitch( MathX.Clamp( EyeAngles.pitch, -80f, 80f ) );
-		Transform.Rotation = Rotation.FromYaw( EyeAngles.yaw );
+		WorldRotation = Rotation.FromYaw( EyeAngles.yaw );
 
 		if ( Camera != null )
 			Camera.Transform.Local = _initialCameraTransform.RotateAround( EyePosition, EyeAngles.WithYaw( 0f ) );
@@ -73,7 +73,7 @@ public sealed class ShaderGraphPlusPlayer : Component
 		if ( Controller == null ) return;
 
 		var wishSpeed = Input.Down( "Run" ) ? RunSpeed : WalkSpeed;
-		var wishVelocity = Input.AnalogMove.Normal * wishSpeed * Transform.Rotation;
+		var wishVelocity = Input.AnalogMove.Normal * wishSpeed * WorldRotation;
 
 		Controller.Accelerate( wishVelocity );
 

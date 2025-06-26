@@ -19,7 +19,7 @@ internal class HLSLAssetPathControlWidget : ControlWidget
     string FilePath;
     string FilePathAbsolute;
 
-    IconButton PreviewButton;
+    IconButton PreviewButton = null;
     private ContextMenu menu;
 
     CustomFunctionNode Node;
