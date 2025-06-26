@@ -14,9 +14,9 @@ public static class SGPLog
 		return Editor.Window.All.OfType<MainWindow>();
 	}
 
-	public static void Info( string message, bool isNotPreview )
+	public static void Info( string message, bool shouldLog )
 	{
-		if ( isNotPreview )
+		if ( shouldLog )
 			_log.Info( message );
 	}
 
