@@ -9,12 +9,23 @@ public static class SGPLog
     /// </summary>
     public static string Name => "ShaderGraphPlus";
 
-    public static void Info( string message )
-    {
-        _log.Info( message );    
-    }
+	internal static IEnumerable<MainWindow> GetAllShadergraphPlusWindows()
+	{
+		return Editor.Window.All.OfType<MainWindow>();
+	}
 
-    public static void Trace( string message )
+	public static void Info( string message, bool isNotPreview )
+	{
+		if ( isNotPreview )
+			_log.Info( message );
+	}
+
+	public static void Info( string message )
+	{
+		_log.Info( message );
+	}
+
+	public static void Trace( string message )
     {
         _log.Trace( message );
     }
