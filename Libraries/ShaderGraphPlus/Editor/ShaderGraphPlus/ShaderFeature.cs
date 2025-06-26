@@ -45,6 +45,7 @@ public struct ShaderFeature : IValid
 	/// <summary>
 	/// String list of feature options.
 	/// </summary>
+	[Hide]
 	public List<string> Options { get; set; }
 
 	[Hide]
@@ -58,7 +59,7 @@ public struct ShaderFeature : IValid
 	{
 		get
 		{
-			if ( string.IsNullOrWhiteSpace( FeatureName ) || !Options.Any() )
+			if ( string.IsNullOrWhiteSpace( FeatureName ) ) //|| !Options.Any() )
 			{
 				return false;
 			}

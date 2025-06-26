@@ -69,6 +69,7 @@ public class MainWindow : DockWindow
     //private readonly Dictionary<string, int> _intAttributes = new();
     private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
+	private readonly Dictionary<string, int> _comboAttributes = new();
 
 	private readonly List<BaseNodePlus> _compiledNodes = new();
 
@@ -161,7 +162,7 @@ public class MainWindow : DockWindow
 		{
 			var path = System.IO.Path.ChangeExtension( _asset.AbsolutePath, ".shader" );
 			var asset = AssetSystem.FindByPath( path );
-			Log.Info( path );
+
 			asset?.OpenInEditor();
 		}
 	}
@@ -375,10 +376,18 @@ public class MainWindow : DockWindow
 		_shaderCompileErrors.Clear();
 	}
 
-	private void OnAttribute( string name, object value )
+	private void OnAttribute( string name, object value, bool isCombo = false )
 	{
 		if ( value == null )
 			return;
+
+		if ( isCombo )
+		{
+	
+			_comboAttributes.Add( name, (int)value );
+			_preview?.SetCombo( name, (int)value );
+			return;
+		}
 
 		switch ( value )
 		{
@@ -410,6 +419,7 @@ public class MainWindow : DockWindow
 				_boolAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
+
 			case Texture v:
 				_textureAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
@@ -923,6 +933,7 @@ public class MainWindow : DockWindow
 		_float2Attributes.Clear();
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
+		_comboAttributes.Clear();
 		_compiledNodes.Clear();
 
 		_preview?.ClearAttributes();
@@ -1306,7 +1317,12 @@ public class MainWindow : DockWindow
 		{
 			_preview.SetAttribute( value.Key, value.Value );
 		}
-		
+
+		foreach ( var value in _comboAttributes )
+		{
+			_preview.SetCombo( value.Key, value.Value );
+		}
+
 		_properties = new Properties( this );
 		_properties.Target = _graph;
 		_properties.PropertyUpdated += OnPropertyUpdated;
@@ -1395,7 +1411,7 @@ public class MainWindow : DockWindow
 		MenuBar.Clear();
 	
 		CreateUI();
-		//Compile();
+		Compile(); // Testing ONLY!
 	}
 
 	[Event( "shadergraphplus.update.subgraph" )]
