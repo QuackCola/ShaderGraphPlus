@@ -54,7 +54,7 @@ public class ProjectCreator : Dialog
     private TemplateUserConfig templateUserConfig;
     private  bool debugLayout = false;
 
-    private Layout headerLayout;
+    //private Layout headerLayout;
 
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
