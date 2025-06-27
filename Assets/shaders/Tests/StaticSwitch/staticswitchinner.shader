@@ -101,7 +101,7 @@ PS
 		float4 staticSwitch_0_result;
 		#if ( S_FEATURE1 == 1 )
 		{
-			float4 l_0 = float4( 1, 0, 1, 1 ); // Bound Switch : `staticSwitch_0_result`
+			float4 l_0 = float4( 1, 0, 1, 1 );
 			staticSwitch_0_result = float4( 1, 0, 1, 1 );
 		
 		}
@@ -116,7 +116,7 @@ PS
 		float4 staticSwitch_1_result;
 		#if ( S_FEATURE0 == 1 )
 		{
-			float4 l_0 = float4( 1, 0, 1, 1 ); // Bound Switch : `staticSwitch_0_result`
+			float4 l_0 = float4( 1, 0, 1, 1 );
 			staticSwitch_1_result = float4( 1, 0, 1, 1 );
 		
 		}
