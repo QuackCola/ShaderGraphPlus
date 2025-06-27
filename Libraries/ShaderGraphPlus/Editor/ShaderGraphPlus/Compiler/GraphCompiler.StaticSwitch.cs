@@ -125,7 +125,6 @@ public sealed partial class GraphCompiler
 				{
 					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( nodeResultComponentCount )};", 1 ) );
 				}
-
 			}
 
 			index++;
