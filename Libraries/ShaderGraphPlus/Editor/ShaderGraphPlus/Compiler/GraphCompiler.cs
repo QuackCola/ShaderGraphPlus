@@ -414,6 +414,20 @@ public sealed partial class GraphCompiler
 		return false;
 	}
 	
+	internal StringBuilder AppendIf( StringBuilder sb, string comboName, string previewToggle )
+	{
+		if ( IsPreview )
+		{
+			sb.AppendLine( $"#if ( {comboName} == {previewToggle} )" );
+		}
+		else
+		{
+			sb.AppendLine( $"#if ( {comboName} == 1 )" );
+		}
+
+		return sb;
+	}
+
 	// TODO : Once i decide to support more than a single bool option in a feature. give this a lookover.
 	/*
 	/// <summary>
