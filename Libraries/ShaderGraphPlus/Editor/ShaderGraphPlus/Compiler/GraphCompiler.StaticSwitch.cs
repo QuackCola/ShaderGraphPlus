@@ -2,7 +2,6 @@
 // Static Switch related code
 //
 
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus;
