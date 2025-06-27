@@ -28,7 +28,7 @@
       "Position": "96,24",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "10",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -97,7 +97,7 @@
       "Position": "-684,-84",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "9",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -162,15 +162,9 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Camera",
-      "Identifier": "8",
-      "Position": "-1596,-408",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "-744,-396",
       "HandleOffsets": {},
       "Input": {
@@ -187,7 +181,7 @@
       "Fraction": 1,
       "BlendMode": "Add",
       "Clamp": false,
-      "Identifier": "10",
+      "Identifier": "9",
       "Position": "-156,-84",
       "HandleOffsets": {},
       "A": {
@@ -199,7 +193,7 @@
         }
       },
       "B": {
-        "Identifier": "11",
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -215,7 +209,7 @@
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "11",
+      "Identifier": "10",
       "Position": "-468,-228",
       "HandleOffsets": {}
     }
