@@ -79,6 +79,7 @@ public struct NodeResult : IValid
 	public int VoidComponents { get; private set; }
 
 	public string StaticSwitchNodeBody { get; set; }
+
 	public GraphCompiler.StaticSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
 
@@ -191,6 +192,17 @@ public struct NodeResult : IValid
 		ResultType = resulttype;
 		Code = code;
 		StaticSwitchNodeBody = switchBody;
+		Constant = constant;
+		IsComponentLess = iscomponentless;
+		VoidComponents = voidComponents;
+	}
+
+	public NodeResult( ResultType resulttype, string code, string switchBody, GraphCompiler.StaticSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	{
+		ResultType = resulttype;
+		Code = code;
+		StaticSwitchNodeBody = switchBody;
+		SwitchInfo = switchInfo;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;

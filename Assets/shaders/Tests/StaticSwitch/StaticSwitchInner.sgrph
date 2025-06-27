@@ -50,7 +50,7 @@
         "Subgraph": null
       },
       "InputFalse": {
-        "Identifier": "4",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null
       }
@@ -64,7 +64,7 @@
         "IsValid": true
       },
       "Identifier": "2",
-      "Position": "-528,0",
+      "Position": "-528,-72",
       "HandleOffsets": {},
       "InputTrue": {
         "Identifier": "3",
@@ -72,7 +72,7 @@
         "Subgraph": null
       },
       "InputFalse": {
-        "Identifier": "5",
+        "Identifier": "6",
         "Output": "Result",
         "Subgraph": null
       }
@@ -91,26 +91,49 @@
     },
     {
       "_class": "Float4",
-      "Value": "0,0,1,1",
+      "Value": "1,0.59515,0,1",
       "Name": "",
       "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
       "Identifier": "4",
-      "Position": "-528,96",
+      "Position": "-792,204",
       "HandleOffsets": {}
     },
     {
-      "_class": "Float",
-      "Min": 0,
-      "Max": 1,
-      "Value": 0,
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {},
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 2,
       "Identifier": "5",
-      "Position": "-768,84",
+      "Position": "-552,204",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "6",
+      "Position": "-624,96",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "OscillatorNode",
+      "DefaultFrequency": 1,
+      "DefaultPhase": 0,
+      "DefaultStrength": 10,
+      "Identifier": "7",
+      "Position": "-972,72",
       "HandleOffsets": {}
     }
   ]

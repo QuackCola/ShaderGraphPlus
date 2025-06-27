@@ -81,6 +81,24 @@ PS
 		
 	StaticCombo( S_FEATURE0, F_FEATURE0, Sys( ALL ) );
 	StaticCombo( S_FEATURE1, F_FEATURE1, Sys( ALL ) );
+		
+	float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
+	{
+		float period, amplitude, currentPhase;
+	
+		if(flFrequency > 0.0001f)
+		{
+			period = 1.0f/flFrequency;
+			currentPhase = (fmod(flTime, period)*flFrequency) + flPhase/255.0f;
+			amplitude = flStrength * sin(currentPhase * 3.1415926535897932f * 2.0f);
+		}
+		else
+		{
+			amplitude = flStrength;
+		}
+	
+		return amplitude;
+	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -98,38 +116,59 @@ PS
 		
 		
 		
-		float4 staticSwitch_0_result;
+		float4 Feature1_result;
 		#if ( S_FEATURE1 == 1 )
 		{
 			float4 l_0 = float4( 1, 0, 1, 1 );
-			staticSwitch_0_result = float4( 1, 0, 1, 1 );
+			Feature1_result = float4( 1, 0, 1, 1 );
 		
 		}
 		#else
 		{
-		
+			float l_1 = Oscillator( g_flTime, 1, 0, 10 );
+			float l_2 = l_1 * 1;
+			Feature1_result = l_1 * 1;
 		}
 		#endif
 		
-		float4 l_1 = staticSwitch_0_result; 
 		
-		float4 staticSwitch_1_result;
+		float4 Feature0_result;
 		#if ( S_FEATURE0 == 1 )
 		{
 			float4 l_0 = float4( 1, 0, 1, 1 );
-			staticSwitch_1_result = float4( 1, 0, 1, 1 );
+			
+			float4 Feature1_result;
+			#if ( S_FEATURE1 == 1 )
+			{
+				float4 l_0 = float4( 1, 0, 1, 1 );
+				Feature1_result = float4( 1, 0, 1, 1 );
+			
+			}
+			#else
+			{
+				float l_1 = Oscillator( g_flTime, 1, 0, 10 );
+				float l_2 = l_1 * 1;
+				Feature1_result = l_1 * 1;
+			}
+			#endif
+			
+			float4 l_3 = Feature1_result;
+			Feature0_result = Feature1_result;
 		
 		}
 		#else
 		{
-			float4 l_2 = float4( 0, 0, 1, 1 );
-			staticSwitch_1_result = float4( 0, 0, 1, 1 );
+			float l_1 = Oscillator( g_flTime, 1, 0, 10 );
+			float l_2 = l_1 * 1;
+			float4 l_4 = float4( 1, 0.59515, 0, 1 );
+			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
+			Feature0_result = l_4 * float4( 2, 2, 2, 2 );
 		}
 		#endif
 		
-		float4 l_3 = staticSwitch_1_result; 
+		float4 l_6 = Feature0_result; 
 		
-		m.Albedo = l_3.xyz;
+		m.Albedo = l_6.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

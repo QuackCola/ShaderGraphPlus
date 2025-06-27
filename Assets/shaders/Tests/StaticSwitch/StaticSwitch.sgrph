@@ -12,7 +12,6 @@
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
-    "EnableShadows": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -28,12 +27,9 @@
       "Position": "96,24",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "8",
+        "Identifier": "1",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {
@@ -51,18 +47,12 @@
       "InputTrue": {
         "Identifier": "4",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       },
       "InputFalse": {
         "Identifier": "3",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {
@@ -79,7 +69,7 @@
     },
     {
       "_class": "Float4",
-      "Value": "0.21667,0,1,1",
+      "Value": "1,0,0,1",
       "Name": "ColorTwo",
       "IsAttribute": false,
       "UI": {
@@ -99,18 +89,12 @@
       "A": {
         "Identifier": "5",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       },
       "B": {
         "Identifier": "7",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {
@@ -122,10 +106,7 @@
       "Power": {
         "Identifier": "6",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {
@@ -149,35 +130,26 @@
       "Input": {
         "Identifier": "2",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {
       "_class": "Blend",
-      "Fraction": 1,
+      "Fraction": 0.4418383,
       "BlendMode": "Add",
       "Clamp": false,
       "Identifier": "8",
-      "Position": "-156,-84",
+      "Position": "-144,-180",
       "HandleOffsets": {},
       "A": {
         "Identifier": "9",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       },
       "B": {
         "Identifier": "1",
         "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
+        "Subgraph": null
       }
     },
     {

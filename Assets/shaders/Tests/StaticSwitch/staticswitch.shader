@@ -81,7 +81,7 @@ PS
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
 	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
-	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.22, 0.00, 1.00, 1.00 ); >;
+	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 0.00, 1.00 ); >;
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -98,29 +98,27 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = float4( 0, 0, 0, 1 ); 
 		
-		float4 staticSwitch_0_result;
+		float4 Fresnel_result;
 		#if ( S_FRESNEL == 1 )
 		{
-			float l_1 = g_flFresnelPower;
-			float3 l_2 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_1 );
-			float4 l_3 = g_vColorOne;
-			float4 l_4 = float4( l_2, 0 ) * l_3;
-			staticSwitch_0_result = float4( l_2, 0 ) * l_3;
+			float l_0 = g_flFresnelPower;
+			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 );
+			float4 l_2 = g_vColorOne;
+			float4 l_3 = float4( l_1, 0 ) * l_2;
+			Fresnel_result = float4( l_1, 0 ) * l_2;
 		
 		}
 		#else
 		{
-			float4 l_5 = g_vColorTwo;
-			staticSwitch_0_result = g_vColorTwo;
+			float4 l_4 = g_vColorTwo;
+			Fresnel_result = g_vColorTwo;
 		}
 		#endif
 		
-		float4 l_6 = staticSwitch_0_result; 
-		float4 l_7 = lerp( l_0, min( 1.0f, (l_0) + (l_6) ), 1 ); 
+		float4 l_5 = Fresnel_result; 
 		
-		m.Albedo = l_7.xyz;
+		m.Albedo = l_5.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
