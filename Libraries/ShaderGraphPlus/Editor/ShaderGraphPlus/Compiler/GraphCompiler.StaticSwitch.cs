@@ -31,19 +31,15 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-
-
 	/// <summary>
 	/// Current StaticSwitch
 	/// </summary>
-	private StaticSwitchNode StaticSwitchNode = null;
-	private List<StaticSwitchNode> StaticSwitchStack = new();
+	//private StaticSwitchNode StaticSwitchNode = null;
+	//private List<StaticSwitchNode> StaticSwitchStack = new();
 	
 	/// <summary>
-	/// Current active switch "block" that locals are being diverted to.
+	/// Currently active switchInfo data.
 	/// </summary>
-	//private StaticSwitchEntry CurrentStaticSwitchCodeBlock { get; set; } = StaticSwitchEntry.None;
-
 	private GraphCompiler.StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
 	private partial class CompileResult
@@ -76,11 +72,7 @@ public sealed partial class GraphCompiler
 		return ( resultA, resb );
 	}
 
-	//public void ResetCurrentStaticSwitchCodeBlock()
-	//{
-	//	CurrentStaticSwitchCodeBlock = StaticSwitchEntry.None;
-	//}
-
+	// TODO : 
 	public void ResetCurrentStaticSwitchInfo()
 	{
 		CurrentStaticSwitchInfo = default;
