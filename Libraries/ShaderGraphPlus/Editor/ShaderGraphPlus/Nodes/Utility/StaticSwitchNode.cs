@@ -4,6 +4,9 @@
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
 
+	[Hide]
+	public override string Title => $"{DisplayInfo.For( this ).Name} ({Feature.FeatureName})";
+
 	[Input]
 	[Title( "True" )]
 	[Hide]
