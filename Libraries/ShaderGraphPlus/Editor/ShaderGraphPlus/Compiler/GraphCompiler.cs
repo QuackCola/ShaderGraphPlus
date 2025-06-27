@@ -46,8 +46,9 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Current StaticSwitch
 	/// </summary>
-	private NodeInput StaticSwitch = default;
-
+	//private NodeInput StaticSwitch = default;
+	private StaticSwitchNode StaticSwitchNode = null;
+	private List<StaticSwitchNode> StaticSwitchStack = new();
 	/// <summary>
 	/// Current active switch "block" that locals are being diverted to.
 	/// </summary>
@@ -114,7 +115,7 @@ public sealed partial class GraphCompiler
 
 	public List<BaseNodePlus> Nodes { get; private set; } = new();
 	private List<NodeInput> InputStack = new();
-	private List<NodeInput> StaticSwitchStack = new();
+
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
