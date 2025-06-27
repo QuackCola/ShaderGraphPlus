@@ -80,7 +80,7 @@ public struct NodeResult : IValid
 	public StaticSwitchState StaticSwitchState { get; set; }
 
 
-	public string BoundStaticSwitchComboName { get; set; }
+	public string BoundStaticSwitch { get; set; }
 	public StaticSwitchEntry BoundStaticSwtichBlock { get; set; } = StaticSwitchEntry.None;
 
 	public string StaticSwitchNodeBody { get; set; }
