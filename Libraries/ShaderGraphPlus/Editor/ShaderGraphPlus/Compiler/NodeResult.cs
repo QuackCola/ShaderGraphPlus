@@ -41,6 +41,7 @@ public enum ResultType
 	String,
 	Gradient,
 	Void,
+	Invalid,
 }
 
 public enum StaticSwitchState
