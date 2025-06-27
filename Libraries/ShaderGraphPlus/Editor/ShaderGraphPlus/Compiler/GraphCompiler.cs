@@ -313,22 +313,20 @@ public sealed partial class GraphCompiler
 		return gradient;
 	}
 
-
-	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int resultComponentCount, bool previewToggle,  out string bodyOut )
+	// public string GenerateShaderFeatureBody( string staticComboName, NodeResult , int resultComponentCount, bool previewToggle,  out string bodyOut )
+	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int nodeResultComponentCount, bool previewToggle, out string switchBodyOut )
 	{
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
 		var sbSwitchBody = new StringBuilder();
 
-		bodyOut = "";
+		switchBodyOut = "";
 
 		var shaderResultsTrue = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.True );
 		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.False );
 
 		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
 		var resultNameInternal = $"{resultName}_result";
-
-		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
@@ -339,13 +337,13 @@ public sealed partial class GraphCompiler
 			{
 				//SGPLog.Info( $"at ✅ true index {index } a {shaderResultsTrue.Count()}" );
 				
-				if ( resultTrue.Item2.Components() == resultComponentCount )
+				if ( resultTrue.Item2.Components() == nodeResultComponentCount )
 				{
 					sbTrueBody.AppendLine( IndentString( $"{resultNameInternal} = {resultTrue.Item2.Code};", 1 ) );
 				}
 				else
 				{
-					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( resultComponentCount )};", 1 ));
+					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( nodeResultComponentCount )};", 1 ));
 				}
 				
 			}
@@ -366,6 +364,8 @@ public sealed partial class GraphCompiler
 		
 			index++;
 		}
+
+		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
 
 		if ( IsPreview )
 		{
@@ -393,7 +393,7 @@ public sealed partial class GraphCompiler
 
 		//SGPLog.Info( sb.ToString() , IsNotPreview );
 
-		bodyOut = sbSwitchBody.ToString();
+		switchBodyOut = sbSwitchBody.ToString();
 
 		return resultNameInternal;
 	}
