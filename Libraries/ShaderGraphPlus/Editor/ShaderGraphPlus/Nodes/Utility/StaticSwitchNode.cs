@@ -26,9 +26,9 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var staticComboName = "";
-		var switchResult = "";
-		var id = compiler.ShaderFeatures.Count;
-		switchResult = $"staticSwitch_{id}";
+		//var switchResult = "";
+		//var id = compiler.ShaderFeatures.Count;
+		//switchResult = $"staticSwitch_{id}";
 
 		if ( Feature.IsValid )
 		{
@@ -46,11 +46,11 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		// Reset active block after we are done. TODO : Rethink this once i can figure out a better way.
 		compiler.ResetCurrentStaticSwitchCodeBlock();
 
-		var result = compiler.GenerateShaderFeatureBody( switchResult, staticComboName, results.Item1, results.Item2, results.Item1.Components(), PreviewToggle, out var switchBody );
+		var switchResultName = compiler.GenerateShaderFeatureBody( staticComboName, results.Item1.TypeName, results.Item1.Components(), PreviewToggle, out var switchBody );
 
 		if ( !string.IsNullOrWhiteSpace( switchBody ) )
 		{
-			return new NodeResult( results.Item1.ResultType, result, switchBody , constant: false );
+			return new NodeResult( results.Item1.ResultType, switchResultName, switchBody , constant: false );
 		}
 		else
 		{
