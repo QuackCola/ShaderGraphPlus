@@ -2,6 +2,7 @@
 using Sandbox;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static Editor.ShaderGraphPlus.GraphCompiler;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -406,16 +407,10 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result( NodeInput input, StaticSwitchEntry switchCodeBlock = StaticSwitchEntry.None )
+	public NodeResult Result( NodeInput input )
 	{
 		if (!input.IsValid)
 			return default;
-		
-		// result belongs to a code block.
-		if ( switchCodeBlock != StaticSwitchEntry.None && IsPreview )
-		{
-			SGPLog.Info( $"Current Block : `{switchCodeBlock}`" );
-		}
 
 		BaseNodePlus node = null;
 		if ( string.IsNullOrEmpty( input.Subgraph ) )
@@ -484,19 +479,20 @@ public sealed partial class GraphCompiler
 			return default;
 		}
 
-		if ( switchCodeBlock is not StaticSwitchEntry.None )
+		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchEntry.None )
 		{
-			CurrentStaticSwitchCodeBlock = switchCodeBlock;
+			//CurrentStaticSwitchCodeBlock = input.StaticSwitchInfo.BoundSwitchBlock;
+			CurrentStaticSwitchInfo = input.StaticSwitchInfo;
 		}
 
 		InputStack.Add( input );
 
 		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
-		
-		if ( node is StaticSwitchNode )
-		{
-			//StaticSwitch = input;
-		}
+
+
+
+
+
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
@@ -670,17 +666,30 @@ public sealed partial class GraphCompiler
 		}
 		else if ( value is NodeResult.Func resultFunc )
 		{
-			
 			var funcResult = resultFunc.Invoke( this );
+			//funcResult.SetCurrentBlock( CurrentStaticSwitchCodeBlock );
+			funcResult.SetSwitchInfo( CurrentStaticSwitchInfo );
 
-			funcResult.BoundStaticSwtichBlock = CurrentStaticSwitchCodeBlock;
 
-			if ( funcResult.BoundStaticSwtichBlock != StaticSwitchEntry.None )
+
+			//if ( input.StaticSwitchInfo.IsValid )
+			//{
+			//
+			//	//SGPLog.Info( $"Setting switchInfo for `{funcResult.Code}` : `{input.StaticSwitchInfo}`" , IsPreview);
+			//
+			//	funcResult.SetSwitchInfo( input.StaticSwitchInfo );
+			//	
+			//
+			//	funcResult.SkipLocalGeneration = true;
+			//}
+
+			if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchEntry.None )
 			{
-				//SGPLog.Info( $"AProcessing Input `{ActiveBlock}`:`{node}`:`{node.Identifier}`", IsPreview );
+				//funcResult.SetSwitchInfo( input.StaticSwitchInfo );
 				funcResult.SkipLocalGeneration = true;
 			}
 
+			SGPLog.Info( $" input `{node.DisplayInfo.Name}` `{funcResult.SwitchInfo}`", IsPreview );
 			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
@@ -712,16 +721,26 @@ public sealed partial class GraphCompiler
 
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-	
 			var localResult = new NodeResult( funcResult.ResultType, varName );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
-			
+
+
+
+			//if ( localResult.SkipLocalGeneration )
+			//{
+			//
+			//	localResult = new NodeResult( funcResult.ResultType, varName, input.StaticSwitchInfo );
+			//	localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
+			//}
+			//else
+			//{ 
+			//
+			//}
+
 			if ( !string.IsNullOrWhiteSpace( funcResult.StaticSwitchNodeBody ) && node is StaticSwitchNode  )
 			{
 				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.StaticSwitchNodeBody );
 			}
-
-			//localResult.BoundStaticSwtichBlock = CurrentStaticSwitchCodeBlock;
 
 			ShaderResult.InputResults.Add( input, localResult );
 			ShaderResult.Results.Add( (localResult, funcResult) );
@@ -731,7 +750,6 @@ public sealed partial class GraphCompiler
 				Nodes.Add( node );
 			}
 
-			//StaticSwitchStack.Remove( input );
 			InputStack.Remove( input );
 
 			return localResult;

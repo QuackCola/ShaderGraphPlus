@@ -30,7 +30,10 @@
       "Albedo": {
         "Identifier": "10",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -48,12 +51,18 @@
       "InputTrue": {
         "Identifier": "4",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       },
       "InputFalse": {
         "Identifier": "5",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -90,12 +99,18 @@
       "A": {
         "Identifier": "9",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       },
       "B": {
         "Identifier": "6",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -108,7 +123,10 @@
       "A": {
         "Identifier": "3",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -122,12 +140,18 @@
       "Phase": {
         "Identifier": "2",
         "Output": "R",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       },
       "Strength": {
         "Identifier": "7",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -152,7 +176,10 @@
       "Input": {
         "Identifier": "2",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {
@@ -166,12 +193,18 @@
       "A": {
         "Identifier": "1",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       },
       "B": {
         "Identifier": "11",
         "Output": "Result",
-        "Subgraph": null
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
       }
     },
     {

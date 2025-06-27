@@ -78,13 +78,8 @@ public struct NodeResult : IValid
 	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
 
-	public StaticSwitchState StaticSwitchState { get; set; }
-
-
-	public string BoundStaticSwitch { get; set; }
-	public StaticSwitchEntry BoundStaticSwtichBlock { get; set; } = StaticSwitchEntry.None;
-
 	public string StaticSwitchNodeBody { get; set; }
+	public GraphCompiler.StaticSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
 
 	public readonly string TypeName
@@ -172,57 +167,53 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
-		StaticSwitchState staticSwitchState = StaticSwitchState.None )
+	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
 	{
 		ResultType = resulttype;
 		Code = code;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-		StaticSwitchState = staticSwitchState;
 	}
 
-	public NodeResult( ResultType resulttype, string code , string switchBody, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
-	StaticSwitchState staticSwitchState = StaticSwitchState.None )
+	public NodeResult( ResultType resulttype, string code , GraphCompiler.StaticSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0)
 	{
 		ResultType = resulttype;
 		Code = code;
+		SwitchInfo = switchInfo;
 		Constant = constant;
 		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-		StaticSwitchState = staticSwitchState;
+	}
+
+	public NodeResult( ResultType resulttype, string code, string switchBody,  bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	{
+		ResultType = resulttype;
+		Code = code;
 		StaticSwitchNodeBody = switchBody;
+		Constant = constant;
+		IsComponentLess = iscomponentless;
+		VoidComponents = voidComponents;
 	}
-
-	//public NodeResult( ResultType resulttype, string code, string code2, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
-	//StaticSwitchState staticSwitchState = StaticSwitchState.None, string switchBody  )
-	//{
-	//	ResultType = resulttype;
-	//	Code = code;
-	//	Constant = constant;
-	//	IsComponentLess = iscomponentless;
-	//	VoidComponents = voidComponents;
-	//	StaticSwitchState = staticSwitchState;
-	//	StaticSwitchNodeBody = switchBody;
-	//}
-
-	//public NodeResult( ResultType resulttype, string code, string code2, bool constant = false, bool iscomponentless = false, int voidComponents = 0,
-	//	StaticSwitchState staticSwitchState = StaticSwitchState.None )
-	//{
-	//	ResultType = resulttype;
-	//	Code = code;
-	//	Code2 = code2;
-	//	Constant = constant;
-	//	IsComponentLess = iscomponentless;
-	//	VoidComponents = voidComponents;
-	//	StaticSwitchState = staticSwitchState;
-	//}
 
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
+
+	public void SetSwitchInfo( GraphCompiler.StaticSwitchInfo switchInfo )
+	{
+		SwitchInfo = switchInfo;
+	}
+
+	public void SetCurrentBlock( StaticSwitchEntry staticSwitchEntry )
+	{
+		GraphCompiler.StaticSwitchInfo staticSwitchInfo;
+		staticSwitchInfo.BoundSwitchBlock = staticSwitchEntry;
+		staticSwitchInfo.BoundSwitch = SwitchInfo.BoundSwitch;
+
+		SwitchInfo = staticSwitchInfo;
+	}
 
 	/// <summary>
 	/// "Cast" this result to different float types
