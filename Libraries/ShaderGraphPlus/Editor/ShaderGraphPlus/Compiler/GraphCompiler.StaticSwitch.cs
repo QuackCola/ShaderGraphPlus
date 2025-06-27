@@ -24,6 +24,12 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> StaticSwitches { get; private set; } = new();
 	}
 
+	public NodeResult ResultOrDefaultTest<T>( NodeInput input, T defaultValue, StaticSwitchEntry staticSwitchEntry )
+	{
+		var result = Result( input, staticSwitchEntry );
+		return result.IsValid ? result : ResultValue( defaultValue );
+	}
+
 	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f, StaticSwitchEntry trueBlock = StaticSwitchEntry.None, StaticSwitchEntry falseBlock = StaticSwitchEntry.None )
 	{
 		var resultA = ResultOrDefaultTest( a, defaultA, trueBlock );

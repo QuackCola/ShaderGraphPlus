@@ -392,11 +392,7 @@ public sealed partial class GraphCompiler
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
-	public NodeResult ResultOrDefaultTest<T>( NodeInput input, T defaultValue, StaticSwitchEntry staticSwitchEntry )
-	{
-		var result = Result( input, staticSwitchEntry );
-		return result.IsValid ? result : ResultValue( defaultValue );
-	}
+
 
 	public void DepreciationWarning( BaseNodePlus node, string oldnode, string newnode )
 	{
