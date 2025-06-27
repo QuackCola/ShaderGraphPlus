@@ -116,22 +116,6 @@ PS
 		
 		
 		
-		float4 Feature1_result;
-		#if ( S_FEATURE1 == 1 )
-		{
-			float4 l_0 = float4( 1, 0, 1, 1 );
-			Feature1_result = float4( 1, 0, 1, 1 );
-		
-		}
-		#else
-		{
-			float l_1 = Oscillator( g_flTime, 1, 0, 10 );
-			float l_2 = l_1 * 1;
-			Feature1_result = l_1 * 1;
-		}
-		#endif
-		
-		
 		float4 Feature0_result;
 		#if ( S_FEATURE0 == 1 )
 		{

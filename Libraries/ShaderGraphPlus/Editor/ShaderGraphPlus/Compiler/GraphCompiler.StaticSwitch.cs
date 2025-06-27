@@ -48,7 +48,6 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	private StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
-
 	public HashSet<string> RegisterdFeatureNames { get; set; } = new();
 
 	private partial class CompileResult
