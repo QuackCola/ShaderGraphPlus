@@ -79,26 +79,9 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
+	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 10 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
-	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.00, 0.00, 0.00, 1.00 ); >;
-		
-	float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
-	{
-		float period, amplitude, currentPhase;
-	
-		if(flFrequency > 0.0001f)
-		{
-			period = 1.0f/flFrequency;
-			currentPhase = (fmod(flTime, period)*flFrequency) + flPhase/255.0f;
-			amplitude = flStrength * sin(currentPhase * 3.1415926535897932f * 2.0f);
-		}
-		else
-		{
-			amplitude = flStrength;
-		}
-	
-		return amplitude;
-	}
+	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.22, 0.00, 1.00, 1.00 ); >;
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -115,30 +98,29 @@ PS
 		m.Transmission = 0;
 		
 		
+		float4 l_0 = float4( 0, 0, 0, 1 ); 
 		
 		float4 staticSwitch_0_result;
 		#if ( S_FRESNEL == 1 )
 		{
-			float4 l_0 = g_vColorOne;
-			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), 6.300008 );
-			float l_2 = Oscillator( g_flTime, 2.3, l_0.r, l_1 );
-			float4 l_3 = l_0 * float4( l_2, l_2, l_2, l_2 );
-			staticSwitch_0_result = l_0 * float4( l_2, l_2, l_2, l_2 );
+			float l_1 = g_flFresnelPower;
+			float3 l_2 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_1 );
+			float4 l_3 = g_vColorOne;
+			float4 l_4 = float4( l_2, 0 ) * l_3;
+			staticSwitch_0_result = float4( l_2, 0 ) * l_3;
 		
 		}
 		#else
 		{
-			float4 l_4 = g_vColorTwo;
-			float4 l_5 = l_4 * float4( 3, 3, 3, 3 );
-			staticSwitch_0_result = l_4 * float4( 3, 3, 3, 3 );
+			float4 l_5 = g_vColorTwo;
+			staticSwitch_0_result = g_vColorTwo;
 		}
 		#endif
 		
 		float4 l_6 = staticSwitch_0_result; 
-		float4 l_7 = float4( 0, 0, 0, 1 ); 
-		float4 l_8 = lerp( l_6, min( 1.0f, (l_6) + (l_7) ), 1 ); 
+		float4 l_7 = lerp( l_0, min( 1.0f, (l_0) + (l_6) ), 1 ); 
 		
-		m.Albedo = l_8.xyz;
+		m.Albedo = l_7.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
