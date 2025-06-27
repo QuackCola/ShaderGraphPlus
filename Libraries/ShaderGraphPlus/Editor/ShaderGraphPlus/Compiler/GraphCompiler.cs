@@ -947,7 +947,6 @@ public sealed partial class GraphCompiler
 		}
 		else if ( value is NodeInput nodeInput )
 		{
-
 			if ( nodeInput == input )
 			{
 				InputStack.Remove( input );
