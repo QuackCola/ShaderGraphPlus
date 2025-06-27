@@ -47,7 +47,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> StaticSwitches { get; private set; } = new();
 	}
 
-	public NodeResult ResultOrDefaultTest<T>( NodeInput input, T defaultValue )
+	internal NodeResult StaticSwitchResultOrDefault<T>( NodeInput input, T defaultValue )
 	{
 		var result = Result( input );
 		return result.IsValid ? result : ResultValue( defaultValue );
@@ -55,8 +55,8 @@ public sealed partial class GraphCompiler
 
 	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
-		var resultA = ResultOrDefaultTest( a, defaultA );
-		var resultB = ResultOrDefaultTest( b, defaultB );
+		var resultA = StaticSwitchResultOrDefault( a, defaultA );
+		var resultB = StaticSwitchResultOrDefault( b, defaultB );
 
 		if ( resultA.Components() == resultB.Components() )
 			return (resultA, resultB);
