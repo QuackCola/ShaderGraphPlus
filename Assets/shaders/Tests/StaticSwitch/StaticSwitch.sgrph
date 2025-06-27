@@ -40,8 +40,7 @@
         "FeatureName": "Fresnel",
         "HeaderName": "Effects",
         "Options": [],
-        "IsValid": true,
-        "IsOptionsValid": true
+        "IsValid": true
       },
       "Identifier": "1",
       "Position": "-480,-48",
