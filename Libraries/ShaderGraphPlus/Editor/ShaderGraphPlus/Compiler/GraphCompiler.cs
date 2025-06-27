@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Sandbox;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -313,130 +314,88 @@ public sealed partial class GraphCompiler
 	}
 
 
-	public string GenerateShaderFeatureBody( string featureName, string staticFeatureName, NodeResult inTrue, NodeResult inFalse, int resultComponentCount, bool toggle,  out string body )
+	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int resultComponentCount, bool toggle,  out string bodyOut )
 	{
-		var featureTrueBody = new StringBuilder();
-		var featureFalseBody = new StringBuilder();
-		var sb = new StringBuilder();
-		body = "";
+		var sbTrueBody = new StringBuilder();
+		var sbFalseBody = new StringBuilder();
+		var sbSwitchBody = new StringBuilder();
+
+		bodyOut = "";
+
 		var shaderResultsTrue = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.True );
 		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.False );
 
+		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
+		var resultNameInternal = $"{resultName}_result";
 
-		var componentCount = resultComponentCount;
-		//
-		//sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
-
-		var result = $"{featureName}_result";
-
-		sb.AppendLine( $"{inTrue.TypeName} {result};" );
+		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
 		{
-			featureTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", 1 ) );
+			sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", 1 ) );
 		
 			if ( index  == shaderResultsTrue.Count() )
 			{
 				//SGPLog.Info( $"at ✅ true index {index } a {shaderResultsTrue.Count()}" );
 				
-				if ( resultTrue.Item2.Components() == componentCount )
+				if ( resultTrue.Item2.Components() == resultComponentCount )
 				{
-					featureTrueBody.AppendLine( IndentString( $"{result} = {resultTrue.Item2.Code};", 1 ) );
+					sbTrueBody.AppendLine( IndentString( $"{resultNameInternal} = {resultTrue.Item2.Code};", 1 ) );
 				}
 				else
 				{
-					featureTrueBody.Append( IndentString( $"{result} = {resultTrue.Item1.Cast( componentCount )};", 1 ));
+					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( resultComponentCount )};", 1 ));
 				}
 				
 			}
-			//var index2 = ShaderResult.Results.FindIndex( x => x.Item2.Code == resultTrue.Item2.Code );
-			//ShaderResult.Results[index2].Item2.SkipLocalGeneration = true;
 
 			index++;
 		}
-		
-		
+
 		index = 1;
 		foreach ( var resultFalse in shaderResultsFalse )
 		{
-			featureFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", 1 ) );
+			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", 1 ) );
 
 			if ( index  == shaderResultsFalse.Count() )
 			{
 				//SGPLog.Info( $"at ❌ false index {index } a {shaderResultsFalse.Count()}" );
-				featureFalseBody.Append( IndentString( $"{result} = {resultFalse.Item2.Code};", 1 ) );
+				sbFalseBody.Append( IndentString( $"{resultNameInternal} = {resultFalse.Item2.Code};", 1 ) );
 			}
 		
 			index++;
 		}
 
-		//resultTrue.Item2.SkipLocalGeneration = true;
-		/*
-		int trueIndex = 1;
-		int falseIndex = 1;
-		foreach ( var resulta in ShaderResult.Results )
-		{
-			if ( resulta.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.True )
-			{
-				featureTrueBody.AppendLine( $"{resulta.Item2.TypeName} {resulta.Item1} = {resulta.Item2.Code};" );
-
-				if ( trueIndex == shaderResultsTrue.Count() )
-				{
-
-					featureTrueBody.AppendLine( $"{result} = {resulta.Item2.Code};" );
-				}
-
-				trueIndex++;
-			}
-			
-			if ( resulta.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.False )
-			{
-				featureFalseBody.AppendLine( $"{resulta.Item2.TypeName} {resulta.Item1} = {resulta.Item2.Code};" );
-
-				if ( falseIndex == shaderResultsFalse.Count() )
-				{
-
-					featureFalseBody.AppendLine( $"{result} = {resulta.Item2.Code};" );
-				}
-
-				falseIndex++;
-			}
-		
-			//Log.Info( $"Feature Entry `{result.Item2.Code}`");
-		}
-		*/
-
 		if ( IsPreview )
 		{
 			//sb.AppendLine( $"#if ( {(toggle ? "true" : "false")} )" );
-			sb.AppendLine( $"#if ( {staticFeatureName} == {(toggle ? "0" : "1")} )" );
+			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == {(toggle ? "0" : "1")} )" );
 		}
 		else
 		{
-			sb.AppendLine( $"#if ( {staticFeatureName} == 1 )" );
+			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == 1 )" );
 		}
 		
-		sb.AppendLine( "{" );
-		sb.AppendLine( featureTrueBody.ToString() );
-		sb.AppendLine( "}" );
-		sb.AppendLine( "#else" );
-		sb.AppendLine( "{" );
-		sb.AppendLine( featureFalseBody.ToString() );
-		sb.AppendLine( "}" );
-		sb.AppendLine( "#endif" );
+		sbSwitchBody.AppendLine( "{" );
+		sbSwitchBody.AppendLine( sbTrueBody.ToString() );
+		sbSwitchBody.AppendLine( "}" );
+		sbSwitchBody.AppendLine( "#else" );
+		sbSwitchBody.AppendLine( "{" );
+		sbSwitchBody.AppendLine( sbFalseBody.ToString() );
+		sbSwitchBody.AppendLine( "}" );
+		sbSwitchBody.AppendLine( "#endif" );
 
-
-		if ( !ShaderResult.StaticSwitches.ContainsKey( featureName ) )
+		if ( !ShaderResult.StaticSwitches.ContainsKey( resultName ) )
 		{
-			ShaderResult.StaticSwitches.Add( featureName, sb.ToString() );
+			ShaderResult.StaticSwitches.Add( resultName, sbSwitchBody.ToString() );
 		}
 
 		//SGPLog.Info( sb.ToString() , IsNotPreview );
 
-		body = sb.ToString();
+		bodyOut = sbSwitchBody.ToString();
 
-		return result;
+		return resultNameInternal;
 	}
 	
 	// TODO : Once i decide to support more than a single bool option in a feature. give this a lookover.
