@@ -313,9 +313,21 @@ public sealed partial class GraphCompiler
 		return gradient;
 	}
 
-	// public string GenerateShaderFeatureBody( string staticComboName, NodeResult , int resultComponentCount, bool previewToggle,  out string bodyOut )
-	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int nodeResultComponentCount, bool previewToggle, out string switchBodyOut )
+	public string GenerateShaderFeatureBody( string staticComboName, NodeInput inputTrue, NodeInput inputFalse, bool previewToggle, out string switchBodyOut, out ResultType switchResultTypeOut )
 	{
+
+		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f, StaticSwitchEntry.True, StaticSwitchEntry.False );
+		results.Item1.BoundStaticSwtichBlock = StaticSwitchEntry.True;
+		results.Item2.BoundStaticSwtichBlock = StaticSwitchEntry.False;
+
+		switchResultTypeOut = results.Item1.ResultType;
+
+		ResetCurrentStaticSwitchCodeBlock();
+
+		string nodeResultTypeName = results.Item1.TypeName;
+		int nodeResultComponentCount = results.Item1.Components();
+
+
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
 		var sbSwitchBody = new StringBuilder();
