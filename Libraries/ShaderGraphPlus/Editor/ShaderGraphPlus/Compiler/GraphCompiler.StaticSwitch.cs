@@ -62,14 +62,9 @@ public sealed partial class GraphCompiler
 			return (resultA, resultB);
 
 		if ( resultA.Components() < resultB.Components() )
-		{
-			var resa = new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ), a.StaticSwitchInfo );
-			return ( resa, resultB );
-		}
-			
-		var resb = new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ), b.StaticSwitchInfo );
+			return ( new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB );
 
-		return ( resultA, resb );
+		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
 	}
 
 	// TODO : 
