@@ -79,7 +79,7 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
-	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 10 ); Range1( 0, 32 ); >;
+	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
 	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 0.22, 0.00, 1.00, 1.00 ); >;
 	
