@@ -377,6 +377,7 @@ public sealed partial class GraphCompiler
 			index++;
 		}
 
+		sbSwitchBody.AppendLine();
 		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
 
 		if ( IsPreview )
