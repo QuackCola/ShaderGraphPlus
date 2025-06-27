@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/tests/staticswitch/staticswitch.sgrph",
-  "Model": "models/citizen/citizen.vmdl",
+  "Model": null,
   "Title": null,
   "Description": "",
   "Category": null,
@@ -38,7 +38,7 @@
     },
     {
       "_class": "StaticSwitchNode",
-      "PreviewToggle": false,
+      "PreviewToggle": true,
       "Feature": {
         "FeatureName": "Fresnel",
         "HeaderName": "Effects",
@@ -132,7 +132,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 32,
-      "Value": 10,
+      "Value": 4,
       "Name": "Fresnel Power",
       "IsAttribute": false,
       "UI": {},
