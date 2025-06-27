@@ -19,6 +19,8 @@ public struct NodeInput : IValid
 	[JsonIgnore]
 	public string SubgraphNode { get; set; }
 
+	public GraphCompiler.StaticSwitchInfo StaticSwitchInfo { get; set; }
+
 	[Browsable( false )]
 	[JsonIgnore, Hide]
 	public readonly bool IsValid => !string.IsNullOrWhiteSpace( Identifier ) && !string.IsNullOrWhiteSpace( Output );
@@ -35,6 +37,7 @@ public struct NodeInput : IValid
 		Identifier = "";
 		Output = "";
 		Subgraph = null;
+		StaticSwitchInfo = default;
 	}
 
 	public static bool operator ==( NodeInput a, NodeInput b ) => a.Identifier == b.Identifier && a.Output == b.Output && a.Subgraph == b.Subgraph && a.SubgraphNode == b.SubgraphNode;

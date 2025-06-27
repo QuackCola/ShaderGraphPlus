@@ -9,6 +9,31 @@ namespace Editor.ShaderGraphPlus;
 public sealed partial class GraphCompiler
 {
 	/// <summary>
+	/// Container for every result to let things further down the line what belongs to what.
+	/// </summary>
+	public struct StaticSwitchInfo : IValid
+	{
+		/// <summary>
+		/// Name of the Switch that this code belongs to.
+		/// </summary>
+		public string BoundSwitch;
+
+		/// <summary>
+		/// What block of the switch this code belongs to. example : true or false blocks.
+		/// </summary>
+		public StaticSwitchEntry BoundSwitchBlock;
+
+		public bool IsValid => !string.IsNullOrWhiteSpace( BoundSwitch );
+
+		public override string ToString()
+		{
+			return $"Bound Switch : `{BoundSwitch}` Bound Switch Block `{BoundSwitchBlock}`";
+		}
+	}
+
+
+
+	/// <summary>
 	/// Current StaticSwitch
 	/// </summary>
 	private StaticSwitchNode StaticSwitchNode = null;
@@ -17,51 +42,48 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Current active switch "block" that locals are being diverted to.
 	/// </summary>
-	private StaticSwitchEntry CurrentStaticSwitchCodeBlock { get; set; } = StaticSwitchEntry.None;
+	//private StaticSwitchEntry CurrentStaticSwitchCodeBlock { get; set; } = StaticSwitchEntry.None;
+
+	private GraphCompiler.StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
 	private partial class CompileResult
 	{
 		public Dictionary<string, string> StaticSwitches { get; private set; } = new();
 	}
 
-	public NodeResult ResultOrDefaultTest<T>( NodeInput input, T defaultValue, StaticSwitchEntry staticSwitchEntry )
+	public NodeResult ResultOrDefaultTest<T>( NodeInput input, T defaultValue )
 	{
-		var result = Result( input, staticSwitchEntry );
+		var result = Result( input );
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
-	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f, StaticSwitchEntry trueBlock = StaticSwitchEntry.None, StaticSwitchEntry falseBlock = StaticSwitchEntry.None )
+	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
-		var resultA = ResultOrDefaultTest( a, defaultA, trueBlock );
-		var resultB = ResultOrDefaultTest( b, defaultB, falseBlock );
-
-		resultA.BoundStaticSwtichBlock = trueBlock;
-		resultB.BoundStaticSwtichBlock = falseBlock;
+		var resultA = ResultOrDefaultTest( a, defaultA );
+		var resultB = ResultOrDefaultTest( b, defaultB );
 
 		if ( resultA.Components() == resultB.Components() )
 			return (resultA, resultB);
 
 		if ( resultA.Components() < resultB.Components() )
 		{
-			
-			var resa = new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) );
-			resa.BoundStaticSwtichBlock = resultA.BoundStaticSwtichBlock;
-
-
-			return ( resa, resultB);
+			var resa = new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ), a.StaticSwitchInfo );
+			return ( resa, resultB );
 		}
 			
-		var resb = new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ));
-		resb.BoundStaticSwtichBlock = resultB.BoundStaticSwtichBlock;
+		var resb = new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ), b.StaticSwitchInfo );
 
-	
-
-		return (resultA, resb);
+		return ( resultA, resb );
 	}
 
-	public void ResetCurrentStaticSwitchCodeBlock()
+	//public void ResetCurrentStaticSwitchCodeBlock()
+	//{
+	//	CurrentStaticSwitchCodeBlock = StaticSwitchEntry.None;
+	//}
+
+	public void ResetCurrentStaticSwitchInfo()
 	{
-		CurrentStaticSwitchCodeBlock = StaticSwitchEntry.None;
+		CurrentStaticSwitchInfo = default;
 	}
 
 	/// <summary>
@@ -118,11 +140,27 @@ public sealed partial class GraphCompiler
 		out ResultType switchResultTypeOut 
 	)
 	{
-		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f, StaticSwitchEntry.True, StaticSwitchEntry.False );
+		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
+		var resultNameInternal = $"{resultName}_result";
+
+		StaticSwitchInfo staticSwitchInfoTrue;
+		staticSwitchInfoTrue.BoundSwitch = resultNameInternal;
+		staticSwitchInfoTrue.BoundSwitchBlock = StaticSwitchEntry.True;
+		
+		inputTrue.StaticSwitchInfo = staticSwitchInfoTrue;
+
+		StaticSwitchInfo staticSwitchInfoFalse;
+		staticSwitchInfoFalse.BoundSwitch = resultNameInternal;
+		staticSwitchInfoFalse.BoundSwitchBlock = StaticSwitchEntry.False;
+		
+		inputFalse.StaticSwitchInfo = staticSwitchInfoFalse;
+
+		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 
 		switchResultTypeOut = results.Item1.ResultType;
 
-		ResetCurrentStaticSwitchCodeBlock();
+		//ResetCurrentStaticSwitchCodeBlock();
+		ResetCurrentStaticSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
 		int nodeResultComponentCount = results.Item1.Components();
@@ -133,11 +171,10 @@ public sealed partial class GraphCompiler
 
 		switchBodyOut = "";
 
-		var shaderResultsTrue = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.True );
-		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.BoundStaticSwtichBlock == StaticSwitchEntry.False );
+		var shaderResultsTrue = ShaderResult.Results.Where( x => x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.True );
+		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.False );
 
-		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
-		var resultNameInternal = $"{resultName}_result";
+
 
 		switchResultVariableNameOut = resultNameInternal;
 
