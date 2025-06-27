@@ -130,20 +130,20 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = float4( 0.39535, 0.39535, 0.39535, 1 );
-		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float4 l_2 = g_tHeightMap.Sample( g_sSampler1,l_1 );
-		float l_3 = g_flDepthScale;
-		float l_4 = g_flReferencePlane;
-		float2 l_5 = BumpOffset( l_2.r, l_3, l_4, l_1, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) );
-		float2 l_6 = g_bEnableBumpOffset ? l_5 : l_1;
-		float4 l_7 = g_tColorMap.Sample( g_sSampler0,l_6 );
-		float l_8 = 1 - l_7.r;
-		float4 l_9 = l_0 * float4( l_8, l_8, l_8, l_8 );
-		float4 l_10 = g_tNormal.Sample( g_sSampler2,l_6 );
-		float3 l_11 = l_10.xyz;
-		float l_12 = g_flRoughness;
-		float l_13 = l_7.r * l_12;
+		float4 l_0 = float4( 0.39535, 0.39535, 0.39535, 1 ); 
+		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 ); 
+		float4 l_2 = g_tHeightMap.Sample( g_sSampler1,l_1 ); 
+		float l_3 = g_flDepthScale; 
+		float l_4 = g_flReferencePlane; 
+		float2 l_5 = BumpOffset( l_2.r, l_3, l_4, l_1, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) ); 
+		float2 l_6 = g_bEnableBumpOffset ? l_5 : l_1; 
+		float4 l_7 = g_tColorMap.Sample( g_sSampler0,l_6 ); 
+		float l_8 = 1 - l_7.r; 
+		float4 l_9 = l_0 * float4( l_8, l_8, l_8, l_8 ); 
+		float4 l_10 = g_tNormal.Sample( g_sSampler2,l_6 ); 
+		float3 l_11 = l_10.xyz; 
+		float l_12 = g_flRoughness; 
+		float l_13 = l_7.r * l_12; 
 		
 		m.Albedo = l_9.xyz;
 		m.Opacity = 1;
