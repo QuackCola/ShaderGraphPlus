@@ -40,7 +40,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Currently active switchInfo data.
 	/// </summary>
-	private GraphCompiler.StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
+	private StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
 	private partial class CompileResult
 	{
