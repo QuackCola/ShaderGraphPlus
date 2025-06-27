@@ -779,7 +779,7 @@ public sealed partial class GraphCompiler
 
 		InputStack.Add( input );
 
-		SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
+		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
 		
 		if ( node is StaticSwitchNode )
 		{
