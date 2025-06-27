@@ -72,7 +72,16 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public bool GenerateShaderFeatureBody( string staticComboName, NodeInput inputTrue, NodeInput inputFalse, bool previewToggle, out string switchResultVariableNameOut, out string switchBodyOut, out ResultType switchResultTypeOut )
+	public bool GenerateShaderFeatureBody
+	( 
+		string staticComboName, 
+		NodeInput inputTrue, 
+		NodeInput inputFalse, 
+		bool previewToggle, 
+		out string switchResultVariableNameOut, 
+		out string switchBodyOut, 
+		out ResultType switchResultTypeOut 
+	)
 	{
 		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f, StaticSwitchEntry.True, StaticSwitchEntry.False );
 		results.Item1.BoundStaticSwtichBlock = StaticSwitchEntry.True;
