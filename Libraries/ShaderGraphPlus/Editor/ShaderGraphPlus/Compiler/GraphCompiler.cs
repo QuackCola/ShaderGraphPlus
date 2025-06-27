@@ -314,7 +314,7 @@ public sealed partial class GraphCompiler
 	}
 
 
-	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int resultComponentCount, bool toggle,  out string bodyOut )
+	public string GenerateShaderFeatureBody( string staticComboName, string nodeResultTypeName, int resultComponentCount, bool previewToggle,  out string bodyOut )
 	{
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
@@ -370,7 +370,7 @@ public sealed partial class GraphCompiler
 		if ( IsPreview )
 		{
 			//sb.AppendLine( $"#if ( {(toggle ? "true" : "false")} )" );
-			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == {(toggle ? "0" : "1")} )" );
+			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == {(previewToggle ? "0" : "1")} )" );
 		}
 		else
 		{
