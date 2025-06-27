@@ -432,7 +432,7 @@ public sealed partial class GraphCompiler
 			ShaderResult.StaticSwitches.Add( featureName, sb.ToString() );
 		}
 
-		SGPLog.Info( sb.ToString() , IsNotPreview );
+		//SGPLog.Info( sb.ToString() , IsNotPreview );
 
 		body = sb.ToString();
 
