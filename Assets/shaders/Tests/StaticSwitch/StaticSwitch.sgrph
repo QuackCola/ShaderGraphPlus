@@ -28,7 +28,7 @@
       "Position": "96,24",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "9",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -38,7 +38,7 @@
     },
     {
       "_class": "StaticSwitchNode",
-      "PreviewToggle": true,
+      "PreviewToggle": false,
       "Feature": {
         "FeatureName": "Fresnel",
         "HeaderName": "Effects",
@@ -57,7 +57,7 @@
         }
       },
       "InputFalse": {
-        "Identifier": "5",
+        "Identifier": "3",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -74,19 +74,19 @@
         "Type": "Color"
       },
       "Identifier": "2",
-      "Position": "-1332,-456",
+      "Position": "-1032,-324",
       "HandleOffsets": {}
     },
     {
       "_class": "Float4",
-      "Value": "0,0,0,1",
+      "Value": "0.21667,0,1,1",
       "Name": "ColorTwo",
       "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
       "Identifier": "3",
-      "Position": "-1056,60",
+      "Position": "-744,36",
       "HandleOffsets": {}
     },
     {
@@ -97,7 +97,7 @@
       "Position": "-684,-84",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "8",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -105,47 +105,6 @@
         }
       },
       "B": {
-        "Identifier": "6",
-        "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
-      }
-    },
-    {
-      "_class": "Multiply",
-      "DefaultA": 0,
-      "DefaultB": 3,
-      "Identifier": "5",
-      "Position": "-672,48",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "3",
-        "Output": "Result",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
-      }
-    },
-    {
-      "_class": "OscillatorNode",
-      "DefaultFrequency": 2.3,
-      "DefaultPhase": 0,
-      "DefaultStrength": 10,
-      "Identifier": "6",
-      "Position": "-972,-300",
-      "HandleOffsets": {},
-      "Phase": {
-        "Identifier": "2",
-        "Output": "R",
-        "Subgraph": null,
-        "StaticSwitchInfo": {
-          "IsValid": false
-        }
-      },
-      "Strength": {
         "Identifier": "7",
         "Output": "Result",
         "Subgraph": null,
@@ -157,15 +116,35 @@
     {
       "_class": "Fresnel",
       "DefaultPower": 6.300008,
-      "Identifier": "7",
-      "Position": "-1344,-288",
+      "Identifier": "5",
+      "Position": "-1032,-156",
+      "HandleOffsets": {},
+      "Power": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null,
+        "StaticSwitchInfo": {
+          "IsValid": false
+        }
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 32,
+      "Value": 10,
+      "Name": "Fresnel Power",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "6",
+      "Position": "-1260,-108",
       "HandleOffsets": {}
     },
     {
       "_class": "ReroutePlus",
       "Comment": null,
-      "Identifier": "8",
-      "Position": "-744,-396",
+      "Identifier": "7",
+      "Position": "-744,-24",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "2",
@@ -181,11 +160,11 @@
       "Fraction": 1,
       "BlendMode": "Add",
       "Clamp": false,
-      "Identifier": "9",
+      "Identifier": "8",
       "Position": "-156,-84",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "1",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -193,7 +172,7 @@
         }
       },
       "B": {
-        "Identifier": "10",
+        "Identifier": "1",
         "Output": "Result",
         "Subgraph": null,
         "StaticSwitchInfo": {
@@ -209,7 +188,7 @@
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "10",
+      "Identifier": "9",
       "Position": "-468,-228",
       "HandleOffsets": {}
     }
