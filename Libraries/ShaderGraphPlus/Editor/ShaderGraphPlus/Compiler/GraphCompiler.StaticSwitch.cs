@@ -68,7 +68,7 @@ public sealed partial class GraphCompiler
 	}
 
 	// TODO : 
-	public void ResetCurrentStaticSwitchInfo()
+	internal void ResetCurrentStaticSwitchInfo()
 	{
 		CurrentStaticSwitchInfo = default;
 	}
@@ -116,7 +116,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public bool GenerateShaderFeatureBody
+	internal bool GenerateShaderFeatureBody
 	( 
 		string staticComboName, 
 		NodeInput inputTrue, 
@@ -323,8 +323,7 @@ public sealed partial class GraphCompiler
 
 	}
 	*/
-
-	private string BuildFeatureOptions( List<string> options )
+	internal string BuildFeatureOptions( List<string> options )
 	{
 		var options_body = "";
 		int count = 0;
