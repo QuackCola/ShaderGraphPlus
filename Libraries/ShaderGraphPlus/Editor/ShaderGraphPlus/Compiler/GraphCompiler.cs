@@ -481,14 +481,12 @@ public sealed partial class GraphCompiler
 
 		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchEntry.None )
 		{
-			//CurrentStaticSwitchCodeBlock = input.StaticSwitchInfo.BoundSwitchBlock;
 			CurrentStaticSwitchInfo = input.StaticSwitchInfo;
 		}
 
 		InputStack.Add( input );
 
 		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
-
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
