@@ -29,6 +29,11 @@ public sealed partial class GraphCompiler
 		{
 			return $"Bound Switch : `{BoundSwitch}` Bound Switch Block `{BoundSwitchBlock}`";
 		}
+
+		public static bool operator ==( StaticSwitchInfo a, StaticSwitchInfo b ) =>  a.BoundSwitch == b.BoundSwitch && a.BoundSwitchBlock == b.BoundSwitchBlock;
+		public static bool operator !=( StaticSwitchInfo a, StaticSwitchInfo b ) => a.BoundSwitch != b.BoundSwitch && a.BoundSwitchBlock != b.BoundSwitchBlock;
+
+		public override bool Equals( object obj ) => obj is StaticSwitchInfo switchInfo && this == switchInfo;
 	}
 
 	/// <summary>
