@@ -490,10 +490,6 @@ public sealed partial class GraphCompiler
 		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
 
 
-
-
-
-
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
 			if ( node.Graph != Graph )
@@ -667,29 +663,15 @@ public sealed partial class GraphCompiler
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
-			//funcResult.SetCurrentBlock( CurrentStaticSwitchCodeBlock );
 			funcResult.SetSwitchInfo( CurrentStaticSwitchInfo );
-
-
-
-			//if ( input.StaticSwitchInfo.IsValid )
-			//{
-			//
-			//	//SGPLog.Info( $"Setting switchInfo for `{funcResult.Code}` : `{input.StaticSwitchInfo}`" , IsPreview);
-			//
-			//	funcResult.SetSwitchInfo( input.StaticSwitchInfo );
-			//	
-			//
-			//	funcResult.SkipLocalGeneration = true;
-			//}
 
 			if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchEntry.None )
 			{
-				//funcResult.SetSwitchInfo( input.StaticSwitchInfo );
 				funcResult.SkipLocalGeneration = true;
 			}
 
-			SGPLog.Info( $" input `{node.DisplayInfo.Name}` `{funcResult.SwitchInfo}`", IsPreview );
+			//SGPLog.Info( $" input `{node.DisplayInfo.Name}` `{funcResult.SwitchInfo}`", IsPreview );
+
 			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
@@ -721,21 +703,8 @@ public sealed partial class GraphCompiler
 
 			var id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult( funcResult.ResultType, varName );
+			var localResult = new NodeResult( funcResult.ResultType, varName, funcResult.SwitchInfo );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
-
-
-
-			//if ( localResult.SkipLocalGeneration )
-			//{
-			//
-			//	localResult = new NodeResult( funcResult.ResultType, varName, input.StaticSwitchInfo );
-			//	localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
-			//}
-			//else
-			//{ 
-			//
-			//}
 
 			if ( !string.IsNullOrWhiteSpace( funcResult.StaticSwitchNodeBody ) && node is StaticSwitchNode  )
 			{
@@ -755,7 +724,6 @@ public sealed partial class GraphCompiler
 			return localResult;
 		}
 		
-	
 		var resultVal = ResultValue( value );
 		InputStack.Remove( input );
 		return resultVal;
