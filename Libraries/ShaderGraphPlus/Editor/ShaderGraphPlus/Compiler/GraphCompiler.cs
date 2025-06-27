@@ -392,8 +392,6 @@ public sealed partial class GraphCompiler
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
-
-
 	public void DepreciationWarning( BaseNodePlus node, string oldnode, string newnode )
 	{
 		var warnings = new List<string>();
