@@ -115,6 +115,7 @@ PS
 		m.Transmission = 0;
 		
 		
+		
 		float4 staticSwitch_0_result;
 		#if ( S_FRESNEL == 1 )
 		{
