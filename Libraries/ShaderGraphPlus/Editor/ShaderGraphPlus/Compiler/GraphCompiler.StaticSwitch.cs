@@ -2,6 +2,7 @@
 // Static Switch related code
 //
 
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus;
@@ -40,12 +41,16 @@ public sealed partial class GraphCompiler
 	/// Current StaticSwitch
 	/// </summary>
 	//private StaticSwitchNode StaticSwitchNode = null;
-	//private List<StaticSwitchNode> StaticSwitchStack = new();
-	
+	private List<StaticSwitchNode> StaticSwitchStack = new();
+	private List<StaticSwitchInfo> StaticSwitchInfoStack = new();
+
 	/// <summary>
 	/// Currently active switchInfo data.
 	/// </summary>
 	private StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
+
+
+	public HashSet<string> RegisterdFeatureNames { get; set; } = new();
 
 	private partial class CompileResult
 	{
@@ -77,7 +82,7 @@ public sealed partial class GraphCompiler
 	{
 		CurrentStaticSwitchInfo = default;
 	}
-
+	private int StaticSwitchCount { get; set; } = 0;
 	/// <summary>
 	/// Registers a true or false Shader Feature.
 	/// </summary>
@@ -123,7 +128,8 @@ public sealed partial class GraphCompiler
 
 	internal bool GenerateShaderFeatureBody
 	( 
-		string staticComboName, 
+		string staticComboName,
+		string featureName,
 		NodeInput inputTrue, 
 		NodeInput inputFalse, 
 		bool previewToggle, 
@@ -132,8 +138,13 @@ public sealed partial class GraphCompiler
 		out ResultType switchResultTypeOut 
 	)
 	{
-		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
+		var resultName = featureName;//$"staticSwitch_{StaticSwitchCount++}";
 		var resultNameInternal = $"{resultName}_result";
+
+		if ( !RegisterdFeatureNames.Contains( resultName ) )
+		{
+			RegisterdFeatureNames.Add( resultName );
+		}
 
 		StaticSwitchInfo staticSwitchInfoTrue;
 		staticSwitchInfoTrue.BoundSwitch = resultNameInternal;
@@ -167,12 +178,16 @@ public sealed partial class GraphCompiler
 		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.False );
 
 
-
 		switchResultVariableNameOut = resultNameInternal;
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
 		{
+			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.StaticSwitchNodeBody ) )
+			{
+				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.StaticSwitchNodeBody}", 1 ) );
+			}
+
 			sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", 1 ) );
 
 			if ( index == shaderResultsTrue.Count() )
@@ -195,6 +210,11 @@ public sealed partial class GraphCompiler
 		index = 1;
 		foreach ( var resultFalse in shaderResultsFalse )
 		{
+			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.StaticSwitchNodeBody ) )
+			{
+				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.StaticSwitchNodeBody}", 1 ) );
+			}
+
 			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", 1 ) );
 
 			if ( index == shaderResultsFalse.Count() )
@@ -238,7 +258,7 @@ public sealed partial class GraphCompiler
 			return true;
 		}
 
-
+		//SGPLog.Info( $"ShaderResult.StaticSwitches already contains key : `{resultName}`", IsPreview );
 
 		return false;
 	}

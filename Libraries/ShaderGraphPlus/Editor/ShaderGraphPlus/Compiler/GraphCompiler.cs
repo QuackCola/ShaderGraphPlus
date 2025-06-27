@@ -444,7 +444,6 @@ public sealed partial class GraphCompiler
 			return default;
 		}
 
-
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty(input.Output);
 
@@ -484,7 +483,7 @@ public sealed partial class GraphCompiler
 
 		InputStack.Add( input );
 
-		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchCodeBlock}`:`{node}`:`{node.Identifier}`", IsNotPreview );
+		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchInfo}`:`{node}`:`{node.Identifier}`", IsPreview );
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
@@ -659,14 +658,22 @@ public sealed partial class GraphCompiler
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
+
+			StaticSwitchInfoStack.Add( funcResult.SwitchInfo );
 			funcResult.SetSwitchInfo( CurrentStaticSwitchInfo );
 
-			if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchEntry.None )
+			if ( node is StaticSwitchNode staticSwitchnode )
+			{
+				if ( StaticSwitchInfoStack.Contains( CurrentStaticSwitchInfo ) && input.StaticSwitchInfo.IsValid )
+				{
+					funcResult.SetSwitchInfo( input.StaticSwitchInfo );
+					funcResult.SkipLocalGeneration = true;
+				}
+			}
+			else if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchEntry.None )
 			{
 				funcResult.SkipLocalGeneration = true;
 			}
-
-			//SGPLog.Info( $" input `{node.DisplayInfo.Name}` `{funcResult.SwitchInfo}`", IsPreview );
 
 			if ( !funcResult.IsValid )
 			{
@@ -694,6 +701,7 @@ public sealed partial class GraphCompiler
 			if ( funcResult.Constant )
 			{
 				InputStack.Remove( input );
+				
 				return funcResult;
 			}
 
@@ -702,7 +710,7 @@ public sealed partial class GraphCompiler
 			var localResult = new NodeResult( funcResult.ResultType, varName, funcResult.SwitchInfo );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
 
-			if ( !string.IsNullOrWhiteSpace( funcResult.StaticSwitchNodeBody ) && node is StaticSwitchNode  )
+			if ( !string.IsNullOrWhiteSpace( funcResult.StaticSwitchNodeBody ) && node is StaticSwitchNode )
 			{
 				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.StaticSwitchNodeBody );
 			}
@@ -716,10 +724,11 @@ public sealed partial class GraphCompiler
 			}
 
 			InputStack.Remove( input );
+			StaticSwitchInfoStack.Remove( funcResult.SwitchInfo );
 
 			return localResult;
 		}
-		
+
 		var resultVal = ResultValue( value );
 		InputStack.Remove( input );
 		return resultVal;
@@ -1596,7 +1605,7 @@ public sealed partial class GraphCompiler
 						//sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						//sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
 
-						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
 						{
 							sb.AppendLine( result.Item2.StaticSwitchNodeBody );
 						}

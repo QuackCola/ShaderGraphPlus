@@ -27,6 +27,16 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	{
 		var staticComboName = "";
 
+		if ( string.IsNullOrWhiteSpace( Feature.FeatureName ) )
+		{
+			return NodeResult.Error( "Feature must have a valid name!" );
+		}
+
+		if ( compiler.RegisterdFeatureNames.Contains( Feature.FeatureName ) )
+		{
+			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
+		}
+
 		if ( Feature.IsValid )
 		{
 			compiler.RegisterShaderFeatureBinary( Feature, out staticComboName );
@@ -36,13 +46,15 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		if ( compiler.GenerateShaderFeatureBody( staticComboName, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+		if ( compiler.GenerateShaderFeatureBody( staticComboName, Feature.FeatureName, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 		{
+			//SGPLog.Info( switchBody, compiler.IsPreview);
+
 			return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
 		}
 		else
 		{
-			return new NodeResult( ResultType.Float, $"{1.0f}" );
+			return new NodeResult( ResultType.Float, $"{4.0f}" );
 		}
 	};
 

@@ -18,7 +18,9 @@ public struct NodeInput : IValid
 	[Hide, Browsable( false )]
 	[JsonIgnore]
 	public string SubgraphNode { get; set; }
-
+	
+	[Hide, Browsable( false )]
+	[JsonIgnore]
 	public GraphCompiler.StaticSwitchInfo StaticSwitchInfo { get; set; }
 
 	[Browsable( false )]
