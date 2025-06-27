@@ -74,30 +74,30 @@ public struct ShaderFeature : IValid
 	/// <summary>
 	/// Returns true if all options have valid names. False if one option has an invalid name.
 	/// </summary>
-	[Hide]
-	public readonly bool IsOptionsValid
-	{
-		get
-		{
-			var optionsCount = Options.Count;
-			var validOptionsCount = 0;
-
-			foreach ( var option in Options )
-			{
-				if ( !string.IsNullOrWhiteSpace( option ) )
-				{
-					validOptionsCount++;
-				}
-			}
-
-			if ( validOptionsCount == optionsCount )
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+	//[Hide]
+	//public readonly bool IsOptionsValid
+	//{
+	//	get
+	//	{
+	//		var optionsCount = Options.Count;
+	//		var validOptionsCount = 0;
+	//
+	//		foreach ( var option in Options )
+	//		{
+	//			if ( !string.IsNullOrWhiteSpace( option ) )
+	//			{
+	//				validOptionsCount++;
+	//			}
+	//		}
+	//
+	//		if ( validOptionsCount == optionsCount )
+	//		{
+	//			return true;
+	//		}
+	//		else
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//}
 }
