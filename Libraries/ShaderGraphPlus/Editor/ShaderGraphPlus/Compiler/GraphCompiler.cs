@@ -1656,7 +1656,7 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
-						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
 						{ 
 							sb.AppendLine( result.Item2.StaticSwitchNodeBody );
 						}
