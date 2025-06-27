@@ -36,8 +36,6 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		//var switchResultName = compiler.GenerateShaderFeatureBody( staticComboName, InputTrue, InputFalse, PreviewToggle, out var nodeResultVariableName, out var switchBody, out var switchResultType );
-
 		if ( compiler.GenerateShaderFeatureBody( staticComboName, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 		{
 			return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
