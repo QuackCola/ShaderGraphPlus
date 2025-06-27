@@ -403,15 +403,13 @@ public sealed partial class GraphCompiler
 		{
 			ShaderResult.StaticSwitches.Add( resultName, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
-			
+
+			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
+
 			return true;
 		}
 
-		//SGPLog.Info( sb.ToString() , IsNotPreview );
-
-		
-
-		//return resultNameInternal;
+	
 
 		return false;
 	}
