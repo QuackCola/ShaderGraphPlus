@@ -13,7 +13,8 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
-    "BackgroundColor": "0,0,0,1",
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [

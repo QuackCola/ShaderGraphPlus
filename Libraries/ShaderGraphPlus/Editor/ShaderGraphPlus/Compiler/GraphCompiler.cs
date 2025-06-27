@@ -338,7 +338,7 @@ public sealed partial class GraphCompiler
 		
 			if ( index  == shaderResultsTrue.Count() )
 			{
-				SGPLog.Info( $"at ✅ true index {index } a {shaderResultsTrue.Count()}" );
+				//SGPLog.Info( $"at ✅ true index {index } a {shaderResultsTrue.Count()}" );
 				
 				if ( resultTrue.Item2.Components() == componentCount )
 				{
@@ -364,7 +364,7 @@ public sealed partial class GraphCompiler
 
 			if ( index  == shaderResultsFalse.Count() )
 			{
-				SGPLog.Info( $"at ❌ false index {index } a {shaderResultsFalse.Count()}" );
+				//SGPLog.Info( $"at ❌ false index {index } a {shaderResultsFalse.Count()}" );
 				featureFalseBody.Append( IndentString( $"{result} = {resultFalse.Item2.Code};", 1 ) );
 			}
 		
@@ -783,7 +783,7 @@ public sealed partial class GraphCompiler
 		
 		if ( node is StaticSwitchNode )
 		{
-			StaticSwitch = input;
+			//StaticSwitch = input;
 		}
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
@@ -1020,7 +1020,7 @@ public sealed partial class GraphCompiler
 				Nodes.Add( node );
 			}
 
-			StaticSwitchStack.Remove( input );
+			//StaticSwitchStack.Remove( input );
 			InputStack.Remove( input );
 
 			return localResult;
