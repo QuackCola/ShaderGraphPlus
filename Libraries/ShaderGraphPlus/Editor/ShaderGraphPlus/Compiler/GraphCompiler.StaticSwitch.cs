@@ -24,6 +24,35 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> StaticSwitches { get; private set; } = new();
 	}
 
+	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f, StaticSwitchEntry trueBlock = StaticSwitchEntry.None, StaticSwitchEntry falseBlock = StaticSwitchEntry.None )
+	{
+		var resultA = ResultOrDefaultTest( a, defaultA, trueBlock );
+		var resultB = ResultOrDefaultTest( b, defaultB, falseBlock );
+
+		resultA.BoundStaticSwtichBlock = trueBlock;
+		resultB.BoundStaticSwtichBlock = falseBlock;
+
+		if ( resultA.Components() == resultB.Components() )
+			return (resultA, resultB);
+
+		if ( resultA.Components() < resultB.Components() )
+		{
+			
+			var resa = new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) );
+			resa.BoundStaticSwtichBlock = resultA.BoundStaticSwtichBlock;
+
+
+			return ( resa, resultB);
+		}
+			
+		var resb = new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ));
+		resb.BoundStaticSwtichBlock = resultB.BoundStaticSwtichBlock;
+
+	
+
+		return (resultA, resb);
+	}
+
 	public void ResetCurrentStaticSwitchCodeBlock()
 	{
 		CurrentStaticSwitchCodeBlock = StaticSwitchEntry.None;
@@ -84,8 +113,6 @@ public sealed partial class GraphCompiler
 	)
 	{
 		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f, StaticSwitchEntry.True, StaticSwitchEntry.False );
-		results.Item1.BoundStaticSwtichBlock = StaticSwitchEntry.True;
-		results.Item2.BoundStaticSwtichBlock = StaticSwitchEntry.False;
 
 		switchResultTypeOut = results.Item1.ResultType;
 

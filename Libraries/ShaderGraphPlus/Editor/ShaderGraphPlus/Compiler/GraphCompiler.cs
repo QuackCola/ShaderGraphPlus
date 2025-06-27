@@ -416,7 +416,13 @@ public sealed partial class GraphCompiler
 	{
 		if (!input.IsValid)
 			return default;
-	
+		
+		// result belongs to a code block.
+		if ( switchCodeBlock != StaticSwitchEntry.None && IsPreview )
+		{
+			SGPLog.Info( $"Current Block : `{switchCodeBlock}`" );
+		}
+
 		BaseNodePlus node = null;
 		if ( string.IsNullOrEmpty( input.Subgraph ) )
 		{
@@ -760,34 +766,6 @@ public sealed partial class GraphCompiler
 		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
 	}
 
-	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f, StaticSwitchEntry trueBlock = StaticSwitchEntry.None, StaticSwitchEntry falseBlock = StaticSwitchEntry.None )
-	{
-		var resultA = ResultOrDefaultTest( a, defaultA, trueBlock );
-		var resultB = ResultOrDefaultTest( b, defaultB, falseBlock );
-
-		resultA.BoundStaticSwtichBlock = trueBlock;
-		resultB.BoundStaticSwtichBlock = falseBlock;
-
-		if ( resultA.Components() == resultB.Components() )
-			return (resultA, resultB);
-
-		if ( resultA.Components() < resultB.Components() )
-		{
-			
-			var resa = new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) );
-			resa.BoundStaticSwtichBlock = resultA.BoundStaticSwtichBlock;
-
-
-			return ( resa, resultB);
-		}
-			
-		var resb = new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ));
-		resb.BoundStaticSwtichBlock = resultB.BoundStaticSwtichBlock;
-
-	
-
-		return (resultA, resb);
-	}
 
 	/// <summary>
 	/// Get result of a value that can be set in material editor
