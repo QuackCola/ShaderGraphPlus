@@ -313,9 +313,8 @@ public sealed partial class GraphCompiler
 		return gradient;
 	}
 
-	public string GenerateShaderFeatureBody( string staticComboName, NodeInput inputTrue, NodeInput inputFalse, bool previewToggle, out string switchBodyOut, out ResultType switchResultTypeOut )
+	public bool GenerateShaderFeatureBody( string staticComboName, NodeInput inputTrue, NodeInput inputFalse, bool previewToggle, out string switchResultVariableNameOut, out string switchBodyOut, out ResultType switchResultTypeOut )
 	{
-
 		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f, StaticSwitchEntry.True, StaticSwitchEntry.False );
 		results.Item1.BoundStaticSwtichBlock = StaticSwitchEntry.True;
 		results.Item2.BoundStaticSwtichBlock = StaticSwitchEntry.False;
@@ -326,7 +325,6 @@ public sealed partial class GraphCompiler
 
 		string nodeResultTypeName = results.Item1.TypeName;
 		int nodeResultComponentCount = results.Item1.Components();
-
 
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
@@ -339,6 +337,8 @@ public sealed partial class GraphCompiler
 
 		var resultName = $"staticSwitch_{ShaderResult.StaticSwitches.Count}";
 		var resultNameInternal = $"{resultName}_result";
+
+		switchResultVariableNameOut = resultNameInternal;
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
@@ -401,13 +401,18 @@ public sealed partial class GraphCompiler
 		if ( !ShaderResult.StaticSwitches.ContainsKey( resultName ) )
 		{
 			ShaderResult.StaticSwitches.Add( resultName, sbSwitchBody.ToString() );
+			switchBodyOut = sbSwitchBody.ToString();
+			
+			return true;
 		}
 
 		//SGPLog.Info( sb.ToString() , IsNotPreview );
 
-		switchBodyOut = sbSwitchBody.ToString();
+		
 
-		return resultNameInternal;
+		//return resultNameInternal;
+
+		return false;
 	}
 	
 	// TODO : Once i decide to support more than a single bool option in a feature. give this a lookover.
