@@ -68,7 +68,7 @@ public struct NodeResult : IValid
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
 
-	public string ComboSwitchNodeBody { get; set; }
+	public string ComboSwitchBody { get; set; }
 
 	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
@@ -181,7 +181,7 @@ public struct NodeResult : IValid
 	{
 		ResultType = resultType;
 		Code = code;
-		ComboSwitchNodeBody = switchBody;
+		ComboSwitchBody = switchBody;
 		Constant = constant;
 		IsComponentLess = isComponentLess;
 		VoidComponents = voidComponents;

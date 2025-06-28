@@ -216,9 +216,9 @@ public sealed partial class GraphCompiler
 		var indentLevel = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
 		{
-			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.ComboSwitchNodeBody ) )
+			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.ComboSwitchBody ) )
 			{
-				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.ComboSwitchNodeBody}", indentLevel ) );
+				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.ComboSwitchBody}", indentLevel ) );
 			}
 
 			//sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
@@ -247,9 +247,9 @@ public sealed partial class GraphCompiler
 		var lastResultLocal = "";
 		foreach ( var resultFalse in shaderResultsFalse )
 		{
-			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.ComboSwitchNodeBody ) )
+			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.ComboSwitchBody ) )
 			{
-				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.ComboSwitchNodeBody}", indentLevel ) );
+				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.ComboSwitchBody}", indentLevel ) );
 			}
 
 			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", indentLevel ) );
