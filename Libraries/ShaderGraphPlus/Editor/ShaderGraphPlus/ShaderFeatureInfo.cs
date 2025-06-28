@@ -19,7 +19,7 @@ public struct ShaderFeatureInfo : IValid
 	{
 		get
 		{
-			return $"{FeatureName}_result";
+			return $"{FeatureName}SwitchResult";
 		}
 	}
 

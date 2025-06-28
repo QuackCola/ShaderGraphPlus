@@ -107,15 +107,15 @@ public partial class ShaderGraphPlus : IGraph
 	/// <summary>
 	/// Currently Registerd features for this graph.
 	/// </summary>
-	[Hide]
-	public Dictionary<string,string> Features { get; set; } = new();
+	//[Hide]
+	//public Dictionary<string,string> Features { get; set; } = new();
 	
 	/// <summary>
 	/// TODO: Hook this up and read from a list of registerd features!
 	/// </summary>
-	[InlineEditor]
-
-	public List<FeatureRule> FeatureRules { get; set; } = new();
+	//[InlineEditor]
+	//
+	//public List<FeatureRule> FeatureRules { get; set; } = new();
 
 	/// <summary>
 	///   Custom key-value storage for this project.
@@ -175,17 +175,17 @@ public partial class ShaderGraphPlus : IGraph
 		RemoveNode( (BaseNodePlus)node );
 	}
 
-	public void AddFeature( ShaderFeatureInfo feature )
-	{
-		if ( !Features.ContainsKey( feature.FeatureName ) )
-		{
-			Features.Add( feature.FeatureName, feature.FeatureString );
-		}
-		else
-		{
-			//SGPLog.Error( "Feature is already known to the graph!" );
-		}
-	}
+	//public void AddFeature( ShaderFeatureInfo feature )
+	//{
+	//	if ( !Features.ContainsKey( feature.FeatureName ) )
+	//	{
+	//		Features.Add( feature.FeatureName, feature.FeatureString );
+	//	}
+	//	else
+	//	{
+	//		//SGPLog.Error( "Feature is already known to the graph!" );
+	//	}
+	//}
 
     //
     // Summary:

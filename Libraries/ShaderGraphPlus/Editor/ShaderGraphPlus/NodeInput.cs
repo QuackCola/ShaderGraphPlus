@@ -21,7 +21,7 @@ public struct NodeInput : IValid
 	
 	[Hide, Browsable( false )]
 	[JsonIgnore]
-	public GraphCompiler.StaticSwitchInfo StaticSwitchInfo { get; set; }
+	public GraphCompiler.ComboSwitchInfo StaticSwitchInfo { get; set; }
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]

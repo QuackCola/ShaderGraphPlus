@@ -70,7 +70,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Container for every result to let things further down the line what belongs to what.
 	/// </summary>
-	public struct StaticSwitchInfo : IValid
+	public struct ComboSwitchInfo : IValid
 	{
 		/// <summary>
 		/// Name of the Switch that this code belongs to.
@@ -89,23 +89,23 @@ public sealed partial class GraphCompiler
 			return $"Bound Switch : `{BoundSwitch}` Bound Switch Block `{BoundSwitchBlock}`";
 		}
 
-		public static bool operator ==( StaticSwitchInfo a, StaticSwitchInfo b ) => a.BoundSwitch == b.BoundSwitch && a.BoundSwitchBlock == b.BoundSwitchBlock;
-		public static bool operator !=( StaticSwitchInfo a, StaticSwitchInfo b ) => a.BoundSwitch != b.BoundSwitch && a.BoundSwitchBlock != b.BoundSwitchBlock;
-		public override bool Equals( object obj ) => obj is StaticSwitchInfo switchInfo && this == switchInfo;
+		public static bool operator ==( ComboSwitchInfo a, ComboSwitchInfo b ) => a.BoundSwitch == b.BoundSwitch && a.BoundSwitchBlock == b.BoundSwitchBlock;
+		public static bool operator !=( ComboSwitchInfo a, ComboSwitchInfo b ) => a.BoundSwitch != b.BoundSwitch && a.BoundSwitchBlock != b.BoundSwitchBlock;
+		public override bool Equals( object obj ) => obj is ComboSwitchInfo switchInfo && this == switchInfo;
 		public override int GetHashCode() => System.HashCode.Combine( BoundSwitch, BoundSwitchBlock );
 	}
 
-	/// <summary>
-	/// Current StaticSwitch
-	/// </summary>
 	//private StaticSwitchNode StaticSwitchNode = null;
-	private List<StaticSwitchNode> StaticSwitchStack = new();
-	private List<StaticSwitchInfo> StaticSwitchInfoStack = new();
+	//private List<StaticSwitchNode> StaticSwitchStack = new();
+	/// <summary>
+	/// 
+	/// </summary>
+	private List<ComboSwitchInfo> StaticSwitchInfoStack = new();
 
 	/// <summary>
-	/// Currently active switchInfo data.
+	/// Currently active SwitchInfo data.
 	/// </summary>
-	private StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
+	private ComboSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
 	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.StaticSwitches.Keys;
 
@@ -143,7 +143,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Registers a true or false Shader Feature.
 	/// </summary>
-	internal void RegisterShaderFeatureBinary( ShaderFeature feature , out ShaderFeatureInfo shaderFeatureInfo )//, out string staticFeatureName )
+	internal bool RegisterShaderFeatureBinary( ShaderFeature feature , out ShaderFeatureInfo shaderFeatureInfo )
 	{
 		var result = ShaderResult;
 		shaderFeatureInfo = new ShaderFeatureInfo();
@@ -165,11 +165,15 @@ public sealed partial class GraphCompiler
 			if ( !result.ShaderFeatures.ContainsKey( id ) )
 			{
 				result.ShaderFeatures.Add( id, shaderFeatureInfo );
+
+				return true;
 			}
+
+			return false;
 		}
 		else
 		{
-			SGPLog.Error( "Invalid feature!!!" );
+			return false;
 		}
 	}
 
@@ -188,8 +192,8 @@ public sealed partial class GraphCompiler
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
-		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.True };
-		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.False };
+		inputTrue.StaticSwitchInfo = new ComboSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.True };
+		inputFalse.StaticSwitchInfo = new ComboSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.False };
 
 		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
@@ -303,7 +307,7 @@ public sealed partial class GraphCompiler
 			ShaderResult.StaticSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
-			Graph.AddFeature( feature );
+			//Graph.AddFeature( feature );
 
 			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
 
