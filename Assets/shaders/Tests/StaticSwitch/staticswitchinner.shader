@@ -127,7 +127,7 @@ PS
 			}
 			#else
 			{
-				float l_1 = Oscillator( g_flTime, 1, 0, 10 );
+				float l_1 = Oscillator( g_flTime, 1, -0.69999987, 10 );
 				float l_2 = l_1 * 1;
 				Feature1SwitchResult = float4( l_2, l_2, l_2, l_2 );}
 			#endif
@@ -136,7 +136,7 @@ PS
 		}
 		#else
 		{
-			float4 l_4 = float4( 1, 0.59515, 0, 1 );
+			float4 l_4 = float4( 0.56374, 0.06789, 0, 1 );
 			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
 			Feature0SwitchResult = l_5;
 		}

@@ -54,9 +54,13 @@ public class MainWindow : DockWindow
 	private Option _undoMenuOption;
 	private Option _redoMenuOption;
 
+	private Option AutoCompileOption;
+
 	public UndoStack UndoStack => _undoStack;
 
 	private bool _dirty = false;
+	private bool _autoCompile = true;
+
 
 	private string _generatedCode;
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
@@ -441,7 +445,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private string GeneratePreviewCode()
+	private string GeneratePreviewCode( bool compileCode = true )
 	{
 		ClearAttributes();
 
@@ -545,8 +549,11 @@ public class MainWindow : DockWindow
 		if ( _generatedCode != code )
 		{
 			_generatedCode = code;
-
-			Compile();
+	
+			if ( compileCode )
+			{
+				Compile();
+			}
 		}
 
 		return code;
@@ -570,8 +577,11 @@ public class MainWindow : DockWindow
 		_dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
+		//if ( !_autoCompile )
+		//	return;
+
 		if ( evaluate )
-			GeneratePreviewCode();
+			GeneratePreviewCode( _autoCompile );
 	}
 
 	[EditorEvent.Frame]
@@ -729,11 +739,28 @@ public class MainWindow : DockWindow
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
 		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
-		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
-
+		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot ).StatusTip = "Take Screenshot";
+		AutoCompileOption = toolBar.AddOption( "Auto Compile", "model_editor/auto_recompile.png", ToggleAutoCompile );
+		AutoCompileOption.StatusTip = "Enable or Disable graph auto compile.";
 
 		_undoOption.Enabled = false;
 		_redoOption.Enabled = false;
+	}
+
+	private void ToggleAutoCompile()
+	{
+		_autoCompile = !_autoCompile;
+
+		if ( _autoCompile )
+		{
+			Compile();
+			//SetDirty();
+		}
+		
+		if ( AutoCompileOption != null )
+		{
+			AutoCompileOption.Icon = $"{( _autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png" )}";
+		}
 	}
 
 	public void BuildMenuBar()
@@ -767,7 +794,7 @@ public class MainWindow : DockWindow
 		var debug = MenuBar.AddMenu( "Debug" );
 		debug.AddSeparator();
 		debug.AddOption( "Open Temp Shader", "common/edit.png", OpenTempGeneratedShader );
-		debug.AddOption("Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt);
+		debug.AddOption( "Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt );
 
 		RefreshRecentFiles();
 
@@ -1365,15 +1392,14 @@ public class MainWindow : DockWindow
 	{
 		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
-
 		if ( _properties.Target is BaseNodePlus node )
 		{
 			_graphView.UpdateNode( node );
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
-		
-		SetDirty(shouldEvaluate);
+
+		SetDirty( shouldEvaluate );
 	}
 
 	protected override void RestoreDefaultDockLayout()
