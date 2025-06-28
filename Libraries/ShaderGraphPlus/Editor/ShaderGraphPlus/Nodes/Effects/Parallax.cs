@@ -4,6 +4,7 @@
 /// Basic probabaly shit Parallax test.
 /// </summary>
 [Title( "Parallax Node Test" ), Category( "Dev" )]
+[Hide]
 public sealed class ParallaxNode : ShaderNodePlus
 {
 	[Hide]
