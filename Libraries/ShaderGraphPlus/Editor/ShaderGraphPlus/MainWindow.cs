@@ -752,30 +752,15 @@ public class MainWindow : DockWindow
 				//SetDirty();
 			}
 
-			AutoCompileOption.Icon = $"{(_autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png")}";
+			AutoCompileOption.Icon = $"{( _autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png" )}";
 		} );
 		AutoCompileOption.StatusTip = "Enable or Disable graph auto compile.";
+
 		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
 		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot ).StatusTip = "Take Screenshot";
 
 		_undoOption.Enabled = false;
 		_redoOption.Enabled = false;
-	}
-
-	private void ToggleAutoCompile()
-	{
-		_autoCompile = !_autoCompile;
-
-		if ( _autoCompile )
-		{
-			Compile();
-			//SetDirty();
-		}
-		
-		if ( AutoCompileOption != null )
-		{
-			AutoCompileOption.Icon = $"{( _autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png" )}";
-		}
 	}
 
 	public void BuildMenuBar()
