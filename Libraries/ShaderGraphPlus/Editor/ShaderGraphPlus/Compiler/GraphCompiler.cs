@@ -476,7 +476,7 @@ public sealed partial class GraphCompiler
 			return default;
 		}
 
-		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchEntry.None )
+		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchBlock.None )
 		{
 			CurrentStaticSwitchInfo = input.StaticSwitchInfo;
 		}
@@ -670,7 +670,7 @@ public sealed partial class GraphCompiler
 					funcResult.SkipLocalGeneration = true;
 				}
 			}
-			else if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchEntry.None )
+			else if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
 			{
 				funcResult.SkipLocalGeneration = true;
 			}

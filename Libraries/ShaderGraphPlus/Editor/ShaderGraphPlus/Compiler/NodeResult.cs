@@ -52,17 +52,7 @@ public enum StaticSwitchState
 	End,
 }
 
-public struct StaticSwitchData
-{
-	public StaticSwitchState State;
-}
 
-public enum StaticSwitchEntry
-{
-	None,
-	True,
-	False,
-}
 
 public struct NodeResult : IValid
 {
@@ -218,7 +208,7 @@ public struct NodeResult : IValid
 		SwitchInfo = switchInfo;
 	}
 
-	public void SetCurrentBlock( StaticSwitchEntry staticSwitchEntry )
+	public void SetCurrentBlock( StaticSwitchBlock staticSwitchEntry )
 	{
 		GraphCompiler.StaticSwitchInfo staticSwitchInfo;
 		staticSwitchInfo.BoundSwitchBlock = staticSwitchEntry;
