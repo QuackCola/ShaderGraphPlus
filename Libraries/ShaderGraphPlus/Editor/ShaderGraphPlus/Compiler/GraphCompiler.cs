@@ -480,8 +480,6 @@ public sealed partial class GraphCompiler
 
 		InputStack.Add( input );
 
-		//SGPLog.Info( $"Processing Input `{CurrentStaticSwitchInfo}`:`{node}`:`{node.Identifier}`", IsPreview );
-
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
 			if ( node.Graph != Graph )
@@ -698,7 +696,6 @@ public sealed partial class GraphCompiler
 			if ( funcResult.Constant )
 			{
 				InputStack.Remove( input );
-				
 				return funcResult;
 			}
 
@@ -707,9 +704,10 @@ public sealed partial class GraphCompiler
 			var localResult = new NodeResult( funcResult.ResultType, varName, funcResult.SwitchInfo );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
 
-			if ( !string.IsNullOrWhiteSpace( funcResult.ComboSwitchNodeBody ) && node is StaticSwitchNode )
+			// get the ComboSwitchBody result from the StaticSwitch funcResult.
+			if ( !string.IsNullOrWhiteSpace( funcResult.ComboSwitchBody ) && node is StaticSwitchNode )
 			{
-				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.ComboSwitchNodeBody );
+				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.ComboSwitchBody );
 			}
 
 			ShaderResult.InputResults.Add( input, localResult );
@@ -758,12 +756,10 @@ public sealed partial class GraphCompiler
 			return ResultValue( value );
 
 		name = CleanName(name);
-
 		var attribName = name;
-
 		var prefix = GetLocalPrefix( value );
-       
-        if ( !name.StartsWith( prefix ) )
+
+		if ( !name.StartsWith( prefix ) )
 			name = prefix + name;
 
 		if ( ShaderResult.Parameters.TryGetValue( name, out var parameter ) )
@@ -835,7 +831,6 @@ public sealed partial class GraphCompiler
 
 		return parameter.Result;
 	}
-
 
 	public void ResultComboPreview( string comboName, int value )
 	{
@@ -915,7 +910,7 @@ public sealed partial class GraphCompiler
 			ResultType r when r == ResultType.Float3x3 => "float3x3",
 			ResultType r when r == ResultType.Float4x4 => "float4x4",
 			ResultType r when r == ResultType.Void => "void",
-			_ => throw new ArgumentException("Unsupported value type", nameof(resultType))
+			_ => throw new ArgumentException("Unsupported value type", nameof( resultType ) )
 		};
 	}
 
@@ -943,6 +938,10 @@ public sealed partial class GraphCompiler
 		}
 		if ( value is JsonElement el )
 		{
+			if ( type == typeof( bool ) )
+			{
+				value = el.GetBoolean();
+			}
 			if ( type == typeof( int ) )
 			{
 				value = el.GetInt32();
@@ -966,10 +965,6 @@ public sealed partial class GraphCompiler
 			else if ( type == typeof( Color ) )
 			{
 				value = Color.Parse( el.GetString() ) ?? Color.White;
-			}
-			else if ( type == typeof( bool ) )
-			{
-				value = el.GetBoolean();
 			}
 		}
 
@@ -1035,7 +1030,7 @@ public sealed partial class GraphCompiler
 		};
 	}
 
-	private static ResultType GetResultTypeFromHLSLDataType(string DataType)
+	private static ResultType GetResultTypeFromHLSLDataType( string DataType )
 	{
 		return DataType switch
 		{
@@ -1227,8 +1222,6 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-
-
 	public static string IndentString( string input, int tabCount )
 	{
 		if ( string.IsNullOrWhiteSpace( input ) )
@@ -1407,8 +1400,8 @@ public sealed partial class GraphCompiler
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
 					float _ => "float",
-		            int _ => "float", // treat int internally as a float.
-		            bool _ => "bool",
+					int _ => "float", // treat int internally as a float.
+					bool _ => "bool",
 					Float2x2 _ => "float2x2",
 					Float3x3 _ => "float3x3",
 					Float4x4 _ => "float4x4",
@@ -1484,14 +1477,14 @@ public sealed partial class GraphCompiler
 		
 		if ( Debug )
 		{
-		    if ( IsPreview )
-		    {
-		        Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
-		    }
-		    else
-		    {
-		        Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
-		    }
+			if ( IsPreview )
+			{
+				Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
+			}
+			else
+			{
+				Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
+			}
 		}
 		
 		foreach ( var gradient in ShaderResult.Gradients )
@@ -1601,22 +1594,14 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
-						//sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-						//sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-
-						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchBody ) && !result.Item2.SkipLocalGeneration )
 						{
-							sb.AppendLine( result.Item2.ComboSwitchNodeBody );
+							sb.AppendLine( result.Item2.ComboSwitchBody );
 						}
-
 						if ( !result.Item2.SkipLocalGeneration )
 						{
-							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" ); // // ShouldSkip? {result.Item2.SkipLocalGeneration}" );
+							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 							sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-						}
-						else
-						{
-							//SGPLog.Info( $"Skipping appending : {result.Item2} ", IsPreview );
 						}
 					}
 				}
@@ -1633,17 +1618,14 @@ public sealed partial class GraphCompiler
 				else if ( result.Item2.ResultType is ResultType.Float2x2 )
 				{
 					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float2x2({result.Item2.Code});" );
 				}
 				else if ( result.Item2.ResultType is ResultType.Float3x3 )
 				{
 					sb.AppendLine( $"float3x3 {result.Item1} = float3x3({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float3x3({result.Item2.Code});" );
 				}
 				else if ( result.Item2.ResultType is ResultType.Float4x4 )
 				{
 					sb.AppendLine( $"float4x4 {result.Item1} = float4x4({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
 				}
 				else
 				{
@@ -1655,16 +1637,14 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
-						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchBody ) && !result.Item2.SkipLocalGeneration )
 						{ 
-							sb.AppendLine( result.Item2.ComboSwitchNodeBody );
+							sb.AppendLine( result.Item2.ComboSwitchBody );
 						}
-
 						if ( !result.Item2.SkipLocalGeneration )
 						{
-							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; " ); // ShouldSkip? `{result.Item2.SkipLocalGeneration}` " );
+							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; " );
 						}
-
 					}
 				}
 			}
@@ -1838,11 +1818,18 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 				{
 					if ( local.Item2.ResultType is ResultType.Void )
 					{
-					    sb.AppendLine( $"{local.Item2.Code};" );
+						sb.AppendLine( $"{local.Item2.Code};" );
 					}
 					else
 					{
-					    sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
+						if ( !string.IsNullOrWhiteSpace( local.Item2.ComboSwitchBody ) && !local.Item2.SkipLocalGeneration )
+						{
+							sb.AppendLine( local.Item2.ComboSwitchBody );
+						}
+						if ( !local.Item2.SkipLocalGeneration )
+						{
+							sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
+						}
 					}
 				}
 				
