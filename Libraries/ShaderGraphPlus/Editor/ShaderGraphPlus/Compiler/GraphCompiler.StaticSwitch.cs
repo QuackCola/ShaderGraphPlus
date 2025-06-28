@@ -1,5 +1,4 @@
-﻿
-// Static Switch related code
+﻿// Static Switch related code
 //
 
 using System.Text;
