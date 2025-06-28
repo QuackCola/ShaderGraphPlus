@@ -34,7 +34,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		{
 			return NodeResult.Error( "Feature must have a valid name!" );
 		}
-
+			
 		if ( compiler.RegisterdFeatureNames.Contains( Feature.FeatureName ) )
 		{
 			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
