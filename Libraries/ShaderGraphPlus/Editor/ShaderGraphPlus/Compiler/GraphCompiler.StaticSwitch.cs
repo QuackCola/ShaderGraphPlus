@@ -6,6 +6,18 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus;
 
+public struct StaticSwitchData
+{
+	public StaticSwitchState State;
+}
+
+public enum StaticSwitchBlock
+{
+	None,
+	True,
+	False,
+}
+
 public sealed partial class GraphCompiler
 {
 	/// <summary>
@@ -21,7 +33,7 @@ public sealed partial class GraphCompiler
 		/// <summary>
 		/// What block of the switch this code belongs to. example : true or false blocks.
 		/// </summary>
-		public StaticSwitchEntry BoundSwitchBlock;
+		public StaticSwitchBlock BoundSwitchBlock;
 
 		public bool IsValid => !string.IsNullOrWhiteSpace( BoundSwitch );
 
@@ -140,8 +152,8 @@ public sealed partial class GraphCompiler
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
-		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.True };
-		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.False };
+		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.True };
+		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.False };
 
 		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
@@ -159,12 +171,12 @@ public sealed partial class GraphCompiler
 		// make sure our results go into the correct switch and the correct block. TODO : Support more than just true or false switches.
 		var shaderResultsTrue = ShaderResult.Results.Where( 
 			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
-			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.True
+			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.True
 		);
 
 		var shaderResultsFalse = ShaderResult.Results.Where( 
 			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
-			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.False
+			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.False
 		);
 
 		var index = 1;

@@ -105,14 +105,12 @@ PS
 			float l_0 = g_flFresnelPower;
 			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 );
 			float4 l_2 = g_vColorOne;
-			float4 l_3 = float4( l_1, 0 ) * l_2;
 			Fresnel_result = float4( l_1, 0 ) * l_2;
-		
 		}
 		#else
 		{
 			float4 l_4 = g_vColorTwo;
-			Fresnel_result = g_vColorTwo;
+			Fresnel_result = l_4;
 		}
 		#endif
 		
