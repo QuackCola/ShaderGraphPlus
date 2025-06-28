@@ -9,7 +9,6 @@ FEATURES
     #include "common/features.hlsl"
 	Feature(F_FEATURE0, 0..1, "Feature Group 0");
 	Feature(F_FEATURE1, 0..1, "Feature Group 0");
-	FeatureRule(Allow1( F_FEATURE0, F_FEATURE1 ), "Only one of these can be chosen!");
 	
 }
 
@@ -117,33 +116,33 @@ PS
 		
 		
 		
-		float4 Feature0_result;
+		float4 Feature0SwitchResult;
 		#if ( S_FEATURE0 == 1 )
 		{
 			
-			float4 Feature1_result;
+			float4 Feature1SwitchResult;
 			#if ( S_FEATURE1 == 1 )
 			{
-				Feature1_result = float4( 1, 0, 1, 1 );
+				Feature1SwitchResult = float4( 1, 0, 1, 1 );
 			}
 			#else
 			{
 				float l_1 = Oscillator( g_flTime, 1, 0, 10 );
 				float l_2 = l_1 * 1;
-				Feature1_result = float4( l_2, l_2, l_2, l_2 );}
+				Feature1SwitchResult = float4( l_2, l_2, l_2, l_2 );}
 			#endif
 			
-			Feature0_result = Feature1_result;
+			Feature0SwitchResult = Feature1SwitchResult;
 		}
 		#else
 		{
 			float4 l_4 = float4( 1, 0.59515, 0, 1 );
 			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
-			Feature0_result = l_5;
+			Feature0SwitchResult = l_5;
 		}
 		#endif
 		
-		float4 l_6 = Feature0_result; 
+		float4 l_6 = Feature0SwitchResult; 
 		
 		m.Albedo = l_6.xyz;
 		m.Opacity = 1;

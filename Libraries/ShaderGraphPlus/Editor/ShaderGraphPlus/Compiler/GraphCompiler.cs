@@ -478,7 +478,7 @@ public sealed partial class GraphCompiler
 
 		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchBlock.None )
 		{
-			CurrentStaticSwitchInfo = input.StaticSwitchInfo;
+			CurrentComboSwitchInfo = input.StaticSwitchInfo;
 		}
 
 		InputStack.Add( input );
@@ -659,12 +659,12 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			StaticSwitchInfoStack.Add( funcResult.SwitchInfo );
-			funcResult.SetSwitchInfo( CurrentStaticSwitchInfo );
+			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
+			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
 
 			if ( node is StaticSwitchNode staticSwitchnode )
 			{
-				if ( StaticSwitchInfoStack.Contains( CurrentStaticSwitchInfo ) && input.StaticSwitchInfo.IsValid )
+				if ( ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.StaticSwitchInfo.IsValid )
 				{
 					funcResult.SetSwitchInfo( input.StaticSwitchInfo );
 					funcResult.SkipLocalGeneration = true;
@@ -710,9 +710,9 @@ public sealed partial class GraphCompiler
 			var localResult = new NodeResult( funcResult.ResultType, varName, funcResult.SwitchInfo );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
 
-			if ( !string.IsNullOrWhiteSpace( funcResult.StaticSwitchNodeBody ) && node is StaticSwitchNode )
+			if ( !string.IsNullOrWhiteSpace( funcResult.ComboSwitchNodeBody ) && node is StaticSwitchNode )
 			{
-				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.StaticSwitchNodeBody );
+				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.ComboSwitchNodeBody );
 			}
 
 			ShaderResult.InputResults.Add( input, localResult );
@@ -724,7 +724,7 @@ public sealed partial class GraphCompiler
 			}
 
 			InputStack.Remove( input );
-			StaticSwitchInfoStack.Remove( funcResult.SwitchInfo );
+			ComboSwitchInfoStack.Remove( funcResult.SwitchInfo );
 
 			return localResult;
 		}
@@ -1607,9 +1607,9 @@ public sealed partial class GraphCompiler
 						//sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 						//sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
 
-						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
 						{
-							sb.AppendLine( result.Item2.StaticSwitchNodeBody );
+							sb.AppendLine( result.Item2.ComboSwitchNodeBody );
 						}
 
 						if ( !result.Item2.SkipLocalGeneration )
@@ -1658,9 +1658,9 @@ public sealed partial class GraphCompiler
 					}
 					else
 					{
-						if ( !string.IsNullOrWhiteSpace( result.Item2.StaticSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
+						if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchNodeBody ) && !result.Item2.SkipLocalGeneration )
 						{ 
-							sb.AppendLine( result.Item2.StaticSwitchNodeBody );
+							sb.AppendLine( result.Item2.ComboSwitchNodeBody );
 						}
 
 						if ( !result.Item2.SkipLocalGeneration )

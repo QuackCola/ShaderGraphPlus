@@ -100,30 +100,24 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// 
 	/// </summary>
-	private List<ComboSwitchInfo> StaticSwitchInfoStack = new();
+	private List<ComboSwitchInfo> ComboSwitchInfoStack = new();
 
 	/// <summary>
 	/// Currently active SwitchInfo data.
 	/// </summary>
-	private ComboSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
+	private ComboSwitchInfo CurrentComboSwitchInfo { get; set; } = default;
 
-	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.StaticSwitches.Keys;
+	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.StaticComboSwitches.Keys;
 
 	private partial class CompileResult
 	{
-		public Dictionary<string, string> StaticSwitches { get; private set; } = new();
-	}
-
-	internal NodeResult StaticSwitchResultOrDefault<T>( NodeInput input, T defaultValue )
-	{
-		var result = Result( input );
-		return result.IsValid ? result : ResultValue( defaultValue );
+		public Dictionary<string, string> StaticComboSwitches { get; private set; } = new();
 	}
 
 	internal (NodeResult, NodeResult) BinaryComboSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
-		var resultA = StaticSwitchResultOrDefault( a, defaultA );
-		var resultB = StaticSwitchResultOrDefault( b, defaultB );
+		var resultA = ResultOrDefault( a, defaultA );
+		var resultB = ResultOrDefault( b, defaultB );
 
 		if ( resultA.Components() == resultB.Components() )
 			return (resultA, resultB);
@@ -135,9 +129,9 @@ public sealed partial class GraphCompiler
 	}
 
 	// TODO : 
-	internal void ResetCurrentStaticSwitchInfo()
+	internal void ResetCurrentComboSwitchInfo()
 	{
-		CurrentStaticSwitchInfo = default;
+		CurrentComboSwitchInfo = default;
 	}
 
 	/// <summary>
@@ -198,8 +192,7 @@ public sealed partial class GraphCompiler
 		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
 
-		//ResetCurrentStaticSwitchCodeBlock();
-		ResetCurrentStaticSwitchInfo();
+		ResetCurrentComboSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
 		int nodeResultComponentCount = results.Item1.Components();
@@ -223,9 +216,9 @@ public sealed partial class GraphCompiler
 		var indentLevel = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
 		{
-			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.StaticSwitchNodeBody ) )
+			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.ComboSwitchNodeBody ) )
 			{
-				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.StaticSwitchNodeBody}", indentLevel ) );
+				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.ComboSwitchNodeBody}", indentLevel ) );
 			}
 
 			//sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
@@ -254,9 +247,9 @@ public sealed partial class GraphCompiler
 		var lastResultLocal = "";
 		foreach ( var resultFalse in shaderResultsFalse )
 		{
-			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.StaticSwitchNodeBody ) )
+			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.ComboSwitchNodeBody ) )
 			{
-				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.StaticSwitchNodeBody}", indentLevel ) );
+				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.ComboSwitchNodeBody}", indentLevel ) );
 			}
 
 			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", indentLevel ) );
@@ -302,9 +295,9 @@ public sealed partial class GraphCompiler
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#endif" );
 
-		if ( !ShaderResult.StaticSwitches.ContainsKey( feature.FeatureString ) )
+		if ( !ShaderResult.StaticComboSwitches.ContainsKey( feature.FeatureString ) )
 		{
-			ShaderResult.StaticSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
+			ShaderResult.StaticComboSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
 			//Graph.AddFeature( feature );
