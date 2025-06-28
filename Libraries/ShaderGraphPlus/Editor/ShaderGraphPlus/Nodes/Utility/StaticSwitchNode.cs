@@ -28,9 +28,6 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		//var staticComboName = "";
-		ShaderFeatureInfo shaderFeatureInfo = new ShaderFeatureInfo();
-
 		if ( string.IsNullOrWhiteSpace( Feature.FeatureName ) )
 		{
 			return NodeResult.Error( "Feature must have a valid name!" );
@@ -41,16 +38,18 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
 		}
 
+		ShaderFeatureInfo shaderFeature = new ShaderFeatureInfo();
+
 		if ( Feature.IsValid )
 		{
-			compiler.RegisterShaderFeatureBinary( Feature, out shaderFeatureInfo );
+			compiler.RegisterShaderFeatureBinary( Feature, out shaderFeature );
 		}
 		else
 		{
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		if ( compiler.GenerateShaderFeatureBody( shaderFeatureInfo, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+		if ( compiler.GenerateComboSwitchBody( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 		{
 			//SGPLog.Info( switchBody, compiler.IsPreview);
 
@@ -58,7 +57,8 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		}
 		else
 		{
-			return new NodeResult( ResultType.Float, $"{4.0f}" );
+			return new NodeResult( ResultType.Float, $"{1.0f}" );
+			//return NodeResult.Error( "Switch body could not be generated!" );
 		}
 	};
 

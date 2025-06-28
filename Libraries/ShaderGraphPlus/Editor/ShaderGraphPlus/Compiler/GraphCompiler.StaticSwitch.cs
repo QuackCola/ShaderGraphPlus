@@ -175,7 +175,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	internal bool GenerateShaderFeatureBody
+	internal bool GenerateComboSwitchBody
 	(
 		ShaderFeatureInfo featureInfo,
 		NodeInput inputTrue, 
