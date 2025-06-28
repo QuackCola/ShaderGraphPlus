@@ -447,11 +447,18 @@ public class MainWindow : DockWindow
 
 	private string GeneratePreviewCode( bool compileCode = true )
 	{
-		ClearAttributes();
+		if ( compileCode )
+		{
+			ClearAttributes();
+		}
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, true );
-		compiler.OnAttribute = OnAttribute;
+		
+		if ( compileCode )
+		{
+			compiler.OnAttribute = OnAttribute;
+		}
 
 		// Evaluate all nodes
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
