@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Sandbox;
+
+namespace Editor.ShaderGraphPlus;
 
 public enum ResultType
 { 
@@ -52,8 +54,6 @@ public enum StaticSwitchState
 	End,
 }
 
-
-
 public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
@@ -65,7 +65,7 @@ public struct NodeResult : IValid
 	public string[] Warnings { get; private init; }
 	public bool IsComponentLess { get; set; }
 	public bool IsDepreciated { get; private set; }
-	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
+	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
 
 	public string ComboSwitchNodeBody { get; set; }
@@ -158,32 +158,32 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	public NodeResult( ResultType resultType, string code, bool constant = false, bool isComponentLess = false, int voidComponents = 0 )
 	{
-		ResultType = resulttype;
+		ResultType = resultType;
 		Code = code;
 		Constant = constant;
-		IsComponentLess = iscomponentless;
+		IsComponentLess = isComponentLess;
 		VoidComponents = voidComponents;
 	}
 
-	public NodeResult( ResultType resulttype, string code , GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0)
+	public NodeResult( ResultType resultType, string code , GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, bool isComponentLess = false, int voidComponents = 0)
 	{
-		ResultType = resulttype;
+		ResultType = resultType;
 		Code = code;
 		SwitchInfo = switchInfo;
 		Constant = constant;
-		IsComponentLess = iscomponentless;
+		IsComponentLess = isComponentLess;
 		VoidComponents = voidComponents;
 	}
 
-	public NodeResult( ResultType resulttype, string code, string switchBody,  bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, bool isComponentLess = false, int voidComponents = 0 )
 	{
-		ResultType = resulttype;
+		ResultType = resultType;
 		Code = code;
 		ComboSwitchNodeBody = switchBody;
 		Constant = constant;
-		IsComponentLess = iscomponentless;
+		IsComponentLess = isComponentLess;
 		VoidComponents = voidComponents;
 	}
 
