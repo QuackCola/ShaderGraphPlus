@@ -1229,7 +1229,7 @@ public class MainWindow : DockWindow
 		_graphView.BilinearFiltering = false;
 		
 		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
+			.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
 		
 		foreach ( var type in types )
 		{

@@ -1,6 +1,7 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 [Title("Test Matrix Input Node"), Description("Test for verifying a matrix can be passed into a node and not cause any issues."), Category("Dev")]
+[Hide]
 public sealed class TestMatrix4X4Node : ShaderNodePlus
 {
 

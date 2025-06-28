@@ -14,7 +14,7 @@
   "PreviewSettings": {
     "EnableShadows": true,
     "ShowSkybox": true,
-    "BackgroundColor": "0,0,0,1",
+    "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -35,7 +35,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/s2_logo.psd",
+      "Image": "textures/facepunch_logo_mask.png",
       "UI": {
         "Name": "Height",
         "Default": "1,1,1,1",
