@@ -286,11 +286,11 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 		if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 		{
-			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, iscomponentless: true );
+			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true );
 		}
 		else
 		{
-			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, iscomponentless: true );
+			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true );
 		}
 	};
 }
