@@ -10,19 +10,6 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
-  "Features": {
-    "Feature1": "F_FEATURE1",
-    "Feature0": "F_FEATURE0"
-  },
-  "FeatureRules": [
-    {
-      "Features": [
-        "F_FEATURE0",
-        "F_FEATURE1"
-      ],
-      "HoverHint": "Only one of these can be chosen!"
-    }
-  ],
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
