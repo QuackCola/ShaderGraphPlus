@@ -17,23 +17,50 @@ public enum StaticSwitchBlock
 	False,
 }
 
-public struct FeatureRule
+public struct FeatureRule : IValid
 {
-	//     FeatureRule(Allow1(F_ONLY_ALLOW_ONE_1, F_ONLY_ALLOW_ONE_2, F_ONLY_ALLOW_ONE_3), "Hover over hint");
-
 	/// <summary>
 	/// Features bound to this rule.
 	/// </summary>
-	public List<string> Features { get; private set; }
+	[InlineEditor( Label = false )]
+	public List<string> Features { get; set; }
 
 	/// <summary>
 	/// Text hint when hovering over features
 	/// </summary>
-	public string HoverHint { get; private set; }
+	public string HoverHint { get;  set; }
+
+	[Hide, JsonIgnore]
+	public bool IsValid
+	{
+		get
+		{
+			if ( Features.Any() )
+			{
+				foreach ( var feature in Features )
+				{
+					if ( string.IsNullOrWhiteSpace( feature ) )
+					{
+						return false;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 
 	public FeatureRule()
 	{
-		Features = new List<string>();
+		Features = new();
 		HoverHint = string.Empty;
 	}
 }
@@ -277,6 +304,8 @@ public sealed partial class GraphCompiler
 		{
 			ShaderResult.StaticSwitches.Add( featureInfo.FeatureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
+
+			Graph.AddFeature( featureInfo );
 
 			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
 

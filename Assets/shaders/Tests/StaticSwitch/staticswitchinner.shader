@@ -8,7 +8,8 @@ FEATURES
 {
     #include "common/features.hlsl"
 	Feature(F_FEATURE0, 0..1, "Feature Group 0");
-	Feature(F_FEATURE1, 0..1, "Feature Group 1");
+	Feature(F_FEATURE1, 0..1, "Feature Group 0");
+	FeatureRule(Allow1( F_FEATURE0, F_FEATURE1 ), "Only one of these can be chosen!");
 	
 }
 
