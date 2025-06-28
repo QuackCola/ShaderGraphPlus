@@ -21,7 +21,7 @@ public struct NodeInput : IValid
 	
 	[Hide, Browsable( false )]
 	[JsonIgnore]
-	public GraphCompiler.ComboSwitchInfo StaticSwitchInfo { get; set; }
+	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; }
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
@@ -39,7 +39,7 @@ public struct NodeInput : IValid
 		Identifier = "";
 		Output = "";
 		Subgraph = null;
-		StaticSwitchInfo = default;
+		ComboSwitchInfo = default;
 	}
 
 	public static bool operator ==( NodeInput a, NodeInput b ) => a.Identifier == b.Identifier && a.Output == b.Output && a.Subgraph == b.Subgraph && a.SubgraphNode == b.SubgraphNode;
