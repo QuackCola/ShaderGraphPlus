@@ -7,8 +7,8 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature(F_FEATURE0, 0..1, "Feature Group 0");
-	Feature(F_FEATURE1, 0..1, "Feature Group 0");
+	Feature( F_FEATURE0, 0..1, "Feature Group 0" );
+	Feature( F_FEATURE1, 0..1, "Feature Group 0" );
 	
 }
 

@@ -149,7 +149,7 @@ public sealed partial class GraphCompiler
 			shaderFeatureInfo = new ShaderFeatureInfo
 			(
 				feature.FeatureName.Replace( " ", "_" ),
-				$"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");",
+				$"Feature( F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\" );",
 				featureOptionAmount,
 				feature.IsDynamicCombo
 			);
