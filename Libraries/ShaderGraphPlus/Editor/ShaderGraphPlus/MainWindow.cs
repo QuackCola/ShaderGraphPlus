@@ -445,9 +445,9 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private string GeneratePreviewCode( bool compileCode = true )
+	private string GeneratePreviewCode()
 	{
-		if ( compileCode )
+		if ( _autoCompile )
 		{
 			ClearAttributes();
 		}
@@ -455,7 +455,7 @@ public class MainWindow : DockWindow
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, true );
 		
-		if ( compileCode )
+		if ( _autoCompile )
 		{
 			compiler.OnAttribute = OnAttribute;
 		}
@@ -557,7 +557,7 @@ public class MainWindow : DockWindow
 		{
 			_generatedCode = code;
 	
-			if ( compileCode )
+			if ( _autoCompile )
 			{
 				Compile();
 			}
@@ -584,11 +584,8 @@ public class MainWindow : DockWindow
 		_dirty = true;
 		_graphCanvas.WindowTitle = $"{_asset?.Name ?? "untitled"}*";
 
-		//if ( !_autoCompile )
-		//	return;
-
 		if ( evaluate )
-			GeneratePreviewCode( _autoCompile );
+			GeneratePreviewCode();
 	}
 
 	[EditorEvent.Frame]
