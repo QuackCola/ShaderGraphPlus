@@ -187,17 +187,6 @@ public struct NodeResult : IValid
 		VoidComponents = voidComponents;
 	}
 
-	public NodeResult( ResultType resulttype, string code, string switchBody, GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
-	{
-		ResultType = resulttype;
-		Code = code;
-		ComboSwitchNodeBody = switchBody;
-		SwitchInfo = switchInfo;
-		Constant = constant;
-		IsComponentLess = iscomponentless;
-		VoidComponents = voidComponents;
-	}
-
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
