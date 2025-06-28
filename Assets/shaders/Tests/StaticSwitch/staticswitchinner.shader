@@ -119,7 +119,6 @@ PS
 		float4 Feature0_result;
 		#if ( S_FEATURE0 == 1 )
 		{
-			float4 l_0 = float4( 1, 0, 1, 1 );
 			
 			float4 Feature1_result;
 			#if ( S_FEATURE1 == 1 )
@@ -142,8 +141,6 @@ PS
 		}
 		#else
 		{
-			float l_1 = Oscillator( g_flTime, 1, 0, 10 );
-			float l_2 = l_1 * 1;
 			float4 l_4 = float4( 1, 0.59515, 0, 1 );
 			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
 			Feature0_result = l_4 * float4( 2, 2, 2, 2 );

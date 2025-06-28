@@ -48,7 +48,7 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	private StaticSwitchInfo CurrentStaticSwitchInfo { get; set; } = default;
 
-	public HashSet<string> RegisterdFeatureNames { get; set; } = new();
+	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.StaticSwitches.Keys;
 
 	private partial class CompileResult
 	{
@@ -136,28 +136,19 @@ public sealed partial class GraphCompiler
 		out ResultType switchResultTypeOut 
 	)
 	{
-		var resultName = featureName;//$"staticSwitch_{StaticSwitchCount++}";
-		var resultNameInternal = $"{resultName}_result";
+		var resultNameInternal = $"{featureName}_result";
+		switchResultVariableNameOut = resultNameInternal;
+		switchBodyOut = "";
 
-		if ( !RegisterdFeatureNames.Contains( resultName ) )
-		{
-			RegisterdFeatureNames.Add( resultName );
-		}
+		//if ( !RegisterdFeatureNames.Contains( featureName ) )
+		//{
+		//	RegisterdFeatureNames.Add( featureName );
+		//}
 
-		StaticSwitchInfo staticSwitchInfoTrue;
-		staticSwitchInfoTrue.BoundSwitch = resultNameInternal;
-		staticSwitchInfoTrue.BoundSwitchBlock = StaticSwitchEntry.True;
-		
-		inputTrue.StaticSwitchInfo = staticSwitchInfoTrue;
-
-		StaticSwitchInfo staticSwitchInfoFalse;
-		staticSwitchInfoFalse.BoundSwitch = resultNameInternal;
-		staticSwitchInfoFalse.BoundSwitchBlock = StaticSwitchEntry.False;
-		
-		inputFalse.StaticSwitchInfo = staticSwitchInfoFalse;
+		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.True };
+		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.False };
 
 		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
-
 		switchResultTypeOut = results.Item1.ResultType;
 
 		//ResetCurrentStaticSwitchCodeBlock();
@@ -170,13 +161,7 @@ public sealed partial class GraphCompiler
 		var sbFalseBody = new StringBuilder();
 		var sbSwitchBody = new StringBuilder();
 
-		switchBodyOut = "";
 
-		var shaderResultsTrue = ShaderResult.Results.Where( x => x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.True );
-		var shaderResultsFalse = ShaderResult.Results.Where( x => x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.False );
-
-
-		switchResultVariableNameOut = resultNameInternal;
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
@@ -229,7 +214,6 @@ public sealed partial class GraphCompiler
 
 		if ( IsPreview )
 		{
-			//sb.AppendLine( $"#if ( {(toggle ? "true" : "false")} )" );
 			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == {(previewToggle ? "0" : "1")} )" );
 		}
 		else
@@ -246,9 +230,9 @@ public sealed partial class GraphCompiler
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#endif" );
 
-		if ( !ShaderResult.StaticSwitches.ContainsKey( resultName ) )
+		if ( !ShaderResult.StaticSwitches.ContainsKey( featureName ) )
 		{
-			ShaderResult.StaticSwitches.Add( resultName, sbSwitchBody.ToString() );
+			ShaderResult.StaticSwitches.Add( featureName, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
 			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );

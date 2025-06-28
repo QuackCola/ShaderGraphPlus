@@ -82,8 +82,6 @@ public partial class ShaderGraphPlus : IGraph
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public bool AddToNodeLibrary { get; set; }
-
-
 	public BlendMode BlendMode { get; set; }
 
     [ShowIf( nameof( ShowShadingModel ), true )]
@@ -97,6 +95,11 @@ public partial class ShaderGraphPlus : IGraph
     //[InlineEditor]
     //[Group("Post Processing")]
     //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
+
+	/// <summary>
+	/// TODO: Hook this up and read from a list of registerd features!
+	/// </summary>
+	public List<string> FeatureRules { get; set; } = new();
 
     //
     // Summary:

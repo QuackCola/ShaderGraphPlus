@@ -10,8 +10,10 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "FeatureRules": [],
   "Metadata": {},
   "PreviewSettings": {
+    "EnableShadows": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"

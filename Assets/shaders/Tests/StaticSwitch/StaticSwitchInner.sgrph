@@ -10,6 +10,7 @@
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
+  "FeatureRules": [],
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
