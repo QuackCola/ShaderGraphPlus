@@ -1354,16 +1354,7 @@ public sealed partial class GraphCompiler
 		// Static & Dynamic shader feature combos
 		foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
-			if ( !feature.Value.IsDynamicCombo )
-			{
-				sb.Append( $"StaticCombo( {feature.Value.ToStaticComboString()}, {feature.Value.ToFeatureName()}, Sys( ALL ) );" );
-			}
-			else
-			{
-				throw new NotImplementedException( "TODO : Implement dynamic combos!" );
-				//sb.Append( $"DynamicCombo( {feature.Value.ToDynamicComboString()}, 0..{feature.Value.OptionsCount}, Sys( PC ) )" );
-			}
-		
+			sb.Append( $"{feature.Value.ComboTypeString}( {feature.Value.ComboString}, {feature.Value.FeatureString}, Sys( ALL ) );" );
 			sb.AppendLine();
 		}
 		

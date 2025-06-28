@@ -17,6 +17,27 @@ public enum StaticSwitchBlock
 	False,
 }
 
+public struct FeatureRule
+{
+	//     FeatureRule(Allow1(F_ONLY_ALLOW_ONE_1, F_ONLY_ALLOW_ONE_2, F_ONLY_ALLOW_ONE_3), "Hover over hint");
+
+	/// <summary>
+	/// Features bound to this rule.
+	/// </summary>
+	public List<string> Features { get; private set; }
+
+	/// <summary>
+	/// Text hint when hovering over features
+	/// </summary>
+	public string HoverHint { get; private set; }
+
+	public FeatureRule()
+	{
+		Features = new List<string>();
+		HoverHint = string.Empty;
+	}
+}
+
 public sealed partial class GraphCompiler
 {
 	/// <summary>
@@ -95,38 +116,30 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Registers a true or false Shader Feature.
 	/// </summary>
-	internal void RegisterShaderFeatureBinary( ShaderFeature feature, out string staticFeatureName )
+	internal void RegisterShaderFeatureBinary( ShaderFeature feature , out ShaderFeatureInfo shaderFeatureInfo )//, out string staticFeatureName )
 	{
 		var result = ShaderResult;
-		var sfinfo = new ShaderFeatureInfo();
-		staticFeatureName = "";
+		shaderFeatureInfo = new ShaderFeatureInfo();
+		//staticFeatureName = "";
 
 		if ( feature.IsValid )
 		{
-			var featureDeclarationName = "";
+			//var featureDeclaration = "";
 			var featureOptionAmount = 2;
 
-			if ( feature.IsDynamicCombo is not true )
+			shaderFeatureInfo = new ShaderFeatureInfo()
 			{
-				staticFeatureName = $"S_{feature.FeatureName.ToUpper()}";
+				FeatureName = feature.FeatureName.Replace( " ", "_" ),
+				FeatureDeclaration = $"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");",
+				OptionsCount = featureOptionAmount,
+				IsDynamicCombo = feature.IsDynamicCombo,
+			};
 
-				featureDeclarationName = $"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");";
-			}
-			else
-			{
-				//Log.Info( $"Generated Dynamic Combo Feature." );
-			}
-
-			sfinfo.FeatureName = feature.FeatureName.Replace( " ", "_" );
-			sfinfo.FeatureDeclaration = featureDeclarationName;
-			sfinfo.OptionsCount = featureOptionAmount;
-			sfinfo.IsDynamicCombo = feature.IsDynamicCombo;
-
-			var id = sfinfo.FeatureName;
+			var id = shaderFeatureInfo.FeatureName;
 
 			if ( !result.ShaderFeatures.ContainsKey( id ) )
 			{
-				result.ShaderFeatures.Add( id, sfinfo );
+				result.ShaderFeatures.Add( id, shaderFeatureInfo );
 			}
 		}
 		else
@@ -136,9 +149,8 @@ public sealed partial class GraphCompiler
 	}
 
 	internal bool GenerateShaderFeatureBody
-	( 
-		string staticComboName,
-		string featureName,
+	(
+		ShaderFeatureInfo featureInfo,
 		NodeInput inputTrue, 
 		NodeInput inputFalse, 
 		bool previewToggle, 
@@ -147,7 +159,7 @@ public sealed partial class GraphCompiler
 		out ResultType switchResultTypeOut 
 	)
 	{
-		var resultNameInternal = $"{featureName}_result";
+		var resultNameInternal = featureInfo.FeatureResultString;
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
@@ -245,11 +257,11 @@ public sealed partial class GraphCompiler
 
 		if ( IsPreview )
 		{
-			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == {(previewToggle ? "0" : "1")} )" );
+			sbSwitchBody.AppendLine( $"#if ( {featureInfo.ComboString} == {(previewToggle ? "0" : "1")} )" );
 		}
 		else
 		{
-			sbSwitchBody.AppendLine( $"#if ( {staticComboName} == 1 )" );
+			sbSwitchBody.AppendLine( $"#if ( {featureInfo.ComboString} == 1 )" );
 		}
 
 		sbSwitchBody.AppendLine( "{" );
@@ -261,9 +273,9 @@ public sealed partial class GraphCompiler
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#endif" );
 
-		if ( !ShaderResult.StaticSwitches.ContainsKey( featureName ) )
+		if ( !ShaderResult.StaticSwitches.ContainsKey( featureInfo.FeatureString ) )
 		{
-			ShaderResult.StaticSwitches.Add( featureName, sbSwitchBody.ToString() );
+			ShaderResult.StaticSwitches.Add( featureInfo.FeatureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
 			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
