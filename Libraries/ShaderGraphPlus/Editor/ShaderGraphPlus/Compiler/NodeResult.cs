@@ -70,7 +70,7 @@ public struct NodeResult : IValid
 
 	public string StaticSwitchNodeBody { get; set; }
 
-	public GraphCompiler.StaticSwitchInfo SwitchInfo { get; private set; } 
+	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
 
 	public readonly string TypeName
@@ -167,7 +167,7 @@ public struct NodeResult : IValid
 		VoidComponents = voidComponents;
 	}
 
-	public NodeResult( ResultType resulttype, string code , GraphCompiler.StaticSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0)
+	public NodeResult( ResultType resulttype, string code , GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0)
 	{
 		ResultType = resulttype;
 		Code = code;
@@ -187,7 +187,7 @@ public struct NodeResult : IValid
 		VoidComponents = voidComponents;
 	}
 
-	public NodeResult( ResultType resulttype, string code, string switchBody, GraphCompiler.StaticSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	public NodeResult( ResultType resulttype, string code, string switchBody, GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
 	{
 		ResultType = resulttype;
 		Code = code;
@@ -203,14 +203,14 @@ public struct NodeResult : IValid
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
 
-	public void SetSwitchInfo( GraphCompiler.StaticSwitchInfo switchInfo )
+	public void SetSwitchInfo( GraphCompiler.ComboSwitchInfo switchInfo )
 	{
 		SwitchInfo = switchInfo;
 	}
 
 	public void SetCurrentBlock( StaticSwitchBlock staticSwitchEntry )
 	{
-		GraphCompiler.StaticSwitchInfo staticSwitchInfo;
+		GraphCompiler.ComboSwitchInfo staticSwitchInfo;
 		staticSwitchInfo.BoundSwitchBlock = staticSwitchEntry;
 		staticSwitchInfo.BoundSwitch = SwitchInfo.BoundSwitch;
 

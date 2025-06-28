@@ -1092,16 +1092,16 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( feature.Value.FeatureDeclaration );
 		}
 		
-		if ( Graph.FeatureRules.Any() )
-		{
-			foreach ( var rule in Graph.FeatureRules )
-			{
-				if ( rule.IsValid )
-				{
-					sb.AppendLine( $"FeatureRule(Allow1( {String.Join( ", ", rule.Features )} ), \"{rule.HoverHint}\");" );
-				}
-			}
-		}
+		//if ( Graph.FeatureRules.Any() )
+		//{
+		//	foreach ( var rule in Graph.FeatureRules )
+		//	{
+		//		if ( rule.IsValid )
+		//		{
+		//			sb.AppendLine( $"FeatureRule(Allow1( {String.Join( ", ", rule.Features )} ), \"{rule.HoverHint}\");" );
+		//		}
+		//	}
+		//}
 
 		return sb.ToString();
 	}

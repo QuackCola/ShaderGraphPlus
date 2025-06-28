@@ -38,28 +38,27 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
 		}
 
-		ShaderFeatureInfo shaderFeature = new ShaderFeatureInfo();
-
-		if ( Feature.IsValid )
+		//if ( Feature.IsValid )
+		if ( compiler.RegisterShaderFeatureBinary( Feature, out ShaderFeatureInfo shaderFeature ) )
 		{
-			compiler.RegisterShaderFeatureBinary( Feature, out shaderFeature );
+			if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+			{
+				//SGPLog.Info( switchBody, compiler.IsPreview);
+
+				return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
+			}
+			else
+			{
+				return new NodeResult( ResultType.Float, $"{1.0f}" );
+				//return NodeResult.Error( "Switch body could not be generated!" );
+			}
 		}
 		else
 		{
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
-		{
-			//SGPLog.Info( switchBody, compiler.IsPreview);
 
-			return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
-		}
-		else
-		{
-			return new NodeResult( ResultType.Float, $"{1.0f}" );
-			//return NodeResult.Error( "Switch body could not be generated!" );
-		}
 	};
 
 }

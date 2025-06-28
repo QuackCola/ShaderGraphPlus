@@ -99,22 +99,22 @@ PS
 		
 		
 		
-		float4 Fresnel_result;
+		float4 FresnelSwitchResult;
 		#if ( S_FRESNEL == 1 )
 		{
 			float l_0 = g_flFresnelPower;
 			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 );
 			float4 l_2 = g_vColorOne;
-			Fresnel_result = float4( l_1, 0 ) * l_2;
+			FresnelSwitchResult = float4( l_1, 0 ) * l_2;
 		}
 		#else
 		{
 			float4 l_4 = g_vColorTwo;
-			Fresnel_result = l_4;
+			FresnelSwitchResult = l_4;
 		}
 		#endif
 		
-		float4 l_5 = Fresnel_result; 
+		float4 l_5 = FresnelSwitchResult; 
 		
 		m.Albedo = l_5.xyz;
 		m.Opacity = 1;
