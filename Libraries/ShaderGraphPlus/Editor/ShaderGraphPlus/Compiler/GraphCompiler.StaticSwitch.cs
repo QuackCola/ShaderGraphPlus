@@ -154,13 +154,14 @@ public sealed partial class GraphCompiler
 			//var featureDeclaration = "";
 			var featureOptionAmount = 2;
 
-			shaderFeatureInfo = new ShaderFeatureInfo()
-			{
-				FeatureName = feature.FeatureName.Replace( " ", "_" ),
-				FeatureDeclaration = $"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");",
-				OptionsCount = featureOptionAmount,
-				IsDynamicCombo = feature.IsDynamicCombo,
-			};
+			shaderFeatureInfo = new ShaderFeatureInfo
+			(
+				feature.FeatureName.Replace( " ", "_" ),
+				$"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");",
+				"",
+				featureOptionAmount,
+				feature.IsDynamicCombo
+			);
 
 			var id = shaderFeatureInfo.FeatureName;
 

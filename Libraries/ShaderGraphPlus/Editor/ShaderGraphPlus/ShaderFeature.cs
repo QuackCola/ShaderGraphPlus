@@ -6,11 +6,11 @@
 /// </summary>
 public struct ShaderFeatureInfo : IValid
 {
-	public string FeatureName;
-	public string FeatureDeclaration;
-	public string FeatureBody;
-	public int OptionsCount;
-	public bool IsDynamicCombo;
+	public string FeatureName { get; private set; }
+	public string FeatureDeclaration { get; private set; }
+	public string FeatureBody { get; private set; }
+	public int OptionsCount { get; private set; }
+	public bool IsDynamicCombo { get; private set; }
 
 	public bool IsValid => string.IsNullOrWhiteSpace( FeatureName );
 
@@ -70,6 +70,24 @@ public struct ShaderFeatureInfo : IValid
 				return $"DynamicCombo";
 			}
 		}
+	}
+
+	public ShaderFeatureInfo( string featureName, string featureDeclaration, string featureBody, int optionsCount, bool isDynamicCombo )
+	{
+		FeatureName = featureName;
+		FeatureDeclaration = featureDeclaration;
+		FeatureBody = featureBody;
+		OptionsCount = optionsCount;
+		IsDynamicCombo = isDynamicCombo;
+	}
+
+	public ShaderFeatureInfo()
+	{
+		FeatureName = "";
+		FeatureDeclaration = "";
+		FeatureBody = "";
+		OptionsCount = 0;
+		IsDynamicCombo = false;
 	}
 }
 
