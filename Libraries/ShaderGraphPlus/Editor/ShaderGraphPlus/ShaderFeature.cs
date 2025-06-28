@@ -4,30 +4,73 @@
 /// <summary>
 /// Container for the generated shader feature info.
 /// </summary>
-public struct ShaderFeatureInfo
-{ 
-    public string FeatureName{ get; set; }
-    public string FeatureDeclaration { get; set; }
-    public string FeatureBody { get; set; }
-	public int OptionsCount { get; set; }
-    public string TrueResult { get; set; }
-    public string FalseResult { get; set; }
-	public bool IsDynamicCombo { get; set; }
+public struct ShaderFeatureInfo : IValid
+{
+	public string FeatureName;
+	public string FeatureDeclaration;
+	public string FeatureBody;
+	public int OptionsCount;
+	public bool IsDynamicCombo;
 
-    public readonly string ToFeatureName()
-    {
-        return $"F_{FeatureName.ToUpper()}";
-    }
+	public bool IsValid => string.IsNullOrWhiteSpace( FeatureName );
 
-    public readonly string ToStaticComboString()
-    {
-        return $"S_{FeatureName.ToUpper()}";
-    }
+	/// <summary>
+	/// Name of the result varible in the MainVs or MainPs functions.
+	/// </summary>
+	public readonly string FeatureResultString
+	{
+		get
+		{
+			return $"{FeatureName}_result";
+		}
+	}
 
-    public readonly string ToDynamicComboString()
-    {
-        return $"D_{FeatureName.ToUpper()}";
-    }
+	/// <summary>
+	/// feature string which is F_FeatureName. With `FeatureName` all uppercase.
+	/// </summary>
+	public readonly string FeatureString
+	{
+		get
+		{
+			return $"F_{FeatureName.ToUpper()}";
+		}
+	}
+
+	/// <summary>
+	/// Combo string. Either S_FeatureName or D_FeatureName.
+	/// </summary>
+	public readonly string ComboString
+	{
+		get
+		{
+			if ( !IsDynamicCombo )
+			{
+				return $"S_{FeatureName.ToUpper()}";
+			}
+			else
+			{
+				return $"D_{FeatureName.ToUpper()}";
+			}
+		}
+	}
+
+	/// <summary>
+	/// Type of combo when declared in either the Vertex or Pixel shader stages.
+	/// </summary>
+	public readonly string ComboTypeString
+	{
+		get
+		{
+			if ( !IsDynamicCombo )
+			{
+				return $"StaticCombo";
+			}
+			else
+			{
+				return $"DynamicCombo";
+			}
+		}
+	}
 }
 
 /// <summary>
