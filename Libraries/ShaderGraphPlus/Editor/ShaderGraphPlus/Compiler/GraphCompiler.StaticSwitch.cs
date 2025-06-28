@@ -147,11 +147,9 @@ public sealed partial class GraphCompiler
 	{
 		var result = ShaderResult;
 		shaderFeatureInfo = new ShaderFeatureInfo();
-		//staticFeatureName = "";
 
 		if ( feature.IsValid )
 		{
-			//var featureDeclaration = "";
 			var featureOptionAmount = 2;
 
 			shaderFeatureInfo = new ShaderFeatureInfo
@@ -178,7 +176,7 @@ public sealed partial class GraphCompiler
 
 	internal bool GenerateComboSwitch
 	(
-		ShaderFeatureInfo featureInfo,
+		ShaderFeatureInfo feature,
 		NodeInput inputTrue, 
 		NodeInput inputFalse, 
 		bool previewToggle, 
@@ -187,7 +185,7 @@ public sealed partial class GraphCompiler
 		out ResultType switchResultTypeOut 
 	)
 	{
-		var resultNameInternal = featureInfo.FeatureResultString;
+		var resultNameInternal = feature.FeatureResultString;
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
@@ -285,11 +283,11 @@ public sealed partial class GraphCompiler
 
 		if ( IsPreview )
 		{
-			sbSwitchBody.AppendLine( $"#if ( {featureInfo.ComboString} == {(previewToggle ? "0" : "1")} )" );
+			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == {(previewToggle ? "0" : "1")} )" );
 		}
 		else
 		{
-			sbSwitchBody.AppendLine( $"#if ( {featureInfo.ComboString} == 1 )" );
+			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == 1 )" );
 		}
 
 		sbSwitchBody.AppendLine( "{" );
@@ -301,12 +299,12 @@ public sealed partial class GraphCompiler
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#endif" );
 
-		if ( !ShaderResult.StaticSwitches.ContainsKey( featureInfo.FeatureString ) )
+		if ( !ShaderResult.StaticSwitches.ContainsKey( feature.FeatureString ) )
 		{
-			ShaderResult.StaticSwitches.Add( featureInfo.FeatureString, sbSwitchBody.ToString() );
+			ShaderResult.StaticSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
-			Graph.AddFeature( featureInfo );
+			Graph.AddFeature( feature );
 
 			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
 
@@ -403,7 +401,7 @@ public sealed partial class GraphCompiler
 
 	}
 	*/
-	internal string BuildFeatureOptions( List<string> options )
+	internal string BuildFeatureOptionsBody( List<string> options )
 	{
 		var options_body = "";
 		int count = 0;
