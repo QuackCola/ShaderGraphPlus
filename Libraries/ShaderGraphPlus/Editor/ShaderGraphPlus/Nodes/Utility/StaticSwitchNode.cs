@@ -3,7 +3,6 @@
 [Title( "Static Switch" ), Category( "Utility" )]
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
-
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} ({Feature.FeatureName})";
 
@@ -16,9 +15,6 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[Title( "False" )]
 	[Hide]
 	public NodeInput InputFalse { get; set; }
-
-	[Hide,JsonIgnore]
-	public string InternalName { get; set; } = "";
 
 	public bool PreviewToggle { get; set; } = false;
 
@@ -38,13 +34,11 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
 		}
 
-		//if ( Feature.IsValid )
 		if ( compiler.RegisterShaderFeatureBinary( Feature, out ShaderFeatureInfo shaderFeature ) )
 		{
 			if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 			{
 				//SGPLog.Info( switchBody, compiler.IsPreview);
-
 				return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
 			}
 			else
@@ -57,8 +51,5 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		{
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
-
-
 	};
-
 }
