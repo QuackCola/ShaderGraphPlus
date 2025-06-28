@@ -91,7 +91,7 @@ public sealed partial class GraphCompiler
 	{
 		CurrentStaticSwitchInfo = default;
 	}
-	private int StaticSwitchCount { get; set; } = 0;
+
 	/// <summary>
 	/// Registers a true or false Shader Feature.
 	/// </summary>
