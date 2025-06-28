@@ -35,7 +35,7 @@
     },
     {
       "_class": "StaticSwitchNode",
-      "PreviewToggle": false,
+      "PreviewToggle": true,
       "Feature": {
         "FeatureName": "Feature0",
         "HeaderName": "Feature Group 0",
@@ -91,14 +91,14 @@
     },
     {
       "_class": "Float4",
-      "Value": "1,0.59515,0,1",
+      "Value": "0.56374,0.06789,0,1",
       "Name": "",
       "IsAttribute": false,
       "UI": {
         "Type": "Color"
       },
       "Identifier": "4",
-      "Position": "-792,204",
+      "Position": "-936,348",
       "HandleOffsets": {}
     },
     {
@@ -130,10 +130,10 @@
     {
       "_class": "OscillatorNode",
       "DefaultFrequency": 1,
-      "DefaultPhase": 0,
+      "DefaultPhase": -0.69999987,
       "DefaultStrength": 10,
       "Identifier": "7",
-      "Position": "-972,72",
+      "Position": "-924,96",
       "HandleOffsets": {}
     }
   ]
