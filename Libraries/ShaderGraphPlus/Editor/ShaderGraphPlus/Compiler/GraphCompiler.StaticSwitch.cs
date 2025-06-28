@@ -120,7 +120,7 @@ public sealed partial class GraphCompiler
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
-	internal (NodeResult, NodeResult) StaticSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
+	internal (NodeResult, NodeResult) BinaryComboSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
 		var resultA = StaticSwitchResultOrDefault( a, defaultA );
 		var resultB = StaticSwitchResultOrDefault( b, defaultB );
@@ -192,7 +192,7 @@ public sealed partial class GraphCompiler
 		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.True };
 		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchBlock.False };
 
-		var results = StaticSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
+		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
 
 		//ResetCurrentStaticSwitchCodeBlock();
