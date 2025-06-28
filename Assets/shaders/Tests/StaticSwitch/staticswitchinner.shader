@@ -123,27 +123,22 @@ PS
 			float4 Feature1_result;
 			#if ( S_FEATURE1 == 1 )
 			{
-				float4 l_0 = float4( 1, 0, 1, 1 );
 				Feature1_result = float4( 1, 0, 1, 1 );
-			
 			}
 			#else
 			{
 				float l_1 = Oscillator( g_flTime, 1, 0, 10 );
 				float l_2 = l_1 * 1;
-				Feature1_result = l_1 * 1;
-			}
+				Feature1_result = float4( l_2, l_2, l_2, l_2 );}
 			#endif
 			
-			float4 l_3 = Feature1_result;
 			Feature0_result = Feature1_result;
-		
 		}
 		#else
 		{
 			float4 l_4 = float4( 1, 0.59515, 0, 1 );
 			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
-			Feature0_result = l_4 * float4( 2, 2, 2, 2 );
+			Feature0_result = l_5;
 		}
 		#endif
 		

@@ -140,11 +140,6 @@ public sealed partial class GraphCompiler
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
-		//if ( !RegisterdFeatureNames.Contains( featureName ) )
-		//{
-		//	RegisterdFeatureNames.Add( featureName );
-		//}
-
 		inputTrue.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.True };
 		inputFalse.StaticSwitchInfo = new StaticSwitchInfo() { BoundSwitch = resultNameInternal, BoundSwitchBlock = StaticSwitchEntry.False };
 
@@ -173,46 +168,62 @@ public sealed partial class GraphCompiler
 		);
 
 		var index = 1;
+		var indentLevel = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
 		{
 			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.StaticSwitchNodeBody ) )
 			{
-				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.StaticSwitchNodeBody}", 1 ) );
+				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.StaticSwitchNodeBody}", indentLevel ) );
 			}
 
-			sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", 1 ) );
+			//sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
 
 			if ( index == shaderResultsTrue.Count() )
 			{
-				//SGPLog.Info( $"at ✅ true index {index } a {shaderResultsTrue.Count()}" );
-
 				if ( resultTrue.Item2.Components() == nodeResultComponentCount )
 				{
-					sbTrueBody.AppendLine( IndentString( $"{resultNameInternal} = {resultTrue.Item2.Code};", 1 ) );
+					sbTrueBody.AppendLine( IndentString( $"{resultNameInternal} = {resultTrue.Item2.Code};", indentLevel ) );
 				}
 				else
 				{
-					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( nodeResultComponentCount )};", 1 ) );
+					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( nodeResultComponentCount )};", indentLevel ) );
 				}
+			}
+			else
+			{
+				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
 			}
 
 			index++;
 		}
 
 		index = 1;
+		var lastResultCode = "";
+		var lastResultLocal = "";
 		foreach ( var resultFalse in shaderResultsFalse )
 		{
 			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.StaticSwitchNodeBody ) )
 			{
-				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.StaticSwitchNodeBody}", 1 ) );
+				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.StaticSwitchNodeBody}", indentLevel ) );
 			}
 
-			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", 1 ) );
+			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", indentLevel ) );
+
+			// Little hack to avoid duplicate code.
+			lastResultCode = resultFalse.Item2.Code;
+			lastResultLocal = resultFalse.Item1.Code;
 
 			if ( index == shaderResultsFalse.Count() )
 			{
-				//SGPLog.Info( $"at ❌ false index {index } a {shaderResultsFalse.Count()}" );
-				sbFalseBody.Append( IndentString( $"{resultNameInternal} = {resultFalse.Item2.Code};", 1 ) );
+				if ( resultFalse.Item2.Components() == nodeResultComponentCount )
+				{
+					//sbFalseBody.AppendLine( IndentString( $"{resultNameInternal} = {resultFalse.Item2.Code};", indentLevel ) );
+					sbFalseBody.AppendLine( IndentString( $"{resultNameInternal} = {lastResultLocal};", indentLevel ) );
+				}
+				else
+				{
+					sbFalseBody.Append( IndentString( $"{resultNameInternal} = {resultFalse.Item1.Cast( nodeResultComponentCount )};", indentLevel ) );
+				}
 			}
 
 			index++;
@@ -231,11 +242,11 @@ public sealed partial class GraphCompiler
 		}
 
 		sbSwitchBody.AppendLine( "{" );
-		sbSwitchBody.AppendLine( sbTrueBody.ToString() );
+		sbSwitchBody.Append( sbTrueBody.ToString() );
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#else" );
 		sbSwitchBody.AppendLine( "{" );
-		sbSwitchBody.AppendLine( sbFalseBody.ToString() );
+		sbSwitchBody.Append( sbFalseBody.ToString() );
 		sbSwitchBody.AppendLine( "}" );
 		sbSwitchBody.AppendLine( "#endif" );
 
