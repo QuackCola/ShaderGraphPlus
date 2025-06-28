@@ -742,7 +742,18 @@ public class MainWindow : DockWindow
 		toolBar.AddSeparator();
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
-		AutoCompileOption = toolBar.AddOption( "Toggle Auto Compile", "model_editor/auto_recompile.png", ToggleAutoCompile );
+		AutoCompileOption = toolBar.AddOption( "Toggle Auto Compile", "model_editor/auto_recompile.png", () =>
+		{
+			_autoCompile = !_autoCompile;
+			
+			if ( _autoCompile )
+			{
+				Compile();
+				//SetDirty();
+			}
+
+			AutoCompileOption.Icon = $"{(_autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png")}";
+		} );
 		AutoCompileOption.StatusTip = "Enable or Disable graph auto compile.";
 		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
 		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot ).StatusTip = "Take Screenshot";
