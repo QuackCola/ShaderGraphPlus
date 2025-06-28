@@ -161,7 +161,16 @@ public sealed partial class GraphCompiler
 		var sbFalseBody = new StringBuilder();
 		var sbSwitchBody = new StringBuilder();
 
+		// make sure our results go into the correct switch and the correct block. TODO : Support more than just true or false switches.
+		var shaderResultsTrue = ShaderResult.Results.Where( 
+			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
+			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.True
+		);
 
+		var shaderResultsFalse = ShaderResult.Results.Where( 
+			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
+			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchEntry.False
+		);
 
 		var index = 1;
 		foreach ( var resultTrue in shaderResultsTrue )
