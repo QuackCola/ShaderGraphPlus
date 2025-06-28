@@ -49,7 +49,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			return NodeResult.Error( "Feature Is Invalid!" );
 		}
 
-		if ( compiler.GenerateComboSwitchBody( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+		if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 		{
 			//SGPLog.Info( switchBody, compiler.IsPreview);
 
