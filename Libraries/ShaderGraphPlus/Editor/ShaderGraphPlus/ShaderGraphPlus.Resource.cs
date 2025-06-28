@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
@@ -50,7 +52,13 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
-    [Hide]
+	//[Hide, JsonIgnore]
+	//public IEnumerable<string> Features => _features.Keys;
+	//
+	//[Hide, JsonIgnore]
+	//private readonly Dictionary<string, string> _features = new();
+
+	[Hide]
 	public bool IsSubgraph { get; set; }
 
 	[Hide]
@@ -91,26 +99,34 @@ public partial class ShaderGraphPlus : IGraph
 
     public MaterialDomain MaterialDomain { get; set; }
 
-    //[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
-    //[InlineEditor]
-    //[Group("Post Processing")]
-    //public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
-
+	//[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
+	//[InlineEditor]
+	//[Group("Post Processing")]
+	//public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
+	
+	/// <summary>
+	/// Currently Registerd features for this graph.
+	/// </summary>
+	[Hide]
+	public Dictionary<string,string> Features { get; set; } = new();
+	
 	/// <summary>
 	/// TODO: Hook this up and read from a list of registerd features!
 	/// </summary>
-	public List<string> FeatureRules { get; set; } = new();
+	[InlineEditor]
 
-    //
-    // Summary:
-    //     Custom key-value storage for this project.
-    [Hide]
-    public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
+	public List<FeatureRule> FeatureRules { get; set; } = new();
 
-    [Hide]
-    public PreviewSettings PreviewSettings { get; set; } = new();
+	/// <summary>
+	///   Custom key-value storage for this project.
+	/// </summary>
+	[Hide]
+	public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
 
-    public ShaderGraphPlus()
+	[Hide]
+	public PreviewSettings PreviewSettings { get; set; } = new();
+
+	public ShaderGraphPlus()
 	{
 	}
 
@@ -157,6 +173,18 @@ public partial class ShaderGraphPlus : IGraph
 	void IGraph.RemoveNode( INode node )
 	{
 		RemoveNode( (BaseNodePlus)node );
+	}
+
+	public void AddFeature( ShaderFeatureInfo feature )
+	{
+		if ( !Features.ContainsKey( feature.FeatureName ) )
+		{
+			Features.Add( feature.FeatureName, feature.FeatureString );
+		}
+		else
+		{
+			//SGPLog.Error( "Feature is already known to the graph!" );
+		}
 	}
 
     //
@@ -251,4 +279,3 @@ public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
 
 
 }
-
