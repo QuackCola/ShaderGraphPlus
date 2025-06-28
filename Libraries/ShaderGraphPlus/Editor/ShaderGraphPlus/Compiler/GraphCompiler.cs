@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus;
 
-
 public sealed partial class GraphCompiler
 {
 	public struct Error
@@ -103,10 +102,8 @@ public sealed partial class GraphCompiler
 	public List<BaseNodePlus> Nodes { get; private set; } = new();
 	private List<NodeInput> InputStack = new();
 
-
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
-
 
 	/// <summary>
 	/// Error list, doesn't give you much information currently
@@ -476,9 +473,9 @@ public sealed partial class GraphCompiler
 			return default;
 		}
 
-		if ( input.StaticSwitchInfo.BoundSwitchBlock is not StaticSwitchBlock.None )
+		if ( input.ComboSwitchInfo.BoundSwitchBlock is not StaticSwitchBlock.None )
 		{
-			CurrentComboSwitchInfo = input.StaticSwitchInfo;
+			CurrentComboSwitchInfo = input.ComboSwitchInfo;
 		}
 
 		InputStack.Add( input );
@@ -664,9 +661,9 @@ public sealed partial class GraphCompiler
 
 			if ( node is StaticSwitchNode staticSwitchnode )
 			{
-				if ( ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.StaticSwitchInfo.IsValid )
+				if ( ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
 				{
-					funcResult.SetSwitchInfo( input.StaticSwitchInfo );
+					funcResult.SetSwitchInfo( input.ComboSwitchInfo );
 					funcResult.SkipLocalGeneration = true;
 				}
 			}
