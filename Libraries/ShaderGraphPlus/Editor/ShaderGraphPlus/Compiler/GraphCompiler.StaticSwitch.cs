@@ -156,7 +156,6 @@ public sealed partial class GraphCompiler
 			(
 				feature.FeatureName.Replace( " ", "_" ),
 				$"Feature(F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\");",
-				"",
 				featureOptionAmount,
 				feature.IsDynamicCombo
 			);
