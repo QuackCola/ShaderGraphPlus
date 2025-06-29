@@ -123,7 +123,6 @@ public sealed partial class GraphCompiler
 		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
 	}
 
-	// TODO : 
 	internal void ResetCurrentComboSwitchInfo()
 	{
 		CurrentComboSwitchInfo = default;
