@@ -111,6 +111,7 @@ PS
 			float4 l_2 = g_vColorOne; // index `2`
 			float4 l_3 = float4( l_1, 0 ) * l_2; // index `3`
 			FresnelSwitchResult = l_3; // result
+		
 		}
 		#else
 		{
@@ -118,6 +119,7 @@ PS
 			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 ); // index `1`
 			float3 l_4 = InvertColors( l_3 ); // index `2`
 			FresnelSwitchResult = float4( l_4, 0 ); // result
+		
 		}
 		#endif
 		
