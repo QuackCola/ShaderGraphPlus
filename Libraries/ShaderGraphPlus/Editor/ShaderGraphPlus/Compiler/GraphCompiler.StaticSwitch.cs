@@ -111,7 +111,7 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> StaticComboSwitches { get; private set; } = new();
 	}
 
-	internal (NodeResult, NodeResult) BinaryComboSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
+	private (NodeResult, NodeResult) BinaryComboSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
@@ -133,12 +133,12 @@ public sealed partial class GraphCompiler
 		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
 	}
 
-	internal void ResetCurrentComboSwitchInfo()
+	private void ResetCurrentComboSwitchInfo()
 	{
 		CurrentComboSwitchInfo = default;
 	}
 
-	internal void AddGraphFeatureReferenceToGraph( string name )
+	private void AddGraphFeatureReferenceToGraph( string name )
 	{
 		if ( !Graph.FeatureNames.Contains( name ) )
 		{
@@ -188,7 +188,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	void ConstructSwitchBlock( out StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, string blockResultName, int blockResultComponentCount, bool debug = false )
+	private void ConstructSwitchBlock( out StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, string blockResultName, int blockResultComponentCount, bool debug = false )
 	{
 		var lastResult = (new NodeResult(), new NodeResult());
 		var indentLevel = 1;
@@ -317,7 +317,7 @@ public sealed partial class GraphCompiler
 		return false;
 	}
 
-	internal StringBuilder AppendIf( StringBuilder sb, string comboName, string previewToggle )
+	private StringBuilder AppendIf( StringBuilder sb, string comboName, string previewToggle )
 	{
 		if ( IsPreview )
 		{
