@@ -82,6 +82,7 @@ public struct ShaderFeatureInfo : IValid
 
 	public ShaderFeatureInfo()
 	{
+		UserDefinedName = "";
 		FeatureName = "";
 		FeatureDeclaration = "";
 		OptionsCount = 0;
