@@ -1,0 +1,169 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/staticswitchsimilarpath.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "96,24",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Fresnel",
+        "HeaderName": "Effects",
+        "Options": [],
+        "IsValid": true
+      },
+      "Identifier": "1",
+      "Position": "-504,-48",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,1,1",
+      "Name": "ColorOne",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "2",
+      "Position": "-1236,-312",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,0,1",
+      "Name": "ColorTwo",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "3",
+      "Position": "-1044,168",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 2,
+      "Identifier": "4",
+      "Position": "-960,-228",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Fresnel",
+      "DefaultPower": 6.300008,
+      "Identifier": "5",
+      "Position": "-1236,-144",
+      "HandleOffsets": {},
+      "Power": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 32,
+      "Value": 4,
+      "Name": "Fresnel Power",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "6",
+      "Position": "-1464,-96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.4418383,
+      "BlendMode": "Add",
+      "Clamp": false,
+      "Identifier": "7",
+      "Position": "-144,-180",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "8",
+      "Position": "-468,-228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "InvertColorsNode",
+      "Identifier": "9",
+      "Position": "-936,-36",
+      "HandleOffsets": {},
+      "Color": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ]
+}

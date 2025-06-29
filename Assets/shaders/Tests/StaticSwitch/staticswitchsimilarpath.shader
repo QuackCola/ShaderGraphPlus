@@ -7,7 +7,8 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-
+	Feature( F_FRESNEL, 0..1, "Effects" );
+	
 }
 
 MODES
@@ -76,6 +77,16 @@ PS
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
+	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
+	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
+	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
+	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 0.00, 1.00 ); >;
+		
+	float3 InvertColors( float3 vColor )
+	{
+		return float3( 1.0 - vColor.r, 1.0 - vColor.g, 1.0 - vColor.b );
+	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -92,10 +103,23 @@ PS
 		m.Transmission = 0;
 		
 		
-		float l_0 = 1.0f - VoronoiNoise( i.vTextureCoords.xy, 2.663653, 24 ); 
-		float l_1 = l_0 * l_0; 
 		
-		m.Albedo = float3( l_1, l_1, l_1 );
+		float4 FresnelSwitchResult;
+		#if ( S_FRESNEL == 1 )
+		{
+			float l_0 = g_flFresnelPower;
+			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 );
+			float4 l_2 = g_vColorOne;
+			FresnelSwitchResult = float4( l_1, 0 ) * l_2;
+		}
+		#else
+		{
+		}
+		#endif
+		
+		float4 l_6 = FresnelSwitchResult; 
+		
+		m.Albedo = l_6.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

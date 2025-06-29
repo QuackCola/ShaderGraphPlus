@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 
+
 namespace Editor.ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
@@ -433,6 +434,7 @@ public sealed partial class GraphCompiler
 				node = subgraph.FindNode( input.Identifier );
 			}
 		}
+
 		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 		{
 			return result;
@@ -479,7 +481,11 @@ public sealed partial class GraphCompiler
 			CurrentComboSwitchInfo = input.ComboSwitchInfo;
 		}
 
+
 		InputStack.Add( input );
+
+
+	
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
@@ -655,8 +661,16 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
+	
 			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
+			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
+
+
+
+
+
+			//SGPLog.Info( $"Result : `{funcResult.Code}` SwitchInfo : `{funcResult.SwitchInfo}`", IsNotPreview );
+
 
 			if ( node is StaticSwitchNode staticSwitchnode )
 			{
