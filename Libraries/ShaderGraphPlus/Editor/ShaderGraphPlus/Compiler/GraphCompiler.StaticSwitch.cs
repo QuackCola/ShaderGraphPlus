@@ -115,13 +115,14 @@ public sealed partial class GraphCompiler
 	{
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
-
+		
+		ResetCurrentComboSwitchInfo();
+		
 		if ( resultA.Components() == resultB.Components() )
 		{
 			//SGPLog.Info( "Not casing" );
 			return (resultA, resultB);
 		}
-			
 
 		if ( resultA.Components() < resultB.Components() )
 		{
@@ -217,7 +218,6 @@ public sealed partial class GraphCompiler
 
 				if ( lastResult.Item2.Components() == blockResultComponentCount )
 				{
-				
 					sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1}; {(debug ? $"// result" : "")}", indentLevel ) );
 				}
 				else
@@ -258,7 +258,7 @@ public sealed partial class GraphCompiler
 		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
 
-		ResetCurrentComboSwitchInfo();
+		//ResetCurrentComboSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
 		int nodeResultComponentCount = results.Item1.Components();
