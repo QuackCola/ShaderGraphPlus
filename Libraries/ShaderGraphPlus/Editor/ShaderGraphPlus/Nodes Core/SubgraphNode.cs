@@ -24,7 +24,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	[Hide]
 	public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
 
-	[Editor( "subgraphnode" ), WideMode( HasLabel = false )]
+	[NodeEditor( "subgraphnode" ), WideMode( HasLabel = false )]
 	public Dictionary<string, object> DefaultValues { get; set; } = new();
 
 	[JsonIgnore, Hide]
