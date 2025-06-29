@@ -1,4 +1,7 @@
-﻿using Editor.ShaderGraphPlus;
+﻿using Editor.NodeEditor;
+using System.ComponentModel;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace Editor.ShaderGraphPlus;
 
@@ -160,11 +163,11 @@ public abstract class BaseNodePlus : INode
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class EditorAttribute : Attribute
+	public class NodeEditorAttribute : Attribute
 	{
 		public string ValueName;
 
-		public EditorAttribute( string valueName )
+		public NodeEditorAttribute( string valueName )
 		{
 			ValueName = valueName;
 		}
@@ -429,7 +432,7 @@ public class PlugInfo
 			return null;
 		}
 
-		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.NodeEditorAttribute>();
 
 		if ( editor is not null )
 		{

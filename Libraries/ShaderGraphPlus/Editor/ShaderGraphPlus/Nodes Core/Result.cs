@@ -23,7 +23,7 @@ public sealed class Result : BaseResult
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Emission { get; set; }
 
-	[Hide, Editor( nameof( DefaultOpacity ) )]
+	[Hide, NodeEditor( nameof( DefaultOpacity ) )]
 	[Input( typeof( float ) )]
 	public NodeInput Opacity { get; set; }
 
@@ -32,17 +32,17 @@ public sealed class Result : BaseResult
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Normal { get; set; }
 
-	[Hide, Editor( nameof( DefaultRoughness ) )]
+	[Hide, NodeEditor( nameof( DefaultRoughness ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Roughness { get; set; }
 
-	[Hide, Editor( nameof( DefaultMetalness ) )]
+	[Hide, NodeEditor( nameof( DefaultMetalness ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Metalness { get; set; }
 
-	[Hide, Editor( nameof( DefaultAmbientOcclusion ) )]
+	[Hide, NodeEditor( nameof( DefaultAmbientOcclusion ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput AmbientOcclusion { get; set; }
