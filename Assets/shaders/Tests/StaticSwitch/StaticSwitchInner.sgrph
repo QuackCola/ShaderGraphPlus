@@ -37,7 +37,7 @@
       "_class": "StaticSwitchNode",
       "PreviewToggle": true,
       "Feature": {
-        "FeatureName": "Feature0",
+        "FeatureName": "Feature1",
         "HeaderName": "Feature Group 0",
         "IsValid": true
       },
@@ -59,7 +59,7 @@
       "_class": "StaticSwitchNode",
       "PreviewToggle": false,
       "Feature": {
-        "FeatureName": "Feature1",
+        "FeatureName": "Feature0",
         "HeaderName": "Feature Group 0",
         "IsValid": true
       },
