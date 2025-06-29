@@ -94,7 +94,7 @@
       "Position": "-1452,-144",
       "HandleOffsets": {},
       "Power": {
-        "Identifier": "5",
+        "Identifier": "11",
         "Output": "Result",
         "Subgraph": null
       }
@@ -108,7 +108,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "5",
-      "Position": "-1680,-96",
+      "Position": "-1968,-96",
       "HandleOffsets": {}
     },
     {
@@ -139,7 +139,7 @@
         "Type": "Color"
       },
       "Identifier": "7",
-      "Position": "-468,-228",
+      "Position": "-540,-348",
       "HandleOffsets": {}
     },
     {
@@ -149,6 +149,41 @@
       "HandleOffsets": {},
       "Color": {
         "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Time",
+      "Identifier": "9",
+      "Position": "-1992,12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Sine",
+      "Identifier": "10",
+      "Position": "-1800,12",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "11",
+      "Position": "-1608,-84",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       }

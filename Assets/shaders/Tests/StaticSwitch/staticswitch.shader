@@ -102,15 +102,18 @@ PS
 		float4 FresnelSwitchResult;
 		#if ( S_FRESNEL == 1 )
 		{
-			float l_0 = g_flFresnelPower;
-			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 );
-			float4 l_2 = g_vColorOne;
-			FresnelSwitchResult = float4( l_1, 0 ) * l_2;
+			float l_0 = g_flFresnelPower; // index `0`
+			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 ); // index `1`
+			float4 l_2 = g_vColorOne; // index `2`
+			float4 l_3 = float4( l_1, 0 ) * l_2; // index `3`
+			FresnelSwitchResult = l_3; // result
+		
 		}
 		#else
 		{
-			float4 l_4 = g_vColorTwo;
-			FresnelSwitchResult = l_4;
+			float4 l_4 = g_vColorTwo; // index `0`
+			FresnelSwitchResult = l_4; // result
+		
 		}
 		#endif
 		
