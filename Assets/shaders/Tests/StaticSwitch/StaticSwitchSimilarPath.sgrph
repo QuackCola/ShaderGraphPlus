@@ -52,7 +52,7 @@
         "Subgraph": null
       },
       "InputFalse": {
-        "Identifier": "4",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null
       }
@@ -141,6 +141,17 @@
       "Identifier": "7",
       "Position": "-468,-228",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "InvertColorsNode",
+      "Identifier": "8",
+      "Position": "-1116,-36",
+      "HandleOffsets": {},
+      "Color": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
     }
   ]
 }

@@ -81,6 +81,11 @@ PS
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
 	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
+		
+	float3 InvertColors( float3 vColor )
+	{
+		return float3( 1.0 - vColor.r, 1.0 - vColor.g, 1.0 - vColor.b );
+	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -111,13 +116,14 @@ PS
 		{
 			float l_2 = g_flFresnelPower; // index `0`
 			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 ); // index `1`
-			FresnelSwitchResult = float4( l_3, 0 ); // result
+			float3 l_4 = InvertColors( l_3 ); // index `2`
+			FresnelSwitchResult = float4( l_4, 0 ); // result
 		}
 		#endif
 		
-		float4 l_4 = FresnelSwitchResult; 
+		float4 l_5 = FresnelSwitchResult; 
 		
-		m.Albedo = l_4.xyz;
+		m.Albedo = l_5.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
