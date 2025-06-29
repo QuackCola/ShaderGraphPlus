@@ -200,6 +200,11 @@ public sealed partial class GraphCompiler
 			{
 				SGPLog.Info( $"At shaderResults index `{i}`", IsNotPreview && debug );
 				var result = shaderResults.ElementAt( i );
+				
+				if ( !string.IsNullOrWhiteSpace( result.Item1.ComboSwitchBody ) )
+				{
+					sb.AppendLine( IndentString( $"{result.Item1.ComboSwitchBody}", indentLevel ) );
+				}
 
 				SGPLog.Info( $"`{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}`", IsNotPreview );
 				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; {(debug ? $"// index `{i}`" : "")}", indentLevel ) );

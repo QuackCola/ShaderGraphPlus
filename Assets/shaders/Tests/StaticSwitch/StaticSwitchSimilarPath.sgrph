@@ -35,7 +35,7 @@
     },
     {
       "_class": "StaticSwitchNode",
-      "PreviewToggle": false,
+      "PreviewToggle": true,
       "Mode": "Create",
       "Feature": {
         "FeatureName": "Fresnel",

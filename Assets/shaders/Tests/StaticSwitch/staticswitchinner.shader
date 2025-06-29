@@ -123,22 +123,25 @@ PS
 			float4 Feature0SwitchResult;
 			#if ( S_FEATURE0 == 1 )
 			{
-				Feature0SwitchResult = float4( 1, 0, 1, 1 );
+				float4 l_0 = float4( 1, 0, 1, 1 ); // index `0`
+				Feature0SwitchResult = l_0; // result
 			}
 			#else
 			{
-				float l_1 = Oscillator( g_flTime, 1, -0.69999987, 10 );
-				float l_2 = l_1 * 1;
-				Feature0SwitchResult = float4( l_2, l_2, l_2, l_2 );}
+				float l_1 = Oscillator( g_flTime, 1, -0.69999987, 10 ); // index `0`
+				float l_2 = l_1 * 1; // index `1`
+				Feature0SwitchResult = float4( l_2, l_2, l_2, l_2 ); // result
+			}
 			#endif
 			
-			Feature1SwitchResult = Feature0SwitchResult;
+			float4 l_3 = Feature0SwitchResult; // index `0`
+			Feature1SwitchResult = l_3; // result
 		}
 		#else
 		{
-			float4 l_4 = float4( 0.56374, 0.06789, 0, 1 );
-			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
-			Feature1SwitchResult = l_5;
+			float4 l_4 = float4( 0.56374, 0.06789, 0, 1 ); // index `0`
+			float4 l_5 = l_4 * float4( 2, 2, 2, 2 ); // index `1`
+			Feature1SwitchResult = l_5; // result
 		}
 		#endif
 		
