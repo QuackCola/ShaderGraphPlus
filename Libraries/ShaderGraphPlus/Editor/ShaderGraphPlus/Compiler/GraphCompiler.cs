@@ -435,9 +435,26 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+		if ( CurrentComboSwitchInfo.IsValid )
 		{
-			return result;
+			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+			{
+				ShaderResult.InputResults.Remove( input );
+		
+		
+				var tres = Result( input );
+		
+				//SGPLog.Info( $"{tres.ResultType}", IsNotPreview );
+		
+				return tres;
+			}
+		}
+		else
+		{
+			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+			{
+				return result;
+			}
 		}
 		if (node == null)
 		{
