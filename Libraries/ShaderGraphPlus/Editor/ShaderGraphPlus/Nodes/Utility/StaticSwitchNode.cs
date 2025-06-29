@@ -1,5 +1,11 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
+public enum StaticSwitchMode
+{
+	Create,
+	Reference
+}
+
 [Title( "Static Switch" ), Category( "Utility" )]
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
@@ -17,6 +23,12 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	public NodeInput InputFalse { get; set; }
 
 	public bool PreviewToggle { get; set; } = false;
+
+	/// <summary>
+	/// TODO : Implement Reference Mode.
+	/// </summary>
+	[ReadOnly]
+	public StaticSwitchMode Mode { get; set; } = StaticSwitchMode.Create;
 
 	[InlineEditor( Label = false ), Group( "Feature" )]
 	public ShaderFeature Feature { get; set; } = new();
