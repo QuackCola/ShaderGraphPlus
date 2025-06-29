@@ -401,6 +401,7 @@ public sealed partial class GraphCompiler
 		warnings.Add($"'{oldnode}' is depreciated please use '{newnode}' instead.");
 	}
 
+	private List<(NodeResult, NodeResult)> SwitchResultStack = new();
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
