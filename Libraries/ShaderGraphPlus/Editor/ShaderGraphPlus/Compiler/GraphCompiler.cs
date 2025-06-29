@@ -435,22 +435,20 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( CurrentComboSwitchInfo.IsValid )
+		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 		{
-			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+			// Note : Should be ok? Rethink this if it bites me in the ass later.
+			// Need this so that the false block of a switch can generate results that were processed by the true block.
+			if ( CurrentComboSwitchInfo.IsValid )
 			{
 				ShaderResult.InputResults.Remove( input );
 
 				return Result( input );
 			}
-		}
-		else
-		{
-			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
-			{
+
 				return result;
-			}
 		}
+
 		if ( node == null )
 		{
 			return default;
