@@ -451,7 +451,7 @@ public sealed partial class GraphCompiler
 				return result;
 			}
 		}
-		if (node == null)
+		if ( node == null )
 		{
 			return default;
 		}
@@ -459,7 +459,7 @@ public sealed partial class GraphCompiler
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty(input.Output);
 
-		if (property == null)
+		if ( property == null )
 		{
 			// Search for alias
 			var allProperties = nodeType.GetProperties();
