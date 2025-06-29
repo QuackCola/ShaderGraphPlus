@@ -28,8 +28,8 @@
       "Position": "0,0",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "1",
-        "Output": "OutputA",
+        "Identifier": "2",
+        "Output": "Result",
         "Subgraph": null
       }
     },
@@ -38,8 +38,26 @@
       "SubgraphPath": "shaders/tests/subgraph/subgraph_test.sgpfunc",
       "DefaultValues": {},
       "Identifier": "1",
-      "Position": "-516,48",
+      "Position": "-744,12",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "2",
+      "Position": "-420,84",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "OutputA",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "OutputA",
+        "Subgraph": null
+      }
     }
   ]
 }
