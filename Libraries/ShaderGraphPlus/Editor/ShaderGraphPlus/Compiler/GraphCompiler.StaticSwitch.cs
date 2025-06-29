@@ -1,6 +1,8 @@
 ﻿// Static Switch related code
 //
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Editor.ShaderGraphPlus;
@@ -115,11 +117,19 @@ public sealed partial class GraphCompiler
 		var resultB = ResultOrDefault( b, defaultB );
 
 		if ( resultA.Components() == resultB.Components() )
+		{
+			//SGPLog.Info( "Not casing" );
 			return (resultA, resultB);
+		}
+			
 
 		if ( resultA.Components() < resultB.Components() )
-			return ( new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB );
+		{
+			//SGPLog.Info("Casting A to B compinents.");
+			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+		}
 
+		//SGPLog.Info( "Casting B to A compinents." );
 		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
 	}
 
@@ -178,6 +188,43 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	void ConstructSwitchBlock( out StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, string blockResultName, int blockResultComponentCount, bool debug = false )
+	{
+		var lastResult = (new NodeResult(), new NodeResult());
+		var indentLevel = 1;
+		sb = new StringBuilder();
+
+		for ( int i = 0; i < shaderResults.Count() + 1; i++ )
+		{
+			if ( i < shaderResults.Count() )
+			{
+				SGPLog.Info( $"At shaderResults index `{i}`", IsNotPreview && debug );
+				var result = shaderResults.ElementAt( i );
+
+				SGPLog.Info( $"`{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}`", IsNotPreview );
+				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; {(debug ? $"// index `{i}`" : "")}", indentLevel ) );
+
+				lastResult = result;
+			}
+			else
+			{
+				SGPLog.Info( $"At last shaderResults index `{i}`", IsNotPreview && debug );
+
+				if ( lastResult.Item2.Components() == blockResultComponentCount )
+				{
+				
+					sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1}; {(debug ? $"// result" : "")}", indentLevel ) );
+				}
+				else
+				{
+					
+					
+					sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}; {(debug ? $"// result" : "")}", indentLevel ) );
+				}
+			}
+		}
+	}
+
 	internal bool GenerateComboSwitch
 	(
 		ShaderFeatureInfo feature,
@@ -219,67 +266,13 @@ public sealed partial class GraphCompiler
 			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.False
 		);
 
-		var index = 1;
-		var indentLevel = 1;
-		foreach ( var resultTrue in shaderResultsTrue )
-		{
-			if ( !string.IsNullOrWhiteSpace( resultTrue.Item1.ComboSwitchBody ) )
-			{
-				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item1.ComboSwitchBody}", indentLevel ) );
-			}
+		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview && ConCommands.VerboseDebgging );
 
-			//sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
+		ConstructSwitchBlock( out sbTrueBody, shaderResultsTrue, resultNameInternal, nodeResultComponentCount, true );
 
-			if ( index == shaderResultsTrue.Count() )
-			{
-				if ( resultTrue.Item2.Components() == nodeResultComponentCount )
-				{
-					sbTrueBody.AppendLine( IndentString( $"{resultNameInternal} = {resultTrue.Item2.Code};", indentLevel ) );
-				}
-				else
-				{
-					sbTrueBody.Append( IndentString( $"{resultNameInternal} = {resultTrue.Item1.Cast( nodeResultComponentCount )};", indentLevel ) );
-				}
-			}
-			else
-			{
-				sbTrueBody.AppendLine( IndentString( $"{resultTrue.Item2.TypeName} {resultTrue.Item1} = {resultTrue.Item2.Code};", indentLevel ) );
-			}
+		SGPLog.Info( $"There is a total of `{shaderResultsFalse.Count()}` false block shader results", IsNotPreview && ConCommands.VerboseDebgging );
 
-			index++;
-		}
-
-		index = 1;
-		var lastResultCode = "";
-		var lastResultLocal = "";
-		foreach ( var resultFalse in shaderResultsFalse )
-		{
-			if ( !string.IsNullOrWhiteSpace( resultFalse.Item1.ComboSwitchBody ) )
-			{
-				sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item1.ComboSwitchBody}", indentLevel ) );
-			}
-
-			sbFalseBody.AppendLine( IndentString( $"{resultFalse.Item2.TypeName} {resultFalse.Item1} = {resultFalse.Item2.Code};", indentLevel ) );
-
-			// Little hack to avoid duplicate code.
-			lastResultCode = resultFalse.Item2.Code;
-			lastResultLocal = resultFalse.Item1.Code;
-
-			if ( index == shaderResultsFalse.Count() )
-			{
-				if ( resultFalse.Item2.Components() == nodeResultComponentCount )
-				{
-					//sbFalseBody.AppendLine( IndentString( $"{resultNameInternal} = {resultFalse.Item2.Code};", indentLevel ) );
-					sbFalseBody.AppendLine( IndentString( $"{resultNameInternal} = {lastResultLocal};", indentLevel ) );
-				}
-				else
-				{
-					sbFalseBody.Append( IndentString( $"{resultNameInternal} = {resultFalse.Item1.Cast( nodeResultComponentCount )};", indentLevel ) );
-				}
-			}
-
-			index++;
-		}
+		ConstructSwitchBlock( out sbFalseBody, shaderResultsFalse, resultNameInternal, nodeResultComponentCount, true );
 
 		sbSwitchBody.AppendLine();
 		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
