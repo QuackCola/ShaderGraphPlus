@@ -1,4 +1,5 @@
-﻿
+﻿using System.ComponentModel;
+
 namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class Binary : ShaderNodePlus

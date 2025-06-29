@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using System.ComponentModel;
+
+namespace Editor.ShaderGraphPlus;
 
 public abstract class ShaderNodePlus : BaseNodePlus
 {
