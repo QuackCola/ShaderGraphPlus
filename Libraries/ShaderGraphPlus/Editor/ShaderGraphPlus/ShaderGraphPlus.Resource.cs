@@ -52,8 +52,8 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	IEnumerable<INode> IGraph.Nodes => Nodes;
 
-	//[Hide, JsonIgnore]
-	//public IEnumerable<string> Features => _features.Keys;
+	[Hide, JsonIgnore]
+	public List<string> FeatureNames { get; set; }
 	//
 	//[Hide, JsonIgnore]
 	//private readonly Dictionary<string, string> _features = new();

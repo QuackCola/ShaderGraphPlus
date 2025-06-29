@@ -128,6 +128,18 @@ public sealed partial class GraphCompiler
 		CurrentComboSwitchInfo = default;
 	}
 
+	internal void AddGraphFeatureReferenceToGraph( string name )
+	{
+		if ( !Graph.FeatureNames.Contains( name ) )
+		{
+			Graph.FeatureNames.Add( name );
+			
+			return;
+		}
+
+		SGPLog.Info( "NameReference already known by the graph." );
+	}
+
 	/// <summary>
 	/// Registers a true or false Shader Feature.
 	/// </summary>
@@ -142,6 +154,7 @@ public sealed partial class GraphCompiler
 
 			shaderFeatureInfo = new ShaderFeatureInfo
 			(
+				feature.FeatureName,
 				feature.FeatureName.Replace( " ", "_" ),
 				$"Feature( F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\" );",
 				featureOptionAmount,
@@ -151,7 +164,9 @@ public sealed partial class GraphCompiler
 			if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
 			{
 				result.ShaderFeatures.Add( feature.FeatureName, shaderFeatureInfo );
-				
+				AddGraphFeatureReferenceToGraph( feature.FeatureName );
+
+
 				return true;
 			}
 

@@ -5,6 +5,7 @@
 /// </summary>
 public struct ShaderFeatureInfo : IValid
 {
+	public string UserDefinedName { get; private set; }
 	public string FeatureName { get; private set; }
 	public string FeatureDeclaration { get; private set; }
 	public int OptionsCount { get; private set; }
@@ -70,8 +71,9 @@ public struct ShaderFeatureInfo : IValid
 		}
 	}
 
-	public ShaderFeatureInfo( string featureName, string featureDeclaration, int optionsCount, bool isDynamicCombo )
+	public ShaderFeatureInfo( string userDefinedName, string featureName, string featureDeclaration, int optionsCount, bool isDynamicCombo )
 	{
+		UserDefinedName = userDefinedName;
 		FeatureName = featureName;
 		FeatureDeclaration = featureDeclaration;
 		OptionsCount = optionsCount;
