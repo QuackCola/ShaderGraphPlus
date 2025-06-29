@@ -24,8 +24,6 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		List<string> errors = new();
-		
 		if ( string.IsNullOrWhiteSpace( Feature.FeatureName ) )
 			return NodeResult.Error( "Feature must have a valid name!" );
 
