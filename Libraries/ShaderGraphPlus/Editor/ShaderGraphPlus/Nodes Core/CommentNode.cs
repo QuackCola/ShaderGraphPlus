@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-
+﻿
 namespace Editor.ShaderGraphPlus;
 
 [Icon( "notes" ), Hide]
