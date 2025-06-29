@@ -446,7 +446,7 @@ public sealed partial class GraphCompiler
 				return Result( input );
 			}
 
-				return result;
+			return result;
 		}
 
 		if ( node == null )
