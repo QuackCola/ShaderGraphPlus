@@ -5,11 +5,6 @@ using System.Text;
 
 namespace Editor.ShaderGraphPlus;
 
-public struct StaticSwitchData
-{
-	public StaticSwitchState State;
-}
-
 public enum StaticSwitchBlock
 {
 	None,
