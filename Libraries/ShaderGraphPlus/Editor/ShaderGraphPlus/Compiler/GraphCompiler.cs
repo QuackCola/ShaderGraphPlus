@@ -481,11 +481,7 @@ public sealed partial class GraphCompiler
 			CurrentComboSwitchInfo = input.ComboSwitchInfo;
 		}
 
-
 		InputStack.Add( input );
-
-
-	
 
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
@@ -661,16 +657,8 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-	
 			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
 			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
-
-
-
-
-
-			//SGPLog.Info( $"Result : `{funcResult.Code}` SwitchInfo : `{funcResult.SwitchInfo}`", IsNotPreview );
-
 
 			if ( node is StaticSwitchNode staticSwitchnode )
 			{
