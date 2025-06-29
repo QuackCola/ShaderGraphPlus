@@ -222,8 +222,6 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-					
-					
 					sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}; {(debug ? $"// result" : "")}", indentLevel ) );
 				}
 			}
