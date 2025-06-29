@@ -117,6 +117,7 @@ public sealed partial class GraphCompiler
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
 	{
 		Graph = graph;
+		Graph.FeatureNames = new();
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
