@@ -35,7 +35,7 @@
     },
     {
       "_class": "StaticSwitchNode",
-      "PreviewToggle": true,
+      "PreviewToggle": false,
       "Mode": "Create",
       "Feature": {
         "FeatureName": "Fresnel",
@@ -44,15 +44,15 @@
         "IsValid": true
       },
       "Identifier": "1",
-      "Position": "-504,-48",
+      "Position": "-780,-168",
       "HandleOffsets": {},
       "InputTrue": {
-        "Identifier": "4",
+        "Identifier": "3",
         "Output": "Result",
         "Subgraph": null
       },
       "InputFalse": {
-        "Identifier": "9",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
@@ -70,26 +70,14 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
-      "Value": "1,0,0,1",
-      "Name": "ColorTwo",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color"
-      },
-      "Identifier": "3",
-      "Position": "-1044,168",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "Multiply",
       "DefaultA": 0,
       "DefaultB": 2,
-      "Identifier": "4",
+      "Identifier": "3",
       "Position": "-960,-228",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "5",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       },
@@ -102,11 +90,11 @@
     {
       "_class": "Fresnel",
       "DefaultPower": 6.300008,
-      "Identifier": "5",
-      "Position": "-1236,-144",
+      "Identifier": "4",
+      "Position": "-1452,-144",
       "HandleOffsets": {},
       "Power": {
-        "Identifier": "6",
+        "Identifier": "5",
         "Output": "Result",
         "Subgraph": null
       }
@@ -119,8 +107,8 @@
       "Name": "Fresnel Power",
       "IsAttribute": false,
       "UI": {},
-      "Identifier": "6",
-      "Position": "-1464,-96",
+      "Identifier": "5",
+      "Position": "-1680,-96",
       "HandleOffsets": {}
     },
     {
@@ -128,11 +116,11 @@
       "Fraction": 0.4418383,
       "BlendMode": "Add",
       "Clamp": false,
-      "Identifier": "7",
+      "Identifier": "6",
       "Position": "-144,-180",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "8",
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       },
@@ -150,20 +138,9 @@
       "UI": {
         "Type": "Color"
       },
-      "Identifier": "8",
+      "Identifier": "7",
       "Position": "-468,-228",
       "HandleOffsets": {}
-    },
-    {
-      "_class": "InvertColorsNode",
-      "Identifier": "9",
-      "Position": "-936,-36",
-      "HandleOffsets": {},
-      "Color": {
-        "Identifier": "3",
-        "Output": "Result",
-        "Subgraph": null
-      }
     }
   ]
 }
