@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 public class MissingNode : BaseNodePlus
 {
