@@ -7,8 +7,8 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature( F_FEATURE0, 0..1, "Feature Group 0" );
 	Feature( F_FEATURE1, 0..1, "Feature Group 0" );
+	Feature( F_FEATURE0, 0..1, "Feature Group 0" );
 	
 }
 
@@ -79,8 +79,8 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
-	StaticCombo( S_FEATURE0, F_FEATURE0, Sys( ALL ) );
 	StaticCombo( S_FEATURE1, F_FEATURE1, Sys( ALL ) );
+	StaticCombo( S_FEATURE0, F_FEATURE0, Sys( ALL ) );
 		
 	float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
 	{
@@ -116,33 +116,33 @@ PS
 		
 		
 		
-		float4 Feature0SwitchResult;
-		#if ( S_FEATURE0 == 1 )
+		float4 Feature1SwitchResult;
+		#if ( S_FEATURE1 == 1 )
 		{
 			
-			float4 Feature1SwitchResult;
-			#if ( S_FEATURE1 == 1 )
+			float4 Feature0SwitchResult;
+			#if ( S_FEATURE0 == 1 )
 			{
-				Feature1SwitchResult = float4( 1, 0, 1, 1 );
+				Feature0SwitchResult = float4( 1, 0, 1, 1 );
 			}
 			#else
 			{
 				float l_1 = Oscillator( g_flTime, 1, -0.69999987, 10 );
 				float l_2 = l_1 * 1;
-				Feature1SwitchResult = float4( l_2, l_2, l_2, l_2 );}
+				Feature0SwitchResult = float4( l_2, l_2, l_2, l_2 );}
 			#endif
 			
-			Feature0SwitchResult = Feature1SwitchResult;
+			Feature1SwitchResult = Feature0SwitchResult;
 		}
 		#else
 		{
 			float4 l_4 = float4( 0.56374, 0.06789, 0, 1 );
 			float4 l_5 = l_4 * float4( 2, 2, 2, 2 );
-			Feature0SwitchResult = l_5;
+			Feature1SwitchResult = l_5;
 		}
 		#endif
 		
-		float4 l_6 = Feature0SwitchResult; 
+		float4 l_6 = Feature1SwitchResult; 
 		
 		m.Albedo = l_6.xyz;
 		m.Opacity = 1;

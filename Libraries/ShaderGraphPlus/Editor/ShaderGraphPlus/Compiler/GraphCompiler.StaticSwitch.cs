@@ -107,7 +107,7 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	private ComboSwitchInfo CurrentComboSwitchInfo { get; set; } = default;
 
-	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.StaticComboSwitches.Keys;
+	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.ShaderFeatures.Keys;
 
 	private partial class CompileResult
 	{
@@ -154,12 +154,10 @@ public sealed partial class GraphCompiler
 				feature.IsDynamicCombo
 			);
 
-			var id = shaderFeatureInfo.FeatureName;
-
-			if ( !result.ShaderFeatures.ContainsKey( id ) )
+			if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
 			{
-				result.ShaderFeatures.Add( id, shaderFeatureInfo );
-
+				result.ShaderFeatures.Add( feature.FeatureName, shaderFeatureInfo );
+				
 				return true;
 			}
 
