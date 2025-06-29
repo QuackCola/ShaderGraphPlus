@@ -36,6 +36,7 @@
     {
       "_class": "StaticSwitchNode",
       "PreviewToggle": true,
+      "Mode": "Create",
       "Feature": {
         "FeatureName": "Fresnel",
         "HeaderName": "Effects",

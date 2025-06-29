@@ -7,7 +7,7 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature(F_FRESNEL, 0..1, "Effects");
+	Feature( F_FRESNEL, 0..1, "Effects" );
 	
 }
 
