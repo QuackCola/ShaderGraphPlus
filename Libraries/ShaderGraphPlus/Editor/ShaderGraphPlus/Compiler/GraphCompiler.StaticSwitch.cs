@@ -228,6 +228,15 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	private StringBuilder AppendSwitchBlock( StringBuilder sb, string body )
+	{
+		sb.AppendLine( "{" );
+		sb.AppendLine( body );
+		sb.AppendLine( "}" );
+
+		return sb;
+	}
+
 	internal bool GenerateComboSwitch
 	(
 		ShaderFeatureInfo feature,
@@ -289,13 +298,9 @@ public sealed partial class GraphCompiler
 			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == 1 )" );
 		}
 
-		sbSwitchBody.AppendLine( "{" );
-		sbSwitchBody.Append( sbTrueBody.ToString() );
-		sbSwitchBody.AppendLine( "}" );
+		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, sbTrueBody.ToString() );
 		sbSwitchBody.AppendLine( "#else" );
-		sbSwitchBody.AppendLine( "{" );
-		sbSwitchBody.Append( sbFalseBody.ToString() );
-		sbSwitchBody.AppendLine( "}" );
+		sbSwitchBody = AppendSwitchBlock( sbSwitchBody,  sbFalseBody.ToString() );
 		sbSwitchBody.AppendLine( "#endif" );
 
 		if ( !ShaderResult.StaticComboSwitches.ContainsKey( feature.FeatureString ) )
@@ -313,20 +318,6 @@ public sealed partial class GraphCompiler
 		//SGPLog.Info( $"ShaderResult.StaticSwitches already contains key : `{resultName}`", IsPreview );
 
 		return false;
-	}
-
-	private StringBuilder AppendIf( StringBuilder sb, string comboName, string previewToggle )
-	{
-		if ( IsPreview )
-		{
-			sb.AppendLine( $"#if ( {comboName} == {previewToggle} )" );
-		}
-		else
-		{
-			sb.AppendLine( $"#if ( {comboName} == 1 )" );
-		}
-
-		return sb;
 	}
 
 	// TODO : Once i decide to support more than a single bool option in a feature. give this a lookover.
