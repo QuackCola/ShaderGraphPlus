@@ -440,13 +440,8 @@ public sealed partial class GraphCompiler
 			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 			{
 				ShaderResult.InputResults.Remove( input );
-		
-		
-				var tres = Result( input );
-		
-				//SGPLog.Info( $"{tres.ResultType}", IsNotPreview );
-		
-				return tres;
+
+				return Result( input );
 			}
 		}
 		else
