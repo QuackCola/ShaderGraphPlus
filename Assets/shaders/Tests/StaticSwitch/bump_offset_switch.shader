@@ -89,8 +89,8 @@ PS
 	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tColorMap )
 	TextureAttribute( RepresentativeTexture, g_tColorMap )
-	float g_flDepthScale < UiGroup( "Height,0/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
-	float g_flReferencePlane < UiGroup( "Height,0/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
+	float g_flDepthScale < UiGroup( "Height,0/,0/1" ); Default1( 0.22571488 ); Range1( 0, 1 ); >;
+	float g_flReferencePlane < UiGroup( "Height,0/,0/2" ); Default1( 0 ); Range1( 0, 1 ); >;
 	float g_flRoughness < UiGroup( "Roughness,0/,0/3" ); Default1( 2.5 ); Range1( 0, 8 ); >;
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
