@@ -340,9 +340,10 @@ public sealed partial class GraphCompiler
 		out List<(NodeResult, NodeResult)> blockResults
 		)
 	{
-		compiler.Stage = ShaderStage.Pixel;
+		compiler.Stage = Stage;
 		compiler.Subgraph = null;
 		compiler.SubgraphStack.Clear();
+
 		blockResults = new List<(NodeResult, NodeResult)>();
 
 		if ( propertyName == "InputTrue" )
@@ -351,11 +352,6 @@ public sealed partial class GraphCompiler
 			
 			if ( compiler.ShaderResult.Results.Any() )
 				blockResults = compiler.ShaderResult.Results;
-
-			//foreach ( var results in compiler.ShaderResult.Results )
-			//{
-			//	SGPLog.Info( $"True SubResult : `{results.Item2.Code}`", compiler.IsNotPreview );
-			//}
 		}
 		if ( propertyName == "InputFalse" )
 		{
@@ -363,11 +359,6 @@ public sealed partial class GraphCompiler
 
 			if ( compiler.ShaderResult.Results.Any() )
 				blockResults = compiler.ShaderResult.Results;
-
-			//foreach ( var results in compiler.ShaderResult.Results )
-			//{
-			//	SGPLog.Info( $"False SubResult : `{results.Item2.Code}`", compiler.IsNotPreview );
-			//}
 		}
 	}
 
