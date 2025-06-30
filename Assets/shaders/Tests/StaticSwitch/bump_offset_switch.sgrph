@@ -1,0 +1,362 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/bump_offset_switch.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "4344,600",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Normal": {
+        "Identifier": "17",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "18",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_height.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Height Map",
+        "Default": "1,1,1,1",
+        "Extension": "Mask",
+        "CustomExtension": "_height",
+        "ColorSpace": "Linear",
+        "ImageFormat": "DXT1",
+        "PrimaryGroup": {
+          "Name": "Height"
+        }
+      },
+      "Identifier": "1",
+      "Position": "2280,660",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "Identifier": "2",
+      "Position": "3516,684",
+      "HandleOffsets": {},
+      "In": {
+        "Identifier": "13",
+        "Output": "R",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0.39535,0.39535,0.39535,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "3",
+      "Position": "3432,516",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "4",
+      "Position": "2040,864",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "5",
+      "Position": "3708,552",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "2",
+        "Output": "Out",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_normal.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Normal",
+        "Default": "1,1,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "SrgbRead": true,
+        "PrimaryGroup": {
+          "Name": "Normal"
+        }
+      },
+      "Identifier": "6",
+      "Position": "3660,744",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "16",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.42,
+      "Name": "Reference Plane",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 2,
+        "PrimaryGroup": {
+          "Name": "Height"
+        }
+      },
+      "Identifier": "7",
+      "Position": "2496,792",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "HeightToNormal",
+      "OutputSpace": "Tangent",
+      "DefaultStrength": 0.20000017,
+      "Identifier": "8",
+      "Position": "3876,660",
+      "HandleOffsets": {},
+      "Height": {
+        "Identifier": "2",
+        "Output": "Out",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "9",
+      "Position": "2664,900",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 2.5,
+      "Identifier": "10",
+      "Position": "3696,972",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "13",
+        "Output": "R",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "11",
+      "Position": "3912,876",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 8,
+      "Value": 2.5,
+      "Name": "Roughness",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 3,
+        "PrimaryGroup": {
+          "Name": "Roughness"
+        }
+      },
+      "Identifier": "12",
+      "Position": "3480,1032",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_color.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Color Map",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "PrimaryGroup": {
+          "Name": "Color"
+        }
+      },
+      "Identifier": "13",
+      "Position": "3144,648",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Bump",
+        "IsValid": true
+      },
+      "Identifier": "14",
+      "Position": "2892,840",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "19",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.125,
+      "Name": "Depth Scale",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 1,
+        "PrimaryGroup": {
+          "Name": "Height"
+        }
+      },
+      "Identifier": "15",
+      "Position": "2496,732",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "16",
+      "Position": "3456,888",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ComponentMask",
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "17",
+      "Position": "3876,768",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "18",
+      "Position": "4068,876",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "BumpOffsetNode",
+      "DefaultHeight": 0,
+      "DefaultDepthScale": 0.125,
+      "DefaultReferencePlane": 0.42,
+      "Identifier": "19",
+      "Position": "2724,684",
+      "HandleOffsets": {},
+      "InputHeight": {
+        "Identifier": "1",
+        "Output": "R",
+        "Subgraph": null
+      },
+      "InputDepthScale": {
+        "Identifier": "15",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputReferencePlane": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputCoords": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ]
+}

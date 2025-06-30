@@ -25,10 +25,15 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "96,24",
+      "Position": "-144,12",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "12",
         "Output": "Result",
         "Subgraph": null
       }
@@ -103,7 +108,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 32,
-      "Value": 4,
+      "Value": 14.643593,
       "Name": "Fresnel Power",
       "IsAttribute": false,
       "UI": {},
@@ -156,13 +161,13 @@
     {
       "_class": "Time",
       "Identifier": "9",
-      "Position": "-1992,12",
+      "Position": "-2112,36",
       "HandleOffsets": {}
     },
     {
       "_class": "Sine",
       "Identifier": "10",
-      "Position": "-1800,12",
+      "Position": "-1884,12",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "9",
@@ -182,6 +187,19 @@
         "Output": "Result",
         "Subgraph": null
       },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 34.099995,
+      "DefaultB": 104.49995,
+      "Identifier": "12",
+      "Position": "-1692,36",
+      "HandleOffsets": {},
       "B": {
         "Identifier": "10",
         "Output": "Result",

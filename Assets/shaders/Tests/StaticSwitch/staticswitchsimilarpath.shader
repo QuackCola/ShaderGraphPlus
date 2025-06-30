@@ -79,7 +79,7 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
-	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
+	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 14.643593 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
 		
 	float3 InvertColors( float3 vColor )
@@ -108,29 +108,34 @@ PS
 		{
 			float l_0 = g_flFresnelPower;
 			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			float4 l_4 = g_vColorOne;
-			float4 l_5 = float4( l_3, 0 ) * l_4;
+			float l_2 = 34.099995 * l_1;
+			float l_3 = l_0 * l_2;
+			float3 l_4 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_3 );
+			float4 l_5 = g_vColorOne;
+			float4 l_6 = float4( l_4, 0 ) * l_5;
+			FresnelSwitchResult = l_6; 
 		
 		}
 		#else
 		{
 			float l_0 = g_flFresnelPower;
 			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			float3 l_4 = InvertColors( l_3 );
-			FresnelSwitchResult = float4( l_4, 0 );
+			float l_2 = 34.099995 * l_1;
+			float l_3 = l_0 * l_2;
+			float3 l_4 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_3 );
+			float3 l_5 = InvertColors( l_4 );
+			FresnelSwitchResult = float4( l_5, 0 );
 		
 		}
 		#endif
 		
 		float4 l_0 = FresnelSwitchResult; 
+		float l_1 = sin( g_flTime ); 
+		float l_2 = 34.099995 * l_1; 
 		
 		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
-		m.Roughness = 1;
+		m.Roughness = l_2;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
 		
