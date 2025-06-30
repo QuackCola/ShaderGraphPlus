@@ -1,6 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static Sandbox.Services.Inventory;
+
+
 
 
 namespace Editor.ShaderGraphPlus;
@@ -402,6 +406,7 @@ public sealed partial class GraphCompiler
 	}
 
 	private List<(NodeResult, NodeResult)> SwitchResultStack = new();
+
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
@@ -437,17 +442,58 @@ public sealed partial class GraphCompiler
 		}
 
 		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
-		{
+		{   
+			//if ( CurrentComboSwitchInfo.IsValid )
+			{
+				//ShaderResult.InputResults.Remove( input );
+				var sb = new StringBuilder();
+
+				//SGPLog.Info( $"inputResult from  : {node} ", IsNotPreview );
+	
+				var stackindex = SwitchResultStack.FindIndex( pair => pair.Item1.Code == result.Code );
+
+				if ( stackindex >= 0 )
+				{
+					// Get all items up to and including the matched one
+					var resulta = SwitchResultStack.Take( stackindex + 1 ).ToList();
+
+					foreach ( var (item1, item2) in resulta )
+					{
+						SGPLog.Info( $"{item2.TypeName} {item1} = {item2.Code};", IsNotPreview );
+						sb.AppendLine( $"{item2.TypeName} {item1} = {item2.Code};" );
+					}
+
+					result.CodeChunk = "chunk";//sb.ToString();
+
+						//if ( !string.IsNullOrWhiteSpace( result.CodeChunk ) )
+						//{
+						//	SGPLog.Info( $"A We have a code chunk!", IsNotPreview );
+						//}
+
+				}
+
+				SGPLog.Info( $"{result.TypeName} : {result.Code}", IsNotPreview );
+				return result;
+			}
+			//else
+			//{
+			//	return result;
+			//}
+
 			// Note : Should be ok? Rethink this if it bites me in the ass later.
 			// I need this so that the false block of a switch can generate results that were processed by the true block.
-			if ( CurrentComboSwitchInfo.IsValid )
-			{
-				ShaderResult.InputResults.Remove( input );
-
-				return Result( input );
-			}
-
-			return result;
+			//if ( CurrentComboSwitchInfo.IsValid )
+			//{
+			//	ShaderResult.InputResults.Remove( input );
+			//
+			//	var inputResult = Result( input, 0 );
+			//
+			//	SGPLog.Info( $"inputResults : {inputResult.Code} : {inputResult.SwitchInfo}", IsNotPreview );
+			//
+			//	inputResult.SetSwitchInfo( input.ComboSwitchInfo );
+			//	SGPLog.Info( $"CurrentComboSwitchInfo : {inputResult.SwitchInfo.BoundSwitchBlock}", IsNotPreview );
+			//	return inputResult;//Result( input );
+			//}
 		}
 
 		if ( node == null )
@@ -659,8 +705,10 @@ public sealed partial class GraphCompiler
 			{
 				InputStack.Remove( input );
 				return default;
-			}	
+			}
+
 			var newResult = Result( nodeInput );
+
 			InputStack.Remove( input );
 			return newResult;
 		}
@@ -722,6 +770,11 @@ public sealed partial class GraphCompiler
 			if ( !string.IsNullOrWhiteSpace( funcResult.ComboSwitchBody ) && node is StaticSwitchNode )
 			{
 				localResult = new NodeResult( funcResult.ResultType, varName, funcResult.ComboSwitchBody );
+			}
+
+			if ( funcResult.SwitchInfo.IsValid )
+			{
+				SwitchResultStack.Add( (localResult, funcResult) );
 			}
 
 			ShaderResult.InputResults.Add( input, localResult );
