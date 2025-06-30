@@ -1,6 +1,8 @@
 ﻿// Static Switch related code
 //
 
+using Editor.ShaderGraph;
+using Sandbox;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -116,19 +118,6 @@ public sealed partial class GraphCompiler
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
 
-
-		if ( !string.IsNullOrWhiteSpace( resultA.ComboSwitchBody ) )
-		{
-			SGPLog.Info( $"A : `{resultA.ComboSwitchBody}`", IsNotPreview );
-
-		}
-
-		if ( !string.IsNullOrWhiteSpace( resultB.ComboSwitchBody ) )
-		{
-			SGPLog.Info( $"B : `{resultB.ComboSwitchBody}`", IsNotPreview );
-
-		}
-
 		ResetCurrentComboSwitchInfo();
 		
 		if ( resultA.Components() == resultB.Components() )
@@ -145,6 +134,25 @@ public sealed partial class GraphCompiler
 
 		//SGPLog.Info( "Casting B to A compinents." );
 		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+	}
+
+	private (NodeResult, NodeResult) CheckResults( NodeResult resultA, NodeResult resultB )
+	{
+
+		if ( resultA.Components() == resultB.Components() )
+		{
+			//SGPLog.Info( "Not casing" );
+			return (resultA, resultB);
+		}
+
+		if ( resultA.Components() < resultB.Components() )
+		{
+			//SGPLog.Info("Casting A to B compinents.");
+			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+		}
+
+		//SGPLog.Info( "Casting B to A compinents." );
+		return (resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ));
 	}
 
 	private void ResetCurrentComboSwitchInfo()
@@ -233,11 +241,6 @@ public sealed partial class GraphCompiler
 					sb.AppendLine( IndentString( $"{result.Item1.ComboSwitchBody}", indentLevel ) );
 				}
 
-				if ( blockName == "False Block" )
-				{
-					//SGPLog.Info( $"Result : `{result.Item2}`", IsNotPreview );
-				}
-
 				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; {(debug ? $"// {debugString}index `{i}`" : "")}", indentLevel ) );
 
 				lastResult = result;
@@ -267,6 +270,108 @@ public sealed partial class GraphCompiler
 		return sb;
 	}
 
+	void AddDatatoParent( GraphCompiler compiler, CompileResult shaderResult )
+	{
+
+		// Let the main compiler instance know about any added parameters
+		if ( compiler.ShaderResult.Parameters.Any() )
+		{
+			foreach ( var parameter in compiler.ShaderResult.Parameters )
+			{
+				if ( ShaderResult.Parameters.TryAdd( parameter.Key, parameter.Value ) )
+				{
+					SGPLog.Info( $"Added `{parameter.Value.Result.Code}` to main graph.", IsNotPreview );
+				}
+				else
+				{
+					SGPLog.Info( $"Could not add `{parameter.Value.Result.Code}` to main graph...", IsNotPreview );
+				}
+
+				//SGPLog.Info( $"True Block Param : `{parameter.Key}` `{parameter.Value.Result.Code}`", IsNotPreview  );
+			}
+		}
+
+		// Let the main compiler instance know about any added or registerd functions
+		if ( compiler.ShaderResult.Functions.Any() )
+		{
+			foreach ( var function in compiler.ShaderResult.Functions )
+			{
+				if ( !ShaderResult.Functions.Add( function ) )
+				{
+					SGPLog.Info( $"Could not register `{function}` to main graph...", IsNotPreview );
+				}
+			}
+		}
+	}
+
+	// Just spin up two GraphCompiler for True and False to avoid a bunch of issues when both inputs somewhat
+	// share similar inputs upstream.
+	public  void SubGraphCompilerInstance( StaticSwitchNode switchNode,
+		out List<(NodeResult, NodeResult)> trueBlockResults,
+		out List<(NodeResult, NodeResult)> falseBlockResults
+	)
+	{
+		trueBlockResults = new();
+		falseBlockResults = new();
+
+		foreach ( var property in GetNodeInputProperties( switchNode.GetType() ) )
+		{
+			if ( property.Name == nameof( switchNode.InputTrue ) )
+			{
+				var compiler = new GraphCompiler( _Asset, Graph, IsPreview );
+
+
+				compiler.Test( compiler, switchNode, nameof( switchNode.InputTrue ), out trueBlockResults );
+
+				AddDatatoParent( compiler, ShaderResult );
+			}
+
+			if ( property.Name == nameof( switchNode.InputFalse ) )
+			{
+				var compiler = new GraphCompiler( _Asset, Graph, IsPreview );
+				compiler.Test( compiler, switchNode, nameof( switchNode.InputFalse ), out falseBlockResults );
+
+				AddDatatoParent( compiler, ShaderResult );
+			}
+		}
+	}
+
+	public void Test( GraphCompiler compiler ,StaticSwitchNode switchNode, string propertyName,
+		out List<(NodeResult, NodeResult)> blockResults
+		)
+	{
+		compiler.Stage = ShaderStage.Pixel;
+		compiler.Subgraph = null;
+		compiler.SubgraphStack.Clear();
+		blockResults = new List<(NodeResult, NodeResult)>();
+
+		if ( propertyName == "InputTrue" )
+		{
+			NodeResult result = switchNode.GetTrueResult( compiler );
+			
+			if ( compiler.ShaderResult.Results.Any() )
+				blockResults = compiler.ShaderResult.Results;
+
+			//foreach ( var results in compiler.ShaderResult.Results )
+			//{
+			//	SGPLog.Info( $"True SubResult : `{results.Item2.Code}`", compiler.IsNotPreview );
+			//}
+		}
+		if ( propertyName == "InputFalse" )
+		{
+			NodeResult result = switchNode.GetFalseResult( compiler );
+
+			if ( compiler.ShaderResult.Results.Any() )
+				blockResults = compiler.ShaderResult.Results;
+
+			//foreach ( var results in compiler.ShaderResult.Results )
+			//{
+			//	SGPLog.Info( $"False SubResult : `{results.Item2.Code}`", compiler.IsNotPreview );
+			//}
+		}
+	}
+
+	// Gets results from the two provided NodeInputs.
 	internal bool GenerateComboSwitch
 	(
 		ShaderFeatureInfo feature,
@@ -350,77 +455,117 @@ public sealed partial class GraphCompiler
 		return false;
 	}
 
-	// TODO : Once i decide to support more than a single bool option in a feature. give this a lookover.
-	/*
-	/// <summary>
-	/// Register and Build a Shader Feature.
-	/// </summary>
-	/// 
-	internal void RegisterShaderFeature(ShaderFeature feature, string falseResult, string trueResult, bool previewToggle)
+	void ResultsLoop( List<(NodeResult, NodeResult)> results , string switchResultString ,string debugBlockName, out string block, out (NodeResult, NodeResult) lastResult, int components = -1)
 	{
-		var result = ShaderResult;
-		var sfinfo = new ShaderFeatureInfo();
-
-		var feature_body = new StringBuilder();
-
-		//Log.Info($"Shader feature : {feature.ToFeatureName()} result true : {trueResult}");
-		//Log.Info($"Shader feature : {feature.ToFeatureName()} defualt result : {falseResult}");
-
-		if ( feature.IsValid )
+		var sb = new StringBuilder();
+		block = "";
+		lastResult = (new NodeResult(), new NodeResult());
+		for ( int i = 0; i < results.Count() + 1; i++ )
 		{
-			var featureDeclaration = "";
-			var featureDeclarationOptionAmount = 0;
-
-			feature_body.AppendLine();
-			feature_body.AppendLine($"#if S_{feature.FeatureName.ToUpper()}" + " == {0} ");
-			feature_body.AppendLine($"{falseResult} = {trueResult};");
-			feature_body.AppendLine("#endif");
-
-			if (feature.IsDynamicCombo is not true)
+			if ( i < results.Count() )
 			{
-				var featureDeclarationName = $"F_{feature.FeatureName.ToUpper()}";
-				var featureDeclarationHeaderName = feature.HeaderName;
-				featureDeclarationOptionAmount = feature.Options.Count - 1;
-				var featureDeclarationOptions = BuildFeatureOptions(feature.Options);
+				var result = results.ElementAt( i );
 
-				if (!string.IsNullOrWhiteSpace(featureDeclarationOptions))
+				if ( i + 1 == results.Count() )
 				{
-					featureDeclaration = $"Feature({featureDeclarationName}, 0..{featureDeclarationOptionAmount}({featureDeclarationOptions}), \"{featureDeclarationHeaderName}\");";
-					//if ( DebugSpew )
-					{
-						// Log.Info($"Generated Static Combo Feature : {_feature}.");
-					}
-				
+					lastResult = result;
 				}
+				
+					//if ( i == 0 )
+					//{
+					//	SGPLog.Info( $"{debugBlockName}ShaderResults start index `{i}`", IsNotPreview );
+					//}
+					//else
+					//{
+					//	SGPLog.Info( $"{debugBlockName}ShaderResults  index `{i}`", IsNotPreview );
+					//}
+
+				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};", 1 ) );
 			}
 			else
 			{
-				Log.Info($"Generated Dynamic Combo Feature.");
+				//SGPLog.Info( $"`{debugBlockName}` result assingment", IsNotPreview  );
+
+				if ( components != -1 )
+				{
+					if ( lastResult.Item2.Components() == components )
+					{
+						sb.AppendLine( IndentString( $"{switchResultString} = {lastResult.Item1}; ", 1 ) );
+					}
+					else
+					{
+						sb.AppendLine( IndentString( $"{switchResultString} = {lastResult.Item1.Cast( components )};", 1 ) );
+					}
+				}
 			}
+		}
 
-			sfinfo.FeatureName = feature.FeatureName.Replace(" ", "_");
-			sfinfo.FeatureDeclaration = featureDeclaration;
-			sfinfo.FeatureBody = feature_body.ToString();
-			sfinfo.OptionsCount = featureDeclarationOptionAmount;
-			sfinfo.TrueResult = trueResult;
-			sfinfo.FalseResult = falseResult;
-			sfinfo.IsDynamicCombo = feature.IsDynamicCombo;
+		block = sb.ToString();
+	}
 
-			var id = sfinfo.FeatureName;
+	// Takes in results generated by an instance of the GraphCompiler.
+	internal bool GenerateComboSwitchTest
+	(
+		ShaderFeatureInfo feature,
+		List<(NodeResult, NodeResult)> resultsTrue,
+		List<(NodeResult, NodeResult)> resultsFalse, 
+		bool previewToggle, 
+		out string switchResultVariableNameOut, 
+		out string switchBodyOut, 
+		out ResultType switchResultTypeOut 
+	)
+	{
+		var resultNameInternal = feature.FeatureResultString;
+		switchResultVariableNameOut = resultNameInternal;
+		switchBodyOut = "";
+		switchResultTypeOut = ResultType.Invalid; // Test
 
-			if ( !result.ShaderFeatures.ContainsKey( id ) )
-			{
-				result.ShaderFeatures.Add( id, (sfinfo, previewToggle));
-			}
+		var sbTrueBody = new StringBuilder();
+		var sbFalseBody = new StringBuilder();
+		var sbSwitchBody = new StringBuilder();
 
+		//SGPLog.Info( $"There is `{resultsTrue.Count()}` trueResults", IsNotPreview );
+
+		ResultsLoop( resultsTrue, resultNameInternal, "true" , out var trueBlock, out var lastTrueResult );
+		ResultsLoop( resultsFalse, resultNameInternal, "false", out var falseBlock, out var lastFalseResult, lastTrueResult.Item1.Components() );
+
+		switchResultTypeOut = lastTrueResult.Item1.ResultType;
+		string nodeResultTypeName = lastTrueResult.Item1.TypeName;
+
+		sbSwitchBody.AppendLine();
+		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
+
+		if ( IsPreview )
+		{
+			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == {(previewToggle ? "0" : "1")} )" );
 		}
 		else
 		{
-			Log.Warning("invalid feature!");
+			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == 1 )" );
 		}
 
+		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, trueBlock );
+		sbSwitchBody.AppendLine( "#else" );
+		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, falseBlock );
+		sbSwitchBody.AppendLine( "#endif" );
+
+		SGPLog.Info( $"Swithc Result : {sbSwitchBody.ToString()}", IsNotPreview );
+
+		if ( !ShaderResult.StaticComboSwitches.ContainsKey( feature.FeatureString ) )
+		{
+			ShaderResult.StaticComboSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
+			switchBodyOut = sbSwitchBody.ToString();
+
+			//Graph.AddFeature( feature );
+
+			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
+
+			return true;
+		}
+
+		return false;
 	}
-	*/
+
 	internal string BuildFeatureOptionsBody( List<string> options )
 	{
 		var options_body = "";

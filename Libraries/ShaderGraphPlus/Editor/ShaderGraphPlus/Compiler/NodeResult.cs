@@ -67,14 +67,10 @@ public struct NodeResult : IValid
 	public bool IsDepreciated { get; private set; }
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
-
 	public string ComboSwitchBody { get; set; }
 
 	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
-
-	// Hack 
-	public string CodeChunk { get; set; }
 
 	public readonly string TypeName
 	{
