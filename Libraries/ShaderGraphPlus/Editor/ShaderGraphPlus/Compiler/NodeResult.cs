@@ -73,6 +73,9 @@ public struct NodeResult : IValid
 	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 	public bool SkipLocalGeneration { get; set; } = false;
 
+	// Hack 
+	public string CodeChunk { get; set; }
+
 	public readonly string TypeName
 	{
 		get
