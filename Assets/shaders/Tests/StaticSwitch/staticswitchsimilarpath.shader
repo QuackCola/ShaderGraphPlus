@@ -106,47 +106,19 @@ PS
 		float4 FresnelSwitchResult;
 		#if ( S_FRESNEL == 1 )
 		{
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			FresnelSwitchResult = l_5; 
+			float l_0 = g_flFresnelPower; // start index `0`
+			float l_1 = sin( g_flTime ); // index `1`
+			float l_2 = l_0 * l_1; // index `2`
+			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 ); // index `3`
+			float4 l_4 = g_vColorOne; // index `4`
+			float4 l_5 = float4( l_3, 0 ) * l_4; // last index `5`
+			FresnelSwitchResult = l_5; // result
 		
 		}
 		#else
 		{
-			//float l_0 = g_flFresnelPower;
-			float l_1 = sin( g_flTime );
-			float l_2 = l_0 * l_1;
-			float3 l_3 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_2 );
-			; 
-			FresnelSwitchResult = float4( l_6, 0 ); 
+			float3 l_6 = InvertColors( l_3 ); // last index `0`
+			FresnelSwitchResult = float4( l_6, 0 ); // result
 		
 		}
 		#endif
