@@ -1,6 +1,4 @@
-﻿using Sandbox;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public enum ResultType
 { 

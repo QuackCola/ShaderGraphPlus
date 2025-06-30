@@ -1,11 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
-using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static Sandbox.Services.Inventory;
-
-
-
 
 namespace Editor.ShaderGraphPlus;
 
@@ -440,43 +435,7 @@ public sealed partial class GraphCompiler
 		}
 
 		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
-		{   
-			//if ( CurrentComboSwitchInfo.IsValid )
-			//{
-			//	//ShaderResult.InputResults.Remove( input );
-			//	var sb = new StringBuilder();
-			//
-			//	//SGPLog.Info( $"inputResult from  : {node} ", IsNotPreview );
-			//
-			//	var stackindex = SwitchResultStack.FindIndex( pair => pair.Item1.Code == result.Code );
-			//
-			//	if ( stackindex >= 0 )
-			//	{
-			//		// Get all items up to and including the matched one
-			//		var resulta = SwitchResultStack.Take( stackindex + 1 ).ToList();
-			//
-			//		foreach ( var (item1, item2) in resulta )
-			//		{
-			//			SGPLog.Info( $"{item2.TypeName} {item1} = {item2.Code};", IsNotPreview );
-			//			sb.AppendLine( $"{item2.TypeName} {item1} = {item2.Code};" );
-			//		}
-
-			//	}
-			//
-			//	var localnew = new NodeResult( result.ResultType, $" float3(1,0,0)", result.SwitchInfo );
-			//	localnew.SkipLocalGeneration = result.SkipLocalGeneration;
-
-			//	SGPLog.Info( $"{result.TypeName} : {result.Code}", IsNotPreview );
-			//	//return Result( input );
-			//	return result;
-			//}
-			//else
-			//{
-			//	return result;
-			//}
-
-			return result;
-
+		{
 			// Note : Should be ok? Rethink this if it bites me in the ass later.
 			// I need this so that the false block of a switch can generate results that were processed by the true block.
 			//if ( CurrentComboSwitchInfo.IsValid )
@@ -490,6 +449,10 @@ public sealed partial class GraphCompiler
 			//	inputResult.SetSwitchInfo( input.ComboSwitchInfo );
 			//	SGPLog.Info( $"CurrentComboSwitchInfo : {inputResult.SwitchInfo.BoundSwitchBlock}", IsNotPreview );
 			//	return inputResult;//Result( input );
+			//}
+			//else
+			//{
+				return result;
 			//}
 		}
 
@@ -1664,6 +1627,7 @@ public sealed partial class GraphCompiler
 						}
 						if ( !result.Item2.SkipLocalGeneration )
 						{
+							SGPLog.Info( $"preview local {result.Item2.Code}", IsPreview );
 							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 							sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
 						}
