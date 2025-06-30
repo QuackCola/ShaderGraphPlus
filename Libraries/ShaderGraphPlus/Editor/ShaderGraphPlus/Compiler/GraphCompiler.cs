@@ -63,8 +63,6 @@ public sealed partial class GraphCompiler
 	public bool IsPreview { get; private set; }
 	public bool IsNotPreview => !IsPreview;
 
-	public StaticSwitchState swState { get; private set; } =  StaticSwitchState.None;
-
 	private partial class CompileResult
 	{
 		public List<(NodeResult, NodeResult)> Results = new();
