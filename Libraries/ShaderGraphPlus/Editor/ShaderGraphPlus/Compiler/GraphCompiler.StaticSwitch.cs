@@ -115,7 +115,20 @@ public sealed partial class GraphCompiler
 	{
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
-		
+
+
+		if ( !string.IsNullOrWhiteSpace( resultA.ComboSwitchBody ) )
+		{
+			SGPLog.Info( $"A : `{resultA.ComboSwitchBody}`", IsNotPreview );
+
+		}
+
+		if ( !string.IsNullOrWhiteSpace( resultB.ComboSwitchBody ) )
+		{
+			SGPLog.Info( $"B : `{resultB.ComboSwitchBody}`", IsNotPreview );
+
+		}
+
 		ResetCurrentComboSwitchInfo();
 		
 		if ( resultA.Components() == resultB.Components() )
@@ -189,7 +202,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	private void ConstructSwitchBlock( out StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, string blockResultName, int blockResultComponentCount, bool debug = false )
+	private void ConstructSwitchBlock( out StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, string blockResultName, int blockResultComponentCount, bool debug = false, string blockName = "" )
 	{
 		var lastResult = (new NodeResult(), new NodeResult());
 		var indentLevel = 1;
@@ -199,22 +212,39 @@ public sealed partial class GraphCompiler
 		{
 			if ( i < shaderResults.Count() )
 			{
-				SGPLog.Info( $"At shaderResults index `{i}`", IsNotPreview && debug );
+				var debugString = "";
+				if ( i + 1 == shaderResults.Count() )
+				{
+					debugString = "last ";
+					SGPLog.Info( $"`{blockName}` At shaderResults last index `{i}`", IsNotPreview && debug );
+				}
+				else
+				{
+					if ( i == 0 )
+						debugString = "start ";
+
+					SGPLog.Info( $"`{blockName}` At shaderResults {debugString} index `{i}`", IsNotPreview && debug );
+				}
+
 				var result = shaderResults.ElementAt( i );
-				
+
 				if ( !string.IsNullOrWhiteSpace( result.Item1.ComboSwitchBody ) )
 				{
 					sb.AppendLine( IndentString( $"{result.Item1.ComboSwitchBody}", indentLevel ) );
 				}
 
-				SGPLog.Info( $"`{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}`", IsNotPreview );
-				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; {(debug ? $"// index `{i}`" : "")}", indentLevel ) );
+				if ( blockName == "False Block" )
+				{
+					//SGPLog.Info( $"Result : `{result.Item2}`", IsNotPreview );
+				}
+
+				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; {(debug ? $"// {debugString}index `{i}`" : "")}", indentLevel ) );
 
 				lastResult = result;
 			}
 			else
 			{
-				SGPLog.Info( $"At last shaderResults index `{i}`", IsNotPreview && debug );
+				SGPLog.Info( $"`{blockName}` At result assingment", IsNotPreview && debug );
 
 				if ( lastResult.Item2.Components() == blockResultComponentCount )
 				{
@@ -280,11 +310,11 @@ public sealed partial class GraphCompiler
 
 		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview && ConCommands.VerboseDebgging );
 
-		ConstructSwitchBlock( out sbTrueBody, shaderResultsTrue, resultNameInternal, nodeResultComponentCount, true );
+		ConstructSwitchBlock( out sbTrueBody, shaderResultsTrue, resultNameInternal, nodeResultComponentCount, true, "True Block" );
 
 		SGPLog.Info( $"There is a total of `{shaderResultsFalse.Count()}` false block shader results", IsNotPreview && ConCommands.VerboseDebgging );
 
-		ConstructSwitchBlock( out sbFalseBody, shaderResultsFalse, resultNameInternal, nodeResultComponentCount, true );
+		ConstructSwitchBlock( out sbFalseBody, shaderResultsFalse, resultNameInternal, nodeResultComponentCount, true, "False Block" );
 
 		sbSwitchBody.AppendLine();
 		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
