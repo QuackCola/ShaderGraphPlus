@@ -78,7 +78,7 @@
         "Type": "Color"
       },
       "Identifier": "3",
-      "Position": "-744,36",
+      "Position": "-924,48",
       "HandleOffsets": {}
     },
     {
@@ -120,7 +120,7 @@
       "IsAttribute": false,
       "UI": {},
       "Identifier": "6",
-      "Position": "-1260,-108",
+      "Position": "-1344,-24",
       "HandleOffsets": {}
     },
     {
@@ -130,7 +130,7 @@
       "Position": "-744,-24",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "2",
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       }
@@ -164,6 +164,32 @@
       },
       "Identifier": "9",
       "Position": "-468,-228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_color.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "10",
+      "Position": "-1032,-564",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "11",
+      "Position": "-1320,-276",
       "HandleOffsets": {}
     }
   ]

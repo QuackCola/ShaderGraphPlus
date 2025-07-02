@@ -7,7 +7,7 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature( F_FRESNEL, 0..1, "Effects" );
+	Feature( F_BUMP, 0..1, "Effects" );
 	
 }
 
@@ -78,14 +78,15 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
-	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
+	StaticCombo( S_BUMP, F_BUMP, Sys( ALL ) );
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tTexture_ps_0 )
-	TextureAttribute( RepresentativeTexture, g_tTexture_ps_0 )
-	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 4 ); Range1( 0, 32 ); >;
-	float4 g_vColorTwo < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 0.00, 1.00 ); >;
+	SamplerState g_sSampler1 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( Normal, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tNormal )
+	TextureAttribute( RepresentativeTexture, g_tNormal )
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -103,28 +104,24 @@ PS
 		
 		
 		
-		float4 FresnelSwitchResult;
-		#if ( S_FRESNEL == 1 )
+		float4 BumpSwitchResult;
+		#if ( S_BUMP == 1 )
 		{
-			float l_0 = g_flFresnelPower; // start index `0`
-			float3 l_1 = pow( 1.0 - dot( normalize( i.vNormalWs ), normalize( CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) ) ), l_0 ); // index `1`
-			float2 l_2 = i.vTextureCoords.xy * float2( 1, 1 ); // index `2`
-			float4 l_3 = g_tTexture_ps_0.Sample( g_sSampler0,l_2 ); // index `3`
-			float4 l_4 = float4( l_1, 0 ) * l_3; // last index `4`
-			FresnelSwitchResult = l_4; // result
+			float4 l_0 = g_tColor.Sample( g_sSampler0,i.vTextureCoords.xy ); // last index `0`
+			BumpSwitchResult = l_0; // result
 		
 		}
 		#else
 		{
-			float4 l_0 = g_vColorTwo; // last index `0`
-			FresnelSwitchResult = l_0; // result
+			float4 l_0 = g_tNormal.Sample( g_sSampler1,i.vTextureCoords.xy ); // last index `0`
+			BumpSwitchResult = l_0; // result
 		
 		}
 		#endif
 		
-		float4 l_0 = FresnelSwitchResult; 
+		float4 l_2 = BumpSwitchResult; 
 		
-		m.Albedo = l_0.xyz;
+		m.Albedo = l_2.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

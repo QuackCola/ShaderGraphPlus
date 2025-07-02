@@ -1,0 +1,88 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/bump_offset_switch2.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "2952,900",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_color.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Color",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "2172,672",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Bump",
+        "HeaderName": "Effects",
+        "IsValid": true
+      },
+      "Identifier": "2",
+      "Position": "2568,864",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "textures/brick_normal.png",
+      "DefaultSampler": {},
+      "UI": {
+        "Name": "Normal",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "3",
+      "Position": "2172,888",
+      "HandleOffsets": {}
+    }
+  ]
+}
