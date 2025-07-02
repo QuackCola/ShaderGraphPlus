@@ -81,7 +81,7 @@ public sealed partial class GraphCompiler
 
 		public override string ToString()
 		{
-			return $"Bound Switch : `{BoundSwitch}` Bound Switch Block `{BoundSwitchBlock}`";
+			return $"BoundSwitch:`{BoundSwitch}`,BoundBlock`{BoundSwitchBlock}`";
 		}
 
 		public static bool operator ==( ComboSwitchInfo a, ComboSwitchInfo b ) => a.BoundSwitch == b.BoundSwitch && a.BoundSwitchBlock == b.BoundSwitchBlock;
@@ -112,6 +112,10 @@ public sealed partial class GraphCompiler
 	private ( NodeResult, NodeResult ) BinaryComboSwitchResult( NodeInput a, NodeInput b, float defaultA = 0.0f, float defaultB = 1.0f )
 	{
 		var resultA = ResultOrDefault( a, defaultA );
+
+		ShaderResult.SwitchBlockInputResults.Clear();
+		ShaderResult.SwitchBlockResults.Clear();
+
 		var resultB = ResultOrDefault( b, defaultB );
 
 		ResetCurrentComboSwitchInfo();
@@ -220,14 +224,14 @@ public sealed partial class GraphCompiler
 				if ( i + 1 == shaderResults.Count() )
 				{
 					debugString = "last ";
-					SGPLog.Info( $"`{blockName}` At shaderResults last index `{i}`", IsNotPreview && debug );
+					//SGPLog.Info( $"`{blockName}` At shaderResults last index `{i}`", IsNotPreview && debug );
 				}
 				else
 				{
 					if ( i == 0 )
 						debugString = "start ";
 
-					SGPLog.Info( $"`{blockName}` At shaderResults {debugString} index `{i}`", IsNotPreview && debug );
+					//SGPLog.Info( $"`{blockName}` At shaderResults {debugString} index `{i}`", IsNotPreview && debug );
 				}
 
 				var result = shaderResults.ElementAt( i );
@@ -243,7 +247,15 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				SGPLog.Info( $"`{blockName}` At result assingment", IsNotPreview && debug );
+				//SGPLog.Info( $"`{blockName}` At result assingment", IsNotPreview && debug );
+
+				if ( !lastResult.Item2.IsValid )
+				{
+					SGPLog.Info( $"lastResult of `{blockName}` is not valid!", IsNotPreview );
+					sb.AppendLine( IndentString( $"// No valid results", indentLevel ) );
+					continue;
+				}
+					
 
 				if ( lastResult.Item2.Components() == blockResultComponentCount )
 				{
@@ -251,6 +263,8 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
+					SGPLog.Info( $"lastResult type : {lastResult.Item2.ResultType}", IsNotPreview );
+
 					sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1.Cast( blockResultComponentCount )}; {(debug ? $"// result" : "")}", indentLevel ) );
 				}
 			}
@@ -265,224 +279,6 @@ public sealed partial class GraphCompiler
 
 		return sb;
 	}
-
-// Strip this stuff inside the region if I end up finding a better way to have both inputs get inputs
-// that were already processed.
-#region Inner GraphCompiler Tests
-	void AddDatatoParent( GraphCompiler compiler, CompileResult shaderResult )
-	{
-
-		// Let the main compiler instance know about any added parameters
-		if ( compiler.ShaderResult.Parameters.Any() )
-		{
-			foreach ( var parameter in compiler.ShaderResult.Parameters )
-			{
-				if ( ShaderResult.Parameters.TryAdd( parameter.Key, parameter.Value ) )
-				{
-					SGPLog.Info( $"Added `{parameter.Value.Result.Code}` to main graph.", IsNotPreview );
-				}
-				else
-				{
-					SGPLog.Info( $"Could not add `{parameter.Value.Result.Code}` to main graph...", IsNotPreview );
-				}
-
-				//SGPLog.Info( $"True Block Param : `{parameter.Key}` `{parameter.Value.Result.Code}`", IsNotPreview  );
-			}
-		}
-
-		// Let the main compiler instance know about any added or registerd functions
-		if ( compiler.ShaderResult.Functions.Any() )
-		{
-			foreach ( var function in compiler.ShaderResult.Functions )
-			{
-				if ( !ShaderResult.Functions.Add( function ) )
-				{
-					SGPLog.Info( $"Could not register `{function}` to main graph...", IsNotPreview );
-				}
-			}
-		}
-
-		if ( compiler.ShaderResult.TextureInputs.Any() )
-		{
-			foreach ( var textureInputs in compiler.ShaderResult.TextureInputs )
-			{
-				if ( !ShaderResult.TextureInputs.TryAdd( textureInputs.Key, textureInputs.Value ) )
-				{
-					
-				}
-			}
-		}
-	}
-
-	// Just spin up two GraphCompiler for True and False to avoid a bunch of issues when both inputs somewhat
-	// share similar inputs upstream.
-	public  void SubGraphCompilerInstance( StaticSwitchNode switchNode,
-		out List<(NodeResult, NodeResult)> trueBlockResults,
-		out List<(NodeResult, NodeResult)> falseBlockResults
-	)
-	{
-		trueBlockResults = new();
-		falseBlockResults = new();
-
-		foreach ( var property in GetNodeInputProperties( switchNode.GetType() ) )
-		{
-			if ( property.Name == nameof( switchNode.InputTrue ) )
-			{
-				var compiler = new GraphCompiler( _Asset, Graph, IsPreview );
-
-
-				compiler.Test( compiler, switchNode, nameof( switchNode.InputTrue ), out trueBlockResults );
-
-				AddDatatoParent( compiler, ShaderResult );
-			}
-
-			if ( property.Name == nameof( switchNode.InputFalse ) )
-			{
-				var compiler = new GraphCompiler( _Asset, Graph, IsPreview );
-				compiler.Test( compiler, switchNode, nameof( switchNode.InputFalse ), out falseBlockResults );
-
-				AddDatatoParent( compiler, ShaderResult );
-			}
-		}
-	}
-
-	public void Test( GraphCompiler compiler ,StaticSwitchNode switchNode, string propertyName,
-		out List<(NodeResult, NodeResult)> blockResults
-	)
-	{
-		compiler.Stage = Stage;
-		compiler.Subgraph = null;
-		compiler.SubgraphStack.Clear();
-
-		blockResults = new List<(NodeResult, NodeResult)>();
-
-		if ( propertyName == "InputTrue" )
-		{
-			NodeResult result = switchNode.GetTrueResult( compiler );
-			
-			if ( compiler.ShaderResult.Results.Any() )
-				blockResults = compiler.ShaderResult.Results;
-		}
-		if ( propertyName == "InputFalse" )
-		{
-			NodeResult result = switchNode.GetFalseResult( compiler );
-
-			if ( compiler.ShaderResult.Results.Any() )
-				blockResults = compiler.ShaderResult.Results;
-		}
-	}
-
-	void ResultsLoop( List<(NodeResult, NodeResult)> results , string switchResultString ,string debugBlockName, out string block, out (NodeResult, NodeResult) lastResult, int components = -1, bool firstBlock = true )
-	{
-		var sb = new StringBuilder();
-		block = "";
-		lastResult = (new NodeResult(), new NodeResult());
-		for ( int i = 0; i < results.Count() + 1; i++ )
-		{
-			if ( i < results.Count() )
-			{
-				var result = results.ElementAt( i );
-
-				if ( i + 1 == results.Count() )
-				{
-					lastResult = result;
-				}
-				
-				//if ( i == 0 )
-				//{
-				//	SGPLog.Info( $"{debugBlockName}ShaderResults start index `{i}`", IsNotPreview );
-				//}
-				//else
-				//{
-				//	SGPLog.Info( $"{debugBlockName}ShaderResults  index `{i}`", IsNotPreview );
-				//}
-
-				sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};", 1 ) );
-			}
-			else
-			{
-				//SGPLog.Info( $"`{debugBlockName}` result assingment", IsNotPreview  );
-
-				//if ( firstBlock )
-				//	components = lastResult.Item2.Components();
-
-				if ( lastResult.Item2.Components() == components || firstBlock )
-				{
-					sb.AppendLine( IndentString( $"{switchResultString} = {lastResult.Item1}; ", 1 ) );
-				}
-				else
-				{
-					sb.AppendLine( IndentString( $"{switchResultString} = {lastResult.Item1.Cast( components )};", 1 ) );
-				}
-			}
-		}
-
-		block = sb.ToString();
-	}
-
-	// Takes in results generated by an instance of the GraphCompiler.
-	internal bool GenerateComboSwitchTest
-	(
-		ShaderFeatureInfo feature,
-		List<(NodeResult, NodeResult)> resultsTrue,
-		List<(NodeResult, NodeResult)> resultsFalse, 
-		bool previewToggle, 
-		out string switchResultVariableNameOut, 
-		out string switchBodyOut, 
-		out ResultType switchResultTypeOut 
-	)
-	{
-		var resultNameInternal = feature.FeatureResultString;
-		switchResultVariableNameOut = resultNameInternal;
-		switchBodyOut = "";
-		switchResultTypeOut = ResultType.Invalid; // Test
-
-		var sbTrueBody = new StringBuilder();
-		var sbFalseBody = new StringBuilder();
-		var sbSwitchBody = new StringBuilder();
-
-		//SGPLog.Info( $"There is `{resultsTrue.Count()}` trueResults", IsNotPreview );
-
-		ResultsLoop( resultsTrue, resultNameInternal, "true" , out var trueBlock, out var lastTrueResult, 0, true );
-		ResultsLoop( resultsFalse, resultNameInternal, "false", out var falseBlock, out var lastFalseResult, lastTrueResult.Item1.Components(), false );
-
-		switchResultTypeOut = lastTrueResult.Item1.ResultType;
-		string nodeResultTypeName = lastTrueResult.Item1.TypeName;
-
-		sbSwitchBody.AppendLine();
-		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
-
-		if ( IsPreview )
-		{
-			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == {(previewToggle ? "0" : "1")} )" );
-		}
-		else
-		{
-			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == 1 )" );
-		}
-
-		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, trueBlock );
-		sbSwitchBody.AppendLine( "#else" );
-		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, falseBlock );
-		sbSwitchBody.AppendLine( "#endif" );
-
-		SGPLog.Info( $"Swithc Result : {sbSwitchBody.ToString()}", IsNotPreview );
-
-		if ( !ShaderResult.StaticComboSwitches.ContainsKey( feature.FeatureString ) )
-		{
-			ShaderResult.StaticComboSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
-			switchBodyOut = sbSwitchBody.ToString();
-
-			//Graph.AddFeature( feature );
-
-			SGPLog.Info( $"StaticSwitch `{resultNameInternal}` generated body : \n{switchBodyOut}", ConCommands.VerboseDebgging );
-
-			return true;
-		}
-
-		return false;
-	}
-#endregion
 
 	// Gets results from the two provided NodeInputs.
 	internal bool GenerateComboSwitch
@@ -506,6 +302,13 @@ public sealed partial class GraphCompiler
 		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
 
+		ShaderResult.IsInComboBlock = true;
+
+		//foreach ( var result in ShaderResult.TestResults )
+		//{
+		//	SGPLog.Info( $"result entry : `{result.Item2.Code}`", IsNotPreview );
+		//}
+
 		//ResetCurrentComboSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
@@ -526,11 +329,13 @@ public sealed partial class GraphCompiler
 			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.False
 		);
 
-		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview && ConCommands.VerboseDebgging );
+		ShaderResult.IsInComboBlock = false;
+
+		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview );//&& ConCommands.VerboseDebgging );
 
 		ConstructSwitchBlock( out sbTrueBody, shaderResultsTrue, resultNameInternal, nodeResultComponentCount, true, "True Block" );
 
-		SGPLog.Info( $"There is a total of `{shaderResultsFalse.Count()}` false block shader results", IsNotPreview && ConCommands.VerboseDebgging );
+		SGPLog.Info( $"There is a total of `{shaderResultsFalse.Count()}` false block shader results", IsNotPreview );//&& ConCommands.VerboseDebgging );
 
 		ConstructSwitchBlock( out sbFalseBody, shaderResultsFalse, resultNameInternal, nodeResultComponentCount, true, "False Block" );
 

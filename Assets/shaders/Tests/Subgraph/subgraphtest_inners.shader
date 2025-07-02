@@ -7,9 +7,7 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-	Feature( F_FEATURE1, 0..1, "Feature Group 0" );
-	Feature( F_FEATURE0, 0..1, "Feature Group 0" );
-	
+
 }
 
 MODES
@@ -78,27 +76,6 @@ PS
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
-		
-	StaticCombo( S_FEATURE1, F_FEATURE1, Sys( ALL ) );
-	StaticCombo( S_FEATURE0, F_FEATURE0, Sys( ALL ) );
-		
-	float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
-	{
-		float period, amplitude, currentPhase;
-	
-		if(flFrequency > 0.0001f)
-		{
-			period = 1.0f/flFrequency;
-			currentPhase = (fmod(flTime, period)*flFrequency) + flPhase/255.0f;
-			amplitude = flStrength * sin(currentPhase * 3.1415926535897932f * 2.0f);
-		}
-		else
-		{
-			amplitude = flStrength;
-		}
-	
-		return amplitude;
-	}
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -115,43 +92,11 @@ PS
 		m.Transmission = 0;
 		
 		
+		float l_0 = 1.0f - VoronoiNoise( i.vTextureCoords.xy, 2.663653, 24 ); 
+		float l_1 = 1.0f - VoronoiNoise( i.vTextureCoords.xy, 4, l_0 ); 
+		float l_2 = l_1 * 1; 
 		
-		float4 Feature1SwitchResult;
-		#if ( S_FEATURE1 == 1 )
-		{
-			
-			float4 Feature0SwitchResult;
-			#if ( S_FEATURE0 == 1 )
-			{
-				float4 l_0 = float4( 1, 0, 1, 1 ); // last index `0`
-				Feature0SwitchResult = l_0; // result
-			
-			}
-			#else
-			{
-				float l_0 = Oscillator( g_flTime, 1, -0.69999987, 10 ); // start index `0`
-				float l_1 = l_0 * 1; // last index `1`
-				Feature0SwitchResult = float4( l_1, l_1, l_1, l_1 ); // result
-			
-			}
-			#endif
-			
-			float4 l_0 = Feature0SwitchResult; // last index `0`
-			Feature1SwitchResult = l_0; // result
-		
-		}
-		#else
-		{
-			float4 l_0 = float4( 0.56374, 0.06789, 0, 1 ); // start index `0`
-			float4 l_1 = l_0 * float4( 2, 2, 2, 2 ); // last index `1`
-			Feature1SwitchResult = l_1; // result
-		
-		}
-		#endif
-		
-		float4 l_1 = Feature1SwitchResult; 
-		
-		m.Albedo = l_1.xyz;
+		m.Albedo = float3( l_2, l_2, l_2 );
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

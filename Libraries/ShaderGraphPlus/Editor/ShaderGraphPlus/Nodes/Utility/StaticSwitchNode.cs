@@ -77,31 +77,6 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[Editor( "FeatureReference" )]
 	public string FeatureReference { get; set; } = "";
 
-	public NodeResult GetTrueResult( GraphCompiler compiler )
-	{
-		var albedoInput = InputTrue;
-		if ( albedoInput.IsValid )
-		{
-			return compiler.ResultValue( albedoInput );
-		}
-
-
-		return default;
-	}
-
-	public NodeResult GetFalseResult( GraphCompiler compiler )
-	{
-		var albedoInput = InputFalse;
-		if ( albedoInput.IsValid )
-		{
-			return compiler.ResultValue( albedoInput );
-		}
-
-
-		return default;
-	}
-
-
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -111,18 +86,11 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		if ( compiler.RegisterdFeatureNames.Contains( Feature.FeatureName ) )
 			return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
 
-		List<(NodeResult, NodeResult)> trueBlockResults = new();
-		List<(NodeResult, NodeResult)> falseBlockResults = new();
-		compiler.SubGraphCompilerInstance( this, out trueBlockResults, out falseBlockResults );
-
 		if ( Mode is StaticSwitchMode.Create )
 		{
 			if ( compiler.RegisterShaderFeatureBinary( Feature, out ShaderFeatureInfo shaderFeature ) )
 			{
-				//compiler.GenerateComboSwitchTest( shaderFeature, trueBlockResults, falseBlockResults, PreviewToggle, out var switchResultVariableName2, out var switchBody2, out var switchResultType2 );
-
-				//if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
-				if ( compiler.GenerateComboSwitchTest( shaderFeature, trueBlockResults, falseBlockResults, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+				if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 				{
 					return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
 				}

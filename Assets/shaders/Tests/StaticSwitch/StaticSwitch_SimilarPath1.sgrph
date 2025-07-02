@@ -1,0 +1,204 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/staticswitch_similarpath1.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "96,24",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Fresnel",
+        "HeaderName": "Effects",
+        "Options": [],
+        "IsValid": true
+      },
+      "Identifier": "1",
+      "Position": "-480,-48",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,1,1",
+      "Name": "ColorOne",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "2",
+      "Position": "-1032,-324",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,0,1",
+      "Name": "ColorTwo",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "3",
+      "Position": "-852,120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 2,
+      "Identifier": "4",
+      "Position": "-672,-156",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Fresnel",
+      "DefaultPower": 6.300008,
+      "Identifier": "5",
+      "Position": "-1032,-156",
+      "HandleOffsets": {},
+      "Power": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 32,
+      "Value": 4,
+      "Name": "Fresnel Power",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "6",
+      "Position": "-1260,-108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "7",
+      "Position": "-720,-96",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Blend",
+      "Fraction": 0.4418383,
+      "BlendMode": "Add",
+      "Clamp": false,
+      "Identifier": "8",
+      "Position": "-144,-180",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "0,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "9",
+      "Position": "-468,-228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 51.817047,
+      "Worley": false,
+      "Identifier": "10",
+      "Position": "-492,180",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ComponentMask",
+      "R": true,
+      "G": false,
+      "B": false,
+      "A": true,
+      "Identifier": "11",
+      "Position": "-732,72",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ]
+}
