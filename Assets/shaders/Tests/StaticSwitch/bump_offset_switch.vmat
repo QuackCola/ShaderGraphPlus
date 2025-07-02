@@ -4,10 +4,11 @@ Layer0
 {
 	shader "shaders/tests/staticswitch/bump_offset_switch.shader"
 
+	//---- Effects ----
 	F_BUMP 1
 
 	//---- Color ----
-	ColorMap "[1.000000 1.000000 1.000000 1.000000]"
+	ColorMap "textures/brick_color.png"
 
 	//---- Fog ----
 	g_bFogEnabled "1"

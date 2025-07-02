@@ -102,10 +102,17 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	private ComboSwitchInfo CurrentComboSwitchInfo { get; set; } = default;
 
+	private bool IsInComboSwitch => CurrentComboSwitchInfo.IsValid;
+
 	public IEnumerable<string> RegisterdFeatureNames => ShaderResult.ShaderFeatures.Keys;
 
 	private partial class CompileResult
 	{
+		public bool IsInComboBlock { get; set; } = false;
+
+		public List<(NodeResult, NodeResult)> SwitchBlockResults = new();
+		public Dictionary<NodeInput, NodeResult> SwitchBlockInputResults = new();
+
 		public Dictionary<string, string> StaticComboSwitches { get; private set; } = new();
 	}
 

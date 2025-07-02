@@ -60,18 +60,8 @@ public sealed partial class GraphCompiler
 
 	private partial class CompileResult
 	{
-		public bool IsInComboBlock { get; set; } = false;
-
-		public List<(NodeResult, NodeResult)> SwitchBlockResults = new();
-		public Dictionary<NodeInput, NodeResult> SwitchBlockInputResults = new();
-		
-
 		public List<(NodeResult, NodeResult)> Results = new();
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
-
-		//public List<(NodeResult, NodeResult)> Results = new();
-		//public Dictionary<NodeInput, NodeResult> InputResults = new();
-
 
 		public Dictionary<string, Sampler> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
@@ -457,49 +447,23 @@ public sealed partial class GraphCompiler
 			lastComboSwitchInfo = CurrentComboSwitchInfo;
 			CurrentComboSwitchInfo = input.ComboSwitchInfo;
 
-			ShaderResult.IsInComboBlock = true;
-	
-
 			// Clear any existing Results & InputResults from a previous block.
 			ShaderResult.SwitchBlockInputResults.Clear();
 			ShaderResult.SwitchBlockResults.Clear();
 		}
-		else if ( !CurrentComboSwitchInfo.IsValid )
-		{ 
-			ShaderResult.IsInComboBlock = false;
-			ShaderResult.SwitchBlockInputResults.Clear();
-			ShaderResult.SwitchBlockResults.Clear();
-		}
 #endif
-		//bool blockChanged = lastComboSwitchInfo is not null && lastComboSwitchInfo.Value.BoundSwitchBlock != CurrentComboSwitchInfo.BoundSwitchBlock;
-		//if ( blockChanged )
-		//{
-		//	SGPLog.Info( $"lastComboSwitchInfo block was `{lastComboSwitchInfo.Value.BoundSwitchBlock}` but CurrentComboSwitchInfo block is `{CurrentComboSwitchInfo.BoundSwitchBlock}`", IsNotPreview );
-		//
-		//
-		//
-		//
-		//}
-		//else
-		//{
-		if ( CurrentComboSwitchInfo.IsValid )
-		{
-			
-			if ( ShaderResult.SwitchBlockInputResults.TryGetValue( input, out var result2 ) )
-			{
-				return result2;
-			}
-		}
-		else
-		{
-			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
-			{
-				//SGPLog.Info( $"InputResults of `{node}` found: {result.Code} with info: {result.SwitchInfo}", IsNotPreview );
 
-				return result;
-			}
+		if ( IsInComboSwitch && ShaderResult.SwitchBlockInputResults.TryGetValue( input, out var result2 ) )
+		{
+			return result2;
 		}
-		//}
+
+		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+		{
+			//SGPLog.Info( $"InputResults of `{node}` found: {result.Code} with info: {result.SwitchInfo}", IsNotPreview );
+
+			return result;
+		}
 
 		if ( node == null )
 		{
@@ -542,14 +506,13 @@ public sealed partial class GraphCompiler
 		// Check if this input has valid SwitchInfo data.
 		if ( input.ComboSwitchInfo.IsValid )
 		{
-			SGPLog.Info( $"input of `{node}:id{node.Identifier}` has SwitchData!", IsNotPreview );
+			SGPLog.Info( $"input of `{node}:id{node.Identifier}` has SwitchInfoData!", IsNotPreview );
 		}
 		else
 		{
-			SGPLog.Info( $"input of `{node}:id{node.Identifier}` does not has SwitchData!", IsNotPreview );
+			SGPLog.Info( $"input of `{node}:id{node.Identifier}` does not has SwitchInfoData!", IsNotPreview );
 		}
 #endif
-
 
 		InputStack.Add( input );
 
@@ -565,10 +528,10 @@ public sealed partial class GraphCompiler
 			}
 		}
 		
-		if ( node is StaticSwitchNode staticSwitchNode )
-		{
-			//SGPLog.Info( $"Node is StaticSwitch with ID `{staticSwitchNode.Identifier}`", IsNotPreview );
-		}
+		//if ( node is StaticSwitchNode staticSwitchNode )
+		//{
+		//	SGPLog.Info( $"Node is StaticSwitch with ID `{staticSwitchNode.Identifier}`", IsNotPreview );
+		//}
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
@@ -736,29 +699,6 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
-
-#if true
-			if ( funcResult.SwitchInfo.IsValid )
-			{
-				SGPLog.Info( $"funcResult of `{node}` has SwitchInfo: {funcResult.SwitchInfo}", IsNotPreview );
-			}
-#endif
-			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
-
-			if ( node is StaticSwitchNode staticSwitchnode )
-			{
-				if ( ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
-				{
-					funcResult.SetSwitchInfo( input.ComboSwitchInfo );
-					funcResult.SkipLocalGeneration = true;
-				}
-			}
-			else if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
-			{
-				funcResult.SkipLocalGeneration = true;
-			}
-
 			if ( !funcResult.IsValid )
 			{
 				SGPLog.Info( $"funcResult of `{node}` is Invalid!", IsNotPreview );
@@ -781,7 +721,29 @@ public sealed partial class GraphCompiler
 				InputStack.Remove( input );
 				return default;
 			}
-		
+
+			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
+
+			//if ( funcResult.SwitchInfo.IsValid )
+			//{
+			//	SGPLog.Info( $"funcResult of `{node}` has SwitchInfo: {funcResult.SwitchInfo}", IsNotPreview );
+			//}
+
+			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
+
+			if ( node is StaticSwitchNode staticSwitchnode )
+			{
+				if ( ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
+				{
+					funcResult.SetSwitchInfo( input.ComboSwitchInfo );
+					funcResult.SkipLocalGeneration = true;
+				}
+			}
+			else if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
+			{
+				funcResult.SkipLocalGeneration = true;
+			}
+
 			// We can return this result without making it a local variable because it's constant
 			if ( funcResult.Constant )
 			{
@@ -791,7 +753,7 @@ public sealed partial class GraphCompiler
 
 			int id = 0;
 
-			if ( CurrentComboSwitchInfo.IsValid )
+			if ( IsInComboSwitch )
 			{
 				id = ShaderResult.SwitchBlockInputResults.Count;
 			}
@@ -815,8 +777,7 @@ public sealed partial class GraphCompiler
 				SwitchResultStack.Add( (localResult, funcResult) );
 			}
 
-
-			if ( CurrentComboSwitchInfo.IsValid )
+			if ( IsInComboSwitch )
 			{
 				ShaderResult.SwitchBlockInputResults.Add( input, localResult );
 			}
