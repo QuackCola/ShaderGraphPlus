@@ -143,7 +143,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 1,
-      "Value": 0,
+      "Value": 0.42,
       "Name": "Reference Plane",
       "IsAttribute": false,
       "UI": {
@@ -257,6 +257,7 @@
       "Mode": "Create",
       "Feature": {
         "FeatureName": "Bump",
+        "HeaderName": "Effects",
         "IsValid": true
       },
       "Identifier": "14",
@@ -277,7 +278,7 @@
       "_class": "Float",
       "Min": 0,
       "Max": 1,
-      "Value": 0.22571488,
+      "Value": 0.125,
       "Name": "Depth Scale",
       "IsAttribute": false,
       "UI": {
