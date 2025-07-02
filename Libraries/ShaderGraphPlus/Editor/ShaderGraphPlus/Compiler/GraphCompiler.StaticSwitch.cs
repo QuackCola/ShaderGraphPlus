@@ -108,7 +108,7 @@ public sealed partial class GraphCompiler
 
 	private partial class CompileResult
 	{
-		public bool IsInComboBlock { get; set; } = false;
+		//public bool IsInComboBlock { get; set; } = false;
 
 		public List<(NodeResult, NodeResult)> SwitchBlockResults = new();
 		public Dictionary<NodeInput, NodeResult> SwitchBlockInputResults = new();
@@ -309,8 +309,6 @@ public sealed partial class GraphCompiler
 		var results = BinaryComboSwitchResult( inputTrue, inputFalse, 0.0f, 0.0f );
 		switchResultTypeOut = results.Item1.ResultType;
 
-		ShaderResult.IsInComboBlock = true;
-
 		//foreach ( var result in ShaderResult.TestResults )
 		//{
 		//	SGPLog.Info( $"result entry : `{result.Item2.Code}`", IsNotPreview );
@@ -335,8 +333,6 @@ public sealed partial class GraphCompiler
 			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
 			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.False
 		);
-
-		ShaderResult.IsInComboBlock = false;
 
 		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview );//&& ConCommands.VerboseDebgging );
 
