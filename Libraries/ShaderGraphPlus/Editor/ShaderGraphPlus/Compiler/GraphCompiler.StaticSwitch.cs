@@ -200,9 +200,6 @@ public sealed partial class GraphCompiler
 				feature.IsDynamicCombo
 			);
 
-			if ( IsPreview )
-				shaderFeatureInfo.IsPreview = true;
-
 			if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
 			{
 				result.ShaderFeatures.Add( feature.FeatureName, shaderFeatureInfo );

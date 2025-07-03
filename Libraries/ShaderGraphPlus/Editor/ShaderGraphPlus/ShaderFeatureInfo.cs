@@ -13,8 +13,6 @@ public struct ShaderFeatureInfo : IValid
 
 	public bool IsValid => string.IsNullOrWhiteSpace( FeatureName );
 
-	public bool IsPreview { get; set; } = false;
-
 	public ShaderFeatureInfo( string userDefinedName, string featureName, string featureDeclaration, int optionsCount, bool isDynamicCombo )
 	{
 		UserDefinedName = userDefinedName;
@@ -22,7 +20,6 @@ public struct ShaderFeatureInfo : IValid
 		FeatureDeclaration = featureDeclaration;
 		OptionsCount = optionsCount;
 		IsDynamicCombo = isDynamicCombo;
-		IsPreview = false;
 	}
 
 	public ShaderFeatureInfo()
@@ -32,6 +29,5 @@ public struct ShaderFeatureInfo : IValid
 		FeatureDeclaration = "";
 		OptionsCount = 0;
 		IsDynamicCombo = false;
-		IsPreview = false;
 	}
 }
