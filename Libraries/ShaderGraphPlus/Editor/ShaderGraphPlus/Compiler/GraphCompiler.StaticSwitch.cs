@@ -108,7 +108,6 @@ public sealed partial class GraphCompiler
 
 	private partial class CompileResult
 	{
-		//public bool IsInComboBlock { get; set; } = false;
 
 		public List<(NodeResult, NodeResult)> SwitchBlockResults = new();
 		public Dictionary<NodeInput, NodeResult> SwitchBlockInputResults = new();
