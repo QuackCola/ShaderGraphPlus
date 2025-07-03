@@ -21,6 +21,13 @@ MODES
 
 COMMON
 {
+	#ifndef SWITCH_TRUE
+	#define SWITCH_TRUE 1
+	#endif
+	#ifndef SWITCH_FALSE
+	#define SWITCH_FALSE 0
+	#endif
+	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -80,7 +87,9 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_FEATURE1, F_FEATURE1, Sys( ALL ) );
+	
 	StaticCombo( S_FEATURE0, F_FEATURE0, Sys( ALL ) );
+	
 		
 	float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
 	{
@@ -117,11 +126,11 @@ PS
 		
 		
 		float4 Feature1SwitchResult;
-		#if ( S_FEATURE1 == 1 )
+		#if ( S_FEATURE1 == SWITCH_TRUE )
 		{
 			
 			float4 Feature0SwitchResult;
-			#if ( S_FEATURE0 == 1 )
+			#if ( S_FEATURE0 == SWITCH_TRUE )
 			{
 				float4 l_0 = float4( 1, 0, 1, 1 ); // last index `0`
 				Feature0SwitchResult = l_0; // result

@@ -20,6 +20,13 @@ MODES
 
 COMMON
 {
+	#ifndef SWITCH_TRUE
+	#define SWITCH_TRUE 1
+	#endif
+	#ifndef SWITCH_FALSE
+	#define SWITCH_FALSE 0
+	#endif
+	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -79,6 +86,7 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_FRESNEL, F_FRESNEL, Sys( ALL ) );
+	
 	float g_flFresnelPower < UiGroup( ",0/,0/0" ); Default1( 14.643593 ); Range1( 0, 32 ); >;
 	float4 g_vColorOne < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 1.00, 1.00 ); >;
 		
@@ -104,7 +112,7 @@ PS
 		
 		
 		float4 FresnelSwitchResult;
-		#if ( S_FRESNEL == 1 )
+		#if ( S_FRESNEL == SWITCH_TRUE )
 		{
 			float l_0 = g_flFresnelPower; // start index `0`
 			float l_1 = sin( g_flTime ); // index `1`
