@@ -189,16 +189,19 @@ public sealed partial class GraphCompiler
 
 		if ( feature.IsValid )
 		{
-			var featureOptionAmount = 2;
+			var optionCount = 2;
 
 			shaderFeatureInfo = new ShaderFeatureInfo
 			(
 				feature.FeatureName,
 				feature.FeatureName.Replace( " ", "_" ),
-				$"Feature( F_{feature.FeatureName.ToUpper()}, 0..1, \"{feature.HeaderName}\" );",
-				featureOptionAmount,
+				$"Feature( F_{feature.FeatureName.ToUpper()}, 0..{optionCount - 1}, \"{feature.HeaderName}\" );",
+				optionCount,
 				feature.IsDynamicCombo
 			);
+
+			if ( IsPreview )
+				shaderFeatureInfo.IsPreview = true;
 
 			if ( !result.ShaderFeatures.ContainsKey( feature.FeatureName ) )
 			{
@@ -291,15 +294,15 @@ public sealed partial class GraphCompiler
 	internal bool GenerateComboSwitch
 	(
 		ShaderFeatureInfo feature,
-		NodeInput inputTrue, 
-		NodeInput inputFalse, 
-		bool previewToggle, 
-		out string switchResultVariableNameOut, 
-		out string switchBodyOut, 
-		out ResultType switchResultTypeOut 
+		NodeInput inputTrue,
+		NodeInput inputFalse,
+		bool previewToggle,
+		out string switchResultVariableNameOut,
+		out string switchBodyOut,
+		out ResultType switchResultTypeOut
 	)
 	{
-		var resultNameInternal = feature.FeatureResultString;
+		var resultNameInternal = $"{feature.FeatureName}SwitchResult";
 		switchResultVariableNameOut = resultNameInternal;
 		switchBodyOut = "";
 
@@ -318,6 +321,7 @@ public sealed partial class GraphCompiler
 
 		string nodeResultTypeName = results.Item1.TypeName;
 		int nodeResultComponentCount = results.Item1.Components();
+		var featureString = $"F_{feature.FeatureName.ToUpper()}";
 
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
@@ -345,13 +349,18 @@ public sealed partial class GraphCompiler
 		sbSwitchBody.AppendLine();
 		sbSwitchBody.AppendLine( $"{nodeResultTypeName} {resultNameInternal};" );
 
+		// If IsPreview is true then use a DynamicCombo here instead.
 		if ( IsPreview )
 		{
-			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == {(previewToggle ? "0" : "1")} )" );
+			var comboString = $"D_{feature.FeatureName.ToUpper()}";
+
+			ResultComboPreview( comboString , previewToggle );
+
+			sbSwitchBody.AppendLine( $"#if ( {comboString} )" );
 		}
 		else
 		{
-			sbSwitchBody.AppendLine( $"#if ( {feature.ComboString} == 1 )" );
+			sbSwitchBody.AppendLine( $"#if ( {(feature.IsDynamicCombo ? "D" : "S")}_{feature.FeatureName.ToUpper()} == SWITCH_TRUE )" );
 		}
 
 		sbSwitchBody = AppendSwitchBlock( sbSwitchBody, sbTrueBody.ToString() );
@@ -359,9 +368,9 @@ public sealed partial class GraphCompiler
 		sbSwitchBody = AppendSwitchBlock( sbSwitchBody,  sbFalseBody.ToString() );
 		sbSwitchBody.AppendLine( "#endif" );
 
-		if ( !ShaderResult.StaticComboSwitches.ContainsKey( feature.FeatureString ) )
+		if ( !ShaderResult.StaticComboSwitches.ContainsKey( featureString ) )
 		{
-			ShaderResult.StaticComboSwitches.Add( feature.FeatureString, sbSwitchBody.ToString() );
+			ShaderResult.StaticComboSwitches.Add( featureString, sbSwitchBody.ToString() );
 			switchBodyOut = sbSwitchBody.ToString();
 
 			//Graph.AddFeature( feature );

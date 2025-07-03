@@ -181,7 +181,7 @@ public class PreviewPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
-	public void SetCombo( string id, int value )
+	public void SetCombo( string id, bool value )
 	{
 		_preview.SetCombo(id, value);
 	}
@@ -361,7 +361,7 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Vector2> _float2Attributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
-	private Dictionary<string, int> _comboAttributes = new();
+	private Dictionary<string, bool> _comboAttributes = new();
 	private int _stageId;
 
     private bool _enablePostProcessing;
@@ -675,9 +675,9 @@ public class Preview : SceneRenderingWidget
 		_sceneObject.Attributes.Set( id, value );
 	}
 
-	public void SetCombo( string id, int value )
+	public void SetCombo( string id, bool value )
 	{
-		Log.Info( $"setting static combo `{id}` : `{value}`" );
+		Log.Info( $"setting combo `{id}` to `{value}`" );
 		_comboAttributes.Add( id, value );
 		_sceneObject.Attributes.SetCombo( id, value );
 	}

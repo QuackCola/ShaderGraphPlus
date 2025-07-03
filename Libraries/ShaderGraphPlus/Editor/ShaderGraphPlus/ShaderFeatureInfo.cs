@@ -13,63 +13,7 @@ public struct ShaderFeatureInfo : IValid
 
 	public bool IsValid => string.IsNullOrWhiteSpace( FeatureName );
 
-	/// <summary>
-	/// Name of the result varible in the MainVs or MainPs functions.
-	/// </summary>
-	public readonly string FeatureResultString
-	{
-		get
-		{
-			return $"{FeatureName}SwitchResult";
-		}
-	}
-
-	/// <summary>
-	/// feature string which is F_FeatureName. With `FeatureName` all uppercase.
-	/// </summary>
-	public readonly string FeatureString
-	{
-		get
-		{
-			return $"F_{FeatureName.ToUpper()}";
-		}
-	}
-
-	/// <summary>
-	/// Combo string. Either S_FeatureName or D_FeatureName.
-	/// </summary>
-	public readonly string ComboString
-	{
-		get
-		{
-			if ( !IsDynamicCombo )
-			{
-				return $"S_{FeatureName.ToUpper()}";
-			}
-			else
-			{
-				return $"D_{FeatureName.ToUpper()}";
-			}
-		}
-	}
-
-	/// <summary>
-	/// Type of combo when declared in either the Vertex or Pixel shader stages.
-	/// </summary>
-	public readonly string ComboTypeString
-	{
-		get
-		{
-			if ( !IsDynamicCombo )
-			{
-				return $"StaticCombo";
-			}
-			else
-			{
-				return $"DynamicCombo";
-			}
-		}
-	}
+	public bool IsPreview { get; set; } = false;
 
 	public ShaderFeatureInfo( string userDefinedName, string featureName, string featureDeclaration, int optionsCount, bool isDynamicCombo )
 	{
@@ -78,6 +22,7 @@ public struct ShaderFeatureInfo : IValid
 		FeatureDeclaration = featureDeclaration;
 		OptionsCount = optionsCount;
 		IsDynamicCombo = isDynamicCombo;
+		IsPreview = false;
 	}
 
 	public ShaderFeatureInfo()
@@ -87,5 +32,6 @@ public struct ShaderFeatureInfo : IValid
 		FeatureDeclaration = "";
 		OptionsCount = 0;
 		IsDynamicCombo = false;
+		IsPreview = false;
 	}
 }

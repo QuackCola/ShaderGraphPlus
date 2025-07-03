@@ -113,6 +113,11 @@
         "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "17",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -140,6 +145,11 @@
         "Identifier": "1",
         "Output": "Result",
         "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "16",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -158,6 +168,11 @@
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "16",
         "Output": "Result",
         "Subgraph": null
       }
@@ -274,6 +289,39 @@
       "B": {
         "Identifier": "13",
         "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "TestSampler"
+      },
+      "Identifier": "15",
+      "Position": "-2016,240",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "16",
+      "Position": "-588,264",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "15",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "17",
+      "Position": "-1716,-72",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "15",
+        "Output": "Sampler",
         "Subgraph": null
       }
     }

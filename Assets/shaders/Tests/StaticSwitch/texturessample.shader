@@ -20,6 +20,13 @@ MODES
 
 COMMON
 {
+	#ifndef SWITCH_TRUE
+	#define SWITCH_TRUE 1
+	#endif
+	#ifndef SWITCH_FALSE
+	#define SWITCH_FALSE 0
+	#endif
+	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -79,9 +86,8 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	StaticCombo( S_BUMPOFFSET, F_BUMPOFFSET, Sys( ALL ) );
-	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	SamplerState g_sSampler1 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	SamplerState g_sSampler2 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	
+	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	CreateInputTexture2D( Height, Srgb, 8, "None", "_height", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	CreateInputTexture2D( Normal, Srgb, 8, "None", "_normal", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -134,10 +140,10 @@ PS
 		float4 l_0 = float4( 0.39535, 0.39535, 0.39535, 1 ); 
 		
 		float2 BumpOffsetSwitchResult;
-		#if ( S_BUMPOFFSET == 1 )
+		#if ( S_BUMPOFFSET == SWITCH_TRUE )
 		{
 			float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 ); // start index `0`
-			float4 l_1 = g_tHeight.Sample( g_sSampler1,l_0 ); // index `1`
+			float4 l_1 = g_tHeight.Sample( g_sTestSampler,l_0 ); // index `1`
 			float l_2 = g_flDepthScale; // index `2`
 			float l_3 = g_flReferencePlane; // index `3`
 			float2 l_4 = BumpOffset( l_1.r, l_2, l_3, l_0, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) ); // last index `4`
@@ -153,10 +159,10 @@ PS
 		#endif
 		
 		float2 l_1 = BumpOffsetSwitchResult; 
-		float4 l_2 = g_tColor.Sample( g_sSampler0,l_1 ); 
+		float4 l_2 = g_tColor.Sample( g_sTestSampler,l_1 ); 
 		float l_3 = 1 - l_2.r; 
 		float4 l_4 = l_0 * float4( l_3, l_3, l_3, l_3 ); 
-		float4 l_5 = g_tNormal.Sample( g_sSampler2,l_1 ); 
+		float4 l_5 = g_tNormal.Sample( g_sTestSampler,l_1 ); 
 		float3 l_6 = l_5.xyz; 
 		float l_7 = g_flRoughness; 
 		float l_8 = l_2.r * l_7; 

@@ -935,11 +935,13 @@ public sealed partial class GraphCompiler
 		return parameter.Result;
 	}
 
-	public void ResultComboPreview( string comboName, int value )
+	/// <summary>
+	/// TODO : Change to int again once we support more than just true or false combos.
+	/// </summary>
+	public void ResultComboPreview( string comboName, bool value )
 	{
-	
+		// 3rd arg lets the OnAttribute method in MainWindow know that this is a combo and not a bool attribute.
 		OnAttribute?.Invoke( comboName, value, true );
-
 	}
 
 	/// <summary>
@@ -1205,6 +1207,19 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		if ( ShaderResult.ShaderFeatures.Any() )
+		{
+			sb.AppendLine( $"#ifndef SWITCH_TRUE" );
+			sb.AppendLine( $"#define SWITCH_TRUE 1" );
+			sb.AppendLine( $"#endif" );
+
+			sb.AppendLine( $"#ifndef SWITCH_FALSE" );
+			sb.AppendLine( $"#define SWITCH_FALSE 0" );
+			sb.AppendLine( $"#endif" );
+
+			sb.AppendLine();
+		}
+
 		var blendMode = Graph.BlendMode;
 		var alphaTest = blendMode == BlendMode.Masked ? 1 : 0;
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
@@ -1458,7 +1473,25 @@ public sealed partial class GraphCompiler
 		// Static & Dynamic shader feature combos
 		foreach ( var feature in ShaderResult.ShaderFeatures )
 		{
-			sb.Append( $"{feature.Value.ComboTypeString}( {feature.Value.ComboString}, {feature.Value.FeatureString}, Sys( ALL ) );" );
+			//SGPLog.Info( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );", IsPreview );
+			
+			if ( feature.Value.IsDynamicCombo )
+			{
+				sb.AppendLine( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );" );
+			}
+			else
+			{
+				if ( IsPreview )
+				{
+					sb.AppendLine( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );" );
+				}
+				else
+				{
+					sb.AppendLine( $"StaticCombo( S_{feature.Value.FeatureName.ToUpper()}, F_{feature.Value.FeatureName.ToUpper()}, Sys( ALL ) );" );
+				}
+		
+			}
+
 			sb.AppendLine();
 		}
 		

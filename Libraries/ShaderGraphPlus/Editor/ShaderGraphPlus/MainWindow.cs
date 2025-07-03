@@ -73,7 +73,7 @@ public class MainWindow : DockWindow
     //private readonly Dictionary<string, int> _intAttributes = new();
     private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
-	private readonly Dictionary<string, int> _comboAttributes = new();
+	private readonly Dictionary<string, bool> _comboAttributes = new();
 
 	private readonly List<BaseNodePlus> _compiledNodes = new();
 
@@ -387,9 +387,8 @@ public class MainWindow : DockWindow
 
 		if ( isCombo )
 		{
-	
-			_comboAttributes.Add( name, (int)value );
-			_preview?.SetCombo( name, (int)value );
+			_comboAttributes.Add( name, (bool)value );
+			_preview?.SetCombo( name, (bool)value );
 			return;
 		}
 
