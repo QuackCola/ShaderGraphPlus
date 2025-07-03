@@ -349,6 +349,8 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	ComboSwitchInfo LastComboSwitchInfo = default;
+
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
@@ -362,14 +364,28 @@ public sealed partial class GraphCompiler
 
 		var result = ShaderResult;
 
-		while ( result.TextureInputs.ContainsKey( id ) )
+		// TODO : Figure out a solution on howto stop duplicate texture2Ds's from being generated. but not fuck up 
+		// the way it currently works for subgraph's.
+		//if ( CurrentComboSwitchInfo.IsValid && LastComboSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.True )
+		//	LastComboSwitchInfo = CurrentComboSwitchInfo;
+		//
+		//// Dont know if this is a good "hack" but it seems to stop 
+		//bool shouldSkipThisShit = CurrentComboSwitchInfo.IsValid && CurrentComboSwitchInfo.BoundSwitchBlock != LastComboSwitchInfo.BoundSwitchBlock && result.TextureInputs.ContainsKey( id );
+		//if ( shouldSkipThisShit )
+		//{
+		//	SGPLog.Info( $"id : {id} was already registerd either by outside the graph or the True Block... IsPreview? `{IsPreview}`", true);
+		//}
+		//else
 		{
-			id = $"{name}_{count++}";
+			while ( result.TextureInputs.ContainsKey( id ) )
+			{
+				id = $"{name}_{count++}";	
+			}
+		
+			OnAttribute?.Invoke( id, texture, false );
+		
+			result.TextureInputs.Add( id, input );
 		}
-
-		OnAttribute?.Invoke( id, texture, false );
-
-		result.TextureInputs.Add( id, input );
 
 		if ( CurrentResultInput == "Albedo" )
 		{
@@ -449,7 +465,6 @@ public sealed partial class GraphCompiler
 			CurrentComboSwitchInfo = input.ComboSwitchInfo;
 
 			// Clear any existing Results & InputResults from a previous block.
-			
 			//if ( IsNotPreview )
 			{
 				ShaderResult.SwitchBlockInputResults.Clear();
@@ -470,6 +485,9 @@ public sealed partial class GraphCompiler
 
 		if ( IsInComboSwitch )
 		{
+			//if ( LastComboSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.True )
+			//	LastComboSwitchInfo = CurrentComboSwitchInfo;
+
 			SGPLog.Info( $"{node} is  in ComboSwitch!" );
 			if ( ShaderResult.SwitchBlockInputResults.TryGetValue( input, out var result2 ) )
 			{
