@@ -205,7 +205,6 @@ public sealed partial class GraphCompiler
 				result.ShaderFeatures.Add( feature.FeatureName, shaderFeatureInfo );
 				AddGraphFeatureReferenceToGraph( feature.FeatureName );
 
-
 				return true;
 			}
 
