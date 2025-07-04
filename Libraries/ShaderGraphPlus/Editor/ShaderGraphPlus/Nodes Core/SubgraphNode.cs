@@ -24,7 +24,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	[Hide]
 	public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
 
-	[NodeEditor( "subgraphnode" ), WideMode( HasLabel = false )]
+	[Editor( "subgraphplusnode" ), WideMode( HasLabel = false )]
 	public Dictionary<string, object> DefaultValues { get; set; } = new();
 
 	[JsonIgnore, Hide]
@@ -80,6 +80,10 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 			if ( string.IsNullOrWhiteSpace( name ) ) continue;
 			var type = parameterNode.GetType().GenericTypeArguments.FirstOrDefault() ?? typeof( object );
 			if ( type == typeof( object ) ) type = parameterNode.GetType().BaseType.GenericTypeArguments.FirstOrDefault() ?? typeof( object );
+			
+			if ( parameterNode.GetPortType() == typeof( TextureObject ) )
+				type = typeof( TextureObject );
+
 			if ( string.IsNullOrEmpty( name ) )
 			{
 				if ( !defaults.ContainsKey( type ) )
@@ -114,7 +118,8 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 
 			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			{
-				DefaultValues[plug.Identifier] = parameterNode.GetValue();
+				if ( parameterNode.GetValue() != null )
+					DefaultValues[plug.Identifier] = parameterNode.GetValue();
 			}
 
 		}
@@ -211,7 +216,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	}
 }
 
-[CustomEditor( typeof( Dictionary<string, object> ), NamedEditor = "subgraphnode", WithAllAttributes = [typeof( WideModeAttribute )] )]
+[CustomEditor( typeof( Dictionary<string, object> ), NamedEditor = "subgraphplusnode", WithAllAttributes = [typeof( WideModeAttribute )] )]
 internal class SubgraphNodeControlWidget : ControlWidget
 {
 	public override bool SupportsMultiEdit => false;
@@ -309,6 +314,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 			}
 		}
 
+		/*
 		int textureInt = 0;
 		int defaultInt = 0;
 		foreach ( var node in Node.Subgraph.Nodes )
@@ -338,6 +344,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 				textureInt++;
 			}
 		}
+		*/
 	}
 
 	private void SetDefaultValue( string name, object value )

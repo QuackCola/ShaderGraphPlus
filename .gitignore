@@ -55,3 +55,4 @@ thumb_wide.psd
 *.graphite
 *.py
 /Assets/shaders/Tests/StaticSwitch/Bug0
+/Assets/shaders/Tests/TextureObject

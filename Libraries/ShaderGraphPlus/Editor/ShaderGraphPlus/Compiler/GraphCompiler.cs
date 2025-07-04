@@ -1057,6 +1057,8 @@ public sealed partial class GraphCompiler
 					return 0.0f;
 				case Type t when t == typeof( bool ):
 					return false;
+				default:
+					throw new Exception( $"Type `{type}` has no default!" );
 			}
 		}
 		if ( value is JsonElement el )
@@ -1088,6 +1090,11 @@ public sealed partial class GraphCompiler
 			else if ( type == typeof( Color ) )
 			{
 				value = Color.Parse( el.GetString() ) ?? Color.White;
+			}
+			else if ( type == typeof( TextureObject ) )
+			{
+				//SGPLog.Info($"type == typeof( TextureObject )", true);
+				value = Color.Magenta;
 			}
 		}
 

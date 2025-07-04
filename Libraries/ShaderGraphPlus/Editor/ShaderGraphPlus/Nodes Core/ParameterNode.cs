@@ -10,6 +10,7 @@ public interface IParameterNode
 
 	NodeInput PreviewInput { get; set; }
 
+	Type GetPortType();
 	object GetValue();
 	void SetValue( object val );
 	Vector4 GetRangeMin();
@@ -108,5 +109,11 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		}
 
 		return errors;
+	}
+
+	// Unused for ParameterNode<T>'s
+	public Type GetPortType()
+	{
+		return typeof ( T );
 	}
 }

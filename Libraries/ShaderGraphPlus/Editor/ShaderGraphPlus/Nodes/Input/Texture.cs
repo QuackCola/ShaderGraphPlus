@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿using Sandbox;
+
+namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
@@ -118,7 +120,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		return result.IsValid ? new( ResultType.Float, $"{result}.{component}", true ) : new( ResultType.Float, "0.0f", true );
 	}
 
-	public List<string> GetErrors()
+	public virtual List<string> GetErrors()
 	{
 		var errors = new List<string>();
 
@@ -140,20 +142,46 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 
 		return errors;
 	}
+
+	public object GetValue()
+	{
+		return 0;
+	}
+
+	public void SetValue( object val )
+	{
+		//throw new NotImplementedException();
+	}
+
+	public Vector4 GetRangeMin()
+	{
+		return Vector4.Zero;
+	}
+
+	public Vector4 GetRangeMax()
+	{
+		return Vector4.One;
+	}
+
+	public Type GetTypeTest()
+	{
+		return typeof( TextureObject );
+	}
 }
 
 
 /// <summary>
-/// Ment for use when you want to pass a Texture2D into a node which happens to have a hlsl function that makes use of .Sample().
+/// 
 /// </summary>
 [Title( "Texture Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode
+public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode, IParameterNode
 {
-    /// <summary>
-    /// Texture to sample in preview
-    /// </summary>
-   	[ImageAssetPath]
-    public string Image
+	/// <summary>
+	/// Texture to sample in preview
+	/// </summary>
+	[ImageAssetPath]
+	[HideIf( nameof( IsSubgraph ), true )]
+	public string Image
 	{
 		get => _image;
 		set
@@ -167,7 +195,23 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		}
 	}
 
-    [Hide]
+	[ShowIf( nameof( IsSubgraph ), true )]
+	[Title( "Input Name" )]
+	public string Name { get; set; }
+
+	[Hide, JsonIgnore]
+	public bool IsAttribute { get; set; }
+	
+	[Hide, JsonIgnore]
+	ParameterUI IParameterNode.UI { get; set; }
+
+	[Hide]
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	public NodeInput PreviewInput { get; set; }
+
+	[Hide]
     private Asset _asset;
 	[Hide]
 	private string _texture;
@@ -215,11 +259,12 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		}
 	}
 
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	[HideIf (nameof( IsSubgraph ), true )]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -231,9 +276,9 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 	public TextureObjectNode() : base()
 	{
-        Image = "materials/dev/white_color.tga";
-        ExpandSize = new Vector2( 0, 128 );
-    }
+		Image = "materials/dev/white_color.tga";
+		ExpandSize = new Vector2( 0, 128 );
+	}
 
 	public override void OnPaint( Rect rect )
 	{
@@ -257,10 +302,10 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
 		{
-			if ( string.IsNullOrWhiteSpace( UI.Name ) )
-			{
-				errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
-			}
+			//if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			//{
+			//	errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			//}
 
 			foreach ( var node in sg.Nodes )
 			{
@@ -274,10 +319,35 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		return errors;
 	}
 
-    /// <summary>
-    /// Texture object result.
-    /// </summary>
-    [Hide]
+	public Type GetPortType()
+	{
+		return typeof( TextureObject );
+	}
+
+	public object GetValue()
+	{
+		return null;
+	}
+
+	public void SetValue( object val )
+	{
+		throw new NotImplementedException( $"{DisplayInfo.ClassName}.SetValue" );
+	}
+
+	public Vector4 GetRangeMin()
+	{
+		return Vector4.Zero;
+	}
+
+	public Vector4 GetRangeMax()
+	{
+		return Vector4.One;
+	}
+
+	/// <summary>
+	/// Texture object result.
+	/// </summary>
+	[Hide]
 	[Output( typeof( TextureObject ) ), Title( "Tex Object" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -290,10 +360,9 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		texture ??= Texture.White;
 		var result = compiler.ResultTexture( null, input, texture );
 
-
-
 		return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = TexturePath };
 	};
+
 }
 
 
@@ -301,7 +370,7 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 /// Sample a 2D Texture
 /// </summary>
 [Title( "Texture 2D" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureSampler : TextureSamplerBase
+public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 {
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
@@ -326,6 +395,9 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Input( typeof( TextureObject ) )]
 	[Hide]
 	public NodeInput TextureObject { get; set; }
+
+	[Hide]
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	/// <summary>
 	/// RGBA color result
@@ -352,7 +424,24 @@ public sealed class TextureSampler : TextureSamplerBase
 		
 		CompileTexture();
 
-		if ( !textureObject.IsValid )
+		if ( IsSubgraph )
+		{
+			var coords = compiler.Result( Coords );
+			var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		
+			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+			{
+				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
+					$" {sampler}," +
+					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+			}
+			else
+			{
+				return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
+					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+			}
+		}
+		else if ( !textureObject.IsValid )
 		{
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
@@ -416,6 +505,28 @@ public sealed class TextureSampler : TextureSamplerBase
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Title( "A" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
+
+	public override List<string> GetErrors()
+	{
+		var errors = new List<string>();
+	
+		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
+		{
+			if ( !TextureObject.IsValid )
+			{
+				errors.Add( $"input `Tex Object` is missing!" );
+			}
+	
+			//if ( string.IsNullOrWhiteSpace( UI.Name ) )
+			//{
+			//	errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
+			//}
+	
+	
+		}
+	
+		return errors;
+	}
 }
 
 /// <summary>
