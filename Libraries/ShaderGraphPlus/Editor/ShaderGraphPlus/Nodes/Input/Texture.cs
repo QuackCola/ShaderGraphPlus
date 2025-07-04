@@ -4,6 +4,9 @@ namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
+	[Hide]
+	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
 	/// <summary>
 	/// Texture to sample in preview
 	/// </summary>
@@ -365,7 +368,6 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 }
 
-
 /// <summary>
 /// Sample a 2D Texture
 /// </summary>
@@ -396,9 +398,6 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 	[Hide]
 	public NodeInput TextureObject { get; set; }
 
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
 	/// <summary>
 	/// RGBA color result
 	/// </summary>
@@ -421,34 +420,34 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 			Hide = false;
 
 		}
-		
+
 		CompileTexture();
 
-		if ( IsSubgraph )
-		{
-			var coords = compiler.Result( Coords );
-			var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
-		
-			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
-					$" {sampler}," +
-					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
-			}
-			else
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
-					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
-			}
-		}
-		else if ( !textureObject.IsValid )
+		//if ( IsSubgraph )
+		//{
+		//	var coords = compiler.Result( Coords );
+		//	var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		//
+		//	if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+		//	{
+		//		return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
+		//			$" {sampler}," +
+		//			$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+		//	}
+		//	else
+		//	{
+		//		return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
+		//			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+		//	}
+		//}
+		if ( !textureObject.IsValid && !IsSubgraph )
 		{
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
 
 			var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
 			var coords = compiler.Result( Coords );
-		
+
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
 				return new NodeResult( ResultType.Color, $"{result.Item1}.SampleLevel(" +
@@ -461,7 +460,7 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
 			}
 		}
-		else
+		else if ( textureObject.IsValid || IsSubgraph )
 		{
 			
 			var coords = compiler.Result( Coords );
@@ -480,6 +479,7 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 			}
 		}
 
+		return new NodeResult( ResultType.Color, $"float4( 1.0f, 0.0f, 1.0f , 1.0f )", true );
 	};
 
 	/// <summary>
@@ -551,7 +551,6 @@ public sealed class TextureCube : ShaderNodePlus
 	[Hide]
 	public NodeInput Sampler { get; set; }
 
-
 	/// <summary>
 	/// Texture to sample in preview
 	/// </summary>
@@ -561,11 +560,11 @@ public sealed class TextureCube : ShaderNodePlus
 	[InlineEditor]
 	public Sampler DefaultSampler { get; set; } = new Sampler();
 
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -575,32 +574,32 @@ public sealed class TextureCube : ShaderNodePlus
 	public TextureCube() : base()
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
-        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
-    }
+		ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+	}
 
-    public override void OnPaint(Rect rect)
-    {
-        rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
+	public override void OnPaint(Rect rect)
+	{
+		rect = rect.Align(130, TextFlag.LeftBottom).Shrink(3);
 
-        Paint.SetBrush("/image/transparent-small.png");
-        Paint.DrawRect(rect.Shrink(2), 2);
+		Paint.SetBrush("/image/transparent-small.png");
+		Paint.DrawRect(rect.Shrink(2), 2);
 
-        Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
-        Paint.DrawRect(rect, 2);
+		Paint.SetBrush(Theme.ControlBackground.WithAlpha(0.7f));
+		Paint.DrawRect(rect, 2);
 
-        if (!string.IsNullOrEmpty(Texture))
-        {
-            var tex = Sandbox.Texture.Find(Texture);
-            if (tex is null) return;
-            var pixmap = Pixmap.FromTexture(tex);
-            Paint.Draw(rect.Shrink(2), pixmap);
-        }
-    }
+		if (!string.IsNullOrEmpty(Texture))
+		{
+			var tex = Sandbox.Texture.Find(Texture);
+			if (tex is null) return;
+			var pixmap = Pixmap.FromTexture(tex);
+			Paint.Draw(rect.Shrink(2), pixmap);
+		}
+	}
 
-    /// <summary>
-    /// RGBA color result
-    /// </summary>
-    [Hide]
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
