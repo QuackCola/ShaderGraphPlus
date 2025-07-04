@@ -1,15 +1,13 @@
-﻿
-using Sandbox;
-
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
-    /// <summary>
-    /// Texture to sample in preview
-    /// </summary>
-    [ImageAssetPath]
-    public string Image
+	/// <summary>
+	/// Texture to sample in preview
+	/// </summary>
+	[ImageAssetPath]
+	[HideIf( nameof( Hide ), true )]
+	public string Image
 	{
 		get => _image;
 		set
@@ -21,6 +19,13 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 
 			CompileTexture();
 		}
+	}
+
+	[JsonIgnore, Hide]
+	public bool Hide
+	{
+		get;
+		set;
 	}
 
 	private Asset _asset;
@@ -67,14 +72,15 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		}
 	}
 
-    [InlineEditor(Label = false), Group("Sampler")]
-    public Sampler DefaultSampler { get; set; } = new Sampler();
+	[InlineEditor(Label = false), Group("Sampler")]
+	public Sampler DefaultSampler { get; set; } = new Sampler();
 
-    /// <summary>
-    /// Settings for how this texture shows up in material editor
-    /// </summary>
-    [InlineEditor(Label = false), Group("UI")]
-    public TextureInput UI { get; set; } = new TextureInput
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor(Label = false), Group("UI")]
+	[HideIf( nameof( Hide ), true )]
+	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
@@ -87,8 +93,8 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 	protected TextureSamplerBase() : base()
 	{
 		Image = "materials/dev/white_color.tga";
-        ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
-    }
+		ExpandSize = new Vector2(0, 8 + Inputs.Count() * 24);
+	}
 
 	public override void OnPaint( Rect rect )
 	{
@@ -284,14 +290,9 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		texture ??= Texture.White;
 		var result = compiler.ResultTexture( null, input, texture );
 
-		if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-		{
-			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true );
-		}
-		else
-		{
-			return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true );
-		}
+
+
+		return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = TexturePath };
 	};
 }
 
@@ -310,7 +311,6 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-
 	/// <summary>
 	/// How the texture is filtered and wrapped when sampled
 	/// </summary>
@@ -318,6 +318,14 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Input( typeof( Sampler ) )]
 	[Hide]
 	public NodeInput Sampler { get; set; }
+
+	/// <summary>
+	/// Optional Texture2D Object input.
+	/// </summary>
+	[Title( "Tex Object" )]
+	[Input( typeof( TextureObject ) )]
+	[Hide]
+	public NodeInput TextureObject { get; set; }
 
 	/// <summary>
 	/// RGBA color result
@@ -328,26 +336,61 @@ public sealed class TextureSampler : TextureSamplerBase
 	{
 		var input = UI;
 		input.Type = TextureType.Tex2D;
+		var textureObject = compiler.Result( TextureObject );
 
-		CompileTexture();
-
-		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-		texture ??= Texture.White;
-
-		var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
-		var coords = compiler.Result( Coords );
-
-		if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+		if ( textureObject.IsValid )
 		{
-			return new NodeResult( ResultType.Color, $"{result.Item1}.SampleLevel(" +
-				$" {result.Item2}," +
-				$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+			Image = textureObject.Code2;
+			Hide = true;
 		}
 		else
 		{
-			return new NodeResult( ResultType.Color, $"{result.Item1}.Sample( {result.Item2}," +
-				$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+			Image = "";
+			Hide = false;
+
 		}
+		
+		CompileTexture();
+
+		if ( !textureObject.IsValid )
+		{
+			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
+			texture ??= Texture.White;
+
+			var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
+			var coords = compiler.Result( Coords );
+		
+			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+			{
+				return new NodeResult( ResultType.Color, $"{result.Item1}.SampleLevel(" +
+					$" {result.Item2}," +
+					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+			}
+			else
+			{
+				return new NodeResult( ResultType.Color, $"{result.Item1}.Sample( {result.Item2}," +
+					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+			}
+		}
+		else
+		{
+			
+			var coords = compiler.Result( Coords );
+			var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+
+			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+			{
+				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
+					$" {sampler}," +
+					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+			}
+			else
+			{
+				return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
+					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+			}
+		}
+
 	};
 
 	/// <summary>

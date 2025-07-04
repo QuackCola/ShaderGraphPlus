@@ -56,7 +56,7 @@ public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
-	public string Code2 { get; private set; }
+	public string Code2 { get; set; }
 	public ResultType ResultType { get; private set; }
 	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
@@ -110,6 +110,10 @@ public struct NodeResult : IValid
 			{
 				return "Gradient";
 			}
+			//else if ( ResultType is ResultType.TextureObject )
+			//{
+			//	return $"float4";
+			//}
 
 			return "float";
 		}
