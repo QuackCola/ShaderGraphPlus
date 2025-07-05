@@ -29,11 +29,11 @@ public class MainWindowShader : MainWindow, IAssetEditor
 
 public class MainWindow : DockWindow
 {
-    public virtual bool IsSubgraph => false;
-    public virtual string FileType => "Shader Graph Plus";
-    public virtual string FileExtension => "sgrph";
+	public virtual bool IsSubgraph => false;
+	public virtual string FileType => "Shader Graph Plus";
+	public virtual string FileExtension => "sgrph";
 
-    private ShaderGraphPlus _graph;
+	private ShaderGraphPlus _graph;
 	private ShaderGraphPlusView _graphView;
 	private Asset _asset;
 
@@ -70,8 +70,8 @@ public class MainWindow : DockWindow
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-    //private readonly Dictionary<string, int> _intAttributes = new();
-    private readonly Dictionary<string, float> _floatAttributes = new();
+	//private readonly Dictionary<string, int> _intAttributes = new();
+	private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
 	private readonly Dictionary<string, bool> _comboAttributes = new();
 
@@ -83,14 +83,19 @@ public class MainWindow : DockWindow
 
 	private Menu _recentFilesMenu;
 	private readonly List<string> _recentFiles = new();
-    private Option _fileHistoryBack;
-    private Option _fileHistoryForward;
-    private Option _fileHistoryHome;
-   
-	private List<string> _fileHistory = new();
-    private int _fileHistoryPosition = 0;
+	private Option _fileHistoryBack;
+	private Option _fileHistoryForward;
+	private Option _fileHistoryHome;
 
-    private string _defaultDockState;
+	private List<string> _fileHistory = new();
+	private int _fileHistoryPosition = 0;
+
+	private string _defaultDockState;
+
+
+	private bool _syncLinkedTextureNodes = false;
+	private string _sourceSyncID = "";
+	private string _sourceParameterName = "";
 
 	public bool CanOpenMultipleAssets => true;
 
@@ -100,13 +105,13 @@ public class MainWindow : DockWindow
 	{
 		DeleteOnClose = true;
 
-        Title = FileType;
-        Size = new Vector2( 1700, 1050 );
+		Title = FileType;
+		Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
-        _graph.IsSubgraph = IsSubgraph;
+		_graph.IsSubgraph = IsSubgraph;
 
-        CreateToolBar();
+		CreateToolBar();
 		
 		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
 		    .Where(x => System.IO.File.Exists(x)).ToList();
@@ -115,8 +120,8 @@ public class MainWindow : DockWindow
 		Show();
 		CreateNew();
 
-        OpenProjectCreationDialog();
-    }
+		OpenProjectCreationDialog();
+	}
 
 	private void OpenProjectCreationDialog()
 	{
@@ -474,23 +479,21 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-			// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
-			// with the ParameterNode that initially registered the Texture2D.
-			if ( node is ITextureParameterNode ITextureParameterNode )
+			if ( node is ITextureParameterNode textureParameterNode )
 			{
-				if ( string.IsNullOrWhiteSpace( ITextureParameterNode.UI.Name ) )
+				if ( string.IsNullOrWhiteSpace( textureParameterNode.UI.Name ) )
 				{
-					ITextureParameterNode.AlreadyRegisterd = false;
+					textureParameterNode.AlreadyRegisterd = false;
 				}
 				else
 				{
 					string syncID = "";
-					if ( node is ISyncableTexturePreview ISyncableTexturePreview )
+					if ( node is ISyncableTexturePreview syncableTexturePreview )
 					{
-						syncID = ISyncableTexturePreview.SyncID;
+						syncID = syncableTexturePreview.SyncID;
 					}
 
-					ITextureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( ITextureParameterNode.UI.Name, syncID );
+					textureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( textureParameterNode.UI.Name, syncID );
 				}
 			}
 
@@ -498,11 +501,9 @@ public class MainWindow : DockWindow
 			if ( !result.IsValid() )
 				continue;
 
-			// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
-			// with the ParameterNode that initially registered the Texture2D.
-			if ( node is ITextureParameterNode ITextureParameterNodePost )
+			if ( node is ITextureParameterNode textureParameterNodePost )
 			{
-				ITextureParameterNodePost.AlreadyRegisterd = false;
+				textureParameterNodePost.AlreadyRegisterd = false;
 			}
 
 			var componentType = result.ComponentType;
@@ -536,7 +537,19 @@ public class MainWindow : DockWindow
 		_compiledNodes.Clear();
 		_compiledNodes.AddRange( compiler.Nodes );
 
+		if ( _syncLinkedTextureNodes )
+		{
+			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
+			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != _sourceSyncID ).Where( x => x.Value == _sourceParameterName );
 
+			foreach ( var nodeID in targetNodeIDs )
+			{
+				//SGPLog.Info( $"Targeting : `{nodeID}` from SourceID : `{SourceID}` that has a bound name of : `{nodeID.Value}`", compiler.IsPreview );
+				compiler.SyncTexturePreviewNode( nodeID.Key, _sourceSyncID );
+			}
+
+			_syncLinkedTextureNodes = false;
+		}
 
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
 		{
@@ -562,19 +575,6 @@ public class MainWindow : DockWindow
 
 		var code = compiler.Generate();
 
-		if ( SyncLinkedTextureNodes )
-		{
-			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
-			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != SourceID  ).Where( x => x.Value == SourceInputName );
-
-			foreach ( var nodeID in targetNodeIDs )
-			{
-				SGPLog.Info( $"Targeting : `{nodeID}` from SourceID : `{SourceID}` that has a bound name of : `{nodeID.Value}`", compiler.IsPreview );
-				compiler.SyncTexturePreviewNode( nodeID.Key, SourceID );
-			}
-
-			SyncLinkedTextureNodes = false;
-		}
 
 		//if ( compiler.Warnings.Any() )
 		//{
@@ -1431,21 +1431,17 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private bool SyncLinkedTextureNodes = false;
-	private string SourceID = "";
-	private string SourceInputName = "";
-
 	private void OnPropertyUpdated()
 	{
 		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
-			if ( node is ISyncableTexturePreview ISyncableTexturePreview )
+			if ( node is ISyncableTexturePreview syncableTexturePreview )
 			{
-				SyncLinkedTextureNodes = true;
-				SourceID = ISyncableTexturePreview.SyncID;
-				SourceInputName = ISyncableTexturePreview.SourceParameterName;
+				_syncLinkedTextureNodes = true;
+				_sourceSyncID = syncableTexturePreview.SyncID;
+				_sourceParameterName = syncableTexturePreview.SourceParameterName;
 			}
 
 			_graphView.UpdateNode( node );

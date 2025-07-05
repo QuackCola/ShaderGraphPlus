@@ -17,7 +17,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 	/// Texture to sample in preview
 	/// </summary>
 	[ImageAssetPath]
-	[HideIf( nameof( Hide ), true )]
+	[HideIf( nameof( IsTextureObjectConnected ), true )]
 	public string Image
 	{
 		get => _image;
@@ -36,7 +36,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 	public bool AlreadyRegisterd { get; set; } = false;
 
 	[JsonIgnore, Hide]
-	public bool Hide
+	public bool IsTextureObjectConnected
 	{
 		get;
 		set;
@@ -93,7 +93,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 	/// Settings for how this texture shows up in material editor
 	/// </summary>
 	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( Hide ), true )]
+	[HideIf( nameof( IsTextureObjectConnected ), true )]
 	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
@@ -369,23 +369,14 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 		texture ??= Texture.White;
 
-		// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
-		// with the ParameterNode that initially registered the Texture2D.
 		if ( AlreadyRegisterd && compiler.IsPreview )
 		{
 			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
 
 			if ( !string.IsNullOrWhiteSpace( existingEntry.Value.BoundNodeId ) )
 			{
-				//SGPLog.Info( $"{DisplayInfo.Fullname}::ID{Identifier} Syncing!" );
-
-				var node = compiler.Graph.FindNode( existingEntry.Value.BoundNodeId ) as TextureObjectNode;
-
-				SGPLog.Info( $"BoundNode : e: {existingEntry.Key} {node}::{node.Identifier}" );
-
 				result.Item1 = $"g_t{existingEntry.Key}";
-				//Image = node.TexturePath;
-				return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = node.TexturePath };
+				return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = Image };
 			}
 
 			//return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`:" );
@@ -447,13 +438,12 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 		if ( textureObject.IsValid )
 		{
 			Image = textureObject.Code2;
-			Hide = true;
+			IsTextureObjectConnected = true;
 		}
 		else
 		{
-			Image = "";
-			Hide = false;
-
+			//Image = "";
+			IsTextureObjectConnected = false;
 		}
 
 		CompileTexture();
