@@ -354,45 +354,49 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public (string, string) ResultTexture( string samplerinput, TextureInput input, Texture texture )
+	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture )
 	{
 		var name = CleanName( input.Name );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
 
 		var id = name;
-		int count = 0;
+		//int count = 0;
 
 		var result = ShaderResult;
 
-		// TODO : Figure out a solution on howto stop duplicate texture2Ds's from being generated. but not fuck up 
-		// the way it currently works for subgraph's.
-		//if ( CurrentComboSwitchInfo.IsValid && LastComboSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.True )
-		//	LastComboSwitchInfo = CurrentComboSwitchInfo;
-		//
-		//// Dont know if this is a good "hack" but it seems to stop 
-		//bool shouldSkipThisShit = CurrentComboSwitchInfo.IsValid && CurrentComboSwitchInfo.BoundSwitchBlock != LastComboSwitchInfo.BoundSwitchBlock && result.TextureInputs.ContainsKey( id );
-		//if ( shouldSkipThisShit )
+		// Dont append _count++ to the end until the key dosent exists.
+		// This causes problems resulting in unnecessary Texture2D declarations with Static and Dynamic Combo Switches.
+		//while ( result.TextureInputs.ContainsKey( id ) )
 		//{
-		//	SGPLog.Info( $"id : {id} was already registerd either by outside the graph or the True Block... IsPreview? `{IsPreview}`", true);
+		//	id = $"{name}_{count++}";	
 		//}
-		//else
+		//
+		//OnAttribute?.Invoke( id, texture, false );
+		//
+		//result.TextureInputs.Add( id, input );
+
+		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
 		{
-			while ( result.TextureInputs.ContainsKey( id ) )
+			if ( CurrentResultInput == "Albedo" )
 			{
-				id = $"{name}_{count++}";	
+				result.RepresentativeTexture = $"g_t{id}";
 			}
-		
-			OnAttribute?.Invoke( id, texture, false );
-		
-			result.TextureInputs.Add( id, input );
-		}
 
-		if ( CurrentResultInput == "Albedo" )
+			return new( $"g_t{id}", samplerinput );
+		}
+		else
 		{
-			result.RepresentativeTexture = $"g_t{id}";
-		}
+			OnAttribute?.Invoke( id, texture, false );
+			
+			result.TextureInputs.Add( id, input );
+			
+			if ( CurrentResultInput == "Albedo" )
+			{
+				result.RepresentativeTexture = $"g_t{id}";
+			}
 
-		return new( $"g_t{id}", samplerinput );
+			return new( $"g_t{id}", samplerinput );
+		}
 	}
 
 	/// <summary>
