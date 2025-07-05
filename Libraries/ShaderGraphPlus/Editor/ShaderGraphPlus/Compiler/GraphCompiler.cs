@@ -18,6 +18,14 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
+	public struct VoidData
+	{
+		public string TargetResult;
+		public string ResultInit;
+		public string FunctionCall;
+		public bool AlreadyDefined;
+	}
+
 	public static Dictionary<Type, string> ValueTypes => new()
 	{
 		{ typeof( Color ), "float4" },
@@ -76,6 +84,8 @@ public sealed partial class GraphCompiler
 		/// A group of Void Locals that belongs to a Custom Function Node
 		/// </summary>
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
+
+		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
 		public int VoidLocalCount { get; set; } = 0;
 	}
 
@@ -150,6 +160,23 @@ public sealed partial class GraphCompiler
 		name = new string(name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
 
 		return name;
+	}
+
+	public void RegisterVoid( string init, string name, string funcCall  )
+	{
+		if ( !ShaderResult.VoidLocals.ContainsKey( name ) )
+		{
+			var voidData = new VoidData() 
+			{
+				TargetResult = name,
+				ResultInit = init,
+				FunctionCall = funcCall,
+				AlreadyDefined = false,
+			};
+
+
+			ShaderResult.VoidLocals.Add( voidData.TargetResult, voidData );
+		}
 	}
 
 	public void RegisterInclude( string path )
@@ -1765,7 +1792,27 @@ public sealed partial class GraphCompiler
 						}
 						if ( !result.Item2.SkipLocalGeneration )
 						{
-							//SGPLog.Info( $"preview local `{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};`", IsPreview );
+							if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.Item2.Code ) )
+							{
+								var data = ShaderResult.VoidLocals[result.Item2.Code];
+
+								if ( !data.AlreadyDefined )
+								{
+									var newData = new VoidData()
+									{
+										TargetResult = data.TargetResult,
+										ResultInit = data.ResultInit,
+										FunctionCall = data.FunctionCall,
+										AlreadyDefined = true
+									};
+
+									ShaderResult.VoidLocals[result.Item2.Code] = newData;
+
+									sb.AppendLine( data.ResultInit );
+									sb.AppendLine( data.FunctionCall );
+								}
+							}
+
 							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
 							sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
 						}
@@ -1809,6 +1856,27 @@ public sealed partial class GraphCompiler
 						}
 						if ( !result.Item2.SkipLocalGeneration )
 						{
+							if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.Item2.Code ) )
+							{
+								var data = ShaderResult.VoidLocals[result.Item2.Code];
+
+								if ( !data.AlreadyDefined )
+								{
+									var newData = new VoidData()
+									{
+										TargetResult = data.TargetResult,
+										ResultInit = data.ResultInit,
+										FunctionCall = data.FunctionCall,
+										AlreadyDefined = true
+									};
+									
+									ShaderResult.VoidLocals[result.Item2.Code] = newData;
+
+									sb.AppendLine( data.ResultInit );
+									sb.AppendLine( data.FunctionCall );
+								}
+							}
+
 							sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code}; " );
 						}
 					}
