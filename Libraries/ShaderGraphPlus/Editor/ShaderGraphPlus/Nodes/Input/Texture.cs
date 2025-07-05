@@ -1,6 +1,4 @@
-﻿using Sandbox;
-
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace Editor.ShaderGraphPlus.Nodes;
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
@@ -204,14 +202,16 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 	[Hide, JsonIgnore]
 	public bool IsAttribute { get; set; }
-	
+
 	[Hide, JsonIgnore]
 	ParameterUI IParameterNode.UI { get; set; }
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	//private bool HidePreviewInput => true;
+	
+	[Input, Title( "Preview" ), Hide]
+	[HideIf( nameof( IsSubgraph ), false )]
 	public NodeInput PreviewInput { get; set; }
 
 	[Hide]
@@ -423,23 +423,7 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 
 		CompileTexture();
 
-		//if ( IsSubgraph )
-		//{
-		//	var coords = compiler.Result( Coords );
-		//	var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
-		//
-		//	if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-		//	{
-		//		return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
-		//			$" {sampler}," +
-		//			$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
-		//	}
-		//	else
-		//	{
-		//		return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
-		//			$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
-		//	}
-		//}
+		// If TextureObject input is not valid then register the texture here instead
 		if ( !textureObject.IsValid && !IsSubgraph )
 		{
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
@@ -460,27 +444,34 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
 			}
 		}
-		else if ( textureObject.IsValid || IsSubgraph )
-		{
-			
-			var coords = compiler.Result( Coords );
-			var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
 
-			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
-					$" {sampler}," +
-					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
-			}
-			else
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
-					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
-			}
+		// Make sure to let the user know that the requied input is missing if this node in in a SubGraph.
+		if ( !textureObject.IsValid && IsSubgraph )
+		{
+			return NodeResult.MissingInput( $"Tex Object" );
 		}
 
-		return new NodeResult( ResultType.Color, $"float4( 1.0f, 0.0f, 1.0f , 1.0f )", true );
+		// If TextureObject input is valid then use the registerd Texture2D from the connected Texture Object node.
+		return SamplerNodeResult( compiler, textureObject.Code );
 	};
+
+	NodeResult SamplerNodeResult( GraphCompiler compiler,string code )
+	{
+		var coords = compiler.Result( Coords );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+
+		if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
+		{
+			return new NodeResult( ResultType.Color, $"{code}.SampleLevel(" +
+				$" {sampler}," +
+				$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
+		}
+		else
+		{
+			return new NodeResult( ResultType.Color, $"{code}.Sample( {sampler}," +
+				$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
+		}
+	}
 
 	/// <summary>
 	/// Red component of result
@@ -512,10 +503,10 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 	
 		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
 		{
-			if ( !TextureObject.IsValid )
-			{
-				errors.Add( $"input `Tex Object` is missing!" );
-			}
+			//if ( !TextureObject.IsValid )
+			//{
+			//	errors.Add( $"input `Tex Object` is missing!" );
+			//}
 	
 			//if ( string.IsNullOrWhiteSpace( UI.Name ) )
 			//{
