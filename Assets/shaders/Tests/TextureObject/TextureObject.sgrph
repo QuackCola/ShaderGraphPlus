@@ -31,6 +31,11 @@
         "Identifier": "2",
         "Output": "Result",
         "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
@@ -44,7 +49,7 @@
         "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-732,204",
+      "Position": "-744,192",
       "HandleOffsets": {}
     },
     {
@@ -57,29 +62,7 @@
         "SrgbRead": true
       },
       "Identifier": "2",
-      "Position": "-444,36",
-      "HandleOffsets": {},
-      "TextureObject": {
-        "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "GetDimentionsNode",
-      "Identifier": "3",
-      "Position": "-444,312",
-      "HandleOffsets": {},
-      "TextureObject": {
-        "Identifier": "1",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "GetDimentionsNode",
-      "Identifier": "4",
-      "Position": "-444,372",
+      "Position": "-456,60",
       "HandleOffsets": {},
       "TextureObject": {
         "Identifier": "1",
@@ -92,9 +75,41 @@
       "SamplerState": {
         "Name": "TestSampler"
       },
-      "Identifier": "5",
-      "Position": "-732,108",
+      "Identifier": "3",
+      "Position": "-732,96",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureObjectNode",
+      "Image": "textures/facepunch_logo_mask.png",
+      "Name": null,
+      "UI": {
+        "Name": "TextureB",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "4",
+      "Position": "-744,432",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "shadergraphplus/textures/facepunch_logo_mask_png_shadergraphplus.generated.vtex",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "5",
+      "Position": "-444,396",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
     }
   ]
 }

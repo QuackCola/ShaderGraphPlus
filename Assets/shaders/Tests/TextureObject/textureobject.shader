@@ -78,8 +78,11 @@ PS
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	SamplerState g_sSampler1 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( TextureA, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( TextureB, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tTextureA < Channel( RGBA, Box( TextureA ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	Texture2D g_tTextureB < Channel( RGBA, Box( TextureB ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tTextureA )
 	TextureAttribute( RepresentativeTexture, g_tTextureA )
 	
@@ -99,10 +102,11 @@ PS
 		
 		
 		float4 l_0 = g_tTextureA.Sample( g_sSampler0,i.vTextureCoords.xy ); 
+		float4 l_1 = g_tTextureB.Sample( g_sSampler1,i.vTextureCoords.xy ); 
 		
 		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
-		m.Roughness = 1;
+		m.Roughness = l_1.x;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
 		

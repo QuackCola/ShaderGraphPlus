@@ -21,6 +21,11 @@ public interface ITextureParameterNode
 {
 	string Image { get; set; }
 	TextureInput UI { get; set; }
+
+	/// <summary>
+	/// Only used by Preview.
+	/// </summary>
+	bool AlreadyRegisterd { get; set; }
 }
 
 public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode

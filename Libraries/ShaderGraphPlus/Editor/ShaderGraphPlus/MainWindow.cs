@@ -472,16 +472,36 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
+			// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
+			// with the ParameterNode that initially registered the Texture2D.
+			if ( node is ITextureParameterNode ITextureParameterNode )
+			{
+				if ( string.IsNullOrWhiteSpace( ITextureParameterNode.UI.Name ) )
+				{
+					ITextureParameterNode.AlreadyRegisterd = false;
+				}
+				else
+				{
+					ITextureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( ITextureParameterNode.UI.Name );
+				}
+			}
+
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
+
+			// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
+			// with the ParameterNode that initially registered the Texture2D.
+			if ( node is ITextureParameterNode ITextureParameterNodePost )
+			{
+				ITextureParameterNodePost.AlreadyRegisterd = false;
+			}
 
 			var componentType = result.ComponentType;
 			if ( componentType == null )
 				continue;
 
 			// While we're here, let's check the output plugs and update their handle configs to the result type
-
 			var nodeUI = _graphView.FindNode( node );
 			if ( !nodeUI.IsValid() )
 				continue;

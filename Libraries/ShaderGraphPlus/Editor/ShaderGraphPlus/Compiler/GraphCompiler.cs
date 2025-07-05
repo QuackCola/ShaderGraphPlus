@@ -377,15 +377,22 @@ public sealed partial class GraphCompiler
 	}
 
 	ComboSwitchInfo LastComboSwitchInfo = default;
+		}
+		else
+		{
+			return  true;
+		}
+	
+	}
 
-	/// <summary>
-	/// Register a texture and return the name of it
-	/// </summary>
-	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture )
+	public KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
+	{
+		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
+	}
+
 	{
 		var name = CleanName( input.Name );
-		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-
+		//name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name; // TODO : Uncomment perhaps?
 		var id = name;
 		//int count = 0;
 
@@ -414,7 +421,41 @@ public sealed partial class GraphCompiler
 		else
 		{
 			OnAttribute?.Invoke( id, texture, false );
+
+
+			return new( $"g_t{id}", samplerinput );
+		}
+	}
+
+	/// <summary>
+	/// Register a texture and return the name of it
+	/// </summary>
+	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture, out (string, bool) alreadyExists )
+	{
+		var name = CleanName( input.Name );
+		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		alreadyExists = new( "", true );
+		var id = name;
+		//int count = 0;
+
+		var result = ShaderResult;
+
+		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
+		{
+			//SGPLog.Info( $"Texture2D `{id}` has already been registerd...", IsPreview );
 			
+			if ( CurrentResultInput == "Albedo" )
+			{
+				result.RepresentativeTexture = $"g_t{id}";
+			}
+
+
+			return new( $"g_t{id}", samplerinput );
+		}
+		else
+		{
+
+
 			result.TextureInputs.Add( id, input );
 			
 			if ( CurrentResultInput == "Albedo" )
