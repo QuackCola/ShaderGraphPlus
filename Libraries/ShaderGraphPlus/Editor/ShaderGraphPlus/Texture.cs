@@ -171,6 +171,10 @@ public struct TextureInput
 			return default;
 		}
 	}
+
+	[JsonIgnore, Hide]
+	public StaticSwitchBlock switchBlock { get; set; }
+
 	[JsonIgnore, Hide]
 	public string BoundNode { get; set; }
 	[JsonIgnore, Hide]
