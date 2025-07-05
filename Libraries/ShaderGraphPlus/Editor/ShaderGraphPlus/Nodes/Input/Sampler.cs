@@ -1,6 +1,6 @@
 ﻿using Editor.ShaderGraphPlus;
 
-[Title( "Sampler" ), Category( "Variables" )]
+[Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
 [Description( "How a texture is filtered and wrapped when sampled." )]
 public sealed class SamplerNode : ShaderNodePlus
 {
