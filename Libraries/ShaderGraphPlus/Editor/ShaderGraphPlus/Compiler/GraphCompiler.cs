@@ -390,7 +390,7 @@ public sealed partial class GraphCompiler
 	
 	}
 
-	public KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
+	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
 	{
 		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
 	}
