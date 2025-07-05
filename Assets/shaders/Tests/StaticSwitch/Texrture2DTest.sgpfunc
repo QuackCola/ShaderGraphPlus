@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "aa14d4f0-2751-4ba1-b26c-a776252a8902",
+          "Id": "e9535922-cfaa-4c7d-b00c-b130f341fbc9",
           "Name": "Result",
           "Type": "Color"
         }
@@ -38,7 +38,7 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "materials/dev/white_color.tga",
+      "Image": null,
       "DefaultSampler": {},
       "UI": {
         "Name": "TextureA",
@@ -47,7 +47,25 @@
         "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-312,24",
+      "Position": "-300,12",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureObjectNode",
+      "Image": "materials/dev/white_color.tga",
+      "Name": "Texture A",
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "2",
+      "Position": "-564,72",
       "HandleOffsets": {}
     }
   ]
