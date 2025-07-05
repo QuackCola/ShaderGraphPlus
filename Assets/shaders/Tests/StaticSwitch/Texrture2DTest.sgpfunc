@@ -14,7 +14,7 @@
   "PreviewSettings": {
     "EnableShadows": true,
     "ShowSkybox": true,
-    "BackgroundColor": "0,0,0,1",
+    "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "4a6e6c2a-6dd8-4fad-b951-0bd5c5c633b9",
+          "Id": "3399368f-fae1-4018-8f98-2d6a63849853",
           "Name": "Result",
           "Type": "Color"
         }
@@ -49,6 +49,11 @@
       "Identifier": "1",
       "Position": "-300,12",
       "HandleOffsets": {},
+      "Sampler": {
+        "Identifier": "3",
+        "Output": "Sampler",
+        "Subgraph": null
+      },
       "TextureObject": {
         "Identifier": "2",
         "Output": "Result",
@@ -66,6 +71,14 @@
       },
       "Identifier": "2",
       "Position": "-564,72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {},
+      "Name": "Sampler",
+      "Identifier": "3",
+      "Position": "-564,0",
       "HandleOffsets": {}
     }
   ]

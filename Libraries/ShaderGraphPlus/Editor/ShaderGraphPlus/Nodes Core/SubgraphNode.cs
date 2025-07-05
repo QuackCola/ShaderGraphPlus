@@ -84,6 +84,9 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 			if ( parameterNode.GetPortType() == typeof( TextureObject ) )
 				type = typeof( TextureObject );
 
+			if ( parameterNode.GetPortType() == typeof( Sampler ) )
+				type = typeof( Sampler );
+
 			if ( string.IsNullOrEmpty( name ) )
 			{
 				if ( !defaults.ContainsKey( type ) )
