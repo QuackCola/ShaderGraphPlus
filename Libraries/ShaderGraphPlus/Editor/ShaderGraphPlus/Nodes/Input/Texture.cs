@@ -592,7 +592,7 @@ public sealed class TextureCube : ShaderNodePlus
 		var input = UI;
 		input.Type = TextureType.TexCube;
 
-		var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, Sandbox.Texture.Load( Texture ), out (string, bool) alreadyExists );
+		var result = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, Sandbox.Texture.Load( Texture ) );
 		var coords = compiler.Result( Coords );
 
 		return new NodeResult( ResultType.Color, $"TexCubeS( {result.Item1}," +
@@ -698,7 +698,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 		texture ??= Texture.White;
 
-		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture, out (string, bool) alreadyExists );
+		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
 		var coords = compiler.Result( Coords );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
@@ -823,7 +823,7 @@ public sealed class NormapMapTriplanar : TextureSamplerBase
 		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 		texture ??= Texture.White;
 
-		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture, out (string, bool) alreadyExists );
+		var (tex, sampler) = compiler.ResultTexture( compiler.ResultSamplerOrDefault( Sampler, DefaultSampler ), input, texture );
 		var coords = compiler.Result( Coords );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );

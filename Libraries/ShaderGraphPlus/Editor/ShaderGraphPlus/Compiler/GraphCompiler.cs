@@ -442,11 +442,11 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture, out (string, bool) alreadyExists )
+	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture )
 	{
 		var name = CleanName( input.Name );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-		alreadyExists = new( "", true );
+
 		var id = name;
 		//int count = 0;
 
@@ -458,8 +458,6 @@ public sealed partial class GraphCompiler
 			{
 				result.RepresentativeTexture = $"g_t{id}";
 			}
-
-			alreadyExists.Item1 = SubgraphNode != null ? SubgraphNode.Identifier : "";
 
 			return new( $"g_t{id}", samplerinput );
 		}
