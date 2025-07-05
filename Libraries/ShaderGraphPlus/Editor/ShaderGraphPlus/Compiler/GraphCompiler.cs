@@ -136,6 +136,18 @@ public sealed partial class GraphCompiler
 		Subgraphs = new();
 		AddSubgraphs( Graph );
 	}
+	internal void SyncTexturePreviewNode( string targetID, string sourceId )
+	{
+		var targetNode = Graph.Nodes.Where( x => x.Identifier == targetID ).FirstOrDefault() as TextureObjectNode;
+		var sourceNode = Graph.Nodes.Where( x => x.Identifier == sourceId ).OfType<TextureObjectNode>().FirstOrDefault();
+
+		targetNode.Image = sourceNode.Image;
+	}
+
+	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
+	{
+		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
+	}
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
 	{
@@ -395,19 +407,6 @@ public sealed partial class GraphCompiler
 		{
 			return  true;
 		}
-	}
-
-	internal void SyncTexturePreviewNode( string targetID, string sourceId )
-	{
-		var targetNode = Graph.Nodes.Where( x => x.Identifier == targetID ).FirstOrDefault() as TextureObjectNode;
-		var sourceNode = Graph.Nodes.Where( x => x.Identifier == sourceId ).OfType<TextureObjectNode>().FirstOrDefault();
-
-		targetNode.Image = sourceNode.Image;
-	}
-
-	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
-	{
-		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
 	}
 
 	public (string TextureGlobal, string samplerGlobal) ResultTextureNew( string samplerinput, TextureInput input, Texture texture )
