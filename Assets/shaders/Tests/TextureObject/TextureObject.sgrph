@@ -25,7 +25,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "168,12",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -36,6 +36,7 @@
     {
       "_class": "TextureObjectNode",
       "Image": "textures/sbox_logo.png",
+      "Name": null,
       "UI": {
         "Name": "TextureA",
         "Default": "1,1,1,1",
@@ -43,7 +44,7 @@
         "SrgbRead": true
       },
       "Identifier": "1",
-      "Position": "-648,96",
+      "Position": "-732,204",
       "HandleOffsets": {}
     },
     {
@@ -63,6 +64,37 @@
         "Output": "Result",
         "Subgraph": null
       }
+    },
+    {
+      "_class": "GetDimentionsNode",
+      "Identifier": "3",
+      "Position": "-444,312",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "GetDimentionsNode",
+      "Identifier": "4",
+      "Position": "-444,372",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "TestSampler"
+      },
+      "Identifier": "5",
+      "Position": "-732,108",
+      "HandleOffsets": {}
     }
   ]
 }
