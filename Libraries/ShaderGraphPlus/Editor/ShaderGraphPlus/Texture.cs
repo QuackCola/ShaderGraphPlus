@@ -171,6 +171,9 @@ public struct TextureInput
 			return default;
 		}
 	}
+	[JsonIgnore, Hide]
+	public string BoundNode { get; set; }
+
 }
 
 public struct TextureObject
