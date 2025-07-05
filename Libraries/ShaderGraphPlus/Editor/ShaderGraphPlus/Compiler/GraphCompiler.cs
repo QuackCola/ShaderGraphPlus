@@ -143,6 +143,7 @@ public sealed partial class GraphCompiler
 		var sourceNode = Graph.Nodes.Where( x => x.Identifier == sourceId ).OfType<TextureObjectNode>().FirstOrDefault();
 
 		targetNode.Image = sourceNode.Image;
+		targetNode.Update();
 	}
 
 	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
