@@ -422,13 +422,11 @@ public sealed partial class GraphCompiler
 				result.RepresentativeTexture = $"g_t{id}";
 			}
 
-
 			return new( $"g_t{id}", samplerinput );
 		}
 		else
 		{
 			OnAttribute?.Invoke( id, texture, false );
-
 
 			result.TextureInputs.Add( id, input );
 
@@ -456,8 +454,6 @@ public sealed partial class GraphCompiler
 
 		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
 		{
-			//SGPLog.Info( $"Texture2D `{id}` has already been registerd...", IsPreview );
-			
 			if ( CurrentResultInput == "Albedo" )
 			{
 				result.RepresentativeTexture = $"g_t{id}";
@@ -470,7 +466,6 @@ public sealed partial class GraphCompiler
 		else
 		{
 			OnAttribute?.Invoke( id, texture, false );
-
 
 			result.TextureInputs.Add( id, input );
 			
