@@ -177,6 +177,7 @@ public struct TextureInput
 
 	[JsonIgnore, Hide]
 	public string BoundNode { get; set; }
+
 	[JsonIgnore, Hide]
 	public string BoundNodeId { get; set; }
 
