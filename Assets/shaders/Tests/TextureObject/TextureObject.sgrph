@@ -45,7 +45,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/sbox_logo.png",
+      "Image": "textures/facepunch_logo_mask.png",
       "Name": null,
       "UI": {
         "Name": "TextureA",
@@ -59,7 +59,7 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "shadergraphplus/textures/sbox_logo_png_shadergraphplus.generated.vtex",
+      "Image": "shadergraphplus/textures/facepunch_logo_mask_png_shadergraphplus.generated.vtex",
       "DefaultSampler": {},
       "UI": {
         "Default": "1,1,1,1",
@@ -86,7 +86,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/sbox_logo.png",
+      "Image": "textures/facepunch_logo_mask.png",
       "Name": null,
       "UI": {
         "Name": "TextureA",
@@ -100,7 +100,7 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "shadergraphplus/textures/sbox_logo_png_shadergraphplus.generated.vtex",
+      "Image": "shadergraphplus/textures/facepunch_logo_mask_png_shadergraphplus.generated.vtex",
       "DefaultSampler": {},
       "UI": {
         "Default": "1,1,1,1",
@@ -118,7 +118,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/brick_height.png",
+      "Image": "textures/sbox_logo.png",
       "Name": null,
       "UI": {
         "Name": "TextureC",
@@ -132,7 +132,7 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "shadergraphplus/textures/brick_height_png_shadergraphplus.generated.vtex",
+      "Image": "shadergraphplus/textures/sbox_logo_png_shadergraphplus.generated.vtex",
       "DefaultSampler": {},
       "UI": {
         "Default": "1,1,1,1",
@@ -168,7 +168,7 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "shadergraphplus/textures/brick_height_png_shadergraphplus.generated.vtex",
+      "Image": "shadergraphplus/textures/sbox_logo_png_shadergraphplus.generated.vtex",
       "DefaultSampler": {},
       "UI": {
         "Default": "1,1,1,1",
@@ -186,7 +186,7 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/brick_height.png",
+      "Image": "textures/sbox_logo.png",
       "Name": null,
       "UI": {
         "Name": "TextureC",

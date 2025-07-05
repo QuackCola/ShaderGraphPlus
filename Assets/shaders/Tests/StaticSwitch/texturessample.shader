@@ -88,14 +88,14 @@ PS
 	StaticCombo( S_BUMPOFFSET, F_BUMPOFFSET, Sys( ALL ) );
 	
 	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	CreateInputTexture2D( Height, Srgb, 8, "None", "_height", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	CreateInputTexture2D( Normal, Srgb, 8, "None", "_normal", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	Texture2D g_tHeight < Channel( RGBA, Box( Height ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tHeight )
-	TextureAttribute( RepresentativeTexture, g_tHeight )
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tColor )
+	TextureAttribute( RepresentativeTexture, g_tColor )
 	float g_flDepthScale < UiGroup( ",0/,0/0" ); Default1( 0.125 ); Range1( 0, 1 ); >;
 	float g_flReferencePlane < UiGroup( ",0/,0/0" ); Default1( 0.42 ); Range1( 0, 1 ); >;
 	float g_flRoughness < UiGroup( "Roughness,0/,0/3" ); Default1( 2.5 ); Range1( 0, 8 ); >;
