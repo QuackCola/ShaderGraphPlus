@@ -136,9 +136,10 @@ public sealed partial class GraphCompiler
 		Subgraphs = new();
 		AddSubgraphs( Graph );
 	}
+
 	internal void SyncTexturePreviewNode( string targetID, string sourceId )
 	{
-		var targetNode = Graph.Nodes.Where( x => x.Identifier == targetID ).FirstOrDefault() as TextureObjectNode;
+		var targetNode = Graph.Nodes.Where( x => x.Identifier == targetID ).OfType<TextureObjectNode>().FirstOrDefault();
 		var sourceNode = Graph.Nodes.Where( x => x.Identifier == sourceId ).OfType<TextureObjectNode>().FirstOrDefault();
 
 		targetNode.Image = sourceNode.Image;
