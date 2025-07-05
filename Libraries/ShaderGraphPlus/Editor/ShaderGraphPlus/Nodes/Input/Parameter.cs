@@ -17,9 +17,9 @@ public abstract class MatrixParameterNode<T> : ShaderNodePlus
 
     public T Value { get; set; }
 
-    /// <summary>
-    /// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
-    /// </summary>
+    // <summary>
+    // If true, this parameter can be modified with <see cref="RenderAttributes"/>.
+    // </summary>
     //[Hide]
     //public bool IsAttribute { get; set; } = false;
 
@@ -79,9 +79,9 @@ public sealed class Bool : ParameterNode<bool>
 	};
 }
 
-/// <summary>
-/// Single int32 value stored as a float internally.
-/// </summary>
+// <summary>
+// Single int32 value stored as a float internally.
+// </summary>
 //[Title("Int"), Category("Constants"), Icon("looks_one")]
 //public sealed class Int : ParameterNode<int>
 //{
