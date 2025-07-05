@@ -100,7 +100,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Currently active SwitchInfo data.
 	/// </summary>
-	private ComboSwitchInfo CurrentComboSwitchInfo { get; set; } = default;
+	public ComboSwitchInfo CurrentComboSwitchInfo { get; set; } = default;
 
 	private bool IsInComboSwitch => CurrentComboSwitchInfo.IsValid;
 
@@ -111,7 +111,7 @@ public sealed partial class GraphCompiler
 
 		public List<(NodeResult, NodeResult)> SwitchBlockResults = new();
 		public Dictionary<NodeInput, NodeResult> SwitchBlockInputResults = new();
-
+		public Dictionary<string, TextureInput> SwitchTextureInputs = new();
 		public Dictionary<string, string> StaticComboSwitches { get; private set; } = new();
 	}
 
