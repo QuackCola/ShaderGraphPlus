@@ -79,10 +79,10 @@ PS
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	SamplerState g_sSampler1 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( TextureA, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	CreateInputTexture2D( TextureB, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tTextureA < Channel( RGBA, Box( TextureA ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
-	Texture2D g_tTextureB < Channel( RGBA, Box( TextureB ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	CreateInputTexture2D( TextureA, Linear, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( TextureB, Linear, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tTextureA < Channel( RGBA, Box( TextureA ), Linear ); OutputFormat( DXT5 ); SrgbRead( False ); >;
+	Texture2D g_tTextureB < Channel( RGBA, Box( TextureB ), Linear ); OutputFormat( DXT5 ); SrgbRead( False ); >;
 	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tTextureA )
 	TextureAttribute( RepresentativeTexture, g_tTextureA )
 	

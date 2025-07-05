@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/tests/textureobject/textureobject.sgrph",
-  "Model": null,
+  "Model": "models/dev/plane.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
@@ -46,7 +46,7 @@
         "Name": "TextureA",
         "Default": "1,1,1,1",
         "ShowExtension": true,
-        "SrgbRead": true
+        "ColorSpace": "Linear"
       },
       "Identifier": "1",
       "Position": "-744,192",
@@ -87,7 +87,7 @@
         "Name": "TextureB",
         "Default": "1,1,1,1",
         "ShowExtension": true,
-        "SrgbRead": true
+        "ColorSpace": "Linear"
       },
       "Identifier": "4",
       "Position": "-744,432",
