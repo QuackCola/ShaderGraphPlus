@@ -56,3 +56,4 @@ thumb_wide.psd
 *.py
 /Assets/shaders/Tests/StaticSwitch/Bug0
 /Assets/shaders/Tests/TextureObject
+/Assets/shaders/Tests/Texture2D
