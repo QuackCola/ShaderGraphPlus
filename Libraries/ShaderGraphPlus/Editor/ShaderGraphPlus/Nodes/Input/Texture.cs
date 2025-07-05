@@ -337,6 +337,8 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		var input = UI;
 		input.Type = TextureType.Tex2D;
 		input.BoundNode = $"{Title}, ID:{Identifier}";
+		input.BoundNodeId = $"{Identifier}";;
+		(string,string) result = new("","");
 
 		CompileTexture();
 
@@ -348,10 +350,24 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		if ( AlreadyRegisterd && compiler.IsPreview )
 		{
 			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+
+			if ( !string.IsNullOrWhiteSpace( existingEntry.Value.BoundNodeId ) )
+			{
+				
+			
+				var node = compiler.Graph.FindNode( existingEntry.Value.BoundNodeId ) as TextureObjectNode;
+
+				SGPLog.Info( $"BoundNode : e: {existingEntry.Key} {node}::{node.Identifier}" );
+
+				result.Item1 = $"g_t{existingEntry.Key}";
+				Image = node.TexturePath;
+				return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = node.TexturePath };
+			}
+
+			//return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`:" );
 		}
 		
-		var result = compiler.ResultTextureNew( null, input, texture );
+		result = compiler.ResultTextureNew( null, input, texture );
 
 		return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = TexturePath };
 	};
@@ -398,6 +414,7 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 		var input = UI;
 		input.Type = TextureType.Tex2D;
 		input.BoundNode = $"{Title}, ID:{Identifier}";
+		input.BoundNodeId = $"{Identifier}";
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
@@ -425,11 +442,11 @@ public sealed class TextureSampler : TextureSamplerBase, IErroringNode
 			
 			// Dont know if i will keep this. May just do it how unreal does it by just syncing the duplicate
 			// with the ParameterNode that initially registered the Texture2D.
-			if ( AlreadyRegisterd && compiler.IsPreview )
-			{
-				var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-				return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
-			}
+			//if ( AlreadyRegisterd && compiler.IsPreview )
+			//{
+			//	var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
+			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+			//}
 
 			var result = compiler.ResultTextureNew( sampler, input, texture );
 
