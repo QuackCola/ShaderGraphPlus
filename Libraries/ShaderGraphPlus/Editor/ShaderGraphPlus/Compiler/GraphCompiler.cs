@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Sandbox;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -38,7 +39,7 @@ public sealed partial class GraphCompiler
 	};
 
 	public bool Debug { get; private set; } = false;
-	
+
 	/// <summary>
 	/// Current graph we're compiling
 	/// </summary>
@@ -78,10 +79,11 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public HashSet<string> Functions { get; private set; } = new();
-		public Dictionary<string,string> Globals { get; private set; } = new();
+		public Dictionary<string, string> Globals { get; private set; } = new();
 		public string RepresentativeTexture { get; set; }
-		
-		/// A group of Void Locals that belongs to a Custom Function Node
+
+		/// <summary>
+		/// A group of Void Locals that belongs to a Custom Function Node.
 		/// </summary>
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
 
@@ -118,10 +120,10 @@ public sealed partial class GraphCompiler
 	/// Error list, doesn't give you much information currently
 	/// </summary>
 	public IEnumerable<Error> Errors => NodeErrors
-		.Select(x => new Error { Node = x.Key, Message = x.Value.FirstOrDefault() });
+		.Select( x => new Error { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public IEnumerable<Warning> Warnings => NodeWarnings
-	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
+	.Select( x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
 	{
@@ -151,22 +153,22 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	private static string CleanName( string name )
+	public static string CleanName( string name )
 	{
 		if ( string.IsNullOrWhiteSpace( name ) )
 			return "";
 
 		name = name.Trim().Replace( " ", string.Empty );
-		name = new string(name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
+		name = new string( name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
 
 		return name;
 	}
 
-	public void RegisterVoid( string init, string name, string funcCall  )
+	public void RegisterVoid( string init, string name, string funcCall )
 	{
 		if ( !ShaderResult.VoidLocals.ContainsKey( name ) )
 		{
-			var voidData = new VoidData() 
+			var voidData = new VoidData()
 			{
 				TargetResult = name,
 				ResultInit = init,
@@ -203,11 +205,11 @@ public sealed partial class GraphCompiler
 	{
 		if ( !GraphHLSLFunctions.HasFunction( name ) )
 			return null;
-		
+
 		var result = ShaderResult;
 		if ( !result.Functions.Contains( name ) )
 			result.Functions.Add( name );
-		
+
 		return $"{name}( {string.Join( ", ", args )} )";
 	}
 
@@ -226,7 +228,7 @@ public sealed partial class GraphCompiler
 	internal string ResultFunctionCustomExpression( BaseNodePlus node, string code, string functionName, string args = "", bool includeFile = false )
 	{
 		var result = ShaderResult;
-		
+
 		if ( !includeFile )
 		{
 			if ( !GraphHLSLFunctions.HasFunction( functionName ) )
@@ -242,7 +244,7 @@ public sealed partial class GraphCompiler
 		{
 			RegisterInclude( code );
 		}
-		
+
 		return $"{functionName}( {args} )";
 	}
 
@@ -250,23 +252,23 @@ public sealed partial class GraphCompiler
 	{
 		var result = ShaderResult;
 		var sb = new StringBuilder();
-		
-		outputDataList = new List < CustomCodeOutputData >();
-		functionOutputs = new List < string >();
-		
+
+		outputDataList = new List<CustomCodeOutputData>();
+		functionOutputs = new List<string>();
+
 		//SGPLog.Info( $" RV : AlreadyEvaluated? = {!result.VoidLocalGroupsTest.Any(x => x.Key == node.Identifier)}");
-		
+
 		if ( !result.VoidLocalGroups.Any( x => x.Key == node.Identifier ) )
 		{
 			foreach ( var value in values )
 			{
 				//SGPLog.Info($" RV : Starting to process `{value.Key}`:`{value.Value}`");
-				
+
 				var varName = $"vl_{result.VoidLocalCount++}";
 				var dataType = value.Value;
-				
+
 				//SGPLog.Info( $" RV : Created compiler name `{varName}` for freindly name `{value.Key}`" );
-				
+
 				CustomCodeOutputData outputData = new CustomCodeOutputData();
 				outputData.CompilerName = varName;
 				outputData.FriendlyName = value.Key;
@@ -274,18 +276,18 @@ public sealed partial class GraphCompiler
 				outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
 				outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
 				outputData.NodeId = node.Identifier;
-				
-				
+
+
 				//SGPLog.Info( $" RV : Created outputData for `{value.Key}`" );
-				
+
 				outputDataList.Add( outputData );
 				functionOutputs.Add( outputData.CompilerName );
 			}
-			
+
 			if ( !result.VoidLocalGroups.ContainsKey( node.Identifier ) )
 			{
 				//SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
-				result.VoidLocalGroups.Add(node.Identifier, outputDataList);
+				result.VoidLocalGroups.Add( node.Identifier, outputDataList );
 			}
 			else
 			{
@@ -304,9 +306,9 @@ public sealed partial class GraphCompiler
 	public Gradient GetGradient( string gradient_name )
 	{
 		var result = ShaderResult;
-		
+
 		Gradient gradient = new();
-		
+
 		foreach ( var g in result.Gradients )
 		{
 			if ( g.Key == gradient_name )
@@ -314,7 +316,7 @@ public sealed partial class GraphCompiler
 				gradient = g.Value;
 			}
 		}
-		
+
 		return gradient;
 	}
 
@@ -331,7 +333,7 @@ public sealed partial class GraphCompiler
 
 		var id = name;
 
-		if (!result.Gradients.ContainsKey( id ) )
+		if ( !result.Gradients.ContainsKey( id ) )
 		{
 			result.Gradients.Add( id, gradient );
 		}
@@ -352,7 +354,7 @@ public sealed partial class GraphCompiler
 
 		var id = name;
 
-		if (!result.SamplerStates.ContainsKey( id ) )
+		if ( !result.SamplerStates.ContainsKey( id ) )
 		{
 			result.SamplerStates.Add( id, sampler ); // Add the Name of the sampler and its associated options.
 
@@ -376,7 +378,11 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	ComboSwitchInfo LastComboSwitchInfo = default;
+	internal bool CheckTextureInputRegistration( string name )
+	{
+		if ( !ShaderResult.TextureInputs.ContainsKey( name ) )
+		{
+			return false;
 		}
 		else
 		{
@@ -390,6 +396,7 @@ public sealed partial class GraphCompiler
 		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
 	}
 
+	public (string TextureGlobal, string samplerGlobal) ResultTextureNew( string samplerinput, TextureInput input, Texture texture )
 	{
 		var name = CleanName( input.Name );
 		//name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name; // TODO : Uncomment perhaps?
@@ -408,7 +415,6 @@ public sealed partial class GraphCompiler
 		//OnAttribute?.Invoke( id, texture, false );
 		//
 		//result.TextureInputs.Add( id, input );
-
 		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
 		{
 			if ( CurrentResultInput == "Albedo" )
@@ -416,12 +422,20 @@ public sealed partial class GraphCompiler
 				result.RepresentativeTexture = $"g_t{id}";
 			}
 
+
 			return new( $"g_t{id}", samplerinput );
 		}
 		else
 		{
 			OnAttribute?.Invoke( id, texture, false );
 
+
+			result.TextureInputs.Add( id, input );
+
+			if ( CurrentResultInput == "Albedo" )
+			{
+				result.RepresentativeTexture = $"g_t{id}";
+			}
 
 			return new( $"g_t{id}", samplerinput );
 		}
@@ -449,11 +463,13 @@ public sealed partial class GraphCompiler
 				result.RepresentativeTexture = $"g_t{id}";
 			}
 
+			alreadyExists.Item1 = SubgraphNode != null ? SubgraphNode.Identifier : "";
 
 			return new( $"g_t{id}", samplerinput );
 		}
 		else
 		{
+			OnAttribute?.Invoke( id, texture, false );
 
 
 			result.TextureInputs.Add( id, input );
