@@ -58,6 +58,8 @@ public sealed partial class GraphCompiler
 	public HashSet<string> PixelIncludes { get; private set; } = new();
 	public HashSet<string> VertexIncludes { get; private set; } = new();
 
+	public Dictionary<string,string> SyncIDs = new();
+
 	public Asset _Asset { get; private set; }
 
 	/// <summary>
@@ -377,8 +379,14 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	internal bool CheckTextureInputRegistration( string name )
+	internal bool CheckTextureInputRegistration( string name, string syncID = "" )
 	{
+		//SGPLog.Info( $"Checking Node with SyncID : `{syncID}`", IsPreview );
+		if ( !SyncIDs.ContainsKey( syncID ) )
+		{
+			SyncIDs.Add(  syncID, name );
+		}
+
 		if ( !ShaderResult.TextureInputs.ContainsKey( name ) )
 		{
 			return false;
@@ -387,7 +395,14 @@ public sealed partial class GraphCompiler
 		{
 			return  true;
 		}
-	
+	}
+
+	internal void SyncTexturePreviewNode( string targetID, string sourceId )
+	{
+		var targetNode = Graph.Nodes.Where( x => x.Identifier == targetID ).FirstOrDefault() as TextureObjectNode;
+		var sourceNode = Graph.Nodes.Where( x => x.Identifier == sourceId ).OfType<TextureObjectNode>().FirstOrDefault();
+
+		targetNode.Image = sourceNode.Image;
 	}
 
 	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )

@@ -1,5 +1,13 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
+public interface ISyncableTexturePreview
+{
+	string SyncID { get; }
+	string SourceParameterName { get; }
+	void Sync( GraphCompiler compiler );
+
+}
+
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
 	[Hide]
@@ -152,7 +160,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 /// 
 /// </summary>
 [Title( "Texture Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IErroringNode, IParameterNode
+public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTexturePreview, IErroringNode
 {
 	/// <summary>
 	/// Texture to sample in preview
@@ -302,6 +310,7 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 		return errors;
 	}
 
+#region Region0
 	public Type GetPortType()
 	{
 		return typeof( TextureObject );
@@ -325,6 +334,21 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 	public Vector4 GetRangeMax()
 	{
 		return Vector4.One;
+	}
+#endregion
+
+	[Hide,JsonIgnore]
+	public string SyncID => Identifier;
+	[Hide, JsonIgnore]
+	public string SourceParameterName => UI.Name;
+
+	public void Sync( GraphCompiler compiler )
+	{
+		SGPLog.Info( $"{DisplayInfo.Fullname}::ID{Identifier} Syncing!" );
+
+		var currentID = SyncID;
+
+
 	}
 
 	/// <summary>
@@ -353,14 +377,14 @@ public sealed class TextureObjectNode : ShaderNodePlus, ITextureParameterNode, I
 
 			if ( !string.IsNullOrWhiteSpace( existingEntry.Value.BoundNodeId ) )
 			{
-				
-			
+				//SGPLog.Info( $"{DisplayInfo.Fullname}::ID{Identifier} Syncing!" );
+
 				var node = compiler.Graph.FindNode( existingEntry.Value.BoundNodeId ) as TextureObjectNode;
 
 				SGPLog.Info( $"BoundNode : e: {existingEntry.Key} {node}::{node.Identifier}" );
 
 				result.Item1 = $"g_t{existingEntry.Key}";
-				Image = node.TexturePath;
+				//Image = node.TexturePath;
 				return new NodeResult( ResultType.TextureObject, result.Item1, constant: true, isComponentLess: true ) { Code2 = node.TexturePath };
 			}
 

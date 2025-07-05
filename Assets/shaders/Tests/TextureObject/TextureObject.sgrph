@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/tests/textureobject/textureobject.sgrph",
-  "Model": "models/dev/plane.vmdl",
+  "Model": null,
   "Title": null,
   "Description": null,
   "Category": null,
@@ -34,6 +34,11 @@
       },
       "Roughness": {
         "Identifier": "5",
+        "Output": "R",
+        "Subgraph": null
+      },
+      "Metalness": {
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null
       }
@@ -44,12 +49,12 @@
       "Name": null,
       "UI": {
         "Name": "TextureA",
-        "Default": "1,1,1,1",
+        "Default": "0.75349,0.25934,0.25934,1",
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
       "Identifier": "1",
-      "Position": "-744,192",
+      "Position": "-732,192",
       "HandleOffsets": {}
     },
     {
@@ -81,21 +86,21 @@
     },
     {
       "_class": "TextureObjectNode",
-      "Image": "textures/facepunch_logo_mask.png",
+      "Image": "textures/sbox_logo.png",
       "Name": null,
       "UI": {
-        "Name": "TextureB",
-        "Default": "1,1,1,1",
+        "Name": "TextureA",
+        "Default": "1,0,0,1",
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
       "Identifier": "4",
-      "Position": "-744,432",
+      "Position": "-744,444",
       "HandleOffsets": {}
     },
     {
       "_class": "TextureSampler",
-      "Image": "shadergraphplus/textures/facepunch_logo_mask_png_shadergraphplus.generated.vtex",
+      "Image": "shadergraphplus/textures/sbox_logo_png_shadergraphplus.generated.vtex",
       "DefaultSampler": {},
       "UI": {
         "Default": "1,1,1,1",
@@ -110,6 +115,88 @@
         "Output": "Result",
         "Subgraph": null
       }
+    },
+    {
+      "_class": "TextureObjectNode",
+      "Image": "textures/brick_height.png",
+      "Name": null,
+      "UI": {
+        "Name": "TextureC",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "6",
+      "Position": "-708,708",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "shadergraphplus/textures/brick_height_png_shadergraphplus.generated.vtex",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "7",
+      "Position": "-492,708",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "-24,732",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "7",
+        "Output": "R",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "9",
+        "Output": "R",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "Image": "shadergraphplus/textures/brick_height_png_shadergraphplus.generated.vtex",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "9",
+      "Position": "-504,960",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureObjectNode",
+      "Image": "textures/brick_height.png",
+      "Name": null,
+      "UI": {
+        "Name": "TextureC",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "10",
+      "Position": "-720,960",
+      "HandleOffsets": {}
     }
   ]
 }

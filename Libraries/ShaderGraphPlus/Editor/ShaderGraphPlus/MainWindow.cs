@@ -459,6 +459,8 @@ public class MainWindow : DockWindow
 			compiler.OnAttribute = OnAttribute;
 		}
 
+
+
 		// Evaluate all nodes
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
@@ -482,7 +484,13 @@ public class MainWindow : DockWindow
 				}
 				else
 				{
-					ITextureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( ITextureParameterNode.UI.Name );
+					string syncID = "";
+					if ( node is ISyncableTexturePreview ISyncableTexturePreview )
+					{
+						syncID = ISyncableTexturePreview.SyncID;
+					}
+
+					ITextureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( ITextureParameterNode.UI.Name, syncID );
 				}
 			}
 
@@ -528,6 +536,8 @@ public class MainWindow : DockWindow
 		_compiledNodes.Clear();
 		_compiledNodes.AddRange( compiler.Nodes );
 
+
+
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
 		{
 			_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
@@ -551,6 +561,20 @@ public class MainWindow : DockWindow
 		}
 
 		var code = compiler.Generate();
+
+		if ( SyncLinkedTextureNodes )
+		{
+			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
+			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != SourceID  ).Where( x => x.Value == SourceInputName );
+
+			foreach ( var nodeID in targetNodeIDs )
+			{
+				SGPLog.Info( $"Targeting : `{nodeID}` from SourceID : `{SourceID}` that has a bound name of : `{nodeID.Value}`", compiler.IsPreview );
+				compiler.SyncTexturePreviewNode( nodeID.Key, SourceID );
+			}
+
+			SyncLinkedTextureNodes = false;
+		}
 
 		//if ( compiler.Warnings.Any() )
 		//{
@@ -1407,12 +1431,23 @@ public class MainWindow : DockWindow
 		}
 	}
 
+	private bool SyncLinkedTextureNodes = false;
+	private string SourceID = "";
+	private string SourceInputName = "";
+
 	private void OnPropertyUpdated()
 	{
 		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
+			if ( node is ISyncableTexturePreview ISyncableTexturePreview )
+			{
+				SyncLinkedTextureNodes = true;
+				SourceID = ISyncableTexturePreview.SyncID;
+				SourceInputName = ISyncableTexturePreview.SourceParameterName;
+			}
+
 			_graphView.UpdateNode( node );
 		}
 
