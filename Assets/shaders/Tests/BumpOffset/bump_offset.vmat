@@ -2,9 +2,10 @@
 
 Layer0
 {
-	shader "shaders/tests/bumpoffset/bump_offset.shader"
+	shader "shaders/tests/bumpoffset/bumpoffset.shader"
 
-	g_flRoughness "0.125"
+	g_bBumpOffset "1"
+	g_flRoughness "0.124"
 
 	//---- Color ----
 	Color "textures/brick_color.png"
@@ -13,7 +14,6 @@ Layer0
 	g_bFogEnabled "1"
 
 	//---- Height ----
-	g_bBumpOffset "1"
 	g_flDepthScale "0.125"
 	g_flReferencePlane "0.420"
 	Height "textures/brick_height.png"
