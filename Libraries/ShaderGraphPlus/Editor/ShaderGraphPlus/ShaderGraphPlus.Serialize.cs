@@ -44,53 +44,53 @@ partial class ShaderGraphPlus
 		return doc.ToJsonString( options );
 	}
 
-	public void Deserialize( string json, string subgraphPath = null )
+	public void Deserialize( string json, string subgraphPath = null, ShaderGraphPlus lightingGraph = null )
 	{
 		using var doc = JsonDocument.Parse( json );
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 		
 		DeserializeObject( this, root, options );
-		DeserializeNodes( root, options, subgraphPath  );
+		DeserializeNodes( root, options, subgraphPath );
 		DeserializeLightingNodes( root, options, null, lightingGraph );
 	}
-	
+
 	public IEnumerable<BaseNodePlus> DeserializeNodes( string json )
 	{
 		using var doc = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
 		return DeserializeNodes(doc.RootElement, SerializerOptions());
 	}
-	
+
 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
 	{
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-		
+
 		foreach ( var nodeProperty in doc.EnumerateObject() )
 		{
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
-			
-			
+
+
 				if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
 					propName = jpna.Name;
-			
+
 				return string.Equals( propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
-			
-			
+
+
 			if ( prop == null )
 				continue;
-			
+
 			if ( prop.CanWrite == false )
 				continue;
-			
+
 			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
-	
-			prop.SetValue(obj, JsonSerializer.Deserialize(nodeProperty.Value.GetRawText(), prop.PropertyType, options));
+
+			prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
 		}
 	}
 
@@ -209,16 +209,16 @@ partial class ShaderGraphPlus
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 
-		var arrayProperty = doc.GetProperty("nodes");
-		foreach (var element in arrayProperty.EnumerateArray())
+		var arrayProperty = doc.GetProperty( "nodes" );
+		foreach ( var element in arrayProperty.EnumerateArray() )
 		{
 			var typeName = element.GetProperty( "_class" ).GetString();
 
 			// Use the new typename if applicable.
-			if ( NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
-			{
-				typeName = newTypeName;
-			}
+			//if ( NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
+			//{
+			//	typeName = newTypeName;
+			//}
 
 			var typeDesc = EditorTypeLibrary.GetType( typeName );
 			var type = new ClassNodeType( typeDesc );
@@ -234,7 +234,7 @@ partial class ShaderGraphPlus
 			{
 				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 				DeserializeObject( node, element, options );
-				
+
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
@@ -244,12 +244,12 @@ partial class ShaderGraphPlus
 				{
 					customCode.OnNodeCreated();
 				}
-				
+
 				if ( node is FunctionResult funcResult )
 				{
-				    funcResult.CreateInputs();
+					funcResult.CreateInputs();
 				}
-				
+
 				if ( node is SubgraphNode subgraphNode )
 				{
 					if ( !FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
@@ -263,15 +263,15 @@ partial class ShaderGraphPlus
 						subgraphNode.OnNodeCreated();
 					}
 				}
-				
+
 				foreach ( var input in node.Inputs )
 				{
 					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
 						continue;
-				
+
 					var connected = connectedElem
 						.Deserialize<NodeInput?>();
-				
+
 					if ( connected is { IsValid: true } )
 					{
 						var connection = connected.Value;
@@ -340,42 +340,6 @@ partial class ShaderGraphPlus
 	}
 
 	private static void SerializeObject( object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null )
-	{
-		var type = obj.GetType();
-		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-			.Where( x => x.GetSetMethod() != null );
-	
-		foreach ( var property in properties )
-		{
-			if ( !property.CanRead)
-				continue;
-
-			if ( property.PropertyType == typeof( NodeInput ) )
-				continue;
-	
-			if ( property.IsDefined( typeof( JsonIgnoreAttribute ) ) )
-				continue;
-	
-			var propertyName = property.Name;
-			if ( property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna )
-				propertyName = jpna.Name;
-	
-			var propertyValue = property.GetValue(obj);
-			if ( propertyName == "Identifier" && propertyValue is string identifier )
-			{
-				if ( identifiers.TryGetValue(identifier, out var newIdentifier ) )
-				{
-					propertyValue = newIdentifier;
-				}
-			}
-	
-			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
-		}
-
-		return doc.ToJsonString(options);
-	}
-	
-	private static void SerializeObject(object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null)
 	{
 		var type = obj.GetType();
 		var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)

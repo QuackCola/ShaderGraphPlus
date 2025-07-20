@@ -60,6 +60,7 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	public readonly Dictionary<string, BaseNodePlus> _lightingNodes = new();
 	
+	[Hide]
 	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
 
 	[Hide]
@@ -144,7 +145,8 @@ public partial class ShaderGraphPlus : IGraph
 
 	public void AddNode( BaseNodePlus node )
 	{
-		_lightingNodes.Clear();
+		node.Graph = this;
+		_nodes.Add( node.Identifier, node );
 	}
 
 	public void ClearLightingNodes()
@@ -225,31 +227,58 @@ public partial class ShaderGraphPlus : IGraph
 	//	}
 	//}
 
-    //
-    // Summary:
-    //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
-    //
-    //
-    // Parameters:
-    //   keyname:
-    //     The key to retrieve the value of.
-    //
-    //   outvalue:
-    //     The value, if it was present in the metadata storage.
-    //
-    // Type parameters:
-    //   T:
-    //     Type of the value.
-    //
-    // Returns:
-    //     Whether the value was successfully retrieved.
-    public bool TryGetMeta<T>(string keyname, out T outvalue)
-    {
-        outvalue = default(T);
-        if (Metadata == null)
-        {
-            return false;
-        }
+	//
+	// Summary:
+	//     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+	//
+	//
+	// Parameters:
+	//   keyname:
+	//     The key to retrieve the value of.
+	//
+	//   outvalue:
+	//     The value, if it was present in the metadata storage.
+	//
+	// Type parameters:
+	//   T:
+	//     Type of the value.
+	//
+	// Returns:
+	//     Whether the value was successfully retrieved.
+	public bool TryGetMeta<T>( string keyname, out T outvalue )
+	{
+		outvalue = default( T );
+		if ( Metadata == null )
+		{
+			return false;
+		}
+
+		if ( !Metadata.TryGetValue( keyname, out var value ) )
+		{
+			return false;
+		}
+
+		if ( value is T val )
+		{
+			outvalue = val;
+			return true;
+		}
+
+		if ( value is JsonElement element )
+		{
+			try
+			{
+				T val2 = element.Deserialize<T>( new JsonSerializerOptions() );
+				outvalue = ((val2 != null) ? val2 : default( T ));
+			}
+			catch ( Exception )
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/// <summary>
 	/// Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.

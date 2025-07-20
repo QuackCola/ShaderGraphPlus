@@ -323,5 +323,6 @@
       "Position": "-1008,-48",
       "HandleOffsets": {}
     }
-  ]
+  ],
+  "lighting_nodes": [ ]
 }

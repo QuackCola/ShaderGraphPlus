@@ -152,7 +152,7 @@ public sealed partial class GraphCompiler
 
 	public bool GeneratingLightingFunc { get; set; } = false;
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, ShaderGraphPlus lightingPageGraph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, ShaderGraphPlus lightingPageGraph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview, bool isLightingPage = false )
 	{
 		Graph = graph;
 		LightingGraph = lightingPageGraph;
@@ -1617,7 +1617,7 @@ public sealed partial class GraphCompiler
 				if ( resultLighting is LightingResult lightingResult )
 				{
 					var lightResult = lightingResult.GetAlbedoResult( this, true );
-					var compiler = new GraphCompiler( _Asset, Graph, LightingGraph, false, true );
+					var compiler = new GraphCompiler( _Asset, Graph, LightingGraph, ShaderFeatures, false, true );
 		
 					if ( compiler.GenerateLighting( IsPreview, true, out string lightingGlobals, out string lightingFunctionResult ) )
 					{
@@ -2056,7 +2056,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.NodeEditorAttribute>();
 				if ( editorAttribute == null )
 					continue;
 

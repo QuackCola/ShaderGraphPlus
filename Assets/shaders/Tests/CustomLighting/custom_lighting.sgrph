@@ -1,4 +1,5 @@
 {
+  "Features": {},
   "IsSubgraph": false,
   "HasCustomLighting": true,
   "Path": "shaders/tests/customlighting/custom_lighting.sgrph",
@@ -37,8 +38,8 @@
     },
     {
       "_class": "TextureSampler",
-      "Image": "textures/sbox_logo.png",
       "DefaultSampler": {},
+      "Image": "textures/sbox_logo.png",
       "UI": {
         "Name": "Color",
         "Default": "1,1,1,1",
@@ -425,7 +426,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "28",
-      "Position": "2364,-168",
+      "Position": "2364,-180",
       "HandleOffsets": {},
       "A": {
         "Identifier": "26",

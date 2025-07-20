@@ -32,7 +32,7 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "NormapMapTriplanar",
+      "_class": "NormalMapTriplanar",
       "DefaultSampler": {},
       "DefaultTile": 1,
       "DefaultBlendFactor": 4,

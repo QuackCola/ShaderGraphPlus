@@ -72,8 +72,6 @@ public class MainWindow : DockWindow
 
 	private Option _nodeDebugInfoOption;
 
-	public UndoStack UndoStack => _undoStack;
-
 	private bool _autoCompile = true;
 
 	private string _generatedCode;
@@ -151,18 +149,18 @@ public class MainWindow : DockWindow
 		Show();
 		CreateNew();
 
-		OpenProjectCreationDialog();
+		//OpenProjectCreationDialog();
 	}
 
-	private void OpenProjectCreationDialog()
-	{
-		ProjectCreator = new ProjectCreator();
-		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
-		ProjectCreator.Show();
-		ProjectCreator.OnProjectCreated += OpenProject;
-
-	}
+	//private void OpenProjectCreationDialog()
+	//{
+	//	ProjectCreator = new ProjectCreator();
+	//	ProjectCreator.DeleteOnClose = true;
+	//	ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+	//	ProjectCreator.Show();
+	//	ProjectCreator.OnProjectCreated += OpenProject;
+	//
+	//}
 
 	public void AssetOpen( Asset asset )
 	{
@@ -1371,7 +1369,7 @@ public class MainWindow : DockWindow
 	public void Open( string path, bool addToPath = true )
 	{
 		var asset = AssetSystem.FindByPath( path );
-
+		SGPLog.Info( $"Opening {path}" );
 		if ( asset == null )
 			return;
 
@@ -1385,6 +1383,11 @@ public class MainWindow : DockWindow
 		graph.Deserialize( System.IO.File.ReadAllText( path ), null, _lightingGraph );
 		graph.Path = asset.RelativePath;
 		graph.IsSubgraph = IsSubgraph;
+
+		foreach ( var node in graph.Nodes )
+		{
+			SGPLog.Info( $"Node : {node}" );
+		}
 
 		_preview.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
 		_preview.LoadSettings( graph.PreviewSettings );
