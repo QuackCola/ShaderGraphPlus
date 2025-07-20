@@ -1,0 +1,120 @@
+{
+  "IsSubgraph": true,
+  "Path": "shaders/tests/textureobject/texobjtst.sgpfunc",
+  "Model": null,
+  "Title": "SubGraph TexObject Input ",
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "1cf771d4-4a9f-4e71-bd83-42c55b836de7",
+          "Name": "Color",
+          "Type": "Color"
+        }
+      ],
+      "Identifier": "0",
+      "Position": "-108,108",
+      "HandleOffsets": {},
+      "Color": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": null,
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "-504,0",
+      "HandleOffsets": {},
+      "Sampler": {
+        "Identifier": "5",
+        "Output": "Sampler",
+        "Subgraph": null
+      },
+      "TextureObject": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DObjectNode",
+      "Image": null,
+      "UI": {
+        "Name": "A",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Name": "Texture A",
+      "Identifier": "2",
+      "Position": "-768,-24",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3",
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "Value": "1,0,1",
+      "Name": "Tint",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 1
+      },
+      "Identifier": "3",
+      "Position": "-504,240",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "4",
+      "Position": "-204,108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "TestSampler2"
+      },
+      "Name": "Sampler",
+      "PortOrder": 0,
+      "Identifier": "5",
+      "Position": "-768,192",
+      "HandleOffsets": {}
+    }
+  ]
+}

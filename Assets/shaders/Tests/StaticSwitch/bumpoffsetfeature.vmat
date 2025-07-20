@@ -1,0 +1,25 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/tests/staticswitch/bumpoffsetfeature.shader"
+
+	//---- Effects ----
+	F_BUMPOFFSET 1
+
+	g_flRoughness "0.124"
+
+	//---- Color ----
+	Color "textures/brick_color.png"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Height ----
+	g_flDepthScale "0.125"
+	g_flReferencePlane "0.420"
+	Height "textures/brick_height.png"
+
+	//---- Normal ----
+	Normal "textures/brick_normal.png"
+}

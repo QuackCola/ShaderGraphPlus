@@ -1,0 +1,119 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/switchinsideswitchcase1.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "312,-120",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": false,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Outer",
+        "HeaderName": "Features"
+      },
+      "FeatureReference": "None",
+      "Identifier": "1",
+      "Position": "12,-120",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": false,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "Inner1",
+        "HeaderName": "Features"
+      },
+      "FeatureReference": "None",
+      "Identifier": "2",
+      "Position": "-264,-192",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "3",
+      "Position": "-612,-228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 1,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "4",
+      "Position": "-612,-168",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 2,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "5",
+      "Position": "-240,-96",
+      "HandleOffsets": {}
+    }
+  ]
+}

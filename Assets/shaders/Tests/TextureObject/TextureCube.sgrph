@@ -1,0 +1,46 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/textureobject/texturecube.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureCube",
+      "Texture": "textures/skybox/noise_01.vtex",
+      "DefaultSampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "ImageFormat": "DXT5",
+        "SrgbRead": true
+      },
+      "Identifier": "1",
+      "Position": "-420,72",
+      "HandleOffsets": {}
+    }
+  ]
+}
