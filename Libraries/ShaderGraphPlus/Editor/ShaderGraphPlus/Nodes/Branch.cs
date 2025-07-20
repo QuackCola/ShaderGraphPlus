@@ -85,11 +85,16 @@ public sealed class Branch : ShaderNodePlus
 		var resultB = useCondition ? compiler.ResultOrDefault( B, 0.0f ) : default;
 		var resultPredicate = compiler.Result( InputPredicate );
 
-		NodeResult enabledResult = resultPredicate.IsValid ? resultPredicate : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI );
-
-		return new NodeResult( results.Item1.ResultType, $"{(useCondition ?
-			$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : enabledResult)} ?" +
-			$" {results.Item1} :" +
-			$" {results.Item2}" );
+		if ( resultPredicate.IsValid )
+		{
+			return new NodeResult( results.Item1.ResultType, $"{resultPredicate} ? {results.Item1} : {results.Item2}" );
+		}
+		else
+		{
+			return new NodeResult( results.Item1.ResultType, $"{(useCondition ?
+				$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI ) )} ?" +
+				$" {results.Item1} :" +
+				$" {results.Item2}" );
+		}
 	};
 }
