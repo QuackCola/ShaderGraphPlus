@@ -12,10 +12,14 @@ public sealed class Branch : ShaderNodePlus
 	[Hide]
 	public override string Title => UseCondition ?
 		$"{DisplayInfo.For( this ).Name} (A {Op} B)" :
-		$"{DisplayInfo.For( this ).Name} ({Name})";
+		$"{DisplayInfo.For( this ).Name}  {(!InputPredicate.IsValid ? $"( {Name} )" : $"")}";
 
 	[Hide]
 	private bool UseCondition => string.IsNullOrWhiteSpace( Name );
+
+	[Title( "Predicate" )]
+	[Input( typeof( bool ) ), Hide]
+	public NodeInput InputPredicate { get; set; }
 
 	[Input, Hide]
 	public NodeInput True { get; set; }
@@ -28,6 +32,7 @@ public sealed class Branch : ShaderNodePlus
 
 	[Input, Hide]
 	public NodeInput B { get; set; }
+
 
 	public string Name { get; set; } = "";
 
@@ -52,6 +57,7 @@ public sealed class Branch : ShaderNodePlus
 	[InlineEditor]
 	public ParameterUI UI { get; set; }
 
+	[Hide]
 	private string Op
 	{
 		get
@@ -77,9 +83,12 @@ public sealed class Branch : ShaderNodePlus
 		var results = compiler.Result( True, False, 0.0f, 0.0f );
 		var resultA = useCondition ? compiler.ResultOrDefault( A, 0.0f ) : default;
 		var resultB = useCondition ? compiler.ResultOrDefault( B, 0.0f ) : default;
+		var resultPredicate = compiler.Result( InputPredicate );
+
+		NodeResult enabledResult = resultPredicate.IsValid ? resultPredicate : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI );
 
 		return new NodeResult( results.Item1.ResultType, $"{(useCondition ?
-			$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI ))} ?" +
+			$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : enabledResult)} ?" +
 			$" {results.Item1} :" +
 			$" {results.Item2}" );
 	};

@@ -1,41 +1,16 @@
 ﻿namespace Editor.ShaderGraphPlus;
 
-
-/// <summary>
-/// Container for the generated shader feature info.
-/// </summary>
-public struct ShaderFeatureInfo
-{ 
-    public string FeatureName{ get; set; }
-    public string FeatureDeclaration { get; set; }
-    public string FeatureBody { get; set; }
-	public int OptionsCount { get; set; }
-    public string TrueResult { get; set; }
-    public string FalseResult { get; set; }
-	public bool IsDynamicCombo { get; set; }
-
-    public readonly string ToFeatureName()
-    {
-        return $"F_{FeatureName.ToUpper()}";
-    }
-
-    public readonly string ToStaticComboString()
-    {
-        return $"S_{FeatureName.ToUpper()}";
-    }
-
-    public readonly string ToDynamicComboString()
-    {
-        return $"D_{FeatureName.ToUpper()}";
-    }
-}
-
 /// <summary>
 ///	
 /// </summary>
 public struct ShaderFeature : IValid
 {
 	public string FeatureName { get; set; }
+
+	/// <summary>
+	/// What this feature does.
+	/// </summary>
+	public string Description { get; set; }
 
 	/// <summary>
 	/// Header Name of this Feature that shows up in the Material Editor.
@@ -45,6 +20,7 @@ public struct ShaderFeature : IValid
 	/// <summary>
 	/// String list of feature options.
 	/// </summary>
+	[Hide]
 	public List<string> Options { get; set; }
 
 	[Hide]
@@ -53,12 +29,12 @@ public struct ShaderFeature : IValid
     [Hide]
     public bool Preview { get; set; }
 
-    [Hide]
+	[Hide, JsonIgnore]
 	public readonly bool IsValid
 	{
 		get
 		{
-			if ( string.IsNullOrWhiteSpace( FeatureName ) || !Options.Any() )
+			if ( string.IsNullOrWhiteSpace( FeatureName ) ) //|| !Options.Any() )
 			{
 				return false;
 			}
@@ -73,30 +49,30 @@ public struct ShaderFeature : IValid
 	/// <summary>
 	/// Returns true if all options have valid names. False if one option has an invalid name.
 	/// </summary>
-	[Hide]
-	public readonly bool IsOptionsValid
-	{
-		get
-		{
-			var optionsCount = Options.Count;
-			var validOptionsCount = 0;
-
-			foreach ( var option in Options )
-			{
-				if ( !string.IsNullOrWhiteSpace( option ) )
-				{
-					validOptionsCount++;
-				}
-			}
-
-			if ( validOptionsCount == optionsCount )
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+	//[Hide]
+	//public readonly bool IsOptionsValid
+	//{
+	//	get
+	//	{
+	//		var optionsCount = Options.Count;
+	//		var validOptionsCount = 0;
+	//
+	//		foreach ( var option in Options )
+	//		{
+	//			if ( !string.IsNullOrWhiteSpace( option ) )
+	//			{
+	//				validOptionsCount++;
+	//			}
+	//		}
+	//
+	//		if ( validOptionsCount == optionsCount )
+	//		{
+	//			return true;
+	//		}
+	//		else
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//}
 }

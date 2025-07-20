@@ -90,11 +90,8 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-		
-		
-		float l_0 = 1.0f - VoronoiNoise( i.vTextureCoords.xy, 3.1415925, 10 );
-		
-		m.Albedo = float3( l_0, l_0, l_0 );
+
+
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

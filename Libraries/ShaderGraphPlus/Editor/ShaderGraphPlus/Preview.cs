@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Sandbox.Rendering;
+
+namespace Editor.ShaderGraphPlus;
 
 public class Throbber : SceneCustomObject
 {
@@ -181,6 +183,16 @@ public class PreviewPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
+	public void SetCombo( string id, bool value )
+	{
+		_preview.SetCombo(id, value);
+	}
+
+	public void SetCombo( string id, int value )
+	{
+		_preview.SetCombo( id, value );
+	}
+
 	public void SetStage( int value )
 	{
 		_preview.SetStage( value );
@@ -330,6 +342,7 @@ public class PreviewPanel : Widget
 
 public class Preview : SceneRenderingWidget
 {
+	private const int NoPreviewID = -1;
 	private SceneWorld _world => Scene.SceneWorld;
 	
 	private Vector2 _lastCursorPos;
@@ -355,6 +368,8 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Vector2> _float2Attributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
+	private Dictionary<string, bool> _comboBoolAttributes = new();
+	private Dictionary<string, int> _comboIntAttributes = new();
 	private int _stageId;
 
     private bool _enablePostProcessing;
@@ -374,7 +389,7 @@ public class Preview : SceneRenderingWidget
 
 			if ( _sceneObject.IsValid() )
 			{
-				_sceneObject.Attributes.Set( "g_iStageId", _enableNodePreview ? _stageId : 0 );
+				_sceneObject.Attributes.Set( "g_iStageId", _enableNodePreview ? _stageId : NoPreviewID );
 			}
 		}
 	}
@@ -439,7 +454,7 @@ public class Preview : SceneRenderingWidget
 		}
 	}
 
-	private DirectionalLight _sun;
+	private DirectionalLight _sun = null;
 	private HashSet<PointLight> _pointLights = new();
 	private Angles _sunAngles = Rotation.FromPitch( 50 );
 	public Angles SunAngle
@@ -491,24 +506,38 @@ public class Preview : SceneRenderingWidget
 
 		_sceneObject.GetType().GetMethod( "SetMaterialOverrideForMeshInstances",
 			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )?.Invoke( _sceneObject, new[] { modelMaterial } );
+
+		
 	}
 
-	IDisposable _postProcessHook;
+	private CommandList _postProcessCmdList;
 	internal void UpdatePostProcessing()
 	{
-		_postProcessHook?.Dispose();
-		if ( !EnablePostProcessing )
+		if ( Scene.Camera is null )
 		{
-			_postProcessHook = null;
 			return;
 		}
-		_postProcessHook = Scene.Camera.AddHookBeforeOverlay( "ShadergraphPlusPostProcess", 1000, x =>
+
+		if ( !EnablePostProcessing )
 		{
-			Graphics.GrabFrameTexture( "ColorBuffer", _sceneObject.Attributes );
-		
-			Graphics.Blit( _material, _sceneObject.Attributes );
-		} );
+			if ( _postProcessCmdList is not null )
+			{
+				Scene?.Camera?.RemoveCommandList( _postProcessCmdList );
+				_postProcessCmdList = null;
+			}
+			return;
+		}
+
+		if ( _postProcessCmdList is null )
+		{
+			_postProcessCmdList = new CommandList( "Preview PostProcess" );
+			Scene.Camera.AddCommandList( _postProcessCmdList, Stage.AfterPostProcess, 1000 );
+		}
+
+		_postProcessCmdList.Reset();
+		_postProcessCmdList.Attributes.GrabFrameTexture( "ColorBuffer" );
 	}
+
 
 	private Material _material;
 	public Material Material
@@ -588,6 +617,11 @@ public class Preview : SceneRenderingWidget
 				_sceneObject.Attributes.Set( v.Key, v.Value );
 			}
 
+			foreach ( var v in _comboBoolAttributes )
+			{
+				_sceneObject.Attributes.SetCombo( v.Key, v.Value );
+			}
+
 			if ( _enableNodePreview )
 			{
 				_sceneObject.Attributes.Set( "g_iStageId", _stageId );
@@ -661,13 +695,35 @@ public class Preview : SceneRenderingWidget
 		_sceneObject.Attributes.Set( id, value );
 	}
 
+	public void SetCombo( string id, bool value )
+	{
+		//SGPLog.Info( $"Setting DynamicCombo `{id}` to `{value}`" );
+		
+		if ( !_comboBoolAttributes.ContainsKey( id ) )
+		{
+			_comboBoolAttributes.Add( id, value );
+			_sceneObject.Attributes.SetCombo( id, value );
+		}
+	}
+
+	public void SetCombo( string id, int value )
+	{
+		//SGPLog.Info( $"Setting DynamicCombo `{id}` to `{value}`" );
+
+		if ( !_comboIntAttributes.ContainsKey( id ) )
+		{
+			_comboIntAttributes.Add( id, value );
+			_sceneObject.Attributes.SetCombo( id, value );
+		}
+	}
+
 	public void SetStage( int value )
 	{
 		_stageId = value;
 
 		if ( _sceneObject.IsValid() )
 		{
-			_sceneObject.Attributes.Set( "g_iStageId", _enableNodePreview ? _stageId : 0 );
+			_sceneObject.Attributes.Set( "g_iStageId", _enableNodePreview ? _stageId : NoPreviewID );
 		}
 	}
 
@@ -682,6 +738,8 @@ public class Preview : SceneRenderingWidget
 		_float2Attributes.Clear();
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
+		_comboBoolAttributes.Clear();
+		_comboIntAttributes.Clear();
 
 		if ( _sceneObject.IsValid() )
 		{
@@ -718,9 +776,9 @@ public class Preview : SceneRenderingWidget
 				camera.BackgroundColor = Color.White;
 			}
 			{
-				var sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
-				sun.WorldRotation = Rotation.FromPitch( 50 );
-				sun.LightColor = Color.White * 2.5f + Color.Cyan * 0.05f;
+				_sun = new GameObject( true, "sun" ).GetOrAddComponent<DirectionalLight>();
+				_sun.WorldRotation = SunAngle;
+				_sun.LightColor = SunColor;
 			}
 			{
 				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
@@ -728,6 +786,7 @@ public class Preview : SceneRenderingWidget
 				light.Radius = 500;
 				light.LightColor = Color.Orange * 3;
 				light.Enabled = true;
+				_pointLights.Add( light );
 			}
 			{
 				var light = new GameObject( true, "light" ).GetOrAddComponent<PointLight>( false );
@@ -735,6 +794,7 @@ public class Preview : SceneRenderingWidget
 				light.Radius = 500;
 				light.LightColor = Color.Cyan * 3;
 				light.Enabled = true;
+				_pointLights.Add( light );
 			}
 			{
 				var cubemap = new GameObject( true, "cubemap" ).GetOrAddComponent<EnvmapProbe>();
@@ -773,7 +833,13 @@ public class Preview : SceneRenderingWidget
 	public override void OnDestroyed()
 	{
 		base.OnDestroyed();
-	
+
+		if ( _postProcessCmdList is not null )
+		{
+			Camera?.RemoveCommandList( _postProcessCmdList );
+			_postProcessCmdList = null;
+		}
+
 		Scene?.Destroy();
 		Scene = null;
 	}

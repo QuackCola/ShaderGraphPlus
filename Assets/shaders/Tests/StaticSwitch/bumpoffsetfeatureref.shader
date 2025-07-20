@@ -7,7 +7,8 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
-
+	Feature( F_BUMPOFFSET, 0..1, "Effects" );
+	
 }
 
 MODES
@@ -19,6 +20,13 @@ MODES
 
 COMMON
 {
+	#ifndef SWITCH_TRUE
+	#define SWITCH_TRUE 1
+	#endif
+	#ifndef SWITCH_FALSE
+	#define SWITCH_FALSE 0
+	#endif
+	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -53,7 +61,10 @@ struct PixelInput
 VS
 {
     #include "common/vertex.hlsl"
-
+	
+	StaticCombo( S_BUMPOFFSET, F_BUMPOFFSET, Sys( ALL ) );
+	
+	
     PixelInput MainVs( VertexInput v )
     {
 		
@@ -77,21 +88,20 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
-	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	SamplerState g_sSampler1 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	SamplerState g_sSampler2 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( ColorMap, Srgb, 8, "None", "_color", "Color,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	CreateInputTexture2D( HeightMap, Linear, 8, "None", "_height", "Height,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	CreateInputTexture2D( Normal, Srgb, 8, "None", "_normal", "Normal,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tColorMap < Channel( RGBA, Box( ColorMap ), Srgb ); OutputFormat( BC7 ); SrgbRead( True ); >;
-	Texture2D g_tHeightMap < Channel( RGBA, Box( HeightMap ), Linear ); OutputFormat( DXT1 ); SrgbRead( False ); >;
-	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tHeightMap )
-	TextureAttribute( RepresentativeTexture, g_tHeightMap )
-	float g_flDepthScale < UiGroup( "Height,0/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
-	float g_flReferencePlane < UiGroup( "Height,0/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
-	bool g_bEnableBumpOffset < UiGroup( "Height,0/,0/3" ); Default( 1 ); >;
-	float g_flRoughness < UiGroup( "Roughness,0/,0/3" ); Default1( 2.5 ); Range1( 0, 8 ); >;
+	StaticCombo( S_BUMPOFFSET, F_BUMPOFFSET, Sys( ALL ) );
+	
+	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", "Color,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( Normal, Linear, 8, "None", "_normal", "Normal,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tHeight < Channel( RGBA, Box( Height ), Linear ); OutputFormat( ATI1N ); SrgbRead( False ); >;
+	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT1 ); SrgbRead( True ); >;
+	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Linear ); OutputFormat( DXT1 ); SrgbRead( False ); >;
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tColor )
+	TextureAttribute( RepresentativeTexture, g_tColor )
+	float g_flDepthScale < UiGroup( "Height,1/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
+	float g_flReferencePlane < UiGroup( "Height,1/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
+	float g_flRoughness < UiGroup( ",0/,0/0" ); Default1( 0.124 ); Range1( 0, 1 ); >;
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{
@@ -130,25 +140,54 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = float4( 0.39535, 0.39535, 0.39535, 1 );
-		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float4 l_2 = g_tHeightMap.Sample( g_sSampler1,l_1 );
-		float l_3 = g_flDepthScale;
-		float l_4 = g_flReferencePlane;
-		float2 l_5 = BumpOffset( l_2.r, l_3, l_4, l_1, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) );
-		float2 l_6 = g_bEnableBumpOffset ? l_5 : l_1;
-		float4 l_7 = g_tColorMap.Sample( g_sSampler0,l_6 );
-		float l_8 = 1 - l_7.r;
-		float4 l_9 = l_0 * float4( l_8, l_8, l_8, l_8 );
-		float4 l_10 = g_tNormal.Sample( g_sSampler2,l_6 );
-		float3 l_11 = l_10.xyz;
-		float l_12 = g_flRoughness;
-		float l_13 = l_7.r * l_12;
 		
-		m.Albedo = l_9.xyz;
+		float2 BumpOffsetSwitchResult;
+		#if ( S_BUMPOFFSET == SWITCH_TRUE )
+		{
+			float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
+			float4 l_1 = g_tHeight.Sample( g_sTestSampler,l_0 );
+			float l_2 = g_flDepthScale;
+			float l_3 = g_flReferencePlane;
+			float2 l_4 = BumpOffset( l_1.r, l_2, l_3, l_0, GetTangentViewVector( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ) );
+			BumpOffsetSwitchResult = l_4; // result
+		
+		}
+		#else
+		{
+			float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
+			BumpOffsetSwitchResult = l_0; // result
+		
+		}
+		#endif
+		
+		float2 l_0 = BumpOffsetSwitchResult;
+		float4 l_1 = g_tColor.Sample( g_sTestSampler,l_0 );
+		
+		float4 BumpOffsetSwitchResult_Ref0;
+		#if ( S_BUMPOFFSET == SWITCH_TRUE )
+		{
+			float4 l_0 = float4( 1, 0, 1, 1 );
+			BumpOffsetSwitchResult_Ref0 = l_0; // result
+		
+		}
+		#else
+		{
+			float4 l_0 = float4( 1, 0, 0, 1 );
+			BumpOffsetSwitchResult_Ref0 = l_0; // result
+		
+		}
+		#endif
+		
+		float4 l_2 = BumpOffsetSwitchResult_Ref0;
+		float4 l_3 = float4( l_1.r, l_1.r, l_1.r, l_1.r ) * l_2;
+		float4 l_4 = g_tNormal.Sample( g_sTestSampler,l_0 );
+		float3 l_5 = l_4.xyz;
+		float l_6 = g_flRoughness;
+		
+		m.Albedo = l_3.xyz;
 		m.Opacity = 1;
-		m.Normal = l_11;
-		m.Roughness = l_13;
+		m.Normal = l_5;
+		m.Roughness = l_6;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;
 		

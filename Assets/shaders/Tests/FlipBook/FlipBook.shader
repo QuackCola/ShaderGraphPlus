@@ -20,7 +20,7 @@ MODES
 COMMON
 {
 	#ifndef S_ALPHA_TEST
-	#define S_ALPHA_TEST 1
+	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
 	#define S_TRANSLUCENT 0
@@ -79,7 +79,9 @@ PS
 		
 	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT1 ); SrgbRead( True ); >;
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tTexture_ps_0 )
+	TextureAttribute( RepresentativeTexture, g_tTexture_ps_0 )
 	float g_flIconIndex < Attribute( "IconIndex" ); Default1( 0 ); >;
 		
 	float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 Invert)
@@ -93,14 +95,43 @@ PS
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
-
+		
+		Material m = Material::Init();
+		m.Albedo = float3( 1, 1, 1 );
+		m.Normal = float3( 0, 0, 1 );
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		m.TintMask = 1;
+		m.Opacity = 1;
+		m.Emission = float3( 0, 0, 0 );
+		m.Transmission = 0;
 		
 		
 		float l_0 = g_flIconIndex;
 		float2 l_1 = FlipBook( i.vTextureCoords.xy, 4, 4, l_0, float2( 0, 0 ) );
 		float4 l_2 = g_tTexture_ps_0.Sample( g_sSampler0,l_1 );
 		
-
-		return float4( l_2.xyz, l_2.a );
+		m.Albedo = l_2.xyz;
+		m.Opacity = l_2.a;
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		
+		
+		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
+		m.Roughness = saturate( m.Roughness );
+		m.Metalness = saturate( m.Metalness );
+		m.Opacity = saturate( m.Opacity );
+		
+		// Result node takes normal as tangent space, convert it to world space now
+		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		
+		// for some toolvis shit
+		m.WorldTangentU = i.vTangentUWs;
+		m.WorldTangentV = i.vTangentVWs;
+		m.TextureCoords = i.vTextureCoords.xy;
+				
+		return ShadingModelStandard::Shade( i, m );
     }
 }

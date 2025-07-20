@@ -6,8 +6,10 @@ public enum ResultType
 	/// No Components, just True or False.
 	/// </summary>
 	Bool,
-
-	// Int,
+	/// <summary>
+	/// 
+	/// </summary>
+	Int,
 	/// <summary>
 	/// 1 Component
 	/// </summary>
@@ -36,11 +38,37 @@ public enum ResultType
 	/// 16 Component's
 	/// </summary>
 	Float4x4,
+	/// <summary>
+	/// 
+	/// </summary>
 	Sampler,
-	TextureObject,
-	String,
+	/// <summary>
+	/// 
+	/// </summary>
+	Texture2DObject,
+	/// <summary>
+	/// 
+	/// </summary>
+	TextureCubeObject,
+	/// <summary>
+	/// 
+	/// </summary>
 	Gradient,
+	/// <summary>
+	/// 
+	/// </summary>
 	Void,
+	/// <summary>
+	/// 
+	/// </summary>
+	Invalid,
+}
+
+public enum CastType
+{
+	FloatToInt,
+	FloatToFloat,
+	IntToFloat,
 }
 
 public struct NodeResult : IValid
@@ -48,22 +76,27 @@ public struct NodeResult : IValid
 	public delegate NodeResult Func( GraphCompiler compiler );
 	public string Code { get; private set; }
 	public ResultType ResultType { get; private set; }
-	public bool Constant { get; set; }
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
-	public bool IsComponentLess { get; set; }
 	public bool IsDepreciated { get; private set; }
-	public readonly bool IsValid => ResultType > (ResultType)(-1) && !string.IsNullOrWhiteSpace( Code );
+	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 	public int VoidComponents { get; private set; }
+	public string ComboSwitchBody { get; private set; }
+	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
+
+	public bool SkipLocalGeneration { get; set; } = false;
+	public bool Constant { get; set; }
+	public string ImagePath { get; set; }
+	public int PreviewID { get; set; }
 
 	public readonly string TypeName
 	{
 		get
 		{
-			//if ( ResultType is ResultType.Int )
-			//{
-			//	return $"float"; // Just identify as a float.
-			//}	
+			if ( ResultType is ResultType.Int )
+			{
+				return $"int"; // Just identify as a float.
+			}	
 			if ( ResultType is ResultType.Float )
 			{
 				return $"float";
@@ -88,13 +121,17 @@ public struct NodeResult : IValid
 			{
 				return "bool";
 			}
-			else if ( ResultType is ResultType.String )
-			{
-				return "";
-			}
-			else if (ResultType is ResultType.Gradient)
+			else if (ResultType is ResultType.Gradient )
 			{
 				return "Gradient";
+			}
+			else if ( ResultType is ResultType.Texture2DObject )
+			{
+				return $"Texture2D";
+			}
+			else if ( ResultType is ResultType.TextureCubeObject )
+			{
+				return $"TextureCube";
 			}
 
 			return "float";
@@ -105,16 +142,16 @@ public struct NodeResult : IValid
 	{
 		get
 		{
-			if (ResultType is ResultType.Void)
+			if ( ResultType is ResultType.Void )
 			{
 				return VoidComponents switch
 				{
-					int r when r == 0 => typeof(bool),
-					//int r when r == 1 => typeof(int),
-					int r when r == 1 => typeof(float),
-					int r when r == 2 => typeof(Vector2),
-					int r when r == 3 => typeof(Vector3),
-					int r when r == 4 => typeof(Color),
+					int r when r == 0 => typeof( bool ),
+					//int r when r == 1 => typeof( int ),
+					int r when r == 1 => typeof( float ),
+					int r when r == 2 => typeof( Vector2 ),
+					int r when r == 3 => typeof( Vector3 ),
+					int r when r == 4 => typeof( Color ),
 					_ => throw new System.NotImplementedException(),
 				};
 			}
@@ -122,44 +159,68 @@ public struct NodeResult : IValid
 			{
 				return ResultType switch
 				{
-					ResultType.Bool => typeof(bool),
+					ResultType.Bool => typeof( bool ),
 					//ResultType.Int => typeof(int),
-					ResultType.Float => typeof(float),
-					ResultType.Vector2 => typeof(Vector2),
-					ResultType.Vector3 => typeof(Vector3),
-					ResultType.Color => typeof(Color),
-					ResultType.Float2x2 => typeof(Float2x2),
-					ResultType.Float3x3 => typeof(Float3x3),
-					ResultType.Float4x4 => typeof(Float4x4),
-					ResultType.Sampler => typeof(Sampler),
-					ResultType.TextureObject => typeof(TextureObject),
-					ResultType.String => typeof(string), // Generic Result
-					ResultType.Gradient => typeof(Gradient),
+					ResultType.Float => typeof( float ),
+					ResultType.Vector2 => typeof( Vector2 ),
+					ResultType.Vector3 => typeof( Vector3 ),
+					ResultType.Color => typeof( Color ),
+					ResultType.Float2x2 => typeof( Float2x2 ),
+					ResultType.Float3x3 => typeof( Float3x3 ),
+					ResultType.Float4x4 => typeof( Float4x4 ),
+					ResultType.Sampler => typeof( Sampler ),
+					ResultType.Texture2DObject => typeof( Texture2DObject ),
+					ResultType.TextureCubeObject => typeof( TextureCubeObject ),
+					ResultType.Gradient => typeof( Gradient ),
 					_ => throw new System.NotImplementedException(),
 				};
 			}
 		}
 	}
 
-	public NodeResult( ResultType resulttype, string code, bool constant = false, bool iscomponentless = false, int voidComponents = 0 )
+	public NodeResult( ResultType resultType, string code, bool constant = false, int voidComponents = 0 )
 	{
-		ResultType = resulttype;
+		ResultType = resultType;
 		Code = code;
 		Constant = constant;
-		IsComponentLess = iscomponentless;
 		VoidComponents = voidComponents;
-    }
+	}
 
-    public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
+	public NodeResult( ResultType resultType, string code, string switchBody, GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, int voidComponents = 0 ) : this ( resultType, code, constant, voidComponents )
+	{
+		SwitchInfo = switchInfo;
+	}
+
+	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, int voidComponents = 0 ) : this( resultType, code, constant, voidComponents )
+	{
+		ComboSwitchBody = switchBody;
+	}
+
+	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
 
+	internal void SetSwitchInfo( GraphCompiler.ComboSwitchInfo switchInfo )
+	{
+		SwitchInfo = switchInfo;
+	}
+
 	/// <summary>
 	/// "Cast" this result to different float types
 	/// </summary>
-	public string Cast( int components, float defaultValue = 0.0f)
+	public string Cast( int components, float defaultValue = 0.0f, CastType castType = CastType.FloatToFloat )
 	{
+		if ( ResultType is ResultType.Float2x2 || ResultType is ResultType.Float3x3 || ResultType is ResultType.Float4x4 )
+		{
+			throw new Exception( $"ResultType `{ResultType}` cannot be cast." );
+		}
+
+		if ( ResultType == ResultType.Int )
+		{
+			throw new NotImplementedException( $"{nameof( Cast )} : ResultType `{ResultType}` is not Implemented yet!" );
+		}
+
 		if ( ResultType is ResultType.Void )
 		{
 			if ( VoidComponents == components )
@@ -181,7 +242,10 @@ public struct NodeResult : IValid
 		else
 		{
 			if ( Components() == components )
-			    return Code;
+			{
+				return Code;
+			}
+				
 
 			if ( Components() > components )
 			{
@@ -193,7 +257,7 @@ public struct NodeResult : IValid
 			}
 			else
 			{
-				return $"float{components}( {Code}, {string.Join(", ", Enumerable.Repeat($"{defaultValue}", components - Components()))} )";
+				return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - Components() ) )} )";
 			}
 		}
 	}
@@ -205,12 +269,15 @@ public struct NodeResult : IValid
 	public readonly int Components()
 	{
 		int components = 0;
-	
+		
 		switch ( ResultType )
 		{
-			//case ResultType.Int:
-			//	components = 1;
-			//	break;
+			case ResultType.Bool:
+				components = 1;
+				break;
+			case ResultType.Int:
+				components = 1;
+				break;
 			case ResultType.Float:
 				components = 1;
 				break;
@@ -233,8 +300,7 @@ public struct NodeResult : IValid
 				components = 16;
 				break;
 			default:
-				//Log.Warning($"Result type: '{ResultType}' has no components.");
-			break;
+				throw new Exception( $"ResultType `{ResultType}` has no components!" );
 		}
 
 		return components;

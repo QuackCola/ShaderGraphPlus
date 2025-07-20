@@ -1,0 +1,88 @@
+{
+  "IsSubgraph": true,
+  "Path": "shaders/tests/texturesamplers/texturesamplerssubgraph.sgpfunc",
+  "Model": null,
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "a9bcf076-b0d2-4c72-b174-f7b733e7af83",
+          "Name": "Result",
+          "Type": "Vector4"
+        }
+      ],
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "NormapMapTriplanar",
+      "DefaultSampler": {},
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Image": null,
+      "UI": {
+        "Default": "0.5,0.5,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "Processor": "NormalizeNormals",
+        "ColorSpace": "Linear"
+      },
+      "Identifier": "1",
+      "Position": "-564,24",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DObjectNode",
+      "Image": "materials/dev/white_color.tga",
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Name": "A",
+      "Identifier": "2",
+      "Position": "-864,-96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": null,
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
+      "Identifier": "3",
+      "Position": "-564,-216",
+      "HandleOffsets": {},
+      "TextureObject": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ]
+}

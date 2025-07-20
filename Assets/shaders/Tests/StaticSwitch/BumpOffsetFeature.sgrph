@@ -1,0 +1,314 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/bumpoffsetfeature.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 0.124,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "36,132",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Normal": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "BumpOffset",
+        "HeaderName": "Effects"
+      },
+      "FeatureReference": "None",
+      "Identifier": "1",
+      "Position": "-756,96",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "BumpOffsetNode",
+      "DefaultHeight": 0,
+      "DefaultDepthScale": 0.125,
+      "DefaultReferencePlane": 0.42,
+      "Identifier": "2",
+      "Position": "-1008,12",
+      "HandleOffsets": {},
+      "InputHeight": {
+        "Identifier": "15",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputDepthScale": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputReferencePlane": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputCoords": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_height.png",
+      "UI": {
+        "Name": "Height",
+        "Default": "1,1,1,1",
+        "Extension": "Mask",
+        "CustomExtension": "_height",
+        "ColorSpace": "Linear",
+        "ImageFormat": "ATI1N",
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "3",
+      "Position": "-1512,-84",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "13",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "4",
+      "Position": "-1728,120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_color.png",
+      "UI": {
+        "Name": "Color",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true,
+        "PrimaryGroup": {
+          "Name": "Color"
+        }
+      },
+      "Identifier": "5",
+      "Position": "-456,-48",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_normal.png",
+      "UI": {
+        "Name": "Normal",
+        "Default": "1,1,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "ColorSpace": "Linear",
+        "PrimaryGroup": {
+          "Name": "Normal"
+        }
+      },
+      "Identifier": "6",
+      "Position": "-456,204",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.125,
+      "Name": "Depth Scale",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 1,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "7",
+      "Position": "-1260,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.42,
+      "Name": "Reference Plane",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 2,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "8",
+      "Position": "-1260,60",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "9",
+      "Position": "-228,204",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.124,
+      "Name": "Roughness",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "10",
+      "Position": "-228,264",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "TestSampler"
+      },
+      "Name": null,
+      "PortOrder": 0,
+      "Identifier": "11",
+      "Position": "-2016,228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "12",
+      "Position": "-588,264",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "11",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "13",
+      "Position": "-1764,-24",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "11",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "14",
+      "Position": "-1068,156",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "15",
+      "Position": "-1092,-24",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "3",
+        "Output": "R",
+        "Subgraph": null
+      }
+    }
+  ]
+}

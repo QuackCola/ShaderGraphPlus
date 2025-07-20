@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public enum UIType
 {
@@ -14,11 +12,13 @@ public struct ParameterUI
 	/// <summary>
 	/// Control type used in the material editor
 	/// </summary>
+	[HideIf( nameof( HideProps ), true )]
 	public UIType Type { get; set; }
 
 	/// <summary>
 	/// Step amount for sliders
 	/// </summary>
+	[HideIf( nameof( HideProps ), true )]
 	public float Step { get; set; }
 
 	/// <summary>
@@ -40,4 +40,12 @@ public struct ParameterUI
 
 	[JsonIgnore, Hide]
 	public readonly string UIGroup => $"{PrimaryGroup.Name},{PrimaryGroup.Priority}/{SecondaryGroup.Name},{SecondaryGroup.Priority}/{Priority}";
+
+	[JsonIgnore, Hide]
+	internal bool HideProps {  get; set; }
+
+	public void SetOrder( int order )
+	{
+		Priority = order;
+	}
 }

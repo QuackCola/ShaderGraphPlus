@@ -1,6 +1,6 @@
 {
   "IsSubgraph": false,
-  "Path": "shaders/tests/subgraph/subgraphtest.sgrph",
+  "Path": "shaders/vanilla.shdrgrph",
   "Model": null,
   "Title": null,
   "Description": "",
@@ -9,12 +9,11 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
-  "Metadata": {},
+  "Domain": "Surface",
   "PreviewSettings": {
     "EnableShadows": true,
     "ShowSkybox": true,
-    "BackgroundColor": "1,1,1,1",
+    "BackgroundColor": "0,0,0,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -25,20 +24,20 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
-      "HandleOffsets": {},
-      "Albedo": {
-        "Identifier": "1",
-        "Output": "OutputA",
-        "Subgraph": null
-      }
+      "Position": "156,-96",
+      "HandleOffsets": {}
     },
     {
-      "_class": "SubgraphNode",
-      "SubgraphPath": "shaders/tests/subgraph/subgraph_test.sgpfunc",
-      "DefaultValues": {},
+      "_class": "TextureCube",
+      "Texture": null,
+      "Sampler": {},
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true
+      },
       "Identifier": "1",
-      "Position": "-516,48",
+      "Position": "-216,-108",
       "HandleOffsets": {}
     }
   ]

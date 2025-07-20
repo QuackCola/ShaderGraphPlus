@@ -52,3 +52,10 @@ thumb_square.psd
 thumb_tall.psd
 thumb_wide.psd
 /tools
+*.graphite
+*.py
+/Assets/shaders/Tests/StaticSwitch/Bug0
+/Assets/shaders/Tests/TextureObject
+/Assets/shaders/Tests/Texture2D
+/Assets/shaders/Tests/StaticSwitch
+/Assets/shaders/Tests

@@ -37,7 +37,7 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
     /// Texture object to apply the effect to.
     /// </summary>
     [Title("TexObject")]
-    [Input( typeof( TextureObject ) )]
+    [Input( typeof( Texture2DObject ) )]
     [Hide]
     public NodeInput TexObject { get; set; }
 
@@ -82,9 +82,9 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		
 		if ( !textureobject.IsValid )
 		{
-		    return NodeResult.MissingInput( nameof( TextureObject ) );
+		    return NodeResult.MissingInput( nameof( Texture2DObject ) );
 		}
-		else if ( textureobject.ResultType is not ResultType.TextureObject )
+		else if ( textureobject.ResultType is not ResultType.Texture2DObject )
 		{
 		    return NodeResult.Error($"Input to TexObject is not a texture object!");
 		}

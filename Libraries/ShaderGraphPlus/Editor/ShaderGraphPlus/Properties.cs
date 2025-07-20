@@ -25,7 +25,7 @@ public class Properties : Widget
 			var so = value.GetSerialized();
 			so.OnPropertyChanged += x =>
 			{
-				PropertyUpdated?.Invoke();
+				PropertyUpdated?.Invoke( x );
 			};
 
 			sheet = new ControlSheet();
@@ -45,7 +45,7 @@ public class Properties : Widget
 
 	private readonly Layout Editor;
 
-	public Action PropertyUpdated { get; set; }
+	public Action<SerializedProperty> PropertyUpdated { get; set; }
 
 	public Properties( Widget parent ) : base( parent )
 	{

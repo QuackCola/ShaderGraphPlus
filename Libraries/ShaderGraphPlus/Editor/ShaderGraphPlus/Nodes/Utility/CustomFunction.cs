@@ -24,7 +24,10 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
     public override string Title => string.IsNullOrEmpty( Name ) ?
     $"{DisplayInfo.For( this ).Name}" :
     $"{DisplayInfo.For( this ).Name} ({Name})";
-    
+
+	[Hide, JsonIgnore]
+    public override bool CanPreview => false;
+
     public string Name { get; set; }
     
     public CustomCodeNodeMode Type { get; set; } = CustomCodeNodeMode.Inline;
@@ -476,7 +479,7 @@ public class CustomCodeNodePorts
             if ( typeName == "float" ) typeName = typeof( float ).FullName;
             if ( typeName == "int" ) typeName = typeof( int ).FullName;
             if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
-            if ( typeName == "Texture2D" ) typeName = typeof( TextureObject ).FullName;
+            if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
             var type = TypeLibrary.GetType( typeName ).TargetType;
             return type;
         }
