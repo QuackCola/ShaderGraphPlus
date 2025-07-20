@@ -2,13 +2,16 @@
 
 namespace Editor.ShaderGraphPlus;
 
-internal static class ObsoleteMapping
+partial class ShaderGraphPlus
 {
-	public static Dictionary<string, string> Mapping => new()
+	/// <summary>
+	/// Key is the old node type name and value is the new node type name.
+	/// </summary>
+	public static Dictionary<string, string> NodeTypeNameMapping => new()
 	{
-		{ "MaterialDomain", "Domain" }
+		{ "TextureObjectNode", "Texture2DObjectNode" },
+		{ "NormapMapTriplanar", "NormalMapTriplanar" },
 	};
-
 }
 
 partial class ShaderGraphPlus
@@ -23,12 +26,12 @@ partial class ShaderGraphPlus
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
 			ReadCommentHandling = JsonCommentHandling.Skip,
 		};
-		
+	
 		options.Converters.Add( new JsonStringEnumConverter( null, true ) );
-		
+	
 		return options;
 	}
-	
+
 	public string Serialize()
 	{
 		var doc = new JsonObject();
@@ -40,8 +43,8 @@ partial class ShaderGraphPlus
 		
 		return doc.ToJsonString( options );
 	}
-	
-	public void Deserialize( string json, string subgraphPath = null, ShaderGraphPlus lightingGraph = null )
+
+	public void Deserialize( string json, string subgraphPath = null )
 	{
 		using var doc = JsonDocument.Parse( json );
 		var root = doc.RootElement;
@@ -90,6 +93,7 @@ partial class ShaderGraphPlus
 			prop.SetValue(obj, JsonSerializer.Deserialize(nodeProperty.Value.GetRawText(), prop.PropertyType, options));
 		}
 	}
+
 	private IEnumerable<BaseNodePlus> DeserializeLightingNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, ShaderGraphPlus lightingGraph = null )
 	{
 		var nodes = new Dictionary<string, BaseNodePlus>();
@@ -97,7 +101,6 @@ partial class ShaderGraphPlus
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 
 		Log.Info( doc.ToString() );
-
 
 		if ( !doc.TryGetProperty( "lighting_nodes", out var element1 ) )
 			return nodes.Values;
@@ -200,27 +203,23 @@ partial class ShaderGraphPlus
 		return nodes.Values;
 	}
 
-	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, ShaderGraphPlus lightingGraph = null, bool deserializingLighting = false )
+	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null )
 	{
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 
-		var arrayProperty = new JsonElement();
-
-		//if ( !deserializingLighting )
-		//{
-		//	arrayProperty = doc.GetProperty( "nodes" );
-		//}
-		//else
-		//{
-		//	arrayProperty = doc.GetProperty( "lighting_nodes" );
-		//}
-
-		arrayProperty = doc.GetProperty( "nodes" );
+		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
 		{
 			var typeName = element.GetProperty( "_class" ).GetString();
+
+			// Use the new typename if applicable.
+			if ( NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
+			{
+				typeName = newTypeName;
+			}
+
 			var typeDesc = EditorTypeLibrary.GetType( typeName );
 			var type = new ClassNodeType( typeDesc );
 
@@ -292,14 +291,7 @@ partial class ShaderGraphPlus
 
 			nodes.Add( node.Identifier, node );
 
-			//if ( !deserializingLighting )
-			//{
-				AddNode( node );
-			//}
-			//else
-			//{
-			//	AddNode( node, lightingGraph );
-			//}
+			AddNode( node );
 		}
 
 		foreach ( var (input, value) in connections )
@@ -331,18 +323,54 @@ partial class ShaderGraphPlus
 
 		return nodes.Values;
 	}
-	
+
 	public string SerializeNodes()
 	{
 		return SerializeNodes(Nodes);
 	}
-	
+
 	public string SerializeNodes(IEnumerable<BaseNodePlus> nodes)
 	{
 		var doc = new JsonObject();
 		var options = SerializerOptions();
 
-		SerializeNodes(nodes, doc, options);
+		SerializeNodes( nodes, doc, options );
+
+		return doc.ToJsonString(options);
+	}
+
+	private static void SerializeObject( object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null )
+	{
+		var type = obj.GetType();
+		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( x => x.GetSetMethod() != null );
+	
+		foreach ( var property in properties )
+		{
+			if ( !property.CanRead)
+				continue;
+
+			if ( property.PropertyType == typeof( NodeInput ) )
+				continue;
+	
+			if ( property.IsDefined( typeof( JsonIgnoreAttribute ) ) )
+				continue;
+	
+			var propertyName = property.Name;
+			if ( property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna )
+				propertyName = jpna.Name;
+	
+			var propertyValue = property.GetValue(obj);
+			if ( propertyName == "Identifier" && propertyValue is string identifier )
+			{
+				if ( identifiers.TryGetValue(identifier, out var newIdentifier ) )
+				{
+					propertyValue = newIdentifier;
+				}
+			}
+	
+			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
+		}
 
 		return doc.ToJsonString(options);
 	}
@@ -410,18 +438,18 @@ partial class ShaderGraphPlus
             identifiers.Add(node.Identifier, $"{identifiers.Count}");
         }
 
-        var nodeArray = new JsonArray();
+		var nodeArray = new JsonArray();
 
-        foreach (var node in nodes)
-        {
-            var type = node.GetType();
-            var nodeObject = new JsonObject { { "_class", type.Name } };
-
-            SerializeObject(node, nodeObject, options, identifiers);
-
-            nodeArray.Add(nodeObject);
-        }
+		foreach ( var node in nodes )
+		{
+			var type = node.GetType();
+			var nodeObject = new JsonObject { { "_class", type.Name } };
 		
+			SerializeObject(node, nodeObject, options, identifiers);
+
+			nodeArray.Add(nodeObject);
+		}
+
 		if ( hasCustomLighting )
 		{
 			doc.Add( "lighting_nodes", nodeArray );
@@ -430,5 +458,5 @@ partial class ShaderGraphPlus
 		{
 			doc.Add( "nodes", nodeArray );
 		}
-    }
+	}
 }

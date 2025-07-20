@@ -1,0 +1,425 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/staticswitch/bumpoffsetfeatureref.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 0.45,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "552,108",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "23",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Normal": {
+        "Identifier": "21",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Roughness": {
+        "Identifier": "22",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": true,
+      "Mode": "Create",
+      "Feature": {
+        "FeatureName": "BumpOffset",
+        "HeaderName": "Effects"
+      },
+      "FeatureReference": "None",
+      "Identifier": "1",
+      "Position": "-816,96",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "16",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "BumpOffsetNode",
+      "DefaultHeight": 0,
+      "DefaultDepthScale": 0.125,
+      "DefaultReferencePlane": 0.42,
+      "Identifier": "2",
+      "Position": "-1008,12",
+      "HandleOffsets": {},
+      "InputHeight": {
+        "Identifier": "17",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputDepthScale": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputReferencePlane": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputCoords": {
+        "Identifier": "16",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_height.png",
+      "UI": {
+        "Name": "Height",
+        "Default": "1,1,1,1",
+        "Extension": "Mask",
+        "CustomExtension": "_height",
+        "ColorSpace": "Linear",
+        "ImageFormat": "ATI1N",
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "3",
+      "Position": "-1512,-84",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "4",
+      "Position": "-1752,120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_color.png",
+      "UI": {
+        "Name": "Color",
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "SrgbRead": true,
+        "PrimaryGroup": {
+          "Name": "Color"
+        }
+      },
+      "Identifier": "5",
+      "Position": "-540,-48",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "13",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureSampler",
+      "DefaultSampler": {},
+      "Image": "textures/brick_normal.png",
+      "UI": {
+        "Name": "Normal",
+        "Default": "1,1,1,1",
+        "Extension": "Normal",
+        "ShowExtension": true,
+        "ColorSpace": "Linear",
+        "PrimaryGroup": {
+          "Name": "Normal"
+        }
+      },
+      "Identifier": "6",
+      "Position": "-540,192",
+      "HandleOffsets": {},
+      "Coords": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "13",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.125,
+      "Name": "Depth Scale",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 1,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "7",
+      "Position": "-1260,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.42,
+      "Name": "Reference Plane",
+      "IsAttribute": false,
+      "UI": {
+        "Priority": 2,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        }
+      },
+      "Identifier": "8",
+      "Position": "-1260,60",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "9",
+      "Position": "-360,192",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "Size": "664,444",
+      "Color": "Green",
+      "Title": "",
+      "Description": "Depending on the value of the BumpOffset combo we will choose the color magenta or red",
+      "Layer": 1,
+      "Identifier": "10",
+      "Position": "-336,-300",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "11",
+      "Position": "96,168",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "15",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SamplerNode",
+      "SamplerState": {
+        "Name": "TestSampler"
+      },
+      "Name": null,
+      "PortOrder": 0,
+      "Identifier": "12",
+      "Position": "-2016,216",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "13",
+      "Position": "-660,252",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "12",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "14",
+      "Position": "-1764,-24",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "12",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "15",
+      "Position": "-204,168",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "5",
+        "Output": "R",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "16",
+      "Position": "-1068,156",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "17",
+      "Position": "-1092,-24",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "3",
+        "Output": "R",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "PreviewToggle": false,
+      "Mode": "Reference",
+      "Feature": {
+        "FeatureName": ""
+      },
+      "FeatureReference": "BumpOffset",
+      "Identifier": "18",
+      "Position": "132,-180",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "19",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "20",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "19",
+      "Position": "-276,-192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "Value": "1,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "20",
+      "Position": "-276,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "21",
+      "Position": "96,228",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "Value": 0.124,
+      "Name": "Roughness",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "22",
+      "Position": "288,264",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "23",
+      "Position": "420,108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "18",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ]
+}

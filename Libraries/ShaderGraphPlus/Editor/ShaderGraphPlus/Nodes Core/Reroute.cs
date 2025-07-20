@@ -11,6 +11,9 @@ public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 	[Input, Hide, Title( "" )]
 	public NodeInput Input { get; set; }
 
+	[Hide, JsonIgnore]
+	public override bool CanPreview => false;
+
 	public override NodeUI CreateUI( GraphView view )
 	{
 		return new RerouteUI( view, this );

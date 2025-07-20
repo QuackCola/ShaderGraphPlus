@@ -9,28 +9,38 @@ public static class SGPLog
 	/// </summary>
 	public static string Name => "ShaderGraphPlus";
 
-	public static void Info( string message )
+	internal static IEnumerable<MainWindow> GetAllShadergraphPlusWindows()
 	{
-		_log.Info( message );
+		return Editor.Window.All.OfType<MainWindow>();
 	}
 
-	public static void Trace( string message )
+	public static void Info( string message, bool shouldLog = true )
 	{
-		_log.Trace( message );
+		if ( shouldLog )
+			_log.Info( message );
 	}
 
-	public static void Warning( string message )
+	public static void Trace( string message, bool shouldLog = true )
 	{
-		_log.Warning( message );
+		if ( shouldLog )
+			_log.Trace( message );
 	}
 
-	public static void Error( string message )
+	public static void Warning( string message, bool shouldLog = true )
 	{
-		_log.Error( message );
+		if ( shouldLog )
+			_log.Warning( message );
 	}
 
-	public static void Error( Exception exception, string message )
+	public static void Error( string message, bool shouldLog = true )
 	{
-		_log.Error( exception, message );
+		if ( shouldLog )
+			_log.Error( message );
+	}
+
+	public static void Error( Exception exception, string message, bool shouldLog = true )
+	{
+		if ( shouldLog )
+			_log.Error( exception, message );
 	}
 }

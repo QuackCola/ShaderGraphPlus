@@ -74,6 +74,9 @@ PS
 {
     #include "common/pixel.hlsl"
 	
+	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
+	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
 	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tHeight < Channel( RGBA, Box( Height ), Srgb ); OutputFormat( DXT1 ); SrgbRead( True ); >;
@@ -81,7 +84,7 @@ PS
 	float g_flSliceDistance < UiGroup( ",0/,0/0" ); Default1( 0.15 ); Range1( 0.001, 4 ); >;
 	float2 g_vTexCoordScale < UiStep( 1 ); UiGroup( ",0/,0/0" ); Default2( 1,1 ); Range2( 1,1, 8,8 ); >;
 		
-	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs)
+	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{
 	    float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
 	    vNormalWs = normalize( vNormalWs.xyz );
@@ -124,14 +127,14 @@ PS
 
 		
 		
-		float l_0 = g_flSliceCount;
-		float l_1 = g_flSliceDistance;
-		float2 l_2 = i.vTextureCoords.xy * float2( 1, 1 );
-		float2 l_3 = g_vTexCoordScale;
-		float2 l_4 = (l_2 * l_3);
-		float3 l_5 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
-		float3 l_6 = GetTangentViewVector(l_5, i.vNormalWs, i.vTangentUWs, i.vTangentVWs);
-		float3 l_7 = SimpleParallax(l_0,l_1,l_4,l_6,g_tHeight,g_sTestSampler);
+		float l_0 = g_flSliceCount; 
+		float l_1 = g_flSliceDistance; 
+		float2 l_2 = i.vTextureCoords.xy * float2( 1, 1 ); 
+		float2 l_3 = g_vTexCoordScale; 
+		float2 l_4 = (l_2 * l_3); 
+		float3 l_5 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz; 
+		float3 l_6 = GetTangentViewVector( l_5, i.vNormalWs, i.vTangentUWs, i.vTangentVWs ); 
+		float3 l_7 = SimpleParallax( l_0, l_1, l_4, l_6, g_tHeight, g_sTestSampler ); 
 		
 
 		return float4( l_7, 1 );

@@ -724,9 +724,6 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 }
 ";
 
-
-
-
     [AttributeUsage( AttributeTargets.Property )]
 	private class FunctionAttribute : Attribute
 	{
@@ -754,6 +751,7 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 	{
 		if ( Functions.ContainsKey( name ) )
 			return false;
+
 		Functions[name] = code;
 		return true;
 	}

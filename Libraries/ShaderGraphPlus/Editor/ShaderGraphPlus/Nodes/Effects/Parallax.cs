@@ -4,6 +4,7 @@
 /// Basic probabaly shit Parallax test.
 /// </summary>
 [Title( "Parallax Node Test" ), Category( "Dev" )]
+[Hide]
 public sealed class ParallaxNode : ShaderNodePlus
 {
 	[Hide]
@@ -57,7 +58,7 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 
 	[Title( "Tex Object" )]
 	[Description( "" )]
-	[Input( typeof( TextureObject ) )]
+	[Input( typeof( Texture2DObject ) )]
 	[Hide]
 	public NodeInput TextureObject { get; set; }
 
@@ -111,7 +112,7 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
         {
         	return NodeResult.MissingInput( nameof( TextureObject ) );
         }
-        else if ( textureobject.ResultType is not ResultType.TextureObject )
+        else if ( textureobject.ResultType is not ResultType.Texture2DObject )
         {
         	return NodeResult.Error( $"Input to Tex Object is not a texture object!" );
         }

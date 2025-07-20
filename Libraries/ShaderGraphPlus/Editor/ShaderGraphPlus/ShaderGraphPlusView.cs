@@ -77,6 +77,76 @@ public class ShaderGraphPlusView : GraphView
 		return AvailableNodes.TryGetValue( type.FullName!, out var nodeType ) ? nodeType : null;
 	}
 
+	protected override void OnOpenContextMenu( Menu menu, Plug targetPlug )
+	{
+		base.OnOpenContextMenu( menu, targetPlug );
+
+		var selectedNodes = SelectedItems.OfType<NodeUI>().ToArray();
+		if ( selectedNodes.Length > 1 && !selectedNodes.Any( x => x.Node is BaseResult ) )
+		{
+			menu.AddOption( "Create Custom Node...", "add_box", () =>
+			{
+				const string extension = "sgpfunc";
+
+				var fd = new FileDialog( null );
+				fd.Title = "Create Shader Graph Function";
+				fd.Directory = Project.Current.RootDirectory.FullName;
+				fd.DefaultSuffix = $".{extension}";
+				fd.SelectFile( $"untitled.{extension}" );
+				fd.SetFindFile();
+				fd.SetModeSave();
+				fd.SetNameFilter( $"ShaderGraph Function (*.{extension})" );
+				if ( !fd.Execute() ) return;
+
+				CreateSubgraphFromSelection( fd.SelectedFile );
+			} );
+		}
+		
+		if ( selectedNodes.Length == 1 )
+		{
+			var item = selectedNodes.FirstOrDefault();
+
+			if ( item is null )
+				return;
+
+			var node = item.Node as BaseNodePlus;
+
+			if ( node != null )
+			{
+				menu.AddSeparator();
+
+				if ( ConCommands.NodeDebugInfo )
+				{
+					NodeDebugInfo( menu, node );
+				}
+			}
+		}
+	}
+
+	private void NodeDebugInfo( Menu menu, BaseNodePlus node )
+	{
+		var header1 = menu.AddHeading( "Node Debug Info" );
+
+		var label1 = menu.AddWidget( new Label() );
+		label1.Text = $"Node ID      : {node.Identifier}";
+
+		var label2 = menu.AddWidget( new Label() );
+		label2.Text = $"Preview ID   : {node.PreviewID}";
+
+		var label3 = menu.AddWidget( new Label() );
+		label3.Text = $"IsReachable? : {node.IsReachable}";
+
+		if ( node.ComboSwitchInfo.IsValid )
+		{
+			var header2 = menu.AddHeading( "Combo Switch Data" );
+
+			var label4 = menu.AddWidget( new Label( $" BoundSwitch : {node.ComboSwitchInfo.BoundSwitch}" ) );
+			var label5 = menu.AddWidget( new Label( $" BoundSwitchBlock : {node.ComboSwitchInfo.BoundSwitchBlock}" ) );
+		}
+
+
+	}
+
 	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
 	{
 		if ( ev.Data.Assets.FirstOrDefault() is { } asset )
@@ -118,25 +188,26 @@ public class ShaderGraphPlusView : GraphView
 		} );
 	}
 
-	private Dictionary<Type, HandleConfig> HandleConfigs { get; } = new()
+	private static bool TryGetHandleConfig( Type type, out Type matchingType, out HandleConfig config )
 	{
-		{ typeof(bool), new HandleConfig( "Bool", Color.Parse( "#ffc0cb" ).Value ) },
-		{ typeof(float), new HandleConfig( "Float", Color.Parse( "#8ec07c" ).Value ) },
-		{ typeof(Vector2), new HandleConfig( "Vector2", Color.Parse( "#ce67e0" ).Value ) },
-		{ typeof(Vector3), new HandleConfig( "Vector3", Color.Parse( "#7177e1" ).Value ) },
-		{ typeof(Vector4), new HandleConfig( "Vector4", Color.Parse( "#e0d867" ).Value ) },
-		{ typeof(Float2x2), new HandleConfig( "Float2x2", Color.Parse( "#a3b3c9" ).Value ) },
-		{ typeof(Float3x3), new HandleConfig( "Float3x3", Color.Parse( "#a3b3c9" ).Value ) },
-		{ typeof(Float4x4), new HandleConfig( "Float4x4", Color.Parse( "#a3b3c9" ).Value ) },
-		{ typeof(TextureObject), new HandleConfig( "Texture2D", Color.Parse( "#ffb3a7" ).Value ) },
-		{ typeof(Sampler), new HandleConfig( "Sampler", Color.Parse( "#dddddd" ).Value ) },
-		{ typeof(Gradient), new HandleConfig( "Gradient", Color.Parse( "#dddddd" ).Value ) },
-		{ typeof(Color), new HandleConfig( "Color", Color.Parse( "#c7ae32" ).Value ) },
-	};
+		if ( ShaderGraphPlusTheme.HandleConfigs.TryGetValue( type, out config ) )
+		{
+			matchingType = type;
+			return true;
+		}
+
+		matchingType = null;
+		return false;
+	}
 
 	protected override HandleConfig OnGetHandleConfig( Type type )
 	{
-		return HandleConfigs.TryGetValue( type, out var config ) ? config : base.OnGetHandleConfig( type );
+		if ( TryGetHandleConfig( type, out var matchingType, out var config ) )
+		{
+			return config with { Name = type == matchingType ? config.Name : null };
+		}
+
+		return base.OnGetHandleConfig( type );
 	}
 
 	public override void ChildValuesChanged( Widget source )
@@ -160,30 +231,6 @@ public class ShaderGraphPlusView : GraphView
 		Log.Info( "Push Redo" );
 		_undoStack.PushRedo( Graph.SerializeNodes() );
 		_window.SetDirty();
-	}
-
-	protected override void OnOpenContextMenu( Menu menu, Plug targetPlug )
-	{
-		var selectedNodes = SelectedItems.OfType<NodeUI>().ToArray();
-		if ( selectedNodes.Length > 1 && !selectedNodes.Any( x => x.Node is BaseResult ) )
-		{
-			menu.AddOption( "Create Custom Node...", "add_box", () =>
-			{
-				const string extension = "sgpfunc";
-
-				var fd = new FileDialog( null );
-				fd.Title = "Create Shader Graph Function";
-				fd.Directory = Project.Current.RootDirectory.FullName;
-				fd.DefaultSuffix = $".{extension}";
-				fd.SelectFile( $"untitled.{extension}" );
-				fd.SetFindFile();
-				fd.SetModeSave();
-				fd.SetNameFilter( $"ShaderGraph Function (*.{extension})" );
-				if ( !fd.Execute() ) return;
-
-				CreateSubgraphFromSelection( fd.SelectedFile );
-			} );
-		}
 	}
 
 	private void CreateSubgraphFromSelection( string filePath )

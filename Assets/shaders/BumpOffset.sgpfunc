@@ -2,11 +2,11 @@
   "IsSubgraph": true,
   "Path": "shaders/bumpoffset.sgpfunc",
   "Model": null,
-  "Title": "Bump Offset",
+  "Title": "Bump Offset Test",
   "Description": null,
   "Category": null,
   "Icon": null,
-  "AddToNodeLibrary": false,
+  "AddToNodeLibrary": true,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
@@ -278,12 +278,12 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "1e645624-194d-4cc9-a908-e1c8907bb8cb",
+          "Id": "b4169622-e9aa-4cc8-83a8-650faa83296a",
           "Name": "UV",
           "Type": "Vector2"
         },
         {
-          "Id": "ab8f9bbc-93c1-4f9d-8cbe-a12b92943989",
+          "Id": "2ca1e83a-4a1b-4cf4-815c-f4f9c9e97050",
           "Name": "UV Offset",
           "Type": "Vector2"
         }

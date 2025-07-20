@@ -1,6 +1,4 @@
-﻿using Editor.ShaderGraphPlus;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public abstract class BaseNodePlus : INode
 {
@@ -15,15 +13,21 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool CanClone => true;
 
-    [JsonIgnore, Hide, Browsable( false )]
-    public virtual bool CanRemove => true;
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual bool CanRemove => true;
 
-    [Hide, Browsable( false )]
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual bool CanPreview => true;
+
+	[Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 
 	[JsonIgnore, Hide]
 	public IGraph _graph;
-	
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public int PreviewID { get; set; }
+
 	[Browsable( false )]
 	[JsonIgnore, Hide]
 	public IGraph Graph
@@ -56,6 +60,10 @@ public abstract class BaseNodePlus : INode
 
 	[Hide, Browsable( false )]
 	public Dictionary<string, float> HandleOffsets { get; set; } = new();
+	
+	// Here so I can debug Switch Info without having to sort through the console.
+	[JsonIgnore, Hide, Browsable( false )]
+	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; } = new();
 
 	public BaseNodePlus()
 	{
@@ -160,11 +168,11 @@ public abstract class BaseNodePlus : INode
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class EditorAttribute : Attribute
+	public class NodeEditorAttribute : Attribute
 	{
 		public string ValueName;
 
-		public EditorAttribute( string valueName )
+		public NodeEditorAttribute( string valueName )
 		{
 			ValueName = valueName;
 		}
@@ -424,7 +432,7 @@ public class PlugInfo
 			return null;
 		}
 
-		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.NodeEditorAttribute>();
 
 		if ( editor is not null )
 		{

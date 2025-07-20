@@ -10,6 +10,7 @@ public interface IParameterNode
 
 	NodeInput PreviewInput { get; set; }
 
+	Type GetPortType();
 	object GetValue();
 	void SetValue( object val );
 	Vector4 GetRangeMin();
@@ -20,6 +21,11 @@ public interface ITextureParameterNode
 {
 	string Image { get; set; }
 	TextureInput UI { get; set; }
+
+	/// <summary>
+	/// Only used by Preview.
+	/// </summary>
+	bool AlreadyRegisterd { get; set; }
 }
 
 public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode
@@ -30,7 +36,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
-		$"{DisplayInfo.For( this ).Name} {Name}";
+		$"{DisplayInfo.For( this ).Name} ( {Name} )";
 
 	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
@@ -67,6 +73,11 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		return new( ResultType.Float, $"{result}.{component}", true );
 	}
 
+	public Type GetPortType()
+	{
+		return typeof( T );
+	}
+
 	public virtual object GetDefaultValue()
 	{
 		return default( T );
@@ -75,11 +86,6 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	public object GetValue()
 	{
 		return Value;
-	}
-
-	public void SetValue( object val )
-	{
-		Value = (T)val;
 	}
 
 	public virtual Vector4 GetRangeMin()
@@ -91,6 +97,10 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	{
 		return Vector4.Zero;
 	}
+	public void SetValue( object val )
+	{
+		Value = (T)val;
+	}
 
 	public List<string> GetErrors()
 	{
@@ -100,6 +110,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		{
 			if ( parameterNode == this )
 				continue;
+
 			if ( !string.IsNullOrWhiteSpace( Name ) && parameterNode is IParameterNode pn && pn.Name == Name )
 			{
 				errors.Add( $"Duplicate name \"{Name}\" on {this.DisplayInfo.Name}" );

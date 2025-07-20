@@ -12,48 +12,48 @@ internal class HLSLAssetPathAttribute : Attribute
 [CustomEditor( typeof(string), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
 internal class HLSLAssetPathControlWidget : ControlWidget
 {
-	public override bool IsControlButton => true;
-	public override bool SupportsMultiEdit => false;
-	
-	string FilePath;
-	string FilePathAbsolute;
-	
-	//IconButton PreviewButton;
-	private ContextMenu menu;
-	
-	CustomFunctionNode Node;
-	SerializedProperty FunctionNameProperty;
-	
-	public HLSLAssetPathControlWidget( SerializedProperty property ) : base( property )
-	{
-	    FilePath = property.GetValue<string>();
-	    
-	    Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
-	
-	    FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
-	
-	    if ( Node is null )
-	        return;
-	
-	    HorizontalSizeMode = SizeMode.CanGrow | SizeMode.Expand;
-	    Cursor = CursorShape.Finger;
-	    MouseTracking = true;
-	    AcceptDrops = true;
-	    IsDraggable = true;
-	}
-	
-	protected override void DoLayout()
-	{
-	    base.DoLayout();
-	    
-	    //if ( PreviewButton.IsValid() )
-	    //{
-	    //    PreviewButton.FixedSize = Height - 2;
-	    //    PreviewButton.Position = new Vector2(Width - Height + 1, 1);
-	    //}
-	}
-	
-	private void DrawContent( Rect rect, string title, string path )
+    public override bool IsControlButton => true;
+    public override bool SupportsMultiEdit => false;
+    
+    string FilePath;
+    string FilePathAbsolute;
+
+    IconButton PreviewButton = null;
+    private ContextMenu menu;
+
+    CustomFunctionNode Node;
+    SerializedProperty FunctionNameProperty;
+    
+    public HLSLAssetPathControlWidget( SerializedProperty property ) : base( property )
+    {
+        FilePath = property.GetValue<string>();
+        
+        Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
+    
+        FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
+    
+        if ( Node is null )
+            return;
+    
+        HorizontalSizeMode = SizeMode.CanGrow | SizeMode.Expand;
+        Cursor = CursorShape.Finger;
+        MouseTracking = true;
+        AcceptDrops = true;
+        IsDraggable = true;
+    }
+    
+    protected override void DoLayout()
+    {
+        base.DoLayout();
+        
+        if ( PreviewButton.IsValid() )
+        {
+            PreviewButton.FixedSize = Height - 2;
+            PreviewButton.Position = new Vector2(Width - Height + 1, 1);
+        }
+    }
+    
+    private void DrawContent( Rect rect, string title, string path )
     {
         bool multiline = Height > 32;
         Rect textRect = rect.Shrink( 0, 6 );
@@ -266,8 +266,8 @@ internal class HLSLAssetPathControlWidget : ControlWidget
 		return fd.SelectedFile;
 	}
 
-	private void UpdateProperty()
-	{
-		SerializedProperty.SetValue( FilePath );
-	}
+    private void UpdateProperty()
+    {
+        SerializedProperty.SetValue( FilePath );
+    }
 }

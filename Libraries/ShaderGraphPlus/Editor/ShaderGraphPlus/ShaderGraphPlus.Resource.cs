@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Editor.ShaderGraphPlus;
 
 public enum BlendMode
@@ -58,6 +60,8 @@ public partial class ShaderGraphPlus : IGraph
 	[Hide, JsonIgnore]
 	public readonly Dictionary<string, BaseNodePlus> _lightingNodes = new();
 	
+	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
+
 	[Hide]
 	public bool IsSubgraph { get; set; }
 
@@ -93,8 +97,6 @@ public partial class ShaderGraphPlus : IGraph
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public bool AddToNodeLibrary { get; set; }
-
-
 	public BlendMode BlendMode { get; set; }
 
 	[ShowIf( nameof( ShowShadingModel ), true )]
@@ -108,10 +110,23 @@ public partial class ShaderGraphPlus : IGraph
 	//[InlineEditor]
 	//[Group("Post Processing")]
 	//public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
-
+	
+	/// <summary>
+	/// Currently Registerd features for this graph.
+	/// </summary>
+	//[Hide]
+	//public Dictionary<string,string> Features { get; set; } = new();
+	
+	/// <summary>
+	/// TODO: Hook this up and read from a list of registerd features!
+	/// </summary>
+	//[InlineEditor]
 	//
-	// Summary:
-	//     Custom key-value storage for this project.
+	//public List<FeatureRule> FeatureRules { get; set; } = new();
+
+	/// <summary>
+	///   Custom key-value storage for this project.
+	/// </summary>
 	[Hide]
 	public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
 
@@ -120,6 +135,16 @@ public partial class ShaderGraphPlus : IGraph
 
 	public ShaderGraphPlus()
 	{
+	}
+
+	public void AssignSwitchInfo( string name, GraphCompiler.ComboSwitchInfo info )
+	{
+		_nodes[name].ComboSwitchInfo = info;
+	}
+
+	public void AddNode( BaseNodePlus node )
+	{
+		_lightingNodes.Clear();
 	}
 
 	public void ClearLightingNodes()
@@ -188,47 +213,43 @@ public partial class ShaderGraphPlus : IGraph
 		RemoveNode( (BaseNodePlus)node );
 	}
 
-	/// <summary>
-	/// Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="keyname"></param>
-	/// <param name="outvalue"></param>
-	/// <returns></returns>
-	public bool TryGetMeta<T>(string keyname, out T outvalue)
-	{
-		outvalue = default(T);
-		if (Metadata == null)
-		{
-			return false;
-		}
-		
-		if (!Metadata.TryGetValue(keyname, out var value))
-		{
-			return false;
-		}
-		
-		if (value is T val)
-		{
-			outvalue = val;
-			return true;
-		}
-		
-		if (value is JsonElement element)
-		{
-			try
-			{
-				T val2 = element.Deserialize<T>(new JsonSerializerOptions());
-				outvalue = ((val2 != null) ? val2 : default(T));
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-		}
-	
-		return true;
-	}
+	//public void AddFeature( ShaderFeatureInfo feature )
+	//{
+	//	if ( !Features.ContainsKey( feature.FeatureName ) )
+	//	{
+	//		Features.Add( feature.FeatureName, feature.FeatureString );
+	//	}
+	//	else
+	//	{
+	//		//SGPLog.Error( "Feature is already known to the graph!" );
+	//	}
+	//}
+
+    //
+    // Summary:
+    //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+    //
+    //
+    // Parameters:
+    //   keyname:
+    //     The key to retrieve the value of.
+    //
+    //   outvalue:
+    //     The value, if it was present in the metadata storage.
+    //
+    // Type parameters:
+    //   T:
+    //     Type of the value.
+    //
+    // Returns:
+    //     Whether the value was successfully retrieved.
+    public bool TryGetMeta<T>(string keyname, out T outvalue)
+    {
+        outvalue = default(T);
+        if (Metadata == null)
+        {
+            return false;
+        }
 
 	/// <summary>
 	/// Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.

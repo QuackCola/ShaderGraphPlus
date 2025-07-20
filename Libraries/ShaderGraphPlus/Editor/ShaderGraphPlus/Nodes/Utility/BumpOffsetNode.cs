@@ -1,5 +1,6 @@
 ﻿namespace Editor.ShaderGraphPlus.Nodes;
 
+
 [Title( "Bump Offset" ), Category( "Utility" ), Icon( "water" )]
 public sealed class BumpOffsetNode : ShaderNodePlus
 {
@@ -26,13 +27,13 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 
 	[Input( typeof( float ) )]
 	[Title( "Depth Scale" )]
-	[Hide, Editor( nameof( DefaultDepthScale ) )]
+	[Hide, NodeEditor( nameof( DefaultDepthScale ) )]
 	[MinMax( 0.0f, 1.0f )]
 	public NodeInput InputDepthScale { get; set; }
 
 	[Input( typeof( float ) )]
 	[Title( "Reference Plane" )]
-	[Hide, Editor( nameof( DefaultReferencePlane ) )]
+	[Hide, NodeEditor( nameof( DefaultReferencePlane ) )]
 	[MinMax( 0.0f, 1.0f )]
 	public NodeInput InputReferencePlane { get; set; }
 

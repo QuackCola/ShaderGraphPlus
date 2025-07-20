@@ -51,3 +51,6 @@ thumb_root.psd
 thumb_square.psd
 thumb_tall.psd
 thumb_wide.psd
+/tools
+*.graphite
+*.py

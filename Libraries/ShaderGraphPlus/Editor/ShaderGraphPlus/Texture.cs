@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace Editor.ShaderGraphPlus;
 
 public enum TextureExtension
 {
@@ -37,10 +35,51 @@ public enum TextureColorSpace
 
 public enum TextureFormat
 {
-	DXT5,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (1).
+	/// Usage : Diffuse Map, Roughness Map, Normal Map
+	/// </summary>
 	DXT1,
-	RGBA8888,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (4).
+	/// Usage : Diffuse Map with Transparency
+	/// </summary>
+	DXT3,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (8).
+	/// Usage : Diffuse Map with High Quality Transparency
+	/// </summary>
+	DXT5,
+	/// <summary>
+	/// Three-channel HDR color (16:16:16).
+	/// Usage : Skyboxes
+	/// </summary>
+	BC6H,
+	/// <summary>
+	/// RGB (4-7 bits per channel) and alpha (0-8 bits).
+	/// Usage : Diffuse Map, Roughness Map, Normal Map
+	/// </summary>
 	BC7,
+	/// <summary>
+	/// Single-channel (8).
+	/// Usage : Height Map, Displacement Map, Ambient Occlusion Map
+	/// </summary>
+	ATI1N,
+	/// <summary>
+	/// Two-channel color (8:8).
+	/// Usage :
+	/// </summary>
+	ATI2N,
+	/// <summary>
+	/// RGB color and alpha (8 bits each).
+	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
+	/// </summary>
+	RGBA8888 ,
+	/// <summary>
+	/// Three-channel HDR color and alpha (16 bits each).
+	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
+	/// </summary>
+	RGBA16161616F
 }
 
 public enum TextureType
@@ -171,9 +210,25 @@ public struct TextureInput
 			return default;
 		}
 	}
+
+#region Graph Editor Only
+	[JsonIgnore, Hide]
+	public StaticSwitchBlock SwitchBlock { get; set; }
+
+	[JsonIgnore, Hide]
+	public string BoundNode { get; set; }
+
+	[JsonIgnore, Hide]
+	public string BoundNodeId { get; set; }
+#endregion Graph Editor Only
 }
 
-public struct TextureObject
+public struct Texture2DObject
+{
+
+}
+
+public struct TextureCubeObject
 {
 
 }
