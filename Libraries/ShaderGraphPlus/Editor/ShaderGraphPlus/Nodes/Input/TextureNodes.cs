@@ -1411,7 +1411,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 
 	public object GetValue()
 	{
-		return new Sampler() { Name = "TestSamp"};
+		return new Sampler();
 	}
 
 	public void SetValue( object val )

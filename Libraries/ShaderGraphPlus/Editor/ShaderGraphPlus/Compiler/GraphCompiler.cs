@@ -706,13 +706,13 @@ public sealed partial class GraphCompiler
 
 					// TODO : This is just a shitty placeholder until you can just set a defaults of Sampler 
 					// and Texture 2D Objects on the subgraph node itself when the input connectedPlug is null.
-					if ( !string.IsNullOrWhiteSpace( error.Item2 ) )
-					{
-						NodeErrors.Add( error.Item1, new List<string> { error.Item2 } );
-					
-						InputStack.Remove( input );
-						return default;
-					}
+					//if ( !string.IsNullOrWhiteSpace( error.Item2 ) )
+					//{
+					//	NodeErrors.Add( error.Item1, new List<string> { error.Item2 } );
+					//
+					//	InputStack.Remove( input );
+					//	return default;
+					//}
 
 					if ( newResult.IsValid )
 					{
@@ -1046,7 +1046,7 @@ public sealed partial class GraphCompiler
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
 	{
-		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
+		if ( !node.Test.TryGetValue( name, out var value ) )
 		{
 			switch ( type )
 			{
@@ -1064,54 +1064,15 @@ public sealed partial class GraphCompiler
 					return 0.0f;
 				case Type t when t == typeof( bool ):
 					return false;
-				//case Type t when t == typeof( Sampler ):
-				//	return new Sampler() { Name = "Test"};
+				case Type t when t == typeof( Sampler ):
+					return new Sampler() {};
 				default:
 					throw new Exception( $"Type `{type}` has no default!" );
 			}
+
 		}
 
-		if ( value is JsonElement el )
-		{
-			if ( type == typeof( bool ) )
-			{
-				value = el.GetBoolean();
-			}
-			if ( type == typeof( int ) )
-			{
-				value = el.GetInt32();
-			}
-			else if ( type == typeof( float ) )
-			{
-				value = el.GetSingle();
-			}
-			else if ( type == typeof( Vector2 ) )
-			{
-				value = Vector2.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Vector3 ) )
-			{
-				value = Vector3.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Vector4 ) )
-			{
-				value = Vector4.Parse( el.GetString() );
-			}
-			else if ( type == typeof( Color ) )
-			{
-				value = Color.Parse( el.GetString() ) ?? Color.White;
-			}
-			else if ( type == typeof( Texture2DObject ) )
-			{
-				value = Color.Magenta;
-			}
-			//else if ( type == typeof( Sampler ) )
-			//{
-			//	value = new Sampler() { Name = "Test" };
-			//}
-		}
-
-		return value;
+		return value.DefaultValue;
 	}
 
 	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out (SubgraphNode,string) error )
@@ -1151,24 +1112,24 @@ public sealed partial class GraphCompiler
 
 					// TODO : This is just a shitty placeholder until you can just set them on the 
 					// subgraph node itself when the input connectedPlug is null.
-					if ( parentInput.Value.Item2 == typeof( Sampler ) )
-					{
-						error = new ( lastNode, "Missing Sampler Input! This sucks i know...");
-						value = null;
-						return new();
-					}
-					else if ( parentInput.Value.Item2 == typeof( Texture2DObject ) )
-					{
-						error = new( lastNode, "Missing Texture2DObject Input! This sucks i know.." );
-						value = null;
-						return new();
-					}
-					else if ( parentInput.Value.Item2 == typeof( TextureCubeObject ) )
-					{
-						error = new( lastNode, "Missing TextureCubeObject Input! This sucks i know.." );
-						value = null;
-						return new();
-					}
+					//if ( parentInput.Value.Item2 == typeof( Sampler ) )
+					//{
+					//	error = new ( lastNode, "Missing Sampler Input! This sucks i know...");
+					//	value = null;
+					//	return new();
+					//}
+					//if ( parentInput.Value.Item2 == typeof( Texture2DObject ) )
+					//{
+					//	error = new( lastNode, "Missing Texture2DObject Input! This sucks i know.." );
+					//	value = null;
+					//	return new();
+					//}
+					//else if ( parentInput.Value.Item2 == typeof( TextureCubeObject ) )
+					//{
+					//	error = new( lastNode, "Missing TextureCubeObject Input! This sucks i know.." );
+					//	value = null;
+					//	return new();
+					//}
 
 
 					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );

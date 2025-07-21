@@ -96,7 +96,7 @@ public class ColorEditorPlus : ValueEditor
 			Value = v;
 			if ( BoundNode is not null )
 			{
-				BoundNode.DefaultValues[BoundParameter] = v;
+				BoundNode.Test[BoundParameter].DefaultValue = v;
 			}
 			Node.Graph.ChildValuesChanged( null );
 			Node.Update();
@@ -110,6 +110,6 @@ public class ColorEditorPlus : ValueEditor
 		BoundNode = subgraphNode;
 		BoundParameter = parameter;
 
-		Value = Color.Parse( subgraphNode.DefaultValues[parameter].ToString() ) ?? Color.White;
+		Value = Color.Parse( subgraphNode.Test[parameter].DefaultValue.ToString() ) ?? Color.White;
 	}
 }

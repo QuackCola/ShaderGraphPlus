@@ -36,11 +36,24 @@
     {
       "_class": "SubgraphNode",
       "SubgraphPath": "shaders/tests/textureobject/texobjtst.sgpfunc",
-      "DefaultValues": {
-        "Name": 0,
-        "B3": "1,0,1",
-        "Tint": "1,0,1",
-        "Sampler": {}
+      "Test": {
+        "Tint": {
+          "_class": "Vector3",
+          "DefaultValue": "1,12,1"
+        },
+        "B3": {
+          "_class": "Vector3",
+          "DefaultValue": "1,12,1"
+        },
+        "SamplerIn": {
+          "_class": "Sampler",
+          "DefaultValue": {
+            "Name": "TestSamp",
+            "Filter": "Aniso",
+            "AddressU": "Wrap",
+            "AddressV": "Wrap"
+          }
+        }
       },
       "Identifier": "1",
       "Position": "-444,-12",
@@ -50,7 +63,7 @@
         "Output": "Result",
         "Subgraph": "shaders/tests/textureobject/texobjtst.sgpfunc"
       },
-      "Sampler": {
+      "SamplerIn": {
         "Identifier": "3",
         "Output": "Sampler",
         "Subgraph": "shaders/tests/textureobject/texobjtst.sgpfunc"
@@ -78,12 +91,15 @@
     {
       "_class": "SamplerNode",
       "SamplerState": {
-        "Name": "TestSampler"
+        "Name": "TestSampler",
+        "Filter": "Aniso",
+        "AddressU": "Wrap",
+        "AddressV": "Wrap"
       },
       "Name": null,
       "PortOrder": 0,
       "Identifier": "3",
-      "Position": "-708,36",
+      "Position": "-708,24",
       "HandleOffsets": {}
     },
     {

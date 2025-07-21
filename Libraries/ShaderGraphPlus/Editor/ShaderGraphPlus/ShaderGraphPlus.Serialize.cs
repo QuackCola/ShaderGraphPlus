@@ -37,8 +37,8 @@ partial class ShaderGraphPlus
 		var doc = new JsonObject();
 		var options = SerializerOptions( true );
 
-	SerializeObject( this, doc, options );
-	SerializeNodes( Nodes, doc, options );
+		SerializeObject( this, doc, options );
+		SerializeNodes( Nodes, doc, options );
 
 		return doc.ToJsonString( options );
 	}

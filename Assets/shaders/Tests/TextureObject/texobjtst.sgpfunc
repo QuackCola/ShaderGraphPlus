@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "1cf771d4-4a9f-4e71-bd83-42c55b836de7",
+          "Id": "8764e00a-6b1a-4210-9e7f-705847c0c33b",
           "Name": "Color",
           "Type": "Color"
         }
@@ -38,7 +38,12 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {},
+      "DefaultSampler": {
+        "Name": "",
+        "Filter": "Aniso",
+        "AddressU": "Wrap",
+        "AddressV": "Wrap"
+      },
       "Image": null,
       "UI": {
         "Default": "1,1,1,1",
@@ -108,9 +113,12 @@
     {
       "_class": "SamplerNode",
       "SamplerState": {
-        "Name": "TestSampler2"
+        "Name": "",
+        "Filter": "Aniso",
+        "AddressU": "Wrap",
+        "AddressV": "Wrap"
       },
-      "Name": "Sampler",
+      "Name": "SamplerIn",
       "PortOrder": 0,
       "Identifier": "5",
       "Position": "-768,192",
