@@ -16,7 +16,7 @@ partial class ShaderGraphPlus
 
 partial class ShaderGraphPlus
 {
-	private static JsonSerializerOptions SerializerOptions( bool indented = false )
+	internal static JsonSerializerOptions SerializerOptions( bool indented = false )
 	{
 		var options = new JsonSerializerOptions
 		{

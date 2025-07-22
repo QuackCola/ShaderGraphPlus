@@ -7,7 +7,7 @@ public interface IParameterNode
 	string Name { get; set; }
 	bool IsAttribute { get; set; }
 	ParameterUI UI { get; set; }
-
+	public int PortOrder { get; set; }
 	NodeInput PreviewInput { get; set; }
 
 	Type GetPortType();
@@ -40,6 +40,9 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 
 	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
+
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public int PortOrder { get; set; }
 
 	public T Value { get; set; }
 

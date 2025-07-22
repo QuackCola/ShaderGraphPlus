@@ -626,6 +626,10 @@ public class Preview : SceneRenderingWidget
 			{
 				_sceneObject.Attributes.Set( "g_iStageId", _stageId );
 			}
+			else
+			{
+				_sceneObject.Attributes.Set( "g_iStageId", NoPreviewID );
+			}
 
 			_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
 		}

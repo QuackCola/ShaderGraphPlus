@@ -1,7 +1,7 @@
 {
   "IsSubgraph": false,
   "Path": "shaders/tests/textureobject/textureobject_subgraphtst.sgrph",
-  "Model": null,
+  "Model": "models/dev/box.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
@@ -28,51 +28,31 @@
       "Position": "0,0",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "1",
-        "Output": "Color",
+        "Identifier": "6",
+        "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "SubgraphNode",
       "SubgraphPath": "shaders/tests/textureobject/texobjtst.sgpfunc",
-      "Test": {
-        "Tint": {
-          "_class": "Vector3",
-          "DefaultValue": "1,12,1"
-        },
-        "B3": {
-          "_class": "Vector3",
-          "DefaultValue": "1,12,1"
-        },
+      "DefaultValues": {
         "SamplerIn": {
-          "_class": "Sampler",
-          "DefaultValue": {
-            "Name": "TestSamp",
-            "Filter": "Aniso",
-            "AddressU": "Wrap",
-            "AddressV": "Wrap"
-          }
+          "Name": "MyDefaultSampler",
+          "Filter": "Trilinear"
+        },
+        "Tint": "1,0,1",
+        "Texture A": {
+          "Name": "MyDefaultTextureA",
+          "PreviewImage": "textures/noise_01.psd",
+          "Default": "1,1,1,1",
+          "ShowExtension": true,
+          "SrgbRead": true
         }
       },
       "Identifier": "1",
-      "Position": "-444,-12",
-      "HandleOffsets": {},
-      "Texture A": {
-        "Identifier": "2",
-        "Output": "Result",
-        "Subgraph": "shaders/tests/textureobject/texobjtst.sgpfunc"
-      },
-      "SamplerIn": {
-        "Identifier": "3",
-        "Output": "Sampler",
-        "Subgraph": "shaders/tests/textureobject/texobjtst.sgpfunc"
-      },
-      "Tint": {
-        "Identifier": "4",
-        "Output": "Result",
-        "Subgraph": "shaders/tests/textureobject/texobjtst.sgpfunc"
-      }
+      "Position": "-444,-60",
+      "HandleOffsets": {}
     },
     {
       "_class": "Texture2DObjectNode",
@@ -83,6 +63,7 @@
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
+      "PortOrder": 0,
       "Name": null,
       "Identifier": "2",
       "Position": "-720,-168",
@@ -91,21 +72,19 @@
     {
       "_class": "SamplerNode",
       "SamplerState": {
-        "Name": "TestSampler",
-        "Filter": "Aniso",
-        "AddressU": "Wrap",
-        "AddressV": "Wrap"
+        "Name": "TestSampler"
       },
       "Name": null,
       "PortOrder": 0,
       "Identifier": "3",
-      "Position": "-708,24",
+      "Position": "-708,36",
       "HandleOffsets": {}
     },
     {
       "_class": "Float3",
       "Min": "0,0,0",
       "Max": "1,1,1",
+      "PortOrder": 0,
       "Value": "1,0,1",
       "Name": "",
       "IsAttribute": false,
@@ -113,6 +92,46 @@
       "Identifier": "4",
       "Position": "-708,120",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "SubgraphNode",
+      "SubgraphPath": "shaders/tests/textureobject/texobjtst.sgpfunc",
+      "DefaultValues": {
+        "SamplerIn": {
+          "Name": "MyDefaultSampler",
+          "Filter": "Trilinear"
+        },
+        "Tint": "0,0,1",
+        "Texture A": {
+          "Name": "MyDefaultTextureB",
+          "PreviewImage": "textures/facepunch_logo_mask.png",
+          "Default": "1,1,1,1",
+          "ShowExtension": true,
+          "ColorSpace": "Linear"
+        }
+      },
+      "Identifier": "5",
+      "Position": "-432,132",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Lerp",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Fraction": 0.7607584,
+      "Identifier": "6",
+      "Position": "-204,36",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Color",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "5",
+        "Output": "Color",
+        "Subgraph": null
+      }
     }
   ]
 }

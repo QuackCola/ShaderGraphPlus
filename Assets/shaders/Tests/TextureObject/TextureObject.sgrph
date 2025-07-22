@@ -52,6 +52,7 @@
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
+      "PortOrder": 0,
       "Name": null,
       "Identifier": "1",
       "Position": "-732,192",
@@ -59,7 +60,9 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {},
+      "DefaultSampler": {
+        "Name": ""
+      },
       "Image": "textures/facepunch_logo_mask.png",
       "UI": {
         "Default": "1,1,1,1",
@@ -95,6 +98,7 @@
         "ShowExtension": true,
         "ColorSpace": "Linear"
       },
+      "PortOrder": 0,
       "Name": null,
       "Identifier": "4",
       "Position": "-744,444",
@@ -102,7 +106,9 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {},
+      "DefaultSampler": {
+        "Name": ""
+      },
       "Image": "textures/facepunch_logo_mask.png",
       "UI": {
         "Default": "1,1,1,1",
@@ -130,6 +136,7 @@
           "Name": ""
         }
       },
+      "PortOrder": 0,
       "Name": null,
       "Identifier": "6",
       "Position": "-744,648",
@@ -137,7 +144,9 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {},
+      "DefaultSampler": {
+        "Name": ""
+      },
       "Image": "textures/sbox_logo.png",
       "UI": {
         "Default": "1,1,1,1",
@@ -173,7 +182,9 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {},
+      "DefaultSampler": {
+        "Name": ""
+      },
       "Image": "textures/sbox_logo.png",
       "UI": {
         "Default": "1,1,1,1",
@@ -196,6 +207,7 @@
           "Name": ""
         }
       },
+      "PortOrder": 0,
       "Name": null,
       "Identifier": "10",
       "Position": "-888,1128",

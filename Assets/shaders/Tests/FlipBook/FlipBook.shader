@@ -108,12 +108,13 @@ PS
 		m.Transmission = 0;
 		
 		
-		float l_0 = g_flIconIndex;
-		float2 l_1 = FlipBook( i.vTextureCoords.xy, 4, 4, l_0, float2( 0, 0 ) );
-		float4 l_2 = g_tTexture_ps_0.Sample( g_sSampler0,l_1 );
+		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
+		float l_1 = g_flIconIndex;
+		float2 l_2 = FlipBook( l_0, 4, 4, l_1, float2( 0, 0 ) );
+		float4 l_3 = g_tTexture_ps_0.Sample( g_sSampler0,l_2 );
 		
-		m.Albedo = l_2.xyz;
-		m.Opacity = l_2.a;
+		m.Albedo = l_3.xyz;
+		m.Opacity = l_3.a;
 		m.Roughness = 1;
 		m.Metalness = 0;
 		m.AmbientOcclusion = 1;

@@ -77,11 +77,13 @@ PS
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
-	SamplerState g_sTestSampler < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
-	CreateInputTexture2D( Punch, Linear, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tPunch < Channel( RGBA, Box( Punch ), Linear ); OutputFormat( DXT1 ); SrgbRead( False ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tPunch )
-	TextureAttribute( RepresentativeTexture, g_tPunch )
+	SamplerState g_sMyDefaultSampler < Filter( TRILINEAR ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D( MyDefaultTextureA, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	CreateInputTexture2D( MyDefaultTextureB, Linear, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tMyDefaultTextureA < Channel( RGBA, Box( MyDefaultTextureA ), Srgb ); OutputFormat( DXT1 ); SrgbRead( True ); >;
+	Texture2D g_tMyDefaultTextureB < Channel( RGBA, Box( MyDefaultTextureB ), Linear ); OutputFormat( DXT1 ); SrgbRead( False ); >;
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tMyDefaultTextureB )
+	TextureAttribute( RepresentativeTexture, g_tMyDefaultTextureB )
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
@@ -98,11 +100,13 @@ PS
 		m.Transmission = 0;
 		
 		
-		float4 l_0 = g_tPunch.Sample( g_sTestSampler,i.vTextureCoords.xy );
-		float3 l_1 = float3( 1, 0, 1 );
-		float4 l_2 = l_0 * float4( l_1, 0 );
+		float4 l_0 = g_tMyDefaultTextureA.Sample( g_sMyDefaultSampler,i.vTextureCoords.xy );
+		float4 l_1 = l_0 * float4( float3( 1, 0, 1 ), 0 );
+		float4 l_2 = g_tMyDefaultTextureB.Sample( g_sMyDefaultSampler,i.vTextureCoords.xy );
+		float4 l_3 = l_2 * float4( float3( 0, 0, 1 ), 0 );
+		float4 l_4 = lerp( l_1, l_3, 0.7607584 );
 		
-		m.Albedo = l_2.xyz;
+		m.Albedo = l_4.xyz;
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

@@ -934,6 +934,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 		}
 	}
 
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public int PortOrder { get; set; }
+
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
 
@@ -1093,6 +1096,8 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		{
 			string name = $"{DisplayInfo.For( this ).Name}";
 
+			UI.SetIsSubgraph( IsSubgraph );
+
 			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( UI.Name ) )
 			{
 				return $"{name} ( {UI.Name} )";
@@ -1175,6 +1180,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		Default = Color.White,
 	};
 
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public int PortOrder { get; set; } = 0;
+
 	public Texture2DObjectNode() : base()
 	{
 		Image = "materials/dev/white_color.tga";
@@ -1232,7 +1240,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 
 	public object GetValue()
 	{
-		return null;
+		return new TextureInput();
 	}
 
 	public void SetValue( object val )
@@ -1395,14 +1403,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	public ParameterUI UI { get; set; }
 
 	[ShowIf( nameof( IsSubgraph ), true )]
-	public int PortOrder {
-		
-		get => UI.Priority;
-		set
-		{
-			UI.SetOrder( value );
-		}
-	}
+	public int PortOrder { get; set; } = 0;
 
 	public Type GetPortType()
 	{

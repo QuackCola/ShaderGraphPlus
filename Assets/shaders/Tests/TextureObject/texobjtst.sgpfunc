@@ -22,7 +22,7 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "8764e00a-6b1a-4210-9e7f-705847c0c33b",
+          "Id": "8899f53f-1cb6-4f35-8018-f964e16d2969",
           "Name": "Color",
           "Type": "Color"
         }
@@ -39,10 +39,7 @@
     {
       "_class": "TextureSampler",
       "DefaultSampler": {
-        "Name": "",
-        "Filter": "Aniso",
-        "AddressU": "Wrap",
-        "AddressV": "Wrap"
+        "Name": "Ass2"
       },
       "Image": null,
       "UI": {
@@ -68,11 +65,12 @@
       "_class": "Texture2DObjectNode",
       "Image": null,
       "UI": {
-        "Name": "A",
+        "Name": "",
         "Default": "1,1,1,1",
         "ShowExtension": true,
         "SrgbRead": true
       },
+      "PortOrder": 0,
       "Name": "Texture A",
       "Identifier": "2",
       "Position": "-768,-24",
@@ -82,11 +80,12 @@
       "_class": "Float3",
       "Min": "0,0,0",
       "Max": "1,1,1",
+      "PortOrder": 2,
       "Value": "1,0,1",
       "Name": "Tint",
       "IsAttribute": false,
       "UI": {
-        "Priority": 1
+        "Priority": 2
       },
       "Identifier": "3",
       "Position": "-504,240",
@@ -113,13 +112,10 @@
     {
       "_class": "SamplerNode",
       "SamplerState": {
-        "Name": "",
-        "Filter": "Aniso",
-        "AddressU": "Wrap",
-        "AddressV": "Wrap"
+        "Name": "Ass1"
       },
       "Name": "SamplerIn",
-      "PortOrder": 0,
+      "PortOrder": 1,
       "Identifier": "5",
       "Position": "-768,192",
       "HandleOffsets": {}

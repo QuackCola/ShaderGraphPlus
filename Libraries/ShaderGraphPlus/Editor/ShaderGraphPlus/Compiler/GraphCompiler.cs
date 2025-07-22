@@ -43,6 +43,8 @@ public sealed partial class GraphCompiler
 	private SubgraphNode SubgraphNode = null;
 	private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
+	public Dictionary<string, string> CompiledTextures { get; private set; } = new();
+
 	/// <summary>
 	/// The loaded sub-graphs
 	/// </summary>
@@ -429,7 +431,11 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			OnAttribute?.Invoke( id, texture, false );
+			if ( texture != null )
+			{
+				OnAttribute?.Invoke( id, texture, false );
+			}
+
 			result.TextureInputs.Add( id, input );
 		}
 
@@ -649,6 +655,10 @@ public sealed partial class GraphCompiler
 			return localResult;
 		}
 		
+		bool previewOverride = false;
+		bool setAttribute = true;
+		string globalName = "";
+
 		if ( node is SubgraphNode subgraphNode )
 		{
 			var newStack = (subgraphNode, Subgraph);
@@ -718,6 +728,31 @@ public sealed partial class GraphCompiler
 					{
 						InputStack.Remove( input );
 						return newResult;
+					}
+
+					if ( value is Sampler sampler )
+					{
+						globalName = ResultSampler( sampler );
+						previewOverride = true;
+						setAttribute = false;
+					}
+					else if ( value is TextureInput textureInput )
+					{
+						if ( !string.IsNullOrWhiteSpace( textureInput.PreviewImage ) )
+						{
+							var textureAssetPath = CompileTexture( textureInput.PreviewImage, textureInput );
+						
+							var texture = string.IsNullOrWhiteSpace( textureAssetPath ) ? null : Texture.Load( textureAssetPath );
+							texture ??= Texture.White;
+						
+							globalName = ResultTexture( null, textureInput, texture ).TextureGlobal;
+							previewOverride = true;
+							setAttribute = false;
+						}
+						else
+						{
+							throw new ArgumentException( $"`{nameof( TextureInput.PreviewImage )}` is empty!" );
+						}
 					}
 				}
 			}
@@ -865,7 +900,7 @@ public sealed partial class GraphCompiler
 			return localResult;
 		}
 
-		var resultVal = ResultValue( value );
+		var resultVal = ResultValue( value, globalName, previewOverride, setAttribute );
 		InputStack.Remove( input );
 		return resultVal;
 	}
@@ -969,11 +1004,48 @@ public sealed partial class GraphCompiler
 		return parameter.Result;
 	}
 
+	private string CompileTexture( string path, TextureInput textureInput )
+	{
+		if ( string.IsNullOrWhiteSpace( path ) )
+			return "";
+
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
+			path,
+			textureInput.ColorSpace,
+			textureInput.ImageFormat,
+			textureInput.Processor 
+		);
+
+		var assetPath = $"shadergraphplus/{path.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
+
+		if ( !CompiledTextures.ContainsKey( resourceText ) )
+		{
+			CompiledTextures.Add( resourceText, assetPath );
+		}
+		else
+		{
+			return CompiledTextures[resourceText];
+		}
+
+		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
+
+		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
+		{
+			return assetPath;
+		}
+		else
+		{
+			Log.Warning( $"Failed to compile {path}" );
+			return "";
+		}
+	}
+
 	/// <summary>
 	/// Get result of a value, in preview mode an attribute will be registered and returned
 	/// Only supports float, Vector2, Vector3, Vector4, Color.
 	/// </summary>
-	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
+	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false, bool setAttribute = true )
 	{
 		if ( value is NodeInput nodeInput ) return Result( nodeInput );
 
@@ -983,8 +1055,11 @@ public sealed partial class GraphCompiler
 
 		if ( isConstant )
 		{
-			OnAttribute?.Invoke( name, value, false );
-			ShaderResult.Attributes[name] = value;
+			if ( setAttribute )
+			{
+				OnAttribute?.Invoke( name, value, false );
+				ShaderResult.Attributes[name] = value;
+			}
 		}
 
 		return value switch
@@ -999,8 +1074,9 @@ public sealed partial class GraphCompiler
 			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}") : new NodeResult(ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
 			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}") : new NodeResult(ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )"),
 			Float4x4 v => isNamed ? new NodeResult( ResultType.Float4x4, $"{value}") : new NodeResult(ResultType.Float4x4, $"float4x4( {v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44} )"),
-			Sampler v => new NodeResult( ResultType.Sampler, $"{v}", true ),
-			_ => throw new ArgumentException( "Unsupported attribute type", nameof( value ) )
+			Sampler v => new NodeResult( ResultType.Sampler, $"{name}", true ),
+			TextureInput v => new NodeResult( ResultType.Texture2DObject, $"{name}", true ),
+			_ => throw new ArgumentException( $"Unsupported attribute type `{value.GetType()}`" )
 		};
 	}
 
@@ -1046,7 +1122,7 @@ public sealed partial class GraphCompiler
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
 	{
-		if ( !node.Test.TryGetValue( name, out var value ) )
+		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
 		{
 			switch ( type )
 			{
@@ -1065,21 +1141,60 @@ public sealed partial class GraphCompiler
 				case Type t when t == typeof( bool ):
 					return false;
 				case Type t when t == typeof( Sampler ):
-					return new Sampler() {};
+					return new Sampler();
+				case Type t when t == typeof( Texture2DObject ):
+					return new TextureInput();
 				default:
 					throw new Exception( $"Type `{type}` has no default!" );
 			}
-
+		
 		}
 
-		return value.DefaultValue;
+		if ( value is JsonElement el )
+		{
+			if ( type == typeof( float ) )
+			{
+				value = el.GetSingle();
+			}
+			else if ( type == typeof( Vector2 ) )
+			{
+				value = Vector2.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Vector3 ) )
+			{
+				value = Vector3.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Vector4 ) )
+			{
+				value = Vector4.Parse( el.GetString() );
+			}
+			else if ( type == typeof( Color ) )
+			{
+				value = Color.Parse( el.GetString() ) ?? Color.White;
+			}
+			else if ( type == typeof( bool ) )
+			{
+				value = el.GetBoolean();
+			}
+			else if ( type == typeof( Sampler ) )
+			{
+				value = JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() );
+			}
+			else if ( type == typeof( Texture2DObject ) )
+			{
+				value = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
+			}
+		}
+	
+		return value;
 	}
 
-	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out (SubgraphNode,string) error )
+	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out (SubgraphNode,string) error)
 	{
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
 		error = new();
+
 		if ( lastNodeEntered is not null )
 		{
 			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
@@ -1124,15 +1239,13 @@ public sealed partial class GraphCompiler
 					//	value = null;
 					//	return new();
 					//}
-					//else if ( parentInput.Value.Item2 == typeof( TextureCubeObject ) )
-					//{
-					//	error = new( lastNode, "Missing TextureCubeObject Input! This sucks i know.." );
-					//	value = null;
-					//	return new();
-					//}
-
-
-					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );
+					if ( parentInput.Value.paramNodeValueType == typeof( TextureCubeObject ) )
+					{
+						error = new( lastNode, "Missing TextureCubeObject Input! This sucks i know.." );
+						value = null;
+						return new();
+					}
+					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.paramNodeValueType );
 					SubgraphStack.Add( lastStack );
 					Subgraph = lastSubgraph;
 					SubgraphNode = lastNode;
