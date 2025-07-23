@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor.ShaderGraphPlus.Nodes;
+
+namespace Editor.ShaderGraphPlus;
 
 public class ShaderGraphPlusView : GraphView
 {
@@ -119,26 +121,20 @@ public class ShaderGraphPlusView : GraphView
 
 	private void NodeDebugInfo( Menu menu, BaseNodePlus node )
 	{
-		var header1 = menu.AddHeading( "Node Debug Info" );
+		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
 
-		var label1 = menu.AddWidget( new Label() );
-		label1.Text = $"Node ID      : {node.Identifier}";
-
-		var label2 = menu.AddWidget( new Label() );
-		label2.Text = $"Preview ID   : {node.PreviewID}";
-
-		var label3 = menu.AddWidget( new Label() );
-		label3.Text = $"IsReachable? : {node.IsReachable}";
+		var nodeIDLabel = menu.AddWidget( new Label( $"Node ID : {node.Identifier}" ) );
+		var previewIDLabel = menu.AddWidget( new Label( $"Preview ID : {node.PreviewID}" ) );
+		var isReachableLabel = menu.AddWidget( new Label( $"IsReachable? : {node.IsReachable}" ) );
+		var canPreviewLabel = menu.AddWidget( new Label( $"CanPreview? : {node.CanPreview}" ) );
 
 		if ( node.ComboSwitchInfo.IsValid )
 		{
-			var header2 = menu.AddHeading( "Combo Switch Data" );
+			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
 
-			var label4 = menu.AddWidget( new Label( $" BoundSwitch : {node.ComboSwitchInfo.BoundSwitch}" ) );
-			var label5 = menu.AddWidget( new Label( $" BoundSwitchBlock : {node.ComboSwitchInfo.BoundSwitchBlock}" ) );
+			var boundSwitchLabel = menu.AddWidget( new Label( $" BoundSwitch : {node.ComboSwitchInfo.BoundSwitch}" ) );
+			var boundSwitchLabelBlock = menu.AddWidget( new Label( $" BoundSwitchBlock : {node.ComboSwitchInfo.BoundSwitchBlock}" ) );
 		}
-
-
 	}
 
 	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
@@ -280,7 +276,52 @@ public class ShaderGraphPlusView : GraphView
 						input.ConnectedOutput = (existingParameterNode as BaseNodePlus).Outputs.FirstOrDefault();
 						continue;
 					}
-					if ( input.Type == typeof( float ) )
+
+					if ( input.Type == typeof( Texture2DObject ) )
+					{
+						var texture2DObjectNodeInput = FindNodeType( typeof( Texture2DObjectNode ) ).CreateNode( subgraph );
+						texture2DObjectNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( texture2DObjectNodeInput is Texture2DObjectNode texture2DObjectNode )
+						{
+							texture2DObjectNode.Name = inputName;
+							input.ConnectedOutput = texture2DObjectNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( texture2DObjectNode );
+						}
+					}
+					else if ( input.Type == typeof( TextureCubeObject ) )
+					{
+						var textureCubeObjectNodeInput = FindNodeType( typeof( TextureCubeObjectNode ) ).CreateNode( subgraph );
+						textureCubeObjectNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( textureCubeObjectNodeInput is TextureCubeObjectNode textureCubeObjectNode )
+						{
+							textureCubeObjectNode.Name = inputName;
+							input.ConnectedOutput = textureCubeObjectNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( textureCubeObjectNode );
+						}
+					}
+					else if ( input.Type == typeof( Sampler ) )
+					{
+						var samplerNodeInput = FindNodeType( typeof( SamplerNode ) ).CreateNode( subgraph );
+						samplerNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( samplerNodeInput is SamplerNode samplerNode )
+						{
+							samplerNode.Name = inputName;
+							input.ConnectedOutput = samplerNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( samplerNode );
+						}
+					}
+					else if ( input.Type == typeof( bool ) )
+					{
+						var boolInput = FindNodeType( typeof( Bool ) ).CreateNode( subgraph );
+						boolInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( boolInput is Bool boolNode )
+						{
+							boolNode.Name = inputName;
+							input.ConnectedOutput = boolNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( boolNode );
+						}
+					}
+					else if ( input.Type == typeof( float ) )
 					{
 						var floatInput = FindNodeType( typeof( Float ) ).CreateNode( subgraph );
 						floatInput.Position = node.Position - new Vector2( 240, 0 );
@@ -313,7 +354,7 @@ public class ShaderGraphPlusView : GraphView
 							nodesToAdd.Add( vector3Node );
 						}
 					}
-					else
+					else if ( input.Type == typeof( Float4 ) )
 					{
 						var vector4Input = FindNodeType( typeof( Float4 ) ).CreateNode( subgraph );
 						vector4Input.Position = node.Position - new Vector2( 240, 0 );
