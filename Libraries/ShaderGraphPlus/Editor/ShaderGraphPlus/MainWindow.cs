@@ -172,12 +172,13 @@ public class MainWindow : DockWindow
 		
 		if ( node != null && node.CanPreview )
 		{
-			//SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`" );
+			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`" );
+
 			_preview.SetStage( node.PreviewID );
 		}
 		else
 		{
-			//SGPLog.Info( $"Graph is now the Target." );
+			SGPLog.Info( $"Graph is now the Target." );
 			_preview.SetStage( NoTargetNode );
 		}
 
@@ -478,7 +479,6 @@ public class MainWindow : DockWindow
 				_boolAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-
 			case Texture v:
 				_textureAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
@@ -518,17 +518,18 @@ public class MainWindow : DockWindow
 			compiler.OnAttribute = OnAttribute;
 		}
 
-		// Assign a PreviewID to any Previewable node.
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
+			// Assign a PreviewID to any Previewable node.
 			if ( node.CanPreview )
 			{
 				node.PreviewID = compiler.PreviewID++;
-			}
-		}
 
-		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
-		{
+				SGPLog.Info( $"Setting Preview ID of ndoe `{node}` to `{node.PreviewID}`" );
+
+				compiler.ReservedPreviewIDs.Add( compiler.PreviewID );
+			}
+
 			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
 
