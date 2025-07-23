@@ -63,7 +63,6 @@ public class MainWindow : DockWindow
 	private bool _dirty = false;
 	private bool _autoCompile = true;
 
-
 	private string _generatedCode;
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
 	private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
@@ -95,16 +94,15 @@ public class MainWindow : DockWindow
 
 	private string _defaultDockState;
 
-
 	private bool _syncLinkedTextureNodes = false;
 	private string _sourceSyncID = "";
 	private string _sourceParameterName = "";
 	private const int NoTargetNode = -1;
 
 	public bool CanOpenMultipleAssets => true;
+	public bool EnableNodePreview => _preview.Preview.EnableNodePreview;
 
 	private ProjectCreator ProjectCreator { get; set; }
-
 
 	private Dictionary<string, ShaderFeatureInfo> ShaderFeatures = new();
 	private List<GraphCompiler.Error> ComboRegistrationErrors { get; set; } = new();
@@ -170,15 +168,15 @@ public class MainWindow : DockWindow
 	{
 		_properties.Target = node != null ? node : _graph;
 		
-		if ( node != null && node.CanPreview )
+		if ( EnableNodePreview && ( node != null && node.CanPreview ) )
 		{
-			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`" );
+			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`", EnableNodePreview );
 
 			_preview.SetStage( node.PreviewID );
 		}
 		else
 		{
-			SGPLog.Info( $"Graph is now the Target." );
+			SGPLog.Info( $"Graph is now the Target.", EnableNodePreview );
 			_preview.SetStage( NoTargetNode );
 		}
 
