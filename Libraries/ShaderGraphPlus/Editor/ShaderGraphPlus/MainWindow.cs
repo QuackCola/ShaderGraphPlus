@@ -72,7 +72,7 @@ public class MainWindow : DockWindow
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-	//private readonly Dictionary<string, int> _intAttributes = new();
+	private readonly Dictionary<string, int> _intAttributes = new();
 	private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
 	private readonly Dictionary<string, int> _comboIntAttributes = new();
@@ -466,12 +466,12 @@ public class MainWindow : DockWindow
 				_float2Attributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-			case int v: // 
-				_floatAttributes.Add(name, v);
-				_preview?.SetAttribute(name, v);
-				break;
 			case float v:
 				_floatAttributes.Add( name, v );
+				_preview?.SetAttribute( name, v );
+				break;
+			case int v:
+				_intAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
 			case bool v:
@@ -1175,6 +1175,7 @@ public class MainWindow : DockWindow
 		_float3Attributes.Clear();
 		_float2Attributes.Clear();
 		_floatAttributes.Clear();
+		_intAttributes.Clear();
 		_boolAttributes.Clear();
 		_comboBoolAttributes.Clear();
 		_comboIntAttributes.Clear();

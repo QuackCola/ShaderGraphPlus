@@ -178,6 +178,11 @@ public class PreviewPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
+	public void SetAttribute( string id, in int value )
+	{
+		_preview.SetAttribute( id, value );
+	}
+
 	public void SetAttribute( string id, in bool value )
 	{
 		_preview.SetAttribute( id, value );
@@ -366,6 +371,7 @@ public class Preview : SceneRenderingWidget
 	private Dictionary<string, Color> _float4Attributes = new();
 	private Dictionary<string, Vector3> _float3Attributes = new();
 	private Dictionary<string, Vector2> _float2Attributes = new();
+	private Dictionary<string, float> _intAttributes = new();
 	private Dictionary<string, float> _floatAttributes = new();
 	private Dictionary<string, bool> _boolAttributes = new();
 	private Dictionary<string, bool> _comboBoolAttributes = new();
@@ -612,6 +618,11 @@ public class Preview : SceneRenderingWidget
 				_sceneObject.Attributes.Set( v.Key, v.Value );
 			}
 
+			foreach ( var v in _intAttributes )
+			{
+				_sceneObject.Attributes.Set( v.Key, v.Value );
+			}
+
 			foreach ( var v in _boolAttributes )
 			{
 				_sceneObject.Attributes.Set( v.Key, v.Value );
@@ -693,6 +704,12 @@ public class Preview : SceneRenderingWidget
 		_sceneObject.Attributes.Set( id, value );
 	}
 
+	public void SetAttribute( string id, int value )
+	{
+		_intAttributes.Add( id, value );
+		_sceneObject.Attributes.Set( id, value );
+	}
+
 	public void SetAttribute( string id, in bool value )
 	{
 		_boolAttributes.Add( id, value );
@@ -740,6 +757,7 @@ public class Preview : SceneRenderingWidget
 		_float4Attributes.Clear();
 		_float3Attributes.Clear();
 		_float2Attributes.Clear();
+		_intAttributes.Clear();
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
 		_comboBoolAttributes.Clear();
