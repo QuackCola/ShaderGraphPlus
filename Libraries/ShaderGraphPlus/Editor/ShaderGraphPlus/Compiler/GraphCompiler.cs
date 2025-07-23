@@ -1888,7 +1888,7 @@ public sealed partial class GraphCompiler
 						{
 							// TODO
 						}
-						else if ( result.Item1.IsPreviewable && result.Item1.PreviewID != 0 )
+						else if ( result.Item1.IsPreviewable && result.Item1.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
 						{
 							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.Item1.PreviewID} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
 							//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );

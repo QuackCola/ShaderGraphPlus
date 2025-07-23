@@ -97,7 +97,6 @@ public class MainWindow : DockWindow
 	private bool _syncLinkedTextureNodes = false;
 	private string _sourceSyncID = "";
 	private string _sourceParameterName = "";
-	private const int NoTargetNode = -1;
 
 	public bool CanOpenMultipleAssets => true;
 	public bool EnableNodePreview => _preview.Preview.EnableNodePreview;
@@ -177,7 +176,7 @@ public class MainWindow : DockWindow
 		else
 		{
 			SGPLog.Info( $"Graph is now the Target.", EnableNodePreview );
-			_preview.SetStage( NoTargetNode );
+			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
 		//_preview.SetStage( _compiledNodes.IndexOf( node ) + 1 );
@@ -662,7 +661,7 @@ public class MainWindow : DockWindow
 		}
 		else
 		{
-			_preview.SetStage( NoTargetNode );
+			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
 		if ( resultNode != null )

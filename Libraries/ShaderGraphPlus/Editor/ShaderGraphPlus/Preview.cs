@@ -347,7 +347,7 @@ public class PreviewPanel : Widget
 
 public class Preview : SceneRenderingWidget
 {
-	private const int NoPreviewID = -1;
+	private const int NoPreviewID = 0;
 	private SceneWorld _world => Scene.SceneWorld;
 	
 	private Vector2 _lastCursorPos;
