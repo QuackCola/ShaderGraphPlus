@@ -658,6 +658,7 @@ public sealed partial class GraphCompiler
 		bool previewOverride = false;
 		bool setAttribute = true;
 		string globalName = "";
+		Texture texture1 = null;
 
 		if ( node is SubgraphNode subgraphNode )
 		{
@@ -684,7 +685,7 @@ public sealed partial class GraphCompiler
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
 				};
-				var newResult = Result( newConnection );
+				var newResult = Result( newConnection, true );
 
 				if ( NodeErrors.Any() )
 				{
@@ -705,6 +706,7 @@ public sealed partial class GraphCompiler
 				Subgraph = newStack.Item2;
 				SubgraphNode = lastNode;
 			}
+
 		}
 		else
 		{
@@ -744,7 +746,7 @@ public sealed partial class GraphCompiler
 						
 							var texture = string.IsNullOrWhiteSpace( textureAssetPath ) ? null : Texture.Load( textureAssetPath );
 							texture ??= Texture.White;
-						
+
 							globalName = ResultTexture( null, textureInput, texture ).TextureGlobal;
 							previewOverride = true;
 							setAttribute = false;
@@ -1073,7 +1075,16 @@ public sealed partial class GraphCompiler
 			Color v => isNamed ? new NodeResult( ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )"),
 			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}") : new NodeResult(ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
 			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}") : new NodeResult(ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )"),
-			Float4x4 v => isNamed ? new NodeResult( ResultType.Float4x4, $"{value}") : new NodeResult(ResultType.Float4x4, $"float4x4( {v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44} )"),
+			bool v => isNamed ? new NodeResult( ResultType.Bool, $"{name}" ) : new NodeResult( ResultType.Bool, $"{v.ToString().ToLower()}" ) { },
+			int v => isNamed ? new NodeResult( ResultType.Int, $"{name}" ) : new NodeResult( ResultType.Int, $"{v}", true ),
+			float v => isNamed ? new NodeResult( ResultType.Float, $"{name}" ) : new NodeResult( ResultType.Float, $"{v}", true ),
+			Vector2 v => isNamed ? new NodeResult( ResultType.Vector2, $"{name}" ) : new NodeResult( ResultType.Vector2, $"float2( {v.x}, {v.y} )" ),
+			Vector3 v => isNamed ? new NodeResult( ResultType.Vector3, $"{name}" ) : new NodeResult( ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )" ),
+			Vector4 v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )" ),
+			Color v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )" ),
+			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}" ) : new NodeResult( ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
+			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}" ) : new NodeResult( ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )" ),
+			Float4x4 v => isNamed ? new NodeResult( ResultType.Float4x4, $"{value}" ) : new NodeResult( ResultType.Float4x4, $"float4x4( {v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44} )" ),
 			Sampler v => new NodeResult( ResultType.Sampler, $"{name}", true ),
 			TextureInput v => new NodeResult( ResultType.Texture2DObject, $"{name}", true ),
 			_ => throw new ArgumentException( $"Unsupported attribute type `{value.GetType()}`" )
@@ -1385,7 +1396,7 @@ public sealed partial class GraphCompiler
 		var ppcb = new PostProcessingComponentBuilder( postProcessiComponentInfo );
 		var type = "";
 
-		foreach (var parameter in ShaderResult.Parameters)
+		foreach ( var parameter in ShaderResult.Parameters )
 		{
 			type = parameter.Value.Result.ComponentType.ToSimpleString();
 			
@@ -1399,15 +1410,12 @@ public sealed partial class GraphCompiler
 			}
 			if ( type is "Vector2" )
 			{
-				ppcb.AddVector2Property(type, parameter.Key, parameter.Value.Options);
 			}
 			if ( type is "Vector3" )
 			{
-				ppcb.AddVector3Property(type, parameter.Key, parameter.Value.Options);
 			}
 			if ( type is "Color" )
 			{
-				ppcb.AddVector4Property(type, parameter.Key, parameter.Value.Options);
 			}
 		}
 
@@ -1822,7 +1830,7 @@ public sealed partial class GraphCompiler
 						}
 						else if ( result.Item1.ResultType != ResultType.Float2x2 || result.Item1.ResultType != ResultType.Float3x3 || result.Item1.ResultType != ResultType.Float4x4 || result.Item1.ResultType != ResultType.Gradient )
 						{
-							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.Item1.PreviewID} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
+							if ( result.Item1.PreviewID != 0 )
 							//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
 						}
 					}
