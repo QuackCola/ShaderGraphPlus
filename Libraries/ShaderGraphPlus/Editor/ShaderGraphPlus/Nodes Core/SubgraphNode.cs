@@ -29,11 +29,11 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	[JsonIgnore, Hide]
 	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.Green, 0.5f );
 
-	[Editor( "subgraphplusnode" ), WideMode( HasLabel = false )]
-	public Dictionary<string, object> DefaultValues { get; set; } = new();
-
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
+
+	[Editor( "subgraphplusnode" ), WideMode( HasLabel = false )]
+	public Dictionary<string, object> DefaultValues { get; set; } = new();
 
 	[Hide]
 	public override DisplayInfo DisplayInfo => new()
@@ -277,13 +277,53 @@ internal class SubgraphNodeControlWidget : ControlWidget
 			var attributes = new List<Attribute>();
 			var properties = new List<SerializedProperty>();
 			var displayName = $"Default {name}";
-			if ( type == typeof( float ) )
+
+			if ( type == typeof( bool ) )
+			{
+				Sheet.AddRow( TypeLibrary.CreateProperty<bool>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return bool.Parse( el.GetRawText() );
+						}
+
+						return (bool)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			else if ( type == typeof( int ) )
+			{
+				Sheet.AddRow( TypeLibrary.CreateProperty<int>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return int.Parse( el.GetRawText() );
+						}
+
+						return (int)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			else if ( type == typeof( float ) )
 			{
 				Sheet.AddRow( TypeLibrary.CreateProperty<float>(
 					displayName, () =>
 					{
 						var val = getter();
-						if ( val is JsonElement el ) return float.Parse( el.GetRawText() );
+
+						if ( val is JsonElement el )
+						{
+							return float.Parse( el.GetRawText() );
+						}
+
 						return (float)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
@@ -295,7 +335,12 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
-						if ( val is JsonElement el ) return Vector2.Parse( el.GetString() );
+
+						if ( val is JsonElement el )
+						{
+							return Vector2.Parse( el.GetString() );
+						}
+
 						return (Vector2)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
@@ -307,10 +352,12 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
+
 						if ( val is JsonElement el )
 						{
 							return Vector3.Parse( el.GetString() );
 						}
+
 						return (Vector3)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
@@ -322,10 +369,12 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
+
 						if ( val is JsonElement el )
 						{
 							return Color.Parse( el.GetString() ) ?? Color.White;
 						}
+
 						return (Color)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
@@ -338,10 +387,12 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
+
 						if ( val is JsonElement el )
 						{
 							return JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() )!;
 						}
+
 						return (Sampler)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
@@ -356,11 +407,12 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
+
 						if ( val is JsonElement el )
 						{
 							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )!;
 						}
-			
+
 						return (TextureInput)val;
 					}, x =>
 					{
