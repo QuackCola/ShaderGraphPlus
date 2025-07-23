@@ -190,7 +190,7 @@ public class PreviewPanel : Widget
 
 	public void SetCombo( string id, bool value )
 	{
-		_preview.SetCombo(id, value);
+		_preview.SetCombo( id, value );
 	}
 
 	public void SetCombo( string id, int value )
