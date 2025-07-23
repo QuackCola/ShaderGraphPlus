@@ -19,7 +19,7 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 
 	float l_3 = smoothstep( l_2, flDepthOffset, Depth );
 
-	/ One Minus the result before return
+	// One Minus the result before return
 	return 1 - l_3;
 }
 ";
