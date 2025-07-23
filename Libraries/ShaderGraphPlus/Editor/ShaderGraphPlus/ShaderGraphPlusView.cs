@@ -310,6 +310,39 @@ public class ShaderGraphPlusView : GraphView
 							nodesToAdd.Add( samplerNode );
 						}
 					}
+					else if ( input.Type == typeof( Float2x2 ) )
+					{
+						var float2x2Input = FindNodeType( typeof( Float2x2Node ) ).CreateNode( subgraph );
+						float2x2Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float2x2Input is Float2x2Node float2x2Node )
+						{
+							float2x2Node.Name = inputName;
+							input.ConnectedOutput = float2x2Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float2x2Node );
+						}
+					}
+					else if ( input.Type == typeof( Float3x3 ) )
+					{
+						var float3x3Input = FindNodeType( typeof( Float3x3Node ) ).CreateNode( subgraph );
+						float3x3Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float3x3Input is Float3x3Node float3x3Node )
+						{
+							float3x3Node.Name = inputName;
+							input.ConnectedOutput = float3x3Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float3x3Node );
+						}
+					}
+					else if ( input.Type == typeof( Float4x4 ) )
+					{
+						var float4x4Input = FindNodeType( typeof( Float4x4Node ) ).CreateNode( subgraph );
+						float4x4Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float4x4Input is Float4x4Node float4x4Node )
+						{
+							float4x4Node.Name = inputName;
+							input.ConnectedOutput = float4x4Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float4x4Node );
+						}
+					}
 					else if ( input.Type == typeof( bool ) )
 					{
 						var boolInput = FindNodeType( typeof( Bool ) ).CreateNode( subgraph );
