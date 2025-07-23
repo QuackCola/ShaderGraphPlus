@@ -652,7 +652,7 @@ public class MainWindow : DockWindow
 
 			_syncLinkedTextureNodes = false;
 		}
-		#endregion ISyncableTextureNode Region
+#endregion ISyncableTextureNode Region
 
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode && targetNode.CanPreview )
 		{
