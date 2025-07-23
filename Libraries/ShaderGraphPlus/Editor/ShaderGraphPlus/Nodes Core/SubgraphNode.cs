@@ -32,6 +32,9 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	[Editor( "subgraphplusnode" ), WideMode( HasLabel = false )]
 	public Dictionary<string, object> DefaultValues { get; set; } = new();
 
+	[JsonIgnore, Hide]
+	public override bool CanPreview => false;
+
 	[Hide]
 	public override DisplayInfo DisplayInfo => new()
 	{
