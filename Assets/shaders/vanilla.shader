@@ -74,7 +74,11 @@ VS
 PS
 {
 	#include "common/pixel.hlsl"
-
+	
+	SamplerState g_sSampler0 < Filter( ANISO ); AddressU( WRAP ); AddressV( WRAP ); >;
+	CreateInputTexture2D( Texture_ps_0, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tTexture_ps_0 < Channel( RGBA, Box( Texture_ps_0 ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
+	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		
@@ -88,10 +92,14 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-
+		
+		float4 l_0 = float4( 1, 0, 1, 1 );
+		float4 l_1 = Tex2DS( g_tTexture_ps_0, g_sSampler0, i.vTextureCoords.xy );
+		
+		m.Albedo = l_0.xyz;
 		m.Opacity = 1;
-		m.Roughness = 1;
-		m.Metalness = 0;
+		m.Roughness = l_1.x;
+		m.Metalness = 0.5;
 		m.AmbientOcclusion = 1;
 		
 		
