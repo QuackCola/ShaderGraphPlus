@@ -51,7 +51,7 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 		var coords = "i.vPositionSs.xy";
 		var worldpos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
 
-		var depthoffset = compiler.ResultOrDefault(DepthOffset, DefaultDepthOffset);
+		var depthoffset = compiler.ResultOrDefault( DepthOffset, DefaultDepthOffset );
 
 		string func = compiler.RegisterFunction( DepthIntersect );
 		string funcCall = compiler.ResultFunction( func, $"{worldpos}, {coords}, {depthoffset}" );
