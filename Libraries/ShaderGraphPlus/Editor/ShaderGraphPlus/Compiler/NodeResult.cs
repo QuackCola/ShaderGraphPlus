@@ -89,6 +89,48 @@ public struct NodeResult : IValid
 	public string ImagePath { get; set; }
 	public int PreviewID { get; set; }
 
+	public bool IsPreviewable
+	{
+		get
+		{
+			switch ( ResultType )
+			{
+				case ResultType.Bool:
+					return false;
+				case ResultType.Int:
+					return true;
+				case ResultType.Float:
+					return true;
+				case ResultType.Vector2:
+					return true;
+				case ResultType.Vector3:
+					return true;
+				case ResultType.Color:
+					return true;
+				case ResultType.Float2x2:
+					return false;
+				case ResultType.Float3x3:
+					return false;
+				case ResultType.Float4x4:
+					return false;
+				case ResultType.Sampler:
+					return false;
+				case ResultType.Texture2DObject:
+					return false;
+				case ResultType.TextureCubeObject:
+					return false;
+				case ResultType.Gradient:
+					return false;
+				case ResultType.Void:
+					return false;
+				case ResultType.Invalid:
+					throw new Exception( "Result Type Is Invalid!" );
+				default: 
+					return false;
+			}
+		}
+	}
+
 	public readonly string TypeName
 	{
 		get
