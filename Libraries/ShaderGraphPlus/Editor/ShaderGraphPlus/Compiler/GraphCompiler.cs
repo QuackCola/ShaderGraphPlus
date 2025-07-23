@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -103,7 +103,13 @@ public sealed partial class GraphCompiler
 	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
 
 	public Action<string, object, bool> OnAttribute { get; set; }
-	public int PreviewID { get; set; } = 0;
+
+	// Init to 1, 0 is reserved.
+	public int PreviewID { get; set; } = 1;
+
+	public List<int> ReservedPreviewIDs = new List<int>();
+
+	public int LastPreviewID { get; set; } = 0;
 
 	//public List<BaseNodePlus> Nodes { get; private set; } = new();
 	private List<NodeInput> InputStack = new();
@@ -472,7 +478,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result( NodeInput input )
+	public NodeResult Result( NodeInput input, bool subgraphResult = false )
 	{
 		if (!input.IsValid)
 			return default;
@@ -480,16 +486,31 @@ public sealed partial class GraphCompiler
 		BaseNodePlus node = null;
 		if ( string.IsNullOrEmpty( input.Subgraph ) )
 		{
+			// Local results.
 			if ( Subgraph is not null )
 			{
 				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
-				return Result( new()
+				var localSubResult =  Result( new()
 				{
 					Identifier = input.Identifier,
 					Output = input.Output,
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
 				} );
+
+
+				//SGPLog.Info( $"Getting Subgraph Result of `{localSubResult.Code}`", IsPreview );
+
+
+				//return Result( new()
+				//{
+				//	Identifier = input.Identifier,
+				//	Output = input.Output,
+				//	Subgraph = Subgraph.Path,
+				//	SubgraphNode = nodeId
+				//} );
+
+				return localSubResult;
 			}
 
 			node = Graph.FindNode( input.Identifier );
@@ -500,7 +521,10 @@ public sealed partial class GraphCompiler
 			if ( subgraph is not null )
 			{
 				node = subgraph.FindNode( input.Identifier );
+				SGPLog.Info( $"Getting Result of node `{node}` which belongs to subgraphNode with ID `{input.SubgraphNode}`", IsPreview );
 			}
+
+
 		}
 
 		ComboSwitchInfo? lastComboSwitchInfo = null;
@@ -662,12 +686,16 @@ public sealed partial class GraphCompiler
 
 		if ( node is SubgraphNode subgraphNode )
 		{
+			//LastPreviewID = subgraphNode.PreviewID ;
 			var newStack = (subgraphNode, Subgraph);
 			var lastNode = SubgraphNode;
 
 			SubgraphStack.Add( newStack );
 			Subgraph = subgraphNode.Subgraph;
 			SubgraphNode = subgraphNode;
+
+
+
 			if ( !Subgraphs.Contains( Subgraph ) )
 			{
 				Subgraphs.Add( Subgraph );
@@ -687,6 +715,7 @@ public sealed partial class GraphCompiler
 				};
 				var newResult = Result( newConnection, true );
 
+
 				if ( NodeErrors.Any() )
 				{
 					InputStack.Remove( input );
@@ -697,6 +726,7 @@ public sealed partial class GraphCompiler
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				Subgraph = newStack.Item2;
 				SubgraphNode = lastNode;
+
 				return newResult;
 			}
 			else
@@ -707,15 +737,18 @@ public sealed partial class GraphCompiler
 				SubgraphNode = lastNode;
 			}
 
+
 		}
 		else
 		{
 			if ( Subgraph is not null )
 			{
+
+
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
 					var newResult = ResolveParameterNode( parameterNode, ref value, out var error );
-
+				
 					// TODO : This is just a shitty placeholder until you can just set a defaults of Sampler 
 					// and Texture 2D Objects on the subgraph node itself when the input connectedPlug is null.
 					//if ( !string.IsNullOrWhiteSpace( error.Item2 ) )
@@ -747,6 +780,8 @@ public sealed partial class GraphCompiler
 							var texture = string.IsNullOrWhiteSpace( textureAssetPath ) ? null : Texture.Load( textureAssetPath );
 							texture ??= Texture.White;
 
+							texture1 = texture;
+
 							globalName = ResultTexture( null, textureInput, texture ).TextureGlobal;
 							previewOverride = true;
 							setAttribute = false;
@@ -760,6 +795,7 @@ public sealed partial class GraphCompiler
 			}
 			else if ( Graph.IsSubgraph )
 			{
+
 				if ( node is IParameterNode parameterNode )
 				{
 					if ( parameterNode.PreviewInput.IsValid )
@@ -812,6 +848,25 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
+
+			//if ( SubgraphNode != null && IsPreview )
+			//{
+			//	SGPLog.Info( $"funcResult {funcResult.Code} // {funcResult.PreviewID} // LastSub : {SubgraphNode.PreviewID}", IsPreview );
+			//
+			//}
+
+			//if ( SubgraphStack.Count > 0 )
+			//{
+			//	SGPLog.Info( $"Last Subgraph In Stack : {SubgraphStack.Last().Item1.PreviewID}", IsPreview );
+			//}
+			//else
+			//{
+			//	SGPLog.Info( $"No Last subgraph for {node.PreviewID}", IsPreview );
+			//}
+
+
+
+
 			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
 			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
 
@@ -830,6 +885,12 @@ public sealed partial class GraphCompiler
 			if ( IsPreview && !IsInComboSwitch )
 			{
 				funcResult.PreviewID = node.PreviewID;
+			}
+
+			if ( subgraphResult )
+			{
+				funcResult.PreviewID = SubgraphNode.PreviewID;
+				SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
 			}
 
 			if ( !funcResult.IsValid )
@@ -902,7 +963,7 @@ public sealed partial class GraphCompiler
 			return localResult;
 		}
 
-		var resultVal = ResultValue( value, globalName, previewOverride, setAttribute );
+		var resultVal = ResultValue( value, globalName, previewOverride, setAttribute, texture1 );
 		InputStack.Remove( input );
 		return resultVal;
 	}
@@ -1047,7 +1108,7 @@ public sealed partial class GraphCompiler
 	/// Get result of a value, in preview mode an attribute will be registered and returned
 	/// Only supports float, Vector2, Vector3, Vector4, Color.
 	/// </summary>
-	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false, bool setAttribute = true )
+	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false, bool setAttribute = true, Texture tex = null )
 	{
 		if ( value is NodeInput nodeInput ) return Result( nodeInput );
 
@@ -1062,19 +1123,15 @@ public sealed partial class GraphCompiler
 				OnAttribute?.Invoke( name, value, false );
 				ShaderResult.Attributes[name] = value;
 			}
+			//else if ( tex != null )
+			//{
+			//	OnAttribute?.Invoke( name, tex, false );
+			//	ShaderResult.Attributes[name] = tex;
+			//}
 		}
 
 		return value switch
 		{
-			bool v => isNamed ? new NodeResult( ResultType.Bool, $"{name}") : new NodeResult( ResultType.Bool, $"{v.ToString().ToLower()}" ) { },
-			int v => isNamed ? new NodeResult( ResultType.Int, $"{name}") : new NodeResult(ResultType.Int, $"{v}", true),
-			float v => isNamed ? new NodeResult( ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
-			Vector2 v => isNamed ? new NodeResult( ResultType.Vector2, $"{name}") : new NodeResult(ResultType.Vector2, $"float2( {v.x}, {v.y} )"),
-			Vector3 v => isNamed ? new NodeResult( ResultType.Vector3, $"{name}") : new NodeResult(ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )"),
-			Vector4 v => isNamed ? new NodeResult( ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )"),
-			Color v => isNamed ? new NodeResult( ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )"),
-			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}") : new NodeResult(ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
-			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}") : new NodeResult(ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )"),
 			bool v => isNamed ? new NodeResult( ResultType.Bool, $"{name}" ) : new NodeResult( ResultType.Bool, $"{v.ToString().ToLower()}" ) { },
 			int v => isNamed ? new NodeResult( ResultType.Int, $"{name}" ) : new NodeResult( ResultType.Int, $"{v}", true ),
 			float v => isNamed ? new NodeResult( ResultType.Float, $"{name}" ) : new NodeResult( ResultType.Float, $"{v}", true ),
@@ -1402,20 +1459,23 @@ public sealed partial class GraphCompiler
 			
 			if ( type is "System.Boolean" )
 			{
-				ppcb.AddBoolProperty(parameter.Key, parameter.Value.Options);
+				ppcb.AddBoolProperty( parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "float" )
 			{
-				ppcb.AddFloatProperty(type, parameter.Key, parameter.Value.Options);
+				ppcb.AddFloatProperty( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Vector2" )
 			{
+				ppcb.AddVector2Property( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Vector3" )
 			{
+				ppcb.AddVector3Property( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Color" )
 			{
+				ppcb.AddVector4Property( type, parameter.Key, parameter.Value.Options );
 			}
 		}
 
@@ -1828,9 +1888,9 @@ public sealed partial class GraphCompiler
 						{
 							// TODO
 						}
-						else if ( result.Item1.ResultType != ResultType.Float2x2 || result.Item1.ResultType != ResultType.Float3x3 || result.Item1.ResultType != ResultType.Float4x4 || result.Item1.ResultType != ResultType.Gradient )
+						else if ( result.Item1.IsPreviewable && result.Item1.PreviewID != 0 )
 						{
-							if ( result.Item1.PreviewID != 0 )
+							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.Item1.PreviewID} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
 							//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
 						}
 					}
