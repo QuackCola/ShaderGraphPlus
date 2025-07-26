@@ -264,9 +264,22 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 
 	public bool ShowLabel => true;
 	public bool AllowStretch => true;
-	public bool ShowConnection => true;
+	public bool ShowConnection => IsReachable;
 	public bool InTitleBar => false;
-	public bool IsReachable => true;
+
+	public bool IsReachable
+	{
+		get
+		{
+			var conditional = Info.Property?.GetCustomAttribute<ConditionalVisibilityAttribute>();
+			if ( conditional is not null )
+			{
+				if ( conditional.TestCondition( Node.GetSerialized() ) ) return false;
+			}
+
+			return true;
+		}
+	}
 
 	public string ErrorMessage => null;
 
@@ -278,8 +291,7 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 }
 
 
-public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
-	: BasePlug( Node, Info, Type ), IPlugIn
+public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugIn
 {
 	IPlugOut IPlugIn.ConnectedOutput
 	{
@@ -329,7 +341,7 @@ public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
 				return;
 			}
 
-			if (value is not BasePlug fromPlug)
+			if ( value is not BasePlug fromPlug )
 			{
 				return;
 			}
@@ -359,7 +371,6 @@ public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
 }
 
 public record BasePlugOut( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugOut;
-
 
 public class PlugInfo
 {
@@ -406,8 +417,8 @@ public class PlugInfo
 			if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
 			{
 				var entry = subgraphNode.InputReferences[plugIn.Inner];
-				var parameterNode = entry.Item1;
-				var parameterType = entry.Item2;
+				var parameterNode = entry.paramNode;
+				var parameterType = entry.paramNodeValueType;
 				if ( parameterNode.UI.Type == UIType.Default ) return null;
 
 				if ( parameterType == typeof( float ) )

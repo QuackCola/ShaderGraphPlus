@@ -46,40 +46,62 @@ public class DefaultEditor : ValueEditor
 		if ( Plug.Inner is IPlugOut plugOut ) return;
 		if ( Plug.Inner is IPlugIn plugIn )
 		{
-			if (plugIn.ConnectedOutput is not null) return;
+			if ( plugIn.ConnectedOutput is not null ) return;
 		}
-		
+
 		var lastTextHash = _textHash;
 		var lastLabelWidth = _labelWidth;
-		
+
 		var so = node.GetSerialized();
-		Type type = typeof(Type);
+		Type type = typeof( Type );
 		object rawVal = null;
 		string val = null;
-		foreach (var property in so)
+		foreach ( var property in so )
 		{
-			if (property.TryGetAttribute<BaseNodePlus.InputDefaultAttribute>(out var inputDefault))
+			if ( property.TryGetAttribute<BaseNodePlus.InputDefaultAttribute>( out var inputDefault ) )
 			{
-				if (inputDefault.Input == Plug.Inner.Identifier)
+				if ( inputDefault.Input == Plug.Inner.Identifier )
 				{
 					type = property.PropertyType;
 					rawVal = property.GetValue<object>();
 					val = rawVal.ToString();
+					break;
 				}
 			}
 		}
-		if (val is null) return;
-		
+		if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
+		{
+			if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
+			{
+				var parameterNode = entry.Item1;
+				if ( parameterNode.IsAttribute ) return;
+				type = entry.Item2;
+				if ( innerPlugIn.ConnectedOutput is not null )
+				{
+					rawVal = parameterNode.GetValue();
+					val = rawVal.ToString();
+				}
+				else
+				{
+					rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
+					val = rawVal?.ToString() ?? "";
+				}
+			}
+		}
+		if ( string.IsNullOrEmpty( val ) ) return;
+
 		Paint.Antialiasing = true;
 		Paint.TextAntialiasing = true;
 		var rect = Parent.LocalRect;
-		
+
 		var shrink = 10f;
 		var extraWidth = 0f;
-		val = PaintHelper.FormatValue(type, rawVal, out extraWidth, out rawVal);
+		val = PaintHelper.FormatValue( type, rawVal, out extraWidth, out rawVal );
 		var textSize = Paint.MeasureText( val ) + extraWidth;
 
-		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2, rect.Height ).Shrink( 0f, 2f, 0f, 2f );
+		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2,
+		rect.Height )
+				.Shrink( 0f, 2f, 0f, 2f );
 
 		//if ( eventArgs.Icon is not null )
 		//{
@@ -170,28 +192,28 @@ internal static class PaintHelper
 		var bg = Theme.ControlBackground;
 		var fg = Theme.TextControl;
 
-		var borderColor = handleConfig.Color.Desaturate(0.2f).Darken(0.3f);
+		var borderColor = handleConfig.Color.Desaturate( 0.2f ).Darken( 0.3f );
 
 		if ( pulseScale > 1f )
 		{
 			bg = Color.Lerp( bg, borderColor, (pulseScale - 1f) * 0.25f );
 		}
 
-		Paint.SetPen( borderColor, 2f * ( pulseScale * 0.5f + 0.5f ) );
+		Paint.SetPen( borderColor, 2f * (pulseScale * 0.5f + 0.5f) );
 		Paint.SetBrush( bg );
 		Paint.DrawRect( valueRect, 2 );
 
 		if ( rawValue is Color color )
 		{
 			ColorPalette.PaintSwatch( color, new Rect( valueRect.Left + 3f, valueRect.Top + 3f, 14f, 14f ), false, radius: 2, disabled: false );
-			valueRect = valueRect.Shrink(14f, 0f, 0f, 0f);
+			valueRect = valueRect.Shrink( 14f, 0f, 0f, 0f );
 		}
 
 		Paint.SetPen( fg );
 
 		if ( !string.IsNullOrEmpty( icon ) )
 		{
-			Paint.DrawIcon(	new Rect( valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height), icon, 16f );
+			Paint.DrawIcon( new Rect( valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height ), icon, 16f );
 			valueRect = valueRect.Shrink( 20f, 0f, 0f, 0f );
 		}
 
