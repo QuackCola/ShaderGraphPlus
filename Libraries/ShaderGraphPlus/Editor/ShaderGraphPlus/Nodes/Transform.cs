@@ -257,14 +257,14 @@ public sealed class PolarCoordinates : ShaderNodePlus
 /// <summary>
 /// Blend two colors or textures together using various different blending modes
 /// </summary>
-[Title( "Blend" ), Category( "Transform" )]
+[Title( "Blend" ), Category( "Transform" ), Icon( "blender" )]
 public sealed class Blend : ShaderNodePlus
 {
-	[Input( typeof( float ) )]
+	[Input( typeof( Color ) )]
 	[Hide]
 	public NodeInput A { get; set; }
 
-	[Input( typeof( float ) )]
+	[Input( typeof( Color ) )]
 	[Hide]
 	public NodeInput B { get; set; }
 
@@ -272,7 +272,13 @@ public sealed class Blend : ShaderNodePlus
 	[Hide, NodeEditor( nameof( Fraction ) )]
 	public NodeInput C { get; set; }
 
-	[MinMax( 0, 1 )]
+	[InputDefault( nameof( A ) )]
+	public Color DefaultA { get; set; } = Color.Black;
+
+	[InputDefault( nameof( B ) )]
+	public Color DefaultB { get; set; } = Color.White;
+
+	[InputDefault( nameof( C ) ), MinMax( 0, 1 )]
 	public float Fraction { get; set; } = 0.5f;
 
 	public BlendNodeMode BlendMode { get; set; } = BlendNodeMode.Mix;
@@ -286,13 +292,15 @@ public sealed class Blend : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		var resultA = compiler.Result( A );
+		var resultB = compiler.Result( B );
 		var results = compiler.Result( A, B );
 		var fraction = compiler.Result( C );
 		var fractionType = fraction.IsValid && fraction.Components() > 1 ? Math.Max( results.Item1.Components(), results.Item2.Components() ) : 1;
 
 		string fractionStr = $"{(fraction.IsValid ? fraction.Cast( fractionType ) : compiler.ResultValue( Fraction ))}";
-		string aStr = results.Item1.ToString();
-		string bStr = results.Item2.ToString();
+		string aStr = resultA.IsValid ? results.Item1.ToString() : compiler.ResultValue( DefaultA ).ToString();
+		string bStr = resultB.IsValid ? results.Item2.ToString() : compiler.ResultValue( DefaultB ).ToString();
 
 		string returnCall = string.Empty;
 
@@ -419,12 +427,11 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		var b = compiler.Result( B );
 
 		string func = compiler.RegisterFunction( NormalBlendVector );
+		
 		if ( Mode == BlendMode.Reoriented )
 		{
 			func = compiler.RegisterFunction( ReorientedNormalBlendVector );
 		}
-
-
 
 		string funcResult = compiler.ResultFunction( func,
 			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
@@ -432,7 +439,6 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		);
 
 		return new NodeResult( ResultType.Vector3, $"{funcResult}" );
-
 	};
 }
 
