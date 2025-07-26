@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Get the dimensions of a Texture2D Object in the width and height.

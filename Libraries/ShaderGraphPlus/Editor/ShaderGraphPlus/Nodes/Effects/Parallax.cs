@@ -1,4 +1,4 @@
-﻿using Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic probabaly shit Parallax test.

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>

@@ -1,5 +1,4 @@
 global using Editor.NodeEditor;
-global using Editor.ShaderGraphPlus.Nodes;
 global using System;
 global using System.Diagnostics;
 global using System.Reflection;

@@ -1,5 +1,5 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// If True, do this, if False, do that.

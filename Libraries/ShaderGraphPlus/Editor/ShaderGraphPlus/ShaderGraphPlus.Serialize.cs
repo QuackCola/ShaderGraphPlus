@@ -1,6 +1,7 @@
-﻿using System.Text.Json.Nodes;
+﻿using ShaderGraphPlus.Nodes;
+using System.Text.Json.Nodes;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 partial class ShaderGraphPlus
 {
@@ -141,7 +142,7 @@ partial class ShaderGraphPlus
 				
 				if ( node is SubgraphNode subgraphNode )
 				{
-					if ( !FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
+					if ( !Editor.FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
 					{
 						var missingNode = new MissingNode( typeName, element );
 						node = missingNode;

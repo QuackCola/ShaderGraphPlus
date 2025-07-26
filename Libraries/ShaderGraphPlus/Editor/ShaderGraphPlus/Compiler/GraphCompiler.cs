@@ -1,8 +1,10 @@
+using Editor;
 using Microsoft.CodeAnalysis;
+using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
 {
@@ -1090,7 +1092,7 @@ public sealed partial class GraphCompiler
 			return CompiledTextures[resourceText];
 		}
 
-		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )

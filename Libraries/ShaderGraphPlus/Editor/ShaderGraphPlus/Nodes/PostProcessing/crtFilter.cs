@@ -1,7 +1,7 @@
 ﻿using Facepunch.ActionGraphs;
 using static Sandbox.VideoWriter;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "CRT Filter" ), Category( "PostProcessing/Crt" )]

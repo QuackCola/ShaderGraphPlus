@@ -1,6 +1,6 @@
 ﻿using static Sandbox.Internal.IControlSheet;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 /// <summary>
 /// Container for the generated shader feature info.

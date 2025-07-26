@@ -1,5 +1,6 @@
-﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 {

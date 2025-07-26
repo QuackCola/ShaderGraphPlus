@@ -1,10 +1,11 @@
 ﻿
+using Editor;
 using Editor.NodeEditor;
 using Editor.ShaderGraph;
 using Sandbox.Resources;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 {
@@ -51,7 +52,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 		{
 
 			Subgraph = new ShaderGraphPlus();
-			var json = FileSystem.Content.ReadAllText( SubgraphPath );
+			var json = Editor.FileSystem.Content.ReadAllText( SubgraphPath );
 			Subgraph.Deserialize( json, SubgraphPath );
 			Subgraph.Path = SubgraphPath;
 

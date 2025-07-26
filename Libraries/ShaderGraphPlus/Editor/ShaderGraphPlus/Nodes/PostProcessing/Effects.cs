@@ -1,6 +1,6 @@
 ﻿
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 [Title( "Warp" ), Category( "PostProcessing/Effects" )]
 [Description( "Takes in the Screen UV's and warps the edges, creating the spherized effect" )]

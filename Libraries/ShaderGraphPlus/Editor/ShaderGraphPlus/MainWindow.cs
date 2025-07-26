@@ -1,4 +1,7 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 [EditorForAssetType( "sgpfunc" )]
 public class MainWindowFunc : MainWindow, IAssetEditor
@@ -118,7 +121,7 @@ public class MainWindow : DockWindow
 
 		CreateToolBar();
 		
-		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
+		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
 		    .Where(x => System.IO.File.Exists(x)).ToList();
 		
 		CreateUI();
@@ -205,7 +208,7 @@ public class MainWindow : DockWindow
 		}
 
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-		var resourcePath = System.IO.Path.Combine( FileSystem.Temporary.GetFullPath( "/temp" ), assetPath );
+		var resourcePath = System.IO.Path.Combine( Editor.FileSystem.Temporary.GetFullPath( "/temp" ), assetPath );
 		var asset = AssetSystem.FindByPath( resourcePath );
 
 		asset?.OpenInEditor();
@@ -229,7 +232,7 @@ public class MainWindow : DockWindow
 		if (_asset is null)
 			return;
 	
-		var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphplus/{_asset.Name}.png");
+		var path = Editor.FileSystem.Root.GetFullPath($"/screenshots/shadergraphplus/{_asset.Name}.png");
 		System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
 	
 		_graphView.Capture($"screenshots/shadergraphplus/{_asset.Name}.png");
@@ -282,8 +285,8 @@ public class MainWindow : DockWindow
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 		var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
 
-		FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
-		FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
+		Editor.FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
+		Editor.FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
 		_isCompiling = true;
 		_preview.IsCompiling = _isCompiling;
@@ -302,11 +305,11 @@ public class MainWindow : DockWindow
 			ConsoleOutput = true
 		};
 		
-		var result = await EditorUtility.CompileShader( FileSystem.Root, path, options );
+		var result = await EditorUtility.CompileShader( Editor.FileSystem.Root, path, options );
 		
 		if ( result.Success )
 		{
-			var asset = AssetSystem.RegisterFile( FileSystem.Root.GetFullPath( path ) );
+			var asset = AssetSystem.RegisterFile( Editor.FileSystem.Root.GetFullPath( path ) );
 		
 			while ( !asset.IsCompiledAndUpToDate )
 			{
@@ -385,7 +388,7 @@ public class MainWindow : DockWindow
 		
 			// Reload the shader otherwise it's gonna be the old wank
 			// Alternatively Material.Create could be made to force reload the shader
-			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
+			Editor.ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 		
 			_preview.Material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
 		}
@@ -1100,7 +1103,7 @@ public class MainWindow : DockWindow
 
 	private void SaveRecentFiles()
 	{
-		FileSystem.Temporary.WriteJson( "shadergraphplus_recentfiles.json", _recentFiles );
+		Editor.FileSystem.Temporary.WriteJson( "shadergraphplus_recentfiles.json", _recentFiles );
 	}
 
 	private void PromptSave( Action action )

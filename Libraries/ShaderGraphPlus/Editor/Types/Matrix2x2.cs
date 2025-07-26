@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Security.Principal;
 
-namespace Editor;
+namespace ShaderGraphPlus;
 
 [JsonConverter( typeof( Matrix2x2Converter ) )]
 public struct Float2x2

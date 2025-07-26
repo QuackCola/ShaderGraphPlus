@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 public enum StaticSwitchMode
 {

@@ -2,7 +2,7 @@
 using Editor.ShaderGraph;
 using System;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class MatrixParameterNode<T> : ShaderNodePlus
 {

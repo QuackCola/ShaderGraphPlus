@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]

@@ -3,7 +3,7 @@
 
 using System.Text;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum StaticSwitchBlock
 {

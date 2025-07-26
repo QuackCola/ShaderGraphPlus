@@ -1,4 +1,6 @@
-﻿namespace Editor;
+﻿using Editor;
+
+namespace ShaderGraphPlus;
 
 [CustomEditor( typeof( Float4x4 ) )]
 public class Float4x4ControlWidget : ControlObjectWidget

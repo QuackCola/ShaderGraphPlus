@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Nodes;
 
 public interface ISyncableTextureNode
 {
@@ -92,7 +94,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		_resourceText = resourceText;
 
 		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
@@ -1155,7 +1157,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		_resourceText = resourceText;
 
 		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )

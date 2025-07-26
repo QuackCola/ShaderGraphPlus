@@ -1,6 +1,7 @@
-﻿using Sandbox.Rendering;
+﻿using Editor;
+using Sandbox.Rendering;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public class Throbber : SceneCustomObject
 {
@@ -26,7 +27,7 @@ public class Throbber : SceneCustomObject
 	public Throbber( SceneWorld sceneWorld, Preview preview ) : base( sceneWorld )
 	{
 		_preview = preview;
-		_texture = Texture.Load( FileSystem.Content, "tools/images/common/busy.png", true );
+		_texture = Texture.Load( Editor.FileSystem.Content, "tools/images/common/busy.png", true );
 		Bounds = BBox.FromPositionAndSize( Vector3.Zero, float.MaxValue );
 	}
 
@@ -867,7 +868,7 @@ public class Preview : SceneRenderingWidget
 	}
 
 	// Application.CursorPosition is fucked for different DPI
-	private static Vector2 CursorPosition => Application.UnscaledCursorPosition;
+	private static Vector2 CursorPosition => Editor.Application.UnscaledCursorPosition;
 
 	public override void PreFrame()
 	{
@@ -894,7 +895,7 @@ public class Preview : SceneRenderingWidget
 				}
 			}
 
-			Application.UnscaledCursorPosition = _lastCursorPos;
+			Editor.Application.UnscaledCursorPosition = _lastCursorPos;
 			Cursor = CursorShape.Blank;
 		}
 		else if ( _zoomControl )
@@ -904,7 +905,7 @@ public class Preview : SceneRenderingWidget
 				Zoom( _cursorDelta.y );
 			}
 
-			Application.UnscaledCursorPosition = _lastCursorPos;
+			Editor.Application.UnscaledCursorPosition = _lastCursorPos;
 			Cursor = CursorShape.Blank;
 		}
 		else if ( _panControl )
@@ -918,7 +919,7 @@ public class Preview : SceneRenderingWidget
 				_origin += down * invRot;
 			}
 
-			Application.UnscaledCursorPosition = _lastCursorPos;
+			Editor.Application.UnscaledCursorPosition = _lastCursorPos;
 			Cursor = CursorShape.Blank;
 		}
 		else

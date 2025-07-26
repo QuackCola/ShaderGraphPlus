@@ -3,7 +3,7 @@ using Sandbox;
 using System.Xml.Linq;
 using static Sandbox.Material;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic round gradient.

@@ -4,7 +4,7 @@ using Sandbox.Resources;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public interface IErroringNode
 {

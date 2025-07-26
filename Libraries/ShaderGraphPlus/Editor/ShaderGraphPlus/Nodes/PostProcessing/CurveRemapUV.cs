@@ -1,4 +1,4 @@
-﻿using Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus.Nodes;
 
 [Title( "Curve Remap UV" ), Category( "PostProcessing/UV" )]
 public class curveRemapUVNode : ShaderNodePlus

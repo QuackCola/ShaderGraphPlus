@@ -1,5 +1,5 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 [Title( "Gradient" ), Description( "" ), Category( "Constants" ), Icon( "gradient" )]
 public sealed class GradientNode : ShaderNodePlus

@@ -1,7 +1,8 @@
 ﻿
-using static Editor.ShaderGraphPlus.GraphCompiler;
 
-namespace Editor.ShaderGraphPlus;
+using Editor;
+
+namespace ShaderGraphPlus;
 
 public class Output : Widget
 {
@@ -76,7 +77,7 @@ public class WarningListView : ListView
 			m.AddOption( "Copy Warning", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}" ) );
 		}
 
-		m.OpenAt( Application.CursorPosition );
+		m.OpenAt( Editor.Application.CursorPosition );
 	}
 
 	protected override void OnPaint()
@@ -164,7 +165,7 @@ public class ErrorListView : ListView
 			m.AddOption( "Copy Error", "content_copy", () => EditorUtility.Clipboard.Copy( $"{error.Message}" ) );
 		}
 
-		m.OpenAt( Application.CursorPosition );
+		m.OpenAt( Editor.Application.CursorPosition );
 	}
 
 	protected override void OnPaint()

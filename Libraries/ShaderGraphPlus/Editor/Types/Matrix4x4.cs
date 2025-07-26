@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Numerics;
 
-namespace Editor;
+namespace ShaderGraphPlus;
 
 [JsonConverter( typeof( Matrix4x4Converter ) )]
 public struct Float4x4

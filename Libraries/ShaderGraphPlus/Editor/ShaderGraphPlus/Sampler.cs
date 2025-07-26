@@ -1,7 +1,8 @@
-﻿using Sandbox.Internal;
+﻿using Editor;
+using Sandbox.Internal;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum SamplerFilter
 {

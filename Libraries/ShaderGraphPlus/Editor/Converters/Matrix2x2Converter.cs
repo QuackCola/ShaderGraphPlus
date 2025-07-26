@@ -1,6 +1,6 @@
 ﻿using Sandbox.Internal;
 
-namespace Editor;
+namespace ShaderGraphPlus;
 
 internal class Matrix2x2Converter : JsonConverter<Float2x2>
 {

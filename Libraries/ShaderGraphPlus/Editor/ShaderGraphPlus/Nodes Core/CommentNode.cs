@@ -1,5 +1,6 @@
-﻿
-namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+
+namespace ShaderGraphPlus;
 
 [Icon( "notes" ), Hide]
 public class CommentNode : BaseNodePlus, ICommentNode

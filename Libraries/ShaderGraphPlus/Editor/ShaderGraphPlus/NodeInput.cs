@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 public struct NodeInput : IValid
 {

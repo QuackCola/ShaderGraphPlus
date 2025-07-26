@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum BlendMode
 {

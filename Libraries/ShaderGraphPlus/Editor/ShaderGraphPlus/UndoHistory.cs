@@ -1,5 +1,7 @@
 ﻿
-namespace Editor.ShaderGraphPlus;
+using Editor;
+
+namespace ShaderGraphPlus;
 
 public class UndoHistory : Widget
 {

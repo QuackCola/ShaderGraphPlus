@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public interface IParameterNode
 {

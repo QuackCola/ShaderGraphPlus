@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using Editor;
+using ShaderGraphPlus.Nodes;
+using System.Text;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 internal class HLSLAssetPathAttribute : Attribute
 {

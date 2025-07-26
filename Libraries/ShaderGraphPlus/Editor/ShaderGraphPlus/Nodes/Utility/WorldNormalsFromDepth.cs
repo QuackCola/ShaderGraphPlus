@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 [Title("World Normals from Depth"), Category("Utility")]
 public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus

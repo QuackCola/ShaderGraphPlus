@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// WIP Depth Intersection Effect. May not be "Correct".

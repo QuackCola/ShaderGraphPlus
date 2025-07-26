@@ -1,6 +1,7 @@
-﻿using Editor.ShaderGraphPlus.Nodes;
+﻿using Editor;
+using ShaderGraphPlus.Nodes;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public class ShaderGraphPlusView : GraphView
 {
@@ -538,7 +539,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			_oldConnectionStyle = ConnectionStyle;
 
-			foreach ( var connection in Items.OfType<NodeEditor.Connection>() )
+			foreach ( var connection in Items.OfType<Editor.NodeEditor.Connection>() )
 			{
 				connection.Layout();
 			}

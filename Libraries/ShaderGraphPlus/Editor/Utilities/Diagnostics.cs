@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Diagnostics;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Diagnostics;
 
 public static class Assert
 {
@@ -6,25 +8,25 @@ public static class Assert
 
     public static void CheckNull<T>(T obj, string message)
     {
-        EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+        EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
         Sandbox.Diagnostics.Assert.IsNull(obj, message);
     }
 
     public static void CheckNotNull<T>(T obj, string message)
     {
-        EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+        EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
         Sandbox.Diagnostics.Assert.NotNull(obj, message);
     }
 
     public static void CheckAreEqual<T>(T a, T b, string message = null)
     {
-        EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+        EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
         Sandbox.Diagnostics.Assert.AreEqual(a, b, message);
     }
 
     public static void CheckAreNotEqual<T>(T a, T b, string message = null)
     {
-        EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+        EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
         Sandbox.Diagnostics.Assert.AreNotEqual(a, b, message);
     }
 
@@ -39,7 +41,7 @@ public static class Assert
     {
         if (object.Equals(a, b))
         {
-            EditorUtility.PlayRawSound(FileSystem.Content.GetFullPath(m_AssertSound));
+            EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
             return true;
         }
         else

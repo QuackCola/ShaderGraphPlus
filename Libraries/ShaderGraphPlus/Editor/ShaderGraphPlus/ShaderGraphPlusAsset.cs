@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.AssetBrowser;
+﻿using Editor;
+
+namespace ShaderGraphPlus.AssetBrowser;
 
 /// <summary>
 /// For adding an option to create a default .sgrph in the Asset Browser.

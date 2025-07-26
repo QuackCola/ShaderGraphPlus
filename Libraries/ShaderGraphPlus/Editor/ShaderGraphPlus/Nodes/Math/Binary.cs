@@ -1,5 +1,7 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+using Editor;
+
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class Binary : ShaderNodePlus
 {
