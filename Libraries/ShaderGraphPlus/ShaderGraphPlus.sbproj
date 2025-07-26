@@ -11,7 +11,7 @@
   "Mounts": null,
   "IsStandaloneOnly": false,
   "Metadata": {
-    "CsProjName": "Shader Graph Plus",
+    "CsProjName": "shadergraphplus",
     "Compiler": {
       "RootNamespace": "ShaderGraphPlus",
       "DefineConstants": "SANDBOX;ADDON;DEBUG",
