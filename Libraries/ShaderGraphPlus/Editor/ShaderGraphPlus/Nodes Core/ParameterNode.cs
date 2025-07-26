@@ -11,8 +11,10 @@ public interface IParameterNode
 	NodeInput PreviewInput { get; set; }
 
 	Type GetPortType();
+
 	object GetValue();
 	void SetValue( object val );
+
 	Vector4 GetRangeMin();
 	Vector4 GetRangeMax();
 }
