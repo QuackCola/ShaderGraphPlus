@@ -1,4 +1,5 @@
 ﻿using Editor;
+using System.Text.Json;
 
 namespace ShaderGraphPlus;
 
@@ -132,7 +133,12 @@ internal static class PaintHelper
 	{
 		extraWidth = 0f;
 		rawValue = value;
-		
+
+		if ( rawValue is JsonElement element )
+		{
+			rawValue = DeserializeElement( element, type );
+		}
+
 		switch ( rawValue )
 		{
 			case null when !type.IsValueType:
@@ -184,9 +190,57 @@ internal static class PaintHelper
 			case Angles angles:
 				return $"p: {angles.pitch:F2}, y: {angles.yaw:F2}, r: {angles.roll:F2}";
 
+			case Sampler sampler:
+				return $"{sampler.Name}";
+
+			case TextureInput input:
+				return $"{input.Name}";
+
 			default:
 				return $"{rawValue}";
 		}
+	}
+
+	public static object DeserializeElement( JsonElement element, Type type )
+	{
+		if ( type == typeof( bool ) )
+		{
+			return bool.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( int ) )
+		{
+			return int.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( float ) )
+		{
+			return float.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector2 ) )
+		{
+			return Vector2.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector3 ) )
+		{
+			return Vector3.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector4 ) )
+		{
+			return Vector4.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Color ) )
+		{
+			return Color.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Sampler ) )
+		{
+			return JsonSerializer.Deserialize<Sampler>( element, ShaderGraphPlus.SerializerOptions() )!;
+		}
+		else if ( type == typeof( Texture2DObject ) )
+		{
+			return JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() )!;
+		}
+
+		throw new Exception( $"Cannot Deserialize `{type}`" );
 	}
 
 	public static void DrawValue( HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null )
