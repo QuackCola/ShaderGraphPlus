@@ -201,7 +201,7 @@ internal static class PaintHelper
 		}
 	}
 
-	public static object DeserializeElement( JsonElement element, Type type )
+	private static object DeserializeElement( JsonElement element, Type type )
 	{
 		if ( type == typeof( bool ) )
 		{
