@@ -1422,12 +1422,12 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 
 	public Vector4 GetRangeMin()
 	{
-		return Vector4.Zero;
+		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMin" );
 	}
 
 	public Vector4 GetRangeMax()
 	{
-		return Vector4.One;
+		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMax" );
 	}
 #endregion IParameterNode Region
 
