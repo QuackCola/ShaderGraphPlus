@@ -525,9 +525,9 @@ public class MainWindow : DockWindow
 			{
 				node.PreviewID = compiler.PreviewID++;
 
-				SGPLog.Info( $"Setting Preview ID of node `{node}` to `{node.PreviewID}`" );
+				//SGPLog.Info( $"Setting Preview ID of node `{node}` to `{node.PreviewID}`" );
 
-				compiler.ReservedPreviewIDs.Add( compiler.PreviewID );
+				//compiler.ReservedPreviewIDs.Add( compiler.PreviewID );
 			}
 
 			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )

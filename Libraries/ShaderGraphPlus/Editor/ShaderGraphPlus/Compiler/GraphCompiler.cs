@@ -109,7 +109,7 @@ public sealed partial class GraphCompiler
 	// Init to 1, 0 is reserved.
 	public int PreviewID { get; set; } = 1;
 
-	public List<int> ReservedPreviewIDs = new List<int>();
+	//public List<int> ReservedPreviewIDs = new List<int>();
 
 	public int LastPreviewID { get; set; } = 0;
 
@@ -523,10 +523,8 @@ public sealed partial class GraphCompiler
 			if ( subgraph is not null )
 			{
 				node = subgraph.FindNode( input.Identifier );
-				SGPLog.Info( $"Getting Result of node `{node}` which belongs to subgraphNode with ID `{input.SubgraphNode}`", IsPreview );
+				//SGPLog.Info( $"Getting Result of node `{node}` which belongs to subgraphNode with ID `{input.SubgraphNode}`", IsPreview );
 			}
-
-
 		}
 
 		ComboSwitchInfo? lastComboSwitchInfo = null;
@@ -892,7 +890,7 @@ public sealed partial class GraphCompiler
 			if ( subgraphResult )
 			{
 				funcResult.PreviewID = SubgraphNode.PreviewID;
-				SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
+				//SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
 			}
 
 			if ( !funcResult.IsValid )
