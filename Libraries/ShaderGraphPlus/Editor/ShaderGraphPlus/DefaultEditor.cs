@@ -1,7 +1,4 @@
-﻿using Editor.NodeEditor;
-
-namespace Editor.ShaderGraphPlus;
-
+﻿namespace Editor.ShaderGraphPlus;
 
 public class DefaultEditor : ValueEditor
 {
