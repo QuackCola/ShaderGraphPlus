@@ -715,7 +715,6 @@ public sealed partial class GraphCompiler
 				};
 				var newResult = Result( newConnection, true );
 
-
 				if ( NodeErrors.Any() )
 				{
 					InputStack.Remove( input );
@@ -736,15 +735,11 @@ public sealed partial class GraphCompiler
 				Subgraph = newStack.Item2;
 				SubgraphNode = lastNode;
 			}
-
-
 		}
 		else
 		{
 			if ( Subgraph is not null )
 			{
-
-
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
 					var newResult = ResolveParameterNode( parameterNode, ref value, out var error );
