@@ -1,8 +1,8 @@
 using Editor;
 using Microsoft.CodeAnalysis;
-using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
