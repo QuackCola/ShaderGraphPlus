@@ -848,25 +848,6 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-
-			//if ( SubgraphNode != null && IsPreview )
-			//{
-			//	SGPLog.Info( $"funcResult {funcResult.Code} // {funcResult.PreviewID} // LastSub : {SubgraphNode.PreviewID}", IsPreview );
-			//
-			//}
-
-			//if ( SubgraphStack.Count > 0 )
-			//{
-			//	SGPLog.Info( $"Last Subgraph In Stack : {SubgraphStack.Last().Item1.PreviewID}", IsPreview );
-			//}
-			//else
-			//{
-			//	SGPLog.Info( $"No Last subgraph for {node.PreviewID}", IsPreview );
-			//}
-
-
-
-
 			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
 			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
 
