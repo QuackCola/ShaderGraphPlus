@@ -102,6 +102,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	{
 		return Vector4.Zero;
 	}
+
 	public void SetValue( object val )
 	{
 		Value = (T)val;
