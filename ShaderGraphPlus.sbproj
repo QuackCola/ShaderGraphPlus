@@ -22,9 +22,24 @@
     "RankType": "None",
     "PerMapRanking": false,
     "LeaderboardType": "None",
-    "CsProjName": "",
+    "CsProjName": "ShaderGraphPlus",
     "StartupScene": "maps/testbed/testbed.scene",
     "LaunchMode": "Normal",
-    "DedicatedServerStartupScene": "maps/testbed/testbed.scene"
+    "DedicatedServerStartupScene": "maps/testbed/testbed.scene",
+    "Compiler": {
+      "RootNamespace": "ShaderGraphPlus",
+      "DefineConstants": "SANDBOX;ADDON;DEBUG",
+      "NoWarn": "1701;1702;1591;",
+      "WarningsAsErrors": "",
+      "TreatWarningsAsErrors": false,
+      "Nullables": false,
+      "ReleaseMode": "Debug",
+      "AssemblyReferences": [],
+      "IgnoreFolders": [
+        "editor",
+        "unittest"
+      ],
+      "DistinctAssemblyReferences": []
+    }
   }
 }
