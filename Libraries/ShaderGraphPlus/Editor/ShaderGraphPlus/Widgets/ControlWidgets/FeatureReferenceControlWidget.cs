@@ -1,6 +1,7 @@
 ﻿using Editor;
+using ShaderGraphPlus.Nodes;
 
-namespace ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus;
 
 [CustomEditor( typeof( string ) , WithAllAttributes = new[] { typeof( ShaderFeatureInfoReferenceAttribute ) } )]
 internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<ShaderFeatureInfo>
