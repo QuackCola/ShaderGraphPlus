@@ -5,7 +5,7 @@ namespace ShaderGraphPlus;
 /// <summary>
 /// 
 /// </summary>
-[CustomEditor(typeof(string), NamedEditor = "shadertypeplus")]
+[CustomEditor(typeof(string), NamedEditor = "shadertypeplus" )]
 sealed class ShaderTypePlusControlWidget : DropdownControlWidget<string>
 {
     public ShaderTypePlusControlWidget(SerializedProperty property) : base(property)

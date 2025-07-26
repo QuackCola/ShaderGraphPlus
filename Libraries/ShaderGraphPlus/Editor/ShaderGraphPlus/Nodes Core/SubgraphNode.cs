@@ -33,7 +33,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
 
-	[Editor( "subgraphplusnode" ), WideMode( HasLabel = false )]
+	[global::Editor( "subgraphplus.defaultvalues" ), WideMode( HasLabel = false )]
 	public Dictionary<string, object> DefaultValues { get; set; } = new();
 
 	[Hide]
@@ -226,7 +226,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	}
 }
 
-[CustomEditor( typeof( Dictionary<string, object> ), NamedEditor = "subgraphplusnode", WithAllAttributes = [typeof( WideModeAttribute )] )]
+[CustomEditor( typeof( Dictionary<string, object> ), NamedEditor = "subgraphplus.defaultvalues", WithAllAttributes = [typeof( WideModeAttribute )] )]
 internal class SubgraphNodeControlWidget : ControlWidget
 {
 	public override bool SupportsMultiEdit => false;

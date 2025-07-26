@@ -96,12 +96,12 @@ public abstract class BaseNodePlus : INode
 		return new NodeUI( view, this );
 	}
 
-    public Color GetPrimaryColor( GraphView view )
-    {
-        return PrimaryColor;
-    }
+	public Color GetPrimaryColor( GraphView view )
+	{
+		return PrimaryColor;
+	}
 
-    public virtual Menu CreateContextMenu( NodeUI node )
+	public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;
 	}
@@ -136,18 +136,18 @@ public abstract class BaseNodePlus : INode
 		}
 	}
 
-    [System.AttributeUsage(AttributeTargets.Property)]
-    public class InputDefaultAttribute : Attribute
-    {
-        public string Input;
+	[System.AttributeUsage(AttributeTargets.Property)]
+	public class InputDefaultAttribute : Attribute
+	{
+		public string Input;
 
-        public InputDefaultAttribute(string input)
-        {
-            Input = input;
-        }
-    }
+		public InputDefaultAttribute(string input)
+		{
+			Input = input;
+		}
+	}
 
-    [System.AttributeUsage( AttributeTargets.Property )]
+	[System.AttributeUsage( AttributeTargets.Property )]
 	public class OutputAttribute : Attribute
 	{
 		public System.Type Type;
@@ -170,35 +170,32 @@ public abstract class BaseNodePlus : INode
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class NodeEditorAttribute : Attribute
+	public class EditorAttribute : Attribute
 	{
 		public string ValueName;
 
-		public NodeEditorAttribute( string valueName )
+		public EditorAttribute( string valueName )
 		{
 			ValueName = valueName;
 		}
 	}
 
-    [System.AttributeUsage(AttributeTargets.Property)]
-    public class RangeAttribute : Attribute
-    {
-        public string Min;
-        public string Max;
-        public string Step;
+	[System.AttributeUsage(AttributeTargets.Property)]
+	public class RangeAttribute : Attribute
+	{
+		public string Min;
+		public string Max;
+		public string Step;
 
-        public RangeAttribute(string min, string max, string step)
-        {
-            Min = min;
-            Max = max;
-            Step = step;
-        }
-    }
+		public RangeAttribute(string min, string max, string step)
+		{
+			Min = min;
+			Max = max;
+			Step = step;
+		}
+	}
 
-
-
-
-    public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
+	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
@@ -221,16 +218,16 @@ public abstract class BaseNodePlus : INode
 		return (inputs, outputs);
 	}
 
-    private void FilterInputsAndOutputs()
-    {
-       if (_graph is not null)
-       {
-           if (Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn)
-           {
-               Inputs = new List<IPlugIn>();
-           }
-       }
-    }
+	private void FilterInputsAndOutputs()
+	{
+		if ( _graph is not null )
+		{
+			if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
+			{
+				Inputs = new List<IPlugIn>();
+			}
+		}
+	}
 
 }
 
@@ -238,12 +235,12 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
 	INode IPlug.Node => Node;
 
-    public string Identifier => Info.Name;
-    public DisplayInfo DisplayInfo => Info.DisplayInfo;
+	public string Identifier => Info.Name;
+	public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
-    public ValueEditor CreateEditor(NodeUI node, Plug plug)
-    {
-       	var editor = Info.CreateEditor( node, plug, Type );
+	public ValueEditor CreateEditor(NodeUI node, Plug plug)
+	{
+		var editor = Info.CreateEditor( node, plug, Type );
 		if ( editor is not null ) return editor;
 
 		// Default
@@ -252,9 +249,9 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 		}
 
 		return null;
-    }
+	}
 
-    public Menu CreateContextMenu( NodeUI node, Plug plug )
+	public Menu CreateContextMenu( NodeUI node, Plug plug )
 	{
 		return null;
 	}
@@ -291,7 +288,6 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 	}
 
 }
-
 
 public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugIn
 {
@@ -450,7 +446,7 @@ public class PlugInfo
 			return null;
 		}
 
-		var editor = Property?.GetCustomAttribute<BaseNodePlus.NodeEditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 
 		if ( editor is not null )
 		{
