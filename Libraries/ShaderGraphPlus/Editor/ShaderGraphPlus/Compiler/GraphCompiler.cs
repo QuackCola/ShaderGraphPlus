@@ -693,8 +693,6 @@ public sealed partial class GraphCompiler
 
 			if ( !funcResult.IsValid )
 			{
-				//SGPLog.Error( $"funcResult of `{node}` is Invalid!", IsNotPreview );
-
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
