@@ -203,7 +203,7 @@ public sealed partial class GraphCompiler
 
 	public List<string> RegisterdVoidResultLocals { get; set; } = new List<string>();
 
-	public string RegisterVoidNew( string functionName, string functionInputs, string nodeID, Dictionary<string,string> outputResults )
+	internal string CustomCodeRegisterResults( string functionName, string functionInputs, string nodeID, Dictionary<string,string> outputResults )
 	{
 		var sb = new StringBuilder();
 		Dictionary<(string,string),ResultType> funcResults = new ();
@@ -222,7 +222,7 @@ public sealed partial class GraphCompiler
 			sb.Append( ( output.Index + 1 ) == outputResults.Count ? $"{id}" : $" {id}, " );
 			funcResults.Add( new (name,id), GetResultTypeFromHLSLDataType( output.Item.Value ) );
 
-			SGPLog.Info( $"Register void result {id}", IsPreview);
+			//SGPLog.Info( $"Register void result {id}", IsPreview);
 
 			RegisterdVoidResultLocals.Add( id );
 		}
@@ -240,27 +240,12 @@ public sealed partial class GraphCompiler
 			BoundNodeId = nodeID
 		};
 
-		//foreach ( var result in voidData.Results )
-		//{
-		//	SGPLog.Info( $"VoidData Result `{result}`", IsPreview );
-		//}
-
-		//if ( !ShaderResult.VoidLocalsNew.ContainsKey( nodeID ) )
-		//{
-		//	ShaderResult.VoidLocalsNew.Add( nodeID, voidData );
-		//
-		//	return funcCall;
-		//}
-
 		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
 		{
 			ShaderResult.VoidLocalsNew.Add( voidData );
 		
 			return funcCall;
 		}
-
-		//return "";
-		//SGPLog.Info( $"Has output : {outputName} of type {dataType} with funcCall `MyFunc({funcCall} {out})`", IsPreview );
 	}
 
 	public void RegisterInclude( string path )
@@ -328,59 +313,6 @@ public sealed partial class GraphCompiler
 		}
 
 		return $"{functionName}( {args} )";
-	}
-
-	public void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
-	{
-		var result = ShaderResult;
-		var sb = new StringBuilder();
-
-		outputDataList = new List<CustomCodeOutputData>();
-		functionOutputs = new List<string>();
-
-		//SGPLog.Info( $" RV : AlreadyEvaluated? = {!result.VoidLocalGroupsTest.Any(x => x.Key == node.Identifier)}");
-
-		if ( !result.VoidLocalGroups.Any( x => x.Key == node.Identifier ) )
-		{
-			foreach ( var value in values )
-			{
-				
-
-				var varName = $"vl_{result.VoidLocalCount++}";
-				var dataType = value.Value;
-				//SGPLog.Info( $" RV : Starting to process `{varName}` of type `{value.Value}`", IsPreview );
-				//SGPLog.Info( $" RV : Created compiler name `{varName}` for freindly name `{value.Key}`" );
-
-
-				CustomCodeOutputData outputData = new CustomCodeOutputData();
-				outputData.CompilerName = varName;
-				outputData.FriendlyName = value.Key;
-				outputData.DataType = dataType;
-				outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
-				outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
-				outputData.NodeId = node.Identifier;
-
-
-				//SGPLog.Info( $" RV : Created outputData for `{value.Key}`" );
-
-				outputDataList.Add( outputData );
-				functionOutputs.Add( outputData.CompilerName );
-			}
-
-			if ( !result.VoidLocalGroups.ContainsKey( node.Identifier ) )
-			{
-				//SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
-				result.VoidLocalGroups.Add( node.Identifier, outputDataList );
-			}
-			else
-			{
-				//SGPLog.Warning($" RV : NodeID `{node.Identifier}` already exists in Dict... ");
-			}
-		}
-		else
-		{
-			//SGPLog.Warning( $" RV : We have already registerd the outputs for this node..." );
-		}
 	}
 
 	/// <summary>

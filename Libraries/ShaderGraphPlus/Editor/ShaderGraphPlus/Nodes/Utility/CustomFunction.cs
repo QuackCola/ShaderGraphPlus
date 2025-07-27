@@ -99,7 +99,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 				return NodeResult.Error( outputsError );
 			}
 
-			string funcCall = compiler.RegisterVoidNew( Name, functionInputs, Identifier, outputResults );
+			string funcCall = compiler.CustomCodeRegisterResults( Name, functionInputs, Identifier, outputResults );
 			return new NodeResult( ResultType.Void, $"{funcCall}", voidComponents: 0 );
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
