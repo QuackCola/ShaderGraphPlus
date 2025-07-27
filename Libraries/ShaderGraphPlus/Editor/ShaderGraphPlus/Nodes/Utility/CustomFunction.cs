@@ -86,12 +86,12 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
         {
             compiler.RegisterVoidFunctionResults(this, GetFunctionVoidLocals(), out List<CustomCodeOutputData> outputData, out List<string> functionOutputs);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sbFuncOutputs = new StringBuilder();
 
             // Construct function outputs, for example : out float output01, out float2 output02
             foreach ( var voidLocal in functionOutputs)
             {
-                sb.Append( voidLocal == functionOutputs.Max() ? $"{voidLocal} " : $" {voidLocal}, ");
+                sbFuncOutputs.Append( voidLocal == functionOutputs.Max() ? $"{voidLocal} " : $" {voidLocal}, ");
             }
 
             if ( !OutputData.Any() )
@@ -104,7 +104,15 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
             }
 
             var functionInputs = GetInputResults(compiler);
-            string funcCall = compiler.ResultFunctionCustomExpression( this, $"{Source}", Name, args: $" {functionInputs}{(ExpressionInputs.Any() ? "," : "")}{sb.ToString()}", true ) + ";";
+            string funcCall = compiler.ResultFunctionCustomExpression( this, $"{Source}", Name, args: $" {functionInputs}{(ExpressionInputs.Any() ? "," : "")}{sbFuncOutputs.ToString()}", true ) + ";";
+
+			{
+				compiler.RegisterVoidNew( Name, functionInputs, GetFunctionVoidLocals()
+					);
+
+
+			}
+
 
             return new NodeResult( ResultType.Void, funcCall, voidComponents: 0 );
         }

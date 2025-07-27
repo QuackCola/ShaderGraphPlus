@@ -1,8 +1,8 @@
 using Editor;
 using Microsoft.CodeAnalysis;
+using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
-using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -197,6 +197,45 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	public void RegisterVoidNew( string functionName, string functionInputs, Dictionary<string,string> outputResults )
+	{
+		var sb = new StringBuilder();
+
+
+		foreach ( var output in outputResults.Index() )
+		{
+			string outputName = output.Item.Key;
+
+			sb.Append( ( output.Index + 1 ) == outputResults.Count ? $"{outputName}" : $" {outputName}, " );
+		}
+
+		// Assemble the function call
+		var funcCall = $"{functionName}( {functionInputs},{sb.ToString()} )";
+
+		SGPLog.Info( $"Generated Function Call body `{funcCall}`", IsPreview );
+
+		// Register each output
+		foreach ( var output in outputResults )
+		{
+			string outputName = output.Key;
+			ResultType dataType = GetResultTypeFromHLSLDataType( output.Value );
+
+			var voidData = new VoidData()
+			{
+				TargetResult = outputName,
+				ResultType = dataType,
+				FunctionCall = funcCall,
+				AlreadyDefined = false,
+			};
+		}
+
+
+
+
+
+		//SGPLog.Info( $"Has output : {outputName} of type {dataType} with funcCall `MyFunc({funcCall} {out})`", IsPreview );
+	}
+
 	public void RegisterInclude( string path )
 	{
 		var list = IsVs ? VertexIncludes : PixelIncludes;
@@ -278,12 +317,13 @@ public sealed partial class GraphCompiler
 		{
 			foreach ( var value in values )
 			{
-				//SGPLog.Info($" RV : Starting to process `{value.Key}`:`{value.Value}`");
+				
 
 				var varName = $"vl_{result.VoidLocalCount++}";
 				var dataType = value.Value;
-
+				//SGPLog.Info( $" RV : Starting to process `{varName}` of type `{value.Value}`", IsPreview );
 				//SGPLog.Info( $" RV : Created compiler name `{varName}` for freindly name `{value.Key}`" );
+
 
 				CustomCodeOutputData outputData = new CustomCodeOutputData();
 				outputData.CompilerName = varName;
