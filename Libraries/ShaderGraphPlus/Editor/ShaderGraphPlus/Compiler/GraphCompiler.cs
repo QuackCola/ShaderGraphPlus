@@ -690,7 +690,6 @@ public sealed partial class GraphCompiler
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
 			var funcResult = customFunctionNode.GetResult( this );
-			var outputData = new CustomCodeOutputData();
 
 			if ( !funcResult.IsValid )
 			{
@@ -716,85 +715,72 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			// New Stuff
+			var freindlyName = input.Output;
+			var functionOutputName = freindlyName;
+			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
+			functionOutputName = voidData.GetCompilerName( functionOutputName );
+
+			if ( !voidData.IsValid )
 			{
-				var freindlyName = input.Output;
-				var functionOutputName = input.Output;
-				//var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
-				var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
-				functionOutputName = voidData.GetCompilerName( functionOutputName );
+				SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
 
-				//if ( ShaderResult.VoidLocalsNew.ContainsKey( customFunctionNode.Identifier ) )
-				//{
-				//	//SGPLog.Info( $"VoidLocalsNew contains key `{customFunctionNode.Identifier}`", IsPreview );
-				//	voidData = ShaderResult.VoidLocalsNew[customFunctionNode.Identifier];
-				//}
-				//else
-				if ( !voidData.IsValid )
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
+
+				return default;
+			}
+
+			//SGPLog.Info( $"Got result from custom function output `{functionOutputName}` from node with ID `{customFunctionNode.Identifier}`", IsPreview );
+
+			if ( voidData.IsValid )
+			{
+				var resultType = voidData.GetResultResultType( functionOutputName );
+				var componentCount = 0;
+
+				switch ( resultType )
 				{
-					SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
-
-					NodeErrors[node] = new List<string> { $"Failed to get result!", };
-
-					return default;
+					case ResultType.Float:
+						componentCount = 1;
+						break;
+					case ResultType.Vector2:
+						componentCount = 2;
+						break;
+					case ResultType.Vector3:
+						componentCount = 3;
+						break;
+					case ResultType.Color:
+						componentCount = 4;
+						break;
+					case ResultType.Invalid:
+						break;
 				}
 
-				//SGPLog.Info( $"Got result from custom function output `{functionOutputName}` from node with ID `{customFunctionNode.Identifier}`", IsPreview );
+				var localResult = new NodeResult( resultType, $"{functionOutputName}", voidComponents: componentCount);
+				localResult.VoidResultFriendlyName = freindlyName;
 
-				if ( voidData.IsValid )
+				// return the localResult if we are getting a result from a node that we have already evaluated. 
+				foreach ( var inputResult in ShaderResult.InputResults )
 				{
-					//SGPLog.Info( $"Fetched VoidData is valid!", IsPreview );
-
-					var resultType = voidData.GetResultResultType( functionOutputName );
-					var componentCount = 0;
-					SGPLog.Info( $"ResultType of `{functionOutputName}` is `{resultType}`", IsPreview );
-
-					switch ( resultType )
+					if ( inputResult.Key.Identifier == input.Identifier )
 					{
-						case ResultType.Float:
-							componentCount = 1;
-							break;
-						case ResultType.Vector2:
-							componentCount = 2;
-							break;
-						case ResultType.Vector3:
-							componentCount = 3;
-							break;
-						case ResultType.Color:
-							componentCount = 4;
-							break;
-						case ResultType.Invalid:
-							break;
+						InputStack.Remove( input );
+				
+						return localResult;
 					}
-
-					var localResult = new NodeResult( resultType, $"{functionOutputName}", voidComponents: componentCount);
-					localResult.VoidResultFriendlyName = freindlyName;
-
-					// return the localResult if we are getting a result from a node that we have already evaluated. 
-					foreach ( var inputResult in ShaderResult.InputResults )
-					{
-						if ( inputResult.Key.Identifier == input.Identifier )
-						{
-							InputStack.Remove( input );
-					
-							return localResult;
-						}
-					}
-					
-					ShaderResult.InputResults.Add( input, localResult );
-					ShaderResult.Results.Add( (localResult, funcResult) );
-					
-					InputStack.Remove( input );
-					
-					return localResult;
 				}
-				else
-				{
-					SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
-					NodeErrors[node] = new List<string> { $"Failed to get result!", };
+				
+				ShaderResult.InputResults.Add( input, localResult );
+				ShaderResult.Results.Add( (localResult, funcResult) );
+				
+				InputStack.Remove( input );
+				
+				return localResult;
+			}
+			else
+			{
+				SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
 
-					return default;
-				}
+				return default;
 			}
 		}
 
@@ -812,8 +798,6 @@ public sealed partial class GraphCompiler
 			SubgraphStack.Add( newStack );
 			Subgraph = subgraphNode.Subgraph;
 			SubgraphNode = subgraphNode;
-
-
 
 			if ( !Subgraphs.Contains( Subgraph ) )
 			{
@@ -862,16 +846,6 @@ public sealed partial class GraphCompiler
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
 					var newResult = ResolveParameterNode( parameterNode, ref value, out var error );
-				
-					// TODO : This is just a shitty placeholder until you can just set a defaults of Sampler 
-					// and Texture 2D Objects on the subgraph node itself when the input connectedPlug is null.
-					//if ( !string.IsNullOrWhiteSpace( error.Item2 ) )
-					//{
-					//	NodeErrors.Add( error.Item1, new List<string> { error.Item2 } );
-					//
-					//	InputStack.Remove( input );
-					//	return default;
-					//}
 
 					if ( newResult.IsValid )
 					{
@@ -909,7 +883,6 @@ public sealed partial class GraphCompiler
 			}
 			else if ( Graph.IsSubgraph )
 			{
-
 				if ( node is IParameterNode parameterNode )
 				{
 					if ( parameterNode.PreviewInput.IsValid )
