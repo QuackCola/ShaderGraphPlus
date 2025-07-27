@@ -1,8 +1,10 @@
 using Editor;
 using Microsoft.CodeAnalysis;
 using ShaderGraphPlus.Nodes;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ShaderGraphPlus;
 
@@ -84,6 +86,8 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
 
 		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
+		//public Dictionary<string, VoidData> VoidLocalsNew { get; private set; } = new();
+		public List<VoidData> VoidLocalsNew { get; private set; } = new();
 		public int VoidLocalCount { get; set; } = 0;
 	}
 
@@ -197,42 +201,65 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void RegisterVoidNew( string functionName, string functionInputs, Dictionary<string,string> outputResults )
+	public List<string> RegisterdVoidResultLocals { get; set; } = new List<string>();
+
+	public string RegisterVoidNew( string functionName, string functionInputs, string nodeID, Dictionary<string,string> outputResults )
 	{
 		var sb = new StringBuilder();
-
+		Dictionary<(string,string),ResultType> funcResults = new ();
+		int count = 0;
 
 		foreach ( var output in outputResults.Index() )
 		{
-			string outputName = output.Item.Key;
+			var name = output.Item.Key;
+			string id = name;
 
-			sb.Append( ( output.Index + 1 ) == outputResults.Count ? $"{outputName}" : $" {outputName}, " );
+			while ( RegisterdVoidResultLocals.Contains( id ) )
+			{
+				id = $"{name}_{count++}";
+			}
+
+			sb.Append( ( output.Index + 1 ) == outputResults.Count ? $"{id}" : $" {id}, " );
+			funcResults.Add( new (name,id), GetResultTypeFromHLSLDataType( output.Item.Value ) );
+
+			SGPLog.Info( $"Register void result {id}", IsPreview);
+
+			RegisterdVoidResultLocals.Add( id );
 		}
 
 		// Assemble the function call
 		var funcCall = $"{functionName}( {functionInputs},{sb.ToString()} )";
 
-		SGPLog.Info( $"Generated Function Call body `{funcCall}`", IsPreview );
-
-		// Register each output
-		foreach ( var output in outputResults )
+		var voidData = new VoidData()
 		{
-			string outputName = output.Key;
-			ResultType dataType = GetResultTypeFromHLSLDataType( output.Value );
+			TargetResult = "",
+			ResultType = ResultType.Invalid,
+			FunctionCall = funcCall,
+			AlreadyDefined = false,
+			Results = funcResults,
+			BoundNodeId = nodeID
+		};
 
-			var voidData = new VoidData()
-			{
-				TargetResult = outputName,
-				ResultType = dataType,
-				FunctionCall = funcCall,
-				AlreadyDefined = false,
-			};
+		//foreach ( var result in voidData.Results )
+		//{
+		//	SGPLog.Info( $"VoidData Result `{result}`", IsPreview );
+		//}
+
+		//if ( !ShaderResult.VoidLocalsNew.ContainsKey( nodeID ) )
+		//{
+		//	ShaderResult.VoidLocalsNew.Add( nodeID, voidData );
+		//
+		//	return funcCall;
+		//}
+
+		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
+		{
+			ShaderResult.VoidLocalsNew.Add( voidData );
+		
+			return funcCall;
 		}
 
-
-
-
-
+		//return "";
 		//SGPLog.Info( $"Has output : {outputName} of type {dataType} with funcCall `MyFunc({funcCall} {out})`", IsPreview );
 	}
 
@@ -664,61 +691,113 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = customFunctionNode.GetResult( this );
 			var outputData = new CustomCodeOutputData();
-			
-			foreach ( var entry in customFunctionNode.OutputData )
-			{
 
-				if ( entry.FriendlyName == input.Output )
-				{
-				    outputData = entry;
-				    break;
-				}
-			}
-			
-			if ( !customFunctionNode.ExpressionOutputs.Any() )
+			if ( !funcResult.IsValid )
 			{
-				//Utilities.EdtiorSound.OhFiddleSticks();
-				
-				NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
-				
+				//SGPLog.Error( $"funcResult of `{node}` is Invalid!", IsNotPreview );
+
+				if ( !NodeErrors.TryGetValue( node, out var errors ) )
+				{
+					errors = new();
+					NodeErrors.Add( node, errors );
+				}
+
+				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
+				{
+					errors.Add( $"Missing input" );
+				}
+				else
+				{
+					foreach ( var error in funcResult.Errors )
+						errors.Add( error );
+				}
+
+				InputStack.Remove( input );
 				return default;
 			}
-			
-			if ( !outputData.IsValid )
-			{
-				//Utilities.EdtiorSound.OhFiddleSticks();
-				
-				NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
-				
-				return default;
-			}
-			
-			var localResult = new NodeResult(outputData.ResultType, $"{outputData.CompilerName}", voidComponents: outputData.ComponentCount );
 
-			// return the localResult if we are getting a result from a node that we have already evaluated. 
-			foreach ( var inputResult in ShaderResult.InputResults )
+			// New Stuff
 			{
-				if ( inputResult.Key.Identifier == input.Identifier )
+				var freindlyName = input.Output;
+				var functionOutputName = input.Output;
+				//var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
+				var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
+				functionOutputName = voidData.GetCompilerName( functionOutputName );
+
+				//if ( ShaderResult.VoidLocalsNew.ContainsKey( customFunctionNode.Identifier ) )
+				//{
+				//	//SGPLog.Info( $"VoidLocalsNew contains key `{customFunctionNode.Identifier}`", IsPreview );
+				//	voidData = ShaderResult.VoidLocalsNew[customFunctionNode.Identifier];
+				//}
+				//else
+				if ( !voidData.IsValid )
 				{
-				    InputStack.Remove( input );
+					SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
 
-				    return localResult;
+					NodeErrors[node] = new List<string> { $"Failed to get result!", };
+
+					return default;
+				}
+
+				//SGPLog.Info( $"Got result from custom function output `{functionOutputName}` from node with ID `{customFunctionNode.Identifier}`", IsPreview );
+
+				if ( voidData.IsValid )
+				{
+					//SGPLog.Info( $"Fetched VoidData is valid!", IsPreview );
+
+					var resultType = voidData.GetResultResultType( functionOutputName );
+					var componentCount = 0;
+					SGPLog.Info( $"ResultType of `{functionOutputName}` is `{resultType}`", IsPreview );
+
+					switch ( resultType )
+					{
+						case ResultType.Float:
+							componentCount = 1;
+							break;
+						case ResultType.Vector2:
+							componentCount = 2;
+							break;
+						case ResultType.Vector3:
+							componentCount = 3;
+							break;
+						case ResultType.Color:
+							componentCount = 4;
+							break;
+						case ResultType.Invalid:
+							break;
+					}
+
+					var localResult = new NodeResult( resultType, $"{functionOutputName}", voidComponents: componentCount);
+					localResult.VoidResultFriendlyName = freindlyName;
+
+					// return the localResult if we are getting a result from a node that we have already evaluated. 
+					foreach ( var inputResult in ShaderResult.InputResults )
+					{
+						if ( inputResult.Key.Identifier == input.Identifier )
+						{
+							InputStack.Remove( input );
+					
+							return localResult;
+						}
+					}
+					
+					ShaderResult.InputResults.Add( input, localResult );
+					ShaderResult.Results.Add( (localResult, funcResult) );
+					
+					InputStack.Remove( input );
+					
+					return localResult;
+				}
+				else
+				{
+					SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
+					NodeErrors[node] = new List<string> { $"Failed to get result!", };
+
+					return default;
 				}
 			}
-			
-			ShaderResult.InputResults.Add( input, localResult );
-			ShaderResult.Results.Add( ( localResult, funcResult ) );
-			
-			//if ( IsPreview )
-			//{
-			//    Nodes.Add( node );
-			//}
-			
-			InputStack.Remove( input );
-			
-			return localResult;
 		}
-		
+
 		bool previewOverride = false;
 		bool setAttribute = true;
 		string globalName = "";
@@ -1857,13 +1936,13 @@ public sealed partial class GraphCompiler
 			//}
 			//else
 			//{
-			if ( result.Item2.ResultType is ResultType.Void ) // TODO : Get rid of this and just do it how the node GetDimensions works with a void function outptus and call.
-			{
-				sb.AppendLine();
-				sb.AppendLine( IndentString( $"{result.Item2.Code}", indentLevel ) );
-				sb.AppendLine();
-			}
-			else
+			//if ( result.Item2.ResultType is ResultType.Void ) // TODO : Get rid of this and just do it how the node GetDimensions works with a void function outptus and call.
+			//{
+			//	sb.AppendLine();
+			//	sb.AppendLine( IndentString( $"{result.Item2.Code}", indentLevel ) );
+			//	sb.AppendLine();
+			//}
+			//else
 			{
 				lastResult = result;
 				var shouldSkip = result.Item2.SkipLocalGeneration;
@@ -1896,7 +1975,56 @@ public sealed partial class GraphCompiler
 						}
 					}
 
-					sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};", indentLevel ) );
+					if ( ShaderResult.VoidLocalsNew.Any() )
+					{
+						var voidData = new VoidData();
+
+						SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
+						foreach ( var data in ShaderResult.VoidLocalsNew )
+						{
+							//SGPLog.Info( $"Data entry  {result.Item1.Code}", IsPreview );
+
+							if ( data.Results.ContainsKey( new( result.Item1.VoidResultFriendlyName, result.Item1.Code ) ) )
+							{
+								voidData = data;
+								break;
+							}
+
+							//if ( data.Results.ContainsKey( result.Item1.Code ) )
+							//{
+							//	SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
+							//	voidData = data;
+							//	break;
+							//}
+							//var dat = data.Results.Where( x => x.res
+							//if ( data.Results.ContainsKey( result.Item1.Code ) )
+							//{
+							//	SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
+							//	voidData = data;
+							//	break;
+							//}
+						}
+
+						if ( voidData.IsValid )
+						{
+
+							foreach ( var localvar in voidData.Results )
+							{
+								//sb.AppendLine( IndentString( voidData.ResultInitNew( localvar.Key, localvar.Value ), indentLevel ) );
+								sb.AppendLine( IndentString( voidData.ResultInitNew( localvar.Key.compilerName, localvar.Value ), indentLevel ) );
+							}
+
+							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
+						}
+
+					}
+
+					SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
+
+					if ( result.Item2.ResultType != ResultType.Void )
+					{
+						sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};", indentLevel ) );
+					}
 
 					if ( preview && string.IsNullOrWhiteSpace( result.Item2.ComboSwitchBody )  )
 					{
@@ -1975,44 +2103,44 @@ public sealed partial class GraphCompiler
 		}
 
 		// TODO : Get rid of VoidLocalGroups and just do it how the node GetDimensions works with a void function outptus and call.
-		foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
-		{
-			sb.AppendLine();
-
-			foreach ( var data in voidLocal.Value )
-			{
-				var initialValue = "";
-				
-				if ( data.DataType == "bool" )
-				{
-					initialValue = "false";
-				}
-				else if ( data.DataType == "int" )
-				{
-					initialValue = "0";
-				}
-				else if ( data.DataType == "float" )
-				{
-					initialValue = "0.0f";
-				}
-				else if ( data.DataType == "float2" )
-				{
-					initialValue = "float2( 0.0f, 0.0f )";
-				}
-				else if ( data.DataType == "float3" )
-				{
-					initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-				}
-				else if ( data.DataType == "float4" )
-				{
-					initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-				}
-
-				sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
-			}
-		}
-
-		sb.AppendLine();
+		//foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
+		//{
+		//	sb.AppendLine();
+		//
+		//	foreach ( var data in voidLocal.Value )
+		//	{
+		//		var initialValue = "";
+		//		
+		//		if ( data.DataType == "bool" )
+		//		{
+		//			initialValue = "false";
+		//		}
+		//		else if ( data.DataType == "int" )
+		//		{
+		//			initialValue = "0";
+		//		}
+		//		else if ( data.DataType == "float" )
+		//		{
+		//			initialValue = "0.0f";
+		//		}
+		//		else if ( data.DataType == "float2" )
+		//		{
+		//			initialValue = "float2( 0.0f, 0.0f )";
+		//		}
+		//		else if ( data.DataType == "float3" )
+		//		{
+		//			initialValue = "float3( 0.0f, 0.0f, 0.0f )";
+		//		}
+		//		else if ( data.DataType == "float4" )
+		//		{
+		//			initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+		//		}
+		//
+		//		sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
+		//	}
+		//}
+		//
+		//sb.AppendLine();
 
 		GenerateLocalResults( ref sb, ShaderResult.Results, out _, IsPreview, false, 0 );
 

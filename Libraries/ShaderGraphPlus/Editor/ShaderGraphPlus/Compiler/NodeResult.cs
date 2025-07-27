@@ -80,14 +80,17 @@ public struct NodeResult : IValid
 	public string[] Warnings { get; private init; }
 	public bool IsDepreciated { get; private set; }
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
+
 	public int VoidComponents { get; private set; }
 	public string ComboSwitchBody { get; private set; }
 	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 
+	public string VoidResultFriendlyName { get; set; }
 	public bool SkipLocalGeneration { get; set; } = false;
 	public bool Constant { get; set; }
 	public string ImagePath { get; set; }
 	public int PreviewID { get; set; }
+
 
 	public bool IsPreviewable
 	{
