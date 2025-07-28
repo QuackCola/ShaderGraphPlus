@@ -79,17 +79,11 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public HashSet<string> Functions { get; private set; } = new();
 		public Dictionary<string, string> Globals { get; private set; } = new();
-		public string RepresentativeTexture { get; set; }
-
-		/// <summary>
-		/// A group of Void Locals that belongs to a Custom Function Node.
-		/// </summary>
-		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
-
 		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
-		//public Dictionary<string, VoidData> VoidLocalsNew { get; private set; } = new();
 		public List<VoidData> VoidLocalsNew { get; private set; } = new();
+
 		public int VoidLocalCount { get; set; } = 0;
+		public string RepresentativeTexture { get; set; }
 	}
 
 	public enum ShaderStage
@@ -1863,10 +1857,10 @@ public sealed partial class GraphCompiler
 				if ( !shouldSkip || appendOverride )
 				{
 					string comboBody = string.Empty;
+
 					if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
 					{
 						comboBody = comboSwitchBody;
-						//SGPLog.Info( $"Got metadata `{nameof( MetaDataType.ComboSwitchBody )}` from funcResult", IsPreview);
 
 						if ( !string.IsNullOrWhiteSpace( comboSwitchBody ) )
 						{
@@ -1874,11 +1868,7 @@ public sealed partial class GraphCompiler
 						}
 					}
 
-					//f ( !string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody ) )
-					//
-					//	sb.AppendLine( IndentString( result.funcResult.ComboSwitchBody, indentLevel ) );
-					//
-
+					// TODO : Remove and just use VoidLocalsNew below.
 					if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
 					{
 						var data = ShaderResult.VoidLocals[result.funcResult.Code];
@@ -2002,46 +1992,6 @@ public sealed partial class GraphCompiler
 
 			sb.AppendLine();
 		}
-
-		// TODO : Get rid of VoidLocalGroups and just do it how the node GetDimensions works with a void function outptus and call.
-		//foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
-		//{
-		//	sb.AppendLine();
-		//
-		//	foreach ( var data in voidLocal.Value )
-		//	{
-		//		var initialValue = "";
-		//		
-		//		if ( data.DataType == "bool" )
-		//		{
-		//			initialValue = "false";
-		//		}
-		//		else if ( data.DataType == "int" )
-		//		{
-		//			initialValue = "0";
-		//		}
-		//		else if ( data.DataType == "float" )
-		//		{
-		//			initialValue = "0.0f";
-		//		}
-		//		else if ( data.DataType == "float2" )
-		//		{
-		//			initialValue = "float2( 0.0f, 0.0f )";
-		//		}
-		//		else if ( data.DataType == "float3" )
-		//		{
-		//			initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-		//		}
-		//		else if ( data.DataType == "float4" )
-		//		{
-		//			initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-		//		}
-		//
-		//		sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
-		//	}
-		//}
-		//
-		//sb.AppendLine();
 
 		GenerateLocalResults( ref sb, ShaderResult.Results, out _, IsPreview, false, 0 );
 
@@ -2168,67 +2118,9 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
-				
-				sb.AppendLine();
-				
-				foreach ( var group in ShaderResult.VoidLocalGroups )
-				{
-					sb.AppendLine();
-					
-					foreach ( var data in group.Value )
-					{
-						var initialValue = "";
-						
-						if ( data.DataType == "bool" )
-						{
-							initialValue = "false";
-						}
-						else if ( data.DataType == "int" )
-						{
-							initialValue = "0";
-						}
-						else if ( data.DataType == "float" )
-						{
-							initialValue = "0.0f";
-						}
-						else if ( data.DataType == "float2" )
-						{
-							initialValue = "float2( 0.0f, 0.0f )";
-						}
-						else if ( data.DataType == "float3" )
-						{
-							initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-						}
-						else if ( data.DataType == "float4" )
-						{
-							initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-						}
-						
-						sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
-					}
-				}
-				
+
 				GenerateLocalResults( ref sb, ShaderResult.Results, out _, false, false, 0 );
 
-				//foreach ( var local in ShaderResult.Results)
-				//{
-				//	if ( local.Item2.ResultType is ResultType.Void )
-				//	{
-				//		sb.AppendLine( $"{local.Item2.Code};" );
-				//	}
-				//	else
-				//	{
-				//		if ( !string.IsNullOrWhiteSpace( local.Item2.ComboSwitchBody ) && !local.Item2.SkipLocalGeneration )
-				//		{
-				//			sb.AppendLine( local.Item2.ComboSwitchBody );
-				//		}
-				//		if ( !local.Item2.SkipLocalGeneration )
-				//		{
-				//			sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
-				//		}
-				//	}
-				//}
-				
 				sb.AppendLine( $"i.vPositionWs.xyz += { result.Cast( componentCount ) };" );
 				sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );
 			}

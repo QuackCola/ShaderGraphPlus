@@ -9,14 +9,14 @@ public sealed class BumpOffsetNode : ShaderNodePlus
 	public static string BumpOffset => @"
 float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane, float2 vTextureCoords, float3 vTangentViewVector )
 {
-		float l_10 = flReferencePlane - flHeightMap;
-		float2 l_11 = vTangentViewVector.xy * float2( l_10, l_10 );
+	float l_10 = flReferencePlane - flHeightMap;
+	float2 l_11 = vTangentViewVector.xy * float2( l_10, l_10 );
 	
-		float2 l_13 = l_11 * float2( flDepthScale, flDepthScale );
-		float2 l_14 = l_13 * float2( 0.1f, 0.1f );
-		float2 l_15 = vTextureCoords.xy + l_14;
+	float2 l_13 = l_11 * float2( flDepthScale, flDepthScale );
+	float2 l_14 = l_13 * float2( 0.1f, 0.1f );
+	float2 l_15 = vTextureCoords.xy + l_14;
 
-		return l_15;
+	return l_15;
 }
 ";
 
