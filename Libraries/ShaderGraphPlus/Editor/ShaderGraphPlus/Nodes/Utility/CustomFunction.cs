@@ -72,7 +72,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		Update();
 	}
 
-	public NodeResult GetResult( GraphCompiler compiler )
+	public NodeResult GetResult( GraphCompiler compiler, string metadataKey, object metadataValue )
 	{
 		foreach ( var input in ExpressionInputs )
 		{
@@ -81,6 +81,8 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 				return NodeResult.Error( $"{input.TypeName} Input has no name" );
 			}
 		}
+
+		Dictionary<string, object> metadata = new Dictionary<string, object>();
 
 		if ( Type is CustomCodeNodeMode.File )
 		{
@@ -100,7 +102,10 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 			}
 
 			string funcCall = compiler.CustomCodeRegisterResults( Name, functionInputs, Identifier, outputResults );
-			return new NodeResult( ResultType.Void, $"{funcCall}", voidComponents: 0 );
+	
+			metadata.Add( metadataKey, metadataValue );
+
+			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata, 0 );
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{

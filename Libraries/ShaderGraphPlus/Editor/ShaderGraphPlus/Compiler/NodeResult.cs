@@ -1,4 +1,5 @@
 ﻿namespace ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum ResultType
 { 
@@ -71,6 +72,9 @@ public enum CastType
 	IntToFloat,
 }
 
+internal enum MetaDataType
+{
+
 public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
@@ -79,20 +83,21 @@ public struct NodeResult : IValid
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
 	public bool IsDepreciated { get; private set; }
-	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 
 	public int VoidComponents { get; private set; }
 	public string ComboSwitchBody { get; private set; }
-	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 
 	public string VoidResultFriendlyName { get; set; }
+	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
+
 	public bool SkipLocalGeneration { get; set; } = false;
-	public bool Constant { get; set; }
 	public string ImagePath { get; set; }
+	public bool Constant { get; set; }
 	public int PreviewID { get; set; }
 
 
 	public bool IsPreviewable
+	public readonly bool IsPreviewable
 	{
 		get
 		{
@@ -223,28 +228,79 @@ public struct NodeResult : IValid
 		}
 	}
 
-	public NodeResult( ResultType resultType, string code, bool constant = false, int voidComponents = 0 )
+	public NodeResult( ResultType resultType, string code, bool constant = false, Dictionary<string, object> metadata = null, int voidComponents = 0 )
 	{
 		ResultType = resultType;
 		Code = code;
 		Constant = constant;
+		
+		if ( metadata == null )
+		else
+		{
+			Metadata = metadata;
+		}
+
 		VoidComponents = voidComponents;
-	}
-
-	public NodeResult( ResultType resultType, string code, string switchBody, GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, int voidComponents = 0 ) : this ( resultType, code, constant, voidComponents )
-	{
-		SwitchInfo = switchInfo;
-	}
-
-	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, int voidComponents = 0 ) : this( resultType, code, constant, voidComponents )
-	{
-		ComboSwitchBody = switchBody;
 	}
 
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
+
+	internal T GetMetadata<T>( string metaName, bool ignoreException = false )
+	{
+		if ( Metadata.TryGetValue( metaName, out var actualData ) )
+		{
+			if ( typeof( T ) == actualData.GetType() )
+			{
+				return (T)actualData;
+			}
+			else
+			{
+			}
+		}
+
+		if ( !ignoreException )
+		{
+			throw new Exception( $"Unable to get metadata with name `{metaName}`" );
+		}
+
+		return default( T );
+	}
+
+	internal bool TryGetMetaData<T>( string metaName, out T data )
+	{
+		data = default;
+
+		if ( Metadata.TryGetValue( metaName, out var actualData ) )
+		{
+			else
+			{
+				return false;
+				//throw new InvalidCastException( $"Generic type of `{typeof( T )}` is not of metadata actual data type `{actualData.GetType()}`" );
+			}
+		}
+
+		return false;
+	}
+
+	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, int voidComponents = 0 ) : this( resultType, code, constant, voidComponents )
+	internal void SetMetadata( string metaName, object actualData )
+	{
+		if ( !Metadata.ContainsKey( metaName ) )
+		{
+			Metadata.Add( metaName, actualData );
+		}
+		else
+			throw new Exception( "Metadata entry already exists!" );
+		}
+	}
+
+	internal void SetMetadata( Dictionary<string, object> metadata )
+	{
+		Metadata = metadata;
+	}
 
 	internal void SetSwitchInfo( GraphCompiler.ComboSwitchInfo switchInfo )
 	{

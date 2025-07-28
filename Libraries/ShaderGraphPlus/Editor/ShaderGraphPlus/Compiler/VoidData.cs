@@ -25,14 +25,7 @@ internal struct VoidData : IValid
 	internal string FunctionCall;
 	internal bool AlreadyDefined;
 	internal string BoundNodeId;
-
-
-	// Each result should have the following
-	// * Compiler definied name
-	// * User Defined Name
-	// * ResultType
 	internal List<TargetResultData> TargetResults;
-	//public Dictionary<(string freindlyName,string compilerName), ResultType> TargetResults;
 
 	public bool IsValid
 	{

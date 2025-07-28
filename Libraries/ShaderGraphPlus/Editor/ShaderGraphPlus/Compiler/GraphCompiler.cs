@@ -625,7 +625,7 @@ public sealed partial class GraphCompiler
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			var funcResult = customFunctionNode.GetResult( this );
+			var funcResult = customFunctionNode.GetResult( this, nameof( MetaDataType.VoidResultUserDefinedName ), input.Output );
 
 			if ( !funcResult.IsValid )
 			{
@@ -649,8 +649,8 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			var freindlyName = input.Output;
-			var functionOutputName = freindlyName;
+			var userDefinedName = input.Output;
+			var functionOutputName = userDefinedName;
 			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
 			functionOutputName = voidData.GetCompilerName( functionOutputName );
 
@@ -668,28 +668,27 @@ public sealed partial class GraphCompiler
 			if ( voidData.IsValid )
 			{
 				var resultType = voidData.GetResultResultType( functionOutputName );
-				var componentCount = 0;
+				var voidComponentsCount = 0;
 
 				switch ( resultType )
 				{
 					case ResultType.Float:
-						componentCount = 1;
+						voidComponentsCount = 1;
 						break;
 					case ResultType.Vector2:
-						componentCount = 2;
+						voidComponentsCount = 2;
 						break;
 					case ResultType.Vector3:
-						componentCount = 3;
+						voidComponentsCount = 3;
 						break;
 					case ResultType.Color:
-						componentCount = 4;
+						voidComponentsCount = 4;
 						break;
 					case ResultType.Invalid:
 						break;
 				}
 
-				var localResult = new NodeResult( resultType, $"{functionOutputName}", voidComponents: componentCount);
-				localResult.VoidResultFriendlyName = freindlyName;
+				var localResult = new NodeResult( resultType, $"{functionOutputName}", false, funcResult.Metadata, voidComponentsCount );
 
 				// return the localResult if we are getting a result from a node that we have already evaluated. 
 				foreach ( var inputResult in ShaderResult.InputResults )
@@ -869,17 +868,21 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			funcResult.SetSwitchInfo( CurrentComboSwitchInfo );
-			ComboSwitchInfoStack.Add( funcResult.SwitchInfo );
+			//if ( CurrentComboSwitchInfo.IsValid )
+			{
+				funcResult.SetMetadataValue( nameof( MetaDataType.ComboSwitchInfo ), CurrentComboSwitchInfo );
+			}
+
+			ComboSwitchInfoStack.Add( CurrentComboSwitchInfo );
 
 			// Gets Static switches generating within a static switch.
 			if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
 			{
 				funcResult.SetSwitchInfo( input.ComboSwitchInfo );
+				funcResult.SetMetadataValue( nameof( MetaDataType.ComboSwitchInfo ), input.ComboSwitchInfo );
 				funcResult.SkipLocalGeneration = true;
 			}
 
-			if ( funcResult.SwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
 			{
 				funcResult.SkipLocalGeneration = true;
 			}
