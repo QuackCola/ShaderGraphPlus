@@ -1,5 +1,6 @@
 using Editor;
 using Microsoft.CodeAnalysis;
+using Sandbox;
 using ShaderGraphPlus.Nodes;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
@@ -878,11 +879,13 @@ public sealed partial class GraphCompiler
 			// Gets Static switches generating within a static switch.
 			if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
 			{
-				funcResult.SetSwitchInfo( input.ComboSwitchInfo );
 				funcResult.SetMetadataValue( nameof( MetaDataType.ComboSwitchInfo ), input.ComboSwitchInfo );
 				funcResult.SkipLocalGeneration = true;
 			}
 
+			var funcResultSwitchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetaDataType.ComboSwitchInfo ), true );
+
+			if ( funcResultSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
 			{
 				funcResult.SkipLocalGeneration = true;
 			}
@@ -929,14 +932,14 @@ public sealed partial class GraphCompiler
 				InputStack.Remove( input );
 				
 				if ( ComboSwitchInfoStack.Any() )
-					ComboSwitchInfoStack.Remove( funcResult.SwitchInfo );
+					ComboSwitchInfoStack.Remove( funcResultSwitchInfo );
 
 				return funcResult;
 			}
 
 			int id = IsInComboSwitch ? ShaderResult.SwitchBlockInputResults.Count : ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult( funcResult.ResultType, varName, funcResult.ComboSwitchBody, CurrentComboSwitchInfo );
+			var localResult = new NodeResult( funcResult.ResultType, varName, false, funcResult.Metadata );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
 			localResult.PreviewID = funcResult.PreviewID;
 
@@ -963,7 +966,7 @@ public sealed partial class GraphCompiler
 			InputStack.Remove( input );
 
 			if ( ComboSwitchInfoStack.Any() )
-				ComboSwitchInfoStack.Remove( funcResult.SwitchInfo );
+				ComboSwitchInfoStack.Remove( funcResultSwitchInfo );
 
 			return localResult;
 		}
@@ -1859,10 +1862,22 @@ public sealed partial class GraphCompiler
 
 				if ( !shouldSkip || appendOverride )
 				{
-					if ( !string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody ) )
+					string comboBody = string.Empty;
+					if ( result.funcResult.TryGetMetaData<string>( nameof( MetaDataType.ComboSwitchBody ), out var comboSwitchBody ) )
 					{
-						sb.AppendLine( IndentString( result.funcResult.ComboSwitchBody, indentLevel ) );
+						comboBody = comboSwitchBody;
+						//SGPLog.Info( $"Got metadata `{nameof( MetaDataType.ComboSwitchBody )}` from funcResult", IsPreview);
+
+						if ( !string.IsNullOrWhiteSpace( comboSwitchBody ) )
+						{
+							sb.AppendLine( IndentString( comboSwitchBody, indentLevel ) );
+						}
 					}
+
+					//f ( !string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody ) )
+					//
+					//	sb.AppendLine( IndentString( result.funcResult.ComboSwitchBody, indentLevel ) );
+					//
 
 					if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
 					{
@@ -1885,10 +1900,10 @@ public sealed partial class GraphCompiler
 						}
 					}
 
-					if ( ShaderResult.VoidLocalsNew.Any() )
+					if ( ShaderResult.VoidLocalsNew.Count > 0 && result.localResult.Metadata.Count > 0 )
 					{
 						var voidData = ShaderResult.VoidLocalsNew
-							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.VoidResultFriendlyName 
+							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetaDataType.VoidResultUserDefinedName ) )
 							&& targetData.CompilerAssignedName == result.localResult.Code
 						) );
 
@@ -1903,7 +1918,6 @@ public sealed partial class GraphCompiler
 
 							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
 						}
-
 					}
 
 					//SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
@@ -1913,7 +1927,7 @@ public sealed partial class GraphCompiler
 						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.Code};", indentLevel ) );
 					}
 
-					if ( preview && string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody )  )
+					if ( preview && string.IsNullOrWhiteSpace( comboBody ) )
 					{
 						if ( result.localResult.ResultType == ResultType.Bool )
 						{
