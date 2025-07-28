@@ -68,7 +68,7 @@ public sealed partial class GraphCompiler
 
 	private partial class CompileResult
 	{
-		public List<(NodeResult, NodeResult)> Results = new();
+		public List<(NodeResult localResult, NodeResult funcResult)> Results = new();
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
 
 		public Dictionary<string, Sampler> SamplerStates = new();
@@ -206,13 +206,14 @@ public sealed partial class GraphCompiler
 	internal string CustomCodeRegisterResults( string functionName, string functionInputs, string nodeID, Dictionary<string,string> outputResults )
 	{
 		var sb = new StringBuilder();
-		Dictionary<(string,string),ResultType> funcResults = new ();
+		List<TargetResultData> targetResults = new ();
 		int count = 0;
 
 		foreach ( var output in outputResults.Index() )
 		{
 			var name = output.Item.Key;
 			string id = name;
+			TargetResultData data = new();
 
 			while ( RegisterdVoidResultLocals.Contains( id ) )
 			{
@@ -220,9 +221,12 @@ public sealed partial class GraphCompiler
 			}
 
 			sb.Append( ( output.Index + 1 ) == outputResults.Count ? $"{id}" : $" {id}, " );
-			funcResults.Add( new (name,id), GetResultTypeFromHLSLDataType( output.Item.Value ) );
 
-			//SGPLog.Info( $"Register void result {id}", IsPreview);
+			data.CompilerAssignedName = id;
+			data.UserAssignedName = name;
+			data.ResultType = GetResultTypeFromHLSLDataType( output.Item.Value );
+
+			targetResults.Add( data );
 
 			RegisterdVoidResultLocals.Add( id );
 		}
@@ -233,10 +237,10 @@ public sealed partial class GraphCompiler
 		var voidData = new VoidData()
 		{
 			TargetResult = "",
+			TargetResults = targetResults,
 			ResultType = ResultType.Invalid,
 			FunctionCall = funcCall,
 			AlreadyDefined = false,
-			Results = funcResults,
 			BoundNodeId = nodeID
 		};
 
@@ -1813,7 +1817,7 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult, NodeResult)> shaderResults, out (NodeResult, NodeResult) lastResult, bool preview, bool appendOverride = false, int indentLevel = 0 )
+	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult localResult, NodeResult funcResult)> shaderResults, out (NodeResult localResult, NodeResult funcResult) lastResult, bool preview, bool appendOverride = false, int indentLevel = 0 )
 	{
 		//int localId = 1;
 		lastResult = (new NodeResult(), new NodeResult());
@@ -1848,18 +1852,18 @@ public sealed partial class GraphCompiler
 			//else
 			{
 				lastResult = result;
-				var shouldSkip = result.Item2.SkipLocalGeneration;
+				var shouldSkip = result.funcResult.SkipLocalGeneration;
 
 				if ( !shouldSkip || appendOverride )
 				{
-					if ( !string.IsNullOrWhiteSpace( result.Item2.ComboSwitchBody ) )
+					if ( !string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody ) )
 					{
-						sb.AppendLine( IndentString( result.Item2.ComboSwitchBody, indentLevel ) );
+						sb.AppendLine( IndentString( result.funcResult.ComboSwitchBody, indentLevel ) );
 					}
 
-					if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.Item2.Code ) )
+					if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
 					{
-						var data = ShaderResult.VoidLocals[result.Item2.Code];
+						var data = ShaderResult.VoidLocals[result.funcResult.Code];
 
 						if ( !data.AlreadyDefined )
 						{
@@ -1871,7 +1875,7 @@ public sealed partial class GraphCompiler
 								AlreadyDefined = true
 							};
 
-							ShaderResult.VoidLocals[result.Item2.Code] = newData;
+							ShaderResult.VoidLocals[result.funcResult.Code] = newData;
 
 							sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
 							sb.AppendLine( IndentString( data.FunctionCall, indentLevel ) );
@@ -1880,41 +1884,18 @@ public sealed partial class GraphCompiler
 
 					if ( ShaderResult.VoidLocalsNew.Any() )
 					{
-						var voidData = new VoidData();
-
-						SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
-						foreach ( var data in ShaderResult.VoidLocalsNew )
-						{
-							//SGPLog.Info( $"Data entry  {result.Item1.Code}", IsPreview );
-
-							if ( data.Results.ContainsKey( new( result.Item1.VoidResultFriendlyName, result.Item1.Code ) ) )
-							{
-								voidData = data;
-								break;
-							}
-
-							//if ( data.Results.ContainsKey( result.Item1.Code ) )
-							//{
-							//	SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
-							//	voidData = data;
-							//	break;
-							//}
-							//var dat = data.Results.Where( x => x.res
-							//if ( data.Results.ContainsKey( result.Item1.Code ) )
-							//{
-							//	SGPLog.Info( $"Got key {result.Item1.Code}", IsPreview );
-							//	voidData = data;
-							//	break;
-							//}
-						}
+						var voidData = ShaderResult.VoidLocalsNew
+							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.VoidResultFriendlyName 
+							&& targetData.CompilerAssignedName == result.localResult.Code
+						) );
 
 						if ( voidData.IsValid )
 						{
-
-							foreach ( var localvar in voidData.Results )
+							// Init all the output results.
+							foreach ( var outResult in voidData.TargetResults )
 							{
 								//sb.AppendLine( IndentString( voidData.ResultInitNew( localvar.Key, localvar.Value ), indentLevel ) );
-								sb.AppendLine( IndentString( voidData.ResultInitNew( localvar.Key.compilerName, localvar.Value ), indentLevel ) );
+								sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 							}
 
 							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
@@ -1922,22 +1903,22 @@ public sealed partial class GraphCompiler
 
 					}
 
-					SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
+					//SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
 
-					if ( result.Item2.ResultType != ResultType.Void )
+					if ( result.funcResult.ResultType != ResultType.Void )
 					{
-						sb.AppendLine( IndentString( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};", indentLevel ) );
+						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.Code};", indentLevel ) );
 					}
 
-					if ( preview && string.IsNullOrWhiteSpace( result.Item2.ComboSwitchBody )  )
+					if ( preview && string.IsNullOrWhiteSpace( result.funcResult.ComboSwitchBody )  )
 					{
-						if ( result.Item1.ResultType == ResultType.Bool )
+						if ( result.localResult.ResultType == ResultType.Bool )
 						{
-							// TODO
+							// TODO : There is no way to know what the actual value of the result is.
 						}
-						else if ( result.Item1.IsPreviewable && result.Item1.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
+						else if ( result.localResult.IsPreviewable && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
 						{
-							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.Item1.PreviewID} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
+							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
 							//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
 						}
 					}

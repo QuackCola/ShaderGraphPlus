@@ -1,27 +1,51 @@
 ﻿namespace ShaderGraphPlus;
 
-public struct VoidData : IValid
+internal struct TargetResultData : IValid
 {
-	public string TargetResult;
+	public string UserAssignedName;
+	public string CompilerAssignedName;
 	public ResultType ResultType;
-	public string FunctionCall;
-	public bool AlreadyDefined;
-	public string BoundNodeId;
-
-	public Dictionary<(string freindlyName,string compilerName), ResultType> Results;
 
 	public bool IsValid
 	{
 		get
 		{
-			if ( Results != null && Results.Any() )
+			if ( !string.IsNullOrWhiteSpace( UserAssignedName ) || ResultType != ResultType.Invalid )
+				return true;
+
+			return false;
+		}
+	}
+}
+
+internal struct VoidData : IValid
+{
+	internal string TargetResult;
+	internal ResultType ResultType;
+	internal string FunctionCall;
+	internal bool AlreadyDefined;
+	internal string BoundNodeId;
+
+
+	// Each result should have the following
+	// * Compiler definied name
+	// * User Defined Name
+	// * ResultType
+	internal List<TargetResultData> TargetResults;
+	//public Dictionary<(string freindlyName,string compilerName), ResultType> TargetResults;
+
+	public bool IsValid
+	{
+		get
+		{
+			if ( TargetResults != null && TargetResults.Any() )
 				return true;
 
 			return false;
 		}
 	}
 
-	public string ResultInit
+	internal string ResultInit
 	{
 		get
 		{
@@ -51,7 +75,7 @@ public struct VoidData : IValid
 		}
 	}
 
-	public string ResultInitNew( string name,ResultType resultType )
+	internal string ResultInitNew( string name,ResultType resultType )
 	{
 		switch ( resultType )
 		{
@@ -78,39 +102,22 @@ public struct VoidData : IValid
 		}
 	}
 
-	public ResultType GetResultResultType( string resultKey )
+	internal ResultType GetResultResultType( string name )
 	{
+		var result = TargetResults.Where( x => x.CompilerAssignedName == name ).FirstOrDefault();
 
-		foreach ( var result in Results )
-		{
-			if ( result.Key.compilerName == resultKey )
-			{
-				return result.Value;
-			}
-		}
-		
-		{
-			throw new Exception( $"Key `{resultKey}` does not exist within `{nameof( VoidData.Results )}`" );
-		}
-		//if ( Results.ContainsKey( resultKey ) )
-		//{
-		//	return Results[resultKey];
-		//}
-		//else
-		//{
-		//	throw new Exception( $"Key `{resultKey}` does not exist within `{nameof( VoidData.Results )}`" );
-		//}
+		if ( result.IsValid )
+			return result.ResultType;
+
+		throw new Exception( $"Key `{name}` does not exist within `{nameof( VoidData.TargetResults )}`" );
 	}
 
-	internal string GetCompilerName( string functionOutputName )
+	internal string GetCompilerName( string name )
 	{
-		foreach ( var result in Results )
-		{
-			if ( result.Key.freindlyName == functionOutputName )
-			{
-				return result.Key.compilerName;
-			}
-		}
+		var result = TargetResults.Where( x => x.UserAssignedName == name ).FirstOrDefault();
+
+		if ( result.IsValid )
+			return result.CompilerAssignedName;
 
 		throw new Exception( "Shits fucked..." );
 	}
