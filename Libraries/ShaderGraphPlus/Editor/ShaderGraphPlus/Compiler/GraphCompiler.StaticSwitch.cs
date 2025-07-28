@@ -273,6 +273,7 @@ public sealed partial class GraphCompiler
 
 		var shaderResultsFalse = ShaderResult.Results.Where( 
 			x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetaDataType.ComboSwitchInfo ) ).BoundSwitch == resultNameInternal
+			&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetaDataType.ComboSwitchInfo ) ).BoundSwitchBlock == StaticSwitchBlock.False
 		);
 
 		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview && ConCommands.VerboseDebgging );
