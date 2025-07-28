@@ -1,11 +1,8 @@
 using Editor;
 using Microsoft.CodeAnalysis;
-using Sandbox;
-using ShaderGraphPlus.Nodes;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
