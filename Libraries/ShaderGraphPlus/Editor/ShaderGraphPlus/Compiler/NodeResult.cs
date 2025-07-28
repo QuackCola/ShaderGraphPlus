@@ -436,4 +436,5 @@ public struct NodeResult : IValid
 	{
 		return Code;
 	}
+
 }

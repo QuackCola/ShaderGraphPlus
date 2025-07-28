@@ -135,6 +135,11 @@ public partial class ShaderGraphPlus : IGraph
 		_nodes[name].ComboSwitchInfo = info;
 	}
 
+	public void ClearSwitchInfo( string name )
+	{
+		_nodes[name].ComboSwitchInfo = default;
+	}
+
 	public void AddNode( BaseNodePlus node )
 	{
 		node.Graph = this;

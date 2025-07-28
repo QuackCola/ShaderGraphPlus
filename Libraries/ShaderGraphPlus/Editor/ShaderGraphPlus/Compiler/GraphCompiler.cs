@@ -522,30 +522,39 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		ComboSwitchInfo? lastComboSwitchInfo = null;
-
-		//SGPLog.Info( $"CurrentComboSwitchInfo is: {CurrentComboSwitchInfo}", IsPreview );
 #region ComboSwitch Region
-		// Set CurrentSwitchInfo to the current incoming SwitchInfo.
-		if ( input.ComboSwitchInfo.BoundSwitchBlock is not StaticSwitchBlock.None )
+		ComboSwitchInfo lastComboSwitchInfo = new();
+
+		// Set CurrentSwitchInfo to the current incoming SwitchInfo from the input.
+		if ( input.ComboSwitchInfo.IsValid )
 		{
 			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
 			SGPLog.Info( $"Setting {nameof( CurrentComboSwitchInfo )} To: {input.ComboSwitchInfo}", IsPreview && ConCommands.VerboseDebgging );
 			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
-			lastComboSwitchInfo = CurrentComboSwitchInfo;
+
 			CurrentComboSwitchInfo = input.ComboSwitchInfo;
-			
+			ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+
+			//SGPLog.Info( $"Setting ComboSwitchInfo from nodeInput : {CurrentComboSwitchInfo}", IsNotPreview );
+
 			// Clear any existing Results & InputResults from a previous block.
 			{
 				ShaderResult.SwitchBlockInputResults.Clear();
 				ShaderResult.SwitchBlockResults.Clear();
 			}
 		}
+		if ( CurrentComboSwitchInfo.IsValid )
+		{
+			lastComboSwitchInfo = CurrentComboSwitchInfo;
 
-		//if ( IsPreview && CurrentComboSwitchInfo.IsValid )
-		//{
-		//	SGPLog.Info( $"Preview Info for node {node} with id {node.Identifier} : {CurrentComboSwitchInfo}" );
-		//}
+			if ( lastComboSwitchInfo.IsValid )
+			{
+				//SGPLog.Info( $"lastComboSwitchInfo : {lastComboSwitchInfo}", IsNotPreview );
+
+				ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+			}
+		}
+
 		if ( IsInComboSwitch )
 		{
 			Graph.AssignSwitchInfo( input.Identifier, CurrentComboSwitchInfo );
@@ -555,9 +564,12 @@ public sealed partial class GraphCompiler
 				return exisitingResultSB;
 			}
 		}
+
 #endregion ComboSwitch Region
 		else
 		{
+			Graph.ClearSwitchInfo( input.Identifier );
+
 			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 			{
 				return result;
@@ -860,25 +872,24 @@ public sealed partial class GraphCompiler
 		{
 			var funcResult = resultFunc.Invoke( this );
 
-			//if ( CurrentComboSwitchInfo.IsValid )
+			if ( lastComboSwitchInfo.IsValid )
 			{
-				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), CurrentComboSwitchInfo );
-			}
+				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), lastComboSwitchInfo );
 
-			ComboSwitchInfoStack.Add( CurrentComboSwitchInfo );
+				//ComboSwitchInfoStack.Add( lastComboSwitchInfo );
 
-			// Gets Static switches generating within a static switch.
-			if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
-			{
-				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), input.ComboSwitchInfo );
-				funcResult.SkipLocalGeneration = true;
-			}
+				if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( lastComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
+				{
+					funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), input.ComboSwitchInfo );
+					funcResult.SkipLocalGeneration = true;
+				}
 
-			var funcResultSwitchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true );
+				var switchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true );
 
-			if ( funcResultSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
-			{
-				funcResult.SkipLocalGeneration = true;
+				if ( switchInfo.IsValid && switchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
+				{
+					funcResult.SkipLocalGeneration = true;
+				}
 			}
 
 			if ( IsPreview && !IsInComboSwitch )
@@ -921,9 +932,12 @@ public sealed partial class GraphCompiler
 			{
 				//SGPLog.Info( $"Result from node : `{node}` is constant! which is `{funcResult.Code}`", IsNotPreview );
 				InputStack.Remove( input );
-				
-				if ( ComboSwitchInfoStack.Any() )
-					ComboSwitchInfoStack.Remove( funcResultSwitchInfo );
+
+				if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info1 ) )
+				{
+					if ( ComboSwitchInfoStack.Any() )
+						ComboSwitchInfoStack.Remove( info1 );
+				}
 
 				return funcResult;
 			}
@@ -945,25 +959,21 @@ public sealed partial class GraphCompiler
 	
 			ShaderResult.Results.Add( (localResult, funcResult) );
 
-			//if ( IsPreview )
-			//{
-			//	// Avoid fuckyness with node preview mode.
-			//	if ( node.CanPreview && !Nodes.Contains( node ) )
-			//	{
-			//		Nodes.Add( node );
-			//	}
-			//}
-
 			InputStack.Remove( input );
 
-			if ( ComboSwitchInfoStack.Any() )
-				ComboSwitchInfoStack.Remove( funcResultSwitchInfo );
+			if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info2 ) )
+			{
+				if ( ComboSwitchInfoStack.Any() )
+					ComboSwitchInfoStack.Remove( info2 );
+			}
 
 			return localResult;
 		}
 
 		var resultVal = ResultValue( value, globalName, previewOverride, setAttribute, texture1 );
+
 		InputStack.Remove( input );
+
 		return resultVal;
 	}
 

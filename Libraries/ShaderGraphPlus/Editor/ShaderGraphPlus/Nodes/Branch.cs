@@ -54,7 +54,7 @@ public sealed class Branch : ShaderNodePlus
 	[HideIf( nameof( UseCondition ), true )]
 	public bool Enabled { get; set; }
 
-	[InlineEditor]
+	[InlineEditor(Label = false ), Group( "UI" )  ]
 	public ParameterUI UI { get; set; }
 
 	[Hide]
