@@ -73,7 +73,7 @@ public enum CastType
 	IntToFloat,
 }
 
-internal enum MetaDataType
+internal enum MetadataType
 {
 	ImagePath,
 	Bool,

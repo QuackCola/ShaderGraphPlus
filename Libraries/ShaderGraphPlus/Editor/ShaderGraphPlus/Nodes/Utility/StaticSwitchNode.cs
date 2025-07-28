@@ -94,7 +94,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 				{
 					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
 
-					result.SetMetadata( nameof( MetaDataType.ComboSwitchBody ), switchBody );
+					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
 					
 
 					return result;
@@ -120,7 +120,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 				{
 					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
 
-					result.SetMetadata( nameof( MetaDataType.ComboSwitchBody ), switchBody );
+					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
 
 					return result;
 				}

@@ -626,7 +626,7 @@ public sealed partial class GraphCompiler
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			var funcResult = customFunctionNode.GetResult( this, nameof( MetaDataType.VoidResultUserDefinedName ), input.Output );
+			var funcResult = customFunctionNode.GetResult( this, nameof( MetadataType.VoidResultUserDefinedName ), input.Output );
 
 			if ( !funcResult.IsValid )
 			{
@@ -871,7 +871,7 @@ public sealed partial class GraphCompiler
 
 			//if ( CurrentComboSwitchInfo.IsValid )
 			{
-				funcResult.SetMetadataValue( nameof( MetaDataType.ComboSwitchInfo ), CurrentComboSwitchInfo );
+				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), CurrentComboSwitchInfo );
 			}
 
 			ComboSwitchInfoStack.Add( CurrentComboSwitchInfo );
@@ -879,11 +879,11 @@ public sealed partial class GraphCompiler
 			// Gets Static switches generating within a static switch.
 			if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( CurrentComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
 			{
-				funcResult.SetMetadataValue( nameof( MetaDataType.ComboSwitchInfo ), input.ComboSwitchInfo );
+				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), input.ComboSwitchInfo );
 				funcResult.SkipLocalGeneration = true;
 			}
 
-			var funcResultSwitchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetaDataType.ComboSwitchInfo ), true );
+			var funcResultSwitchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true );
 
 			if ( funcResultSwitchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
 			{
@@ -1863,7 +1863,7 @@ public sealed partial class GraphCompiler
 				if ( !shouldSkip || appendOverride )
 				{
 					string comboBody = string.Empty;
-					if ( result.funcResult.TryGetMetaData<string>( nameof( MetaDataType.ComboSwitchBody ), out var comboSwitchBody ) )
+					if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
 					{
 						comboBody = comboSwitchBody;
 						//SGPLog.Info( $"Got metadata `{nameof( MetaDataType.ComboSwitchBody )}` from funcResult", IsPreview);
@@ -1903,7 +1903,7 @@ public sealed partial class GraphCompiler
 					if ( ShaderResult.VoidLocalsNew.Count > 0 && result.localResult.Metadata.Count > 0 )
 					{
 						var voidData = ShaderResult.VoidLocalsNew
-							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetaDataType.VoidResultUserDefinedName ) )
+							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetadataType.VoidResultUserDefinedName ) )
 							&& targetData.CompilerAssignedName == result.localResult.Code
 						) );
 
