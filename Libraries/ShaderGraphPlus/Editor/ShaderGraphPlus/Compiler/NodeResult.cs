@@ -1,4 +1,5 @@
-﻿namespace ShaderGraphPlus;
+﻿using static ShaderGraphPlus.GraphCompiler;
+
 namespace ShaderGraphPlus;
 
 public enum ResultType
@@ -74,6 +75,13 @@ public enum CastType
 
 internal enum MetaDataType
 {
+	ImagePath,
+	Bool,
+	ComboSwitchInfo,
+	ComboSwitchBody,
+	VoidComponents,
+	VoidResultUserDefinedName
+}
 
 public struct NodeResult : IValid
 {
@@ -83,11 +91,8 @@ public struct NodeResult : IValid
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
 	public bool IsDepreciated { get; private set; }
-
 	public int VoidComponents { get; private set; }
-	public string ComboSwitchBody { get; private set; }
 
-	public string VoidResultFriendlyName { get; set; }
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 
 	public bool SkipLocalGeneration { get; set; } = false;
@@ -95,8 +100,11 @@ public struct NodeResult : IValid
 	public bool Constant { get; set; }
 	public int PreviewID { get; set; }
 
+	/// <summary>
+	/// Generic-Ish metadata related to this NodeResult.
+	/// </summary>
+	internal Dictionary<string, object> Metadata { get; private set; }
 
-	public bool IsPreviewable
 	public readonly bool IsPreviewable
 	{
 		get
@@ -235,6 +243,9 @@ public struct NodeResult : IValid
 		Constant = constant;
 		
 		if ( metadata == null )
+		{
+			Metadata = new();
+		}
 		else
 		{
 			Metadata = metadata;
@@ -258,6 +269,7 @@ public struct NodeResult : IValid
 			}
 			else
 			{
+				throw new InvalidCastException( $"Generic type of `{typeof( T )}` is not of metadata actual data type `{actualData.GetType()}`" );
 			}
 		}
 
@@ -275,6 +287,11 @@ public struct NodeResult : IValid
 
 		if ( Metadata.TryGetValue( metaName, out var actualData ) )
 		{
+			if ( typeof( T ) == actualData.GetType() )
+			{
+				data = (T)actualData;
+				return true;
+			}
 			else
 			{
 				return false;
@@ -285,7 +302,6 @@ public struct NodeResult : IValid
 		return false;
 	}
 
-	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, int voidComponents = 0 ) : this( resultType, code, constant, voidComponents )
 	internal void SetMetadata( string metaName, object actualData )
 	{
 		if ( !Metadata.ContainsKey( metaName ) )
@@ -293,6 +309,7 @@ public struct NodeResult : IValid
 			Metadata.Add( metaName, actualData );
 		}
 		else
+		{
 			throw new Exception( "Metadata entry already exists!" );
 		}
 	}
@@ -302,9 +319,17 @@ public struct NodeResult : IValid
 		Metadata = metadata;
 	}
 
-	internal void SetSwitchInfo( GraphCompiler.ComboSwitchInfo switchInfo )
+	internal void SetMetadataValue( string metaName, object actualData )
 	{
-		SwitchInfo = switchInfo;
+		if ( Metadata.ContainsKey( metaName ) )
+		{
+			Metadata[metaName] = actualData;
+		}
+		else
+		{
+			//SGPLog.Warning( $"Metadata entry `{metaName}` dosent exist! Creating new Metadata entry instead." );
+			SetMetadata( metaName, actualData );
+		}
 	}
 
 	/// <summary>
