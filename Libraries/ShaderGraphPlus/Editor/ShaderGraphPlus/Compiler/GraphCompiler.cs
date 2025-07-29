@@ -233,6 +233,7 @@ public sealed partial class GraphCompiler
 			ResultType = ResultType.Invalid,
 			FunctionCall = funcCall,
 			AlreadyDefined = false,
+			InlineCode = false,
 			BoundNodeId = nodeID
 		};
 
@@ -240,6 +241,62 @@ public sealed partial class GraphCompiler
 		{
 			ShaderResult.VoidLocalsNew.Add( voidData );
 		
+			return funcCall;
+		}
+	}
+
+	internal string CustomCodeRegisterInlineCode( StringBuilder sb, List<(string inputName,string code)> inlineInputs, string nodeID, Dictionary<string, string> outputResults )
+	{
+		//foreach ( var input in inlineInputs )
+		//{
+		//	SGPLog.Info( $"Inline input `{input.inputName}` with code `{input.code}`", IsPreview );
+		//}
+
+		//SGPLog.Info( $"Inline code body \n : {sb.ToString()}", IsPreview );
+		//var sb2 = new StringBuilder();
+		List<TargetResultData> targetResults = new();
+		//int count = 0;
+
+		foreach ( var output in outputResults.Index() )
+		{
+			var name = output.Item.Key;
+			string id = name;
+			TargetResultData data = new();
+
+			//while ( RegisterdVoidResultLocals.Contains( id ) )
+			//{
+			//	id = $"{name}_{count++}";
+			//}
+
+			//sb2.Append( (output.Index + 1) == outputResults.Count ? $"{id}" : $" {id}, " );
+
+			data.CompilerAssignedName = id;
+			data.UserAssignedName = name;
+			data.ResultType = GetResultTypeFromHLSLDataType( output.Item.Value );
+
+			targetResults.Add( data );
+
+			//RegisterdVoidResultLocals.Add( id );
+		}
+
+		// Assemble the function call
+		var funcCall = $"{sb.ToString()}";
+
+		var voidData = new VoidData()
+		{
+			TargetResult = "",
+			TargetResults = targetResults,
+			ResultType = ResultType.Invalid,
+			FunctionCall = funcCall,
+			AlreadyDefined = false,
+			InlineCode = true,
+			BoundNodeId = nodeID
+		};
+
+		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
+		{
+			ShaderResult.VoidLocalsNew.Add( voidData );
+
 			return funcCall;
 		}
 	}
@@ -656,7 +713,38 @@ public sealed partial class GraphCompiler
 			var userDefinedName = input.Output;
 			var functionOutputName = userDefinedName;
 			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
-			functionOutputName = voidData.GetCompilerName( functionOutputName );
+
+			if ( !voidData.AlreadyProcessed )//|| voidData.Inline )
+			{
+				var voidDataNew = voidData;
+				var newTargetResults = new List<TargetResultData>();
+
+				foreach ( var targetResultData in voidData.TargetResults )
+				{
+					var id = ShaderResult.VoidLocalCount++;
+					var varName = $"vl_{id}";
+					var newTargetResultData = targetResultData with { CompilerAssignedName = varName };
+
+					//SGPLog.Info( $"targetResultData.CompilerAssignedName is : {targetResultData.CompilerAssignedName}", IsPreview );
+					//SGPLog.Info( $"voidDataNew.FunctionCall before is : \n {voidDataNew.FunctionCall}", IsPreview );
+
+					voidDataNew.FunctionCall = voidDataNew.FunctionCall.Replace( targetResultData.CompilerAssignedName, varName );
+					newTargetResults.Add( newTargetResultData );
+				}
+
+				// Update existing VoidData entry with new TargetResultData list.
+				voidDataNew = voidDataNew with { TargetResults = newTargetResults };
+				voidDataNew.AlreadyProcessed = true;
+
+				// Update existing VoidData entry.
+				ShaderResult.VoidLocalsNew[ShaderResult.VoidLocalsNew.IndexOf( voidData )] = voidDataNew;
+
+				voidData = voidDataNew;
+			}
+
+			functionOutputName = voidData.GetCompilerName( userDefinedName );
+
+			//SGPLog.Info( $"functionOutputName is `{functionOutputName}`", IsPreview );
 
 			if ( !voidData.IsValid )
 			{
@@ -692,6 +780,9 @@ public sealed partial class GraphCompiler
 						break;
 				}
 
+				// Get the updated compiler name.
+				//functionOutputName = voidDataNew.GetCompilerName( userDefinedName );
+
 				var localResult = new NodeResult( resultType, $"{functionOutputName}", false, funcResult.Metadata, voidComponentsCount );
 
 				// return the localResult if we are getting a result from a node that we have already evaluated. 
@@ -700,11 +791,12 @@ public sealed partial class GraphCompiler
 					if ( inputResult.Key.Identifier == input.Identifier )
 					{
 						InputStack.Remove( input );
-				
+						SGPLog.Info( $"Getting preexisiting result!" , IsPreview);
 						return localResult;
 					}
 				}
-				
+
+				//ShaderResult.VoidLocalCount++;
 				ShaderResult.InputResults.Add( input, localResult );
 				ShaderResult.Results.Add( (localResult, funcResult) );
 				
@@ -1880,6 +1972,8 @@ public sealed partial class GraphCompiler
 					{
 						var data = ShaderResult.VoidLocals[result.funcResult.Code];
 
+						sb.AppendLine();
+
 						if ( !data.AlreadyDefined )
 						{
 							var newData = new VoidData()
@@ -1891,7 +1985,7 @@ public sealed partial class GraphCompiler
 							};
 
 							ShaderResult.VoidLocals[result.funcResult.Code] = newData;
-
+							
 							sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
 							sb.AppendLine( IndentString( data.FunctionCall, indentLevel ) );
 						}
@@ -1906,6 +2000,9 @@ public sealed partial class GraphCompiler
 
 						if ( voidData.IsValid )
 						{
+							if ( voidData.InlineCode )
+								sb.AppendLine();
+
 							// Init all the output results.
 							foreach ( var outResult in voidData.TargetResults )
 							{
@@ -1913,7 +2010,15 @@ public sealed partial class GraphCompiler
 								sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 							}
 
-							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
+							if ( !voidData.InlineCode )
+							{
+								sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
+							}
+							else
+							{
+								sb.AppendLine( IndentString( $"{voidData.FunctionCall}", indentLevel ) );
+							}
+
 						}
 					}
 

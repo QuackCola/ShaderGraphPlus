@@ -1,4 +1,5 @@
 using System.Text;
+using static Sandbox.Gizmo;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -39,6 +40,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 	[HideIf( nameof( Type ), CustomCodeNodeMode.Inline )]
 	[HLSLAssetPath]
 	public string Source { get; set; }
+
+	[Hide]
+	public string CodeComment { get; set; } = "";
 
 	[Title( "Inputs" )]
 	public List<CustomCodeNodePorts> ExpressionInputs { get; set; }
@@ -109,40 +113,30 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{
-			throw new NotImplementedException();
-			/*
-            compiler.RegisterVoidFunctionResults( this, GetFunctionVoidLocals(), out List<CustomCodeOutputData> outputData, out List<string> functionOutputs, true );
-            
-            if ( !OutputData.Any() )
-            {
-                OutputData = outputData;
-            }
-            else
-            {
-                //SGPLog.Warning( "Output Data was already generated!" );
-            }
-            
-            StringBuilder sb = new StringBuilder();
-            var inputs = GetInputResultsInline( compiler );
-            
-            sb.AppendLine( "{" );
-            sb.AppendLine( Body );
-            sb.AppendLine( "};" );
-            
-            // Relpace the user defined input names with the compiler assigned names.
-            foreach ( var input in inputs )
-            {
-                sb.Replace( input.Item1, input.Item2 );
-            }
-            
-            // Relpace the user defined output names with the compiler assigned names.
-            foreach ( var data in OutputData )
-            {
-                sb.Replace( data.FriendlyName, data.CompilerName );
-            }
-            
-            return new( ResultType.Void, sb.ToString(), voidComponents: 0 );
-			*/
+			StringBuilder sb = new StringBuilder();
+			var inlineInputs = GetInputResultsInline( compiler );
+			var outputResults = GetFunctionVoidLocals( out string outputsError );
+
+			if ( !string.IsNullOrWhiteSpace( outputsError ) )
+			{
+				return NodeResult.Error( outputsError );
+			}
+
+			sb.AppendLine( "{" );
+			sb.AppendLine( Body );
+			sb.AppendLine( "}" );
+
+			// Relpace the user defined input names with the compiler assigned names.
+			foreach ( var (userDefined, compilerDefined) in inlineInputs )
+			{
+				sb.Replace( userDefined, compilerDefined );
+			}
+
+			string funcCall = compiler.CustomCodeRegisterInlineCode( sb, inlineInputs, Identifier, outputResults );
+
+			metadata.Add( metadataKey, metadataValue );
+
+			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata, 0 );
 		}
 
 		return NodeResult.Error( $"Failed to evaluate!" );
@@ -201,7 +195,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		return sb.ToString();
 	}
 
-	private List<(string, string)> GetInputResultsInline( GraphCompiler compiler )
+	private List<(string userDefined, string compilerDefined)> GetInputResultsInline( GraphCompiler compiler )
 	{
 		StringBuilder sb = new StringBuilder();
 		int index = 0;

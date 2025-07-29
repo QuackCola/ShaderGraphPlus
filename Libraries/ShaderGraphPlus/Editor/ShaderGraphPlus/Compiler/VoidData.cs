@@ -24,6 +24,11 @@ internal struct VoidData : IValid
 	internal ResultType ResultType;
 	internal string FunctionCall;
 	internal bool AlreadyDefined;
+	internal bool AlreadyProcessed { get; set ;}
+	/// <summary>
+	/// Is this void data ment for a void function call or inline code?
+	/// </summary>
+	internal bool InlineCode;
 	internal string BoundNodeId;
 	internal List<TargetResultData> TargetResults;
 
@@ -68,7 +73,7 @@ internal struct VoidData : IValid
 		}
 	}
 
-	internal string ResultInitNew( string name,ResultType resultType )
+	internal string ResultInitNew( string name, ResultType resultType )
 	{
 		switch ( resultType )
 		{
