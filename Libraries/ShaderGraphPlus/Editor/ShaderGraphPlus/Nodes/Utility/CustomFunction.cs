@@ -82,7 +82,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		{
 			if ( string.IsNullOrWhiteSpace( input.Name ) )
 			{
-				return NodeResult.Error( $"{input.TypeName} Input has no name" );
+				return NodeResult.Error( $"\"{input.TypeName}\" Input has no name" );
 			}
 		}
 
@@ -158,21 +158,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		error = "";
 
 		foreach ( IPlugIn input in Inputs )
-		{
-			//if ( string.IsNullOrWhiteSpace( input.DisplayInfo.Name ) )
-			//{
-			//	error = $"{input.Type.Name} Input has no name";
-			//	return sb.ToString();
-			//}
-
-			if ( compiler.IsNotPreview )
-			{
-				if ( compiler.Debug )
-				{
-					Log.Info( $"Evaluating Input `{input.DisplayInfo.Name}` from `{input.ConnectedOutput}`" );
-				}
-			}
-			
+		{	
 			NodeResult result = new NodeResult();
 			
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
@@ -218,14 +204,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		
 		foreach ( IPlugIn input in Inputs )
 		{
-			if ( compiler.IsNotPreview )
-			{
-				if ( compiler.Debug )
-				{
-					Log.Info( $"Evaluating Input `{input.DisplayInfo.Name}` from `{input.ConnectedOutput}`" );
-				}
-			}
-			
 			NodeResult result = new NodeResult();
 			
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
@@ -291,7 +269,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		{
 			if ( string.IsNullOrWhiteSpace( output.Name ) )
 			{
-				error = $"{output.TypeName} Output has no name";
+				error = $"\"{output.TypeName}\" Output has no name";
 				return result;
 			}
 
