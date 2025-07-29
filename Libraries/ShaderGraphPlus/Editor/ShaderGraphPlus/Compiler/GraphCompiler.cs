@@ -29,7 +29,10 @@ public sealed partial class GraphCompiler
 		{ typeof( float ), ( "float", false ) },
 		{ typeof( bool ), ( "bool", false ) },
 		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
-		{ typeof( Sampler ), ( "Sampler", true ) }
+		{ typeof( Sampler ), ( "Sampler", true ) },
+		{ typeof( Float2x2 ), ( "float2x2", true ) },
+		{ typeof( Float3x3 ), ( "float3x3", true ) },
+		{ typeof( Float3x3 ), ( "float4x4", true ) },
 	};
 
 	public bool Debug { get; private set; } = false;
@@ -1836,136 +1839,114 @@ public sealed partial class GraphCompiler
 
 	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult localResult, NodeResult funcResult)> shaderResults, out (NodeResult localResult, NodeResult funcResult) lastResult, bool preview, bool appendOverride = false, int indentLevel = 0 )
 	{
-		//int localId = 1;
 		lastResult = (new NodeResult(), new NodeResult());
 
 		foreach ( var result in shaderResults )
 		{
-			//if ( result.Item2.ResultType is ResultType.TextureObject )
-			//{
-			//	sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-			//	sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );" );
-			//}
-			//else if ( result.Item2.ResultType is ResultType.Float2x2 )
-			//{
-			//	sb.AppendLine( $"float2x2 {result.Item1} = float2x2( {result.Item2.Code} );" );
-			//}
-			//else if ( result.Item2.ResultType is ResultType.Float3x3 )
-			//{
-			//	sb.AppendLine( $"float3x3 {result.Item1} = float3x3( {result.Item2.Code} );" );
-			//}
-			//else if ( result.Item2.ResultType is ResultType.Float4x4 )
-			//{
-			//	sb.AppendLine( $"float4x4 {result.Item1} = float4x4( {result.Item2.Code} );" );
-			//}
-			//else
-			//{
-			//if ( result.Item2.ResultType is ResultType.Void ) // TODO : Get rid of this and just do it how the node GetDimensions works with a void function outptus and call.
-			//{
-			//	sb.AppendLine();
-			//	sb.AppendLine( IndentString( $"{result.Item2.Code}", indentLevel ) );
-			//	sb.AppendLine();
-			//}
-			//else
+			lastResult = result;
+			var shouldSkip = result.funcResult.SkipLocalGeneration;
+
+			if ( !shouldSkip || appendOverride )
 			{
-				lastResult = result;
-				var shouldSkip = result.funcResult.SkipLocalGeneration;
+				string comboBody = string.Empty;
 
-				if ( !shouldSkip || appendOverride )
+				if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
 				{
-					string comboBody = string.Empty;
+					comboBody = comboSwitchBody;
 
-					if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
+					if ( !string.IsNullOrWhiteSpace( comboSwitchBody ) )
 					{
-						comboBody = comboSwitchBody;
-
-						if ( !string.IsNullOrWhiteSpace( comboSwitchBody ) )
-						{
-							sb.AppendLine( IndentString( comboSwitchBody, indentLevel ) );
-						}
+						sb.AppendLine( IndentString( comboSwitchBody, indentLevel ) );
 					}
+				}
 
-					// TODO : Remove and just use VoidLocalsNew below.
-					if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
+				// TODO : Remove and just use VoidLocalsNew below.
+				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
+				{
+					var data = ShaderResult.VoidLocals[result.funcResult.Code];
+
+					sb.AppendLine();
+
+					if ( !data.AlreadyDefined )
 					{
-						var data = ShaderResult.VoidLocals[result.funcResult.Code];
-
-						sb.AppendLine();
-
-						if ( !data.AlreadyDefined )
+						var newData = new VoidData()
 						{
-							var newData = new VoidData()
-							{
-								TargetResult = data.TargetResult,
-								ResultType = data.ResultType,
-								FunctionCall = data.FunctionCall,
-								AlreadyDefined = true
-							};
+							TargetResult = data.TargetResult,
+							ResultType = data.ResultType,
+							FunctionCall = data.FunctionCall,
+							AlreadyDefined = true
+						};
 
-							ShaderResult.VoidLocals[result.funcResult.Code] = newData;
-							
-							sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
-							sb.AppendLine( IndentString( data.FunctionCall, indentLevel ) );
-						}
+						ShaderResult.VoidLocals[result.funcResult.Code] = newData;
+						
+						sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
+						sb.AppendLine( IndentString( data.FunctionCall, indentLevel ) );
 					}
+				}
 
-					if ( ShaderResult.VoidLocalsNew.Count > 0 && result.localResult.Metadata.Count > 0 )
+				if ( ShaderResult.VoidLocalsNew.Count > 0 && result.localResult.Metadata.Count > 0 )
+				{
+					var voidData = ShaderResult.VoidLocalsNew
+						.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetadataType.VoidResultUserDefinedName ) )
+						&& targetData.CompilerAssignedName == result.localResult.Code
+					) );
+
+					if ( voidData.IsValid )
 					{
-						var voidData = ShaderResult.VoidLocalsNew
-							.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetadataType.VoidResultUserDefinedName ) )
-							&& targetData.CompilerAssignedName == result.localResult.Code
-						) );
+						if ( voidData.InlineCode )
+							sb.AppendLine();
 
-						if ( voidData.IsValid )
+						// Init all the output results.
+						foreach ( var outResult in voidData.TargetResults )
 						{
-							if ( voidData.InlineCode )
-								sb.AppendLine();
-
-							// Init all the output results.
-							foreach ( var outResult in voidData.TargetResults )
-							{
-								sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
-							}
-
-							if ( !voidData.InlineCode )
-							{
-								sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
-							}
-							else
-							{
-								sb.AppendLine( IndentString( $"{voidData.FunctionCall}", indentLevel ) );
-							}
-
+							sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 						}
+
+						if ( !voidData.InlineCode )
+						{
+							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
+						}
+						else
+						{
+							sb.AppendLine( IndentString( $"{voidData.FunctionCall}", indentLevel ) );
+						}
+
 					}
+				}
 
-					//SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
+				//SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
 
-					if ( result.funcResult.ResultType != ResultType.Void )
+				if ( result.funcResult.ResultType != ResultType.Void )
+				{
+					//sb.AppendLine( $"float4x4 {result.Item1} = float4x4( {result.Item2.Code} );" );
+
+					if ( result.funcResult.ResultType == ResultType.Float2x2
+					 || result.funcResult.ResultType == ResultType.Float3x3
+					 || result.funcResult.ResultType == ResultType.Float4x4 )
+					{
+						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.TypeName}( {result.funcResult.Code} );", indentLevel ) );
+					}
+					else
 					{
 						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.Code};", indentLevel ) );
 					}
+				}
 
-					if ( preview && string.IsNullOrWhiteSpace( comboBody ) )
+				if ( preview && string.IsNullOrWhiteSpace( comboBody ) )
+				{
+					if ( result.localResult.ResultType == ResultType.Bool )
 					{
-						if ( result.localResult.ResultType == ResultType.Bool )
-						{
-							// TODO : There is no way to know what the actual value of the result is.
-						}
-						else if ( result.localResult.IsPreviewable && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
-						{
-							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
-							//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
-						}
+						// TODO : There is no way to know what the actual value of the result is.
 					}
-
+					else if ( result.localResult.IsPreviewable && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
+					{
+						sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
+						//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );
+					}
 				}
 
 			}
-			//}
 		}
-
-		//SGPLog.Info( $"`{nameof( GenerateLocalResults )}` Finished", preview );
 	}
 
 	private string GenerateLocals()

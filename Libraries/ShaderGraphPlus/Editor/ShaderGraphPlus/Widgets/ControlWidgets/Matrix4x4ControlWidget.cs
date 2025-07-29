@@ -5,14 +5,14 @@ namespace ShaderGraphPlus;
 [CustomEditor( typeof( Float4x4 ) )]
 sealed class Float4x4ControlWidget : ControlObjectWidget
 {
-	public Float4x4ControlWidget( SerializedProperty property ) : base(property, true)
+	public Float4x4ControlWidget( SerializedProperty property ) : base( property, true )
 	{
 		//property.TryGetAsObject( out SerializedObject so );
 
 		MinimumSize = Theme.RowHeight * 2 + 2;
 
-	Layout = Layout.Column();
-	Layout.Spacing = 2;
+		Layout = Layout.Column();
+		Layout.Spacing = 2;
 
 		var Row1Layout = Layout.AddRow();
 		Row1Layout.Spacing = 4;

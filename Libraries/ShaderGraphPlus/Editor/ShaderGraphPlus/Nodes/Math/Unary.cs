@@ -98,13 +98,6 @@ public abstract class UnaryCurve : Unary
 	}
 }
 
-[Title( "Transpose" ), Category( "Unary" )]
-public sealed class Transpose : Unary
-{
-    [Hide]
-    protected override string Op => "transpose";
-}
-
 /// <summary>
 /// Clamps the specified input value to the pecified minimum and maximum.
 /// </summary>

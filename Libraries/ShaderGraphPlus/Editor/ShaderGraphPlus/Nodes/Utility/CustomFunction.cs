@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using static Sandbox.Gizmo;
 
@@ -494,6 +495,9 @@ public class CustomCodeNodePorts
 			{
 				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
 				if ( typeName == "Sampler" ) typeName = typeof( Sampler ).FullName;
+				if ( typeName == "float2x2" ) typeName = typeof( Float2x2 ).FullName;
+				if ( typeName == "float3x3" ) typeName = typeof( Float3x3 ).FullName;
+				if ( typeName == "float4x4" ) typeName = typeof( Float4x4 ).FullName;
 
 				var editorType = EditorTypeLibrary.GetType( typeName ).TargetType;
 
@@ -520,41 +524,32 @@ public class CustomCodeNodePorts
 	{
 		get
 		{
-			if ( TypeName is "int" )
+			switch ( TypeName )
 			{
-				return $"float"; // Just identify as a float.
-			}
-			else if ( TypeName is "float" )
-			{
-				return $"float";
-			}
-			else if ( TypeName is "Vector2" )
-			{
-				return $"float2";
-			}
-			else if ( TypeName is "Vector3" )
-			{
-				return $"float3";
-			}
-			else if ( TypeName is "Vector4" )
-			{
-				return $"float4";
-			}
-			else if ( TypeName is "Color" )
-			{
-				return $"float4";
-			}
-			else if ( TypeName is "bool" )
-			{
-				return "bool";
-			}
-			else if ( TypeName is "Texture2D" )
-			{
-				return "Texture2D";
-			}
-			else if ( TypeName is "Sampler" )
-			{
-				return "Sampler";
+				case "bool":
+					return "bool";
+				case "int":
+					return $"float"; // Just identify as a float.
+				case "float":
+					return $"float";
+				case "Vector2":
+					return $"float2";
+				case "Vector3":
+					return $"float3";
+				case "Vector4":
+					return $"float4";
+				case "Color":
+					return $"float4";
+				case "float2x2":
+					return "float2x2";
+				case "float3x3":
+					return "float3x3";
+				case "float4x4":
+					return "float4x4";
+				case "Texture2D":
+					return "Texture2D";
+				case "Sampler":
+					return "Sampler";
 			}
 
 			throw new ArgumentException("Unsupported value type", nameof( TypeName ) );
