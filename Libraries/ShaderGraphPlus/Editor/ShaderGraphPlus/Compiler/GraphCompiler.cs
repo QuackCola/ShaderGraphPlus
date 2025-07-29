@@ -243,7 +243,7 @@ public sealed partial class GraphCompiler
 			FunctionCall = funcCall,
 			AlreadyDefined = false,
 			InlineCode = isInlineCode,//false,
-			BoundNodeId = nodeID
+			BoundNodeIdentifier = nodeID
 		};
 
 		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
@@ -665,7 +665,7 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeId == customFunctionNode.Identifier ).FirstOrDefault();
+			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
 			var userAssignedVariableName = input.Output;
 			var compilerAssignedVariableName = voidData.GetCompilerAssignedName( userAssignedVariableName );
 

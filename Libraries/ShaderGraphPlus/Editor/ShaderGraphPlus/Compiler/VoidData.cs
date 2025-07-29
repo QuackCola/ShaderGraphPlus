@@ -24,12 +24,15 @@ internal struct VoidData : IValid
 	internal ResultType ResultType;
 	internal string FunctionCall;
 	internal bool AlreadyDefined;
-	internal bool AlreadyProcessed { get; set ;}
+	//internal bool AlreadyProcessed { get; set ;}
 	/// <summary>
 	/// Is this void data ment for a void function call or inline code?
 	/// </summary>
 	internal bool InlineCode;
-	internal string BoundNodeId;
+	/// <summary>
+	/// The Identifier of the node that this data is bound to.
+	/// </summary>
+	internal string BoundNodeIdentifier;
 	internal List<TargetResultData> TargetResults;
 
 	public bool IsValid
