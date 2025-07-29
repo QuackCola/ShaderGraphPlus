@@ -1924,7 +1924,6 @@ public sealed partial class GraphCompiler
 							// Init all the output results.
 							foreach ( var outResult in voidData.TargetResults )
 							{
-								//sb.AppendLine( IndentString( voidData.ResultInitNew( localvar.Key, localvar.Value ), indentLevel ) );
 								sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 							}
 
