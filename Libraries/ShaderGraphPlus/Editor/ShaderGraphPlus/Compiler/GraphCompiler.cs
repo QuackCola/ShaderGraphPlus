@@ -20,15 +20,16 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
-	public static Dictionary<Type, string> ValueTypes => new()
+	public static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
 	{
-		{ typeof( Color ), "float4" },
-		{ typeof( Vector4 ), "float4" },
-		{ typeof( Vector3 ), "float3" },
-		{ typeof( Vector2 ), "float2" },
-		{ typeof( float ), "float" },
-		{ typeof( bool ), "bool" },
-		//{ typeof( TextureObject ), "Texture2D" }
+		{ typeof( Color ), ( "float4", false ) },
+		{ typeof( Vector4 ),( "float4", false ) },
+		{ typeof( Vector3 ),( "float3", false ) },
+		{ typeof( Vector2 ),( "float2", false ) },
+		{ typeof( float ), ( "float", false ) },
+		{ typeof( bool ), ( "bool", false ) },
+		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
+		{ typeof( Sampler ), ( "Sampler", true ) }
 	};
 
 	public bool Debug { get; private set; } = false;

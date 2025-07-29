@@ -92,10 +92,10 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		{
 			var functionInputs = GetInputResults( compiler, out string inputsError );
 
-			//if ( !string.IsNullOrWhiteSpace( inputsError ) )
-			//{
-			//	return NodeResult.Error( inputsError );
-			//}
+			if ( !string.IsNullOrWhiteSpace( inputsError ) )
+			{
+				return NodeResult.Error( inputsError );
+			}
 
 			compiler.RegisterInclude( Source );
 			var outputResults = GetFunctionVoidLocals( out string outputsError );
@@ -114,7 +114,13 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{
 			StringBuilder sb = new StringBuilder();
-			var inlineInputs = GetInputResultsInline( compiler );
+			var inlineInputs = GetInputResultsInline( compiler, out string inputsError );
+			
+			if ( !string.IsNullOrWhiteSpace( inputsError ) )
+			{
+				return NodeResult.Error( inputsError );
+			}
+
 			var outputResults = GetFunctionVoidLocals( out string outputsError );
 
 			if ( !string.IsNullOrWhiteSpace( outputsError ) )
@@ -171,6 +177,14 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 			
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
 			{
+				if ( input.Type == typeof( Texture2DObject ) || input.Type == typeof( Sampler ) )
+				{
+					error = $"Required Input \"{input.DisplayInfo.Name}\" is missing";
+				}
+				//else if ( input.Type == typeof( Sampler ) )
+				//{
+				//
+				//}
 				result = new NodeResult( ResultType.Float, $"0", constant: true );
 			}
 			else
@@ -195,10 +209,11 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		return sb.ToString();
 	}
 
-	private List<(string userDefined, string compilerDefined)> GetInputResultsInline( GraphCompiler compiler )
+	private List<(string userDefined, string compilerDefined)> GetInputResultsInline( GraphCompiler compiler, out string error )
 	{
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
+		error = "";
 		List<(string, string)> inputResults = new List<(string,string)>();
 		
 		foreach ( IPlugIn input in Inputs )
@@ -215,6 +230,11 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 			
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
 			{
+				if ( input.Type == typeof( Texture2DObject ) || input.Type == typeof( Sampler ) )
+				{
+					error = $"Required Input \"{input.DisplayInfo.Name}\" is missing";
+				}
+
 				result = new NodeResult( ResultType.Float, $"0", constant: true );
 			}
 			else
@@ -490,16 +510,23 @@ public class CustomCodeNodePorts
 		{
 			if ( string.IsNullOrEmpty( TypeName ) ) return null;
 			var typeName = TypeName;
+
+			// Try getting type from EditorTypeLibrary.
+			if ( GraphCompiler.ValueTypes.ContainsValue( new ( typeName, true ) ) )
+			{
+				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
+				if ( typeName == "Sampler" ) typeName = typeof( Sampler ).FullName;
+
+				var editorType = EditorTypeLibrary.GetType( typeName ).TargetType;
+
+				return editorType;
+			}
+
 			if ( typeName == "float" ) typeName = typeof( float ).FullName;
 			if ( typeName == "int" ) typeName = typeof( int ).FullName;
 			if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
-			if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
-			var type = TypeLibrary.GetType( typeName ).TargetType;
 
-			if ( type == null )
-			{
-				type = EditorTypeLibrary.GetType( typeName ).TargetType;
-			}
+			var type = TypeLibrary.GetType( typeName ).TargetType;
 
 			return type;
 		}
@@ -543,9 +570,13 @@ public class CustomCodeNodePorts
 			{
 				return "bool";
 			}
-			else if (TypeName is "Texture2D" )
+			else if ( TypeName is "Texture2D" )
 			{
 				return "Texture2D";
+			}
+			else if ( TypeName is "Sampler" )
+			{
+				return "Sampler";
 			}
 
 			throw new ArgumentException("Unsupported value type", nameof( TypeName ) );
