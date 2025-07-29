@@ -1,7 +1,7 @@
 ﻿namespace ShaderGraphPlus.Nodes;
 
 
-[Title( "Bump Offset" ), Category( "Utility" ), Icon( "water" )]
+[Title( "Bump Offset" ), Category( "Effects" ), Icon( "water" )]
 public sealed class BumpOffsetNode : ShaderNodePlus
 {
 

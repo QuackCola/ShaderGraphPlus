@@ -46,6 +46,7 @@ float4 TestMatrix( float4x4 test4x4, float3x3 test3x3, float2x2 test2x2 )
 }
 
 [Title( "Test Node" ), Description( "Test node." ), Category( "Dev" )]
+[Hide]
 public sealed class TestNode : ShaderNodePlus
 {
 

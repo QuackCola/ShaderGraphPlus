@@ -30,8 +30,8 @@ public abstract class Unary : ShaderNodePlus
 
 	protected virtual string Op { get; }
 
-    [Hide]
-    protected virtual int? Components { get; set; } = null;
+	[Hide]
+	protected virtual int? Components { get; set; } = null;
 
 	public Unary() : base()
 	{
@@ -48,13 +48,13 @@ public abstract class Unary : ShaderNodePlus
 		
 		if ( Components is not null )
 		{
-		    switch ( Components )
-		    {
-		        case 1: resulttype = ResultType.Float; break;
-		        case 2: resulttype = ResultType.Vector2; break;
-		        case 3: resulttype = ResultType.Vector3; break;
-		        case 4: resulttype = ResultType.Color; break;
-		    }
+			switch ( Components )
+			{
+				case 1: resulttype = ResultType.Float; break;
+				case 2: resulttype = ResultType.Vector2; break;
+				case 3: resulttype = ResultType.Vector3; break;
+				case 4: resulttype = ResultType.Color; break;
+			}
 		}
 		
 		
@@ -101,69 +101,68 @@ public abstract class UnaryCurve : Unary
 /// <summary>
 /// Clamps the specified input value to the pecified minimum and maximum.
 /// </summary>
-[Title("Clamp"), Category("Unary")]
+[Title( "Clamp" ), Category( "Math/Unary" )]
 public sealed class Clamp : ShaderNodePlus
 {
-    [Input]
-    [Hide]
-    [Title("Value")]
-    public NodeInput InputA { get; set; }
+	[Input]
+	[Hide]
+	[Title( "Value" )]
+	public NodeInput InputA { get; set; }
 
-    [Input]
-    [Hide]
-	[Title("Min")]
-    public NodeInput InputB { get; set; }
+	[Input]
+	[Hide]
+	[Title( "Min" )]
+	public NodeInput InputB { get; set; }
 
-    [Input]
-    [Hide]
-    [Title("Max")]
-    public NodeInput InputC { get; set; }
-
+	[Input]
+	[Hide]
+	[Title( "Max" )]
+	public NodeInput InputC { get; set; }
 
 	public float DefaultMin { get; set; } = 0.0f;
 	public float DefaultMax { get; set; } = 1.0f;
 
-    [Output]
-    [Hide]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        var resultA = compiler.ResultOrDefault(InputA, 0.0f);
-        var resultB = compiler.ResultOrDefault(InputB, DefaultMin);
-        var resultC = compiler.ResultOrDefault(InputC, DefaultMax).Cast(resultB.Components());
+	[Output]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var resultA = compiler.ResultOrDefault( InputA, 0.0f );
+		var resultB = compiler.ResultOrDefault( InputB, DefaultMin );
+		var resultC = compiler.ResultOrDefault( InputC, DefaultMax ).Cast(resultB.Components() );
 
-        return new NodeResult(ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )");
-    };
+		return new NodeResult( ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )" );
+	};
 }
 
 /// <summary>
 /// Returns the cosine of the input value.
 /// </summary>
-[Title("Cosine"), Category("Unary")]
+[Title( "Cosine" ), Category( "Math/Unary" )]
 public sealed class Cosine : UnaryCurve
 {
-    protected override float Evaluate(float x)
-    {
-        return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
-    }
-
-    [Hide]
-    protected override string Op => "cos";
+	protected override float Evaluate(float x)
+	{
+		return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
+	}
+	
+	[Hide]
+	protected override string Op => "cos";
 }
 
 /// <summary>
 /// Returns the absolute value of the input value.
 /// </summary>
-[Title( "Abs" ), Category( "Unary" )]
+[Title( "Abs" ), Category( "Math/Unary" )]
 public sealed class Abs : Unary
 {
-    [Hide]
-    protected override string Op => "abs";
+	[Hide]
+	protected override string Op => "abs";
 }
 
 /// <summary>
 /// Returns the reciprocal of the square root of the input value.
 /// </summary>
-[Title("Rsqrt"), Category("Unary")]
+[Title( "Rsqrt" ), Category( "Math/Unary" )]
 public sealed class Rsqrt : Unary
 {
 	[Input, Title( "" ), Hide]
@@ -198,15 +197,14 @@ public sealed class Rsqrt : Unary
 		Paint.DrawPolygon( points.ToArray() );
 	}
 
-
-    [Hide]
-    protected override string Op => "rsqrt";
+	[Hide]
+	protected override string Op => "rsqrt";
 }
 
 /// <summary>
 /// Returns the square root of the input value.
 /// </summary>
-[Title( "Sqrt" ), Category( "Unary" )]
+[Title( "Sqrt" ), Category( "Math/Unary" )]
 public sealed class Sqrt : Unary
 {
 	[Input, Title( "" ), Hide]
@@ -241,15 +239,14 @@ public sealed class Sqrt : Unary
 		Paint.DrawPolygon( points.ToArray() );
 	}
 
-
-    [Hide]
-    protected override string Op => "sqrt";
+	[Hide]
+	protected override string Op => "sqrt";
 }
 
 /// <summary>
 /// Returns the doc product which is a value equal to the magnitudes of the two input values multiplied together and then multiplied by the cosine of the angle between them.
 /// </summary>
-[Title( "Dot Product" ), Category( "Unary" )]
+[Title( "Dot Product" ), Category( "Math/Unary" )]
 public sealed class DotProduct : ShaderNodePlus
 {
 	[Input]
@@ -271,13 +268,13 @@ public sealed class DotProduct : ShaderNodePlus
 	};
 }
 
-[Title( "DDX" ), Category( "Unary" )]
+[Title( "DDX" ), Category( "Math/Unary" )]
 public sealed class DDX : Unary
 {
 	public DerivativePrecision Precision { get; set; }
 
-    [Hide]
-    protected override string Op
+	[Hide]
+	protected override string Op
 	{
 		get
 		{
@@ -291,13 +288,13 @@ public sealed class DDX : Unary
 	}
 }
 
-[Title( "DDY" ), Category( "Unary" )]
+[Title( "DDY" ), Category( "Math/Unary" )]
 public sealed class DDY : Unary
 {
 	public DerivativePrecision Precision { get; set; }
 
-    [Hide]
-    protected override string Op
+	[Hide]
+	protected override string Op
 	{
 		get
 		{
@@ -311,14 +308,14 @@ public sealed class DDY : Unary
 	}
 }
 
-[Title( "DDXY" ), Category( "Unary" )]
+[Title( "DDXY" ), Category( "Math/Unary" )]
 public sealed class DDXY : Unary
 {
-    [Hide]
-    protected override string Op => "fwidth";
+	[Hide]
+	protected override string Op => "fwidth";
 }
 
-[Title( "Exponential" ), Category( "Unary" )]
+[Title( "Exponential" ), Category( "Math/Unary" )]
 public sealed class Exponential : Unary
 {
 	public ExponentBase Base { get; set; }
@@ -351,7 +348,7 @@ public sealed class Exponential : Unary
 /// <summary>
 /// Returns the fractional (or decimal) part of the input value.
 /// </summary>
-[Title( "Frac" ), Category( "Unary" )]
+[Title( "Frac" ), Category( "Math/Unary" )]
 public sealed class Frac : Unary
 {
     [Hide]
@@ -361,7 +358,7 @@ public sealed class Frac : Unary
 /// <summary>
 /// The largest integer value (or whole number) that is less than or equal to the input value.
 /// </summary>
-[Title( "Floor" ), Category( "Unary" )]
+[Title( "Floor" ), Category( "Math/Unary" )]
 public sealed class Floor : Unary
 {
     [Hide]
@@ -371,7 +368,7 @@ public sealed class Floor : Unary
 /// <summary>
 /// Return the length (or magnitude) of the input value.
 /// </summary>
-[Title( "Length" ), Category( "Unary" )]
+[Title( "Length" ), Category( "Math/Unary" )]
 public sealed class Length : Unary
 {
     [Hide]
@@ -382,7 +379,7 @@ public sealed class Length : Unary
 }
 
 
-[Title( "Log" ), Category( "Unary" )]
+[Title( "Log" ), Category( "Math/Unary" )]
 public sealed class BaseLog : Unary
 {
 	public LogBase Base { get; set; }
@@ -401,7 +398,7 @@ public sealed class BaseLog : Unary
 	}
 }
 
-[Title( "Min" ), Category( "Unary" )]
+[Title( "Min" ), Category( "Math/Unary" )]
 public sealed class Min : ShaderNodePlus
 {
 	[Input( typeof( float ) )]
@@ -428,7 +425,7 @@ public sealed class Min : ShaderNodePlus
 	};
 }
 
-[Title( "Max" ), Category( "Unary" )]
+[Title( "Max" ), Category( "Math/Unary" )]
 public sealed class Max : ShaderNodePlus
 {
 	[Input( typeof( float ) )]
@@ -461,29 +458,29 @@ public sealed class Max : ShaderNodePlus
 [Title( "Saturate" ), Category( "Transform" )]
 public sealed class Saturate : Unary
 {
-    [Hide]
-    protected override string Op => "saturate";
+	[Hide]
+	protected override string Op => "saturate";
 }
 
 /// <summary>
 /// Returns the sine of the input value
 /// </summary>
-[Title("Sine"), Category("Unary")]
+[Title( "Sine" ), Category( "Math/Unary" )]
 public sealed class Sine : UnaryCurve
 {
-    protected override float Evaluate(float x)
-    {
-        return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
-    }
+	protected override float Evaluate(float x)
+	{
+		return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
+	}
 
-    [Hide]
-    protected override string Op => "sin";
+	[Hide]
+	protected override string Op => "sin";
 }
 
 /// <summary>
 /// Computes a smooth interpolation between 0 and 1. When the the input value of Input is greater than or equal to the input value of Edge.
 /// </summary>
-[Title( "Step" ), Category( "Unary" )]
+[Title( "Step" ), Category( "Math/Unary" )]
 public sealed class Step : ShaderNodePlus
 {
 	[Input( typeof( float ) )]
@@ -513,7 +510,7 @@ public sealed class Step : ShaderNodePlus
 /// <summary>
 /// Used to create a smooth transition between two input values (or edges).
 /// </summary>
-[Title( "Smooth Step" ), Category( "Unary" )]
+[Title( "Smooth Step" ), Category( "Math/Unary" )]
 public sealed class SmoothStep : ShaderNodePlus
 {
 	[Input]
@@ -559,37 +556,37 @@ public sealed class SmoothStep : ShaderNodePlus
 /// <summary>
 /// Computes the tangent of a specified angle (in radians).
 /// </summary>
-[Title( "Tangent" ), Category( "Unary" )]
+[Title( "Tangent" ), Category( "Math/Unary" )]
 public sealed class Tan : Unary
 {
-    [Hide]
-    protected override string Op => "tan";
+	[Hide]
+	protected override string Op => "tan";
 }
 
 /// <summary>
 /// Computes the angle (in radians) whose sine is the specified number.
 /// </summary>
-[Title( "Arcsin" ), Category( "Unary" )]
+[Title( "Arcsin" ), Category( "Math/Unary" )]
 public sealed class Arcsin : Unary
 {
-    [Hide]
-    protected override string Op => "asin";
+	[Hide]
+	protected override string Op => "asin";
 }
 
 /// <summary>
 /// Computes the angle (in radians) whose cosine is the specified number.
 /// </summary>
-[Title( "Arccos" ), Category( "Unary" )]
+[Title( "Arccos" ), Category( "Math/Unary" )]
 public sealed class Arccos : Unary
 {
-    [Hide]
-    protected override string Op => "acos";
+	[Hide]
+	protected override string Op => "acos";
 }
 
 /// <summary>
 /// Round to the nearest integer.
 /// </summary>
-[Title("Round"), Category("Unary")]
+[Title( "Round" ), Category( "Math/Unary" )]
 public sealed class Round : Unary
 {
 	[Hide]
@@ -599,17 +596,17 @@ public sealed class Round : Unary
 /// <summary>
 /// Returns the smallest integer value that is greater than or equal to the specified value.
 /// </summary>
-[Title( "Ceil" ), Category( "Unary" )]
+[Title( "Ceil" ), Category( "Math/Unary" )]
 public sealed class Ceil : Unary
 {
-    [Hide]
-    protected override string Op => "ceil";
+	[Hide]
+	protected override string Op => "ceil";
 }
 
 /// <summary>
 /// Returns the reuslt of the input value subtracted from 1.
 /// </summary>
-[Title( "One Minus" ), Category( "Unary" )]
+[Title( "One Minus" ), Category( "Math/Unary" )]
 public sealed class OneMinus : ShaderNodePlus
 {
 	[Input( typeof( float ) ), Hide, Title( "" )]
@@ -631,29 +628,29 @@ public sealed class OneMinus : ShaderNodePlus
 /// <summary>
 /// Positive values passed in become negative and negative values passed in become positive.
 /// </summary>
-[Title("Negate"), Category("Unary")]
+[Title( "Negate" ), Category( "Math/Unary" )]
 public sealed class Negate : ShaderNodePlus
 {
-    [Input(typeof(float)), Hide, Title("")]
-    public NodeInput In { get; set; }
+	[Input( typeof( float ) ), Hide, Title( "" )]
+	public NodeInput In { get; set; }
 
-    public Negate() : base()
-    {
-        ExpandSize = new Vector3(-85, 0);
-    }
+	public Negate() : base()
+	{
+		ExpandSize = new Vector3( -85, 0 );
+	}
 
-    [Output, Hide, Title("")]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-    {
-        var result = compiler.ResultOrDefault(In, 0.0f);
-        return new NodeResult(result.ResultType, $"-1 * {result}");
-    };
+	[Output, Hide, Title( "" )]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		var result = compiler.ResultOrDefault( In, 0.0f );
+		return new NodeResult( result.ResultType, $"-1 * {result}" );
+	};
 }
 
 /// <summary>
 /// Returns a distance scalar between two vectors.
 /// </summary>
-[Title( "Distance" ), Category( "Unary" )]
+[Title( "Distance" ), Category( "Math/Unary" )]
 public sealed class Distance : ShaderNodePlus
 {
 	[Input]
