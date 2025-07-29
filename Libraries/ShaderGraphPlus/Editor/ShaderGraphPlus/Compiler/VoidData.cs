@@ -100,19 +100,19 @@ internal struct VoidData : IValid
 		}
 	}
 
-	internal ResultType GetResultResultType( string name )
+	internal ResultType GetResultResultType( string compilerAssignedName )
 	{
-		var result = TargetResults.Where( x => x.CompilerAssignedName == name ).FirstOrDefault();
+		var result = TargetResults.Where( x => x.CompilerAssignedName == compilerAssignedName ).FirstOrDefault();
 
 		if ( result.IsValid )
 			return result.ResultType;
 
-		throw new Exception( $"Key `{name}` does not exist within `{nameof( VoidData.TargetResults )}`" );
+		throw new Exception( $"Key `{compilerAssignedName}` does not exist within `{nameof( VoidData.TargetResults )}`" );
 	}
 
-	internal string GetCompilerName( string name )
+	internal string GetCompilerAssignedName( string userAssignedName )
 	{
-		var result = TargetResults.Where( x => x.UserAssignedName == name ).FirstOrDefault();
+		var result = TargetResults.Where( x => x.UserAssignedName == userAssignedName ).FirstOrDefault();
 
 		if ( result.IsValid )
 			return result.CompilerAssignedName;

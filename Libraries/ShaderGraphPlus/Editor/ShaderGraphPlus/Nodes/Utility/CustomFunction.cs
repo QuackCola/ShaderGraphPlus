@@ -105,7 +105,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 				return NodeResult.Error( outputsError );
 			}
 
-			string funcCall = compiler.CustomCodeRegisterResults( Name, functionInputs, Identifier, outputResults );
+			string funcCall = compiler.CustomCodeRegister( Name, functionInputs, Identifier, null, outputResults, false );
 	
 			metadata.Add( metadataKey, metadataValue );
 
@@ -113,7 +113,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{
-			StringBuilder sb = new StringBuilder();
+			StringBuilder inlineCodeSb = new StringBuilder();
 			var inlineInputs = GetInputResultsInline( compiler, out string inputsError );
 			
 			if ( !string.IsNullOrWhiteSpace( inputsError ) )
@@ -128,17 +128,17 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 				return NodeResult.Error( outputsError );
 			}
 
-			sb.AppendLine( "{" );
-			sb.AppendLine( Body );
-			sb.AppendLine( "}" );
+			inlineCodeSb.AppendLine( "{" );
+			inlineCodeSb.AppendLine( Body );
+			inlineCodeSb.AppendLine( "}" );
 
 			// Relpace the user defined input names with the compiler assigned names.
 			foreach ( var (userDefined, compilerDefined) in inlineInputs )
 			{
-				sb.Replace( userDefined, compilerDefined );
+				inlineCodeSb.Replace( userDefined, compilerDefined );
 			}
 
-			string funcCall = compiler.CustomCodeRegisterInlineCode( sb, inlineInputs, Identifier, outputResults );
+			string funcCall = compiler.CustomCodeRegister( null, null, Identifier, inlineCodeSb, outputResults, true );
 
 			metadata.Add( metadataKey, metadataValue );
 
