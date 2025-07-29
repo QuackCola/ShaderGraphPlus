@@ -11,7 +11,7 @@ internal sealed class HLSLAssetPathAttribute : Attribute
 	}
 }
 
-[CustomEditor( typeof(string), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
+[CustomEditor( typeof( string ), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
 internal sealed class HLSLAssetPathControlWidget : ControlWidget
 {
 	public override bool IsControlButton => true;
@@ -85,14 +85,14 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 	protected override void PaintControl()
 	{
-		var rect = new Rect(0, Size);
+		var rect = new Rect( 0, Size );
 
-		var iconRect = rect.Shrink(2);
+		var iconRect = rect.Shrink( 2 );
 		iconRect.Width = iconRect.Height;
 
 		var alpha = IsControlDisabled ? 0.6f : 1f;
-		var textRect = rect.Shrink(0, 3);
-		var pickerName = DisplayInfo.ForType(SerializedProperty.PropertyType).Name;
+		var textRect = rect.Shrink( 0, 3 );
+		var pickerName = DisplayInfo.ForType( SerializedProperty.PropertyType ).Name;
 
 		//Paint.SetBrush(Theme.Red.Darken(0.8f).WithAlpha(alpha));
 		//Paint.DrawRect(iconRect, 2);
@@ -100,7 +100,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 		//Paint.SetPen(Theme.Red.WithAlpha(alpha));
 		//Paint.DrawIcon(iconRect, "error", Math.Max(16, iconRect.Height / 2));
 
-		DrawContent(rect, $"", FilePath);
+		DrawContent( rect, $"", FilePath );
 	}
 
 	public void GenerateHLSLIncludeBase()
@@ -120,38 +120,44 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 	private void Generate( string functionName )
 	{
-		StringBuilder sb = new StringBuilder();
-		
 		string functionHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
 		StringBuilder functionBody = new StringBuilder();
 		
 		foreach ( var output in Node.ExpressionOutputs )
 		{
-			var initialValue = "0";
+			var initialValue = "";
 
-			if ( output.HLSLDataType == "bool" )
+			switch ( output.HLSLDataType )
 			{
-				initialValue = "false";
-			}
-			else if ( output.HLSLDataType == "int" )
-			{
-				initialValue = "0";
-			}
-			else if ( output.HLSLDataType == "float" )
-			{
-				initialValue = "0.0f";
-			}
-			else if ( output.HLSLDataType == "float2" )
-			{
-				initialValue = "float2( 0.0f, 0.0f )";
-			}
-			else if ( output.HLSLDataType == "float3" )
-			{
-				initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-			}
-			else if ( output.HLSLDataType == "float4" )
-			{
-				initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+				case "bool":
+					initialValue = "false";
+					break;
+				case "int":
+					initialValue = "0";
+					break;
+				case "float":
+					initialValue = "0.0f";
+					break;
+				case "float2":
+					initialValue = "float2( 0.0f, 0.0f )";
+					break;
+				case "float3":
+					initialValue = "float3( 0.0f, 0.0f, 0.0f )";
+					break;
+				case "float4":
+					initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
+					break;
+				case "float2x2":
+					initialValue = "float2x2( 0.0f, 0.0f, 0.0f, 0.0f )";
+					break;
+				case "float3x3":
+					initialValue = "float3x3( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f )";
+					break;
+				case "float4x4":
+					initialValue = "float4x4( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f )";
+					break;
+				default:
+					throw new Exception( $"Unknown HLSL DataType `{output.HLSLDataType}`" );
 			}
 
 			functionBody.AppendLine( $"{output.Name} = {initialValue};" );
@@ -187,15 +193,15 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 			{
 				if ( !string.IsNullOrWhiteSpace( Node.Source ) )
 				{
-					FilePathAbsolute = Editor.FileSystem.Content.GetFullPath($"shaders/{Node.Source}");
+					FilePathAbsolute = Editor.FileSystem.Content.GetFullPath( $"shaders/{Node.Source}" );
 
 					menu?.Close();
 					menu = new ContextMenu();
 
-					menu.AddOption("Open include", "file_open", action: () => OpenFile());
-					menu.AddOption("Clear...", "delete", action: () => ClearFile());
+					menu.AddOption( "Open include", "file_open", action: () => OpenFile() );
+					menu.AddOption( "Clear...", "delete", action: () => ClearFile() );
 
-					menu.OpenAt(ScreenRect.BottomLeft);
+					menu.OpenAt( ScreenRect.BottomLeft );
 
 					e.Accepted = true;
 				}
@@ -242,7 +248,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 		System.IO.File.WriteAllText( fd.SelectedFile, generatedFile );
 
-		FilePath = Path.GetRelativePath(Project.Current.GetAssetsPath(), fd.SelectedFile).Replace('\\', '/').Remove(0,8);
+		FilePath = Path.GetRelativePath( Project.Current.GetAssetsPath(), fd.SelectedFile ).Replace( '\\', '/' ).Remove( 0, 8 );
 
 		UpdateProperty();
 
