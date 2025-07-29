@@ -1,7 +1,9 @@
 ﻿namespace ShaderGraphPlus.Nodes;
 
+// TODO : Finish Implementing This!
+#if false
 /// <summary>
-/// TODO :
+/// 
 /// </summary>
 [Title( "Matrix Split" ), Category( "Math/Matrix" ), Icon( "device_hub" )]
 public sealed class MatrixSplitNode : ShaderNodePlus
@@ -136,3 +138,4 @@ public sealed class MatrixSplitNode : ShaderNodePlus
 	};
 
 }
+#endif
