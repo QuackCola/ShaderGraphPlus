@@ -10,6 +10,6 @@ public sealed class ViewToProjectionNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult(ResultType.Float4x4, "g_matViewToProjection", true );
+		return new NodeResult( ResultType.Float4x4, "g_matViewToProjection", true );
 	};
 }
