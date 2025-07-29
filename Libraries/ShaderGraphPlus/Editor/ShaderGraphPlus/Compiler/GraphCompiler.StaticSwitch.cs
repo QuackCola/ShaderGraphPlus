@@ -266,16 +266,6 @@ public sealed partial class GraphCompiler
 		var sbSwitchBody = new StringBuilder();
 
 		// make sure our results go into the correct switch and the correct block. TODO : Support more than just true or false switches.
-		//var shaderResultsTrue = ShaderResult.Results.Where( 
-		//	x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ) ).BoundSwitch == resultNameInternal
-		//	&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ) ).BoundSwitchBlock == StaticSwitchBlock.True
-		//);
-		//
-		//var shaderResultsFalse = ShaderResult.Results.Where( 
-		//	x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ) ).BoundSwitch == resultNameInternal
-		//	&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ) ).BoundSwitchBlock == StaticSwitchBlock.False
-		//);
-
 		var shaderResultsTrue = ShaderResult.Results.Where( 
 			x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitch == resultNameInternal
 			&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitchBlock == StaticSwitchBlock.True
