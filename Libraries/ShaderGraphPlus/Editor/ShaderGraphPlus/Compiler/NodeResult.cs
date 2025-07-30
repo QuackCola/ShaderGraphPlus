@@ -123,6 +123,8 @@ public struct NodeResult : IValid
 	public string ImagePath { get; set; }
 	public bool Constant { get; set; }
 	public int PreviewID { get; set; }
+	public string TargetID { get; set; }
+	public bool ShouldPreview { get; set; }
 
 	/// <summary>
 	/// Generic-Ish metadata related to this NodeResult.

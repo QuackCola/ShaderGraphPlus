@@ -126,6 +126,36 @@ public abstract class BaseNodePlus : INode
 	public bool HasTitleBar => true;
 
 	[System.AttributeUsage( AttributeTargets.Property )]
+	public class IgnoreAttribute : Attribute
+	{
+		public IgnoreAttribute()
+		{
+		}
+	}
+
+	[System.AttributeUsage( AttributeTargets.Property )]
+	public class VoidFunctionResultAttribute : Attribute
+	{
+		public string HLSLType;
+		public string SplitToHLSLType;
+		public bool SplitOutput;
+
+		public VoidFunctionResultAttribute()
+		{
+			HLSLType = "";
+			SplitOutput = false;
+		}
+
+		public VoidFunctionResultAttribute( string hlslType, bool splitOutput, string splitToHLSLType = "")
+		{
+			HLSLType = hlslType;
+			SplitOutput = splitOutput;
+			SplitToHLSLType = splitToHLSLType;
+		}
+
+	}
+
+	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputAttribute : Attribute
 	{
 		public System.Type Type;

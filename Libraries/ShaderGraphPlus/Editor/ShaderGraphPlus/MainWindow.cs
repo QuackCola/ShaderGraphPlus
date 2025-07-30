@@ -540,7 +540,12 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-#region ITextureParameterNode Region
+			//if ( node is IVoidFunctionNode IVoidFunctionNode )
+			//{
+			//	IVoidFunctionNode.RegisterVoidFunction( compiler );
+			//}
+
+			#region ITextureParameterNode Region
 			if ( node is ITextureParameterNode textureParameterNode )
 			{
 				if ( string.IsNullOrWhiteSpace( textureParameterNode.UI.Name ) )
