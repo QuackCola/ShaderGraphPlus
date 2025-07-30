@@ -128,7 +128,7 @@ public sealed class Clamp : ShaderNodePlus
 	{
 		var resultA = compiler.ResultOrDefault( InputA, 0.0f );
 		var resultB = compiler.ResultOrDefault( InputB, DefaultMin );
-		var resultC = compiler.ResultOrDefault( InputC, DefaultMax ).Cast(resultB.Components() );
+		var resultC = compiler.ResultOrDefault( InputC, DefaultMax ).Cast(resultB.Components );
 
 		return new NodeResult( ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )" );
 	};
@@ -262,7 +262,7 @@ public sealed class DotProduct : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var resultA = compiler.ResultOrDefault( InputA, 0.0f );
-		var resultB = compiler.ResultOrDefault( InputB, 0.0f ).Cast( resultA.Components() );
+		var resultB = compiler.ResultOrDefault( InputB, 0.0f ).Cast( resultA.Components );
 
 		return new NodeResult( ResultType.Float, $"dot( {resultA}, {resultB} )" );
 	};
@@ -419,7 +419,7 @@ public sealed class Min : ShaderNodePlus
 		var a = compiler.ResultOrDefault( InputA, DefaultA );
 		var b = compiler.ResultOrDefault( InputB, DefaultB );
 
-		int maxComponents = Math.Max( a.IsValid ? a.Components() : 1, b.IsValid ? b.Components() : 1 );
+		int maxComponents = Math.Max( a.IsValid ? a.Components : 1, b.IsValid ? b.Components : 1 );
 
 		return new NodeResult( (ResultType)maxComponents, $"min( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
 	};
@@ -446,7 +446,7 @@ public sealed class Max : ShaderNodePlus
 		var a = compiler.ResultOrDefault( InputA, DefaultA );
 		var b = compiler.ResultOrDefault( InputB, DefaultB );
 
-		int maxComponents = Math.Max( a.IsValid ? a.Components() : 1, b.IsValid ? b.Components() : 1 );
+		int maxComponents = Math.Max( a.IsValid ? a.Components : 1, b.IsValid ? b.Components : 1 );
 
 		return new NodeResult( (ResultType)maxComponents, $"max( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
 	};
@@ -501,7 +501,7 @@ public sealed class Step : ShaderNodePlus
 		var edge = compiler.ResultOrDefault( Edge, DefaultEdge );
 		var input = compiler.ResultOrDefault( Input, DefaultInput );
 
-		int maxComponents = Math.Max( edge.IsValid ? edge.Components() : 1, input.IsValid ? input.Components() : 1 );
+		int maxComponents = Math.Max( edge.IsValid ? edge.Components : 1, input.IsValid ? input.Components : 1 );
 
 		return new NodeResult( (ResultType)maxComponents, $"step( {(edge.IsValid ? edge : "0.0f")}, {(input.IsValid ? input : "0.0f")} )" );
 	};
@@ -542,8 +542,8 @@ public sealed class SmoothStep : ShaderNodePlus
 		var edge2 = compiler.Result( Edge2 );
 		var input = compiler.Result( Input );
 
-		int maxComponents = Math.Max( edge1.IsValid ? edge1.Components() : 1, input.IsValid ? input.Components() : 1 );
-		maxComponents = Math.Max( edge2.IsValid ? edge2.Components() : 1, maxComponents );
+		int maxComponents = Math.Max( edge1.IsValid ? edge1.Components : 1, input.IsValid ? input.Components : 1 );
+		maxComponents = Math.Max( edge2.IsValid ? edge2.Components : 1, maxComponents );
 
 		var edge1String = edge1.IsValid ? edge1.ToString() : compiler.ResultValue( DefaultEdge1 ).ToString();
 		var edge2String = edge2.IsValid ? edge2.ToString() : compiler.ResultValue( DefaultEdge2 ).ToString();
@@ -666,7 +666,7 @@ public sealed class Distance : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var resultA = compiler.ResultOrDefault( A, 0.0f );
-		var resultB = compiler.ResultOrDefault( B, 0.0f ).Cast( resultA.Components() );
+		var resultB = compiler.ResultOrDefault( B, 0.0f ).Cast( resultA.Components );
 
 		return new NodeResult( ResultType.Float, $"distance( {resultA}, {resultB} )" );
 	};

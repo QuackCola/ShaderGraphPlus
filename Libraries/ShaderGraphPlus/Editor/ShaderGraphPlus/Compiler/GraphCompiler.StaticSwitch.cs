@@ -138,20 +138,20 @@ public sealed partial class GraphCompiler
 
 		ResetCurrentComboSwitchInfo();
 		
-		if ( resultA.Components() == resultB.Components() )
+		if ( resultA.Components == resultB.Components )
 		{
 			//SGPLog.Info( "Not casing" );
 			return (resultA, resultB);
 		}
 
-		if ( resultA.Components() < resultB.Components() )
+		if ( resultA.Components < resultB.Components )
 		{
 			//SGPLog.Info("Casting A to B compinents.");
-			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components ) ), resultB);
 		}
 
 		//SGPLog.Info( "Casting B to A compinents." );
-		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components ) ) );
 	}
 
 	private void ResetCurrentComboSwitchInfo()
@@ -181,7 +181,7 @@ public sealed partial class GraphCompiler
 			// Handle the situation where the result of switch block is constant.
 			if ( constantResult.IsValid )
 			{
-				if ( constantResult.Components() == blockResultComponentCount )
+				if ( constantResult.Components == blockResultComponentCount )
 				{
 					sb.AppendLine( IndentString( $"{blockResultName} = {constantResult}; {(debug ? $"// result" : "")}", indentLevel ) );
 				}
@@ -198,7 +198,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( lastResult.Item1.Components() == blockResultComponentCount )
+			if ( lastResult.Item1.Components == blockResultComponentCount )
 			{
 				sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1}; {(debug ? $"// result" : "")}", indentLevel ) );
 			}
@@ -259,7 +259,7 @@ public sealed partial class GraphCompiler
 		//ResetCurrentComboSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
-		int nodeResultComponentCount = results.Item1.Components();
+		int nodeResultComponentCount = results.Item1.Components;
 		
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();

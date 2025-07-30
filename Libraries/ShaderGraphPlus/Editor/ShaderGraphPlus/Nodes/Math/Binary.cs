@@ -149,7 +149,7 @@ public sealed class Lerp : ShaderNodePlus
 	{
 		var results = compiler.Result( A, B );
 		var fraction = compiler.Result( C );
-		var fractionType = fraction.IsValid && fraction.Components() > 1 ? Math.Max( results.Item1.Components(), results.Item2.Components() ) : 1;
+		var fractionType = fraction.IsValid && fraction.Components > 1 ? Math.Max( results.Item1.Components, results.Item2.Components ) : 1;
 		return new NodeResult( results.Item1.ResultType, $"lerp( {results.Item1}, {results.Item2}," +
 			$" {(fraction.IsValid ? fraction.Cast( fractionType ) : compiler.ResultValue( Fraction ))} )" );
 	};
@@ -278,7 +278,7 @@ public sealed class RemapValue : ShaderNodePlus
 		private NodeResult Result;
 		private float Attribute;
 
-		public int Components => Result.IsValid ? Result.Components() : 1;
+		public int Components => Result.IsValid ? Result.Components : 1;
 
 		public ResultHolder( GraphCompiler compiler, NodeInput input, float attribute )
 		{

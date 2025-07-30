@@ -32,7 +32,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), ( "Sampler", true ) },
 		{ typeof( Float2x2 ), ( "float2x2", true ) },
 		{ typeof( Float3x3 ), ( "float3x3", true ) },
-		{ typeof( Float3x3 ), ( "float4x4", true ) },
+		{ typeof( Float4x4 ), ( "float4x4", true ) },
 	};
 
 	public bool Debug { get; private set; } = false;
@@ -684,27 +684,8 @@ public sealed partial class GraphCompiler
 			if ( voidData.IsValid )
 			{
 				var resultType = voidData.GetResultResultType( compilerAssignedVariableName );
-				var voidComponentsCount = 0;
 
-				switch ( resultType )
-				{
-					case ResultType.Float:
-						voidComponentsCount = 1;
-						break;
-					case ResultType.Vector2:
-						voidComponentsCount = 2;
-						break;
-					case ResultType.Vector3:
-						voidComponentsCount = 3;
-						break;
-					case ResultType.Color:
-						voidComponentsCount = 4;
-						break;
-					case ResultType.Invalid:
-						break;
-				}
-
-				var localResult = new NodeResult( resultType, $"{compilerAssignedVariableName}", false, funcResult.Metadata, voidComponentsCount );
+				var localResult = new NodeResult( resultType, $"{compilerAssignedVariableName}", false, funcResult.Metadata );
 
 				// return the localResult if we are getting a result from a node that we have already evaluated. 
 				foreach ( var inputResult in ShaderResult.InputResults )
@@ -998,13 +979,13 @@ public sealed partial class GraphCompiler
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
 
-		if ( resultA.Components() == resultB.Components() )
+		if ( resultA.Components == resultB.Components )
 			return (resultA, resultB);
 
-		if ( resultA.Components() < resultB.Components() )
-			return (new(resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+		if ( resultA.Components < resultB.Components )
+			return (new(resultB.ResultType, resultA.Cast( resultB.Components ) ), resultB);
 
-		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components ) ) );
 	}
 
 
@@ -1041,7 +1022,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				options.Write($"Default{parameter.Result.Components()}( {value} ); ");
+				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
 		}
 		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
@@ -1064,12 +1045,12 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				options.Write($"Default{parameter.Result.Components()}( {value} ); ");
+				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
 
-			if ( value is not bool && parameter.Result.Components() > 0 && isRange )
+			if ( value is not bool && parameter.Result.Components > 0 && isRange )
 			{
-				options.Write($"Range{parameter.Result.Components()}( {min}, {max} ); ");
+				options.Write($"Range{parameter.Result.Components}( {min}, {max} ); ");
 			}
 		}
 
@@ -1189,25 +1170,6 @@ public sealed partial class GraphCompiler
 		};
 
 		return prefix;
-	}
-
-	public string GetHLSLDataType( ResultType resultType )
-	{
-		return resultType switch
-		{
-			ResultType r when r == ResultType.Bool => "bool",
-			ResultType r when r == ResultType.Int => "int",
-			ResultType r when r == ResultType.Float => "float",
-			ResultType r when r == ResultType.Vector2 => "float2",
-			ResultType r when r == ResultType.Vector3 => "float3",
-			ResultType r when r == ResultType.Color => "float4",
-			ResultType r when r == ResultType.Gradient => "Gradient",
-			ResultType r when r == ResultType.Float2x2 => "float2x2",
-			ResultType r when r == ResultType.Float3x3 => "float3x3",
-			ResultType r when r == ResultType.Float4x4 => "float4x4",
-			ResultType r when r == ResultType.Void => "void",
-			_ => throw new ArgumentException("Unsupported value type", nameof( resultType ) )
-		};
 	}
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
@@ -1377,24 +1339,7 @@ public sealed partial class GraphCompiler
 			"Sampler" => ResultType.Sampler,
 			"Texture2D" => ResultType.Texture2DObject,
 			"TextureCube" => ResultType.TextureCubeObject,
-			_ => throw new ArgumentException( "Unknown ResultType" )
-		};
-	}
-
-	private static int GetComponentCountFromHLSLDataType( string DataType )
-	{
-		return DataType switch
-		{
-			"bool" => 0,
-			"int" => 1,
-			"float" => 1,
-			"float2" => 2,
-			"float3" => 3,
-			"float4" => 4,
-			"float2x2" => 4,
-			"float3x3" => 9,
-			"float4x4" => 16,
-			_ => throw new ArgumentException( $"DataType is not valid : {DataType}" )
+			_ => throw new ArgumentException( $"Unknown DataType `{DataType}`" )
 		};
 	}
 
@@ -1938,7 +1883,7 @@ public sealed partial class GraphCompiler
 					{
 						// TODO : There is no way to know what the actual value of the result is.
 					}
-					else if ( result.localResult.IsPreviewable && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
+					else if ( result.localResult.CanPreview && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
 					{
 						sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
 						//sb.AppendLine( IndentString( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};", indentLevel ) );

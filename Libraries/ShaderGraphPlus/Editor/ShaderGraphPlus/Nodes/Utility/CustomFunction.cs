@@ -110,7 +110,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 	
 			metadata.Add( metadataKey, metadataValue );
 
-			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata, 0 );
+			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata );//, ResultType.Invalid );// 0 );
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{
@@ -143,7 +143,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 
 			metadata.Add( metadataKey, metadataValue );
 
-			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata, 0 );
+			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata );//, ResultType.Invalid ); //0 );
 		}
 
 		return NodeResult.Error( $"Failed to evaluate!" );

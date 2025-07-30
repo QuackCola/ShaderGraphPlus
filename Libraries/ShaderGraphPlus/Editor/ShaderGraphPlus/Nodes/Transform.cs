@@ -296,7 +296,7 @@ public sealed class Blend : ShaderNodePlus
 		var resultB = compiler.Result( B );
 		var results = compiler.Result( A, B );
 		var fraction = compiler.Result( C );
-		var fractionType = fraction.IsValid && fraction.Components() > 1 ? Math.Max( results.Item1.Components(), results.Item2.Components() ) : 1;
+		var fractionType = fraction.IsValid && fraction.Components > 1 ? Math.Max( results.Item1.Components, results.Item2.Components ) : 1;
 
 		string fractionStr = $"{(fraction.IsValid ? fraction.Cast( fractionType ) : compiler.ResultValue( Fraction ))}";
 		string aStr = resultA.IsValid ? results.Item1.ToString() : compiler.ResultValue( DefaultA ).ToString();

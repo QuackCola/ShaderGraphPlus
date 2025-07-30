@@ -69,7 +69,7 @@ public sealed class ComponentMask : ShaderNodePlus
 			var resultType = ResultType.Float;
 			var components = string.Empty;
 
-			switch ( result.Components() )
+			switch ( result.Components )
 			{
 				case 2:
 					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
@@ -125,7 +125,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func X => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
+		if ( result.IsValid && result.Components > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -133,7 +133,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func Y => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 1 ) return new NodeResult( ResultType.Float, $"{result}.y" );
+		if ( result.IsValid && result.Components > 1 ) return new NodeResult( ResultType.Float, $"{result}.y" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -141,7 +141,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func Z => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 2 ) return new NodeResult( ResultType.Float, $"{result}.z" );
+		if ( result.IsValid && result.Components > 2 ) return new NodeResult( ResultType.Float, $"{result}.z" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -149,7 +149,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func W => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 3 ) return new NodeResult( ResultType.Float, $"{result}.w" );
+		if ( result.IsValid && result.Components > 3 ) return new NodeResult( ResultType.Float, $"{result}.w" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 }
@@ -275,7 +275,7 @@ public sealed class AppendVector : ShaderNodePlus
 		var resultA = compiler.ResultOrDefault( A, 0.0f );
 		var resultB = compiler.ResultOrDefault( B, 0.0f );
 
-		var components = resultB.Components() + resultA.Components();
+		var components = resultB.Components + resultA.Components;
 		if ( components < 1 || components > 4 )
 			return NodeResult.Error( $"Can't append {resultB.TypeName} to {resultA.TypeName}" );
 
