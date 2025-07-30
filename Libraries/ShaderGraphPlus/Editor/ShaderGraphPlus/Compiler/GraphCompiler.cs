@@ -164,10 +164,10 @@ public sealed partial class GraphCompiler
 			var data = ShaderResult.VoidLocals[nodeIdentifier];
 			var funcCall = data.FunctionCall;
 
-			if ( !string.IsNullOrWhiteSpace( funcName ) )
-			{
-				funcCall = funcCall.Replace( "##FUNCNAME##", funcName );
-			}
+			//if ( !string.IsNullOrWhiteSpace( funcName ) )
+			//{
+			//	funcCall = funcCall.Replace( "##FUNCNAME##", funcName );
+			//}
 
 			foreach ( var input in inputs )
 			{
@@ -206,80 +206,19 @@ public sealed partial class GraphCompiler
 		OnAttribute?.Invoke( comboName, value, true );
 	}
 
-	/// <summary>
-	/// Register a void function. Atm only one Target result.
-	/// </summary>
-	public void RegisterVoid( ResultType resultType, string resultName, string funcCall )
+	public bool CheckIfVoidFunctionIsRegisterd( string nodeID )
 	{
-		if ( !ShaderResult.VoidLocals.ContainsKey( resultName ) )
+		if ( ShaderResult.VoidLocals.ContainsKey( nodeID ) )
 		{
-			var voidData = new VoidData()
-			{
-				TargetResult = resultName,
-				ResultType = resultType,
-				FunctionCall = funcCall,
-				AlreadyDefined = false,
-			};
-
-			ShaderResult.VoidLocals.Add( voidData.TargetResult, voidData );
+			return true;
+		}
+		else
+		{ 
+			return false;
 		}
 	}
 
-	public string RegisterVoidNew( string functionName, string funcArgs, string targetOutput, List<string> functionInputs, Dictionary<string, string> functionOutputs, string nodeID )
-	{
-		List<TargetResultData> targetResults = new ();
-
-		// Assemble the function call
-		var funcCall = $"{functionName}( {funcArgs} )";
-		var oldFuncCall = funcCall;
-		var targetResult = "";
-		var userName = "";
-		foreach ( var output in functionOutputs.Index() )
-		{
-			var userAssignedname = output.Item.Key;
-			var hlslType = output.Item.Value;
-			var id = ShaderResult.VoidLocalCount++;
-			var varName = $"ol_{id}";
-			TargetResultData data = new();
-
-			funcCall = funcCall.Replace( userAssignedname, varName );
-			userName = userAssignedname;
-			targetResult = userAssignedname.Replace( userAssignedname, varName );
-
-			data.CompilerAssignedName = varName;
-			data.UserAssignedName = userAssignedname;
-			data.ResultType = GetResultTypeFromHLSLDataType( hlslType );
-
-			SGPLog.Info( $"Adding TargetResultData entry with the following : CompilerName == {data.CompilerAssignedName}, UserAssignedName == {data.UserAssignedName}, ResultType == {data.ResultType}", IsPreview );
-
-			targetResults.Add( data );
-		}
-
-		SGPLog.Info( $"FuncCall `{oldFuncCall}` is now `{funcCall}`", IsPreview );
-		targetResult = userName;
-
-		if ( !ShaderResult.VoidLocals.ContainsKey( targetResult ) )
-		{
-			var voidData = new VoidData()
-			{
-				TargetResult = "",
-				TargetResults = targetResults,
-				ResultType = ResultType.Invalid,
-				FunctionCall = funcCall,
-				AlreadyDefined = false,
-				InlineCode = false,
-				BoundNodeIdentifier = nodeID
-			};
-
-			ShaderResult.VoidLocals.Add( targetResult, voidData );
-
-			return targetResult;
-		}
-
-		return targetResult;
-	}
-
-	public string RegisterVoidNew2( string functionName, string funcArgs, string targetOutput, Dictionary<string, string> functionInputs, Dictionary<(string name, bool seperate), string> functionOutputs, string nodeID, out List<(string userDefined, string CompilerDefined)> Outputs )
+	public void RegisterVoidFunction( string functionName, string funcArgs, Dictionary<string, string> functionInputs, Dictionary<string, string> functionOutputs, string nodeID, out List<(string userAssigned, string compilerAssigned)> Outputs )
 	{
 		List<TargetResultData> targetResults = new();
 		Outputs = new();
@@ -289,20 +228,16 @@ public sealed partial class GraphCompiler
 			// Assemble the function call
 			var funcCall = $"{functionName}( {funcArgs} )";
 			var oldFuncCall = funcCall;
-			var targetResult = "";
-			var userName = "";
-
+	
 			foreach ( var output in functionOutputs.Index() )
 			{
-				var userAssignedname = output.Item.Key.name;
+				var userAssignedname = output.Item.Key;
 				var hlslType = output.Item.Value;
 				var id = ShaderResult.VoidLocalCount++;
 				var varName = $"ol_{id}";
 				TargetResultData data = new();
 
 				funcCall = funcCall.Replace( userAssignedname, varName );
-				userName = userAssignedname;
-				targetResult = userAssignedname.Replace( userAssignedname, varName );
 
 				data.CompilerAssignedName = varName;
 				data.UserAssignedName = userAssignedname;
@@ -316,11 +251,9 @@ public sealed partial class GraphCompiler
 			}
 
 			SGPLog.Info( $"FuncCall `{oldFuncCall}` is now `{funcCall}`", IsPreview );
-			targetResult = userName;
 
 			var voidData = new VoidData()
 			{
-				TargetResult = "",
 				TargetResults = targetResults,
 				ResultType = ResultType.Invalid,
 				FunctionCall = funcCall,
@@ -330,11 +263,7 @@ public sealed partial class GraphCompiler
 			};
 			
 			ShaderResult.VoidLocals.Add( nodeID, voidData );
-			
-			return targetResult;
 		}
-
-		return "";
 	}
 
 	internal string CustomCodeRegister( string functionName, string functionInputs, string nodeID, StringBuilder inlineCodeSb, Dictionary<string,string> outputResults, bool isInlineCode = false )
@@ -380,7 +309,6 @@ public sealed partial class GraphCompiler
 
 		var voidData = new VoidData()
 		{
-			TargetResult = "",
 			TargetResults = targetResults,
 			ResultType = ResultType.Invalid,
 			FunctionCall = funcCall,
@@ -782,9 +710,9 @@ public sealed partial class GraphCompiler
 
 		if ( node is IVoidFunctionNode IVoidFunctionNode )
 		{
-			SGPLog.Info( $"Encounterd IVoidFunctionNode Node", IsPreview );
+			//SGPLog.Info( $"Encounterd IVoidFunctionNode Node", IsPreview );
 			IVoidFunctionNode.RegisterIncludes( this );
-			IVoidFunctionNode.RegisterVoidFunction( this );
+			//IVoidFunctionNode.RegisterVoidFunction( this );
 		}
 
 		if ( node is CustomFunctionNode customFunctionNode )
@@ -1967,7 +1895,6 @@ public sealed partial class GraphCompiler
 					{
 						var newData = new VoidData()
 						{
-							TargetResult = data.TargetResult,
 							TargetResults= data.TargetResults,
 							ResultType = data.ResultType,
 							FunctionCall = data.FunctionCall,
@@ -1983,7 +1910,7 @@ public sealed partial class GraphCompiler
 						// Init all the output results.
 						foreach ( var outResult in data.TargetResults )
 						{
-							sb.AppendLine( IndentString( data.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
+							sb.AppendLine( IndentString( data.ResultInit( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 						}
 
 						//sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
@@ -2006,7 +1933,7 @@ public sealed partial class GraphCompiler
 						// Init all the output results.
 						foreach ( var outResult in voidData.TargetResults )
 						{
-							sb.AppendLine( IndentString( voidData.ResultInitNew( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
+							sb.AppendLine( IndentString( voidData.ResultInit( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 						}
 
 						if ( !voidData.InlineCode )
