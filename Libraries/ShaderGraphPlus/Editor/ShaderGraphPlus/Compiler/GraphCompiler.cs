@@ -1,8 +1,10 @@
 using Editor;
+using Editor.NodeEditor;
 using Microsoft.CodeAnalysis;
+using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
-using ShaderGraphPlus.Nodes;
+using static ShaderGraphPlus.BaseNodePlus;
 
 namespace ShaderGraphPlus;
 
@@ -156,30 +158,109 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	public void PostProcessVoidResult( List<string> inputs, string nodeIdentifier, string funcName = "" )
+	public void PreProcessVoidResult( VoidFunctionBase node, string nodeIdentifier, string funcName = "" )
 	{
-		if ( ShaderResult.VoidLocals.ContainsKey( nodeIdentifier ) )
+		if ( ShaderResult.VoidLocals.TryGetValue( nodeIdentifier, out VoidData data ) )
 		{
-			SGPLog.Info( $"PostProcessing VoidResult of node with ID `{nodeIdentifier}`", IsPreview );
-			var data = ShaderResult.VoidLocals[nodeIdentifier];
-			var funcCall = data.FunctionCall;
-
-			//if ( !string.IsNullOrWhiteSpace( funcName ) )
-			//{
-			//	funcCall = funcCall.Replace( "##FUNCNAME##", funcName );
-			//}
-
-			foreach ( var input in inputs )
+			if ( data.AlreadyPostProcessed )
 			{
-				funcCall = string.Format( funcCall,
-					input
-				);
+				SGPLog.Info( $"Already PostProcessed data `{nodeIdentifier}`", IsPreview );
+				return;
+			}
+
+			var funcCall = data.FunctionCall;
+			var nodeInputPropertyInfos = VoidFunctionBase.GetNodeProperties( node.GetType(), false );
+
+			foreach ( var propertyInfo in nodeInputPropertyInfos )
+			{
+				var voidFunctionArgAttribute = propertyInfo.GetCustomAttribute<VoidFunctionArgumentAttribute>();
+				var inputAttribute = propertyInfo.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+				var titleAttribute = propertyInfo.GetCustomAttribute<TitleAttribute>();
+
+				if ( voidFunctionArgAttribute is null )
+					continue;
+
+				if ( inputAttribute is null )
+					continue;
+
+				if ( titleAttribute is null )
+					continue;
+
+				var nodeInput = (NodeInput)propertyInfo.GetValue( node, null );
+				var funcResult = new NodeResult();
+				object value = default;
+			
+				if ( !string.IsNullOrWhiteSpace( voidFunctionArgAttribute.VarDefault ) )
+				{
+					var varDefaultProperty = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public )
+							.FirstOrDefault( property => property.Name == voidFunctionArgAttribute.VarDefault );
+
+					value = varDefaultProperty.GetValue( node );
+					
+					if ( varDefaultProperty != null )
+					{
+						SGPLog.Info( $"Got default `{varDefaultProperty.Name}` with value `{value}`", IsPreview );
+
+						if ( value.GetType() != inputAttribute.Type )
+						{
+							NodeErrors.Add( node, new List<string>() { $"Default value `{varDefaultProperty.Name}` does not match type of `{titleAttribute.Value}` node input!" } );
+						}
+
+					}
+					else
+					{
+						throw new Exception( $"Could not find property with the name `{voidFunctionArgAttribute.VarDefault}`" );
+					}
+				}
+				else
+				{
+					value = EditorTypeLibrary.Create( inputAttribute.Type.Name, inputAttribute.Type );
+				}
+
+				switch ( inputAttribute.Type )
+				{
+					case Type t when t == typeof( bool ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( int ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( float ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( Vector2 ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( Vector3 ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( Vector4 ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( Color ):
+						funcResult = ResultOrDefault( nodeInput, value );
+						break;
+					case Type t when t == typeof( Sampler ):
+						funcResult = Result( nodeInput );
+						break;
+					case Type t when t == typeof( Texture2DObject ):
+						funcResult = Result( nodeInput );
+						break;
+					case Type t when t == typeof( TextureCubeObject ):
+						funcResult = Result( nodeInput );
+						break;
+				}
+
+				if ( !funcResult.IsValid )
+				{
+					NodeErrors.Add( node, new List<string>() { $"Missing required input `{titleAttribute.Value}`." } );
+				}
+
+				funcCall = funcCall.Replace( voidFunctionArgAttribute.VarName, funcResult.Code );
 			}
 
 			data.FunctionCall = funcCall;
-
-			//SGPLog.Info( $"data.FunctionCall == {data.FunctionCall}", IsPreview);
-
+			data.AlreadyPostProcessed = true;
 			ShaderResult.VoidLocals[nodeIdentifier] = data;
 		}
 	}
@@ -245,12 +326,12 @@ public sealed partial class GraphCompiler
 
 				Outputs.Add( new ( userAssignedname, varName ) );
 
-				SGPLog.Info( $"Adding TargetResultData entry with the following : CompilerName == {data.CompilerAssignedName}, UserAssignedName == {data.UserAssignedName}, ResultType == {data.ResultType}", IsPreview );
+				//SGPLog.Info( $"Adding TargetResultData entry with the following : CompilerName == {data.CompilerAssignedName}, UserAssignedName == {data.UserAssignedName}, ResultType == {data.ResultType}", IsPreview );
 
 				targetResults.Add( data );
 			}
 
-			SGPLog.Info( $"FuncCall `{oldFuncCall}` is now `{funcCall}`", IsPreview );
+			//SGPLog.Info( $"FuncCall `{oldFuncCall}` is now `{funcCall}`", IsPreview );
 
 			var voidData = new VoidData()
 			{
@@ -261,9 +342,17 @@ public sealed partial class GraphCompiler
 				InlineCode = false,
 				BoundNodeIdentifier = nodeID
 			};
-			
+
+
+			SGPLog.Info( $"Adding new entry `{nodeID}` to ShaderResult.VoidLocals", IsPreview );
 			ShaderResult.VoidLocals.Add( nodeID, voidData );
 		}
+		
+		//if ( ShaderResult.VoidLocals.ContainsKey( nodeID ) )
+		//{
+		//	//var data = ShaderResult.VoidLocals[nodeID];
+		//	SGPLog.Info( $"Entry with key `{nodeID}` already exists!", IsPreview);
+		//}
 	}
 
 	internal string CustomCodeRegister( string functionName, string functionInputs, string nodeID, StringBuilder inlineCodeSb, Dictionary<string,string> outputResults, bool isInlineCode = false )
@@ -712,7 +801,7 @@ public sealed partial class GraphCompiler
 		{
 			//SGPLog.Info( $"Encounterd IVoidFunctionNode Node", IsPreview );
 			IVoidFunctionNode.RegisterIncludes( this );
-			//IVoidFunctionNode.RegisterVoidFunction( this );
+			IVoidFunctionNode.RegisterVoidFunction( this );
 		}
 
 		if ( node is CustomFunctionNode customFunctionNode )

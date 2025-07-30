@@ -1,20 +1,21 @@
-﻿
-using Facepunch.ActionGraphs;
+﻿namespace ShaderGraphPlus.Nodes;
 
-namespace ShaderGraphPlus.Nodes;
 public interface IVoidFunctionNode
 {
 	public void RegisterIncludes( GraphCompiler compiler );
-	public void RegisterVoidFunction( GraphCompiler compiler, string functionName, string functionArgs );
+	public void RegisterVoidFunction( GraphCompiler compiler, string functionName = "", string functionArgs = "" );
 }
 
 public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 {
+	public virtual string FunctionName { get; }
+	public virtual string FunctionArgs { get; }
+
 	public virtual void RegisterIncludes( GraphCompiler compiler )
 	{
 	}
 
-	public void RegisterVoidFunction( GraphCompiler compiler, string functionName ,string functionArgs )
+	public void RegisterVoidFunction( GraphCompiler compiler, string functionName = "", string functionArgs = "" )
 	{
 		if ( compiler.CheckIfVoidFunctionIsRegisterd( Identifier ) )
 		{
@@ -22,21 +23,26 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return;
 		}
 
-		//var inputProperties = GetProperties( this.GetType(), false );
-		var outputProperties = GetProperties( this.GetType(), true );
+		var inputProperties = GetNodeProperties( this.GetType(), false );
+		var outputProperties = GetNodeProperties( this.GetType(), true );
 		Dictionary<string, string> inputs = new();
 		Dictionary<string, string> outputs = new();
+
+		functionName = FunctionName;
+		functionArgs = FunctionArgs;
 
 		if ( !string.IsNullOrWhiteSpace( functionName ) )
 		{
 			foreach ( var property in outputProperties.Index() )
 			{
-				var attribute = property.Item.GetCustomAttribute<VoidFunctionResultAttribute>();
+				var attribute = property.Item.GetCustomAttribute<VoidFunctionArgumentAttribute>();
 
 				if ( attribute is null )
 					continue;
 
-				outputs.Add( $"{property.Item.Name}", attribute.HLSLType );
+				functionArgs = functionArgs.Replace( attribute.VarName, property.Item.Name );
+	
+				outputs.Add( $"{property.Item.Name}", attribute.HLSLDataType );
 			}
 
 			compiler.RegisterVoidFunction( functionName, functionArgs, inputs, outputs, Identifier, out var functionOutputs );
@@ -53,26 +59,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 		}
 	}
 
-	public NodeResult GetResult( GraphCompiler compiler, string targetPropertyName )
-	{
-		var property = this.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
-			.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) && x.Name == targetPropertyName );
-
-
-		//foreach ( var propertyInfo in property )
-		{
-			SGPLog.Info( $"Found NodeResult.Func Property `{property.Name}`", compiler.IsPreview );
-		}
-
-		//RegisterVoidFunction( compiler, "TestFunc", $"{inputA.Code}, {nameof( OutA )}, {nameof( OutB )}" );
-
-		//var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
-
-
-		return default( NodeResult );
-	}
-
-	public static IEnumerable<PropertyInfo> GetProperties( Type type , bool output )
+	public static IEnumerable<PropertyInfo> GetNodeProperties( Type type , bool output )
 	{
 		if ( !output )
 		{
@@ -86,7 +73,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 				.Where( property => property.GetSetMethod() != null &&
 				property.PropertyType == typeof( string ) &&
-				property.IsDefined( typeof( BaseNodePlus.VoidFunctionResultAttribute ), false ) );
+				property.IsDefined( typeof( BaseNodePlus.VoidFunctionArgumentAttribute ), false ) );
 		}
 	}
 }

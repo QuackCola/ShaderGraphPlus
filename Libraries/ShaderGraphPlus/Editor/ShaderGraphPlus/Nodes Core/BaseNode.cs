@@ -134,23 +134,29 @@ public abstract class BaseNodePlus : INode
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class VoidFunctionResultAttribute : Attribute
+	public class VoidFunctionDefaultAttribute : Attribute
 	{
-		public string HLSLType;
-		public string SplitToHLSLType;
-		public bool SplitOutput;
-
-		public VoidFunctionResultAttribute()
+		public VoidFunctionDefaultAttribute()
 		{
-			HLSLType = "";
-			SplitOutput = false;
+		}
+	}
+
+	[System.AttributeUsage( AttributeTargets.Property )]
+	public class VoidFunctionArgumentAttribute : Attribute
+	{
+		public string HLSLDataType;
+		public string VarName;
+		public string VarDefault;
+
+		public VoidFunctionArgumentAttribute( string hlslDataType, string varName, string varDefault  ) : this( hlslDataType, varName )
+		{
+			VarDefault = varDefault;
 		}
 
-		public VoidFunctionResultAttribute( string hlslType, bool splitOutput, string splitToHLSLType = "")
+		public VoidFunctionArgumentAttribute( string hlslDataType, string varName )
 		{
-			HLSLType = hlslType;
-			SplitOutput = splitOutput;
-			SplitToHLSLType = splitToHLSLType;
+			HLSLDataType = hlslDataType;
+			VarName = varName;
 		}
 
 	}

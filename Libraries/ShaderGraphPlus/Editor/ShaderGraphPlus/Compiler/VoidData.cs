@@ -24,7 +24,7 @@ internal struct VoidData : IValid
 	internal ResultType ResultType;
 	internal string FunctionCall;
 	internal bool AlreadyDefined;
-	//internal bool AlreadyProcessed { get; set ;}
+	internal bool AlreadyPostProcessed { get; set ;}
 	/// <summary>
 	/// Is this void data ment for a void function call or inline code?
 	/// </summary>
