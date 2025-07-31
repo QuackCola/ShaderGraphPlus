@@ -160,9 +160,9 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	public void SetNodeError( BaseNodePlus node, string error )
+	internal bool CheckIfVoidFunctionIsRegisterd( string nodeID )
 	{
-		NodeErrors.Add( node, [ error ] );
+		return ShaderResult.VoidLocals.ContainsKey( nodeID );
 	}
 
 	internal void PostProcessVoidFunctionResult( VoidFunctionBase node, string funcName = "" )
@@ -292,6 +292,11 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	public void SetNodeError( BaseNodePlus node, string error )
+	{
+		NodeErrors.Add( node, [error] );
+	}
+
 	private void AddSubgraphs( ShaderGraphPlus graph )
 	{
 		if ( graph != Graph )
@@ -312,18 +317,6 @@ public sealed partial class GraphCompiler
 	public void ResultComboPreview( string comboName, object value )
 	{
 		OnAttribute?.Invoke( comboName, value, true );
-	}
-
-	public bool CheckIfVoidFunctionIsRegisterd( string nodeID )
-	{
-		if ( ShaderResult.VoidLocals.ContainsKey( nodeID ) )
-		{
-			return true;
-		}
-		else
-		{ 
-			return false;
-		}
 	}
 
 	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> args, out List<(string userAssigned, string compilerAssigned)> Outputs )
