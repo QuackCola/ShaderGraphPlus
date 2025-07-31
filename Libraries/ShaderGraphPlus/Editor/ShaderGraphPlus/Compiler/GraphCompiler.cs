@@ -171,7 +171,7 @@ public sealed partial class GraphCompiler
 		{
 			if ( data.AlreadyPostProcessed )
 			{
-				SGPLog.Info( $"Already PostProcessed data `{node.Identifier}`", IsPreview );
+				//SGPLog.Info( $"Already PostProcessed data `{node.Identifier}`", IsPreview );
 				return;
 			}
 
@@ -197,7 +197,7 @@ public sealed partial class GraphCompiler
 					title = titleAttribute.Value;
 				}
 
-				SGPLog.Info( $"targetProperty `{targetProperty.Key.targetProperty}`", IsPreview );
+				//SGPLog.Info( $"targetProperty `{targetProperty.Key.targetProperty}`", IsPreview );
 
 				var nodeInput = (NodeInput)property.GetValue( node, null );
 				var funcResult = new NodeResult();
