@@ -9,20 +9,23 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]
 	[Hide]
-	[VoidFunctionInputArgument( ResultType.Texture2DObject, "$in0" )]
 	public NodeInput TextureObject { get; set; }
 
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
 
 	[JsonIgnore, Hide]
-	public override string FunctionName => "$in0.GetDimensions";
-
-	[JsonIgnore, Hide]
-	public override string FunctionArgs => $"$out0.x, $out0.y";
-
-	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Vector2, "$out0" )]
 	public string TextureObjectSize { get; set; } = "";
+
+	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	{
+		args.Add( new VoidFunctionArgument( nameof( TextureObject ), "$in0", VoidFunctionArgumentType.Input, ResultType.TextureCubeObject ) );
+		args.Add( new VoidFunctionArgument( nameof( TextureObjectSize ), "$out0", VoidFunctionArgumentType.Output, ResultType.Vector2 ) );
+		
+		functionName = $"{args[0].VarName}.GetDimensions";
+		functionCall = $"{functionName}( {args[1].VarName}.x, {args[1].VarName}.y )";
+	}
+
 
 	[Output( typeof( Vector2 ) )]
 	[Title( "Tex Size" )]
@@ -48,22 +51,15 @@ public sealed class TestFuncNode : VoidFunctionBase
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
 
-	[JsonIgnore, Hide]
-	public override string FunctionName => "TestFunc";
-
-	[JsonIgnore, Hide]
-	public override string FunctionArgs => $"$in0, $out0, $out1";
-
 	[Title( "InA" )]
 	[Input( typeof( float ) )]
 	[Hide]
-	[VoidFunctionInputArgument( ResultType.Float, "$in0", nameof( DefaultInputA ) )]
 	public NodeInput InputA { get; set; }
 
-	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Vector2, "$out0" )]
+	[JsonIgnore, Hide]
 	public string OutA { get; set;} = "";
 	
-	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Color, "$out1" )]
+	[JsonIgnore, Hide]
 	public string OutB { get; set; } = "";
 
 	public float DefaultInputA { get; set; } = 0.0f;
@@ -71,6 +67,16 @@ public sealed class TestFuncNode : VoidFunctionBase
 	public override void RegisterIncludes( GraphCompiler compiler )
 	{
 		compiler.RegisterInclude( $"TestFuncs.hlsl" );
+	}
+
+	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	{
+		args.Add( new VoidFunctionArgument( nameof( InputA ), nameof( DefaultInputA ), "$in0", VoidFunctionArgumentType.Input, ResultType.Float ) );
+		args.Add( new VoidFunctionArgument( nameof( OutA ), "$out0", VoidFunctionArgumentType.Output, ResultType.Vector2 ) );
+		args.Add( new VoidFunctionArgument( nameof( OutB ), "$out1", VoidFunctionArgumentType.Output, ResultType.Color ) );
+
+		functionName = $"TestFunc";
+		functionCall = $"{functionName}( {args[0].VarName}, {args[1].VarName}, {args[2].VarName} )";
 	}
 
 	[Output( typeof( Vector2 ) )]

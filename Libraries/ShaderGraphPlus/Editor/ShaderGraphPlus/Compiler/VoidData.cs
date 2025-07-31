@@ -20,6 +20,7 @@ internal struct TargetResultData : IValid
 
 internal struct VoidData : IValid
 {
+	internal Dictionary<(string targetProperty, string placeholderName), string> TargetProperties;
 	internal List<TargetResultData> TargetResults;
 	internal ResultType ResultType;
 	internal string FunctionCall;

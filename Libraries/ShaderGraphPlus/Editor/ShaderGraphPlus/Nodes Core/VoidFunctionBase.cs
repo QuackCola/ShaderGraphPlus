@@ -1,6 +1,47 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using ShaderGraphPlus.Diagnostics;
+using ShaderGraphPlus.Utilities;
+using Assert = ShaderGraphPlus.Diagnostics.Assert;
 
-public interface IVoidFunctionNode
+namespace ShaderGraphPlus.Nodes;
+
+public enum VoidFunctionArgumentType
+{
+	Input,
+	Output
+}
+
+public struct VoidFunctionArgument
+{
+	public string TargetProperty;
+	public string DefaultTargetProperty;
+	public ResultType ResultType;
+	public string VarName;
+	public VoidFunctionArgumentType ArgumentType;
+
+	public VoidFunctionArgument( string targetProperty, string varName, VoidFunctionArgumentType argumentType, ResultType resultType )
+	{
+		TargetProperty = targetProperty;
+		DefaultTargetProperty = "";
+		ArgumentType = argumentType;
+		ResultType = resultType;
+		VarName = varName;
+	}
+
+	public VoidFunctionArgument( string targetProperty, string defaultTargetProperty, string varName, VoidFunctionArgumentType argumentType, ResultType resultType )
+	: this( targetProperty, varName, argumentType, resultType )
+	{
+		if ( ArgumentType != VoidFunctionArgumentType.Input && !string.IsNullOrWhiteSpace( defaultTargetProperty )  )
+		{
+			EdtiorSound.OhFiddleSticks();
+			throw new Exception( $"`defaultTargetProperty` should not be set if the argument type is not an `{VoidFunctionArgumentType.Input}`" );
+		}
+
+		DefaultTargetProperty = !string.IsNullOrWhiteSpace( defaultTargetProperty ) ? defaultTargetProperty : "";
+	}
+
+}
+
+internal interface IVoidFunctionNode
 {
 	public void RegisterIncludes( GraphCompiler compiler );
 	public void RegisterVoidFunction( GraphCompiler compiler );
@@ -8,10 +49,11 @@ public interface IVoidFunctionNode
 
 public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 {
-	public virtual string FunctionName { get; }
-	public virtual string FunctionArgs { get; }
-
 	public virtual void RegisterIncludes( GraphCompiler compiler )
+	{
+	}
+
+	public virtual void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
 	{
 	}
 
@@ -23,27 +65,17 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return;
 		}
 
-		var outputProperties = GetNodeVoidFunctionOutputProperties( this.GetType() );
 		Dictionary<string, string> outputs = new();
+		var args = new List<VoidFunctionArgument>();
+		var functionName = "";
+		var functionCall = "";
+		BuildFunctionCall( ref args, ref functionName, ref functionCall );
 
-		var functionName = FunctionName;
-		var functionArgs = FunctionArgs;
+		Assert.CheckAreNotEqual( args.Count, 0, $"args.Count == {args.Count}" );
 
 		if ( !string.IsNullOrWhiteSpace( functionName ) )
 		{
-			foreach ( var property in outputProperties.Index() )
-			{
-				var attribute = property.Item.GetCustomAttribute<VoidFunctionOutputArgumentAttribute>();
-
-				if ( attribute is null )
-					continue;
-
-				functionArgs = functionArgs.Replace( attribute.VarName, property.Item.Name );
-	
-				outputs.Add( $"{property.Item.Name}", attribute.HLSLDataType );
-			}
-			
-			compiler.RegisterVoidFunction( functionName, functionArgs, outputs, Identifier, out var functionOutputs );
+			compiler.RegisterVoidFunction( functionCall, Identifier, args, out var functionOutputs );
 
 			foreach ( var funcOutput in functionOutputs )
 			{
@@ -55,8 +87,11 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 				}
 			}
 		}
+
+		Assert.CheckAreNotEqual( functionName, "", $"functionName is empty!" );
 	}
 
+	/*
 	internal static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
 	{
 		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
@@ -107,4 +142,5 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			VarName = varName;
 		}
 	}
+	*/
 }

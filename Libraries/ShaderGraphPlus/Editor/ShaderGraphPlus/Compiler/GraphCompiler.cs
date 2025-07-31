@@ -1,10 +1,11 @@
 using Editor;
-using Editor.NodeEditor;
+using Facepunch.ActionGraphs;
 using Microsoft.CodeAnalysis;
 using ShaderGraphPlus.Nodes;
+using ShaderGraphPlus.Utilities;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static ShaderGraphPlus.BaseNodePlus;
+using static Editor.Label;
 using static ShaderGraphPlus.Nodes.VoidFunctionBase;
 
 namespace ShaderGraphPlus;
@@ -159,6 +160,11 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
+	public void SetNodeError( BaseNodePlus node, string error )
+	{
+		NodeErrors.Add( node, [ error ] );
+	}
+
 	public void PreProcessVoidResult( VoidFunctionBase node, string nodeIdentifier, string funcName = "" )
 	{
 		if ( ShaderResult.VoidLocals.TryGetValue( nodeIdentifier, out VoidData data ) )
@@ -170,73 +176,94 @@ public sealed partial class GraphCompiler
 			}
 
 			var funcCall = data.FunctionCall;
-			var nodeInputPropertyInfos = VoidFunctionBase.GetNodeInputProperties( node.GetType() );
-
-			foreach ( var propertyInfo in nodeInputPropertyInfos )
+			//var nodeInputPropertyInfos = VoidFunctionBase.GetNodeInputProperties( node.GetType() );
+			
+			foreach ( var targetProperty in data.TargetProperties )
 			{
-				var voidFunctionInputAttribute = propertyInfo.GetCustomAttribute<VoidFunctionInputArgumentAttribute>();
-				var inputAttribute = propertyInfo.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-				var titleAttribute = propertyInfo.GetCustomAttribute<TitleAttribute>();
+				var property  = node.GetType().GetProperty( targetProperty.Key.targetProperty );
+				
+				if ( property == null && property.PropertyType != typeof( NodeInput ) )
+				{
+					SGPLog.Error( $"\"{property.PropertyType}\" is not of type \"{typeof( NodeInput )}\"" );
+					continue;
+				}
+
+				var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+				var titleAttribute = property.GetCustomAttribute<TitleAttribute>();
 
 				var title = "";
 				if ( titleAttribute is not null )
 				{
 					title = titleAttribute.Value;
 				}
-				
-				var nodeInput = (NodeInput)propertyInfo.GetValue( node, null );
+
+				SGPLog.Info( $"targetProperty `{targetProperty.Key.targetProperty}`", IsPreview );
+
+				var nodeInput = (NodeInput)property.GetValue( node, null );
 				var funcResult = new NodeResult();
-				object value = default;
-			
-				if ( !string.IsNullOrWhiteSpace( voidFunctionInputAttribute.VarDefault ) )
+				object defaultValue = EditorTypeLibrary.Create( inputAttribute.Type.Name, inputAttribute.Type );
+
+				PropertyInfo defaltPropertyInfo = node.GetType().GetProperty( targetProperty.Value );
+
+				if ( !string.IsNullOrWhiteSpace( targetProperty.Value ) )
 				{
-					var varDefaultProperty = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public )
-							.FirstOrDefault( property => property.Name == voidFunctionInputAttribute.VarDefault );
-
-					value = varDefaultProperty.GetValue( node );
-					
-					if ( varDefaultProperty != null )
+					if ( defaltPropertyInfo != null )
 					{
-						SGPLog.Info( $"Got default `{varDefaultProperty.Name}` with value `{value}`", IsPreview );
+						defaultValue = defaltPropertyInfo.GetValue( node );
 
-						if ( value.GetType() != inputAttribute.Type )
+						if ( defaultValue.GetType() != inputAttribute.Type )
 						{
-							NodeErrors.Add( node, new List<string>() { $"Default value `{varDefaultProperty.Name}` does not match type of `{title}` node input!" } );
+							EdtiorSound.OhFiddleSticks();
+							throw new Exception( $"Default value \"{targetProperty.Value}\" does not match type of \"{title}\" node input!" );
 						}
-
 					}
 					else
 					{
-						throw new Exception( $"Could not find property with the name `{voidFunctionInputAttribute.VarDefault}`" );
+						EdtiorSound.OhFiddleSticks();
+						throw new Exception( $"Could not find property with the name \"{targetProperty.Value}\"" );
 					}
-				}
-				else
-				{
-					value = EditorTypeLibrary.Create( inputAttribute.Type.Name, inputAttribute.Type );
 				}
 
 				switch ( inputAttribute.Type )
 				{
 					case Type t when t == typeof( bool ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( int ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( float ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( Vector2 ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( Vector3 ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( Vector4 ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( Color ):
-						funcResult = ResultOrDefault( nodeInput, value );
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Vector2Int ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Vector3Int ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Float2x2 ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Float3x3 ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Float4x4 ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
+						break;
+					case Type t when t == typeof( Gradient ):
+						funcResult = ResultOrDefault( nodeInput, defaultValue );
 						break;
 					case Type t when t == typeof( Sampler ):
 						funcResult = Result( nodeInput );
@@ -247,14 +274,18 @@ public sealed partial class GraphCompiler
 					case Type t when t == typeof( TextureCubeObject ):
 						funcResult = Result( nodeInput );
 						break;
+					default:
+						EdtiorSound.OhFiddleSticks();
+						throw new NotImplementedException( $"\"{inputAttribute.Type}\" is not implemented." );
+
 				}
 
 				if ( !funcResult.IsValid )
 				{
-					NodeErrors.Add( node, new List<string>() { $"Missing required input `{title}`." } );
+					NodeErrors.Add( node, [ $"Missing required input \"{title}\"." ] );
 				}
 
-				funcCall = funcCall.Replace( voidFunctionInputAttribute.VarName, funcResult.Code );
+				funcCall = funcCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
 			}
 
 			ShaderResult.VoidLocals[nodeIdentifier] = data with { FunctionCall = funcCall, AlreadyPostProcessed = true };
@@ -295,21 +326,28 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void RegisterVoidFunction( string functionName, string funcArgs, Dictionary<string, string> functionOutputs, string nodeID, out List<(string userAssigned, string compilerAssigned)> Outputs )
+	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> args, out List<(string userAssigned, string compilerAssigned)> Outputs )
 	{
 		List<TargetResultData> targetResults = new();
 		Outputs = new();
 
 		if ( !ShaderResult.VoidLocals.ContainsKey( nodeID ) )
 		{
-			// Assemble the function call
-			var funcCall = $"{functionName}( {funcArgs} )";
-			var oldFuncCall = funcCall;
-	
-			foreach ( var output in functionOutputs.Index() )
+			var funcCall = functionCall;
+			Dictionary<string, string> functionOutputs = new();
+			Dictionary<(string,string), string> targetProperties = new();
+
+			foreach ( var inputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Input ).Index() )
 			{
-				var userAssignedname = output.Item.Key;
-				var hlslType = output.Item.Value;
+				targetProperties.Add( ( inputArg.Item.TargetProperty, inputArg.Item.VarName ), inputArg.Item.DefaultTargetProperty );
+			}
+
+			foreach ( var outputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Output ).Index() )
+			{
+				funcCall = funcCall.Replace( outputArg.Item.VarName, outputArg.Item.TargetProperty );
+
+				var userAssignedname = outputArg.Item.TargetProperty;
+				var hlslType = outputArg.Item.ResultType.GetHLSLDataType();
 				var id = ShaderResult.VoidLocalCount++;
 				var varName = $"ol_{id}";
 				TargetResultData data = new();
@@ -320,18 +358,16 @@ public sealed partial class GraphCompiler
 				data.UserAssignedName = userAssignedname;
 				data.ResultType = GetResultTypeFromHLSLDataType( hlslType );
 
-				Outputs.Add( new ( userAssignedname, varName ) );
-
-				//SGPLog.Info( $"Adding TargetResultData entry with the following : CompilerName == {data.CompilerAssignedName}, UserAssignedName == {data.UserAssignedName}, ResultType == {data.ResultType}", IsPreview );
+				Outputs.Add( new( userAssignedname, varName ) );
 
 				targetResults.Add( data );
 			}
 
-			//SGPLog.Info( $"FuncCall `{oldFuncCall}` is now `{funcCall}`", IsPreview );
-
 			var voidData = new VoidData()
 			{
 				TargetResults = targetResults,
+
+				TargetProperties = targetProperties,
 				ResultType = ResultType.Invalid,
 				FunctionCall = funcCall,
 				AlreadyDefined = false,
@@ -339,16 +375,8 @@ public sealed partial class GraphCompiler
 				BoundNodeIdentifier = nodeID
 			};
 
-
-			SGPLog.Info( $"Adding new entry `{nodeID}` to ShaderResult.VoidLocals", IsPreview );
 			ShaderResult.VoidLocals.Add( nodeID, voidData );
 		}
-		
-		//if ( ShaderResult.VoidLocals.ContainsKey( nodeID ) )
-		//{
-		//	//var data = ShaderResult.VoidLocals[nodeID];
-		//	SGPLog.Info( $"Entry with key `{nodeID}` already exists!", IsPreview);
-		//}
 	}
 
 	internal string CustomCodeRegister( string functionName, string functionInputs, string nodeID, StringBuilder inlineCodeSb, Dictionary<string,string> outputResults, bool isInlineCode = false )
