@@ -12,17 +12,17 @@ public class ShaderGraphPlusView : GraphView
 
 	protected override string ViewCookie => _window?.AssetPath;
 
-    private static bool? _cachedConnectionStyle;
+	private static bool? _cachedConnectionStyle;
 
-    public static bool EnableGridAlignedWires
-    {
-        get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
-        set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
-    }
+	public static bool EnableGridAlignedWires
+	{
+		get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
+		set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
+	}
 
-    private ConnectionStyle _oldConnectionStyle;
+	private ConnectionStyle _oldConnectionStyle;
 
-    public new ShaderGraphPlus Graph
+	public new ShaderGraphPlus Graph
 	{
 		get => (ShaderGraphPlus)base.Graph;
 		set => base.Graph = value;
@@ -30,17 +30,44 @@ public class ShaderGraphPlusView : GraphView
 
 	private readonly Dictionary<string, INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
-    public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
-    ? GridConnectionStyle.Instance
-    : ConnectionStyle.Default;
+	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
+	? GridConnectionStyle.Instance
+	: ConnectionStyle.Default;
 
-    public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
+	public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
 	{
 		_window = window;
 		_undoStack = window.UndoStack;
 
 		OnSelectionChanged += SelectionChanged;
 	}
+
+	/*
+	protected override Pixmap CreateBackgroundPixmap()
+	{
+		var cs = new ComputeShader( "core/ShaderGraphPlus/graphView_grid_cs.shader" );
+		var texture = CreateTexture( "graphViewTex", 2048, 2048 );
+
+		cs.Attributes.Set( "TextureSize", new Vector2( texture.Width, texture.Height ) );
+		cs.Attributes.Set( "RWOutputTexture", texture );
+
+		cs.Dispatch( texture.Width, texture.Height, 1 );
+
+		var bitmap = texture.GetBitmap( 0 );
+
+		return Pixmap.FromBitmap( bitmap );
+	}
+
+
+	public static Texture CreateTexture( string name, int width, int height, ImageFormat imageFormat = ImageFormat.RGBA8888 )
+	{
+		return Texture.Create( width, height )
+		.WithName( name )
+		.WithUAVBinding()
+		.WithFormat( imageFormat )
+		.Finish();
+	}
+	*/
 
 	protected override INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
 	protected override INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
