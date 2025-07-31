@@ -475,32 +475,6 @@ public sealed partial class GraphCompiler
 	}
 
 	/// <summary>
-	/// Slightly tweaked version of the original. Only used by the Custom Expression node.
-	/// </summary>
-	internal string ResultFunctionCustomExpression( BaseNodePlus node, string code, string functionName, string args = "", bool includeFile = false )
-	{
-		var result = ShaderResult;
-
-		if ( !includeFile )
-		{
-			if ( !GraphHLSLFunctions.HasFunction( functionName ) )
-			{
-				GraphHLSLFunctions.RegisterFunction( functionName, code );
-			}
-			else
-			{
-				//SGPLog.Warning( $"Function `{functionName}` already registerd..." );
-			}
-		}
-		else
-		{
-			RegisterInclude( code );
-		}
-
-		return $"{functionName}( {args} )";
-	}
-
-	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
 	/// </summary>
 	public Gradient GetGradient( string gradient_name )
@@ -582,14 +556,7 @@ public sealed partial class GraphCompiler
 
 	internal bool CheckTextureInputRegistration( string name )
 	{
-		if ( !ShaderResult.TextureInputs.ContainsKey( name ) )
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return ShaderResult.TextureInputs.ContainsKey( name );
 	}
 
 	/// <summary>
@@ -674,27 +641,14 @@ public sealed partial class GraphCompiler
 			if ( Subgraph is not null )
 			{
 				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
-				var localSubResult =  Result( new()
+
+				return Result( new()
 				{
 					Identifier = input.Identifier,
 					Output = input.Output,
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
 				} );
-
-
-				//SGPLog.Info( $"Getting Subgraph Result of `{localSubResult.Code}`", IsPreview );
-
-
-				//return Result( new()
-				//{
-				//	Identifier = input.Identifier,
-				//	Output = input.Output,
-				//	Subgraph = Subgraph.Path,
-				//	SubgraphNode = nodeId
-				//} );
-
-				return localSubResult;
 			}
 
 			node = Graph.FindNode( input.Identifier );
