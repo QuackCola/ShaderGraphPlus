@@ -8,7 +8,20 @@ public class MissingNode : BaseNodePlus
 	public string Title { get; set; }
 
 	[Hide]
-	public string Content { get; set; }
+	private string _content = "";
+
+	[Hide]
+	public string Content
+	{
+		get => _content;
+		set
+		{
+			_content = value;
+			Paint.SetDefaultFont();
+			ContentSize = Paint.MeasureText( Content );
+			ExpandSize = new Vector3( 30, ContentSize.y + 16 );
+		}
+	}
 
 	[Hide]
 	Vector2 ContentSize = new();
@@ -16,21 +29,14 @@ public class MissingNode : BaseNodePlus
 	[Hide]
 	public override Color PrimaryColor => Theme.MultipleValues;
 
+	public MissingNode()
+	{
+	}
+
 	public MissingNode( string title, JsonElement json ) : base()
 	{
 		Title = title;
 		Content = json.ToString();
-
-		Paint.SetDefaultFont();
-		ContentSize = Paint.MeasureText( Content );
-		ExpandSize = new Vector3( 30, ContentSize.y + 16 );
-
-		InitPlugs( json );
-	}
-
-	private void InitPlugs( JsonElement json )
-	{
-
 	}
 
 	public override void OnPaint( Rect rect )
