@@ -3,7 +3,7 @@
 public interface IVoidFunctionNode
 {
 	public void RegisterIncludes( GraphCompiler compiler );
-	public void RegisterVoidFunction( GraphCompiler compiler, string functionName = "", string functionArgs = "" );
+	public void RegisterVoidFunction( GraphCompiler compiler );
 }
 
 public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
@@ -15,7 +15,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 	{
 	}
 
-	public void RegisterVoidFunction( GraphCompiler compiler, string functionName = "", string functionArgs = "" )
+	public void RegisterVoidFunction( GraphCompiler compiler )
 	{
 		if ( compiler.CheckIfVoidFunctionIsRegisterd( Identifier ) )
 		{
@@ -23,11 +23,11 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return;
 		}
 
-		var outputProperties = GetNodeProperties( this.GetType(), true );
+		var outputProperties = GetNodeVoidFunctionOutputProperties( this.GetType() );
 		Dictionary<string, string> outputs = new();
 
-		functionName = FunctionName;
-		functionArgs = FunctionArgs;
+		var functionName = FunctionName;
+		var functionArgs = FunctionArgs;
 
 		if ( !string.IsNullOrWhiteSpace( functionName ) )
 		{
@@ -57,24 +57,22 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 		}
 	}
 
-	public static IEnumerable<PropertyInfo> GetNodeProperties( Type type , bool output )
+	internal static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
 	{
-		if ( !output )
-		{
-			return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-				.Where( property => property.GetSetMethod() != null &&
-				property.PropertyType == typeof( NodeInput ) &&
-				property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) &&
-				property.IsDefined( typeof( VoidFunctionInputArgumentAttribute ), false )
-				);
-		}
-		else
-		{
-			return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-				.Where( property => property.GetSetMethod() != null &&
-				property.PropertyType == typeof( string ) &&
-				property.IsDefined( typeof( VoidFunctionOutputArgumentAttribute ), false ) );
-		}
+		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( property => property.GetSetMethod() != null &&
+			property.PropertyType == typeof( NodeInput ) &&
+			property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) &&
+			property.IsDefined( typeof( VoidFunctionInputArgumentAttribute ), false )
+			);
+	}
+
+	internal static IEnumerable<PropertyInfo> GetNodeVoidFunctionOutputProperties( Type type )
+	{
+		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
+			.Where( property => property.GetSetMethod() != null &&
+			property.PropertyType == typeof( string ) &&
+			property.IsDefined( typeof( VoidFunctionOutputArgumentAttribute ), false ) );
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]

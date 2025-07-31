@@ -29,22 +29,20 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[Hide]
 	public NodeResult.Func TextureSize => ( GraphCompiler compiler ) =>
 	{
-		//var textureObject = compiler.Result( TextureObject );
+		compiler.PreProcessVoidResult( this, Identifier );
 
-		//if ( textureObject.IsValid )
-		{
-			compiler.PreProcessVoidResult( this, Identifier );
-			return new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
-		}
-		//else
-		//{
-		//	return NodeResult.MissingInput( $"Tex Object" );
-		//}
+		if ( string.IsNullOrWhiteSpace( TextureObjectSize ) )
+			return NodeResult.Error( $"\"{nameof( TextureObjectSize )}\" property is empty!" );
+
+		return new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
 	};
-
 }
 
+/// <summary>
+/// Example node demonstrating how to setup a node that uses a void function.
+/// </summary>
 [Title( "TestFunc" ), Category( "Textures" ), Icon( "straighten" )]
+[Hide]
 public sealed class TestFuncNode : VoidFunctionBase
 {
 	[JsonIgnore, Hide]
@@ -83,7 +81,7 @@ public sealed class TestFuncNode : VoidFunctionBase
 		compiler.PreProcessVoidResult( this, Identifier );
 
 		if ( string.IsNullOrWhiteSpace( OutA ) )
-			return NodeResult.Error( $"`{nameof( OutA )}` property is empty!" );
+			return NodeResult.Error( $"\"{nameof( OutA )}\" property is empty!" );
 
 		return new NodeResult( ResultType.Vector2, OutA, constant: false );
 	};
@@ -96,7 +94,7 @@ public sealed class TestFuncNode : VoidFunctionBase
 		compiler.PreProcessVoidResult( this, Identifier );
 
 		if ( string.IsNullOrWhiteSpace( OutB ) )
-			return NodeResult.Error( $"`{nameof( OutB )}` property is empty!" );
+			return NodeResult.Error( $"\"{nameof( OutB )}\" property is empty!" );
 
 		return new NodeResult( ResultType.Color, OutB, constant: false );
 	};

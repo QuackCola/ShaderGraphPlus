@@ -170,7 +170,7 @@ public sealed partial class GraphCompiler
 			}
 
 			var funcCall = data.FunctionCall;
-			var nodeInputPropertyInfos = VoidFunctionBase.GetNodeProperties( node.GetType(), false );
+			var nodeInputPropertyInfos = VoidFunctionBase.GetNodeInputProperties( node.GetType() );
 
 			foreach ( var propertyInfo in nodeInputPropertyInfos )
 			{
