@@ -104,12 +104,6 @@ partial class ShaderGraphPlus
 		{
 			var typeName = element.GetProperty( "_class" ).GetString();
 
-			// Try and get the missing node from the Title if initial typeName is MissingNode.
-			if ( typeName == nameof( MissingNode ) )
-			{
-				typeName = element.GetProperty( nameof( MissingNode.Title ) ).GetString();
-			}
-
 			// Use the new typename if applicable.
 			if ( NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
 			{
