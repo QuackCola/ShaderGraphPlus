@@ -165,13 +165,13 @@ public sealed partial class GraphCompiler
 		NodeErrors.Add( node, [ error ] );
 	}
 
-	public void PreProcessVoidResult( VoidFunctionBase node, string nodeIdentifier, string funcName = "" )
+	internal void PostProcessVoidFunctionResult( VoidFunctionBase node, string funcName = "" )
 	{
-		if ( ShaderResult.VoidLocals.TryGetValue( nodeIdentifier, out VoidData data ) )
+		if ( ShaderResult.VoidLocals.TryGetValue( node.Identifier, out VoidData data ) )
 		{
 			if ( data.AlreadyPostProcessed )
 			{
-				SGPLog.Info( $"Already PostProcessed data `{nodeIdentifier}`", IsPreview );
+				SGPLog.Info( $"Already PostProcessed data `{node.Identifier}`", IsPreview );
 				return;
 			}
 
@@ -288,7 +288,7 @@ public sealed partial class GraphCompiler
 				funcCall = funcCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
 			}
 
-			ShaderResult.VoidLocals[nodeIdentifier] = data with { FunctionCall = funcCall, AlreadyPostProcessed = true };
+			ShaderResult.VoidLocals[node.Identifier] = data with { FunctionCall = funcCall, AlreadyPostProcessed = true };
 		}
 	}
 
@@ -821,11 +821,12 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		if ( node is IVoidFunctionNode IVoidFunctionNode )
+		if ( node is VoidFunctionBase VoidFunctionBase )
 		{
-			//SGPLog.Info( $"Encounterd IVoidFunctionNode Node", IsPreview );
-			IVoidFunctionNode.RegisterIncludes( this );
-			IVoidFunctionNode.RegisterVoidFunction( this );
+			VoidFunctionBase.Register( this );
+			VoidFunctionBase.RegisterVoidFunction( this );
+			
+			PostProcessVoidFunctionResult( VoidFunctionBase );
 		}
 
 		if ( node is CustomFunctionNode customFunctionNode )

@@ -43,13 +43,17 @@ public struct VoidFunctionArgument
 
 internal interface IVoidFunctionNode
 {
-	public void RegisterIncludes( GraphCompiler compiler );
+	public void Register( GraphCompiler compiler );
 	public void RegisterVoidFunction( GraphCompiler compiler );
 }
 
 public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 {
-	public virtual void RegisterIncludes( GraphCompiler compiler )
+	/// <summary>
+	/// Register anything that this node uses.
+	/// </summary>
+	/// <param name="compiler"></param>
+	public virtual void Register( GraphCompiler compiler )
 	{
 	}
 
