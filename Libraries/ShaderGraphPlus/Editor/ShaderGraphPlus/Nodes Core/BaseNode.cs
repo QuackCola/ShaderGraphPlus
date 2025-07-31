@@ -126,42 +126,6 @@ public abstract class BaseNodePlus : INode
 	public bool HasTitleBar => true;
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class IgnoreAttribute : Attribute
-	{
-		public IgnoreAttribute()
-		{
-		}
-	}
-
-	[System.AttributeUsage( AttributeTargets.Property )]
-	public class VoidFunctionDefaultAttribute : Attribute
-	{
-		public VoidFunctionDefaultAttribute()
-		{
-		}
-	}
-
-	[System.AttributeUsage( AttributeTargets.Property )]
-	public class VoidFunctionArgumentAttribute : Attribute
-	{
-		public string HLSLDataType;
-		public string VarName;
-		public string VarDefault;
-
-		public VoidFunctionArgumentAttribute( string hlslDataType, string varName, string varDefault  ) : this( hlslDataType, varName )
-		{
-			VarDefault = varDefault;
-		}
-
-		public VoidFunctionArgumentAttribute( string hlslDataType, string varName )
-		{
-			HLSLDataType = hlslDataType;
-			VarName = varName;
-		}
-
-	}
-
-	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputAttribute : Attribute
 	{
 		public System.Type Type;

@@ -23,9 +23,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return;
 		}
 
-		var inputProperties = GetNodeProperties( this.GetType(), false );
 		var outputProperties = GetNodeProperties( this.GetType(), true );
-		Dictionary<string, string> inputs = new();
 		Dictionary<string, string> outputs = new();
 
 		functionName = FunctionName;
@@ -35,7 +33,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 		{
 			foreach ( var property in outputProperties.Index() )
 			{
-				var attribute = property.Item.GetCustomAttribute<VoidFunctionArgumentAttribute>();
+				var attribute = property.Item.GetCustomAttribute<VoidFunctionOutputArgumentAttribute>();
 
 				if ( attribute is null )
 					continue;
@@ -44,8 +42,8 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 	
 				outputs.Add( $"{property.Item.Name}", attribute.HLSLDataType );
 			}
-
-			compiler.RegisterVoidFunction( functionName, functionArgs, inputs, outputs, Identifier, out var functionOutputs );
+			
+			compiler.RegisterVoidFunction( functionName, functionArgs, outputs, Identifier, out var functionOutputs );
 
 			foreach ( var funcOutput in functionOutputs )
 			{
@@ -66,14 +64,49 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 			return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 				.Where( property => property.GetSetMethod() != null &&
 				property.PropertyType == typeof( NodeInput ) &&
-				property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) );
+				property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) &&
+				property.IsDefined( typeof( VoidFunctionInputArgumentAttribute ), false )
+				);
 		}
 		else
 		{
 			return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 				.Where( property => property.GetSetMethod() != null &&
 				property.PropertyType == typeof( string ) &&
-				property.IsDefined( typeof( BaseNodePlus.VoidFunctionArgumentAttribute ), false ) );
+				property.IsDefined( typeof( VoidFunctionOutputArgumentAttribute ), false ) );
+		}
+	}
+
+	[System.AttributeUsage( AttributeTargets.Property )]
+	public sealed class VoidFunctionInputArgumentAttribute : Attribute
+	{
+		public string HLSLDataType;
+		public string VarName;
+		public string VarDefault;
+
+		public VoidFunctionInputArgumentAttribute( ResultType resultType, string varName, string varDefault ) : this( resultType, varName )
+		{
+			VarDefault = varDefault;
+		}
+
+		public VoidFunctionInputArgumentAttribute( ResultType resultType, string varName )
+		{
+			HLSLDataType = resultType.GetHLSLDataType();
+			VarName = varName;
+		}
+
+	}
+
+	[System.AttributeUsage( AttributeTargets.Property )]
+	public sealed class VoidFunctionOutputArgumentAttribute : Attribute
+	{
+		public string HLSLDataType;
+		public string VarName;
+
+		public VoidFunctionOutputArgumentAttribute( ResultType resultType, string varName )
+		{
+			HLSLDataType = resultType.GetHLSLDataType();
+			VarName = varName;
 		}
 	}
 }

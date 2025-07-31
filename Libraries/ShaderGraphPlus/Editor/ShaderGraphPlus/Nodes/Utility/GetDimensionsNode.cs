@@ -9,7 +9,7 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]
 	[Hide]
-	[VoidFunctionArgument( "Texture2D", "$in0" )]
+	[VoidFunctionInputArgument( ResultType.Texture2DObject, "$in0" )]
 	public NodeInput TextureObject { get; set; }
 
 	[JsonIgnore, Hide]
@@ -21,11 +21,8 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[JsonIgnore, Hide]
 	public override string FunctionArgs => $"$out0.x, $out0.y";
 
-	[JsonIgnore, Hide, VoidFunctionArgument( "float2", "$out0" )]
+	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Vector2, "$out0" )]
 	public string TextureObjectSize { get; set; } = "";
-
-	//[JsonIgnore, VoidFunctionDefault]
-	//public Vector2 DefaultVec2 { get; set; } = Vector2.Zero;
 
 	[Output( typeof( Vector2 ) )]
 	[Title( "Tex Size" )]
@@ -62,13 +59,13 @@ public sealed class TestFuncNode : VoidFunctionBase
 	[Title( "InA" )]
 	[Input( typeof( float ) )]
 	[Hide]
-	[VoidFunctionArgument( "float", "$in0", nameof( DefaultInputA ) )]
+	[VoidFunctionInputArgument( ResultType.Float, "$in0", nameof( DefaultInputA ) )]
 	public NodeInput InputA { get; set; }
 
-	[JsonIgnore, Hide, VoidFunctionArgument( "float2", "$out0" )]
+	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Vector2, "$out0" )]
 	public string OutA { get; set;} = "";
 	
-	[JsonIgnore, Hide, VoidFunctionArgument( "float4", "$out1" )]
+	[JsonIgnore, Hide, VoidFunctionOutputArgument( ResultType.Color, "$out1" )]
 	public string OutB { get; set; } = "";
 
 	public float DefaultInputA { get; set; } = 0.0f;

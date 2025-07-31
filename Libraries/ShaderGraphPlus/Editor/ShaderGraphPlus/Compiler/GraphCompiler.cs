@@ -5,6 +5,7 @@ using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
 using static ShaderGraphPlus.BaseNodePlus;
+using static ShaderGraphPlus.Nodes.VoidFunctionBase;
 
 namespace ShaderGraphPlus;
 
@@ -173,27 +174,24 @@ public sealed partial class GraphCompiler
 
 			foreach ( var propertyInfo in nodeInputPropertyInfos )
 			{
-				var voidFunctionArgAttribute = propertyInfo.GetCustomAttribute<VoidFunctionArgumentAttribute>();
+				var voidFunctionInputAttribute = propertyInfo.GetCustomAttribute<VoidFunctionInputArgumentAttribute>();
 				var inputAttribute = propertyInfo.GetCustomAttribute<BaseNodePlus.InputAttribute>();
 				var titleAttribute = propertyInfo.GetCustomAttribute<TitleAttribute>();
 
-				if ( voidFunctionArgAttribute is null )
-					continue;
-
-				if ( inputAttribute is null )
-					continue;
-
-				if ( titleAttribute is null )
-					continue;
-
+				var title = "";
+				if ( titleAttribute is not null )
+				{
+					title = titleAttribute.Value;
+				}
+				
 				var nodeInput = (NodeInput)propertyInfo.GetValue( node, null );
 				var funcResult = new NodeResult();
 				object value = default;
 			
-				if ( !string.IsNullOrWhiteSpace( voidFunctionArgAttribute.VarDefault ) )
+				if ( !string.IsNullOrWhiteSpace( voidFunctionInputAttribute.VarDefault ) )
 				{
 					var varDefaultProperty = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public )
-							.FirstOrDefault( property => property.Name == voidFunctionArgAttribute.VarDefault );
+							.FirstOrDefault( property => property.Name == voidFunctionInputAttribute.VarDefault );
 
 					value = varDefaultProperty.GetValue( node );
 					
@@ -203,13 +201,13 @@ public sealed partial class GraphCompiler
 
 						if ( value.GetType() != inputAttribute.Type )
 						{
-							NodeErrors.Add( node, new List<string>() { $"Default value `{varDefaultProperty.Name}` does not match type of `{titleAttribute.Value}` node input!" } );
+							NodeErrors.Add( node, new List<string>() { $"Default value `{varDefaultProperty.Name}` does not match type of `{title}` node input!" } );
 						}
 
 					}
 					else
 					{
-						throw new Exception( $"Could not find property with the name `{voidFunctionArgAttribute.VarDefault}`" );
+						throw new Exception( $"Could not find property with the name `{voidFunctionInputAttribute.VarDefault}`" );
 					}
 				}
 				else
@@ -253,15 +251,13 @@ public sealed partial class GraphCompiler
 
 				if ( !funcResult.IsValid )
 				{
-					NodeErrors.Add( node, new List<string>() { $"Missing required input `{titleAttribute.Value}`." } );
+					NodeErrors.Add( node, new List<string>() { $"Missing required input `{title}`." } );
 				}
 
-				funcCall = funcCall.Replace( voidFunctionArgAttribute.VarName, funcResult.Code );
+				funcCall = funcCall.Replace( voidFunctionInputAttribute.VarName, funcResult.Code );
 			}
 
-			data.FunctionCall = funcCall;
-			data.AlreadyPostProcessed = true;
-			ShaderResult.VoidLocals[nodeIdentifier] = data;
+			ShaderResult.VoidLocals[nodeIdentifier] = data with { FunctionCall = funcCall, AlreadyPostProcessed = true };
 		}
 	}
 
@@ -299,7 +295,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void RegisterVoidFunction( string functionName, string funcArgs, Dictionary<string, string> functionInputs, Dictionary<string, string> functionOutputs, string nodeID, out List<(string userAssigned, string compilerAssigned)> Outputs )
+	public void RegisterVoidFunction( string functionName, string funcArgs, Dictionary<string, string> functionOutputs, string nodeID, out List<(string userAssigned, string compilerAssigned)> Outputs )
 	{
 		List<TargetResultData> targetResults = new();
 		Outputs = new();

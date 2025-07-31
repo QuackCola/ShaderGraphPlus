@@ -426,8 +426,8 @@ public static class ResultTypeExtentions
 			case ResultType.TextureCubeObject:
 				return "TextureCube";
 			default:
-				return "float";
-				//throw new Exception( $"Unsupported ResultType `{resultType}`" );
+				//return "float";
+				throw new Exception( $"Unsupported ResultType `{resultType}`" );
 		}
 	}
 
