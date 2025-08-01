@@ -75,7 +75,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 		var functionCall = "";
 		BuildFunctionCall( ref args, ref functionName, ref functionCall );
 
-		Assert.CheckAreNotEqual( args.Count, 0, $"args.Count == {args.Count}" );
+		Assert.CheckAreNotEqual( args.Count, 0, $"args.Count == \"{args.Count}\"" );
 
 		if ( !string.IsNullOrWhiteSpace( functionName ) )
 		{
