@@ -1,11 +1,17 @@
-﻿using System.Text.Json.Nodes;
+﻿using ShaderGraphPlus;
+using ShaderGraphPlus.Nodes;
+using System.Text.Json.Nodes;
 
 
-//[JsonUpgrader( typeof( ShrimpleCharacterController ), 3 )]
-//private static void UpdateTraceShape( JsonObject json )
-//{
-//	if ( json.Remove( "CylinderTrace", out var newNode ) && newNode is JsonValue boolNode && boolNode.TryGetValue<bool>( out var isCylinder ) )
-//		json["TraceShape"] = isCylinder ? "Cylinder" : "Box";
-//	else
-//		json["TraceShape"] = "Box";
-//}
+
+
+
+internal static class JsonUpgraders
+{
+	[JsonUpgrader( typeof( SamplerNode ), 1 )]
+	private static void SamplerNodeUpgrader( JsonObject json )
+	{
+		SGPLog.Info( $"Upgrading SamplerNode" );
+	}
+
+}
