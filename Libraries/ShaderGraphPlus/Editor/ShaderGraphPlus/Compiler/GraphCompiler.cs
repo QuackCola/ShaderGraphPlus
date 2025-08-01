@@ -82,7 +82,7 @@ public sealed partial class GraphCompiler
 		public HashSet<string> Functions { get; private set; } = new();
 		public Dictionary<string, string> Globals { get; private set; } = new();
 		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
-		public List<VoidData> VoidLocalsNew { get; private set; } = new();
+		public List<VoidData> CustomCodeResults { get; private set; } = new();
 
 		public int VoidLocalCount { get; set; } = 0;
 		public string RepresentativeTexture { get; set; }
@@ -422,7 +422,7 @@ public sealed partial class GraphCompiler
 
 		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
 		{
-			ShaderResult.VoidLocalsNew.Add( voidData );
+			ShaderResult.CustomCodeResults.Add( voidData );
 		
 			return funcCall;
 		}
@@ -800,7 +800,7 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			var voidData = ShaderResult.VoidLocalsNew.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
+			var voidData = ShaderResult.CustomCodeResults.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
 			var userAssignedVariableName = input.Output;
 			var compilerAssignedVariableName = voidData.GetCompilerAssignedName( userAssignedVariableName );
 
@@ -1941,8 +1941,6 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				// TODO : Remove and just use VoidLocalsNew below.
-				//if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.Code ) )
 				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.TargetID ) )
 				{
 					//var data = ShaderResult.VoidLocals[result.funcResult.Code];
@@ -1964,7 +1962,6 @@ public sealed partial class GraphCompiler
 						//ShaderResult.VoidLocals[result.funcResult.Code] = newData;
 						ShaderResult.VoidLocals[result.funcResult.TargetID] = newData;
 
-
 						// Init all the output results.
 						foreach ( var outResult in data.TargetResults )
 						{
@@ -1976,9 +1973,9 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				if ( ShaderResult.VoidLocalsNew.Count > 0 && result.localResult.Metadata.Count > 0 )
+				if ( ShaderResult.CustomCodeResults.Count > 0 && result.localResult.Metadata.Count > 0 )
 				{
-					var voidData = ShaderResult.VoidLocalsNew
+					var voidData = ShaderResult.CustomCodeResults
 						.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetadataType.VoidResultUserDefinedName ) )
 						&& targetData.CompilerAssignedName == result.localResult.Code
 					) );
