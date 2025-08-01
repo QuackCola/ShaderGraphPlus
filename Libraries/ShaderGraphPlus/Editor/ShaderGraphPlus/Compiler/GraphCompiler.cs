@@ -468,24 +468,6 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	/// <summary>
-	/// Register a sampler and return the name of it
-	/// </summary>
-	public string ResultSampler( Sampler sampler, string samplerName )
-	{
-		var name = CleanName( samplerName );
-		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
-		var id = name;
-		var result = ShaderResult;
-
-		if ( !result.SamplerStates.ContainsKey( id ) )
-		{
-			result.SamplerStates.Add( id, sampler.SamplerState );
-		}
-
-		return $"g_s{id}";
-	}
-
 	public NodeResult ResultSamplerOrDefault( NodeInput sampler, Sampler defaultsampler, bool isAttribute = true )
 	{
 		if ( sampler.IsValid )
@@ -497,7 +479,6 @@ public sealed partial class GraphCompiler
 			var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
 
 			return ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
-			//return ResultSampler( defaultsampler, defaultSamplerName );
 		}
 	}
 
