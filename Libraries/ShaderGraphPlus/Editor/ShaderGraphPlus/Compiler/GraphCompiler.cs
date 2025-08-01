@@ -1,9 +1,9 @@
 using Editor;
 using Microsoft.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Text;
 using ShaderGraphPlus.Nodes;
 using ShaderGraphPlus.Utilities;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace ShaderGraphPlus;
 
@@ -34,6 +34,16 @@ public sealed partial class GraphCompiler
 		{ typeof( Float2x2 ), ( "float2x2", true ) },
 		{ typeof( Float3x3 ), ( "float3x3", true ) },
 		{ typeof( Float4x4 ), ( "float4x4", true ) },
+	};
+
+	/// <summary>
+	/// Types that have no defualts.
+	/// </summary>
+	public static HashSet<Type> NoDefaultValues => new()
+	{
+		{ typeof( Sampler ) },
+		{ typeof( Texture2DObject ) },
+		{ typeof( TextureCubeObject ) },
 	};
 
 	public bool Debug { get; private set; } = false;
@@ -157,24 +167,15 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	internal bool CheckIfVoidFunctionIsRegisterd( string nodeID )
-	{
-		return ShaderResult.VoidLocals.ContainsKey( nodeID );
-	}
-
 	internal void PostProcessVoidFunctionResult( VoidFunctionBase node, string funcName = "" )
 	{
 		if ( ShaderResult.VoidLocals.TryGetValue( node.Identifier, out VoidData data ) )
 		{
 			if ( data.AlreadyPostProcessed )
-			{
-				//SGPLog.Info( $"Already PostProcessed data `{node.Identifier}`", IsPreview );
 				return;
-			}
 
-			var funcCall = data.FunctionCall;
-			//var nodeInputPropertyInfos = VoidFunctionBase.GetNodeInputProperties( node.GetType() );
-			
+			var functionCall = data.FunctionCall;
+
 			foreach ( var targetProperty in data.TargetProperties )
 			{
 				var property  = node.GetType().GetProperty( targetProperty.Key.targetProperty );
@@ -200,13 +201,14 @@ public sealed partial class GraphCompiler
 				var funcResult = new NodeResult();
 				object defaultValue = EditorTypeLibrary.Create( inputAttribute.Type.Name, inputAttribute.Type );
 
-				PropertyInfo defaltPropertyInfo = node.GetType().GetProperty( targetProperty.Value );
+				PropertyInfo defaultPropertyInfo = node.GetType().GetProperty( targetProperty.Value );
 
+				// Check if we have a valid Default Value property name reference.
 				if ( !string.IsNullOrWhiteSpace( targetProperty.Value ) )
 				{
-					if ( defaltPropertyInfo != null )
+					if ( defaultPropertyInfo != null )
 					{
-						defaultValue = defaltPropertyInfo.GetValue( node );
+						defaultValue = defaultPropertyInfo.GetValue( node );
 
 						if ( defaultValue.GetType() != inputAttribute.Type )
 						{
@@ -221,60 +223,13 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				switch ( inputAttribute.Type )
+				if ( !NoDefaultValues.Contains( inputAttribute.Type ) )
 				{
-					case Type t when t == typeof( bool ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( int ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( float ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Vector2 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Vector3 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Vector4 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Color ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Vector2Int ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Vector3Int ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Float2x2 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Float3x3 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Float4x4 ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Gradient ):
-						funcResult = ResultOrDefault( nodeInput, defaultValue );
-						break;
-					case Type t when t == typeof( Sampler ):
-						funcResult = Result( nodeInput );
-						break;
-					case Type t when t == typeof( Texture2DObject ):
-						funcResult = Result( nodeInput );
-						break;
-					case Type t when t == typeof( TextureCubeObject ):
-						funcResult = Result( nodeInput );
-						break;
-					default:
-						EdtiorSound.OhFiddleSticks();
-						throw new NotImplementedException( $"\"{inputAttribute.Type}\" is not implemented." );
-
+					funcResult = ResultOrDefault( nodeInput, defaultValue );
+				}
+				else
+				{
+					funcResult = Result( nodeInput );
 				}
 
 				if ( !funcResult.IsValid )
@@ -282,10 +237,10 @@ public sealed partial class GraphCompiler
 					NodeErrors.Add( node, [ $"Missing required input \"{title}\"." ] );
 				}
 
-				funcCall = funcCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
+				functionCall = functionCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
 			}
 
-			ShaderResult.VoidLocals[node.Identifier] = data with { FunctionCall = funcCall, AlreadyPostProcessed = true };
+			ShaderResult.VoidLocals[node.Identifier] = data with { FunctionCall = functionCall, AlreadyPostProcessed = true };
 		}
 	}
 
@@ -768,8 +723,16 @@ public sealed partial class GraphCompiler
 		if ( node is VoidFunctionBase VoidFunctionBase )
 		{
 			VoidFunctionBase.Register( this );
-			VoidFunctionBase.RegisterVoidFunction( this );
-			
+
+			if ( !ShaderResult.VoidLocals.ContainsKey( VoidFunctionBase.Identifier ) )
+			{
+				VoidFunctionBase.RegisterVoidFunction( this );
+			}
+			else
+			{
+				//SGPLog.Info( $"Node with ID `{Identifier}` has already been registerd!", compiler.IsPreview );
+			}
+
 			PostProcessVoidFunctionResult( VoidFunctionBase );
 		}
 

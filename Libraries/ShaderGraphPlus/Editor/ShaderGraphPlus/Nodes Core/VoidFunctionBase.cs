@@ -63,16 +63,11 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 
 	public void RegisterVoidFunction( GraphCompiler compiler )
 	{
-		if ( compiler.CheckIfVoidFunctionIsRegisterd( Identifier ) )
-		{
-			SGPLog.Info( $"Node with ID `{Identifier}` has already been registerd!", compiler.IsPreview );
-			return;
-		}
-
 		Dictionary<string, string> outputs = new();
 		var args = new List<VoidFunctionArgument>();
 		var functionName = "";
 		var functionCall = "";
+
 		BuildFunctionCall( ref args, ref functionName, ref functionCall );
 
 		Assert.CheckAreNotEqual( args.Count, 0, $"args.Count == \"{args.Count}\"" );
