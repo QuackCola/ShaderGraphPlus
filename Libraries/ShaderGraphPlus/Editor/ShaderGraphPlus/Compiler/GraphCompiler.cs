@@ -471,7 +471,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a sampler and return the name of it
 	/// </summary>
-	public string ResultSampler( SamplerState sampler, string samplerName )
+	public string ResultSampler( Sampler sampler, string samplerName )
 	{
 		var name = CleanName( samplerName );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
@@ -480,7 +480,7 @@ public sealed partial class GraphCompiler
 
 		if ( !result.SamplerStates.ContainsKey( id ) )
 		{
-			result.SamplerStates.Add( id, sampler );
+			result.SamplerStates.Add( id, sampler.SamplerState );
 		}
 
 		return $"g_s{id}";
@@ -884,7 +884,9 @@ public sealed partial class GraphCompiler
 
 					if ( value is Sampler sampler )
 					{
-						globalName = ResultSampler( sampler.SamplerState, sampler.Name );
+						var defaultSamplerName = string.IsNullOrWhiteSpace( sampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : sampler.Name;
+						globalName = ResultParameter( defaultSamplerName, sampler, default, default, false, parameterNode.IsAttribute, default ).Code;
+
 						previewOverride = true;
 						setAttribute = false;
 					}
