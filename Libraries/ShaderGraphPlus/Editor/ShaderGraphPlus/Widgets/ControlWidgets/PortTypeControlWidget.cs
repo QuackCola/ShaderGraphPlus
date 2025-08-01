@@ -1,4 +1,5 @@
 ﻿using Editor;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -21,7 +22,7 @@ sealed class PortTypeControlWidget : DropdownControlWidget<string>
 			else if ( type.Key == typeof( int ) ) list.Add("int");
 			else if ( type.Key == typeof( bool ) ) list.Add("bool");
 			else if ( type.Key == typeof( Texture2DObject ) ) list.Add( "Texture2D" );
-			else if ( type.Key == typeof( Sampler ) ) list.Add( "Sampler" );
+			else if ( type.Key == typeof( Sampler ) ) list.Add( "SamplerState" );
 			else if ( type.Key == typeof( Float2x2 ) ) list.Add( "float2x2" );
 			else if ( type.Key == typeof( Float3x3 ) ) list.Add( "float3x3" );
 			else if ( type.Key == typeof( Float4x4 ) ) list.Add( "float4x4" );

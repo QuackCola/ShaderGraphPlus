@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus;
+﻿using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 public enum ResultType
 { 

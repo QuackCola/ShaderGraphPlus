@@ -16,6 +16,24 @@ public interface ISyncableTextureNode
 	void Sync( ISyncableTextureNode targetNode );
 }
 
+public struct Sampler
+{
+	public string Name { get; set; }
+
+	[InlineEditor( Label = false )]
+	public SamplerState SamplerState { get; set; }
+
+	public Sampler( string name, SamplerState samplerState )
+	{
+		Name = name;
+		SamplerState = samplerState;
+	}
+
+	public Sampler()
+	{
+	}
+}
+
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
 {
 	[Hide]
@@ -218,20 +236,9 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Hide]
 	public NodeInput TextureObject { get; set; }
 
-	//[InlineEditor( Label = false ), Group( "Sampler" )]
-	////[HideIf( nameof( IsSubgraph ), true )]
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	/// <summary>
 	/// RGBA color result
@@ -246,7 +253,7 @@ public sealed class TextureSampler : TextureSamplerBase
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureObject = compiler.Result( TextureObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var coords = compiler.Result( Coords );
 
 		if ( textureObject.IsValid )
@@ -407,20 +414,9 @@ public sealed class TextureCube : ShaderNodePlus
 	[ShowIf( nameof( ShowUIProperty ), true )]
 	public string Texture { get; set; }
 
-	//[InlineEditor( Label = false ), Group( "Sampler" )]
-	////[HideIf( nameof( IsSubgraph ), true )]
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	/// <summary>
 	/// Settings for how this texture shows up in material editor
@@ -472,7 +468,7 @@ public sealed class TextureCube : ShaderNodePlus
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureCubeObject = compiler.Result( TextureCubeObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var coords = compiler.Result( Coords );
 
 		if ( textureCubeObject.IsValid )
@@ -605,19 +601,9 @@ public sealed class TextureTriplanar : TextureSamplerBase
 	[Hide]
 	public NodeInput BlendFactor { get; set; }
 
-	//[InlineEditor( Label = false ), Group( "Sampler" )]
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	public float DefaultTile { get; set; } = 1.0f;
 
@@ -642,7 +628,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -810,16 +796,9 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 	//[InlineEditor( Label = false ), Group( "Sampler" )]
 	//public Sampler DefaultSampler { get; set; } = new Sampler();
 
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	public float DefaultTile { get; set; } = 1.0f;
 
@@ -839,7 +818,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -1398,20 +1377,9 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 		ExpandSize = new Vector2( 0, 8 );
 	}
 
-	//[InlineEditor( Label = false ), Group( "Sampler" )]
-	//[HideIf( nameof( IsSubgraph ), true )]
-	//public Sampler SamplerState { get; set; } = new Sampler();
-
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	public bool IsAttribute { get; set; } = false;
 
@@ -1422,9 +1390,9 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 		{
 			string name = $"{DisplayInfo.For( this ).Name}";
 
-			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( SamplerName ) )
+			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( SamplerState.Name ) )
 			{
-				return $"{name} ( {SamplerName} )";
+				return $"{name} ( {SamplerState.Name} )";
 			}
 			else if ( !IsSubgraph )
 			{
@@ -1469,7 +1437,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 
 	public object GetValue()
 	{
-		return new SamplerState();
+		return new Sampler();
 	}
 
 	public void SetValue( object val )
@@ -1491,6 +1459,6 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
 	{
-		return compiler.ResultParameter( SamplerName, SamplerState, default, default, false, IsAttribute, default );
+		return compiler.ResultParameter( SamplerState.Name, SamplerState, default, default, false, IsAttribute, default );
 	};
 }

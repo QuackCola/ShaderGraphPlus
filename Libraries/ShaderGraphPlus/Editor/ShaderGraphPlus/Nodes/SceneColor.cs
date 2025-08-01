@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using Sandbox.Rendering;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Color of the scene.
@@ -92,8 +94,8 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-	public SamplerAddress AddressU { get; set; } = SamplerAddress.Wrap;
-	public SamplerAddress AddressV { get; set; } = SamplerAddress.Wrap;
+	public TextureAddressMode AddressU { get; set; } = TextureAddressMode.Wrap;
+	public TextureAddressMode AddressV { get; set; } = TextureAddressMode.Wrap;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]

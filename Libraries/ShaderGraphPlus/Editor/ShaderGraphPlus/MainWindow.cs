@@ -486,9 +486,9 @@ public class MainWindow : DockWindow
 				_textureAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-			case SamplerState v:
-				_samplerStateAttributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+			case Sampler v:
+				_samplerStateAttributes.Add( name, v.SamplerState );
+				_preview?.SetAttribute( name, v.SamplerState );
 				break;
 			case Float2x2 v: // Stub - Quack
 				_float2x2Attributes.Add( name, v );

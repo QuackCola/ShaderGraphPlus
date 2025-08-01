@@ -87,16 +87,9 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 
 	public float DefaultSliceCount { get; set; } = 25.0f;
 	public float DefaultSliceDistance { get; set; } = 0.15f;
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	public string SamplerName { get; set; } = "";
 
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 
 	[Title( "Stock Texture Filtering" )]
@@ -117,7 +110,7 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 		var coords = compiler.Result( Coords );
 		var tangentviewdir = compiler.Result( TangentViewDir );
 		var textureobject = compiler.Result( TextureObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 
 
 		if ( !textureobject.IsValid )

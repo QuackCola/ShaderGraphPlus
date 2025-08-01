@@ -59,15 +59,8 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput BoarderThickness { get; set; }
 
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-	/// <summary>
-	/// Name of this sampler.
-	/// </summary>
-	[Title( "Name" ), Group( "Sampler" )]
-	public string SamplerName { get; set; } = "";
-
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	public SamplerState SamplerState { get; set; } = new SamplerState();
+	public Sampler SamplerState { get; set; } = new Sampler();
 	public Vector2 DefaultGridSize { get; set; } = new Vector2( 24.0f, 24.0f );
 	public float DefaultBoarderThickness { get; set; } = 0.420f;
 
@@ -101,7 +94,7 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		}
 		
 		string func = compiler.RegisterFunction( PixelPlot );
-		string funcCall = compiler.ResultFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, SamplerState, SamplerName )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
+		string funcCall = compiler.ResultFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, SamplerState )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
 		
 		return new NodeResult( ResultType.Color, funcCall );
     };
