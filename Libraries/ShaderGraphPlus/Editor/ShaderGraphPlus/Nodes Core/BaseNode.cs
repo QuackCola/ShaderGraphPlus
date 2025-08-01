@@ -106,6 +106,24 @@ public abstract class BaseNodePlus : INode
 		return null;
 	}
 
+	public virtual void DebugInfo( Menu menu )
+	{
+		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
+
+		var nodeIDLabel = menu.AddWidget( new Label( $"Node ID : {this.Identifier}" ) );
+		var previewIDLabel = menu.AddWidget( new Label( $"Preview ID : {this.PreviewID}" ) );
+		var isReachableLabel = menu.AddWidget( new Label( $"IsReachable? : {this.IsReachable}" ) );
+		var canPreviewLabel = menu.AddWidget( new Label( $"CanPreview? : {this.CanPreview}" ) );
+
+		if ( this.ComboSwitchInfo.IsValid )
+		{
+			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
+
+			var boundSwitchLabel = menu.AddWidget( new Label( $" BoundSwitch : {this.ComboSwitchInfo.BoundSwitch}" ) );
+			var boundSwitchLabelBlock = menu.AddWidget( new Label( $" BoundSwitchBlock : {this.ComboSwitchInfo.BoundSwitchBlock}" ) );
+		}
+	}
+
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual Pixmap Thumbnail { get; }
 

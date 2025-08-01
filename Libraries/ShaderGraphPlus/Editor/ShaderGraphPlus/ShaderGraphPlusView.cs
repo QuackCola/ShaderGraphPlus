@@ -132,36 +132,13 @@ public class ShaderGraphPlusView : GraphView
 
 			if ( item is null )
 				return;
-
-			var node = item.Node as BaseNodePlus;
-
-			if ( node != null )
+			
+			if ( item.Node is BaseNodePlus node && ConCommands.NodeDebugInfo )
 			{
 				menu.AddSeparator();
 
-				if ( ConCommands.NodeDebugInfo )
-				{
-					NodeDebugInfo( menu, node );
-				}
+				node.DebugInfo( menu );
 			}
-		}
-	}
-
-	private void NodeDebugInfo( Menu menu, BaseNodePlus node )
-	{
-		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
-
-		var nodeIDLabel = menu.AddWidget( new Label( $"Node ID : {node.Identifier}" ) );
-		var previewIDLabel = menu.AddWidget( new Label( $"Preview ID : {node.PreviewID}" ) );
-		var isReachableLabel = menu.AddWidget( new Label( $"IsReachable? : {node.IsReachable}" ) );
-		var canPreviewLabel = menu.AddWidget( new Label( $"CanPreview? : {node.CanPreview}" ) );
-
-		if ( node.ComboSwitchInfo.IsValid )
-		{
-			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
-
-			var boundSwitchLabel = menu.AddWidget( new Label( $" BoundSwitch : {node.ComboSwitchInfo.BoundSwitch}" ) );
-			var boundSwitchLabelBlock = menu.AddWidget( new Label( $" BoundSwitchBlock : {node.ComboSwitchInfo.BoundSwitchBlock}" ) );
 		}
 	}
 
