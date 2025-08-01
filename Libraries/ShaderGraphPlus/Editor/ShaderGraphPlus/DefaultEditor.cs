@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Sandbox.Rendering;
 using System.Text.Json;
 
 namespace ShaderGraphPlus;
@@ -86,8 +87,15 @@ public class DefaultEditor : ValueEditor
 				}
 				else
 				{
-					rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
-					val = rawVal?.ToString() ?? "";
+					if ( rawVal != null )
+					{
+						rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
+						val = rawVal?.ToString() ?? "";
+					}
+					else
+					{
+						val = "";
+					}
 				}
 			}
 		}

@@ -1,9 +1,8 @@
 ﻿
 using Editor;
-using Editor.NodeEditor;
-using Editor.ShaderGraph;
+using Sandbox.Rendering;
 using Sandbox.Resources;
-using System.Diagnostics.CodeAnalysis;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -58,6 +57,14 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 
 			CreateInputs();
 			CreateOutputs();
+
+			foreach ( var node in Subgraph.Nodes )
+			{
+				if ( node is SamplerNode samplerNode && DefaultValues.TryGetValue( $"__samp_{samplerNode.SamplerName}", out var defaultTexVal ) )
+				{
+					samplerNode.SamplerState = (SamplerState)defaultTexVal;
+				}
+			}
 
 			//foreach ( var node in Subgraph.Nodes )
 			//{
@@ -381,26 +388,26 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					attributes.ToArray()
 				) );
 			}
-			else if ( type == typeof( Sampler ) )
-			{
-				attributes.Add( new InlineEditorAttribute() { Label = false } );
-				properties.Add( EditorTypeLibrary.CreateProperty<Sampler>(
-					displayName, () =>
-					{
-						var val = getter();
-
-						if ( val is JsonElement el )
-						{
-							return JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() )!;
-						}
-
-						return (Sampler)val;
-					}, x => SetDefaultValue( name, x ),
-					attributes.ToArray()
-				) );
-
-				Sheet.AddGroup( displayName, properties.ToArray() );
-			}
+			//else if ( type == typeof( SamplerState ) )
+			//{
+			//	attributes.Add( new InlineEditorAttribute() { Label = false } );
+			//	properties.Add( EditorTypeLibrary.CreateProperty<SamplerState>(
+			//		displayName, () =>
+			//		{
+			//			var val = getter();
+			//
+			//			if ( val is JsonElement el )
+			//			{
+			//				return JsonSerializer.Deserialize<SamplerState>( el, ShaderGraphPlus.SerializerOptions() )!;
+			//			}
+			//
+			//			return (SamplerState)val;
+			//		}, x => SetDefaultValue( name, x ),
+			//		attributes.ToArray()
+			//	) );
+			//
+			//	Sheet.AddGroup( displayName, properties.ToArray() );
+			//}
 			else if ( type == typeof( Texture2DObject ) )
 			{
 				attributes.Add( new InlineEditorAttribute() { Label = false } );
@@ -423,6 +430,38 @@ internal class SubgraphNodeControlWidget : ControlWidget
 				) );
 			
 				Sheet.AddGroup( displayName, properties.ToArray() );
+			}
+		}
+
+		int defaultInt = 0;
+		foreach ( var node in Node.Subgraph.Nodes )
+		{
+			var properties = new List<SerializedProperty>();
+
+
+			if ( node is SamplerNode samplerNode )
+			{
+				var name = samplerNode.SamplerName;
+				var type = typeof( SamplerState );
+
+				if ( string.IsNullOrEmpty( name ) )
+				{
+					name = $"{type.Name}_{defaultInt}";
+					defaultInt++;
+				}
+
+				properties.Add( TypeLibrary.CreateProperty<SamplerState>(
+					$"Default {name}",
+					() => samplerNode.SamplerState,
+					x =>
+					{
+						samplerNode.SamplerState = x;
+						SetDefaultValue( $"__samp_{name}", x );
+					},
+					[new InlineEditorAttribute() { Label = false }]
+				) );
+
+				Sheet.AddGroup( $"Default {name}", properties.ToArray() );
 			}
 		}
 	}

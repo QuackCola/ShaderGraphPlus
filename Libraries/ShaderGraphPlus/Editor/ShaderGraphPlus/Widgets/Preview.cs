@@ -154,6 +154,11 @@ public class PreviewPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
+	public void SetAttribute( string id, in SamplerState value )
+	{
+		_preview.SetAttribute( id, value );
+	}
+
 	public void SetAttribute( string id, in Texture value )
 	{
 		_preview.SetAttribute( id, value );
@@ -364,7 +369,8 @@ public class Preview : SceneRenderingWidget
 	
 	private SceneModel _sceneObject;
 	private Throbber _thobber;
-	
+
+	private Dictionary<string, SamplerState> _samplerStateAttributes = new();
 	private Dictionary<string, Texture> _textureAttributes = new();
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private Dictionary<string, Float3x3> _float3x3Attributes = new();
@@ -594,6 +600,11 @@ public class Preview : SceneRenderingWidget
 
 			UpdateMaterial();
 
+			foreach ( var samplerState in _samplerStateAttributes )
+			{
+				_sceneObject.Attributes.Set( samplerState.Key, samplerState.Value );
+			}
+
 			foreach ( var texture in _textureAttributes )
 			{
 				_sceneObject.Attributes.Set( texture.Key, texture.Value );
@@ -675,6 +686,12 @@ public class Preview : SceneRenderingWidget
 		_sceneObject.Attributes.SetData( id, value );
 	}
 
+	public void SetAttribute( string id, SamplerState value )
+	{
+		_samplerStateAttributes.Add( id, value );
+		_sceneObject.Attributes.Set( id, value );
+	}
+
 	public void SetAttribute( string id, Texture value )
 	{
 		_textureAttributes.Add( id, value );
@@ -751,6 +768,7 @@ public class Preview : SceneRenderingWidget
 
 	public void ClearAttributes()
 	{
+		_samplerStateAttributes.Clear();
 		_textureAttributes.Clear();
 		_float2x2Attributes.Clear();
 		_float3x3Attributes.Clear();

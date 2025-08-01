@@ -1,5 +1,7 @@
 ﻿using Editor;
+using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
+using System.Collections.ObjectModel;
 
 namespace ShaderGraphPlus;
 
@@ -67,6 +69,7 @@ public class MainWindow : DockWindow
 	private bool _autoCompile = true;
 
 	private string _generatedCode;
+	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
 	private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private readonly Dictionary<string, Float3x3> _float3x3Attributes = new();
@@ -481,6 +484,10 @@ public class MainWindow : DockWindow
 				break;
 			case Texture v:
 				_textureAttributes.Add( name, v );
+				_preview?.SetAttribute( name, v );
+				break;
+			case SamplerState v:
+				_samplerStateAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
 			case Float2x2 v: // Stub - Quack
@@ -1173,6 +1180,7 @@ public class MainWindow : DockWindow
 
 	private void ClearAttributes()
 	{
+		_samplerStateAttributes.Clear();
 		_textureAttributes.Clear();
 		_float2x2Attributes.Clear();
 		_float3x3Attributes.Clear();
@@ -1514,7 +1522,7 @@ public class MainWindow : DockWindow
 		{
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
-		
+
 		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
 		//{
 		//	_preview.IsPostProcessShader = true;
@@ -1524,6 +1532,11 @@ public class MainWindow : DockWindow
 		//	_preview.IsPostProcessShader = false;
 		//}
 		
+		foreach ( var value in _samplerStateAttributes )
+		{
+			_preview.SetAttribute( value.Key, value.Value );
+		}
+
 		foreach ( var value in _textureAttributes )
 		{
 			_preview.SetAttribute( value.Key, value.Value );

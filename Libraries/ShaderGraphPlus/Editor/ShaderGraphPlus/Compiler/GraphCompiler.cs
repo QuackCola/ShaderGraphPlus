@@ -1,5 +1,6 @@
 using Editor;
 using Microsoft.CodeAnalysis;
+using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
 using ShaderGraphPlus.Utilities;
 using System.Runtime.CompilerServices;
@@ -84,7 +85,7 @@ public sealed partial class GraphCompiler
 		public List<(NodeResult localResult, NodeResult funcResult)> Results = new();
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
 
-		public Dictionary<string, Sampler> SamplerStates = new();
+		public Dictionary<string, SamplerState> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
 		public Dictionary<string, Gradient> Gradients = new();
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
@@ -470,31 +471,33 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a sampler and return the name of it
 	/// </summary>
-	public string ResultSampler( Sampler sampler )
+	public string ResultSampler( SamplerState sampler, string samplerName )
 	{
-		var name = CleanName( sampler.Name );
+		var name = CleanName( samplerName );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
 		var id = name;
 		var result = ShaderResult;
 
 		if ( !result.SamplerStates.ContainsKey( id ) )
 		{
-			result.SamplerStates.Add( id, sampler ); // Add the Name of the sampler and its associated options.
+			result.SamplerStates.Add( id, sampler );
 		}
 
 		return $"g_s{id}";
 	}
 
-	public string ResultSamplerOrDefault( NodeInput sampler, Sampler defaultsampler )
+	public NodeResult ResultSamplerOrDefault( NodeInput sampler, SamplerState defaultsampler, string defaultSamplerName, bool isAttribute = true )
 	{
 		if ( sampler.IsValid )
 		{
-			return Result( sampler ).Code;
+			return Result( sampler );
 		}
 		else
 		{
-			// Register the default sampler
-			return ResultSampler( defaultsampler );
+			defaultSamplerName = string.IsNullOrWhiteSpace( defaultSamplerName ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultSamplerName;
+
+			return ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
+			//return ResultSampler( defaultsampler, defaultSamplerName );
 		}
 	}
 
@@ -879,9 +882,9 @@ public sealed partial class GraphCompiler
 						return newResult;
 					}
 
-					if ( value is Sampler sampler )
+					if ( value is SamplerState sampler )
 					{
-						globalName = ResultSampler( sampler );
+						globalName = ResultSampler( sampler, "" );
 						previewOverride = true;
 						setAttribute = false;
 					}
@@ -1088,6 +1091,11 @@ public sealed partial class GraphCompiler
 	}
 
 
+	//public NodeResult ResultSampler( string name, SamplerState, bool isAttribute )
+	//{
+	//
+	//}
+
 	/// <summary>
 	/// Get result of a value that can be set in material editor
 	/// </summary>
@@ -1096,9 +1104,15 @@ public sealed partial class GraphCompiler
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
 			return ResultValue( value );
 
-		name = CleanName(name);
+		if ( value is not SamplerState )
+		{
+			name = CleanName( name );
+		}
+
 		var attribName = name;
 		var prefix = GetLocalPrefix( value );
+
+		SGPLog.Info( $"Name is {name}" );
 
 		if ( !name.StartsWith( prefix ) )
 			name = prefix + name;
@@ -1115,16 +1129,24 @@ public sealed partial class GraphCompiler
 		{
 			options.Write($"Attribute( \"{attribName}\" ); ");
 
-			if (value is bool boolValue)
+			if ( value is bool boolValue )
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
-			else
+			else if ( value is not SamplerState )
 			{
 				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
 		}
-		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
+		else if ( value is SamplerState samplerState )
+		{
+			options.Write( $" Filter( {samplerState.Filter.ToString().ToUpper()} );" );
+			options.Write( $" AddressU( {samplerState.AddressModeU.ToString().ToUpper()} );" );
+			options.Write( $" AddressV( {samplerState.AddressModeV.ToString().ToUpper()} );" );
+			options.Write( $" AddressW( {samplerState.AddressModeW.ToString().ToUpper()} );" );
+			options.Write( $" MaxAniso( {samplerState.MaxAnisotropy} );" );
+		}
+		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4  )
 		{
 			if (ui.Type != UIType.Default)
 			{
@@ -1164,6 +1186,11 @@ public sealed partial class GraphCompiler
 		else
 		{
 			ShaderResult.Parameters.Add( name, parameter );
+		}
+
+		if ( value is SamplerState samplerState1 )
+		{ 
+			ShaderResult.SamplerStates.Add( name, samplerState1 );
 		}
 
 		return parameter.Result;
@@ -1218,6 +1245,8 @@ public sealed partial class GraphCompiler
 		bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
 		name = isConstant ? $"g_{StageName}_{ShaderResult.Attributes.Count}" : name;
 
+		//SGPLog.Info( $"ResultValue name `{name}`" );
+
 		if ( isConstant )
 		{
 			if ( setAttribute )
@@ -1244,7 +1273,7 @@ public sealed partial class GraphCompiler
 			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}" ) : new NodeResult( ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
 			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}" ) : new NodeResult( ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )" ),
 			Float4x4 v => isNamed ? new NodeResult( ResultType.Float4x4, $"{value}" ) : new NodeResult( ResultType.Float4x4, $"float4x4( {v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44} )" ),
-			Sampler v => new NodeResult( ResultType.Sampler, $"{name}", true ),
+			SamplerState v => new NodeResult( ResultType.Sampler, $"{name}", true ),
 			TextureInput v => new NodeResult( ResultType.Texture2DObject, $"{name}", true ),
 			_ => throw new ArgumentException( $"Unsupported attribute type `{value.GetType()}`" )
 		};
@@ -1265,6 +1294,7 @@ public sealed partial class GraphCompiler
 			Float2x2 _ => "g_m",
 			Float3x3 _ => "g_m",
 			Float4x4 _ => "g_m",
+			SamplerState _ => "g_s",
 			_ => throw new ArgumentException( "Unsupported value type", nameof( value ) )
 		};
 
@@ -1327,9 +1357,9 @@ public sealed partial class GraphCompiler
 			{
 				value = el.GetBoolean();
 			}
-			else if ( type == typeof( Sampler ) )
+			else if ( type == typeof( SamplerState ) )
 			{
-				value = JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() );
+				value = JsonSerializer.Deserialize<SamplerState>( el, ShaderGraphPlus.SerializerOptions() );
 			}
 			else if ( type == typeof( Texture2DObject ) )
 			{
@@ -1340,7 +1370,7 @@ public sealed partial class GraphCompiler
 		return value;
 	}
 
-	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out (SubgraphNode,string) error)
+	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out ( SubgraphNode, string ) error)
 	{
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
@@ -1435,7 +1465,7 @@ public sealed partial class GraphCompiler
 			"float2x2" => ResultType.Float2x2,
 			"float3x3" => ResultType.Float3x3,
 			"float4x4" => ResultType.Float4x4,
-			"Sampler" => ResultType.Sampler,
+			"SamplerState" => ResultType.Sampler,
 			"Texture2D" => ResultType.Texture2DObject,
 			"TextureCube" => ResultType.TextureCubeObject,
 			_ => throw new ArgumentException( $"Unknown DataType `{DataType}`" )
@@ -1774,14 +1804,16 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( global.Value );
 		}
 		
-		foreach ( var Sampler in ShaderResult.SamplerStates )
-		{
-			sb.Append( $"{Sampler.Value.CreateSampler( Sampler.Key )} <" )
-			  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
-			  .Append( $" AddressU( {Sampler.Value.AddressU.ToString().ToUpper()} );" )
-			  .Append( $" AddressV( {Sampler.Value.AddressV.ToString().ToUpper()} ); >;" )
-			  .AppendLine();
-		}
+		//foreach ( var Sampler in ShaderResult.SamplerStates )
+		//{
+		//	sb.Append( $"SamplerState g_s{Sampler.Key} <" )
+		//	  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
+		//	  .Append( $" AddressU( {Sampler.Value.AddressModeU.ToString().ToUpper()} );" )
+		//	  .Append( $" AddressV( {Sampler.Value.AddressModeV.ToString().ToUpper()} );" )
+		//	  .Append( $" AddressW( {Sampler.Value.AddressModeW.ToString().ToUpper()} );" )
+		//	  .Append( $" MaxAniso( {Sampler.Value.MaxAnisotropy.ToString()} ); >;" )
+		//	  .AppendLine();
+		//}
 		
 		if ( IsPs )
 		{
@@ -1815,6 +1847,7 @@ public sealed partial class GraphCompiler
 					float _ => "float",
 					int _ => "float", // treat int internally as a float.
 					bool _ => "bool",
+					SamplerState _ => "SamplerState",
 					_ => null
 				};
 				

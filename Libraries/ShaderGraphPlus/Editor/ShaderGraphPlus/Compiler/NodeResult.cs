@@ -420,7 +420,7 @@ public static class ResultTypeExtentions
 			case ResultType.Gradient:
 				return "Gradient";
 			case ResultType.Sampler:
-				return "Sampler";
+				return "SamplerState";
 			case ResultType.Texture2DObject:
 				return "Texture2D";
 			case ResultType.TextureCubeObject:
