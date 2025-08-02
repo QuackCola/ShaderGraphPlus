@@ -1,6 +1,9 @@
 ﻿using Editor;
+using ShaderGraphPlus.Utilities;
 
 namespace ShaderGraphPlus.Diagnostics;
+
+#nullable enable
 
 public static class Assert
 {
@@ -72,5 +75,14 @@ public static class Assert
 		{
 			return false;
 		}
+	}
+}
+
+public static class Exeptions
+{
+	public static void SGPExeption( string? message )
+	{
+		EdtiorSound.OhFiddleSticks();
+		throw new Exception( message );
 	}
 }
