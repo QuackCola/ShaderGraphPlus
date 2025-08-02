@@ -1501,14 +1501,13 @@ public sealed partial class GraphCompiler
 		var alphaTest = blendMode == BlendMode.Masked ? 1 : 0;
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
 
-		sb.AppendLine($"#ifndef S_ALPHA_TEST");
 		sb.AppendLine( $"#ifndef S_ALPHA_TEST" );
 		sb.AppendLine( $"#define S_ALPHA_TEST {alphaTest}" );
 		sb.AppendLine( $"#endif" );
 
-		sb.AppendLine($"#ifndef S_TRANSLUCENT");
-		sb.AppendLine($"#define S_TRANSLUCENT {translucent}");
-		sb.AppendLine($"#endif");
+		sb.AppendLine( $"#ifndef S_TRANSLUCENT" );
+		sb.AppendLine( $"#define S_TRANSLUCENT {translucent}" );
+		sb.AppendLine( $"#endif" );
 
 		return sb.ToString();
 	}
@@ -1588,12 +1587,6 @@ public sealed partial class GraphCompiler
 			IndentString( pixelOutput, 2 )
 		);
 	}
-
-	//		sb.Append( entry.Value );
-	//	}
-	//
-	//	return sb.ToString();
-	//}
 
 	private static string GenerateFunctions( CompileResult result )
 	{
@@ -1766,11 +1759,7 @@ public sealed partial class GraphCompiler
 		{
 			sb.AppendLine( global.Value );
 		}
-		//	  .Append( $" AddressW( {Sampler.Value.AddressModeW.ToString().ToUpper()} );" )
-		//	  .Append( $" MaxAniso( {Sampler.Value.MaxAnisotropy.ToString()} ); >;" )
-		//	  .AppendLine();
-		//}
-		
+
 		if ( IsPs )
 		{
 			if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
@@ -1892,17 +1881,12 @@ public sealed partial class GraphCompiler
 
 				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.VoidLocalTargetID ) )
 				{
-					//var data = ShaderResult.VoidLocals[result.funcResult.Code];
 					var data = ShaderResult.VoidLocals[result.funcResult.VoidLocalTargetID];
 					sb.AppendLine();
 
 					if ( !data.AlreadyDefined )
 					{
-							BoundNodeIdentifier = data.BoundNodeIdentifier
-						};
-
-						//ShaderResult.VoidLocals[result.funcResult.Code] = newData;
-						ShaderResult.VoidLocals[result.funcResult.TargetID] = newData;
+						ShaderResult.VoidLocals[result.funcResult.VoidLocalTargetID] = data with { AlreadyDefined = true, InlineCode = false };
 
 						// Init all the output results.
 						foreach ( var outResult in data.TargetResults )
