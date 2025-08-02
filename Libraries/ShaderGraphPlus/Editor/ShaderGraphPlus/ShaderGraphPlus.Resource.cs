@@ -128,6 +128,7 @@ public partial class ShaderGraphPlus : IGraph
 
 	public ShaderGraphPlus()
 	{
+		SGPJsonUpgrader.UpdateUpgraders( EditorTypeLibrary );
 	}
 
 	public void AssignSwitchInfo( string name, GraphCompiler.ComboSwitchInfo info )

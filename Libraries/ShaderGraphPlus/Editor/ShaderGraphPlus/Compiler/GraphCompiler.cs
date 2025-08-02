@@ -1121,11 +1121,11 @@ public sealed partial class GraphCompiler
 		}
 		else if ( value is Sampler sampler )
 		{
-			options.Write( $" Filter( {sampler.SamplerState.Filter.ToString().ToUpper()} );" );
-			options.Write( $" AddressU( {sampler.SamplerState.AddressModeU.ToString().ToUpper()} );" );
-			options.Write( $" AddressV( {sampler.SamplerState.AddressModeV.ToString().ToUpper()} );" );
-			options.Write( $" AddressW( {sampler.SamplerState.AddressModeW.ToString().ToUpper()} );" );
-			options.Write( $" MaxAniso( {sampler.SamplerState.MaxAnisotropy} );" );
+			options.Write( $" Filter( {sampler.Filter.ToString().ToUpper()} );" );
+			options.Write( $" AddressU( {sampler.AddressModeU.ToString().ToUpper()} );" );
+			options.Write( $" AddressV( {sampler.AddressModeV.ToString().ToUpper()} );" );
+			options.Write( $" AddressW( {sampler.AddressModeW.ToString().ToUpper()} );" );
+			options.Write( $" MaxAniso( {sampler.MaxAnisotropy} );" );
 		}
 		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4  )
 		{
@@ -1171,7 +1171,7 @@ public sealed partial class GraphCompiler
 
 		if ( value is Sampler sampler1 )
 		{ 
-			ShaderResult.SamplerStates.Add( name, sampler1.SamplerState );
+			ShaderResult.SamplerStates.Add( name, (SamplerState)sampler1 );
 		}
 
 		return parameter.Result;

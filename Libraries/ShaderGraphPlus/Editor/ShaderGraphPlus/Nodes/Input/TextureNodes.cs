@@ -1,5 +1,4 @@
 ﻿using Editor;
-using Sandbox.Rendering;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -14,24 +13,6 @@ public interface ISyncableTextureNode
 	void Update();
 
 	void Sync( ISyncableTextureNode targetNode );
-}
-
-public struct Sampler
-{
-	public string Name { get; set; }
-
-	[InlineEditor( Label = false )]
-	public SamplerState SamplerState { get; set; }
-
-	public Sampler( string name, SamplerState samplerState )
-	{
-		Name = name;
-		SamplerState = samplerState;
-	}
-
-	public Sampler()
-	{
-	}
 }
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode

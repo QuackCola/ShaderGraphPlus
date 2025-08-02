@@ -487,8 +487,18 @@ public class MainWindow : DockWindow
 				_preview?.SetAttribute( name, v );
 				break;
 			case Sampler v:
-				_samplerStateAttributes.Add( name, v.SamplerState );
-				_preview?.SetAttribute( name, v.SamplerState );
+				//SamplerState samplerState = new SamplerState()
+				//{
+				//	Filter = v.Filter,
+				//	AddressModeU = v.AddressModeU,
+				//	AddressModeV = v.AddressModeV,
+				//	AddressModeW = v.AddressModeW,
+				//	MipLodBias = v.MipLodBias,
+				//	MaxAnisotropy = v.MaxAnisotropy,
+				//	BorderColor = v.BorderColor,
+				//};
+				_samplerStateAttributes.Add( name, (SamplerState)v );
+				_preview?.SetAttribute( name, (SamplerState)v );
 				break;
 			case Float2x2 v: // Stub - Quack
 				_float2x2Attributes.Add( name, v );
@@ -1393,7 +1403,24 @@ public class MainWindow : DockWindow
 				return false;
 		
 			// Write generated shader to file
-			System.IO.File.WriteAllText( shaderPath, code );
+			if ( System.IO.File.Exists( shaderPath ) )
+			{
+				FileInfo fileInfo = new FileInfo( shaderPath );
+
+				if ( !fileInfo.IsReadOnly )
+				{
+					System.IO.File.WriteAllText( shaderPath, code );
+				}
+				else
+				{
+					SGPLog.Warning( $"Asset at path \"{_asset.Path}\" is read only!" );
+				}
+			}
+			else
+			{
+				System.IO.File.WriteAllText( shaderPath, code );
+			}
+
 		}
 		
 		
