@@ -5,6 +5,7 @@ namespace ShaderGraphPlus;
 
 public interface ISGPJsonUpgradeable
 {
+	[JsonPropertyName( "__version" ), Hide]
 	public int Version { get; }
 }
 
