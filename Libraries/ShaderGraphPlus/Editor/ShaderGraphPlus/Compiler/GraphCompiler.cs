@@ -1,6 +1,7 @@
 using Editor;
 using Microsoft.CodeAnalysis;
 using Sandbox.Rendering;
+using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
 using ShaderGraphPlus.Utilities;
 using System.Runtime.CompilerServices;
@@ -213,14 +214,12 @@ public sealed partial class GraphCompiler
 
 						if ( defaultValue.GetType() != inputAttribute.Type )
 						{
-							EdtiorSound.OhFiddleSticks();
-							throw new Exception( $"Default value \"{targetProperty.Value}\" does not match type of \"{title}\" node input!" );
+							Exeptions.SGPExeption( $"Default value \"{targetProperty.Value}\" does not match type of \"{title}\" node input!" );
 						}
 					}
 					else
 					{
-						EdtiorSound.OhFiddleSticks();
-						throw new Exception( $"Could not find property with the name \"{targetProperty.Value}\"" );
+						Exeptions.SGPExeption( $"Could not find property with the name \"{targetProperty.Value}\"" );
 					}
 				}
 
