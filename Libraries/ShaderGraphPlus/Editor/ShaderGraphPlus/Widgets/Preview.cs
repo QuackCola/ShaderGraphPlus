@@ -27,7 +27,7 @@ public class Throbber : SceneCustomObject
 	public Throbber( SceneWorld sceneWorld, Preview preview ) : base( sceneWorld )
 	{
 		_preview = preview;
-		_texture = Texture.Load( Editor.FileSystem.Content, "tools/images/common/busy.png", true );
+		_texture = Texture.Load( "tools/images/common/busy.png", true );
 		Bounds = BBox.FromPositionAndSize( Vector3.Zero, float.MaxValue );
 	}
 
