@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
-using ShaderGraphPlus.Utilities;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -120,13 +119,8 @@ public sealed partial class GraphCompiler
 	public Action<string, object, bool> OnAttribute { get; set; }
 
 	// Init to 1, 0 is reserved.
-	public int PreviewID { get; set; } = 1;
+	public int PreviewID { get; internal set; } = 1;
 
-	//public List<int> ReservedPreviewIDs = new List<int>();
-
-	public int LastPreviewID { get; set; } = 0;
-
-	//public List<BaseNodePlus> Nodes { get; private set; } = new();
 	private List<NodeInput> InputStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
@@ -467,20 +461,6 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	public NodeResult ResultSamplerOrDefault( NodeInput sampler, Sampler defaultsampler, bool isAttribute = true )
-	{
-		if ( sampler.IsValid )
-		{
-			return Result( sampler );
-		}
-		else
-		{
-			var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
-
-			return ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
-		}
-	}
-
 	internal void RegisterSyncID( string syncID, string name )
 	{
 		if ( !SyncIDs.ContainsKey( syncID ) )
@@ -542,23 +522,42 @@ public sealed partial class GraphCompiler
 	}
 
 	/// <summary>
+	/// Get result of an input sampler with an optional default sampler if it failed to resolve
+	/// </summary>
+	public NodeResult ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultsampler, bool isAttribute = true )
+	{
+		var resultSampler = Result( samplerInput );
+
+		if ( resultSampler.IsValid )
+		{
+			
+			return resultSampler;
+		}
+		else
+		{
+	
+			var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
+
+			var result = ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
+			
+			if ( result.IsValid )
+			{
+				return result;
+			}
+			else
+			{
+				throw new Exception("default result is not valid");
+			}
+		}
+	}
+
+	/// <summary>
 	/// Get result of an input with an optional default value if it failed to resolve
 	/// </summary>
 	public NodeResult ResultOrDefault<T>( NodeInput input, T defaultValue )
 	{
 		var result = Result( input );
 		return result.IsValid ? result : ResultValue( defaultValue );
-	}
-
-	public void DepreciationWarning( BaseNodePlus node, string oldnode, string newnode )
-	{
-		var warnings = new List<string>();
-
-
-		//NodeErrors.Add( node, warnings );
-		NodeWarnings.Add(node, warnings);
-
-		warnings.Add($"'{oldnode}' is depreciated please use '{newnode}' instead.");
 	}
 
 	/// <summary>
@@ -594,7 +593,6 @@ public sealed partial class GraphCompiler
 			if ( subgraph is not null )
 			{
 				node = subgraph.FindNode( input.Identifier );
-				//SGPLog.Info( $"Getting Result of node `{node}` which belongs to subgraphNode with ID `{input.SubgraphNode}`", IsPreview );
 			}
 		}
 
@@ -640,10 +638,10 @@ public sealed partial class GraphCompiler
 				return exisitingResultSB;
 			}
 		}
-
 #endregion ComboSwitch Region
 		else
 		{
+
 			Graph.ClearSwitchInfo( input.Identifier );
 
 			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
@@ -721,7 +719,6 @@ public sealed partial class GraphCompiler
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			SGPLog.Info( $"input.Output == {input.Output}", IsPreview);
 			var funcResult = customFunctionNode.GetResult( this, nameof( MetadataType.VoidResultUserDefinedName ), input.Output );
 
 			if ( !funcResult.IsValid )
@@ -771,12 +768,10 @@ public sealed partial class GraphCompiler
 					if ( inputResult.Key.Identifier == input.Identifier )
 					{
 						InputStack.Remove( input );
-						SGPLog.Info( $"Getting preexisiting result!" , IsPreview);
 						return localResult;
 					}
 				}
 
-				//ShaderResult.VoidLocalCount++;
 				ShaderResult.InputResults.Add( input, localResult );
 				ShaderResult.Results.Add( (localResult, funcResult) );
 				
@@ -945,7 +940,7 @@ public sealed partial class GraphCompiler
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
-			funcResult.TargetID = node.Identifier;
+			funcResult.SetVoidLocalTargetID( node.Identifier );
 			funcResult.ShouldPreview = node.CanPreview;
 
 			if ( lastComboSwitchInfo.IsValid )
@@ -970,12 +965,12 @@ public sealed partial class GraphCompiler
 
 			if ( IsPreview && !IsInComboSwitch )
 			{
-				funcResult.PreviewID = node.PreviewID;
+				funcResult.SetPreviewID( node.PreviewID );
 			}
 
 			if ( subgraphResult )
 			{
-				funcResult.PreviewID = SubgraphNode.PreviewID;
+				funcResult.SetPreviewID( SubgraphNode.PreviewID );
 				//SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
 			}
 
@@ -1021,9 +1016,9 @@ public sealed partial class GraphCompiler
 			int id = IsInComboSwitch ? ShaderResult.SwitchBlockInputResults.Count : ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
 			var localResult = new NodeResult( funcResult.ResultType, varName, false, funcResult.Metadata );
+			localResult.SetPreviewID( funcResult.PreviewID );
+			localResult.SetVoidLocalTargetID( funcResult.VoidLocalTargetID );
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
-			localResult.PreviewID = funcResult.PreviewID;
-			localResult.TargetID = funcResult.TargetID;
 			localResult.ShouldPreview = funcResult.ShouldPreview;
 
 			if ( IsInComboSwitch && !ShaderResult.SwitchBlockInputResults.ContainsKey( input ) )
@@ -1071,12 +1066,6 @@ public sealed partial class GraphCompiler
 
 		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components ) ) );
 	}
-
-
-	//public NodeResult ResultSampler( string name, SamplerState, bool isAttribute )
-	//{
-	//
-	//}
 
 	/// <summary>
 	/// Get result of a value that can be set in material editor
@@ -1168,9 +1157,9 @@ public sealed partial class GraphCompiler
 			ShaderResult.Parameters.Add( name, parameter );
 		}
 
-		if ( value is Sampler sampler1 )
+		if ( value is Sampler samplerValue )
 		{ 
-			ShaderResult.SamplerStates.Add( name, (SamplerState)sampler1 );
+			ShaderResult.SamplerStates.Add( name, (SamplerState)samplerValue );
 		}
 
 		return parameter.Result;
@@ -1225,7 +1214,6 @@ public sealed partial class GraphCompiler
 		bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
 		name = isConstant ? $"g_{StageName}_{ShaderResult.Attributes.Count}" : name;
 
-		//SGPLog.Info( $"ResultValue name `{name}`" );
 
 		if ( isConstant )
 		{
@@ -1514,8 +1502,9 @@ public sealed partial class GraphCompiler
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
 
 		sb.AppendLine($"#ifndef S_ALPHA_TEST");
-		sb.AppendLine($"#define S_ALPHA_TEST {alphaTest}");
-		sb.AppendLine($"#endif");
+		sb.AppendLine( $"#ifndef S_ALPHA_TEST" );
+		sb.AppendLine( $"#define S_ALPHA_TEST {alphaTest}" );
+		sb.AppendLine( $"#endif" );
 
 		sb.AppendLine($"#ifndef S_TRANSLUCENT");
 		sb.AppendLine($"#define S_TRANSLUCENT {translucent}");
@@ -1600,12 +1589,6 @@ public sealed partial class GraphCompiler
 		);
 	}
 
-	//private static string GenerateFunctions( CompileResult result )
-	//{
-	//	var sb = new StringBuilder();
-	//
-	//	foreach ( var entry in result.Functions )
-	//	{
 	//		sb.Append( entry.Value );
 	//	}
 	//
@@ -1677,7 +1660,7 @@ public sealed partial class GraphCompiler
 		
 		foreach ( var include in pixelIncludes )
 		{
-			sb.AppendLine($"#include \"{include}\"");
+			sb.AppendLine( $"#include \"{include}\"" );
 		}
 		
 		sb.AppendLine();
@@ -1708,9 +1691,9 @@ public sealed partial class GraphCompiler
 			if ( resultNode == null )
 				return null;
 			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3( 1.0f, 1.0f, 1.0f )";
 			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
+			string opacity = opacityResult.Cast( 1 ) ?? "1.0f";
 		
 			return $"return float4( {albedo}, {opacity} );";
 		}
@@ -1783,13 +1766,6 @@ public sealed partial class GraphCompiler
 		{
 			sb.AppendLine( global.Value );
 		}
-		
-		//foreach ( var Sampler in ShaderResult.SamplerStates )
-		//{
-		//	sb.Append( $"SamplerState g_s{Sampler.Key} <" )
-		//	  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
-		//	  .Append( $" AddressU( {Sampler.Value.AddressModeU.ToString().ToUpper()} );" )
-		//	  .Append( $" AddressV( {Sampler.Value.AddressModeV.ToString().ToUpper()} );" )
 		//	  .Append( $" AddressW( {Sampler.Value.AddressModeW.ToString().ToUpper()} );" )
 		//	  .Append( $" MaxAniso( {Sampler.Value.MaxAnisotropy.ToString()} ); >;" )
 		//	  .AppendLine();
@@ -1878,10 +1854,7 @@ public sealed partial class GraphCompiler
 			foreach ( var parameter in ShaderResult.Parameters )
 			{
 				var resultType = parameter.Value.Result.ResultType;
-				//if ( resultType is ResultType.Float2x2 || resultType is ResultType.Float3x3 || resultType is ResultType.Float3x3 )
-				//{
-				//
-				//}
+
 				sb.AppendLine( $"{parameter.Value.Result.TypeName} {parameter.Key} < {parameter.Value.Options} >;" );
 			}
 		}
@@ -1917,21 +1890,14 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.TargetID ) )
+				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.VoidLocalTargetID ) )
 				{
 					//var data = ShaderResult.VoidLocals[result.funcResult.Code];
-					var data = ShaderResult.VoidLocals[result.funcResult.TargetID];
+					var data = ShaderResult.VoidLocals[result.funcResult.VoidLocalTargetID];
 					sb.AppendLine();
 
 					if ( !data.AlreadyDefined )
 					{
-						var newData = new VoidData()
-						{
-							TargetResults= data.TargetResults,
-							ResultType = data.ResultType,
-							FunctionCall = data.FunctionCall,
-							AlreadyDefined = true,
-							InlineCode = false,
 							BoundNodeIdentifier = data.BoundNodeIdentifier
 						};
 
@@ -1944,7 +1910,6 @@ public sealed partial class GraphCompiler
 							sb.AppendLine( IndentString( data.ResultInit( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
 						}
 
-						//sb.AppendLine( IndentString( data.ResultInit, indentLevel ) );
 						sb.AppendLine( IndentString( $"{data.FunctionCall};", indentLevel ) );
 					}
 				}
@@ -1979,12 +1944,8 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				//SGPLog.Info( $" result.Item2.ResultType == {result.Item2.ResultType}", IsPreview );
-
 				if ( result.funcResult.ResultType != ResultType.Void )
 				{
-					//sb.AppendLine( $"float4x4 {result.Item1} = float4x4( {result.Item2.Code} );" );
-
 					if ( result.funcResult.ResultType == ResultType.Float2x2
 					 || result.funcResult.ResultType == ResultType.Float3x3
 					 || result.funcResult.ResultType == ResultType.Float4x4 )
@@ -2177,8 +2138,8 @@ i.vPaintValues = v.vColorPaintValues;
 case MaterialDomain.PostProcess:
 				sb.AppendLine(@"
 PixelInput i;
-i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
-i.vPositionWs = float3(v.vTexCoord, 0.0f);
+i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
+i.vPositionWs = float3( v.vTexCoord, 0.0f );
 ");
 				break;
 		}

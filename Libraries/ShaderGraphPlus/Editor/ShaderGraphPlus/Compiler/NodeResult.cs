@@ -92,6 +92,8 @@ public struct NodeResult : IValid
 	public string[] Warnings { get; private init; }
 	public bool IsDepreciated { get; private set; }
 	public int Components { get; private set; }
+	public int PreviewID { get; private set; }
+	public string VoidLocalTargetID { get; private set; }
 
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
 
@@ -124,8 +126,6 @@ public struct NodeResult : IValid
 	public bool SkipLocalGeneration { get; set; } = false;
 	public string ImagePath { get; set; }
 	public bool Constant { get; set; }
-	public int PreviewID { get; set; }
-	public string TargetID { get; set; }
 	public bool ShouldPreview { get; set; }
 
 	/// <summary>
@@ -249,6 +249,9 @@ public struct NodeResult : IValid
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
+
+	public void SetPreviewID( int previewid ) { PreviewID = previewid; }
+	public void SetVoidLocalTargetID( string voidLocalTargetID ) { VoidLocalTargetID = voidLocalTargetID; }
 
 #region Metdata
 	internal T GetMetadata<T>( string metaName, bool ignoreException = false )
