@@ -309,7 +309,7 @@ public class FunctionOutput
 		}
 	}
 
-	[KeyProperty, Editor( "shadertype" ), JsonPropertyName( "Type" )]
+	[KeyProperty, Editor( "shadertypeplus" ), JsonPropertyName( "Type" )]
 	public string TypeName { get; set; }
 
 	public PreviewType Preview { get; set; }

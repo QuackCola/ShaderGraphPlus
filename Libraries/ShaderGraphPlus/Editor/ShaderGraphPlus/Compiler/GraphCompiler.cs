@@ -1,8 +1,11 @@
 using Editor;
+using Editor.ShaderGraph;
 using Microsoft.CodeAnalysis;
+using Sandbox;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -521,33 +524,67 @@ public sealed partial class GraphCompiler
 		return new( $"g_t{id}", samplerinput );
 	}
 
+	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
+	{
+		var name = CleanName( sampler.Name );
+		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
+		var id = name;
+
+		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+			return ResultValue( sampler ).Code;
+
+		if ( ShaderResult.SamplerStates.ContainsKey( id ) )
+		{
+
+		}
+		else
+		{
+			OnAttribute?.Invoke( id, sampler, false );
+
+			ShaderResult.SamplerStates.Add( id, (SamplerState)sampler );
+		}
+
+		return $"g_s{id}";
+	}
+
+	public string ResultSamplerOrDefault2( NodeInput samplerInput, Sampler defautlSampler )
+	{
+		var resultSampler = Result( samplerInput );
+
+		return resultSampler.IsValid ? resultSampler.Code : ResultSampler( defautlSampler );
+	}
+
+
 	/// <summary>
 	/// Get result of an input sampler with an optional default sampler if it failed to resolve
 	/// </summary>
-	public NodeResult ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultsampler, bool isAttribute = true )
+	public NodeResult ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultsampler, bool isAttribute = true, bool isSubgraph = false )
 	{
 		var resultSampler = Result( samplerInput );
 
 		if ( resultSampler.IsValid )
 		{
-			
 			return resultSampler;
 		}
 		else
 		{
-	
-			var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
+			//if ( !isSubgraph )
+			//{
+			//	var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
+			//
+			//	var result = ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
+			//
+			//	if ( result.IsValid )
+			//	{
+			//		return result;
+			//	}
+			//	else
+			//	{
+			//		throw new Exception( "default result is not valid" );
+			//	}
+			//}
 
-			var result = ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
-			
-			if ( result.IsValid )
-			{
-				return result;
-			}
-			else
-			{
-				throw new Exception("default result is not valid");
-			}
+			return default;
 		}
 	}
 
@@ -847,6 +884,24 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
+				if ( node is SubgraphInput subgraphInput )
+				{
+					SGPLog.Info( $"Node is Subgraph Input with name \"{subgraphInput.InputName}\" that is of type \"{subgraphInput.InputType}\"", IsPreview );
+				
+					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value );
+
+					if ( newResult.IsValid )
+					{
+						SGPLog.Info( $"SubgraphInputNode result is of resulttype \"{newResult.ResultType}\" with code \"{newResult.Code}\" ", IsPreview );
+
+						InputStack.Remove( input );
+						return newResult;
+					}
+					else
+					{
+						SGPLog.Warning( $"SubgraphInputNode result is not valid!" );
+					}
+				}
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
 				{
 					var newResult = ResolveParameterNode( parameterNode, ref value, out var error );
@@ -942,6 +997,8 @@ public sealed partial class GraphCompiler
 			var funcResult = resultFunc.Invoke( this );
 			funcResult.SetVoidLocalTargetID( node.Identifier );
 			funcResult.ShouldPreview = node.CanPreview;
+
+			SGPLog.Info( $"result from node \"{node}\"is of resulttype \"{funcResult.ResultType}\" with code \"{funcResult.Code}\" ", IsPreview );
 
 			if ( lastComboSwitchInfo.IsValid )
 			{
@@ -1154,6 +1211,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
+
 			ShaderResult.Parameters.Add( name, parameter );
 		}
 
@@ -1214,14 +1272,13 @@ public sealed partial class GraphCompiler
 		bool isNamed = isConstant || !string.IsNullOrWhiteSpace(name);
 		name = isConstant ? $"g_{StageName}_{ShaderResult.Attributes.Count}" : name;
 
-
 		if ( isConstant )
 		{
-			if ( setAttribute )
-			{
+			//if ( setAttribute )
+			//{
 				OnAttribute?.Invoke( name, value, false );
 				ShaderResult.Attributes[name] = value;
-			}
+			//}
 			//else if ( tex != null )
 			//{
 			//	OnAttribute?.Invoke( name, tex, false );
@@ -1337,6 +1394,71 @@ public sealed partial class GraphCompiler
 	
 		return value;
 	}
+
+	private NodeResult ResolveSubgraphInputNode( SubgraphInput inputNode, ref object value )
+	{
+		var lastStack = SubgraphStack.LastOrDefault();
+		var lastNodeEntered = lastStack.Item1;
+
+		SGPLog.Info( $"Last SubgraphNode is \"{lastNodeEntered?.SubgraphPath}\" " , IsPreview );
+
+		if ( lastNodeEntered != null )
+		{
+			var parentInput = lastNodeEntered.InputReferencesNew.FirstOrDefault( x => x.Key.Identifier == inputNode.InputName );
+
+			if ( parentInput.Key is not null )
+			{
+				//SGPLog.Info( $"parentInput.Key is \"{parentInput.Key}\" ", IsPreview );
+
+				var lastSubgraph = Subgraph;
+				var lastNode = SubgraphNode;
+				Subgraph = lastStack.Item2;
+				SubgraphNode = (Subgraph is null) ? null : lastNodeEntered;
+				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
+				
+				var connectedPlug = parentInput.Key.ConnectedOutput;
+
+
+				if ( connectedPlug is not null )
+				{
+					//SGPLog.Info( $"connectedPlug is \"{connectedPlug}\" ", IsPreview );
+
+
+
+					var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
+					var newResult = Result( new()
+					{
+						Identifier = connectedPlug.Node.Identifier,
+						Output = connectedPlug.Identifier,
+						Subgraph = Subgraph?.Path,
+						SubgraphNode = nodeId
+					} );
+					SubgraphStack.Add( lastStack );
+					Subgraph = lastSubgraph;
+					SubgraphNode = lastNode;
+
+					SGPLog.Info( $"Got Result from SubgraphInputNode of type \"{newResult.ResultType}\" with value \"{newResult.Code}\"" , IsPreview);
+
+					return newResult;
+
+					//return default( NodeResult );
+				}
+				else
+				{
+					SGPLog.Warning( $"connectedPlug is null", IsPreview );
+					// TODO 
+					//value = 0.0f;
+					value = GetDefaultValue( lastNodeEntered, inputNode.InputName, parentInput.Value.paramNodeValueType );
+					SubgraphStack.Add( lastStack );
+					Subgraph = lastSubgraph;
+					SubgraphNode = lastNode;
+				}
+			}
+		}
+
+		return default( NodeResult );
+	}
+
 
 	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out ( SubgraphNode, string ) error)
 	{
@@ -1777,7 +1899,12 @@ public sealed partial class GraphCompiler
 				  .Append( $" SrgbRead( {result.Value.SrgbRead} ); >;" )
 				  .AppendLine();
 			}
-		
+
+			//foreach ( var result in ShaderResult.SamplerStates )
+			//{
+			//	sb.AppendLine( $"SamplerState {result.Key} < Attribute( \"{result.Key}\" ); >;" );
+			//}
+
 			foreach ( var result in ShaderResult.Attributes )
 			{
 				if ( result.Value is Float2x2 || result.Value is Float3x3 || result.Value is Float4x4 )
@@ -1804,6 +1931,17 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
+			foreach ( var Sampler in ShaderResult.SamplerStates )
+			{
+				sb.Append( $"SamplerState g_s{Sampler.Key} <" )
+				  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
+				  .Append( $" AddressU( {Sampler.Value.AddressModeU.ToString().ToUpper()} );" )
+				  .Append( $" AddressV( {Sampler.Value.AddressModeV.ToString().ToUpper()} );" )
+				  .Append( $" AddressW( {Sampler.Value.AddressModeW.ToString().ToUpper()} );" )
+				  .Append( $" MaxAniso( {Sampler.Value.MaxAnisotropy.ToString()} ); >;" )
+				  .AppendLine();
+			}
+
 			foreach ( var result in ShaderResult.TextureInputs )
 			{
 				// If we're an attribute, we don't care about texture inputs

@@ -688,6 +688,8 @@ public class Preview : SceneRenderingWidget
 
 	public void SetAttribute( string id, SamplerState value )
 	{
+		//if ( _samplerStateAttributes.ContainsKey( id ) )
+		//	_samplerStateAttributes.Remove( id );
 		_samplerStateAttributes.Add( id, value );
 		_sceneObject.Attributes.Set( id, value );
 	}

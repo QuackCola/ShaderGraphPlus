@@ -30,6 +30,9 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public int PreviewID { get; set; }
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool Processed { get; set; } = false;
+
 	[Browsable( false )]
 	[JsonIgnore, Hide]
 	public IGraph Graph
@@ -430,36 +433,37 @@ public class PlugInfo
 	{
 		if ( Property is null )
 		{
-			if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
-			{
-				var entry = subgraphNode.InputReferences[plugIn.Inner];
-				var parameterNode = entry.paramNode;
-				var parameterType = entry.paramNodeValueType;
-				if ( parameterNode.UI.Type == UIType.Default ) return null;
-
-				if ( parameterType == typeof( float ) )
-				{
-					var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
-					slider.Bind( "Value" ).From( parameterNode, "Value" );
-
-					var rangeMin = parameterNode.GetRangeMin();
-					var rangeMax = parameterNode.GetRangeMax();
-					var rangeStep = parameterNode.UI.Step;
-
-					slider.Bind( "Min" ).FromObject( rangeMin.x );
-					slider.Bind( "Max" ).FromObject( rangeMax.x );
-					slider.Bind( "Step" ).FromObject( rangeStep );
-
-					return slider;
-				}
-				else if ( parameterType == typeof( Color ) )
-				{
-					var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
-					slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
-
-					return slider;
-				}
-			}
+			// TODO 
+			//if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
+			//{
+			//	var entry = subgraphNode.InputReferences[plugIn.Inner];
+			//	var parameterNode = entry.paramNode;
+			//	var parameterType = entry.paramNodeValueType;
+			//	if ( parameterNode.UI.Type == UIType.Default ) return null;
+			//
+			//	if ( parameterType == typeof( float ) )
+			//	{
+			//		var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+			//		slider.Bind( "Value" ).From( parameterNode, "Value" );
+			//
+			//		var rangeMin = parameterNode.GetRangeMin();
+			//		var rangeMax = parameterNode.GetRangeMax();
+			//		var rangeStep = parameterNode.UI.Step;
+			//
+			//		slider.Bind( "Min" ).FromObject( rangeMin.x );
+			//		slider.Bind( "Max" ).FromObject( rangeMax.x );
+			//		slider.Bind( "Step" ).FromObject( rangeStep );
+			//
+			//		return slider;
+			//	}
+			//	else if ( parameterType == typeof( Color ) )
+			//	{
+			//		var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+			//		slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
+			//
+			//		return slider;
+			//	}
+			//}
 
 			return null;
 		}

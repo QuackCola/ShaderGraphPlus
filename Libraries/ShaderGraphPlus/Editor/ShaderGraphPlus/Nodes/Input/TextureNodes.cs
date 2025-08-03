@@ -234,8 +234,10 @@ public sealed class TextureSampler : TextureSamplerBase
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureObject = compiler.Result( TextureObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
+		
 		var coords = compiler.Result( Coords );
+
+		//SGPLog.Info( $"IsSubgraph? : {IsSubgraph}" , compiler.IsPreview);
 
 		if ( textureObject.IsValid )
 		{
@@ -264,8 +266,8 @@ public sealed class TextureSampler : TextureSamplerBase
 			//	var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
 			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 			//}
-
-			var result = compiler.ResultTexture( sampler.Code, input, texture );
+			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+			var result = compiler.ResultTexture( sampler, input, texture );
 
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
@@ -290,8 +292,8 @@ public sealed class TextureSampler : TextureSamplerBase
 		// Either if the textureObject input is valid or we are in a Subgraph.
 		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
 		{
-			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
+			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview ); //&& ConCommands.TextureNodeDebug );
+			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
 				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
@@ -449,7 +451,7 @@ public sealed class TextureCube : ShaderNodePlus
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureCubeObject = compiler.Result( TextureCubeObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var coords = compiler.Result( Coords );
 
 		if ( textureCubeObject.IsValid )
@@ -472,7 +474,7 @@ public sealed class TextureCube : ShaderNodePlus
 		// If TextureCubeObject input is not valid and we are not in a SubGraph then register the texture here instead.
 		if ( !textureCubeObject.IsValid && !IsSubgraph )
 		{
-			var textureResult = compiler.ResultTexture( sampler.Code, input, Sandbox.Texture.Load( Texture ) );
+			var textureResult = compiler.ResultTexture( sampler, input, Sandbox.Texture.Load( Texture ) );
 
 			return new NodeResult( ResultType.Color, $"TexCubeS( {textureResult.TextureGlobal}," +
 				$" {textureResult.samplerGlobal}," +
@@ -609,7 +611,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -640,7 +642,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
 
-			var textureResult = compiler.ResultTexture( sampler.Code, input, texture );
+			var textureResult = compiler.ResultTexture( sampler, input, texture );
 
 			var result = compiler.ResultFunction( "TexTriplanar_Color",
 			textureResult.TextureGlobal,
@@ -799,7 +801,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -830,7 +832,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
 
-			var textureResult = compiler.ResultTexture( sampler.Code, input, texture );
+			var textureResult = compiler.ResultTexture( sampler, input, texture );
 
 			var result = compiler.ResultFunction( "TexTriplanar_Normal",
 			textureResult.TextureGlobal,
@@ -1440,6 +1442,8 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
 	{
+		//var sampler = compiler.ResultSampler( SamplerState, Processed );
+		//return new NodeResult( ResultType.Sampler, sampler, true );
 		return compiler.ResultParameter( SamplerState.Name, SamplerState, default, default, false, IsAttribute, default );
 	};
 }

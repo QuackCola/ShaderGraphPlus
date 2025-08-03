@@ -1,4 +1,6 @@
-﻿using ShaderGraphPlus.Nodes;
+﻿using Sandbox;
+using ShaderGraphPlus.Nodes;
+using System.Reflection;
 using System.Text.Json.Nodes;
 
 namespace ShaderGraphPlus;
@@ -66,14 +68,69 @@ partial class ShaderGraphPlus
 		return DeserializeNodes(doc.RootElement, SerializerOptions());
 	}
 
+	private static bool TryUpgradeProperty( JsonProperty jsonProperty, PropertyInfo propertyInfo, JsonSerializerOptions options, ref int oldVersionNumber, out JsonElement newElement )
+	{
+		//SGPLog.Info( $"Object of type \"{obj.GetType()}\" implements ISGPJsonUpgradeable" );
+
+		newElement = default( JsonElement );
+
+		var typeInstance = EditorTypeLibrary.Create( propertyInfo.PropertyType.Name, propertyInfo.PropertyType );
+
+		if ( typeInstance != null && typeInstance is ISGPJsonUpgradeable iSGPJsonUpgradeable )
+		{
+			//var versionNum = 0;
+			if ( jsonProperty.Value.TryGetProperty( "__version", out var version ) )
+			{
+				oldVersionNumber = version.GetInt32();
+			}
+
+			// Upgrade
+			if ( oldVersionNumber < iSGPJsonUpgradeable.Version )
+			{
+				var jsonObject = JsonNode.Parse( jsonProperty.Value.GetRawText() ) as JsonObject;
+
+				SGPJsonUpgrader.Upgrade( oldVersionNumber, jsonObject, propertyInfo.PropertyType );
+
+				newElement = JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString() );
+
+				//deserializedObject = JsonSerializer.Deserialize( upgradedElement.GetRawText(), propertyInfo.PropertyType, options );
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			throw new Exception( $"Couldnt create a type instance of type \"{propertyInfo.PropertyType.Name}\"" );
+		}
+	}
+
+	private static bool TryUpgradeElement( JsonElement jsonElement, JsonSerializerOptions options )
+	{
+		return true;
+	}
+
 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
 	{
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 		
-		foreach ( var nodeProperty in doc.EnumerateObject() )
+		//if ( obj is ISGPJsonUpgradeable upgradeable )
+		//{
+		//
+		//}
+
+		foreach ( var jsonProperty in doc.EnumerateObject() )
 		{
+			if ( obj is ShaderGraphPlus && obj is ISGPJsonUpgradeable upgradeable )
+			{
+				SGPLog.Info( $"\"{obj.GetType()}\" current version is \"{upgradeable.Version}\"" );
+			}
+
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
@@ -82,7 +139,7 @@ partial class ShaderGraphPlus
 				if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
 					propName = jpna.Name;
 			
-				return string.Equals( propName, nodeProperty.Name, StringComparison.OrdinalIgnoreCase );
+				return string.Equals( propName, jsonProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
 			
 			if ( prop == null )
@@ -99,6 +156,20 @@ partial class ShaderGraphPlus
 			// Handle any types that use the ISGPJsonUpgradeable interface
 			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( prop.PropertyType ) )
 			{
+				int oldVersionNumber = 0;
+				if ( TryUpgradeProperty( jsonProperty, prop, options, ref oldVersionNumber, out var newJsonElement ) )
+				{
+					deserializedObject = JsonSerializer.Deserialize( newJsonElement.GetRawText(), prop.PropertyType, options );
+					SGPLog.Info( $"Upgraded \"{prop.Name}\" of type \"{prop.PropertyType}\" from version \"{oldVersionNumber}\" to new version \"{((ISGPJsonUpgradeable)deserializedObject).Version}\"" );
+				}
+				else
+				{
+					deserializedObject = JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options );
+				}
+
+				/*
+				SGPLog.Info( $"Object of type \"{obj.GetType()}\" implamnets ISGPJsonUpgradeable" );
+
 				var typeInstance = EditorTypeLibrary.Create( prop.PropertyType.Name, prop.PropertyType );
 
 				if ( typeInstance != null && typeInstance is ISGPJsonUpgradeable iSGPJsonUpgradeable )
@@ -129,6 +200,7 @@ partial class ShaderGraphPlus
 				{
 					throw new Exception( $"Couldnt create a type instance of type \"{prop.PropertyType.Name}\"" );
 				}
+				*/
 			}
 
 			if ( deserializedObject != null )
@@ -137,7 +209,7 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				prop.SetValue( obj, JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options ) );
+				prop.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options ) );
 			}
 		}
 	}
@@ -283,7 +355,13 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-	
+
+
+		if ( obj is ISGPJsonUpgradeable upgradeable )
+		{
+			doc.Add( "__version", JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
+		}
+
 		foreach ( var property in properties )
 		{
 			if ( !property.CanRead)
@@ -307,6 +385,7 @@ partial class ShaderGraphPlus
 					propertyValue = newIdentifier;
 				}
 			}
+
 
 			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
 		}

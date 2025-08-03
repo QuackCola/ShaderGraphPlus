@@ -15,6 +15,7 @@ public partial class PaletteWidget : Widget
     {
 		Name = "Palette";
 		WindowTitle = "Palette";
+		IsSubgraph = isSubgraph;
 		SetWindowIcon( "palette" );
 
 		Layout = Layout.Column();
@@ -63,6 +64,7 @@ public partial class PaletteWidget : Widget
 				{
 					return false;
 				}
+				if ( !IsSubgraph && x.HasAttribute<SubgraphOnlyAttribute>() ) return false;
 				if ( !IsSubgraph && x.TargetType == typeof( FunctionResult ) )
 				{
 					return false;

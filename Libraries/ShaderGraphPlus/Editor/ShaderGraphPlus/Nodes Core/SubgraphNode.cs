@@ -77,13 +77,62 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 
 	[Hide, JsonIgnore]
 	internal Dictionary<IPlugIn, (IParameterNode paramNode, Type paramNodeValueType)> InputReferences = new();
+	[Hide, JsonIgnore]
+	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferencesNew = new();
+
 	public void CreateInputs()
 	{
 		var plugs = new List<IPlugIn>();
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
+		InputReferencesNew.Clear();
 
 		var parameterNodes = Subgraph.Nodes.OfType<IParameterNode>().OrderBy( x => x.PortOrder );
+		var subgraphInputNodes = Subgraph.Nodes.OfType<SubgraphInput>();
+
+		foreach ( var inputNode in subgraphInputNodes )
+		{
+			var inputName = inputNode.InputName;
+
+			if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
+
+			var type = inputNode.PortType;
+
+			var plugInfo = new PlugInfo()
+			{
+				Name = inputName,
+				Type = type,
+				DisplayInfo = new DisplayInfo()
+				{
+					Name = inputName,
+					Fullname = type.FullName,
+					Description = inputNode.InputDescription
+				}
+			};
+
+			var plug = new BasePlugIn( this, plugInfo, type );
+			var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == plugInfo.Name && plugIn.Info.Type == plugInfo.Type ) as BasePlugIn;
+			if ( oldPlug is not null )
+			{
+				oldPlug.Info.Name = plugInfo.Name;
+				oldPlug.Info.Type = plugInfo.Type;
+				oldPlug.Info.DisplayInfo = plugInfo.DisplayInfo;
+				plug = oldPlug;
+			}
+
+			plugs.Add( plug );
+
+			InputReferencesNew[plug] = (inputNode, type);
+
+			//if ( !DefaultValues.ContainsKey( plug.Identifier ) )
+			//{
+			//	if ( parameterNode.GetValue() != null )
+			//	{
+			//		DefaultValues[plug.Identifier] = parameterNode.GetValue();
+			//	}
+			//}
+
+		}
 
 		foreach ( var parameterNode in parameterNodes )
 		{

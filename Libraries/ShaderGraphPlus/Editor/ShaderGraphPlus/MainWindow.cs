@@ -497,6 +497,10 @@ public class MainWindow : DockWindow
 				//	MaxAnisotropy = v.MaxAnisotropy,
 				//	BorderColor = v.BorderColor,
 				//};
+
+				//if ( _samplerStateAttributes.ContainsKey( name ) )
+				//	_samplerStateAttributes.Remove( name );
+
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview?.SetAttribute( name, (SamplerState)v );
 				break;
@@ -611,6 +615,11 @@ public class MainWindow : DockWindow
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
+
+			if ( node is SamplerNode samplerNode )
+			{
+				samplerNode.Processed = true;
+			}
 
 #region ITextureParameterNode Region
 			if ( node is ITextureParameterNode textureParameterNodePost )
@@ -1514,8 +1523,17 @@ public class MainWindow : DockWindow
 		//_graphView.SetBackgroundImage( "toolimages:/grapheditor/grapheditorbackgroundpattern_shader.png" );
 		_graphView.BilinearFiltering = false;
 		
-		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-			.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
+		IOrderedEnumerable<TypeDescription> types = default;
+		if ( !IsSubgraph )
+		{
+			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
+				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && !x.HasAttribute<SubgraphOnlyAttribute>() ).OrderBy( x => x.Name );
+		}
+		else
+		{
+			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
+				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
+		}
 		
 		foreach ( var type in types )
 		{
