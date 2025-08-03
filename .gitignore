@@ -55,3 +55,4 @@ thumb_wide.psd
 *.py
 *.graphite
 /Assets/shaders/Tests
+/Screenshots
