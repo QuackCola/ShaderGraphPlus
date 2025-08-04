@@ -76,18 +76,15 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<IPlugIn, (IParameterNode paramNode, Type paramNodeValueType)> InputReferences = new();
-	[Hide, JsonIgnore]
-	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferencesNew = new();
+	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
 
 	public void CreateInputs()
 	{
 		var plugs = new List<IPlugIn>();
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
-		InputReferencesNew.Clear();
 
-		var parameterNodes = Subgraph.Nodes.OfType<IParameterNode>().OrderBy( x => x.PortOrder );
+		//var parameterNodes = Subgraph.Nodes.OfType<IParameterNode>().OrderBy( x => x.PortOrder );
 		var subgraphInputNodes = Subgraph.Nodes.OfType<SubgraphInput>();
 
 		foreach ( var inputNode in subgraphInputNodes )
@@ -122,7 +119,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 
 			plugs.Add( plug );
 
-			InputReferencesNew[plug] = (inputNode, type);
+			InputReferences[plug] = (inputNode, type);
 
 			//if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			//{
@@ -134,53 +131,53 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 
 		}
 
-		foreach ( var parameterNode in parameterNodes )
-		{
-			var name = parameterNode.Name;
-			if ( string.IsNullOrWhiteSpace( name ) ) continue;
-
-			var type = parameterNode.GetPortType();
-
-			if ( string.IsNullOrEmpty( name ) )
-			{
-				if ( !defaults.ContainsKey( type ) )
-				{
-					defaults[type] = 0;
-				}
-				name = $"{type.Name}_{defaults[type]}";
-				defaults[type]++;
-			}
-
-			var info = new PlugInfo()
-			{
-				Name = name,
-				Type = type,
-				DisplayInfo = new DisplayInfo()
-				{
-					Name = name,
-					Fullname = type.FullName
-				}
-			};
-			var plug = new BasePlugIn( this, info, type );
-			var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == info.Name && plugIn.Info.Type == info.Type ) as BasePlugIn;
-			if ( oldPlug is not null )
-			{
-				oldPlug.Info.Name = info.Name;
-				oldPlug.Info.Type = info.Type;
-				oldPlug.Info.DisplayInfo = info.DisplayInfo;
-				plug = oldPlug;
-			}
-			plugs.Add( plug );
-			InputReferences[plug] = (parameterNode, type);
-
-			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
-			{
-				if ( parameterNode.GetValue() != null )
-				{
-					DefaultValues[plug.Identifier] = parameterNode.GetValue();
-				}
-			}
-		}
+		//foreach ( var parameterNode in parameterNodes )
+		//{
+		//	var name = parameterNode.Name;
+		//	if ( string.IsNullOrWhiteSpace( name ) ) continue;
+		//
+		//	var type = parameterNode.GetPortType();
+		//
+		//	if ( string.IsNullOrEmpty( name ) )
+		//	{
+		//		if ( !defaults.ContainsKey( type ) )
+		//		{
+		//			defaults[type] = 0;
+		//		}
+		//		name = $"{type.Name}_{defaults[type]}";
+		//		defaults[type]++;
+		//	}
+		//
+		//	var info = new PlugInfo()
+		//	{
+		//		Name = name,
+		//		Type = type,
+		//		DisplayInfo = new DisplayInfo()
+		//		{
+		//			Name = name,
+		//			Fullname = type.FullName
+		//		}
+		//	};
+		//	var plug = new BasePlugIn( this, info, type );
+		//	var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == info.Name && plugIn.Info.Type == info.Type ) as BasePlugIn;
+		//	if ( oldPlug is not null )
+		//	{
+		//		oldPlug.Info.Name = info.Name;
+		//		oldPlug.Info.Type = info.Type;
+		//		oldPlug.Info.DisplayInfo = info.DisplayInfo;
+		//		plug = oldPlug;
+		//	}
+		//	plugs.Add( plug );
+		//	InputReferences[plug] = (parameterNode, type);
+		//
+		//	if ( !DefaultValues.ContainsKey( plug.Identifier ) )
+		//	{
+		//		if ( parameterNode.GetValue() != null )
+		//		{
+		//			DefaultValues[plug.Identifier] = parameterNode.GetValue();
+		//		}
+		//	}
+		//}
 
 		InternalInputs = plugs;
 	}
@@ -189,26 +186,24 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 	internal Dictionary<IPlugOut, IPlugIn> OutputReferences = new();
 	public void CreateOutputs()
 	{
-		var resultNode = Subgraph.Nodes.OfType<FunctionResult>().FirstOrDefault();
-		if ( resultNode is null ) return;
+		var subgraphOutputNodes = Subgraph.Nodes.OfType<SubgraphOutput>();
+		if ( subgraphOutputNodes is null ) return;
 
 		var plugs = new List<IPlugOut>();
-		foreach ( var output in resultNode.FunctionOutputs.OrderBy( x => x.Priority ) )
+		foreach ( var output in subgraphOutputNodes )
 		{
-			var outputType = output.Type;
-			if ( outputType == typeof( ColorTextureGenerator ) )
-			{
-				outputType = typeof( Color );
-			}
+			var outputType = output.SubgraphFunctionOutput.Type;
+
 			if ( outputType is null ) continue;
 			var info = new PlugInfo()
 			{
-				Name = output.Name,
+				Name = output.SubgraphFunctionOutput.OutputName,
 				Type = outputType,
 				DisplayInfo = new DisplayInfo()
 				{
-					Name = output.Name,
-					Fullname = outputType.FullName
+					Name = output.SubgraphFunctionOutput.OutputName,
+					Fullname = outputType.FullName,
+					Description = output.SubgraphFunctionOutput.OutputDescription
 				}
 			};
 			var plug = new BasePlugOut( this, info, outputType );
@@ -246,17 +241,17 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 			}
 		}
 
-		foreach ( var input in InputReferences )
-		{
-			var plug = input.Key;
-			var parameterNode = input.Value.paramNode;
-			var inputName = parameterNode.Name;
-			if ( string.IsNullOrWhiteSpace( inputName ) ) inputName = input.Key.DisplayInfo.Name;
-			if ( parameterNode.IsAttribute && plug.ConnectedOutput is null )
-			{
-				errors.Add( $"Required Input \"{inputName}\" is missing on Node \"{Subgraph.Title}\"" );
-			}
-		}
+		//foreach ( var input in InputReferences )
+		//{
+		//	var plug = input.Key;
+		//	var parameterNode = input.Value.paramNode;
+		//	var inputName = parameterNode.Name;
+		//	if ( string.IsNullOrWhiteSpace( inputName ) ) inputName = input.Key.DisplayInfo.Name;
+		//	if ( parameterNode.IsAttribute && plug.ConnectedOutput is null )
+		//	{
+		//		errors.Add( $"Required Input \"{inputName}\" is missing on Node \"{Subgraph.Title}\"" );
+		//	}
+		//}
 
 		return errors;
 	}
@@ -303,6 +298,8 @@ internal class SubgraphNodeControlWidget : ControlWidget
 	{
 		Sheet.Clear( true );
 
+		// TODO
+		/*
 		foreach ( var inputRef in Node.InputReferences )
 		{
 			if ( inputRef.Value.paramNode.IsAttribute ) continue;
@@ -473,6 +470,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 				Sheet.AddGroup( displayName, properties.ToArray() );
 			}
 		}
+		*/
 	}
 
 	private void SetDefaultValue( string name, object value )

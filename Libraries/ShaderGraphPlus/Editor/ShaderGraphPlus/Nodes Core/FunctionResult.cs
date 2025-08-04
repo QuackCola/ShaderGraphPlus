@@ -14,7 +14,7 @@ public interface IErroringNode
 /// <summary>
 /// Final result
 /// </summary>
-[Title( "Result" ), Icon( "output" )]
+[Title( "Result" ), Icon( "output" ), Hide]
 public sealed class FunctionResult : BaseResult, IErroringNode
 {
 	[Title( "Outputs" )]
@@ -25,6 +25,9 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 
 	[Hide]
 	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+
+	[Hide, JsonIgnore]
+	public override bool CanAddToGraph => false;
 
 	[Hide, JsonIgnore]
 	int _lastHashCode = 0;
@@ -241,11 +244,11 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 			var opacityResult = GetOpacityResult( compiler );
 			sb.AppendLine( $"m.Opacity = {opacityResult.Cast( 1 )};" );
 		}
-		if ( !visited.Contains( "Normal" ) )
-		{
-			var normalResult = GetNormalResult( compiler );
-			sb.AppendLine( $"m.Normal = {normalResult.Cast( 3 )};" );
-		}
+		//if ( !visited.Contains( "Normal" ) )
+		//{
+		//	var normalResult = GetNormalResult( compiler );
+		//	sb.AppendLine( $"m.Normal = {normalResult.Cast( 3 )};" );
+		//}
 		if ( !visited.Contains( "Roughness" ) )
 		{
 			var roughnessResult = GetRoughnessResult( compiler );
@@ -285,6 +288,8 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 		return null;
 	}
 }
+
+
 
 public class FunctionOutput
 {

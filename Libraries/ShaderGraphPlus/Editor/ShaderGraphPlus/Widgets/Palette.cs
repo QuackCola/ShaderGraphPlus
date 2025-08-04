@@ -65,10 +65,6 @@ public partial class PaletteWidget : Widget
 					return false;
 				}
 				if ( !IsSubgraph && x.HasAttribute<SubgraphOnlyAttribute>() ) return false;
-				if ( !IsSubgraph && x.TargetType == typeof( FunctionResult ) )
-				{
-					return false;
-				}
 				if ( x.TargetType == typeof( SubgraphNode ) )
 				{
 					return false;

@@ -1,7 +1,6 @@
 ﻿using Editor;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
-using System.Collections.ObjectModel;
 
 namespace ShaderGraphPlus;
 
@@ -487,20 +486,6 @@ public class MainWindow : DockWindow
 				_preview?.SetAttribute( name, v );
 				break;
 			case Sampler v:
-				//SamplerState samplerState = new SamplerState()
-				//{
-				//	Filter = v.Filter,
-				//	AddressModeU = v.AddressModeU,
-				//	AddressModeV = v.AddressModeV,
-				//	AddressModeW = v.AddressModeW,
-				//	MipLodBias = v.MipLodBias,
-				//	MaxAnisotropy = v.MaxAnisotropy,
-				//	BorderColor = v.BorderColor,
-				//};
-
-				//if ( _samplerStateAttributes.ContainsKey( name ) )
-				//	_samplerStateAttributes.Remove( name );
-
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview?.SetAttribute( name, (SamplerState)v );
 				break;
@@ -698,22 +683,18 @@ public class MainWindow : DockWindow
 			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
-		if ( resultNode != null )
+		if ( resultNode != null && !IsSubgraph )
 		{
-			var nodeUI = _graphView.FindNode( resultNode );
-			if ( nodeUI.IsValid() )
+			UpdateNodeUI( resultNode );
+		}
+		else if ( IsSubgraph )
+		{
+			foreach ( var subgraphOutput in _graph.Nodes.OfType<SubgraphOutput>() )
 			{
-				nodeUI.Update();
-
-				foreach ( var input in nodeUI.Inputs )
-				{
-					if ( !input.IsValid() || !input.Connection.IsValid() )
-						continue;
-
-					input.Connection.Update();
-				}
+				UpdateNodeUI( subgraphOutput );
 			}
 		}
+
 
 		//compiler.ClearResults();
 		var code = compiler.Generate();
@@ -749,6 +730,24 @@ public class MainWindow : DockWindow
 		}
 
 		return code;
+	}
+
+	private void UpdateNodeUI( BaseNodePlus node )
+	{
+		var nodeUI = _graphView.FindNode( node );
+
+		if ( nodeUI.IsValid() )
+		{
+			nodeUI.Update();
+
+			foreach ( var input in nodeUI.Inputs )
+			{
+				if ( !input.IsValid() || !input.Connection.IsValid() )
+					continue;
+
+				input.Connection.Update();
+			}
+		}
 	}
 
 	private void RegisterStaticCombos()
@@ -1187,7 +1186,13 @@ public class MainWindow : DockWindow
 		}
 		else
 		{
-			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( FunctionResult ) ), 0 );
+			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( SubgraphOutput ) ), 0 );
+			
+			var subgraphOutput = result.Node as SubgraphOutput;
+			subgraphOutput.SubgraphFunctionOutput.OutputName = "Out0";
+			subgraphOutput.SubgraphFunctionOutput.OutputType =  SubgraphOutputType.Vector3;
+			subgraphOutput.SubgraphFunctionOutput.Preview = FunctionOutput.PreviewType.Albedo;
+
 			_graphView.Scale = 1;
 			_graphView.CenterOn( result.Size * 0.5f );
 		}

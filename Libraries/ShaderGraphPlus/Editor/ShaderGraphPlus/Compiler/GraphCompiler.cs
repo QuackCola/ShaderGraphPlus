@@ -1,11 +1,8 @@
 using Editor;
-using Editor.ShaderGraph;
 using Microsoft.CodeAnalysis;
-using Sandbox;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -612,7 +609,7 @@ public sealed partial class GraphCompiler
 			if ( Subgraph is not null )
 			{
 				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
-
+				
 				return Result( new()
 				{
 					Identifier = input.Identifier,
@@ -845,7 +842,7 @@ public sealed partial class GraphCompiler
 				Subgraphs.Add( Subgraph );
 			}
 
-			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
+			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.SubgraphFunctionOutput.OutputName == input.Output ).FirstOrDefault();
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
 			{
@@ -874,7 +871,8 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );
+				SGPLog.Warning( $"resultInput?.ConnectedOutput is null", IsPreview);
+				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );	
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				Subgraph = newStack.Item2;
 				SubgraphNode = lastNode;
@@ -902,55 +900,17 @@ public sealed partial class GraphCompiler
 						SGPLog.Warning( $"SubgraphInputNode result is not valid!" );
 					}
 				}
-				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
-				{
-					var newResult = ResolveParameterNode( parameterNode, ref value, out var error );
-
-					if ( newResult.IsValid )
-					{
-						InputStack.Remove( input );
-						return newResult;
-					}
-
-					if ( value is Sampler sampler )
-					{
-						var defaultSamplerName = string.IsNullOrWhiteSpace( sampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : sampler.Name;
-						globalName = ResultParameter( defaultSamplerName, sampler, default, default, false, parameterNode.IsAttribute, default ).Code;
-
-						previewOverride = true;
-						setAttribute = false;
-					}
-					else if ( value is TextureInput textureInput )
-					{
-						if ( !string.IsNullOrWhiteSpace( textureInput.PreviewImage ) )
-						{
-							var textureAssetPath = CompileTexture( textureInput.PreviewImage, textureInput );
-						
-							var texture = string.IsNullOrWhiteSpace( textureAssetPath ) ? null : Texture.Load( textureAssetPath );
-							texture ??= Texture.White;
-
-							texture1 = texture;
-
-							globalName = ResultTexture( null, textureInput, texture ).TextureGlobal;
-							previewOverride = true;
-							setAttribute = false;
-						}
-						else
-						{
-							throw new ArgumentException( $"`{nameof( TextureInput.PreviewImage )}` is empty!" );
-						}
-					}
-				}
 			}
 			else if ( Graph.IsSubgraph )
 			{
-				if ( node is IParameterNode parameterNode )
+				if ( node is SubgraphInput subgraphInput )
 				{
-					if ( parameterNode.PreviewInput.IsValid )
+					if ( subgraphInput.PreviewInput.IsValid )
 					{
-						var paramResult = Result( parameterNode.PreviewInput );
+						var subgraphInputResult = Result( subgraphInput.PreviewInput );
+						
 						InputStack.Remove( input );
-						return paramResult;
+						return subgraphInputResult;
 					}
 				}
 			}
@@ -998,7 +958,7 @@ public sealed partial class GraphCompiler
 			funcResult.SetVoidLocalTargetID( node.Identifier );
 			funcResult.ShouldPreview = node.CanPreview;
 
-			SGPLog.Info( $"result from node \"{node}\"is of resulttype \"{funcResult.ResultType}\" with code \"{funcResult.Code}\" ", IsPreview );
+			//SGPLog.Info( $"result from node \"{node}\"is of resulttype \"{funcResult.ResultType}\" with code \"{funcResult.Code}\" ", IsPreview );
 
 			if ( lastComboSwitchInfo.IsValid )
 			{
@@ -1314,13 +1274,12 @@ public sealed partial class GraphCompiler
 			Vector2 _ => "g_v",
 			float _ => "g_fl",
 			int _ => "g_n",
-			//int _ => "g_fl",
 			bool _ => "g_b",
 			Float2x2 _ => "g_m",
 			Float3x3 _ => "g_m",
 			Float4x4 _ => "g_m",
 			Sampler _ => "g_s",
-			_ => throw new ArgumentException( "Unsupported value type", nameof( value ) )
+			_ => throw new Exception( $"Unsupported value type \"{value.GetType()}\"" )
 		};
 
 		return prefix;
@@ -1328,7 +1287,8 @@ public sealed partial class GraphCompiler
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
 	{
-		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
+
+		//if ( !node.DefaultValues.TryGetValue( name, out var value ) )
 		{
 			switch ( type )
 			{
@@ -1355,7 +1315,7 @@ public sealed partial class GraphCompiler
 			}
 		
 		}
-
+		/*
 		if ( value is JsonElement el )
 		{
 			if ( type == typeof( float ) )
@@ -1391,8 +1351,9 @@ public sealed partial class GraphCompiler
 				value = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
 			}
 		}
-	
+		
 		return value;
+		*/
 	}
 
 	private NodeResult ResolveSubgraphInputNode( SubgraphInput inputNode, ref object value )
@@ -1400,16 +1361,13 @@ public sealed partial class GraphCompiler
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
 
-		SGPLog.Info( $"Last SubgraphNode is \"{lastNodeEntered?.SubgraphPath}\" " , IsPreview );
-
+		//SGPLog.Info( $"Last SubgraphNode is \"{lastNodeEntered?.SubgraphPath}\" " , IsPreview );
 		if ( lastNodeEntered != null )
 		{
-			var parentInput = lastNodeEntered.InputReferencesNew.FirstOrDefault( x => x.Key.Identifier == inputNode.InputName );
-
+			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == inputNode.InputName );
 			if ( parentInput.Key is not null )
 			{
 				//SGPLog.Info( $"parentInput.Key is \"{parentInput.Key}\" ", IsPreview );
-
 				var lastSubgraph = Subgraph;
 				var lastNode = SubgraphNode;
 				Subgraph = lastStack.Item2;
@@ -1417,14 +1375,9 @@ public sealed partial class GraphCompiler
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				
 				var connectedPlug = parentInput.Key.ConnectedOutput;
-
-
 				if ( connectedPlug is not null )
 				{
 					//SGPLog.Info( $"connectedPlug is \"{connectedPlug}\" ", IsPreview );
-
-
-
 					var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
 					var newResult = Result( new()
 					{
@@ -1438,10 +1391,7 @@ public sealed partial class GraphCompiler
 					SubgraphNode = lastNode;
 
 					SGPLog.Info( $"Got Result from SubgraphInputNode of type \"{newResult.ResultType}\" with value \"{newResult.Code}\"" , IsPreview);
-
 					return newResult;
-
-					//return default( NodeResult );
 				}
 				else
 				{
@@ -1457,73 +1407,6 @@ public sealed partial class GraphCompiler
 		}
 
 		return default( NodeResult );
-	}
-
-
-	private NodeResult ResolveParameterNode( IParameterNode node, ref object value, out ( SubgraphNode, string ) error)
-	{
-		var lastStack = SubgraphStack.LastOrDefault();
-		var lastNodeEntered = lastStack.Item1;
-		error = new();
-
-		if ( lastNodeEntered is not null )
-		{
-			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
-			if ( parentInput.Key is not null )
-			{
-				var lastSubgraph = Subgraph;
-				var lastNode = SubgraphNode;
-				Subgraph = lastStack.Item2;
-				SubgraphNode = (Subgraph is null) ? null : lastNodeEntered;
-				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
-
-				var connectedPlug = parentInput.Key.ConnectedOutput;
-				if ( connectedPlug is not null )
-				{
-					var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
-					var newResult = Result( new()
-					{
-						Identifier = connectedPlug.Node.Identifier,
-						Output = connectedPlug.Identifier,
-						Subgraph = Subgraph?.Path,
-						SubgraphNode = nodeId
-					} );
-					SubgraphStack.Add( lastStack );
-					Subgraph = lastSubgraph;
-					SubgraphNode = lastNode;
-					return newResult;
-				}
-				else
-				{
-
-					// TODO : This is just a shitty placeholder until you can just set them on the 
-					// subgraph node itself when the input connectedPlug is null.
-					//if ( parentInput.Value.Item2 == typeof( Sampler ) )
-					//{
-					//	error = new ( lastNode, "Missing Sampler Input! This sucks i know...");
-					//	value = null;
-					//	return new();
-					//}
-					//if ( parentInput.Value.Item2 == typeof( Texture2DObject ) )
-					//{
-					//	error = new( lastNode, "Missing Texture2DObject Input! This sucks i know.." );
-					//	value = null;
-					//	return new();
-					//}
-					if ( parentInput.Value.paramNodeValueType == typeof( TextureCubeObject ) )
-					{
-						error = new( lastNode, "Missing TextureCubeObject Input! This sucks i know.." );
-						value = null;
-						return new();
-					}
-					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.paramNodeValueType );
-					SubgraphStack.Add( lastStack );
-					Subgraph = lastSubgraph;
-					SubgraphNode = lastNode;
-				}
-			}
-		}
-		return new();
 	}
 
 	private static int GetComponentCount( Type inputType )
@@ -1674,10 +1557,18 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public string Generate()
 	{
+		if ( Graph.IsSubgraph )
+		{
+			if ( !Graph.Nodes.OfType<SubgraphOutput>().Any() )
+			{
+				NodeErrors.Add( new DummyNode(), [ $"There must be atleast one Subgraph Output node!" ] );
+			}
+		}
+
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
 			return null;
-
+		
 		var material = GenerateMaterial();
 		var pixelOutput = GeneratePixelOutput();
 
@@ -2161,9 +2052,10 @@ public sealed partial class GraphCompiler
 		Subgraph = null;
 		SubgraphStack.Clear();
 
-		if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
+		if ( Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess ) return "";
 
 		var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+
 		if ( resultNode == null )
 			return null;
 
@@ -2213,13 +2105,31 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
-		if ( resultNode is FunctionResult functionResult )
+		if ( Graph.IsSubgraph )
 		{
-			functionResult.AddMaterialOutputs( this, sb, visited );
+			var subgraphOutputs = Graph.Nodes.OfType<SubgraphOutput>();
+			var reservedPreview = new Dictionary<string, BaseNodePlus>();
+
+			foreach ( var subgraphOutput in subgraphOutputs )
+			{
+				if ( reservedPreview.ContainsKey( $"{subgraphOutput.SubgraphFunctionOutput.Preview}" ) )
+				{
+					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.SubgraphFunctionOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.SubgraphFunctionOutput.Preview}\" as its preview type"] );
+					continue;
+				}
+
+				if ( subgraphOutput.SubgraphFunctionOutput.Preview == FunctionOutput.PreviewType.None )
+					continue;
+
+				reservedPreview.Add( $"{subgraphOutput.SubgraphFunctionOutput.Preview}", subgraphOutput );
+
+				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.SubgraphFunctionOutput.Preview );
+			}
+
+			reservedPreview.Clear();
 		}
 
 		visited.Clear();
-
 		CurrentResultInput = null;
 
 		return sb.ToString();

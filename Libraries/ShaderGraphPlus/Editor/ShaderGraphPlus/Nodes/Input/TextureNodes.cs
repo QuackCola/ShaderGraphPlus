@@ -292,7 +292,7 @@ public sealed class TextureSampler : TextureSamplerBase
 		// Either if the textureObject input is valid or we are in a Subgraph.
 		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
 		{
-			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview ); //&& ConCommands.TextureNodeDebug );
+			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
 			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{

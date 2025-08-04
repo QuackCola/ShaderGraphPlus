@@ -199,18 +199,6 @@ public sealed class SubgraphInput : ShaderNodePlus
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		//(ResultType resultType, string defaultCode ) defaultResult = InputType switch
-		//{
-		//	SubgraphInputType.Bool => ( ResultType.Bool, "false" ),
-		//	SubgraphInputType.Float => ( ResultType.Float, "0.0f" ),
-		//	SubgraphInputType.Vector2 => ( ResultType.Vector2, $"float2( {Vector2.Zero} )" ),
-		//	SubgraphInputType.Vector3 => ( ResultType.Vector3, $"float3( {Vector3.Zero} )" ),
-		//	SubgraphInputType.Color => ( ResultType.Color, $"float4( 1, 0, 1, 1 )" ),
-		//	SubgraphInputType.Sampler => ( ResultType.Sampler, $"{compiler.ResultSampler( default )}" ),
-		//	SubgraphInputType.Texture2DObject => ( ResultType.Texture2DObject, compiler.ResultTexture( "PlaceHolderTexture2D", default, Texture.Invalid ).TextureGlobal ),
-		//	_ => throw new NotImplementedException()
-		//};
-
 		(ResultType resultType, string defaultCode) defaultResult = InputType switch
 		{
 			SubgraphInputType.Bool => (ResultType.Bool, $"{compiler.ResultValue<bool>( ((VariantValueBool)DefaultValue).Value )}"),

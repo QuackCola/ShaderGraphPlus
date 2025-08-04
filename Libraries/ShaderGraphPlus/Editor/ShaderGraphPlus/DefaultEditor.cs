@@ -74,32 +74,33 @@ public class DefaultEditor : ValueEditor
 				}
 			}
 		}
-		if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
-		{
-			if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
-			{
-				var parameterNode = entry.Item1;
-				if ( parameterNode.IsAttribute ) return;
-				type = entry.Item2;
-				if ( innerPlugIn.ConnectedOutput is not null )
-				{
-					rawVal = parameterNode.GetValue();
-					val = rawVal.ToString();
-				}
-				else
-				{
-					if ( rawVal != null )
-					{
-						rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
-						val = rawVal?.ToString() ?? "";
-					}
-					else
-					{
-						val = "";
-					}
-				}
-			}
-		}
+		// TODO
+		//if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
+		//{
+		//	if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
+		//	{
+		//		var parameterNode = entry.Item1;
+		//		if ( parameterNode.IsAttribute ) return;
+		//		type = entry.Item2;
+		//		if ( innerPlugIn.ConnectedOutput is not null )
+		//		{
+		//			rawVal = parameterNode.GetValue();
+		//			val = rawVal.ToString();
+		//		}
+		//		else
+		//		{
+		//			if ( rawVal != null )
+		//			{
+		//				rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
+		//				val = rawVal?.ToString() ?? "";
+		//			}
+		//			else
+		//			{
+		//				val = "";
+		//			}
+		//		}
+		//	}
+		//}
 		if ( string.IsNullOrEmpty( val ) ) return;
 
 		Paint.Antialiasing = true;

@@ -407,8 +407,53 @@ public class ShaderGraphPlusView : GraphView
 			}
 		}
 
+		var subgraphOutputs = new List<SubgraphOutput>();
+		foreach ( var node in subgraph.Nodes )
+		{
+			foreach ( var output in node.Outputs )
+			{
+				
+				var subgraphOutputNode = FindNodeType( typeof( SubgraphOutput ) ).CreateNode( subgraph );
+
+				if ( subgraphOutputNode is SubgraphOutput subgraphOutput )
+				{
+					subgraphOutput.Position = rightmostPos + new Vector2( 240, 0 );
+					subgraphOutput.SubgraphFunctionOutput = new();
+
+					var correspondingNode = Graph.Nodes.FirstOrDefault( x => !subgraph.Nodes.Contains( x ) && x.Inputs.Any( x => x.ConnectedOutput == output ) );
+					if ( correspondingNode is null ) continue;
+					var inputName = $"{output.Identifier}_{output.Node.Identifier}";
+
+					subgraphOutput.SubgraphFunctionOutput = new ShaderFunctionOutput()
+					{
+						OutputName = inputName,
+					};
+					subgraphOutput.SubgraphFunctionOutput.SetOutputTypeFromType( output.Type );
+
+					subgraphOutput.CreateInput();
+		
+					var input = subgraphOutput.Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == inputName );
+					input.ConnectedOutput = output;
+
+					subgraphOutputs.Add( subgraphOutput );
+					break;
+				}
+			}
+		}
+
+		//nodesToAdd.Add( subgraphOutput );
+		nodesToAdd.AddRange( subgraphOutputs );
+
+		// Add all the newly created nodes
+		foreach ( var node in nodesToAdd )
+		{
+			subgraph.AddNode( node );
+		}
+
+		/*
 		// Create Output/Result node
 		var frNode = FindNodeType( typeof( FunctionResult ) ).CreateNode( subgraph );
+		
 		if ( frNode is FunctionResult resultNode )
 		{
 			resultNode.Position = rightmostPos + new Vector2( 240, 0 );
@@ -440,6 +485,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			subgraph.AddNode( node );
 		}
+		*/
 
 		// Save the newly created sub-graph
 		System.IO.File.WriteAllText( filePath, subgraph.Serialize() );
@@ -502,6 +548,7 @@ public class ShaderGraphPlusView : GraphView
 
 		// Delete all previously selected nodes
 		UpdateConnections( Graph.Nodes );
+		
 	}
 
 	private void SelectionChanged()

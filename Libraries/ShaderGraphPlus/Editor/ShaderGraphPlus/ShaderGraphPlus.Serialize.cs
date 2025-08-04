@@ -1,4 +1,6 @@
-﻿using Sandbox;
+﻿using Editor.NodeEditor;
+using Sandbox;
+using Sandbox.Services;
 using ShaderGraphPlus.Nodes;
 using System.Reflection;
 using System.Text.Json.Nodes;
@@ -57,7 +59,7 @@ partial class ShaderGraphPlus
 		using var doc = JsonDocument.Parse( json );
 		var root = doc.RootElement;
 		var options = SerializerOptions();
-		
+
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath );
 	}
@@ -118,7 +120,7 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-		
+
 		//if ( obj is ISGPJsonUpgradeable upgradeable )
 		//{
 		//
@@ -126,10 +128,15 @@ partial class ShaderGraphPlus
 
 		foreach ( var jsonProperty in doc.EnumerateObject() )
 		{
-			if ( obj is ShaderGraphPlus && obj is ISGPJsonUpgradeable upgradeable )
-			{
-				SGPLog.Info( $"\"{obj.GetType()}\" current version is \"{upgradeable.Version}\"" );
-			}
+			//if ( obj is ShaderGraphPlus && obj is ISGPJsonUpgradeable upgradeable )
+			//{
+			//	SGPLog.Info( $"\"{obj.GetType()}\" current version is \"{upgradeable.Version}\"" );
+			//}
+
+			//if ( jsonProperty.Name == "__version" )
+			//{
+			//	hasVersionProperty = true;
+			//}
 
 			var prop = properties.FirstOrDefault( x =>
 			{
@@ -141,10 +148,10 @@ partial class ShaderGraphPlus
 			
 				return string.Equals( propName, jsonProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
-			
+
 			if ( prop == null )
 				continue;
-			
+
 			if ( prop.CanWrite == false )
 				continue;
 			
@@ -219,6 +226,7 @@ partial class ShaderGraphPlus
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
+		var SubgraphOutputNodeInputs = new List<IPlugIn>();
 
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
@@ -255,12 +263,17 @@ partial class ShaderGraphPlus
 				{
 					customCode.OnNodeCreated();
 				}
-				
+
 				if ( node is FunctionResult funcResult )
 				{
-				    funcResult.CreateInputs();
+					funcResult.CreateInputs();
 				}
-				
+
+				if ( node is SubgraphOutput subgraphOutput )
+				{
+					subgraphOutput.CreateInput();
+				}
+
 				if ( node is SubgraphNode subgraphNode )
 				{
 					if ( !Editor.FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
@@ -275,14 +288,35 @@ partial class ShaderGraphPlus
 					}
 				}
 				
+				Vector2 lastPos = Vector2.Zero;
 				foreach ( var input in node.Inputs )
 				{
+					if ( node is FunctionResult functionResultNode )
+					{
+						var subgraphOutputNode = new SubgraphOutput();
+						subgraphOutputNode.Position = functionResultNode.Position.WithY( 64 + lastPos.y );
+						lastPos = subgraphOutputNode.Position;
+
+						subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput()
+						{
+							OutputName = input.Identifier,
+							//Preview = ,
+						}; 
+						subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( input.Type );
+						subgraphOutputNode.CreateInput();
+
+						nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
+						AddNode( subgraphOutputNode );
+						
+						SubgraphOutputNodeInputs.Add( subgraphOutputNode.Inputs.First() );
+					}
+
 					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
 						continue;
 				
 					var connected = connectedElem
 						.Deserialize<NodeInput?>();
-				
+			
 					if ( connected is { IsValid: true } )
 					{
 						var connection = connected.Value;
@@ -295,14 +329,31 @@ partial class ShaderGraphPlus
 								Subgraph = subgraphPath
 							};
 						}
-						connections.Add( (input, connection) );
+
+						if ( node is not FunctionResult )
+						{
+							connections.Add( (input, connection) );
+						}
+						else // replace FunctionResult node
+						{
+							foreach ( var subgraphResultInput in SubgraphOutputNodeInputs )
+							{
+								connections.Add( (subgraphResultInput, connection) );
+							}
+
+							RemoveNode( node );
+							nodes.Remove( node.Identifier );
+						}
 					}
 				}
 			}
 
 			nodes.Add( node.Identifier, node );
 
-			AddNode( node );
+			if ( node.CanAddToGraph )
+			{
+				AddNode( node );
+			}
 		}
 
 		foreach ( var (input, value) in connections )
@@ -424,6 +475,9 @@ partial class ShaderGraphPlus
 
 		foreach ( var node in nodes )
 		{
+			if ( node is DummyNode )
+				continue;
+
 			var type = node.GetType();
 			var nodeObject = new JsonObject { { "_class", type.Name } };
 		

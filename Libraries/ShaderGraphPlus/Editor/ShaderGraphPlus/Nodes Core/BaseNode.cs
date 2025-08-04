@@ -21,6 +21,9 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual bool CanPreview => true;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual bool CanAddToGraph => true;
+
 	[Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 

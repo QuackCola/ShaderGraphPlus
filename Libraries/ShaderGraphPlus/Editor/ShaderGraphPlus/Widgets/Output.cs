@@ -137,7 +137,10 @@ public class ErrorListView : ListView
 			if ( a is not GraphCompiler.Error error )
 				return;
 
-			_output.OnNodeSelected?.Invoke( error.Node );
+			if ( error.Node is not DummyNode )
+			{
+				_output.OnNodeSelected?.Invoke( error.Node );
+			}
 		};
 
 		ItemContextMenu = OpenItemContextMenu;
@@ -153,7 +156,7 @@ public class ErrorListView : ListView
 
 		var m = new Menu();
 
-		if ( error.Node != null )
+		if ( error.Node != null && error.Node is not DummyNode )
 		{
 			var nodeName = DisplayInfo.ForType( error.Node.GetType() ).Name;
 
@@ -195,8 +198,6 @@ public class ErrorListView : ListView
 		var iconRect = item.Rect.Shrink( 12, 0 );
 		iconRect.Width = 24;
 
-
-
 		Paint.DrawIcon( iconRect, "error", 24 );
 
 		var rect = item.Rect.Shrink( 48, 8, 0, 8 );
@@ -204,7 +205,7 @@ public class ErrorListView : ListView
 		Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
 		Paint.DrawText( rect, error.Message, (error.Node != null ? TextFlag.LeftTop : TextFlag.LeftCenter) | TextFlag.SingleLine );
 
-		if ( error.Node != null )
+		if ( error.Node != null && error.Node is not DummyNode )
 		{
 			var nodeName = DisplayInfo.ForType( error.Node.GetType() ).Name;
 			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
