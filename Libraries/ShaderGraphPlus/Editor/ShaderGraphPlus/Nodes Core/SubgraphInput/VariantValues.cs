@@ -41,6 +41,75 @@ public abstract class VariantValueBase
 		};
 	}
 
+
+}
+
+public static class VariantValueBaseExtentions
+{
+
+	/// <summary>
+	/// Get the VariantValue<typeparamref name="T"/> as a VariantParam<typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="variantValueBase"></param>
+	/// <param name="propertyDescription"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public static VariantParam<T> GetAsVariantParam<T>( this VariantValueBase variantValueBase, string propertyDescription )
+	{
+		if ( variantValueBase is VariantValue<T> variantValue )
+		{
+			VariantParam<T> variantParam = new VariantParam<T>();
+			variantParam.Name = "Default Value Here";
+			variantParam.Description = propertyDescription;
+			variantParam.Value = variantValue.Value;
+			variantParam.DefaultValue = variantValue.Value;
+
+			return variantParam;
+		}
+		else
+		{
+			throw new Exception( $"Unable to get \"{variantValueBase}\" as \"{ typeof( VariantParam<T> )}\"" );
+		}
+	}
+
+	/// <summary>
+	/// Fetch the value contained within a VariantValue<typeparamref name="T"/>. Throws an exeption when variaintValueBase is not VariantValue<typeparamref name="T"/>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="variantValueBase"></param>
+	/// <returns>Object value of <typeparamref name="T"/></returns>
+	/// <exception cref="Exception"></exception>
+	public static T GetValue<T>( this VariantValueBase variantValueBase )
+	{
+		if ( variantValueBase is VariantValue<T> variantValue )
+		{
+			return variantValue.Value;
+		}
+		else
+		{
+			throw new Exception( $"Unable to get value of type \"{typeof( T )}\"" );
+		}
+	}
+
+	/// <summary>
+	/// Set the value contained within a VariantValue<typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="variantValueBase"></param>
+	/// <param name="value"></param>
+	/// <exception cref="Exception"></exception>
+	public static void SetValue<T>( this VariantValueBase variantValueBase, T value )
+	{
+		if ( variantValueBase is VariantValue<T> variantValue )
+		{
+			variantValue.Value = value;
+		}
+		else
+		{
+			throw new Exception( $"Unable to set value of type \"{typeof( T )}\"" );
+		}
+	}
 }
 
 /// <summary>

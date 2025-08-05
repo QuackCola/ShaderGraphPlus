@@ -1,5 +1,7 @@
 ﻿
 using Editor;
+using Sandbox;
+using System.Xml.Linq;
 
 namespace ShaderGraphPlus;
 
@@ -32,7 +34,7 @@ internal class SubgraphOnlyAttribute : Attribute
 }
 
 /// <summary>
-/// Input to a Subgraph.
+/// Input of a Subgraph.
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
 public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
@@ -57,18 +59,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	/// </summary>
 	public bool IsRequired { get; set; } = false;
 
-	[Hide,JsonIgnore]
-	private SubgraphInputType _inputType = SubgraphInputType.Float;
-
-	[Hide]
-	public SubgraphInputType InputType
-	{
-		get => _inputType;
-		set
-		{
-			_inputType = value;
-		}
-	}
+	public int PortOrder { get; set; }
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -83,7 +74,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		{
 			string name = $"{DisplayInfo.For( this ).Name}";
 
-			return $"{InputName} ( {InputType} )";
+			return $"{InputName} ( {DefaultValue.InputType} )";
 		}
 	}
 
@@ -92,7 +83,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		get
 		{
-			return InputType switch
+			return DefaultValue.InputType switch
 			{
 				SubgraphInputType.Bool => typeof( bool ),
 				SubgraphInputType.Float => typeof( float ),
@@ -109,42 +100,19 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[global::Editor( "DefaultValue" ), InlineEditor( Label = false )]
 	public VariantValueBase DefaultValue { get; set; }
 
-	internal T GetDefaultValue<T>()
-	{
-		if ( DefaultValue is VariantValue<T> variantProperty )
-		{
-			return variantProperty.Value;
-		}
-
-		throw new Exception( $"GetDefaultValue : variantProperty is null!!!! it was actually {DefaultValue.GetType()} when {typeof( T )} was requested!" );
-	}
-
 	internal VariantParam<T> GetValueAsVariantParam<T>()
 	{
-		if ( DefaultValue is VariantValue<T> variantProperty )
-		{
-			VariantParam<T> variantParam = new VariantParam<T>();
-			variantParam.Name = "Default Value Here";
-			variantParam.Description = InputDescription;
-			variantParam.Value = variantProperty.Value;
-			variantParam.DefaultValue = variantProperty.Value;
+		return DefaultValue.GetAsVariantParam<T>( InputDescription );
+	}
 
-			return variantParam;
-		}
-
-		throw new Exception( $"GetValueAsDefaultParam : variantProperty is null!!!!" );
+	internal T GetDefaultValue<T>()
+	{
+		return DefaultValue.GetValue<T>();
 	}
 
 	internal void SetDefaultValue<T>( T value )
 	{
-		if ( DefaultValue is VariantValue<T> variantProperty )
-		{
-			variantProperty.Value = value;
-		}
-		else
-		{
-			throw new Exception( $"SetDefaultValue : variantProperty is null!!!!" );
-		}
+		DefaultValue.SetValue<T>( value );
 	}
 
 	public void OnNodeCreated()
@@ -191,7 +159,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 
 	public string ResultTexture( GraphCompiler compiler )
 	{
-		var texpath = CompileTexture( ((VariantValueTexture2D)DefaultValue).Value.PreviewImage, ((VariantValueTexture2D)DefaultValue).Value );
+		var texpath = CompileTexture( DefaultValue.GetValue<TextureInput>().PreviewImage, DefaultValue.GetValue<TextureInput>() );
 
 		return compiler.ResultTexture( "PlaceHolderTexture2D", default, Texture.Load( texpath ) ).TextureGlobal;
 	}
@@ -233,17 +201,20 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		(ResultType resultType, string defaultCode) defaultResult = InputType switch
+		SGPLog.Info( $"DefaultValue is of type \"{DefaultValue.GetType()}\"", compiler.IsPreview );
+
+		(ResultType resultType, string defaultCode) defaultResult = DefaultValue.InputType switch
 		{
-			SubgraphInputType.Bool => (ResultType.Bool, $"{compiler.ResultValue<bool>( ((VariantValueBool)DefaultValue).Value )}"),
-			SubgraphInputType.Float => (ResultType.Float, $"{compiler.ResultValue<float>( ((VariantValueFloat)DefaultValue).Value )}"),
-			SubgraphInputType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue<Vector2>( ((VariantValueVector2)DefaultValue).Value )} )"),
-			SubgraphInputType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue<Vector3>( ((VariantValueVector3)DefaultValue).Value )} )"),
-			SubgraphInputType.Color => (ResultType.Color, $"float4( {compiler.ResultValue<Color>( ((VariantValueColor)DefaultValue).Value)} )"),
-			SubgraphInputType.Sampler => (ResultType.Sampler, $"{compiler.ResultSampler( ((VariantValueSampler)DefaultValue).Value )}"),
-			SubgraphInputType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler ) ),
+			SubgraphInputType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( DefaultValue.GetValue<bool>() )}" ),
+			SubgraphInputType.Float => ( ResultType.Float, $"{compiler.ResultValue( DefaultValue.GetValue<float>() )}" ),
+			SubgraphInputType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( DefaultValue.GetValue<Vector2>() )} )" ),
+			SubgraphInputType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( DefaultValue.GetValue<Vector3>() )} )" ),
+			SubgraphInputType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( DefaultValue.GetValue<Color>() )} )" ),
+			SubgraphInputType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( DefaultValue.GetValue<Sampler>() )}" ),
+			SubgraphInputType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
 			_ => throw new NotImplementedException()
 		};
+
 
 
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );

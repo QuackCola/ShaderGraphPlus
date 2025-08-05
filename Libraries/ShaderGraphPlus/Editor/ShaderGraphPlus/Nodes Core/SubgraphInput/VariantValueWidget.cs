@@ -67,7 +67,7 @@ internal class VariantValueSerializedObject : SerializedObject
 	}
 }
 
-internal struct VariantParam<T>
+public struct VariantParam<T>
 {
 	public string Name;
 	public string Description;
