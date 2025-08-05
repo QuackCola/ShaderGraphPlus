@@ -885,13 +885,13 @@ public sealed partial class GraphCompiler
 			{
 				if ( node is SubgraphInput subgraphInput )
 				{
-					SGPLog.Info( $"Node is Subgraph Input with name \"{subgraphInput.InputName}\" that is of type \"{subgraphInput.DefaultValue.InputType}\"", IsPreview );
+					//SGPLog.Info( $"Node is Subgraph Input with name \"{subgraphInput.InputName}\" that is of type \"{subgraphInput.DefaultValue.InputType}\"", IsPreview );
 				
 					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value );
 
 					if ( newResult.IsValid )
 					{
-						SGPLog.Info( $"SubgraphInputNode result is of resulttype \"{newResult.ResultType}\" with code \"{newResult.Code}\" ", IsPreview );
+						//SGPLog.Info( $"SubgraphInputNode result is of resulttype \"{newResult.ResultType}\" with code \"{newResult.Code}\" ", IsPreview );
 
 						InputStack.Remove( input );
 						return newResult;
