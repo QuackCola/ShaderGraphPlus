@@ -14,7 +14,6 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
-    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -81,7 +80,7 @@
     {
       "_class": "SubgraphOutput",
       "SubgraphFunctionOutput": {
-        "Id": "32508370-b62b-42dc-9e3c-59f93771735a",
+        "Id": "c7724aed-081b-47c6-ac50-7dd622c949c0",
         "OutputName": "VertexOffset",
         "OutputType": "Vector3",
         "Preview": "PositionOffset"
