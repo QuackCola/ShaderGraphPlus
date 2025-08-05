@@ -35,7 +35,7 @@ internal class SubgraphOnlyAttribute : Attribute
 /// Input to a Subgraph.
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
-public sealed class SubgraphInput : ShaderNodePlus
+public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 {
 
 	[Input, Title( "Preview" ), Hide]
@@ -194,6 +194,40 @@ public sealed class SubgraphInput : ShaderNodePlus
 		var texpath = CompileTexture( ((VariantValueTexture2D)DefaultValue).Value.PreviewImage, ((VariantValueTexture2D)DefaultValue).Value );
 
 		return compiler.ResultTexture( "PlaceHolderTexture2D", default, Texture.Load( texpath ) ).TextureGlobal;
+	}
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+
+		warnings.Add( $"This is a fucking warning!" );
+
+		return warnings;
+	}
+
+	public List<string> GetErrors()
+	{
+		List<string> errors = new List<string>();
+
+
+
+		if ( string.IsNullOrWhiteSpace( InputName ) )
+		{
+			errors.Add( $"SubgraphInput of InputType \"{DefaultValue.InputType}\" must have a name!" );
+		}
+
+		if ( InputName.Contains( ' ' ) )
+		{
+			errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
+		}
+
+		if ( DefaultValue.InputType == SubgraphInputType.Invalid )
+		{
+			errors.Add( $"SubgraphInput InputType is invalid!" );
+		}
+		//errors.Add( $"This is a fucking error!" );
+		return errors;
 	}
 
 	[Output, Hide]

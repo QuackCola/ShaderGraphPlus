@@ -6,7 +6,7 @@ using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
-public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
+public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 {
 	[Hide]
 	public string SubgraphPath { get; set; }
@@ -221,6 +221,16 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode
 			}
 		}
 		InternalOutputs = plugs;
+	}
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+
+		warnings.Add( $"This is a fucking warning!" );
+
+		return warnings;
 	}
 
 	public List<string> GetErrors()

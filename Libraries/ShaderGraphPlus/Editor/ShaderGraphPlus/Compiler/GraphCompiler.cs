@@ -10,10 +10,11 @@ namespace ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
 {
-	public struct Error
+	public struct Issue
 	{
 		public BaseNodePlus Node;
 		public string Message;
+		public bool IsWarning;
 	}
 
 	public struct Warning
@@ -129,8 +130,8 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Error list, doesn't give you much information currently
 	/// </summary>
-	public IEnumerable<Error> Errors => NodeErrors
-		.Select( x => new Error { Node = x.Key, Message = x.Value.FirstOrDefault() } );
+	public IEnumerable<Issue> Errors => NodeErrors
+		.Select( x => new Issue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public IEnumerable<Warning> Warnings => NodeWarnings
 	.Select( x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() } );

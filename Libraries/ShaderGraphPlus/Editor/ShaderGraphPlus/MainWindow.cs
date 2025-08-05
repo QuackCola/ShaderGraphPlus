@@ -109,7 +109,7 @@ public class MainWindow : DockWindow
 	private ProjectCreator ProjectCreator { get; set; }
 
 	private Dictionary<string, ShaderFeatureInfo> ShaderFeatures = new();
-	private List<GraphCompiler.Error> ComboRegistrationErrors { get; set; } = new();
+	private List<GraphCompiler.Issue> ComboRegistrationErrors { get; set; } = new();
 
 	public MainWindow()
 	{
@@ -245,8 +245,8 @@ public class MainWindow : DockWindow
 	protected virtual void Compile()
 	{
 		_shaderCompileErrors.Clear();
-
-
+		
+		/*
 		var compileErrors = new List<GraphCompiler.Error>();
 		foreach ( var node in _graph.Nodes )
 		{
@@ -256,7 +256,7 @@ public class MainWindow : DockWindow
 				if ( errors.Count > 0 )
 				{
 					_shaderCompileErrors.AddRange( errors );
-
+		
 					if ( IsSubgraph )
 					{
 						foreach ( var error in errors )
@@ -267,8 +267,8 @@ public class MainWindow : DockWindow
 				}
 			}
 		}
-
 		_output.Errors = compileErrors;
+		*/
 
 		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
@@ -323,7 +323,6 @@ public class MainWindow : DockWindow
 	}
 
 	private readonly List<string> _shaderCompileErrors = new();
-	//private readonly List<string> _Warnings = new();
 
 	private struct StatusMessage
 	{
@@ -381,8 +380,8 @@ public class MainWindow : DockWindow
 		
 			return;
 		}
-		
-		if ( exitCode == 0 )
+
+		if ( exitCode == 0 && _shaderCompileErrors.Count == 0 )
 		{
 			Log.Info( $"Compile finished in {_timeSinceCompile}" );
 		
@@ -398,7 +397,7 @@ public class MainWindow : DockWindow
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
 		
-			_output.Errors = _shaderCompileErrors.Select( x => new GraphCompiler.Error { Message = x } );
+			_output.GraphIssues = (List<GraphCompiler.Issue>)_shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
 			DockManager.RaiseDock( "Output" );
 		
 			RestoreShader();
@@ -516,9 +515,24 @@ public class MainWindow : DockWindow
 		// Go ahead and register any StaticSwitches.
 		RegisterStaticCombos();
 
+		if ( ComboRegistrationErrors.Any() )
+		{
+			_output.GraphIssues = ComboRegistrationErrors;
+
+			DockManager.RaiseDock( "Output" );
+
+			_generatedCode = null;
+
+			RestoreShader();
+
+			return null;
+		}
+
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
-		
+		var iErroringNodeErrors = new List<GraphCompiler.Issue>();
+		var iWarningNodeWarnings = new List<GraphCompiler.Issue>();
+
 		if ( _autoCompile )
 		{
 			compiler.OnAttribute = OnAttribute;
@@ -534,6 +548,35 @@ public class MainWindow : DockWindow
 				//SGPLog.Info( $"Setting Preview ID of node `{node}` to `{node.PreviewID}`" );
 
 				//compiler.ReservedPreviewIDs.Add( compiler.PreviewID );
+			}
+
+			if ( node is IWarningNode warningNode )
+			{
+				var warnings = warningNode.GetWarnings();
+				if ( warnings.Count > 0 )
+				{
+					foreach ( var error in warnings )
+					{
+						iWarningNodeWarnings.Add( new() { Message = error, Node = node, IsWarning = true } );
+					}
+				}
+			}
+
+			if ( node is IErroringNode erroring )
+			{
+				var errors = erroring.GetErrors();
+				if ( errors.Count > 0 )
+				{
+					//_shaderCompileErrors.AddRange( errors );
+
+					//if ( IsSubgraph )
+					{
+						foreach ( var error in errors )
+						{
+							iErroringNodeErrors.Add( new() { Message = error, Node = node, IsWarning = false } );
+						}
+					}
+				}
 			}
 
 			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
@@ -695,6 +738,7 @@ public class MainWindow : DockWindow
 			}
 		}
 
+	
 
 		//compiler.ClearResults();
 		var code = compiler.Generate();
@@ -704,20 +748,39 @@ public class MainWindow : DockWindow
 		//	_output.Warnings = compiler.Warnings;
 		//	DockManager.RaiseDock( "Output" );
 		//}
-
-		if ( compiler.Errors.Any() || ComboRegistrationErrors.Any() )
+		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
 		{
-			_output.Errors = ComboRegistrationErrors.Any() ? ComboRegistrationErrors : compiler.Errors;
-			DockManager.RaiseDock( "Output" );
+			// Add any iErroringNodeErrors to the end of the iWarningNodeWarning list.
+			if ( iErroringNodeErrors.Any() )
+			{
+				iWarningNodeWarnings.AddRange( iErroringNodeErrors );
+				_output.GraphIssues = iWarningNodeWarnings;
 
-			_generatedCode = null;
+				DockManager.RaiseDock( "Output" );
 
-			RestoreShader();
+				_generatedCode = null;
 
-			return null;
+				RestoreShader();
+
+				return null;
+			}
+			else // No Errors to add :) not great not terrible
+			{
+				_output.GraphIssues = iWarningNodeWarnings;
+
+				DockManager.RaiseDock( "Output" );
+			}
+		}
+		else // No warnings? clear em.
+		{
+			_output.ClearWarnings();
 		}
 
-		_output.Clear();
+		// No errors :o? clear em :D.
+		if ( !iErroringNodeErrors.Any() )
+		{
+			_output.ClearErrors();
+		}
 
 		if ( _generatedCode != code )
 		{
@@ -769,7 +832,7 @@ public class MainWindow : DockWindow
 				{
 					if ( ShaderFeatures.ContainsKey( node.Feature.FeatureName ) )
 					{
-						var error = new GraphCompiler.Error { Node = node, Message = $"Feature `{node.Feature.FeatureName}` was already registerd!" };
+						var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` was already registerd!", IsWarning = false };
 						ComboRegistrationErrors.Add( error );
 					}
 
@@ -789,7 +852,7 @@ public class MainWindow : DockWindow
 				}
 				else
 				{
-					var error = new GraphCompiler.Error { Node = node, Message = $"Feature `{node.Feature.FeatureName}` is not valid!" };
+					var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` is not valid!", IsWarning = false };
 					ComboRegistrationErrors.Add( error );
 				}
 			}
@@ -1176,7 +1239,8 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_properties.Target = _graph;
 
-		_output.Clear();
+		_output.ClearErrors();
+		_output.ClearWarnings();
 
 		if ( !IsSubgraph )
 		{
@@ -1277,7 +1341,8 @@ public class MainWindow : DockWindow
 		if ( addToPath )
 			AddFileHistory( path );
 
-		_output.Clear();
+		_output.ClearErrors();
+		_output.ClearWarnings();
 
 		var center = Vector2.Zero;
 		var resultNode = graph.Nodes.OfType<BaseResult>().FirstOrDefault();

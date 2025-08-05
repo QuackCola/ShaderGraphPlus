@@ -1,25 +1,44 @@
 ﻿
 
 using Editor;
+using static ShaderGraphPlus.GraphCompiler;
 
 namespace ShaderGraphPlus;
 
 public class Output : Widget
 {
-	private ErrorListView _errorListView;
+	private IssueListView _issueListView;
 
-	private WarningListView _warningListView;
+	public IEnumerable<GraphCompiler.Issue> Errors { set { _issueListView.SetItems( value.Cast<object>() ); } }
 
-	public IEnumerable<GraphCompiler.Error> Errors { set { _errorListView.SetItems( value.Cast<object>() ); } }
-
-	public IEnumerable<GraphCompiler.Warning> Warnings { set { _warningListView.SetItems( value.Cast<object>() ); } }
+	private List<GraphCompiler.Issue> _graphIssues;
+	public List<GraphCompiler.Issue> GraphIssues
+	{
+		get => _graphIssues;
+		set
+		{
+			_graphIssues = value;
+			//_issueListView.AddItems( value.Cast<object>() );
+			_issueListView.SetItems( value.Cast<object>() );
+		}
+	}
 
 	public Action<BaseNodePlus> OnNodeSelected { get; set; }
 
-	public void Clear()
+	public void ClearErrors()
 	{
-		_errorListView.Clear();
-		_warningListView.Clear();
+		foreach ( var error in _issueListView.Items.Where ( x=> x is Issue issue && issue.IsWarning == false ) )
+		{
+			_issueListView.RemoveItem( error );
+		}
+	}
+
+	internal void ClearWarnings()
+	{
+		foreach ( var warning in _issueListView.Items.Where( x => x is Issue issue && issue.IsWarning == true ) )
+		{
+			_issueListView.RemoveItem( warning );
+		}
 	}
 
 	public Output( Widget parent ) : base( parent )
@@ -30,116 +49,26 @@ public class Output : Widget
 		
 		Layout = Layout.Column();
 
-		_errorListView = new( this );
-		_warningListView = new( this );
-		Layout.Add( _errorListView );
-		Layout.Add( _warningListView );
+		_issueListView = new( this );
+		Layout.Add( _issueListView );
 	}
 }
 
-public class WarningListView : ListView
+public class IssueListView : ListView
 {
 	private Output _output;
 
-	public WarningListView( Output parent) : base( parent )
+	public IssueListView( Output parent ) : base( parent )
 	{
 		_output = parent;
 		ItemActivated = ( a ) =>
 		{
-			if ( a is not GraphCompiler.Warning warning )
+			if ( a is not GraphCompiler.Issue issueInfo )
 				return;
-
-			_output.OnNodeSelected?.Invoke( warning.Node );
-		};
-
-		ItemContextMenu = OpenItemContextMenu;
-		ItemSize = new Vector2( 0, 48 );
-		ItemSpacing = 0;
-		Margin = 0;
-	}
-
-	private void OpenItemContextMenu( object item )
-	{
-		if ( item is not GraphCompiler.Warning warning )
-			return;
-
-		var m = new Menu();
-
-		if ( warning.Node != null )
-		{
-			var nodeName = DisplayInfo.ForType( warning.Node.GetType() ).Name;
-
-			m.AddOption( "Go to Warning", "arrow_upward", () => _output.OnNodeSelected?.Invoke( warning.Node ) );
-			m.AddOption( "Copy Warning", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}\n{nodeName} #{warning.Node.Identifier}" ) );
-		}
-		else
-		{
-			m.AddOption( "Copy Warning", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}" ) );
-		}
-
-		m.OpenAt( Editor.Application.CursorPosition );
-	}
-
-	protected override void OnPaint()
-	{
-		Paint.ClearPen();
-		Paint.SetBrush( Theme.WindowBackground );
-		Paint.DrawRect( LocalRect );
-
-		base.OnPaint();
-	}
-
-	protected override void PaintItem( VirtualWidget item )
-	{
-		if ( item.Object is not GraphCompiler.Error error )
-			return;
-
-		var color = Theme.Yellow;
-	
-		Paint.SetBrush( color.WithAlpha( Paint.HasMouseOver ? 0.1f : 0.03f ) );
-		Paint.ClearPen();
-		Paint.DrawRect( item.Rect.Shrink( 0, 1 ) );
-
-		Paint.Antialiasing = true;
-		Paint.SetPen( color.WithAlpha( Paint.HasMouseOver ? 1 : 0.7f ), 3.0f );
-		Paint.ClearBrush();
-
-		var iconRect = item.Rect.Shrink( 12, 0 );
-		iconRect.Width = 24;
-
-
-
-		Paint.DrawIcon( iconRect, "error", 24 );
-
-		var rect = item.Rect.Shrink( 48, 8, 0, 8 );
-
-		Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
-		Paint.DrawText( rect, error.Message, (error.Node != null ? TextFlag.LeftTop : TextFlag.LeftCenter) | TextFlag.SingleLine );
-
-		if ( error.Node != null )
-		{
-			var nodeName = DisplayInfo.ForType( error.Node.GetType() ).Name;
-			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
-			Paint.DrawText( rect, $"{nodeName}", TextFlag.LeftBottom | TextFlag.SingleLine );
-		}
-	}
-}
-
-public class ErrorListView : ListView
-{
-	private Output _output;
-
-	public ErrorListView( Output parent ) : base( parent )
-	{
-		_output = parent;
-		ItemActivated = ( a ) =>
-		{
-			if ( a is not GraphCompiler.Error error )
-				return;
-
-			if ( error.Node is not DummyNode )
+			
+			if ( issueInfo.Node != null && issueInfo.Node is not DummyNode )
 			{
-				_output.OnNodeSelected?.Invoke( error.Node );
+				_output.OnNodeSelected?.Invoke( issueInfo.Node );
 			}
 		};
 
@@ -151,9 +80,35 @@ public class ErrorListView : ListView
 
 	private void OpenItemContextMenu( object item )
 	{
-		if ( item is not GraphCompiler.Error error )
+		if ( item is not GraphCompiler.Issue )
 			return;
 
+		if ( item is GraphCompiler.Issue issue )
+		{
+			OnOpenItemContextMenuError( item, issue );
+		}
+
+	}
+	private void OnOpenItemContextMenuWarning( object item, Warning warning )
+	{
+		var m = new Menu();
+
+		if ( warning.Node != null && warning.Node is not DummyNode )
+		{
+			var nodeName = DisplayInfo.ForType( warning.Node.GetType() ).Name;
+
+			m.AddOption( "Go to Error", "arrow_upward", () => _output.OnNodeSelected?.Invoke( warning.Node ) );
+			m.AddOption( "Copy Error", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}\n{nodeName} #{warning.Node.Identifier}" ) );
+		}
+		else
+		{
+			m.AddOption( "Copy Error", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}" ) );
+		}
+
+		m.OpenAt( Editor.Application.CursorPosition );
+	}
+	private void OnOpenItemContextMenuError( object item , Issue error )
+	{
 		var m = new Menu();
 
 		if ( error.Node != null && error.Node is not DummyNode )
@@ -180,10 +135,8 @@ public class ErrorListView : ListView
 		base.OnPaint();
 	}
 
-	protected override void PaintItem( VirtualWidget item )
+	public void OnPaintError( VirtualWidget item, GraphCompiler.Issue error )
 	{
-		if ( item.Object is not GraphCompiler.Error error )
-			return;
 
 		var color = Theme.Red;
 
@@ -211,5 +164,54 @@ public class ErrorListView : ListView
 			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
 			Paint.DrawText( rect, $"{nodeName}", TextFlag.LeftBottom | TextFlag.SingleLine );
 		}
+	}
+
+	public void OnPaintWarning( VirtualWidget item, GraphCompiler.Issue warning )
+	{
+		var color = Theme.Yellow;
+
+		Paint.SetBrush( color.WithAlpha( Paint.HasMouseOver ? 0.1f : 0.03f ) );
+		Paint.ClearPen();
+		Paint.DrawRect( item.Rect.Shrink( 0, 1 ) );
+
+		Paint.Antialiasing = true;
+		Paint.SetPen( color.WithAlpha( Paint.HasMouseOver ? 1 : 0.7f ), 3.0f );
+		Paint.ClearBrush();
+
+		var iconRect = item.Rect.Shrink( 12, 0 );
+		iconRect.Width = 24;
+
+		Paint.DrawIcon( iconRect, "error", 24 );
+
+		var rect = item.Rect.Shrink( 48, 8, 0, 8 );
+
+		Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
+		Paint.DrawText( rect, warning.Message, (warning.Node != null ? TextFlag.LeftTop : TextFlag.LeftCenter) | TextFlag.SingleLine );
+
+		if ( warning.Node != null )
+		{
+			var nodeName = DisplayInfo.ForType( warning.Node.GetType() ).Name;
+			Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 0.5f : 0.4f ), 3.0f );
+			Paint.DrawText( rect, $"{nodeName}", TextFlag.LeftBottom | TextFlag.SingleLine );
+		}
+	}
+
+	protected override void PaintItem( VirtualWidget item )
+	{
+		if ( item.Object is not GraphCompiler.Issue )
+			return;
+
+		if ( item.Object is GraphCompiler.Issue issue )
+		{
+			if ( issue.IsWarning )
+			{
+				OnPaintWarning( item, issue );
+			}
+			else
+			{
+				OnPaintError( item, issue );
+			}
+		}
+
 	}
 }

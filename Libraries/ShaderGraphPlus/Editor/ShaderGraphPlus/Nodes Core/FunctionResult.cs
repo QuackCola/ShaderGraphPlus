@@ -6,6 +6,11 @@ using System.Text.Json.Serialization;
 
 namespace ShaderGraphPlus;
 
+public interface IWarningNode
+{
+	List<string> GetWarnings();
+}
+
 public interface IErroringNode
 {
 	List<string> GetErrors();
