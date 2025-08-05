@@ -1,0 +1,212 @@
+{
+  "__version": 1,
+  "IsSubgraph": true,
+  "Path": "shaders/shaderfunctions/vertexjitter.sgpfunc",
+  "Model": "models/fauna/hare/hare.vmdl",
+  "Title": "Vertex Jitter",
+  "Description": "",
+  "Category": null,
+  "Icon": "waves",
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Branch",
+      "Name": "",
+      "IsAttribute": true,
+      "Operator": "Equal",
+      "Enabled": false,
+      "UI": {},
+      "Identifier": "0",
+      "Position": "948,84",
+      "HandleOffsets": {},
+      "InputPredicate": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "True": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "False": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "WorldPosition",
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "1",
+      "Position": "-84,168",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "2",
+      "Position": "192,156",
+      "HandleOffsets": {},
+      "B": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "3",
+      "Position": "540,312",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphOutput",
+      "SubgraphFunctionOutput": {
+        "Id": "92ebb1a8-4d43-4517-8c80-cc17462a8794",
+        "OutputName": "VertexOffset",
+        "OutputType": "Vector3",
+        "Preview": "PositionOffset"
+      },
+      "Identifier": "4",
+      "Position": "1140,84",
+      "HandleOffsets": {},
+      "VertexOffset": {
+        "Identifier": "0",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Floor",
+      "Identifier": "5",
+      "Position": "456,192",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "InputName": "ToggleSnapping",
+      "InputDescription": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "DefaultValue": {
+        "__class": "VariantValueBool",
+        "InputType": "Bool",
+        "Value": true
+      },
+      "Identifier": "6",
+      "Position": "744,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Camera",
+      "Identifier": "7",
+      "Position": "-84,36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Divide",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "336,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "9",
+      "Position": "624,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Subtract",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "10",
+      "Position": "744,108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "11",
+      "Position": "756,192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SubgraphInput",
+      "InputName": "GridSize",
+      "InputDescription": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "DefaultValue": {
+        "__class": "VariantValueFloat",
+        "InputType": "Float",
+        "Value": 0.85
+      },
+      "Identifier": "12",
+      "Position": "-84,348",
+      "HandleOffsets": {}
+    }
+  ]
+}
