@@ -14,6 +14,7 @@
   "Metadata": {},
   "PreviewSettings": {
     "EnableShadows": true,
+    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -80,7 +81,7 @@
     {
       "_class": "SubgraphOutput",
       "SubgraphFunctionOutput": {
-        "Id": "92ebb1a8-4d43-4517-8c80-cc17462a8794",
+        "Id": "32508370-b62b-42dc-9e3c-59f93771735a",
         "OutputName": "VertexOffset",
         "OutputType": "Vector3",
         "Preview": "PositionOffset"
@@ -97,7 +98,7 @@
     {
       "_class": "Floor",
       "Identifier": "5",
-      "Position": "456,192",
+      "Position": "456,204",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "8",
@@ -131,7 +132,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "8",
-      "Position": "336,192",
+      "Position": "348,204",
       "HandleOffsets": {},
       "A": {
         "Identifier": "2",
@@ -202,10 +203,10 @@
       "DefaultValue": {
         "__class": "VariantValueFloat",
         "InputType": "Float",
-        "Value": 0.85
+        "Value": 0.4
       },
       "Identifier": "12",
-      "Position": "-84,348",
+      "Position": "-72,276",
       "HandleOffsets": {}
     }
   ]
