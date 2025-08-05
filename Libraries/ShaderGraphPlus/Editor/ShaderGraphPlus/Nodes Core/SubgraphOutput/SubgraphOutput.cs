@@ -32,7 +32,7 @@ public class ShaderFunctionOutput
 	/// Name of this output.
 	/// </summary>
 
-	public string OutputName { get; set; }
+	public string OutputName { get; set; } = "In0";
 
 	/// <summary>
 	/// Description of this output.
@@ -41,6 +41,8 @@ public class ShaderFunctionOutput
 	public string OutputDescription { get; set; }
 
 	public SubgraphOutputType OutputType { get; set; } = SubgraphOutputType.Vector3;
+
+	public int PortOrder { get; set; }
 
 	[Hide, JsonIgnore]
 	public Type Type
@@ -89,8 +91,6 @@ public class ShaderFunctionOutput
 	}
 
 	public FunctionOutput.PreviewType Preview { get; set; }
-
-	public int Priority { get; set; }
 
 	public void SetOutputTypeFromType( Type type )
 	{
@@ -142,7 +142,7 @@ public class ShaderFunctionOutput
 
 	public override int GetHashCode()
 	{
-		return System.HashCode.Combine( Id, OutputName, OutputDescription, HLSLTypeName, Priority );
+		return System.HashCode.Combine( Id, OutputName, OutputDescription, HLSLTypeName, PortOrder );
 	}
 }
 
@@ -152,8 +152,11 @@ public class ShaderFunctionOutput
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
 public sealed class SubgraphOutput : BaseResult, IErroringNode
 {
-
+	[Hide, JsonIgnore]
 	public override bool CanRemove => true;
+
+	[Hide, JsonIgnore]
+	int _lastHashCode = 0;
 
 	[InlineEditor( Label = false )]
 	public ShaderFunctionOutput SubgraphFunctionOutput { get; set; } = new ShaderFunctionOutput();
@@ -169,7 +172,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 			var oldhashCode = _lastHashCode;
 			_lastHashCode = hashCode;
 
-			SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
+			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 			
 			CreateInput();
 			IsDirty = true;
@@ -225,71 +228,52 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 	}
 
 	[Hide]
-	private List<IPlugIn> InternalInputs = new();
+	private BasePlugIn InternalInput = null;
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
-
-	[Hide, JsonIgnore]
-	int _lastHashCode = 0;
-
-	public void CreateInput()
-	{
-		var plugs = new List<IPlugIn>();
-		var functionOutputs = new List<ShaderFunctionOutput>() { SubgraphFunctionOutput };
-
-		//if ( functionOutputs == null )
-		//{
-		//	InternalInputs = new();
-		//}
-		//else
+	public override IEnumerable<IPlugIn> Inputs
+	{ 
+		get
 		{
-			foreach ( var output in functionOutputs.OrderBy( x => x.Priority ) )
-			{
-				var outputType = output.Type;
+			if ( InternalInput == null )
+				return new List<BasePlugIn>();
 
-				//SGPLog.Info( $"output.Type == \"{output.Type}\"" );
-
-
-				//if ( outputType == typeof( ColorTextureGenerator ) )
-				//{
-				//	outputType = typeof( Color );
-				//}
-				if ( outputType is null ) continue;
-				var info = new PlugInfo()
-				{
-					Id = output.Id,
-					Name = output.OutputName,
-					Type = outputType,
-					DisplayInfo = new()
-					{
-						Name = output.OutputName,
-						Fullname = outputType.FullName,
-						Description = output.OutputDescription,
-					}
-				};
-				var plug = new BasePlugIn( this, info, info.Type );
-				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
-				if ( oldPlug is not null )
-				{
-					//SGPLog.Info( $"plugIn.Info.Id == \"{info.Id}\"" );
-
-					oldPlug.Info.Name = info.Name;
-					oldPlug.Info.Type = info.Type;
-					oldPlug.Info.DisplayInfo = info.DisplayInfo;
-					plugs.Add( oldPlug );
-				}
-				else
-				{
-					plugs.Add( plug );
-				}
-			};
-
-			InternalInputs = plugs;
+			return new List<BasePlugIn> { InternalInput };
 		}
 	}
 
-	public void AddMaterialOutputs( GraphCompiler compiler, StringBuilder sb, FunctionOutput.PreviewType previewType)
+	public void CreateInput()
+	{
+		var plugInfo = new PlugInfo()
+		{
+			Id = SubgraphFunctionOutput.Id,
+			Name = SubgraphFunctionOutput.OutputName,
+			Type = SubgraphFunctionOutput.Type,
+			DisplayInfo = new()
+			{
+				Name = SubgraphFunctionOutput.OutputName,
+				Fullname = SubgraphFunctionOutput.Type.FullName,
+				Description = SubgraphFunctionOutput.OutputDescription,
+			}
+		};
+		
+		var oldPlugIn = InternalInput;
+		if ( oldPlugIn is not null )
+		{
+			oldPlugIn.Info.Name = plugInfo.Name;
+			oldPlugIn.Info.Type = plugInfo.Type;
+			oldPlugIn.Info.DisplayInfo = plugInfo.DisplayInfo;
+
+			InternalInput = oldPlugIn;
+		}
+		else 
+		{
+			var plugIn = new BasePlugIn( this, plugInfo, plugInfo.Type );
+			InternalInput = plugIn;
+		}
+	}
+
+	public void AddMaterialOutputs( GraphCompiler compiler, StringBuilder sb, FunctionOutput.PreviewType previewType )
 	{
 		if ( previewType == FunctionOutput.PreviewType.Albedo )
 		{
@@ -331,7 +315,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 	public NodeInput? GetInputFromPreview( FunctionOutput.PreviewType previewType )
 	{
 		var albedoOutput = SubgraphFunctionOutput;
-		if ( albedoOutput is not null )
+		if ( albedoOutput is not null && SubgraphFunctionOutput.Preview == previewType )
 		{
 			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == albedoOutput.Id );
 			if ( input is BasePlugIn plugIn )
