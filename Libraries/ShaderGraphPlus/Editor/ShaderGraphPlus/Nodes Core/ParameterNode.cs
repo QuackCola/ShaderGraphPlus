@@ -10,6 +10,8 @@ public interface IParameterNode
 	public int PortOrder { get; set; }
 	NodeInput PreviewInput { get; set; }
 
+	public Vector2 ParameterNodePosition { get; }
+
 	Type GetPortType();
 
 	object GetValue();
@@ -40,15 +42,20 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		$"{DisplayInfo.For( this ).Name}" :
 		$"{DisplayInfo.For( this ).Name} ( {Name} )";
 
-	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	//[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	[Hide]
 	public NodeInput PreviewInput { get; set; }
 
-	[ShowIf( nameof( IsSubgraph ), true )]
+	//[ShowIf( nameof( IsSubgraph ), true )]
+	[Hide]
 	public int PortOrder { get; set; }
 
 	public T Value { get; set; }
 
 	public string Name { get; set; } = "";
+
+	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
@@ -59,7 +66,8 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	/// <summary>
 	/// If true, this parameter can be modified directly on the subgraph node.
 	/// </summary>
-	[JsonIgnore, ShowIf( nameof( IsSubgraph ), true )]
+	//[JsonIgnore, ShowIf( nameof( IsSubgraph ), true )]
+	[Hide]
 	protected bool IsRequiredInput
 	{
 		get => IsAttribute;
@@ -111,6 +119,11 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	public List<string> GetErrors()
 	{
 		var errors = new List<string>();
+
+		if ( Name.Contains( ' ' ) )
+		{
+			errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
+		}
 
 		foreach ( var parameterNode in Graph.Nodes )
 		{
