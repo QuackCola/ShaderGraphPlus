@@ -885,7 +885,7 @@ public sealed partial class GraphCompiler
 			{
 				if ( node is SubgraphInput subgraphInput )
 				{
-					SGPLog.Info( $"Node is Subgraph Input with name \"{subgraphInput.InputName}\" that is of type \"{subgraphInput.InputType}\"", IsPreview );
+					SGPLog.Info( $"Node is Subgraph Input with name \"{subgraphInput.InputName}\" that is of type \"{subgraphInput.DefaultValue.InputType}\"", IsPreview );
 				
 					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value );
 
