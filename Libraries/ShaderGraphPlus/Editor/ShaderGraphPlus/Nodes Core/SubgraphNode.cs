@@ -80,10 +80,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
 
-		//var parameterNodes = Subgraph.Nodes.OfType<IParameterNode>().OrderBy( x => x.PortOrder );
-		var subgraphInputNodes = Subgraph.Nodes.OfType<SubgraphInput>();
-
-		foreach ( var inputNode in subgraphInputNodes )
+		foreach ( var inputNode in Subgraph.Nodes.OfType<SubgraphInput>().OrderBy( x => x.PortOrder ) )
 		{
 			var inputName = inputNode.InputName;
 
@@ -134,11 +131,9 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	internal Dictionary<IPlugOut, IPlugIn> OutputReferences = new();
 	public void CreateOutputs()
 	{
-		var subgraphOutputNodes = Subgraph.Nodes.OfType<SubgraphOutput>();
-		if ( subgraphOutputNodes is null ) return;
-
 		var plugs = new List<IPlugOut>();
-		foreach ( var output in subgraphOutputNodes )
+
+		foreach ( var output in Subgraph.Nodes.OfType<SubgraphOutput>().OrderBy( x => x.SubgraphFunctionOutput.PortOrder ) )
 		{
 			var outputType = output.SubgraphFunctionOutput.Type;
 
