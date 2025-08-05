@@ -943,6 +943,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 		}
 	}
 
+	[Hide,JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
+
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public int PortOrder { get; set; }
 
@@ -1125,6 +1128,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 			}
 		}
 	}
+
+	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
 
 	[Hide, JsonIgnore]
 	public bool AlreadyRegisterd { get; set; } = false;
@@ -1391,6 +1397,9 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 			}
 		}
 	}
+
+	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
