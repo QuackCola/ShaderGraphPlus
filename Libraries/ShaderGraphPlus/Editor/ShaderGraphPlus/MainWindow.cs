@@ -1638,15 +1638,6 @@ public class MainWindow : DockWindow
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
 
-		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
-		//{
-		//	_preview.IsPostProcessShader = true;
-		//}
-		//else
-		//{
-		//	_preview.IsPostProcessShader = false;
-		//}
-		
 		foreach ( var value in _samplerStateAttributes )
 		{
 			_preview.SetAttribute( value.Key, value.Value );

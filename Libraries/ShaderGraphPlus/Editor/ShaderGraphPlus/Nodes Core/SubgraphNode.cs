@@ -1,8 +1,4 @@
-﻿
-using Editor;
-using Sandbox.Rendering;
-using Sandbox.Resources;
-using ShaderGraphPlus.Nodes;
+﻿using Editor;
 
 namespace ShaderGraphPlus;
 
@@ -121,6 +117,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			InputReferences[plug] = (inputNode, type);
 
+			// TODO 
 			//if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			//{
 			//	if ( parameterNode.GetValue() != null )
@@ -128,56 +125,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 			//		DefaultValues[plug.Identifier] = parameterNode.GetValue();
 			//	}
 			//}
-
 		}
-
-		//foreach ( var parameterNode in parameterNodes )
-		//{
-		//	var name = parameterNode.Name;
-		//	if ( string.IsNullOrWhiteSpace( name ) ) continue;
-		//
-		//	var type = parameterNode.GetPortType();
-		//
-		//	if ( string.IsNullOrEmpty( name ) )
-		//	{
-		//		if ( !defaults.ContainsKey( type ) )
-		//		{
-		//			defaults[type] = 0;
-		//		}
-		//		name = $"{type.Name}_{defaults[type]}";
-		//		defaults[type]++;
-		//	}
-		//
-		//	var info = new PlugInfo()
-		//	{
-		//		Name = name,
-		//		Type = type,
-		//		DisplayInfo = new DisplayInfo()
-		//		{
-		//			Name = name,
-		//			Fullname = type.FullName
-		//		}
-		//	};
-		//	var plug = new BasePlugIn( this, info, type );
-		//	var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == info.Name && plugIn.Info.Type == info.Type ) as BasePlugIn;
-		//	if ( oldPlug is not null )
-		//	{
-		//		oldPlug.Info.Name = info.Name;
-		//		oldPlug.Info.Type = info.Type;
-		//		oldPlug.Info.DisplayInfo = info.DisplayInfo;
-		//		plug = oldPlug;
-		//	}
-		//	plugs.Add( plug );
-		//	InputReferences[plug] = (parameterNode, type);
-		//
-		//	if ( !DefaultValues.ContainsKey( plug.Identifier ) )
-		//	{
-		//		if ( parameterNode.GetValue() != null )
-		//		{
-		//			DefaultValues[plug.Identifier] = parameterNode.GetValue();
-		//		}
-		//	}
-		//}
 
 		InternalInputs = plugs;
 	}
@@ -251,6 +199,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 			}
 		}
 
+		// TODO
 		//foreach ( var input in InputReferences )
 		//{
 		//	var plug = input.Key;
@@ -277,6 +226,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 		shader.OpenInEditor();
 	}
+
 }
 
 [CustomEditor( typeof( Dictionary<string, object> ), NamedEditor = "subgraphplus.defaultvalues", WithAllAttributes = [typeof( WideModeAttribute )] )]

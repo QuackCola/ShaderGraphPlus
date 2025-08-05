@@ -2148,7 +2148,7 @@ public sealed partial class GraphCompiler
 
 		var sb = new StringBuilder();
 
-		switch (Graph.MaterialDomain)
+		switch ( Graph.MaterialDomain )
 		{
 		case MaterialDomain.Surface:
 				sb.AppendLine(@"

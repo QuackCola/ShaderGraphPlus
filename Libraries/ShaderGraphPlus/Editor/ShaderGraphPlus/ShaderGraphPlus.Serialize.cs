@@ -167,47 +167,12 @@ partial class ShaderGraphPlus
 				if ( TryUpgradeProperty( jsonProperty, prop, options, ref oldVersionNumber, out var newJsonElement ) )
 				{
 					deserializedObject = JsonSerializer.Deserialize( newJsonElement.GetRawText(), prop.PropertyType, options );
-					SGPLog.Info( $"Upgraded \"{prop.Name}\" of type \"{prop.PropertyType}\" from version \"{oldVersionNumber}\" to new version \"{((ISGPJsonUpgradeable)deserializedObject).Version}\"" );
+					//SGPLog.Info( $"Upgraded \"{prop.Name}\" of type \"{prop.PropertyType}\" from version \"{oldVersionNumber}\" to new version \"{((ISGPJsonUpgradeable)deserializedObject).Version}\"" );
 				}
 				else
 				{
 					deserializedObject = JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options );
 				}
-
-				/*
-				SGPLog.Info( $"Object of type \"{obj.GetType()}\" implamnets ISGPJsonUpgradeable" );
-
-				var typeInstance = EditorTypeLibrary.Create( prop.PropertyType.Name, prop.PropertyType );
-
-				if ( typeInstance != null && typeInstance is ISGPJsonUpgradeable iSGPJsonUpgradeable )
-				{
-					var versionNum = 0;
-					if ( nodeProperty.Value.TryGetProperty( "__version", out var version ) )
-					{
-						versionNum = version.GetInt32();
-					}
-
-					// Upgrade
-					if ( versionNum < iSGPJsonUpgradeable.Version )
-					{
-						var jsonObject = JsonNode.Parse( nodeProperty.Value.GetRawText() ) as JsonObject;
-
-						SGPJsonUpgrader.Upgrade( versionNum, jsonObject, prop.PropertyType );
-
-						var upgradedElement = JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString() );
-
-						deserializedObject = JsonSerializer.Deserialize( upgradedElement.GetRawText(), prop.PropertyType, options );
-					}
-					else
-					{
-						deserializedObject = JsonSerializer.Deserialize( nodeProperty.Value.GetRawText(), prop.PropertyType, options );
-					}
-				}
-				else
-				{
-					throw new Exception( $"Couldnt create a type instance of type \"{prop.PropertyType.Name}\"" );
-				}
-				*/
 			}
 
 			if ( deserializedObject != null )
@@ -296,7 +261,7 @@ partial class ShaderGraphPlus
 						var subgraphOutputNode = new SubgraphOutput();
 						subgraphOutputNode.Position = functionResultNode.Position.WithY( 64 + lastPos.y );
 						lastPos = subgraphOutputNode.Position;
-
+					
 						subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput()
 						{
 							OutputName = input.Identifier,
@@ -304,7 +269,7 @@ partial class ShaderGraphPlus
 						}; 
 						subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( input.Type );
 						subgraphOutputNode.CreateInput();
-
+					
 						nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
 						AddNode( subgraphOutputNode );
 						
@@ -340,7 +305,7 @@ partial class ShaderGraphPlus
 							{
 								connections.Add( (subgraphResultInput, connection) );
 							}
-
+						
 							RemoveNode( node );
 							nodes.Remove( node.Identifier );
 						}
