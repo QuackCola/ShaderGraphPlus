@@ -1,8 +1,4 @@
-﻿using Editor.NodeEditor;
-using Sandbox;
-using Sandbox.Services;
-using ShaderGraphPlus.Nodes;
-using System.Reflection;
+﻿using ShaderGraphPlus.Nodes;
 using System.Text.Json.Nodes;
 
 namespace ShaderGraphPlus;
@@ -223,6 +219,28 @@ partial class ShaderGraphPlus
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
+
+				// TODO : Think about this...
+				/*
+				if ( node is IParameterNode parameterNode && IsSubgraph )
+				{
+					if ( node is Float3 float3Node )
+					{
+						var subgraphInput = new SubgraphInput();
+						subgraphInput.Position = parameterNode.ParameterNodePosition.WithY( parameterNode.ParameterNodePosition.y - 128 );
+						subgraphInput.InputName = float3Node.Name;
+						subgraphInput.DefaultValue = new VariantValueVector3( float3Node.Value, SubgraphInputType.Vector3 );
+
+						nodes.Add( subgraphInput.Identifier, subgraphInput );
+						AddNode( subgraphInput );
+
+						//foreach ( var output in float3Node.Outputs )
+						//{
+						//	SGPLog.Info( $"IParameterNode \"{float3Node.Name}\" output \"{output.Identifier}\"" );
+						//}
+					}
+				}
+				*/
 
 				if ( node is CustomFunctionNode customCode )
 				{
