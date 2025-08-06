@@ -1,4 +1,5 @@
 ﻿using ShaderGraphPlus.Nodes;
+using System.Reflection;
 using System.Text.Json.Nodes;
 
 namespace ShaderGraphPlus;
@@ -56,8 +57,26 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 
+		var projectFileVersion = GetProjectVersion( root );
+		if ( projectFileVersion < Version )
+		{
+			SGPLog.Info( $"Version of loading Project is \"{projectFileVersion}\" which is less than the defined version \"{Version}\"." );
+		}
+		
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath );
+	}
+
+	private static int GetProjectVersion( JsonElement root )
+	{
+		if ( root.TryGetProperty( "__version", out var versionElement ) && versionElement.TryGetInt32( out var versionNum ) )
+		{
+			return versionNum;
+		}
+		else // Older Projects that dont contain a listed __version property
+		{
+			return 0;
+		}
 	}
 
 	public IEnumerable<BaseNodePlus> DeserializeNodes( string json )
@@ -66,49 +85,13 @@ partial class ShaderGraphPlus
 		return DeserializeNodes(doc.RootElement, SerializerOptions());
 	}
 
-	private static bool TryUpgradeProperty( JsonProperty jsonProperty, PropertyInfo propertyInfo, JsonSerializerOptions options, ref int oldVersionNumber, out JsonElement newElement )
+	public static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonProperty jsonProperty, JsonSerializerOptions serializerOptions )
 	{
-		//SGPLog.Info( $"Object of type \"{obj.GetType()}\" implements ISGPJsonUpgradeable" );
+		var jsonObject = JsonNode.Parse( jsonProperty.Value.GetRawText() ) as JsonObject;
 
-		newElement = default( JsonElement );
+		SGPJsonUpgrader.Upgrade( versionNumber, jsonObject, type );
 
-		var typeInstance = EditorTypeLibrary.Create( propertyInfo.PropertyType.Name, propertyInfo.PropertyType );
-
-		if ( typeInstance != null && typeInstance is ISGPJsonUpgradeable iSGPJsonUpgradeable )
-		{
-			//var versionNum = 0;
-			if ( jsonProperty.Value.TryGetProperty( "__version", out var version ) )
-			{
-				oldVersionNumber = version.GetInt32();
-			}
-
-			// Upgrade
-			if ( oldVersionNumber < iSGPJsonUpgradeable.Version )
-			{
-				var jsonObject = JsonNode.Parse( jsonProperty.Value.GetRawText() ) as JsonObject;
-
-				SGPJsonUpgrader.Upgrade( oldVersionNumber, jsonObject, propertyInfo.PropertyType );
-
-				newElement = JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString() );
-
-				//deserializedObject = JsonSerializer.Deserialize( upgradedElement.GetRawText(), propertyInfo.PropertyType, options );
-
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			throw new Exception( $"Couldnt create a type instance of type \"{propertyInfo.PropertyType.Name}\"" );
-		}
-	}
-
-	private static bool TryUpgradeElement( JsonElement jsonElement, JsonSerializerOptions options )
-	{
-		return true;
+		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
 	}
 
 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
@@ -124,16 +107,6 @@ partial class ShaderGraphPlus
 
 		foreach ( var jsonProperty in doc.EnumerateObject() )
 		{
-			//if ( obj is ShaderGraphPlus && obj is ISGPJsonUpgradeable upgradeable )
-			//{
-			//	SGPLog.Info( $"\"{obj.GetType()}\" current version is \"{upgradeable.Version}\"" );
-			//}
-
-			//if ( jsonProperty.Name == "__version" )
-			//{
-			//	hasVersionProperty = true;
-			//}
-
 			var prop = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
@@ -154,31 +127,31 @@ partial class ShaderGraphPlus
 			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
 
-			object deserializedObject = null;
-
 			// Handle any types that use the ISGPJsonUpgradeable interface
 			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( prop.PropertyType ) )
 			{
+				var typeInstance = EditorTypeLibrary.Create( prop.PropertyType.Name, prop.PropertyType );
 				int oldVersionNumber = 0;
-				if ( TryUpgradeProperty( jsonProperty, prop, options, ref oldVersionNumber, out var newJsonElement ) )
+
+				if ( jsonProperty.Value.TryGetProperty( "__version", out var versionElement ) )
 				{
-					deserializedObject = JsonSerializer.Deserialize( newJsonElement.GetRawText(), prop.PropertyType, options );
-					//SGPLog.Info( $"Upgraded \"{prop.Name}\" of type \"{prop.PropertyType}\" from version \"{oldVersionNumber}\" to new version \"{((ISGPJsonUpgradeable)deserializedObject).Version}\"" );
+					oldVersionNumber = versionElement.GetInt32();
 				}
-				else
+
+				SGPLog.Info( $"Got \"{prop.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
+
+				if ( typeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
 				{
-					deserializedObject = JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options );
+					var newElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, prop.PropertyType, jsonProperty, options );
+					prop.SetValue( obj, JsonSerializer.Deserialize( newElement.GetRawText(), prop.PropertyType, options ) );
+
+					continue; // Continue to the next jsonProperty :)
 				}
+
+				SGPLog.Info( $"\"{prop.PropertyType}\" is already at the latest version :)" );
 			}
 
-			if ( deserializedObject != null )
-			{
-				prop.SetValue( obj, deserializedObject );
-			}
-			else
-			{
-				prop.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options ) );
-			}
+			prop.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options ) );
 		}
 	}
 
@@ -274,6 +247,7 @@ partial class ShaderGraphPlus
 				Vector2 lastPos = Vector2.Zero;
 				foreach ( var input in node.Inputs )
 				{
+					// Replace Function result inputs with individual SubgraphOutput nodes. Remove this later along with all the FunctionResult code...
 					if ( node is FunctionResult functionResultNode )
 					{
 						var subgraphOutputNode = new SubgraphOutput();
@@ -389,7 +363,6 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-
 
 		if ( obj is ISGPJsonUpgradeable upgradeable )
 		{

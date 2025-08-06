@@ -61,7 +61,7 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 	/// <summary>
 	/// Current shadergraphplus project version. Used to determine if the project needs to be upgraded.
 	/// </summary>
-	[Hide]
+	[Hide, JsonPropertyName( "__version" )]
 	public int Version => 1;
 
 	[Hide]

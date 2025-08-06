@@ -201,8 +201,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		SGPLog.Info( $"DefaultValue is of type \"{DefaultValue.GetType()}\"", compiler.IsPreview );
-
 		(ResultType resultType, string defaultCode) defaultResult = DefaultValue.InputType switch
 		{
 			SubgraphInputType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( DefaultValue.GetValue<bool>() )}" ),
