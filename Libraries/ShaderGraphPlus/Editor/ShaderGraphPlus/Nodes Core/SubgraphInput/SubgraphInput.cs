@@ -110,9 +110,28 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return DefaultValue.GetValue<T>();
 	}
 
+	internal T GetDefaultValueRangeMin<T>()
+	{
+		return DefaultValue.GetValueRangeMin<T>();
+	}
+
+	internal T GetDefaultValueRangeMax<T>()
+	{
+		return DefaultValue.GetValueRangeMax<T>();
+	}
+
 	internal void SetDefaultValue<T>( T value )
 	{
 		DefaultValue.SetValue<T>( value );
+	}
+	internal void SetDefaultValueRangeMin<T>( T value )
+	{
+		DefaultValue.SetValueRangeMin<T>( value );
+	}
+
+	internal void SetDefaultValueRangeMax<T>( T value )
+	{
+		DefaultValue.SetValueRangeMax<T>( value );
 	}
 
 	public void OnNodeCreated()

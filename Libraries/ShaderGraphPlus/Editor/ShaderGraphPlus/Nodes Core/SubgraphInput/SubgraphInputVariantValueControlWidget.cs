@@ -29,7 +29,7 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		if ( Node.DefaultValue == null )
 		{
 			SGPLog.Info( $"Node.DefaultValue is  null setting default to Vector3" );
-			Node.DefaultValue = new VariantValueVector3( Vector3.Zero, SubgraphInputType.Vector3 );
+			Node.DefaultValue = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphInputType.Vector3 );
 		}
 
 	
@@ -61,13 +61,13 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 				Node.DefaultValue = new VariantValueBool( false, SubgraphInputType.Bool );
 				break;
 			case SubgraphInputType.Float:
-				Node.DefaultValue = new VariantValueFloat( 0.0f, SubgraphInputType.Float );
+				Node.DefaultValue = new VariantValueFloat( 0.0f, 0.0f, 1.0f, SubgraphInputType.Float );
 				break;
 			case SubgraphInputType.Vector2:
-				Node.DefaultValue = new VariantValueVector2( Vector2.Zero, SubgraphInputType.Vector2 );
+				Node.DefaultValue = new VariantValueVector2( Vector2.Zero, Vector2.Zero, Vector2.One, SubgraphInputType.Vector2 );
 				break;
 			case SubgraphInputType.Vector3:
-				Node.DefaultValue = new VariantValueVector3( Vector3.Zero, SubgraphInputType.Vector3 );
+				Node.DefaultValue = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphInputType.Vector3 );
 				break;
 			case SubgraphInputType.Color:
 				Node.DefaultValue = new VariantValueColor( Color.White, SubgraphInputType.Color );
@@ -122,11 +122,31 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		{
 			return Node.GetDefaultValue<T>();
 		}
-		
+
+		public T GetValueRangeMin<T>()
+		{
+			return Node.GetDefaultValueRangeMin<T>();
+		}
+
+		public T GetValueRangeMax<T>()
+		{
+			return Node.GetDefaultValueRangeMax<T>();
+		}
+
 		public void SetValue<T>( T value )
 		{
 			Node?.SetDefaultValue<T>( value );
 			OnPropertyUpdate?.Invoke();
+		}
+
+		public void SetValueRangeMin<T>( T value )
+		{
+			Node?.SetDefaultValueRangeMin<T>( value );
+		}
+
+		public void SetValueRangeMax<T>( T value )
+		{
+			Node?.SetDefaultValueRangeMax<T>( value );
 		}
 	}
 }

@@ -49,7 +49,7 @@
       "_class": "WorldPosition",
       "NoHighPrecisionLightingOffsets": false,
       "Identifier": "1",
-      "Position": "-84,168",
+      "Position": "60,156",
       "HandleOffsets": {}
     },
     {
@@ -57,7 +57,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "2",
-      "Position": "192,156",
+      "Position": "288,132",
       "HandleOffsets": {},
       "B": {
         "Identifier": "1",
@@ -69,7 +69,7 @@
       "_class": "ReroutePlus",
       "Comment": null,
       "Identifier": "3",
-      "Position": "540,312",
+      "Position": "564,312",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "12",
@@ -80,7 +80,7 @@
     {
       "_class": "SubgraphOutput",
       "SubgraphFunctionOutput": {
-        "Id": "c7724aed-081b-47c6-ac50-7dd622c949c0",
+        "Id": "b59fae1a-4730-487e-a14f-8f024426b690",
         "OutputName": "VertexOffset",
         "OutputType": "Vector3",
         "Preview": "PositionOffset"
@@ -97,7 +97,7 @@
     {
       "_class": "Floor",
       "Identifier": "5",
-      "Position": "456,204",
+      "Position": "516,192",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "8",
@@ -123,7 +123,7 @@
     {
       "_class": "Camera",
       "Identifier": "7",
-      "Position": "-84,36",
+      "Position": "60,24",
       "HandleOffsets": {}
     },
     {
@@ -131,7 +131,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "8",
-      "Position": "348,204",
+      "Position": "420,192",
       "HandleOffsets": {},
       "A": {
         "Identifier": "2",
@@ -149,7 +149,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "9",
-      "Position": "624,192",
+      "Position": "648,192",
       "HandleOffsets": {},
       "A": {
         "Identifier": "5",
@@ -202,10 +202,38 @@
       "DefaultValue": {
         "__class": "VariantValueFloat",
         "InputType": "Float",
-        "Value": 0.4
+        "Value": 0.4,
+        "MinValue": 0,
+        "MaxValue": 2
       },
       "Identifier": "12",
-      "Position": "-72,276",
+      "Position": "192,276",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3",
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "PortOrder": 0,
+      "Value": "0.5002532,0.7704057,0.5002532",
+      "Name": "A",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "13",
+      "Position": "516,-132",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "PortOrder": 0,
+      "Value": "0.35374,0.3185,0.71786,0.78833",
+      "Name": "B",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color"
+      },
+      "Identifier": "14",
+      "Position": "732,-132",
       "HandleOffsets": {}
     }
   ]

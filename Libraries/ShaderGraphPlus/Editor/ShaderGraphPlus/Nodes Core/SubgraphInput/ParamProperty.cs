@@ -5,21 +5,50 @@ internal abstract class ParamProperty : SerializedProperty
 	public static ParamProperty Create( VariantValueSerializedObject parent )
 	{
 		var variantProperty = parent.Node.DefaultValue;
-		//var type = parent.Node.PortType;
 
 		SGPLog.Info( $"Creating ParamProperty of \"{variantProperty.GetType()}\"" );
 
 		return variantProperty switch
 		{
-			VariantValueBool => new VariantValueBool.ParamProperty( parent, "Default Bool" ),
-			VariantValueInt => new VariantValueInt.ParamProperty( parent, "Default Int" ),
-			VariantValueFloat => new VariantValueFloat.ParamProperty( parent, "Default Float" ),
-			VariantValueVector2 => new VariantValueVector2.ParamProperty( parent, "Default Vector2" ),
-			VariantValueVector3 => new VariantValueVector3.ParamProperty( parent, "Default Vector3" ),
-			VariantValueVector4 => new VariantValueVector4.ParamProperty( parent, "Default Vector4" ),
-			VariantValueColor => new VariantValueColor.ParamProperty( parent, "Default Color" ),
-			VariantValueSampler => new VariantValueSampler.ParamProperty( parent, "Default Sampler" ),
-			VariantValueTexture2D => new VariantValueTexture2D.ParamProperty( parent, "Default Texture2D" ),
+			VariantValueBool => new VariantValueBool.ParamPropertyBool( parent, "Default Bool" ),
+			VariantValueInt => new VariantValueInt.ParamPropertyInt( parent, "Default Int" ),
+			VariantValueFloat => new VariantValueFloat.ParamPropertyFloat( parent, "Default Float" ),
+			VariantValueVector2 => new VariantValueVector2.ParamPropertyVector2( parent, "Default Vector2" ),
+			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3( parent, "Default Vector3" ),
+			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4( parent, "Default Vector4" ),
+			VariantValueColor => new VariantValueColor.ParamPropertyColor( parent, "Default Color" ),
+			VariantValueSampler => new VariantValueSampler.ParamPropertySampler( parent, "Default Sampler" ),
+			VariantValueTexture2D => new VariantValueTexture2D.ParamPropertyTexture2D( parent, "Default Texture2D" ),
+			_ => null,
+		};
+	}
+
+	public static ParamProperty CreateRangeMin( VariantValueSerializedObject parent )
+	{
+		var variantProperty = parent.Node.DefaultValue;
+
+		return variantProperty switch
+		{
+			VariantValueFloat => new VariantValueFloat.ParamPropertyFloatRangeMin( parent, "Default Float Min" ),
+			VariantValueVector2 => new VariantValueVector2.ParamPropertyVector2RangeMin( parent, "Default Vector2 Min" ),
+			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3RangeMin( parent, "Default Vector3 Min" ),
+			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4RangeMin( parent, "Default Vector4 Min" ),
+			VariantValueColor => new VariantValueColor.ParamPropertyColorRangeMin( parent, "Default Color Min" ),
+			_ => null,
+		};
+	}
+
+	public static ParamProperty CreateRangeMax( VariantValueSerializedObject parent )
+	{
+		var variantProperty = parent.Node.DefaultValue;
+
+		return variantProperty switch
+		{
+			VariantValueFloat => new VariantValueFloat.ParamPropertyFloatRangeMax( parent, "Default Float Max" ),
+			VariantValueVector2 => new VariantValueVector2.ParamPropertyVector2RangeMax( parent, "Default Vector2 Max" ),
+			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3RangeMax( parent, "Default Vector3 Max" ),
+			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4RangeMax( parent, "Default Vector4 Max" ),
+			VariantValueColor => new VariantValueColor.ParamPropertyColorRangeMax( parent, "Default Color Max" ),
 			_ => null,
 		};
 	}
@@ -52,7 +81,9 @@ internal abstract class ParamProperty<TValue> : ParamProperty
 	public abstract TValue Value { get; set; }
 
 	public override string DisplayName => Name;
-	public override string Name { get; }
+	public override string Name => "Value";
+
+	public virtual bool HasMinMax { get; } = false;
 
 	public override string Description => PropertyDescription;
 	public string PropertyDescription { get; }
@@ -61,7 +92,6 @@ internal abstract class ParamProperty<TValue> : ParamProperty
 	: base( parent, name, typeof( TValue ) )
 	{
 		Parameter = parent.Node.GetValueAsVariantParam<TValue>();
-		Name = Parameter.Name;
 		PropertyDescription = Parameter.Description;
 	}
 
