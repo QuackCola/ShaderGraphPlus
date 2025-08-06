@@ -15,8 +15,23 @@ internal sealed class VariantValueWidget : Widget
 		public Action OnPropertyUpdate { get; set; }
 
 		public T GetValue<T>();
+		public T GetValueRangeMin<T>();
+		public T GetValueRangeMax<T>();
+
 		public void SetValue<T>( T value );
+		public void SetValueRangeMin<T>( T value );
+		public void SetValueRangeMax<T>( T value );
+
 	}
+
+	public VariantValueWidget( Widget parent ) : base( parent )
+	{
+		Layout = Layout.Column();
+
+		Sheet = new ControlSheet();
+		Layout.Add( Sheet, 1 );
+	}
+
 	public void SetAccessor( IAccessor accessor )
 	{
 		if ( Node is null )
@@ -31,14 +46,6 @@ internal sealed class VariantValueWidget : Widget
 	public void SetNode( SubgraphInput node )
 	{
 		Node = node;
-	}
-
-	public VariantValueWidget( Widget parent ) : base( parent )
-	{
-		Layout = Layout.Column();
-
-		Sheet = new ControlSheet();
-		Layout.Add( Sheet, 1 );
 	}
 }
 
@@ -60,9 +67,18 @@ internal class VariantValueSerializedObject : SerializedObject
 	{
 		PropertyList = new List<SerializedProperty>();
 
-		if ( ParamProperty.Create( this ) is { } property )
+		//if ( ParamProperty.Create( this ) is { } property )
 		{
-			PropertyList.Add( property );
+			var paramProp = ParamProperty.Create( this );
+			PropertyList.Add( paramProp );
+
+			if ( Node.DefaultValue.HasRange )
+			{
+				var paramPropRangeMin = ParamProperty.CreateRangeMin( this );
+				var paramPropRangeMax = ParamProperty.CreateRangeMax( this );
+				PropertyList.Add( paramPropRangeMin );
+				PropertyList.Add( paramPropRangeMax );
+			}
 		}
 	}
 }
@@ -76,4 +92,6 @@ public struct VariantParam<T>
 
 	public T Value;
 	public T DefaultValue;
+	public T MinValue;
+	public T MaxValue;
 }
