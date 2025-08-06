@@ -19,6 +19,8 @@ public interface IParameterNode
 
 	Vector4 GetRangeMin();
 	Vector4 GetRangeMax();
+
+	public SubgraphInput UpgradeToSubgraphInput();
 }
 
 public interface ITextureParameterNode
@@ -75,6 +77,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	}
 
 	[InlineEditor( Label = false ), Group( "UI" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
@@ -114,6 +117,11 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	public void SetValue( object val )
 	{
 		Value = (T)val;
+	}
+
+	public virtual SubgraphInput UpgradeToSubgraphInput()
+	{
+		return default ( SubgraphInput );
 	}
 
 	public List<string> GetErrors()

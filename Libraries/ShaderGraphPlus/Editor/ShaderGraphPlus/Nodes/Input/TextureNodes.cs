@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Sandbox.Rendering;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -1042,7 +1043,17 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 	{
 		return Vector4.One;
 	}
-#endregion IParameterNode Region
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+
+		return subgraphInput;
+	}
+	#endregion IParameterNode Region
 
 	/// <summary>
 	/// TextureCube object result.
@@ -1272,7 +1283,18 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 	{
 		return Vector4.One;
 	}
-#endregion IParameterNode Region
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+
+		return subgraphInput;
+	}
+
+	#endregion IParameterNode Region
 
 #region ISyncableTextureNode Region
 	[Hide,JsonIgnore]
@@ -1446,6 +1468,17 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	{
 		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMax" );
 	}
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueSampler( SamplerState, SubgraphInputType.Sampler );
+
+		return subgraphInput;
+	}
+
 #endregion IParameterNode Region
 
 	[Output( typeof( Sampler ) ), Hide]

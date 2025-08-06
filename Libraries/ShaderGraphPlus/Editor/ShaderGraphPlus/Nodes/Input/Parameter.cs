@@ -24,6 +24,16 @@ public sealed class Bool : ParameterNode<bool>
 		UI = UI with { HideProps = true };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueBool( Value, SubgraphInputType.Bool );
+
+		return subgraphInput;
+	}
 }
 
 // <summary>
@@ -81,6 +91,16 @@ public sealed class Float : ParameterNode<float>
 	public override Vector4 GetRangeMax()
 	{
 		return new( Max );
+	}
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueFloat( Value, Min, Max, SubgraphInputType.Float );
+
+		return subgraphInput;
 	}
 }
 
@@ -149,6 +169,16 @@ public sealed class Float2 : ParameterNode<Vector2>
 	{
 		return new( Max.x, Max.y, 0, 0 );
 	}
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueVector2( Value, Min, Max, SubgraphInputType.Vector2 );
+
+		return subgraphInput;
+	}
 }
 
 /// <summary>
@@ -165,6 +195,16 @@ public sealed class Float3 : ParameterNode<Vector3>
 
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueVector3( Value, Min, Max, SubgraphInputType.Vector3 );
+
+		return subgraphInput;
+	}
 
 	public Float3()
 	{
@@ -237,6 +277,16 @@ public sealed class Float4 : ParameterNode<Color>
 	{
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.DefaultValue = new VariantValueColor( Value, SubgraphInputType.Color );
+
+		return subgraphInput;
+	}
 
 	[JsonIgnore, Hide]
 	public float ValueR
