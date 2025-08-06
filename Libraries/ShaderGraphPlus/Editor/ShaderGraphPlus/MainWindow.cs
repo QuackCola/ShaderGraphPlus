@@ -49,6 +49,7 @@ public class MainWindow : DockWindow
 	private Output _output;
 	private UndoHistory _undoHistory;
 	private PaletteWidget _palette;
+	private TextView _generatedCodeTextView;
 
 	private readonly UndoStack _undoStack = new();
 
@@ -124,7 +125,7 @@ public class MainWindow : DockWindow
 		CreateToolBar();
 		
 		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
-		    .Where(x => System.IO.File.Exists(x)).ToList();
+			.Where(x => System.IO.File.Exists(x)).ToList();
 		
 		CreateUI();
 		Show();
@@ -522,6 +523,7 @@ public class MainWindow : DockWindow
 			DockManager.RaiseDock( "Output" );
 
 			_generatedCode = null;
+			_generatedCodeTextView.SetTextContents( "" );
 
 			RestoreShader();
 
@@ -594,7 +596,7 @@ public class MainWindow : DockWindow
 			//	IVoidFunctionNode.RegisterVoidFunction( compiler );
 			//}
 
-			#region ITextureParameterNode Region
+#region ITextureParameterNode Region
 			if ( node is ITextureParameterNode textureParameterNode )
 			{
 				if ( string.IsNullOrWhiteSpace( textureParameterNode.UI.Name ) )
@@ -743,11 +745,6 @@ public class MainWindow : DockWindow
 		//compiler.ClearResults();
 		var code = compiler.Generate();
 
-		//if ( compiler.Warnings.Any() )
-		//{
-		//	_output.Warnings = compiler.Warnings;
-		//	DockManager.RaiseDock( "Output" );
-		//}
 		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
 		{
 			// Add any iErroringNodeErrors to the end of the iWarningNodeWarning list.
@@ -759,6 +756,7 @@ public class MainWindow : DockWindow
 				DockManager.RaiseDock( "Output" );
 
 				_generatedCode = null;
+				_generatedCodeTextView.SetTextContents( "" );
 
 				RestoreShader();
 
@@ -776,8 +774,20 @@ public class MainWindow : DockWindow
 			_output.ClearWarnings();
 		}
 
-		// No errors :o? clear em :D.
-		if ( !iErroringNodeErrors.Any() )
+		if ( iErroringNodeErrors.Any() )
+		{
+			_output.GraphIssues = iErroringNodeErrors;
+
+			DockManager.RaiseDock( "Output" );
+
+			_generatedCode = null;
+			//_generatedCodeTextView.SetTextContents( "" );
+
+			RestoreShader();
+
+			return null;
+		}
+		else // No errors :o? clear em :D.
 		{
 			_output.ClearErrors();
 		}
@@ -785,6 +795,7 @@ public class MainWindow : DockWindow
 		if ( _generatedCode != code )
 		{
 			_generatedCode = code;
+			//_generatedCodeTextView.SetTextContents( code );
 	
 			if ( _autoCompile )
 			{
@@ -1159,7 +1170,7 @@ public class MainWindow : DockWindow
 
 		view.AddSeparator();
 
-		var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+		var style = view.AddOption( "Grid-Aligned Wires", "turn_sharp_right" );
 		style.Checkable = true;
 		style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
 		style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
@@ -1237,6 +1248,7 @@ public class MainWindow : DockWindow
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
+		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
 
 		_output.ClearErrors();
@@ -1336,6 +1348,7 @@ public class MainWindow : DockWindow
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
+		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
 
 		if ( addToPath )
@@ -1472,15 +1485,20 @@ public class MainWindow : DockWindow
 		if ( IsSubgraph )
 		{
 			Compile();
+
+			_generatedCodeTextView.SetTextContents( _generatedCode );
 		}
 		else
 		{
 			var shaderPath = System.IO.Path.ChangeExtension( savePath, ".shader" );
 		
 			var code = GenerateShaderCode();
+
 			if ( string.IsNullOrWhiteSpace( code ) )
 				return false;
-		
+
+			_generatedCodeTextView.SetTextContents( code );
+
 			// Write generated shader to file
 			if ( System.IO.File.Exists( shaderPath ) )
 			{
@@ -1558,7 +1576,8 @@ public class MainWindow : DockWindow
 		DockManager.RegisterDockType( "Console", "text_snippet", null, false );
 		DockManager.RegisterDockType( "Undo History", "history", null, false );
 		DockManager.RegisterDockType( "Palette", "palette", null, false );
-		
+		DockManager.RegisterDockType( "Generated Code", "", null, false );
+
 		_graphCanvas = new Widget( this ) { WindowTitle = $"{(_asset != null ? _asset.Name : "untitled")}{(_dirty ? "*" : "")}" };
 		_graphCanvas.Name = "Graph";
 		_graphCanvas.SetWindowIcon( "account_tree" );
@@ -1576,7 +1595,6 @@ public class MainWindow : DockWindow
 		_fileHistoryBack.Enabled = false;
 		_fileHistoryForward.Enabled = false;
 		_fileHistoryHome.Enabled = false;
-		
 		
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
@@ -1616,7 +1634,7 @@ public class MainWindow : DockWindow
 			// Skip any _c compiled subgraph files.
 			if ( subgraph.CanRecompile )
 			{
-			    _graphView.AddNodeType( subgraph.Path );
+				_graphView.AddNodeType( subgraph.Path );
 			}
 		}
 		
@@ -1632,7 +1650,7 @@ public class MainWindow : DockWindow
 			_graphView.Scale = 1;
 			_graphView.CenterOn( nodeUI.Center );
 		};
-		
+
 		_preview = new PreviewPanel( this, _graph.Model )
 		{
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
@@ -1708,19 +1726,20 @@ public class MainWindow : DockWindow
 		_undoHistory.OnHistorySelected = SetUndoLevel;
 		
 		_palette = new PaletteWidget( this, IsSubgraph );
-		
+		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
+
 		DockManager.AddDock( null, _preview, DockArea.Left, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
 		DockManager.AddDock( _preview, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
-		
+
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		
+		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.25f );
+
 		DockManager.RaiseDock( "Output" );
 		DockManager.Update();
 		
