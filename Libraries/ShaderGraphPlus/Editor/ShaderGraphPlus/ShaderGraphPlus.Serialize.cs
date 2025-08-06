@@ -24,6 +24,9 @@ partial class ShaderGraphPlus
 
 partial class ShaderGraphPlus
 {
+	[JsonIgnore, Hide]
+	internal bool Upgrade { get; set; } = false;
+
 	internal static JsonSerializerOptions SerializerOptions( bool indented = false )
 	{
 		var options = new JsonSerializerOptions
@@ -100,14 +103,20 @@ partial class ShaderGraphPlus
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 
-		//if ( obj is ISGPJsonUpgradeable upgradeable )
-		//{
-		//
-		//}
+		if ( obj is BaseNodePlus baseNode )
+		{
+			SGPLog.Info( $"Deserializing BaseNodePlus object \"{type}\"" );
+		}
+		else
+		{
+			SGPLog.Info( $"Deserializing object \"{type}\"" );
+		}
 
+		// start deserilzing each property of the current type we are deserialzing. Also handle 
+		// any property that needs upgrading.
 		foreach ( var jsonProperty in doc.EnumerateObject() )
 		{
-			var prop = properties.FirstOrDefault( x =>
+			var propertyInfo = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
 			
@@ -118,40 +127,44 @@ partial class ShaderGraphPlus
 				return string.Equals( propName, jsonProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
 
-			if ( prop == null )
+			if ( propertyInfo == null )
 				continue;
 
-			if ( prop.CanWrite == false )
+			if ( propertyInfo.CanWrite == false )
 				continue;
 			
-			if ( prop.IsDefined( typeof( JsonIgnoreAttribute ) ) )
+			if ( propertyInfo.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
 
 			// Handle any types that use the ISGPJsonUpgradeable interface
-			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( prop.PropertyType ) )
+			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( propertyInfo.PropertyType ) )
 			{
-				var typeInstance = EditorTypeLibrary.Create( prop.PropertyType.Name, prop.PropertyType );
+				var propertyTypeInstance = EditorTypeLibrary.Create( propertyInfo.PropertyType.Name, propertyInfo.PropertyType );
 				int oldVersionNumber = 0;
 
+				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
 				if ( jsonProperty.Value.TryGetProperty( "__version", out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
 				}
 
-				SGPLog.Info( $"Got \"{prop.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
+				SGPLog.Info( $"Got \"{propertyInfo.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
 
-				if ( typeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
+				// Dont even bother upgrading if we dont need to.
+				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
 				{
-					var newElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, prop.PropertyType, jsonProperty, options );
-					prop.SetValue( obj, JsonSerializer.Deserialize( newElement.GetRawText(), prop.PropertyType, options ) );
+					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, propertyInfo.PropertyType, jsonProperty, options );
 
-					continue; // Continue to the next jsonProperty :)
+					propertyInfo.SetValue( obj, JsonSerializer.Deserialize( upgradedElement.GetRawText(), propertyInfo.PropertyType, options ) );
+
+					// Continue to the next jsonProperty :)
+					continue;
 				}
 
-				SGPLog.Info( $"\"{prop.PropertyType}\" is already at the latest version :)" );
+				SGPLog.Info( $"\"{propertyInfo.PropertyType}\" is already at the latest version :)" );
 			}
 
-			prop.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), prop.PropertyType, options ) );
+			propertyInfo.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), propertyInfo.PropertyType, options ) );
 		}
 	}
 
@@ -191,6 +204,18 @@ partial class ShaderGraphPlus
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
+				}
+
+				// Replace named IParameter nodes with a SubgraphInput node.
+				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
+				{
+					SGPLog.Info( $"Found named IParameterNode \"{parameterNode.Name}\" while current graph is a subgraph." );
+					
+					var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
+					subgraphInputNode.Position = parameterNode.ParameterNodePosition.WithY( parameterNode.ParameterNodePosition.y - 128 );
+
+					nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
+					AddNode( subgraphInputNode );
 				}
 
 				// TODO : Think about this...
@@ -247,6 +272,8 @@ partial class ShaderGraphPlus
 				Vector2 lastPos = Vector2.Zero;
 				foreach ( var input in node.Inputs )
 				{
+					//SGPLog.Info( $"Node \"{node}\" input \"{input.Identifier}\"" );
+
 					// Replace Function result inputs with individual SubgraphOutput nodes. Remove this later along with all the FunctionResult code...
 					if ( node is FunctionResult functionResultNode )
 					{
@@ -261,10 +288,12 @@ partial class ShaderGraphPlus
 						}; 
 						subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( input.Type );
 						subgraphOutputNode.CreateInput();
-					
-						nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
-						AddNode( subgraphOutputNode );
-						
+
+						//nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
+						//AddNode( subgraphOutputNode );
+
+						node = subgraphOutputNode;
+
 						SubgraphOutputNodeInputs.Add( subgraphOutputNode.Inputs.First() );
 					}
 
@@ -298,8 +327,8 @@ partial class ShaderGraphPlus
 								connections.Add( (subgraphResultInput, connection) );
 							}
 						
-							RemoveNode( node );
-							nodes.Remove( node.Identifier );
+							//RemoveNode( node );
+							//nodes.Remove( node.Identifier );
 						}
 					}
 				}
@@ -310,6 +339,10 @@ partial class ShaderGraphPlus
 			if ( node.CanAddToGraph )
 			{
 				AddNode( node );
+			}
+			else
+			{
+				//nodes.Remove( node.Identifier );
 			}
 		}
 
