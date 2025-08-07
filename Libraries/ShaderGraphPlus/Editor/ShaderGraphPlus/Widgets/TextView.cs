@@ -37,7 +37,7 @@ public class TextView : Widget
 			TextChanged?.Invoke();
 		};
 
-		TextEdit.SetStyles( $"tab-size: 4; font-size: 12px; font-weight: regular; color: {Theme.TextControl.Hex};" );
+		TextEdit.SetStyles( $"font-size: 12px; font-weight: regular; color: {Theme.TextControl.Hex};" );
 
 		Layout.Add( TextEdit );
 	}
@@ -50,12 +50,13 @@ public class TextView : Widget
 
 	public void SetTextContents( string text )
 	{
+		if ( !string.IsNullOrWhiteSpace( text ) )
+		{
+			text.ReplaceLineEndings();
+			text = text.Replace( "    ", "\t" );
+		}
+
 		Text = text;
-		
-		Text.ReplaceLineEndings();
-		Text = Text.Replace( "    ", "\t" );
-
-
 		TextEdit.PlainText = Text;
 	}
 }
