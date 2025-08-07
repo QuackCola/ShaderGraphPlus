@@ -124,7 +124,7 @@
       "Min": 0,
       "Max": 1,
       "Value": 0.49999848,
-      "Name": "Depth Scale",
+      "Name": "DepthScale",
       "IsAttribute": false,
       "UI": {},
       "Identifier": "7",
@@ -243,7 +243,7 @@
       "Min": 0,
       "Max": 1,
       "Value": 0.5,
-      "Name": "Reference Plane",
+      "Name": "ReferencePlane",
       "IsAttribute": true,
       "UI": {},
       "Identifier": "16",
@@ -280,7 +280,8 @@
         {
           "Id": "b4169622-e9aa-4cc8-83a8-650faa83296a",
           "Name": "UV",
-          "Type": "Vector2"
+          "Type": "Vector2",
+		  "Preview": "Albedo"
         },
         {
           "Id": "2ca1e83a-4a1b-4cf4-815c-f4f9c9e97050",
@@ -289,7 +290,7 @@
         }
       ],
       "Identifier": "19",
-      "Position": "3180,384",
+      "Position": "3180,255",
       "HandleOffsets": {},
       "UV": {
         "Identifier": "13",
