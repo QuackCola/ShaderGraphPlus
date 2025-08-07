@@ -36,6 +36,9 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool Processed { get; set; } = false;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool UpgradedToNewNode { get; set; } = false;
+
 	[Browsable( false )]
 	[JsonIgnore, Hide]
 	public IGraph Graph

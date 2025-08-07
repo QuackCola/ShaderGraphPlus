@@ -63,7 +63,7 @@ partial class ShaderGraphPlus
 		var projectFileVersion = GetProjectVersion( root );
 		if ( projectFileVersion < Version )
 		{
-			SGPLog.Info( $"Version of loading Project is \"{projectFileVersion}\" which is less than the defined version \"{Version}\"." );
+			//SGPLog.Info( $"Version of loading Project is \"{projectFileVersion}\" which is less than the defined version \"{Version}\"." );
 		}
 		
 		DeserializeObject( this, root, options );
@@ -103,14 +103,14 @@ partial class ShaderGraphPlus
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 
-		if ( obj is BaseNodePlus baseNode )
-		{
-			SGPLog.Info( $"Deserializing BaseNodePlus object \"{type}\"" );
-		}
-		else
-		{
-			SGPLog.Info( $"Deserializing object \"{type}\"" );
-		}
+		//if ( obj is BaseNodePlus baseNode )
+		//{
+		//	SGPLog.Info( $"Deserializing BaseNodePlus object \"{type}\"" );
+		//}
+		//else
+		//{
+		//	SGPLog.Info( $"Deserializing object \"{type}\"" );
+		//}
 
 		// start deserilzing each property of the current type we are deserialzing. Also handle 
 		// any property that needs upgrading.
@@ -148,7 +148,7 @@ partial class ShaderGraphPlus
 					oldVersionNumber = versionElement.GetInt32();
 				}
 
-				SGPLog.Info( $"Got \"{propertyInfo.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
+				//SGPLog.Info( $"Got \"{propertyInfo.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
 
 				// Dont even bother upgrading if we dont need to.
 				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
@@ -161,7 +161,7 @@ partial class ShaderGraphPlus
 					continue;
 				}
 
-				SGPLog.Info( $"\"{propertyInfo.PropertyType}\" is already at the latest version :)" );
+				//SGPLog.Info( $"\"{propertyInfo.PropertyType}\" is already at the latest version :)" );
 			}
 
 			propertyInfo.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), propertyInfo.PropertyType, options ) );
@@ -173,7 +173,6 @@ partial class ShaderGraphPlus
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
-		var SubgraphOutputNodeInputs = new List<IPlugIn>();
 
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
@@ -200,7 +199,7 @@ partial class ShaderGraphPlus
 			{
 				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 				DeserializeObject( node, element, options );
-				
+
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
@@ -209,50 +208,16 @@ partial class ShaderGraphPlus
 				// Replace named IParameter nodes with a SubgraphInput node.
 				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
 				{
-					SGPLog.Info( $"Found named IParameterNode \"{parameterNode.Name}\" while current graph is a subgraph." );
-					
+					node.UpgradedToNewNode = true;
+
 					var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
-					subgraphInputNode.Position = parameterNode.ParameterNodePosition.WithY( parameterNode.ParameterNodePosition.y - 128 );
+					subgraphInputNode.Position = parameterNode.ParameterNodePosition;
+					
+					// Take the Identifier of the node that we are replacing.
+					subgraphInputNode.Identifier = node.Identifier;
 
 					nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
 					AddNode( subgraphInputNode );
-				}
-
-				// TODO : Think about this...
-				/*
-				if ( node is IParameterNode parameterNode && IsSubgraph )
-				{
-					if ( node is Float3 float3Node )
-					{
-						var subgraphInput = new SubgraphInput();
-						subgraphInput.Position = parameterNode.ParameterNodePosition.WithY( parameterNode.ParameterNodePosition.y - 128 );
-						subgraphInput.InputName = float3Node.Name;
-						subgraphInput.DefaultValue = new VariantValueVector3( float3Node.Value, SubgraphInputType.Vector3 );
-
-						nodes.Add( subgraphInput.Identifier, subgraphInput );
-						AddNode( subgraphInput );
-
-						//foreach ( var output in float3Node.Outputs )
-						//{
-						//	SGPLog.Info( $"IParameterNode \"{float3Node.Name}\" output \"{output.Identifier}\"" );
-						//}
-					}
-				}
-				*/
-
-				if ( node is CustomFunctionNode customCode )
-				{
-					customCode.OnNodeCreated();
-				}
-
-				if ( node is FunctionResult funcResult )
-				{
-					funcResult.CreateInputs();
-				}
-
-				if ( node is SubgraphOutput subgraphOutput )
-				{
-					subgraphOutput.CreateInput();
 				}
 
 				if ( node is SubgraphNode subgraphNode )
@@ -268,81 +233,127 @@ partial class ShaderGraphPlus
 						subgraphNode.OnNodeCreated();
 					}
 				}
-				
-				Vector2 lastPos = Vector2.Zero;
-				foreach ( var input in node.Inputs )
-				{
-					//SGPLog.Info( $"Node \"{node}\" input \"{input.Identifier}\"" );
 
-					// Replace Function result inputs with individual SubgraphOutput nodes. Remove this later along with all the FunctionResult code...
-					if ( node is FunctionResult functionResultNode )
+				if ( node is CustomFunctionNode customCode )
+				{
+					customCode.OnNodeCreated();
+				}
+
+				// TODO : Remove FunctionResult node later once time has passed. Will mean that old project thats havent been converted
+				// will just have missing node in place.
+				if ( node is FunctionResult funcResult )
+				{
+					funcResult.CreateInputs();
+#region FunctionResult To SubgraphOutput Region
+					node.UpgradedToNewNode = true;
+
+					Vector2 lastOffset = Vector2.Zero;
+					foreach ( var funcResultInput in funcResult.Inputs )
 					{
 						var subgraphOutputNode = new SubgraphOutput();
-						subgraphOutputNode.Position = functionResultNode.Position.WithY( 64 + lastPos.y );
-						lastPos = subgraphOutputNode.Position;
-					
-						subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput()
+
+						lastOffset.y += 64;
+						subgraphOutputNode.Position = funcResult.Position + new Vector2( 0, lastOffset.y );
+
+						subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput( ((BasePlugIn)funcResultInput).Info.Id )
 						{
-							OutputName = input.Identifier,
-							//Preview = ,
-						}; 
-						subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( input.Type );
-						subgraphOutputNode.CreateInput();
+							OutputName = funcResultInput.Identifier,
+							Preview = funcResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview,
+						};
 
-						//nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
-						//AddNode( subgraphOutputNode );
-
-						node = subgraphOutputNode;
-
-						SubgraphOutputNodeInputs.Add( subgraphOutputNode.Inputs.First() );
-					}
-
-					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
-						continue;
-				
-					var connected = connectedElem
-						.Deserialize<NodeInput?>();
-			
-					if ( connected is { IsValid: true } )
-					{
-						var connection = connected.Value;
-						if ( !string.IsNullOrEmpty( subgraphPath ) )
-						{
-							connection = new()
-							{
-								Identifier = connection.Identifier,
-								Output = connection.Output,
-								Subgraph = subgraphPath
-							};
-						}
-
-						if ( node is not FunctionResult )
-						{
-							connections.Add( (input, connection) );
-						}
-						else // replace FunctionResult node
-						{
-							foreach ( var subgraphResultInput in SubgraphOutputNodeInputs )
-							{
-								connections.Add( (subgraphResultInput, connection) );
-							}
+						subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( funcResultInput.Type );
 						
-							//RemoveNode( node );
-							//nodes.Remove( node.Identifier );
+						// Chnage some stuff with a new PlugInfo & BasePlugIn.
+						var oldPlug = (BasePlugIn)funcResultInput;
+						var plugInfoNew = new PlugInfo()
+						{
+							Id = oldPlug.Info.Id,
+							Name = oldPlug.Info.Name,
+							Type = funcResultInput.Type,
+							DisplayInfo = new()
+							{
+								Name = oldPlug.Info.Name,
+								Fullname = funcResultInput.Type.FullName,
+							}
+						};
+						var plugInNew = new BasePlugIn( subgraphOutputNode, plugInfoNew, plugInfoNew.Type );
+						subgraphOutputNode.InternalInput = plugInNew;
+
+						if ( !element.TryGetProperty( subgraphOutputNode.InternalInput.Identifier, out var connectedElem ) )
+							continue;
+
+						var connected = connectedElem
+							.Deserialize<NodeInput?>();
+						
+						if ( connected is { IsValid: true } )
+						{
+							var connection = connected.Value;
+
+							if ( !string.IsNullOrEmpty( subgraphPath ) )
+							{
+								connection = new()
+								{
+									Identifier = connection.Identifier,
+									Output = connection.Output,
+									Subgraph = subgraphPath
+								};
+							}
+
+							connections.Add( (subgraphOutputNode.InternalInput, connection) );
+					
+						}
+
+						nodes.Add( subgraphOutputNode.Identifier, subgraphOutputNode );
+						AddNode( subgraphOutputNode );
+
+					}
+#endregion FunctionResult To SubgraphOutput Region
+				}
+
+				if ( node is SubgraphOutput subgraphOutput )
+				{
+					subgraphOutput.CreateInput();
+				}
+
+				if ( node is not FunctionResult )
+				{
+					foreach ( var input in node.Inputs )
+					{
+						if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
+							continue;
+
+						var connected = connectedElem
+							.Deserialize<NodeInput?>();
+
+						if ( connected is { IsValid: true } )
+						{
+							var connection = connected.Value;
+							if ( !string.IsNullOrEmpty( subgraphPath ) )
+							{
+								connection = new()
+								{
+									Identifier = connection.Identifier,
+									Output = connection.Output,
+									Subgraph = subgraphPath
+								};
+							}
+
+							connections.Add( (input, connection) );
 						}
 					}
 				}
-			}
+	
+				if ( node.UpgradedToNewNode == false )
+				{
+					nodes.Add( node.Identifier, node );
 
-			nodes.Add( node.Identifier, node );
+					AddNode( node );
+				}
 
-			if ( node.CanAddToGraph )
-			{
-				AddNode( node );
-			}
-			else
-			{
-				//nodes.Remove( node.Identifier );
+				//if ( node.CanAddToGraph )
+				//{
+				//	AddNode( node );
+				//}
 			}
 		}
 

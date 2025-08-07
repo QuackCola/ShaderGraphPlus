@@ -28,6 +28,16 @@ public class ShaderFunctionOutput
 	[Hide]
 	public Guid Id { get; } = Guid.NewGuid();
 
+	public ShaderFunctionOutput()
+	{
+
+	}
+
+	public ShaderFunctionOutput( Guid guid )
+	{
+		Id = guid;
+	}
+
 	/// <summary>
 	/// Name of this output.
 	/// </summary>
@@ -228,7 +238,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 	}
 
 	[Hide]
-	private BasePlugIn InternalInput = null;
+	public BasePlugIn InternalInput = null;
 
 	[Hide]
 	public override IEnumerable<IPlugIn> Inputs
