@@ -64,21 +64,3 @@ internal static class SGPJsonUpgrader
 
 	}
 }
-
-public enum ReplacementMode
-{
-	SubgraphOnly,
-	Both
-}
-
-[AttributeUsage( AttributeTargets.Class )]
-public class NodeReplaceAttribute : Attribute
-{
-
-	public ReplacementMode Mode;
-
-	public NodeReplaceAttribute( ReplacementMode mode )
-	{
-		Mode = mode;
-	}
-}
