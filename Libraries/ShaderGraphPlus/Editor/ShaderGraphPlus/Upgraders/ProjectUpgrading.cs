@@ -1,6 +1,24 @@
-﻿using Facepunch.ActionGraphs;
-using ShaderGraphPlus;
+﻿using ShaderGraphPlus;
 using ShaderGraphPlus.Nodes;
+
+public enum ReplacementMode
+{
+	SubgraphOnly,
+	Both
+}
+
+[AttributeUsage( AttributeTargets.Class )]
+public class NodeReplaceAttribute : Attribute
+{
+
+	public ReplacementMode Mode;
+
+	public NodeReplaceAttribute( ReplacementMode mode )
+	{
+		Mode = mode;
+	}
+}
+
 
 public static class ProjectUpgrading
 {
