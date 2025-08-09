@@ -3,6 +3,9 @@
 [Title( "View To Projection" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class ViewToProjectionNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 

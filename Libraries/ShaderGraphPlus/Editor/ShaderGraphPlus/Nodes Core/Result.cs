@@ -10,6 +10,9 @@ namespace ShaderGraphPlus;
 public sealed class Result : BaseResult
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 
 	[Hide]

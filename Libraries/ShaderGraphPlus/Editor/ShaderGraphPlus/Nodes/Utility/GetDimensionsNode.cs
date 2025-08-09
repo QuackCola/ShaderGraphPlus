@@ -6,6 +6,9 @@
 [Title( "Get Dimensions" ), Category( "Textures" ), Icon( "straighten" )]
 public sealed class GetDimensionsNode : VoidFunctionBase
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]
 	[Hide]

@@ -1,31 +1,30 @@
 ﻿using ShaderGraphPlus.Nodes;
 using System.Reflection;
 using System.Text.Json.Nodes;
+using static Sandbox.VertexLayout;
 
 namespace ShaderGraphPlus;
 
 public interface ISGPJsonUpgradeable
 {
-	[JsonPropertyName( "__version" ), Hide]
+	[Hide]
 	public int Version { get; }
-}
-
-partial class ShaderGraphPlus
-{
-	/// <summary>
-	/// Key is the old node type name and value is the new node type name.
-	/// </summary>
-	public static Dictionary<string, string> NodeTypeNameMapping => new()
-	{
-		{ "TextureObjectNode", "Texture2DObjectNode" },
-		{ "NormapMapTriplanar", "NormalMapTriplanar" },
-	};
 }
 
 partial class ShaderGraphPlus
 {
 	[JsonIgnore, Hide]
 	internal bool Upgrade { get; set; } = false;
+
+	internal static class VersioningInfo
+	{
+		/// <summary>
+		/// Json Property name of the version number.
+		/// </summary>
+		internal const string VersionJsonPropertyName = "__version";
+
+		internal const string VersionClassPropertyName = "Version";
+	}
 
 	internal static JsonSerializerOptions SerializerOptions( bool indented = false )
 	{
@@ -47,6 +46,8 @@ partial class ShaderGraphPlus
 	{
 		var doc = new JsonObject();
 		var options = SerializerOptions( true );
+
+		doc.Add( VersioningInfo.VersionJsonPropertyName, Version );
 
 		SerializeObject( this, doc, options );
 		SerializeNodes( Nodes, doc, options );
@@ -72,7 +73,7 @@ partial class ShaderGraphPlus
 
 	private static int GetProjectVersion( JsonElement root )
 	{
-		if ( root.TryGetProperty( "__version", out var versionElement ) && versionElement.TryGetInt32( out var versionNum ) )
+		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) && versionElement.TryGetInt32( out var versionNum ) )
 		{
 			return versionNum;
 		}
@@ -143,7 +144,7 @@ partial class ShaderGraphPlus
 				int oldVersionNumber = 0;
 
 				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
-				if ( jsonProperty.Value.TryGetProperty( "__version", out var versionElement ) )
+				if ( jsonProperty.Value.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
 				}
@@ -173,14 +174,15 @@ partial class ShaderGraphPlus
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
-
+		var replacedNodes = new Dictionary<string, BaseNodePlus>();
+		//var replacedNodes = new Dictionary<string, (BaseNodePlus oldNode, List<IPlugOut> OldNodeOutputs )>();
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
 		{
 			var typeName = element.GetProperty( "_class" ).GetString();
 
 			// Use the new typename if applicable.
-			if ( NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
+			if ( ProjectUpgrading.NodeTypeNameMapping.TryGetValue( typeName, out string newTypeName ) )
 			{
 				typeName = newTypeName;
 			}
@@ -198,7 +200,9 @@ partial class ShaderGraphPlus
 			else
 			{
 				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
+				var replaceAttribute = node.GetType().GetCustomAttribute<NodeReplaceAttribute>();
 				DeserializeObject( node, element, options );
+
 
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
@@ -206,18 +210,62 @@ partial class ShaderGraphPlus
 				}
 
 				// Replace named IParameter nodes with a SubgraphInput node.
-				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
+				//if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
+				//{
+				//	node.UpgradedToNewNode = true;
+				//
+				//	var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
+				//	subgraphInputNode.Position = parameterNode.ParameterNodePosition;
+				//	
+				//	// Take the Identifier of the node that we are replacing.
+				//	subgraphInputNode.Identifier = node.Identifier;
+				//
+				//	nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
+				//	AddNode( subgraphInputNode );
+				//}
+
+				if ( replaceAttribute != null && node is IReplaceNode iReplaceNode )
 				{
-					node.UpgradedToNewNode = true;
 
-					var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
-					subgraphInputNode.Position = parameterNode.ParameterNodePosition;
-					
-					// Take the Identifier of the node that we are replacing.
-					subgraphInputNode.Identifier = node.Identifier;
+					if ( replaceAttribute.Mode == ReplacementMode.SubgraphOnly && IsSubgraph )
+					{
+						node.UpgradedToNewNode = true;
+						var newNode = iReplaceNode.GetReplacementNode();
+						newNode.Position = node.Position;
 
-					nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
-					AddNode( subgraphInputNode );
+						// Take the Identifier of the node that we are replacing.
+						newNode.Identifier = node.Identifier;
+
+						//SGPLog.Info( $"Upgraded subgraph node \"{node}\" to \"{newNode}\"" );
+
+						//foreach ( var plugOut in node.Outputs )
+						//{
+						//	SGPLog.Info( $"node output  \"{plugOut.Node}\"" );
+						//}
+
+						replacedNodes.Add( node.Identifier, node );
+						nodes.Add( newNode.Identifier, newNode );
+						AddNode( newNode );
+					}
+					else
+					{
+						node.UpgradedToNewNode = true;
+						var newNode = iReplaceNode.GetReplacementNode();
+						newNode.Position = node.Position;
+
+						// Take the Identifier of the node that we are replacing.
+						newNode.Identifier = node.Identifier;
+
+						SGPLog.Info( $"Upgraded node \"{node}\" to \"{newNode}\"" );
+
+						nodes.Add( newNode.Identifier, newNode );
+						AddNode( newNode );
+					}
+				}
+
+				if ( node is not IReplaceNode && node is IInitializeNode initializeableNode )
+				{
+					initializeableNode.InitializeNode();
 				}
 
 				if ( node is SubgraphNode subgraphNode )
@@ -234,16 +282,11 @@ partial class ShaderGraphPlus
 					}
 				}
 
-				if ( node is CustomFunctionNode customCode )
-				{
-					customCode.OnNodeCreated();
-				}
-
 				// TODO : Remove FunctionResult node later once time has passed. Will mean that old project thats havent been converted
 				// will just have missing node in place.
 				if ( node is FunctionResult funcResult )
 				{
-					funcResult.CreateInputs();
+					//funcResult.CreateInputs();
 #region FunctionResult To SubgraphOutput Region
 					node.UpgradedToNewNode = true;
 
@@ -310,12 +353,7 @@ partial class ShaderGraphPlus
 #endregion FunctionResult To SubgraphOutput Region
 				}
 
-				if ( node is SubgraphOutput subgraphOutput )
-				{
-					subgraphOutput.CreateInput();
-				}
-
-				if ( node is not FunctionResult )
+				if ( node is not FunctionResult  )
 				{
 					foreach ( var input in node.Inputs )
 					{
@@ -343,17 +381,12 @@ partial class ShaderGraphPlus
 					}
 				}
 	
-				if ( node.UpgradedToNewNode == false )
+				if ( !node.UpgradedToNewNode )
 				{
 					nodes.Add( node.Identifier, node );
 
 					AddNode( node );
 				}
-
-				//if ( node.CanAddToGraph )
-				//{
-				//	AddNode( node );
-				//}
 			}
 		}
 
@@ -365,6 +398,14 @@ partial class ShaderGraphPlus
 			if ( nodes.TryGetValue( outputIdent, out var node ) )
 			{
 				var output = node.Outputs.FirstOrDefault( x => x.Identifier == value.Output );
+
+				// Uprgraded node but the NodeResult property name on the new node output differs from the old one.
+				// Bit of a hack really.
+				if ( replacedNodes.TryGetValue( node.Identifier, out var oldNode ) && output is null )
+				{
+					ProjectUpgrading.ReplaceOutputReference( node, oldNode, value.Output, ref output );
+				}
+
 				if ( output is null )
 				{
 					// Check for Aliases
@@ -408,14 +449,12 @@ partial class ShaderGraphPlus
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 
-		if ( obj is ISGPJsonUpgradeable upgradeable )
-		{
-			doc.Add( "__version", JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
-		}
-
 		foreach ( var property in properties )
 		{
 			if ( !property.CanRead)
+				continue;
+
+			if ( property.Name == VersioningInfo.VersionClassPropertyName )
 				continue;
 
 			if ( property.PropertyType == typeof( NodeInput ) )
@@ -479,9 +518,14 @@ partial class ShaderGraphPlus
 				continue;
 
 			var type = node.GetType();
-			var nodeObject = new JsonObject { { "_class", type.Name } };
-		
-			SerializeObject(node, nodeObject, options, identifiers);
+			var nodeObject = new JsonObject { { "_class", type.Name }, { VersioningInfo.VersionJsonPropertyName, node.Version } };
+
+			//if ( node is ISGPJsonUpgradeable upgradeable )
+			//{
+			//	nodeObject.Add( VersioningInfo.JsonPropertyName, upgradeable.Version );
+			//}
+
+			SerializeObject( node, nodeObject, options, identifiers);
 
 			nodeArray.Add(nodeObject);
 		}

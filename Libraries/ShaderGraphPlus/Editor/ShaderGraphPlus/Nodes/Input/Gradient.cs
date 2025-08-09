@@ -7,6 +7,8 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Gradient" ), Category( "Constants/Gradient" ), Icon( "gradient" )]
 public sealed class GradientNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
 	[Hide]
 	public override string Title => string.IsNullOrEmpty(Name) ?

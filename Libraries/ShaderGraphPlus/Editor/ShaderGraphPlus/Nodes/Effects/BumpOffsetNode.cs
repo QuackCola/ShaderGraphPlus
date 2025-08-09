@@ -4,6 +4,7 @@
 [Title( "Bump Offset" ), Category( "Effects" ), Icon( "water" )]
 public sealed class BumpOffsetNode : ShaderNodePlus
 {
+	public override int Version => 0;
 
 	[Hide]
 	public static string BumpOffset => @"

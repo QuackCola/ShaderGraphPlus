@@ -8,8 +8,10 @@ namespace ShaderGraphPlus.Nodes;
 [Description( "Crt Filter Ported from	" )]
 public class CrtFilterNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
-[Hide]
+	[Hide]
 public static string crtFilter => @"
 //
 // Ported from glsl to hlsl.

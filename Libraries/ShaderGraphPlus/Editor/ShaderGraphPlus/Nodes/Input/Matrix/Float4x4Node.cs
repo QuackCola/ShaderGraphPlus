@@ -3,6 +3,8 @@
 [Title( "Float 4x4" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 {
+	[Hide] public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 

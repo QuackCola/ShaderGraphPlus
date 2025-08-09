@@ -7,6 +7,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Time" ), Category( "Variables" ), Icon( "timer" )]
 public sealed class Time : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[JsonIgnore]
 	public float Value => RealTime.Now;
 

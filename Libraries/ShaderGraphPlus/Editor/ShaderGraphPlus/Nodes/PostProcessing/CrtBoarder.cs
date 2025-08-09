@@ -4,6 +4,9 @@
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]
 public class CRTBoarderNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 
 [Hide]
 public static string CRTBoarder => @"

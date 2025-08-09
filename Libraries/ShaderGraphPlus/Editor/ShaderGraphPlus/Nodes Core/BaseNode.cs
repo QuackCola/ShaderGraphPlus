@@ -2,9 +2,15 @@
 
 namespace ShaderGraphPlus;
 
-public abstract class BaseNodePlus : INode
+public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 {
 	public event Action Changed;
+
+	/// <summary>
+	/// Current version of this node. Used by ISGPJsonUpgradeable
+	/// </summary>
+	[Hide]
+	public abstract int Version { get; }
 
 	[Hide, Browsable( false )]
 	public string Identifier { get; set; }

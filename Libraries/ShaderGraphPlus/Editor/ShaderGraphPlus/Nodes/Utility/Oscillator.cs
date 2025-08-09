@@ -3,8 +3,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Oscillator" ), Category( "Utility" ), Icon( "waves" )]
 public sealed class OscillatorNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
-[Hide]
+	[Hide]
 public string Oscillator => @"
 float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
 {

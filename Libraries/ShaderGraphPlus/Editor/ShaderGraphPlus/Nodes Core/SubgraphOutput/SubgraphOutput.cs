@@ -1,4 +1,5 @@
 ﻿using Editor.NodeEditor;
+using ShaderGraphPlus.Nodes;
 using System.Text;
 
 namespace ShaderGraphPlus;
@@ -160,8 +161,11 @@ public class ShaderFunctionOutput
 /// Output of a subgraph.
 /// </summary>
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
-public sealed class SubgraphOutput : BaseResult, IErroringNode
+public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanRemove => true;
 
@@ -188,6 +192,11 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 			IsDirty = true;
 			Update();
 		}
+	}
+
+	public void InitializeNode()
+	{
+		CreateInput();
 	}
 
 	public List<string> GetErrors()
@@ -252,7 +261,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode
 		}
 	}
 
-	public void CreateInput()
+	private void CreateInput()
 	{
 		var plugInfo = new PlugInfo()
 		{

@@ -5,6 +5,9 @@ namespace ShaderGraphPlus;
 public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public string SubgraphPath { get; set; }
 
 	[Hide, JsonIgnore]

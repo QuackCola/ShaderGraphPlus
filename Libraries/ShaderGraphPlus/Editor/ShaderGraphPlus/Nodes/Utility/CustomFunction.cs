@@ -8,8 +8,11 @@ namespace ShaderGraphPlus.Nodes;
 /// Container for HLSL code.
 /// </summary>
 [Title( "Custom Function" ), Category( "Utility" ), Icon( "code" )]
-public class CustomFunctionNode : ShaderNodePlus, IErroringNode
+public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 {
+	[Hide]
+	public override int Version => 0;
+
 	public enum CustomCodeNodeMode
 	{
 		/// <summary>
@@ -69,7 +72,12 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode
 	[Hide, JsonIgnore]
 	int _lastHashCodeOutputs = 0;
 
-	public void OnNodeCreated()
+	public void InitializeNode()
+	{
+		OnNodeCreated();
+	}
+
+	private void OnNodeCreated()
 	{
 		CreateInputs();
 		CreateOutputs();

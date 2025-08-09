@@ -10,6 +10,9 @@ namespace ShaderGraphPlus.Nodes;
 public sealed class ParallaxNode : ShaderNodePlus
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public static string SimpleParallax=> @"
 float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight, SamplerState vSampler)
 {

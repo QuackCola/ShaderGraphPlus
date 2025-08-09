@@ -4,14 +4,19 @@ using System;
 
 namespace ShaderGraphPlus.Nodes;
 
+
 /// <summary>
 /// Bool value for use in the material editor.
 /// </summary>
 [Title( "Bool" ), Category( "Constants" ), Icon( "check_box" )]
 public sealed class Bool : ParameterNode<bool>
 {
+	[Hide]
+	public override int Version => 0;
+
 	public Bool() : base()
 	{
+
 	}
 
 	[Hide, JsonIgnore]
@@ -65,6 +70,9 @@ public sealed class Bool : ParameterNode<bool>
 [Title( "Float" ), Category( "Constants" ), Icon( "looks_one" )]
 public sealed class Float : ParameterNode<float>
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Hide] public float Step => UI.Step;
 
 	[Output( typeof( float ) ), Title( "Value" )]
@@ -110,6 +118,9 @@ public sealed class Float : ParameterNode<float>
 [Title( "Float2" ), Category( "Constants" ), Icon( "looks_two" )]
 public sealed class Float2 : ParameterNode<Vector2>
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -187,6 +198,9 @@ public sealed class Float2 : ParameterNode<Vector2>
 [Title( "Float3" ), Category( "Constants" ), Icon( "looks_3" )]
 public sealed class Float3 : ParameterNode<Vector3>
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -271,6 +285,9 @@ public sealed class Float3 : ParameterNode<Vector3>
 [Title( "Color" ), Category( "Constants" )]
 public sealed class Float4 : ParameterNode<Color>
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>

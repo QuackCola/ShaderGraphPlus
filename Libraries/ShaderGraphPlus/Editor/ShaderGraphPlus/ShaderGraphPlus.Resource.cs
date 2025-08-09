@@ -43,6 +43,12 @@ public class PreviewSettings
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
 public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 {
+	/// <summary>
+	/// Current shadergraphplus project version.
+	/// </summary>
+	[Hide, JsonIgnore]
+	public int Version => 1;
+
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
 
@@ -57,12 +63,6 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 
 	//[Hide, JsonIgnore]
 	//private readonly Dictionary<string, string> _features = new();
-
-	/// <summary>
-	/// Current shadergraphplus project version. Used to determine if the project needs to be upgraded.
-	/// </summary>
-	[Hide, JsonPropertyName( "__version" )]
-	public int Version => 1;
 
 	[Hide]
 	public bool IsSubgraph { get; set; }

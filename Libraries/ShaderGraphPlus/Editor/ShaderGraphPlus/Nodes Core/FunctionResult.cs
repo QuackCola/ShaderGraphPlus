@@ -1,6 +1,7 @@
 ﻿
 using Editor.NodeEditor;
 using Sandbox.Resources;
+using ShaderGraphPlus.Nodes;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -20,8 +21,11 @@ public interface IErroringNode
 /// Final result
 /// </summary>
 [Title( "Result" ), Icon( "output" ), Hide]
-public sealed class FunctionResult : BaseResult, IErroringNode
+public sealed class FunctionResult : BaseResult, IErroringNode, IInitializeNode
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Title( "Outputs" )]
 	public List<FunctionOutput> FunctionOutputs { get; set; }
 
@@ -55,7 +59,12 @@ public sealed class FunctionResult : BaseResult, IErroringNode
 		}
 	}
 
-	public void CreateInputs()
+	public void InitializeNode()
+	{
+		CreateInputs();
+	}
+
+	private void CreateInputs()
 	{
 		var plugs = new List<IPlugIn>();
 		if ( FunctionOutputs == null )

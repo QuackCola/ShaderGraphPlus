@@ -11,6 +11,9 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Round Gradient" ), Category( "Procedural/Gradients" ), Icon( "gradient" )]
 public sealed class RoundGradientNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]

@@ -3,6 +3,9 @@
 [Title( "World To View" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class WorldToViewNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 

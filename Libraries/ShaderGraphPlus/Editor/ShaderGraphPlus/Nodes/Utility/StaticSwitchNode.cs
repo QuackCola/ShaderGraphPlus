@@ -23,6 +23,9 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public override string Title
 	{
 		get

@@ -5,5 +5,7 @@
 /// </summary>
 [Hide]
 internal sealed class DummyNode : ShaderNodePlus
-{ 
+{
+	[Hide]
+	public override int Version => 0;
 }

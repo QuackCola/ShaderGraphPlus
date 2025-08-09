@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using Editor.ShaderGraph;
+using ShaderGraphPlus.Nodes;
+using System.Text.Json.Serialization;
 
 namespace ShaderGraphPlus;
 
@@ -34,10 +36,18 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		var subgraphInputNode = UpgradeToSubgraphInput();
+
+		return subgraphInputNode;
+	}
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?

@@ -8,6 +8,9 @@
 [Title( "Matrix Split" ), Category( "Math/Matrix" ), Icon( "device_hub" )]
 public sealed class MatrixSplitNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input]
 	[Hide]
 	public NodeInput Input { get; set; }

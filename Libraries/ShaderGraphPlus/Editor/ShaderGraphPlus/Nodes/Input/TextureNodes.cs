@@ -194,6 +194,10 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 [Title( "Texture 2D" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureSampler : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
 	/// </summary>
@@ -343,6 +347,10 @@ public sealed class TextureSampler : TextureSamplerBase
 [Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
 public sealed class TextureCube : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[JsonIgnore, Hide]
 	public bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
@@ -537,6 +545,10 @@ public sealed class TextureCube : ShaderNodePlus
 [Title( "Texture Triplanar" ), Category( "Textures" ), Icon( "photo_library" )]
 public sealed class TextureTriplanar : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -714,6 +726,10 @@ public sealed class TextureTriplanar : TextureSamplerBase
 [Title( "Normal Map Triplanar" ), Category( "Textures" ), Icon( "texture" )]
 public sealed class NormalMapTriplanar : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -879,6 +895,10 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 [Title( "Texture Coordinate" ), Category( "Variables" ), Icon( "texture" )]
 public sealed class TextureCoord : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// Use the secondary vertex coordinate
 	/// </summary>
@@ -918,6 +938,10 @@ public sealed class TextureCoord : ShaderNodePlus
 [Title( "Texture Cube Object" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Hide]
 	public override string Title
 	{
@@ -1091,8 +1115,19 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 /// Texture2D Object.
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode, IReplaceNode
 {
+	[Hide]
+	public override int Version => 0;
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		var subgraphInputNode = UpgradeToSubgraphInput();
+
+		return subgraphInputNode;
+	}
+
 	/// <summary>
 	/// Texture to sample in preview
 	/// </summary>
@@ -1381,8 +1416,19 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
 [Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
-public sealed class SamplerNode : ShaderNodePlus, IParameterNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 {
+	[Hide]
+	public override int Version => 0;
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		var subgraphInputNode = UpgradeToSubgraphInput();
+
+		return subgraphInputNode;
+	}
+
 	public SamplerNode() : base()
 	{
 		ExpandSize = new Vector2( 0, 8 );

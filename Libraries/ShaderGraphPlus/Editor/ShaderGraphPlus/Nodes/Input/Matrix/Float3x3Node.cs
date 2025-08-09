@@ -3,6 +3,8 @@
 [Title( "Float 3x3" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class Float3x3Node : MatrixParameterNode<Float3x3>
 {
+	[Hide] public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 

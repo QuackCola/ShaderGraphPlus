@@ -7,6 +7,9 @@
 [Hide]
 public sealed class TestFuncNode : VoidFunctionBase
 {
+	[Hide]
+	public override int Version => 0;
+
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
 

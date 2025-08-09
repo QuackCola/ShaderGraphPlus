@@ -1,5 +1,7 @@
-﻿using Sandbox.Internal;
+﻿using Editor;
+using Sandbox.Internal;
 using System.Text.Json.Nodes;
+using static ShaderGraphPlus.ShaderGraphPlus;
 
 [AttributeUsage( AttributeTargets.Method )]
 public class SGPJsonUpgraderAttribute : Attribute
@@ -56,9 +58,27 @@ internal static class SGPJsonUpgrader
 			}
 			finally
 			{
-				json["__version"] = item2.Attribute.Version;
+				json[VersioningInfo.VersionJsonPropertyName] = item2.Attribute.Version;
 			}
 		}
 
+	}
+}
+
+public enum ReplacementMode
+{
+	SubgraphOnly,
+	Both
+}
+
+[AttributeUsage( AttributeTargets.Class )]
+public class NodeReplaceAttribute : Attribute
+{
+
+	public ReplacementMode Mode;
+
+	public NodeReplaceAttribute( ReplacementMode mode )
+	{
+		Mode = mode;
 	}
 }

@@ -10,6 +10,9 @@ namespace ShaderGraphPlus.Nodes;
 public sealed class Branch : ShaderNodePlus
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public override string Title => UseCondition ?
 		$"{DisplayInfo.For( this ).Name} (A {Op} B)" :
 		$"{DisplayInfo.For( this ).Name}  {(!InputPredicate.IsValid ? $"( {Name} )" : $"")}";

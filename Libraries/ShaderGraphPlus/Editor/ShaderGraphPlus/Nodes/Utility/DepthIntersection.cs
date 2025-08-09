@@ -6,6 +6,8 @@
 [Title("Depth Intersection"), Category( "Utility" ), Icon( "join_inner" )]
 public sealed class DepthIntersectionNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
 	[Hide]
 	public static string DepthIntersect => @"

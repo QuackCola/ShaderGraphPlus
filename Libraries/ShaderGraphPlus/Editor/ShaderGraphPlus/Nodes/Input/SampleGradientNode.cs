@@ -7,6 +7,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Sample Gradient" ), Category( "Gradient" ), Icon( "gradient" )]
 public sealed class SampleGradientNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Title( "Gradient" )]
 	[Input( typeof( Gradient ) )]
 	[Hide]

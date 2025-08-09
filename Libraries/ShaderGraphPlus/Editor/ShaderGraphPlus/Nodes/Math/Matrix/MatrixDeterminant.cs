@@ -5,6 +5,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Matrix Determinant" ), Category( "Math/Matrix" )]
 public sealed class MatrixDeterminant : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input]
 	[Hide]
 	public NodeInput Input { get; set; }

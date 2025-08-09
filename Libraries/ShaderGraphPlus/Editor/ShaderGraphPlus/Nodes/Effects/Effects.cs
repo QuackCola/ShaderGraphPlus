@@ -7,6 +7,9 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Fresnel" ), Category( "Effects" )]
 public sealed class Fresnel : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	/// <summary>
 	/// Normal at the point being shaded.
 	/// </summary>

@@ -24,6 +24,10 @@ public enum DerivativePrecision
 
 public abstract class Unary : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input]
 	[Hide]
 	public virtual NodeInput Input { get; set; }
@@ -104,6 +108,10 @@ public abstract class UnaryCurve : Unary
 [Title( "Clamp" ), Category( "Math/Unary" )]
 public sealed class Clamp : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input]
 	[Hide]
 	[Title( "Value" )]
@@ -249,6 +257,10 @@ public sealed class Sqrt : Unary
 [Title( "Dot Product" ), Category( "Math/Unary" )]
 public sealed class DotProduct : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input]
 	[Hide]
 	public NodeInput InputA { get; set; }
@@ -401,6 +413,10 @@ public sealed class BaseLog : Unary
 [Title( "Min" ), Category( "Math/Unary" )]
 public sealed class Min : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput InputA { get; set; }
@@ -428,6 +444,9 @@ public sealed class Min : ShaderNodePlus
 [Title( "Max" ), Category( "Math/Unary" )]
 public sealed class Max : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput InputA { get; set; }
@@ -483,6 +502,10 @@ public sealed class Sine : UnaryCurve
 [Title( "Step" ), Category( "Math/Unary" )]
 public sealed class Step : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput Input { get; set; }
@@ -513,6 +536,9 @@ public sealed class Step : ShaderNodePlus
 [Title( "Smooth Step" ), Category( "Math/Unary" )]
 public sealed class SmoothStep : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input]
 	[Hide]
 	public NodeInput Input { get; set; }
@@ -609,6 +635,9 @@ public sealed class Ceil : Unary
 [Title( "One Minus" ), Category( "Math/Unary" )]
 public sealed class OneMinus : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input( typeof( float ) ), Hide, Title( "" )]
 	public NodeInput In { get; set; }
 
@@ -631,6 +660,10 @@ public sealed class OneMinus : ShaderNodePlus
 [Title( "Negate" ), Category( "Math/Unary" )]
 public sealed class Negate : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) ), Hide, Title( "" )]
 	public NodeInput In { get; set; }
 
@@ -653,6 +686,9 @@ public sealed class Negate : ShaderNodePlus
 [Title( "Distance" ), Category( "Math/Unary" )]
 public sealed class Distance : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input]
 	[Hide]
 	public NodeInput A { get; set; }

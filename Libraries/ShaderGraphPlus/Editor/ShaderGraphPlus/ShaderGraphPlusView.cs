@@ -432,7 +432,7 @@ public class ShaderGraphPlusView : GraphView
 					};
 					subgraphOutput.SubgraphFunctionOutput.SetOutputTypeFromType( output.Type );
 
-					subgraphOutput.CreateInput();
+					subgraphOutput.InitializeNode();
 		
 					var input = subgraphOutput.Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == inputName );
 					input.ConnectedOutput = output;

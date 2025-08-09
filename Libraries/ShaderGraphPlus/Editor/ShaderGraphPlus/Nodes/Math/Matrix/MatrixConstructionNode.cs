@@ -14,6 +14,10 @@ public enum MatrixNodeMode
 [Title( "Matrix Construction" ), Category( "Math/Matrix" ), Icon( "construction" )]
 public sealed class MatrixConstructionode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Title( "M0" )]
 	[Input( typeof( Color ) )]
 	[Hide]

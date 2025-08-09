@@ -47,6 +47,8 @@ public class SQRT2 : ConstantsNode
 [Title( "Math Constants" ), Category( "Constants" )]
 public class MathConstantsNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} ({Constant})";

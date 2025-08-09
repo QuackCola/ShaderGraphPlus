@@ -23,6 +23,9 @@ public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 
 public sealed class ReroutePlus : RerouteNode
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Output, Hide,Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{

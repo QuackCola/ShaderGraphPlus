@@ -5,6 +5,9 @@ namespace ShaderGraphPlus.Nodes;
 public class MissingNode : BaseNodePlus
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public string Title { get; set; }
 
 	[Hide]

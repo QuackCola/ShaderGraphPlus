@@ -3,6 +3,9 @@
 [Title( "World To Projection" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class WorldToProjectionNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 

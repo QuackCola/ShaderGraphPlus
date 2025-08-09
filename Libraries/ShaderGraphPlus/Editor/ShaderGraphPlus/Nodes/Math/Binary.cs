@@ -5,6 +5,10 @@ namespace ShaderGraphPlus.Nodes;
 
 public abstract class Binary : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	[Title( "" )]
@@ -121,6 +125,9 @@ public sealed class Mod : Binary
 [Title( "Lerp" ), Category( "Math/Binary" )]
 public sealed class Lerp : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input]
 	[Hide]
 	public NodeInput A { get; set; }
@@ -161,6 +168,10 @@ public sealed class Lerp : ShaderNodePlus
 [Title( "Cross Product" ), Category( "Math/Binary" )]
 public sealed class CrossProduct : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// The first float3
 	/// </summary>
@@ -206,6 +217,10 @@ public sealed class CrossProduct : ShaderNodePlus
 [Title( "Remap Value" ), Category( "Math/Binary" )]
 public sealed class RemapValue : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	/// <summary>
 	/// Input value to be transformed
 	/// </summary>
@@ -340,6 +355,10 @@ public sealed class RemapValue : ShaderNodePlus
 [Title( "Arctan2" ), Category( "Math/Binary" )]
 public sealed class Arctan2 : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput Y { get; set; }
@@ -374,6 +393,10 @@ public sealed class Arctan2 : ShaderNodePlus
 [Title( "Power" ), Category( "Math/Binary" ), Icon( "^" )]
 public sealed class Power : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	[Title( "" )]

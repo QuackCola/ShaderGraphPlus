@@ -39,6 +39,8 @@ internal class SubgraphOnlyAttribute : Attribute
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
 public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 {
+	[Hide]
+	public override int Version => 0;
 
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }

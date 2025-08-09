@@ -6,6 +6,9 @@
 [Title( "Pi" ), Category( "Constants" )]
 public class PiNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 
 	[Title( "Multiplier" )]
 	[Input( typeof( float ) )]

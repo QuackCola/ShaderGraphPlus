@@ -8,7 +8,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Scene Color" ), Category( "Variables" ), Icon( "palette" )]
 public sealed class SceneColorNode : ShaderNodePlus
 {
-	[Sandbox.Hide]
+	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public string MapSceneColorCoords => @"
 float2 MapSceneColorCoords( float2 vInput, float2 modes )
 {
@@ -136,6 +139,9 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 [Title( "Frame Buffer Copy Inv Size And Uv Scale" ), Category( "Variables" )]
 public sealed class FrameBufferCopyInvSizeAndUvScaleNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func Result => (GraphCompiler compiler) =>

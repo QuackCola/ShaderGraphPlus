@@ -12,6 +12,9 @@ public enum SwizzleChannel
 public sealed class ComponentMask : ShaderNodePlus
 {
 	[Hide]
+	public override int Version => 0;
+
+	[Hide]
 	public override string Title
 	{
 		get
@@ -118,6 +121,9 @@ public sealed class ComponentMask : ShaderNodePlus
 [Title( "Split" ), Category( "Channel" ), Icon( "call_split" )]
 public sealed class SplitVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -160,6 +166,9 @@ public sealed class SplitVector : ShaderNodePlus
 [Title( "Combine" ), Category( "Channel" ), Icon( "call_merge" )]
 public sealed class CombineVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput X { get; set; }
@@ -221,6 +230,9 @@ public sealed class CombineVector : ShaderNodePlus
 [Title( "Swizzle" ), Category( "Channel" ), Icon( "swap_horiz" )]
 public sealed class SwizzleVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -263,6 +275,9 @@ public sealed class SwizzleVector : ShaderNodePlus
 [Title( "Append" ), Category( "Channel" )]
 public sealed class AppendVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input, Hide]
 	public NodeInput A { get; set; }
 

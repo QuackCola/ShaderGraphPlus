@@ -8,8 +8,10 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Pixel Plot" ), Category( "Effects" )]
 public sealed class PixelPlotNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
 
-[Hide]
+	[Hide]
 public string PixelPlot => @"	
 float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , float2 vGridSize , float flBoarderThickness)
 {

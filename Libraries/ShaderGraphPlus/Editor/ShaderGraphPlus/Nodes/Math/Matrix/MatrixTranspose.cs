@@ -5,6 +5,9 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Matrix Transpose" ), Category( "Math/Matrix" ), Icon( "table_convert" )]
 public sealed class MatrixTranspose : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 0;
+
 	[Input]
 	[Hide]
 	public NodeInput Input { get; set; }
