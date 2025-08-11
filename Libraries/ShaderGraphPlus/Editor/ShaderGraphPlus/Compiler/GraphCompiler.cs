@@ -1113,7 +1113,7 @@ public sealed partial class GraphCompiler
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
-			else if ( value is not SamplerState )
+			else if ( value is not Sampler )
 			{
 				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
