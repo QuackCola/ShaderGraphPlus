@@ -16,8 +16,8 @@
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": false,
-    "ShowSkybox": true,
-    "BackgroundColor": "1,1,1,1",
+    "ShowSkybox": false,
+    "BackgroundColor": "0,0,0,1",
     "Tint": "1,1,1,1"
   },
   "nodes": [
@@ -97,7 +97,7 @@
       "_class": "SubgraphOutput",
       "__version": 1,
       "SubgraphFunctionOutput": {
-        "Id": "89dd5700-22f6-4178-915f-b4ce963c9df0",
+        "Id": "6e14fbdc-b1c3-4d6a-9a26-0decac89c572",
         "OutputName": "VertexOffset",
         "OutputDescription": null,
         "OutputType": "Vector3",
@@ -250,33 +250,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "SwitchNode",
-      "__version": 1,
-      "Name": "",
-      "Enabled": true,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Identifier": "13",
-      "Position": "504,-180",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "ComparisonNode",
       "__version": 1,
-      "Operator": "Equal",
-      "Identifier": "14",
-      "Position": "684,-180",
+      "Operator": "GreaterThanOrEqual",
+      "Identifier": "13",
+      "Position": "984,-84",
       "HandleOffsets": {}
     }
   ]
