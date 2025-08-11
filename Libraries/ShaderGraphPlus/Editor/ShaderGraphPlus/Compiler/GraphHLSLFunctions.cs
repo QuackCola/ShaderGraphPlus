@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+
+namespace ShaderGraphPlus;
 
 public static class GraphHLSLFunctions
 {

@@ -1,5 +1,5 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Calculates a Fresnel term.
@@ -7,6 +7,9 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Fresnel" ), Category( "Effects" )]
 public sealed class Fresnel : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	/// <summary>
 	/// Normal at the point being shaded.
 	/// </summary>

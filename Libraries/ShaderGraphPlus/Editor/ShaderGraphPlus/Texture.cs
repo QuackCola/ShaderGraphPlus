@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 public enum TextureExtension
 {
@@ -106,27 +106,38 @@ public struct TextureInput
 	/// <summary>
 	/// Name that shows up in material editor
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public string Name { get; set; }
+
+	/// <summary>
+	/// Image that is used for preview.
+	/// </summary>
+	[ImageAssetPath]
+	public string PreviewImage { get; set; }
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public bool IsAttribute { get; set; }
 
 	/// <summary>
 	/// Default color that shows up in material editor when using color control
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public Color Default { get; set; }
 
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
 	/// </summary>
 	[ShowIf( nameof( ShowExtension ), true )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureExtension Extension { get; set; }
 
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public string CustomExtension { get; set; }
 
     public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
@@ -153,21 +164,25 @@ public struct TextureInput
 	/// <summary>
 	/// Processor used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureProcessor Processor { get; set; }
 
 	/// <summary>
 	/// Color space used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureColorSpace ColorSpace { get; set; }
 
 	/// <summary>
 	/// Format used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureFormat ImageFormat { get; set; }
 
 	/// <summary>
 	/// Sample this texture as srgb
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public bool SrgbRead { get; set; }
 
 	/// <summary>
@@ -179,12 +194,14 @@ public struct TextureInput
 	/// Primary group
 	/// </summary>
 	[InlineEditor( Label = false ), Group( "Group" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public UIGroup PrimaryGroup { get; set; }
 
 	/// <summary>
 	/// Group within the primary group
 	/// </summary>
 	[InlineEditor( Label = false ), Group( "Sub Group" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public UIGroup SecondaryGroup { get; set; }
 
 	[JsonIgnore, Hide]
@@ -221,6 +238,20 @@ public struct TextureInput
 	[JsonIgnore, Hide]
 	public string BoundNodeId { get; set; }
 #endregion Graph Editor Only
+
+	public void SetOrder( int order )
+	{
+		Priority = order;
+	}
+
+	public void SetIsSubgraph( bool isSubgraph )
+	{
+		IsSubgraph = isSubgraph;
+	}
+
+	[JsonIgnore, Hide]
+	public bool IsSubgraph { get; set; }
+
 }
 
 public struct Texture2DObject

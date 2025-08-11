@@ -1,0 +1,283 @@
+{
+  "__version": 1,
+  "IsSubgraph": true,
+  "Path": "shaders/shaderfunctions/vertexjitter.sgpfunc",
+  "Model": "models/fauna/hare/hare.vmdl",
+  "Title": "Vertex Jitter",
+  "Description": "",
+  "Category": null,
+  "Icon": "waves",
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "SwitchNode",
+      "__version": 1,
+      "Name": "",
+      "Enabled": true,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "0",
+      "Position": "972,84",
+      "HandleOffsets": {},
+      "InputPredicate": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "True": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "False": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "WorldPosition",
+      "__version": 1,
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "1",
+      "Position": "60,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "2",
+      "Position": "288,132",
+      "HandleOffsets": {},
+      "B": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": null,
+      "Identifier": "3",
+      "Position": "564,312",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphOutput",
+      "__version": 1,
+      "SubgraphFunctionOutput": {
+        "Id": "89dd5700-22f6-4178-915f-b4ce963c9df0",
+        "OutputName": "VertexOffset",
+        "OutputDescription": null,
+        "OutputType": "Vector3",
+        "Preview": "PositionOffset",
+        "PortOrder": 0
+      },
+      "Identifier": "4",
+      "Position": "1164,84",
+      "HandleOffsets": {},
+      "VertexOffset": {
+        "Identifier": "0",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Floor",
+      "__version": 1,
+      "Identifier": "5",
+      "Position": "516,192",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "InputName": "ToggleSnapping",
+      "InputDescription": "",
+      "InputData": {
+        "__class": "VariantValueBool",
+        "InputType": "Bool",
+        "Value": true
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "6",
+      "Position": "744,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Camera",
+      "__version": 1,
+      "Identifier": "7",
+      "Position": "60,24",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Divide",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "420,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "9",
+      "Position": "648,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Subtract",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "10",
+      "Position": "744,108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "11",
+      "Position": "756,192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "InputName": "GridSize",
+      "InputDescription": "",
+      "InputData": {
+        "__class": "VariantValueFloat",
+        "InputType": "Float",
+        "Value": 0.4,
+        "MinValue": 0,
+        "MaxValue": 2
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "12",
+      "Position": "192,276",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SwitchNode",
+      "__version": 1,
+      "Name": "",
+      "Enabled": true,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "13",
+      "Position": "504,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComparisonNode",
+      "__version": 1,
+      "Operator": "Equal",
+      "Identifier": "14",
+      "Position": "684,-180",
+      "HandleOffsets": {}
+    }
+  ]
+}

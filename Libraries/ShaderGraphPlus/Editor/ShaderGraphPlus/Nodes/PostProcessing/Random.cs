@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
+
+// TODO : Remove this?
 
 /// <summary>
 ///
@@ -6,8 +8,10 @@
 [Title( "Random" ), Category( "PostProcessing/Utility" )]
 public sealed class RandomNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
-[Hide]
+	[Hide]
 public static string Random => @"
 float2 Random(float2 vUv)
 {

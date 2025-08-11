@@ -1,0 +1,52 @@
+{
+  "__version": 1,
+  "IsSubgraph": false,
+  "Path": "shaders/shaderfunctions/jittertest2.sgrph",
+  "Model": "models/fauna/hare/hare.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "PositionOffset": {
+        "Identifier": "1",
+        "Output": "VertexOffset",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphNode",
+      "__version": 1,
+      "SubgraphPath": "shaders/shaderfunctions/vertexjitter2.sgpfunc",
+      "DefaultValues": {
+        "GridSize": 0.4
+      },
+      "Identifier": "1",
+      "Position": "-276,180",
+      "HandleOffsets": {}
+    }
+  ]
+}

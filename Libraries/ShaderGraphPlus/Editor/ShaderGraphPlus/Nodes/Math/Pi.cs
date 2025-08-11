@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Pi math constant with multiplier.
@@ -6,6 +6,9 @@
 [Title( "Pi" ), Category( "Constants" )]
 public class PiNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 
 	[Title( "Multiplier" )]
 	[Input( typeof( float ) )]

@@ -14,6 +14,10 @@ insert_final_newline = true
 
 #### C# Coding Conventions ####
 
+# Errors
+# CA1860: Avoid using 'Enumerable.Any()' extension method
+dotnet_diagnostic.CA1860.severity = none
+
 # Expression-bodied members
 csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_constructors = false:silent

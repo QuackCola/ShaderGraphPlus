@@ -1,20 +1,28 @@
-﻿using System.Text.Json.Serialization;
+﻿using Editor.ShaderGraph;
+using ShaderGraphPlus.Nodes;
+using System.Text.Json.Serialization;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public interface IParameterNode
 {
 	string Name { get; set; }
 	bool IsAttribute { get; set; }
 	ParameterUI UI { get; set; }
-
+	public int PortOrder { get; set; }
 	NodeInput PreviewInput { get; set; }
 
+	public Vector2 ParameterNodePosition { get; }
+
 	Type GetPortType();
+
 	object GetValue();
 	void SetValue( object val );
+
 	Vector4 GetRangeMin();
 	Vector4 GetRangeMax();
+
+	public SubgraphInput UpgradeToSubgraphInput();
 }
 
 public interface ITextureParameterNode
@@ -28,22 +36,40 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[Hide, JsonIgnore]
+	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		return UpgradeToSubgraphInput();
+	}
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
 		$"{DisplayInfo.For( this ).Name} ( {Name} )";
 
-	[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	//[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
+	[Hide]
 	public NodeInput PreviewInput { get; set; }
+
+	//[ShowIf( nameof( IsSubgraph ), true )]
+	[Hide]
+	public int PortOrder { get; set; }
 
 	public T Value { get; set; }
 
+	[HideIf( nameof( IsSubgraph ), true )]
 	public string Name { get; set; } = "";
+
+	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
@@ -54,7 +80,8 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	/// <summary>
 	/// If true, this parameter can be modified directly on the subgraph node.
 	/// </summary>
-	[JsonIgnore, ShowIf( nameof( IsSubgraph ), true )]
+	//[JsonIgnore, ShowIf( nameof( IsSubgraph ), true )]
+	[Hide]
 	protected bool IsRequiredInput
 	{
 		get => IsAttribute;
@@ -62,6 +89,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	}
 
 	[InlineEditor( Label = false ), Group( "UI" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
@@ -97,14 +125,25 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	{
 		return Vector4.Zero;
 	}
+
 	public void SetValue( object val )
 	{
 		Value = (T)val;
 	}
 
+	public virtual SubgraphInput UpgradeToSubgraphInput()
+	{
+		return default ( SubgraphInput );
+	}
+
 	public List<string> GetErrors()
 	{
 		var errors = new List<string>();
+
+		if ( Name.Contains( ' ' ) )
+		{
+			errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
+		}
 
 		foreach ( var parameterNode in Graph.Nodes )
 		{

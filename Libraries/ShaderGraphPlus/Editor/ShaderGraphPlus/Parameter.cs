@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 public enum UIType
 {
@@ -41,6 +41,9 @@ public struct ParameterUI
 	[JsonIgnore, Hide]
 	public readonly string UIGroup => $"{PrimaryGroup.Name},{PrimaryGroup.Priority}/{SecondaryGroup.Name},{SecondaryGroup.Priority}/{Priority}";
 
+	/// <summary>
+	/// Hide Type and Step properties.
+	/// </summary>
 	[JsonIgnore, Hide]
 	internal bool HideProps {  get; set; }
 

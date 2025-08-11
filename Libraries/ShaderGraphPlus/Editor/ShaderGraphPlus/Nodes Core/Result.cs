@@ -1,5 +1,6 @@
-﻿
-namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+
+namespace ShaderGraphPlus;
 
 /// <summary>
 /// Final result
@@ -8,11 +9,18 @@ namespace Editor.ShaderGraphPlus;
 public sealed class Result : BaseResult
 {
 	[Hide]
+	public override int Version => 1;
+
+	[Hide]
 	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 
 	[Hide]
 	private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
-	
+
+	// TODO :
+	//[Hide]
+	//private bool IsCustomLighting => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Custom );
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
@@ -25,7 +33,7 @@ public sealed class Result : BaseResult
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Emission { get; set; }
 
-	[Hide, NodeEditor( nameof( DefaultOpacity ) )]
+	[Hide, Editor( nameof( DefaultOpacity ) )]
 	[Input( typeof( float ) )]
 	public NodeInput Opacity { get; set; }
 
@@ -34,17 +42,17 @@ public sealed class Result : BaseResult
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Normal { get; set; }
 
-	[Hide, NodeEditor( nameof( DefaultRoughness ) )]
+	[Hide, Editor( nameof( DefaultRoughness ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Roughness { get; set; }
 
-	[Hide, NodeEditor( nameof( DefaultMetalness ) )]
+	[Hide, Editor( nameof( DefaultMetalness ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput Metalness { get; set; }
 
-	[Hide, NodeEditor( nameof( DefaultAmbientOcclusion ) )]
+	[Hide, Editor( nameof( DefaultAmbientOcclusion ) )]
 	[Input( typeof( float ) )]
 	[ShowIf( nameof( this.IsLit ), true )]
 	public NodeInput AmbientOcclusion { get; set; }
@@ -85,6 +93,13 @@ public sealed class Result : BaseResult
 	[HideIf( nameof( IsPostProcess ), true )]
 	public NodeInput PositionOffset { get; set; }
 
+	// TODO :
+	//[Hide]
+	//[Input( typeof( Vector3 ) )]
+	//[HideIf( nameof( IsCustomLighting ), true )]
+	//public NodeInput CustomLighting { get; set; }
+
+
 	[JsonIgnore, Hide]
 	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
 
@@ -120,7 +135,7 @@ public sealed class Result : BaseResult
 				displayInfo.Name = property.DisplayName;
 				info.DisplayInfo = displayInfo;
 				var plug = new BasePlugIn( this, info, info.Type );
-				var oldPlug = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.DisplayInfo.Name == info.DisplayInfo.Name ) as BasePlugIn;
+				var oldPlug = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.DisplayInfo.Name == property.Name ) as BasePlugIn;
 				if ( oldPlug is not null )
 				{
 					oldPlug.Info.Name = info.Name;

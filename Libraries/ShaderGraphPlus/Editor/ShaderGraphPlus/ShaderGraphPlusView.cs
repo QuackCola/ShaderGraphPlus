@@ -1,4 +1,7 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 public class ShaderGraphPlusView : GraphView
 {
@@ -9,17 +12,17 @@ public class ShaderGraphPlusView : GraphView
 
 	protected override string ViewCookie => _window?.AssetPath;
 
-    private static bool? _cachedConnectionStyle;
+	private static bool? _cachedConnectionStyle;
 
-    public static bool EnableGridAlignedWires
-    {
-        get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
-        set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
-    }
+	public static bool EnableGridAlignedWires
+	{
+		get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
+		set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
+	}
 
-    private ConnectionStyle _oldConnectionStyle;
+	private ConnectionStyle _oldConnectionStyle;
 
-    public new ShaderGraphPlus Graph
+	public new ShaderGraphPlus Graph
 	{
 		get => (ShaderGraphPlus)base.Graph;
 		set => base.Graph = value;
@@ -27,17 +30,44 @@ public class ShaderGraphPlusView : GraphView
 
 	private readonly Dictionary<string, INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
-    public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
-    ? GridConnectionStyle.Instance
-    : ConnectionStyle.Default;
+	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
+	? GridConnectionStyle.Instance
+	: ConnectionStyle.Default;
 
-    public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
+	public ShaderGraphPlusView( Widget parent, MainWindow window ) : base( parent )
 	{
 		_window = window;
 		_undoStack = window.UndoStack;
 
 		OnSelectionChanged += SelectionChanged;
 	}
+
+	/*
+	protected override Pixmap CreateBackgroundPixmap()
+	{
+		var cs = new ComputeShader( "core/ShaderGraphPlus/graphView_grid_cs.shader" );
+		var texture = CreateTexture( "graphViewTex", 2048, 2048 );
+
+		cs.Attributes.Set( "TextureSize", new Vector2( texture.Width, texture.Height ) );
+		cs.Attributes.Set( "RWOutputTexture", texture );
+
+		cs.Dispatch( texture.Width, texture.Height, 1 );
+
+		var bitmap = texture.GetBitmap( 0 );
+
+		return Pixmap.FromBitmap( bitmap );
+	}
+
+
+	public static Texture CreateTexture( string name, int width, int height, ImageFormat imageFormat = ImageFormat.RGBA8888 )
+	{
+		return Texture.Create( width, height )
+		.WithName( name )
+		.WithUAVBinding()
+		.WithFormat( imageFormat )
+		.Finish();
+	}
+	*/
 
 	protected override INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
 	protected override INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
@@ -102,43 +132,14 @@ public class ShaderGraphPlusView : GraphView
 
 			if ( item is null )
 				return;
-
-			var node = item.Node as BaseNodePlus;
-
-			if ( node != null )
+			
+			if ( item.Node is BaseNodePlus node && ConCommands.NodeDebugInfo )
 			{
 				menu.AddSeparator();
 
-				if ( ConCommands.NodeDebugInfo )
-				{
-					NodeDebugInfo( menu, node );
-				}
+				node.DebugInfo( menu );
 			}
 		}
-	}
-
-	private void NodeDebugInfo( Menu menu, BaseNodePlus node )
-	{
-		var header1 = menu.AddHeading( "Node Debug Info" );
-
-		var label1 = menu.AddWidget( new Label() );
-		label1.Text = $"Node ID      : {node.Identifier}";
-
-		var label2 = menu.AddWidget( new Label() );
-		label2.Text = $"Preview ID   : {node.PreviewID}";
-
-		var label3 = menu.AddWidget( new Label() );
-		label3.Text = $"IsReachable? : {node.IsReachable}";
-
-		if ( node.ComboSwitchInfo.IsValid )
-		{
-			var header2 = menu.AddHeading( "Combo Switch Data" );
-
-			var label4 = menu.AddWidget( new Label( $" BoundSwitch : {node.ComboSwitchInfo.BoundSwitch}" ) );
-			var label5 = menu.AddWidget( new Label( $" BoundSwitchBlock : {node.ComboSwitchInfo.BoundSwitchBlock}" ) );
-		}
-
-
 	}
 
 	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
@@ -190,6 +191,7 @@ public class ShaderGraphPlusView : GraphView
 			return true;
 		}
 
+		//SGPLog.Info( $"failed to get HandleConfig type\"{type}\"" );
 		matchingType = null;
 		return false;
 	}
@@ -198,6 +200,7 @@ public class ShaderGraphPlusView : GraphView
 	{
 		if ( TryGetHandleConfig( type, out var matchingType, out var config ) )
 		{
+			//SGPLog.Info( $"Got HandleConfig type\"{type}\" matchingType\"{matchingType}\" config.Name\"{config.Name}\"" );
 			return config with { Name = type == matchingType ? config.Name : null };
 		}
 
@@ -280,7 +283,85 @@ public class ShaderGraphPlusView : GraphView
 						input.ConnectedOutput = (existingParameterNode as BaseNodePlus).Outputs.FirstOrDefault();
 						continue;
 					}
-					if ( input.Type == typeof( float ) )
+
+					if ( input.Type == typeof( Texture2DObject ) )
+					{
+						var texture2DObjectNodeInput = FindNodeType( typeof( Texture2DObjectNode ) ).CreateNode( subgraph );
+						texture2DObjectNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( texture2DObjectNodeInput is Texture2DObjectNode texture2DObjectNode )
+						{
+							texture2DObjectNode.Name = inputName;
+							input.ConnectedOutput = texture2DObjectNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( texture2DObjectNode );
+						}
+					}
+					else if ( input.Type == typeof( TextureCubeObject ) )
+					{
+						var textureCubeObjectNodeInput = FindNodeType( typeof( TextureCubeObjectNode ) ).CreateNode( subgraph );
+						textureCubeObjectNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( textureCubeObjectNodeInput is TextureCubeObjectNode textureCubeObjectNode )
+						{
+							textureCubeObjectNode.Name = inputName;
+							input.ConnectedOutput = textureCubeObjectNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( textureCubeObjectNode );
+						}
+					}
+					else if ( input.Type == typeof( Sampler ) )
+					{
+						var samplerNodeInput = FindNodeType( typeof( SamplerNode ) ).CreateNode( subgraph );
+						samplerNodeInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( samplerNodeInput is SamplerNode samplerNode )
+						{
+							samplerNode.Name = inputName;
+							input.ConnectedOutput = samplerNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( samplerNode );
+						}
+					}
+					else if ( input.Type == typeof( Float2x2 ) )
+					{
+						var float2x2Input = FindNodeType( typeof( Float2x2Node ) ).CreateNode( subgraph );
+						float2x2Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float2x2Input is Float2x2Node float2x2Node )
+						{
+							float2x2Node.Name = inputName;
+							input.ConnectedOutput = float2x2Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float2x2Node );
+						}
+					}
+					else if ( input.Type == typeof( Float3x3 ) )
+					{
+						var float3x3Input = FindNodeType( typeof( Float3x3Node ) ).CreateNode( subgraph );
+						float3x3Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float3x3Input is Float3x3Node float3x3Node )
+						{
+							float3x3Node.Name = inputName;
+							input.ConnectedOutput = float3x3Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float3x3Node );
+						}
+					}
+					else if ( input.Type == typeof( Float4x4 ) )
+					{
+						var float4x4Input = FindNodeType( typeof( Float4x4Node ) ).CreateNode( subgraph );
+						float4x4Input.Position = node.Position - new Vector2( 240, 0 );
+						if ( float4x4Input is Float4x4Node float4x4Node )
+						{
+							float4x4Node.Name = inputName;
+							input.ConnectedOutput = float4x4Node.Outputs.FirstOrDefault();
+							nodesToAdd.Add( float4x4Node );
+						}
+					}
+					else if ( input.Type == typeof( bool ) )
+					{
+						var boolInput = FindNodeType( typeof( Bool ) ).CreateNode( subgraph );
+						boolInput.Position = node.Position - new Vector2( 240, 0 );
+						if ( boolInput is Bool boolNode )
+						{
+							boolNode.Name = inputName;
+							input.ConnectedOutput = boolNode.Outputs.FirstOrDefault();
+							nodesToAdd.Add( boolNode );
+						}
+					}
+					else if ( input.Type == typeof( float ) )
 					{
 						var floatInput = FindNodeType( typeof( Float ) ).CreateNode( subgraph );
 						floatInput.Position = node.Position - new Vector2( 240, 0 );
@@ -313,7 +394,7 @@ public class ShaderGraphPlusView : GraphView
 							nodesToAdd.Add( vector3Node );
 						}
 					}
-					else
+					else if ( input.Type == typeof( Float4 ) )
 					{
 						var vector4Input = FindNodeType( typeof( Float4 ) ).CreateNode( subgraph );
 						vector4Input.Position = node.Position - new Vector2( 240, 0 );
@@ -328,8 +409,53 @@ public class ShaderGraphPlusView : GraphView
 			}
 		}
 
+		var subgraphOutputs = new List<SubgraphOutput>();
+		foreach ( var node in subgraph.Nodes )
+		{
+			foreach ( var output in node.Outputs )
+			{
+				
+				var subgraphOutputNode = FindNodeType( typeof( SubgraphOutput ) ).CreateNode( subgraph );
+
+				if ( subgraphOutputNode is SubgraphOutput subgraphOutput )
+				{
+					subgraphOutput.Position = rightmostPos + new Vector2( 240, 0 );
+					subgraphOutput.SubgraphFunctionOutput = new();
+
+					var correspondingNode = Graph.Nodes.FirstOrDefault( x => !subgraph.Nodes.Contains( x ) && x.Inputs.Any( x => x.ConnectedOutput == output ) );
+					if ( correspondingNode is null ) continue;
+					var inputName = $"{output.Identifier}_{output.Node.Identifier}";
+
+					subgraphOutput.SubgraphFunctionOutput = new ShaderFunctionOutput()
+					{
+						OutputName = inputName,
+					};
+					subgraphOutput.SubgraphFunctionOutput.SetOutputTypeFromType( output.Type );
+
+					subgraphOutput.InitializeNode();
+		
+					var input = subgraphOutput.Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == inputName );
+					input.ConnectedOutput = output;
+
+					subgraphOutputs.Add( subgraphOutput );
+					break;
+				}
+			}
+		}
+
+		//nodesToAdd.Add( subgraphOutput );
+		nodesToAdd.AddRange( subgraphOutputs );
+
+		// Add all the newly created nodes
+		foreach ( var node in nodesToAdd )
+		{
+			subgraph.AddNode( node );
+		}
+
+		/*
 		// Create Output/Result node
 		var frNode = FindNodeType( typeof( FunctionResult ) ).CreateNode( subgraph );
+		
 		if ( frNode is FunctionResult resultNode )
 		{
 			resultNode.Position = rightmostPos + new Vector2( 240, 0 );
@@ -361,6 +487,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			subgraph.AddNode( node );
 		}
+		*/
 
 		// Save the newly created sub-graph
 		System.IO.File.WriteAllText( filePath, subgraph.Serialize() );
@@ -423,6 +550,7 @@ public class ShaderGraphPlusView : GraphView
 
 		// Delete all previously selected nodes
 		UpdateConnections( Graph.Nodes );
+		
 	}
 
 	private void SelectionChanged()
@@ -458,13 +586,15 @@ public class ShaderGraphPlusView : GraphView
 			{
 				baseNode.OnFrame();
 			}
+
+
 		}
 
 		if ( _oldConnectionStyle != ConnectionStyle )
 		{
 			_oldConnectionStyle = ConnectionStyle;
 
-			foreach ( var connection in Items.OfType<NodeEditor.Connection>() )
+			foreach ( var connection in Items.OfType<Editor.NodeEditor.Connection>() )
 			{
 				connection.Layout();
 			}

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
@@ -9,8 +9,10 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "UV Rotation" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVRotationNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
-[Hide]
+	[Hide]
 public string UVRotation => @"
 float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 {
@@ -83,6 +85,8 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 [Title( "UV Scale" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScaleNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
 	[Hide]
 	public string UVScale => @"
@@ -137,6 +141,8 @@ public sealed class UVScaleNode : ShaderNodePlus
 [Title( "UV Scale By Point" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScaleByPointNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
 [Hide]
 public static string UVScaleByPoint => @"
@@ -207,6 +213,8 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 [Title( "UV Scroll" ), Category( "UV" ), Icon( "texture" )]
 public sealed class UVScrollNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
 [Hide]
 public static string UVScroll => @"
@@ -282,6 +290,9 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 [Title( "UV Tile And Offset" ), Category( "UV" ), Icon( "texture" )]
 public sealed class TileAndOffset : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput UV { get; set; }
@@ -342,6 +353,8 @@ public sealed class TileAndOffset : ShaderNodePlus
 [Title( "FlipBook" ), Category( "UV" ), Icon( "texture" )]
 public sealed class FlipBookNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
 [Hide]
 public static string FlipBook => @"

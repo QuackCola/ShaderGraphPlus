@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 public enum ResultType
 { 
@@ -71,6 +73,16 @@ public enum CastType
 	IntToFloat,
 }
 
+internal enum MetadataType
+{
+	ImagePath,
+	Bool,
+	ComboSwitchInfo,
+	ComboSwitchBody,
+	VoidComponents,
+	VoidResultUserDefinedName
+}
+
 public struct NodeResult : IValid
 {
 	public delegate NodeResult Func( GraphCompiler compiler );
@@ -79,74 +91,23 @@ public struct NodeResult : IValid
 	public string[] Errors { get; private init; }
 	public string[] Warnings { get; private init; }
 	public bool IsDepreciated { get; private set; }
+	public int Components { get; private set; }
+	public int PreviewID { get; private set; }
+	public string VoidLocalTargetID { get; private set; }
+
 	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
-	public int VoidComponents { get; private set; }
-	public string ComboSwitchBody { get; private set; }
-	public GraphCompiler.ComboSwitchInfo SwitchInfo { get; private set; } 
 
-	public bool SkipLocalGeneration { get; set; } = false;
-	public bool Constant { get; set; }
-	public string ImagePath { get; set; }
-	public int PreviewID { get; set; }
-
-	public readonly string TypeName
-	{
-		get
-		{
-			if ( ResultType is ResultType.Int )
-			{
-				return $"int"; // Just identify as a float.
-			}	
-			if ( ResultType is ResultType.Float )
-			{
-				return $"float";
-			}
-			else if ( ResultType is ResultType.Vector2 or ResultType.Vector3 or ResultType.Color )
-			{
-				return $"float{Components()}";
-			}
-			else if ( ResultType is ResultType.Float2x2 )
-			{
-				return "float2x2";
-			}
-			else if ( ResultType is ResultType.Float3x3 )
-			{
-				return "float3x3";
-			}
-			else if ( ResultType is ResultType.Float4x4 )
-			{
-				return "float4x4";
-			}
-			else if ( ResultType is ResultType.Bool )
-			{
-				return "bool";
-			}
-			else if (ResultType is ResultType.Gradient )
-			{
-				return "Gradient";
-			}
-			else if ( ResultType is ResultType.Texture2DObject )
-			{
-				return $"Texture2D";
-			}
-			else if ( ResultType is ResultType.TextureCubeObject )
-			{
-				return $"TextureCube";
-			}
-
-			return "float";
-		}
-	}
-
+	public readonly string TypeName => ResultType.GetHLSLDataType();
+	
 	public readonly Type ComponentType
 	{
 		get
 		{
-			if ( ResultType is ResultType.Void )
+			if ( ResultType == ResultType.Void )
 			{
-				return VoidComponents switch
+				return Components switch
 				{
-					int r when r == 0 => typeof( bool ),
+					//int r when r == 0 => typeof( bool ),
 					//int r when r == 1 => typeof( int ),
 					int r when r == 1 => typeof( float ),
 					int r when r == 2 => typeof( Vector2 ),
@@ -157,43 +118,131 @@ public struct NodeResult : IValid
 			}
 			else
 			{
-				return ResultType switch
-				{
-					ResultType.Bool => typeof( bool ),
-					//ResultType.Int => typeof(int),
-					ResultType.Float => typeof( float ),
-					ResultType.Vector2 => typeof( Vector2 ),
-					ResultType.Vector3 => typeof( Vector3 ),
-					ResultType.Color => typeof( Color ),
-					ResultType.Float2x2 => typeof( Float2x2 ),
-					ResultType.Float3x3 => typeof( Float3x3 ),
-					ResultType.Float4x4 => typeof( Float4x4 ),
-					ResultType.Sampler => typeof( Sampler ),
-					ResultType.Texture2DObject => typeof( Texture2DObject ),
-					ResultType.TextureCubeObject => typeof( TextureCubeObject ),
-					ResultType.Gradient => typeof( Gradient ),
-					_ => throw new System.NotImplementedException(),
-				};
+				return ResultType.GetRepresentedType();
 			}
 		}
 	}
 
-	public NodeResult( ResultType resultType, string code, bool constant = false, int voidComponents = 0 )
+	public bool SkipLocalGeneration { get; set; } = false;
+	public string ImagePath { get; set; }
+	public bool Constant { get; set; }
+	public bool ShouldPreview { get; set; }
+
+	/// <summary>
+	/// Generic-Ish metadata related to this NodeResult.
+	/// </summary>
+	internal Dictionary<string, object> Metadata { get; private set; }
+
+	public readonly bool CanPreview
+	{
+		get
+		{
+			switch ( ResultType )
+			{
+				case ResultType.Bool:
+					return false;
+				case ResultType.Int:
+					return true;
+				case ResultType.Float:
+					return true;
+				case ResultType.Vector2:
+					return true;
+				case ResultType.Vector3:
+					return true;
+				case ResultType.Color:
+					return true;
+				case ResultType.Float2x2:
+					return false;
+				case ResultType.Float3x3:
+					return false;
+				case ResultType.Float4x4:
+					return false;
+				case ResultType.Sampler:
+					return false;
+				case ResultType.Texture2DObject:
+					return false;
+				case ResultType.TextureCubeObject:
+					return false;
+				case ResultType.Gradient:
+					return false;
+				case ResultType.Void:
+					return false;
+				case ResultType.Invalid:
+					throw new Exception( "Result Type Is Invalid!" );
+				default:
+					return false;
+			}
+		}
+	}
+
+	public readonly bool CanCast
+	{
+		get
+		{
+			switch ( ResultType )
+			{
+				case ResultType.Float2x2:
+					return false;
+				case ResultType.Float3x3:
+					return false;
+				case ResultType.Float4x4:
+					return false;
+				case ResultType.Sampler:
+					return false;
+				case ResultType.Texture2DObject:
+					return false;
+				case ResultType.TextureCubeObject:
+					return false;
+				case ResultType.Gradient:
+					return false;
+				case ResultType.Void:
+					return false;
+				case ResultType.Invalid:
+					return false;
+				case ResultType.Bool:
+					return false;
+				case ResultType.Int:
+					return true;
+				case ResultType.Float:
+					return true;
+				case ResultType.Vector2:
+					return true;
+				case ResultType.Vector3:
+					return true;
+				case ResultType.Color:
+					return true;
+				default: 
+					return false;
+			}
+		}
+	}
+
+	public NodeResult( ResultType resultType, string code, bool constant = false, Dictionary<string, object> metadata = null )
 	{
 		ResultType = resultType;
 		Code = code;
 		Constant = constant;
-		VoidComponents = voidComponents;
-	}
+		
+		if ( metadata == null )
+		{
+			Metadata = new();
+		}
+		else
+		{
+			Metadata = metadata;
+		}
 
-	public NodeResult( ResultType resultType, string code, string switchBody, GraphCompiler.ComboSwitchInfo switchInfo, bool constant = false, int voidComponents = 0 ) : this ( resultType, code, constant, voidComponents )
-	{
-		SwitchInfo = switchInfo;
-	}
-
-	public NodeResult( ResultType resultType, string code, string switchBody, bool constant = false, int voidComponents = 0 ) : this( resultType, code, constant, voidComponents )
-	{
-		ComboSwitchBody = switchBody;
+		Components = ResultType switch
+		{
+			ResultType.Bool => 1,
+			ResultType.Int => 1,
+			ResultType.Float => 1,
+			ResultType.Vector2 => 2,
+			ResultType.Vector3 => 3,
+			ResultType.Color => 4,
+			ResultType.Void => 0,
+			_ => 0
+		};
 	}
 
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
@@ -201,17 +250,90 @@ public struct NodeResult : IValid
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
 	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
 
-	internal void SetSwitchInfo( GraphCompiler.ComboSwitchInfo switchInfo )
+	public void SetPreviewID( int previewid ) { PreviewID = previewid; }
+	public void SetVoidLocalTargetID( string voidLocalTargetID ) { VoidLocalTargetID = voidLocalTargetID; }
+
+#region Metdata
+	internal T GetMetadata<T>( string metaName, bool ignoreException = false )
 	{
-		SwitchInfo = switchInfo;
+		if ( Metadata.TryGetValue( metaName, out var actualData ) )
+		{
+			if ( typeof( T ) == actualData.GetType() )
+			{
+				return (T)actualData;
+			}
+			else
+			{
+				throw new InvalidCastException( $"Generic type of `{typeof( T )}` is not of metadata actual data type `{actualData.GetType()}`" );
+			}
+		}
+
+		if ( !ignoreException )
+		{
+			throw new Exception( $"Unable to get metadata with name `{metaName}`" );
+		}
+
+		return default( T );
 	}
+
+	internal bool TryGetMetaData<T>( string metaName, out T data )
+	{
+		data = default;
+
+		if ( Metadata.TryGetValue( metaName, out var actualData ) )
+		{
+			if ( typeof( T ) == actualData.GetType() )
+			{
+				data = (T)actualData;
+				return true;
+			}
+			else
+			{
+				return false;
+				//throw new InvalidCastException( $"Generic type of `{typeof( T )}` is not of metadata actual data type `{actualData.GetType()}`" );
+			}
+		}
+
+		return false;
+	}
+
+	internal void SetMetadata( string metaName, object actualData )
+	{
+		if ( !Metadata.ContainsKey( metaName ) )
+		{
+			Metadata.Add( metaName, actualData );
+		}
+		else
+		{
+			throw new Exception( "Metadata entry already exists!" );
+		}
+	}
+
+	internal void SetMetadata( Dictionary<string, object> metadata )
+	{
+		Metadata = metadata;
+	}
+
+	internal void SetMetadataValue( string metaName, object actualData )
+	{
+		if ( Metadata.ContainsKey( metaName ) )
+		{
+			Metadata[metaName] = actualData;
+		}
+		else
+		{
+			//SGPLog.Warning( $"Metadata entry `{metaName}` dosent exist! Creating new Metadata entry instead." );
+			SetMetadata( metaName, actualData );
+		}
+	}
+#endregion Metdata
 
 	/// <summary>
 	/// "Cast" this result to different float types
 	/// </summary>
 	public string Cast( int components, float defaultValue = 0.0f, CastType castType = CastType.FloatToFloat )
 	{
-		if ( ResultType is ResultType.Float2x2 || ResultType is ResultType.Float3x3 || ResultType is ResultType.Float4x4 )
+		if ( !CanCast )
 		{
 			throw new Exception( $"ResultType `{ResultType}` cannot be cast." );
 		}
@@ -221,93 +343,131 @@ public struct NodeResult : IValid
 			throw new NotImplementedException( $"{nameof( Cast )} : ResultType `{ResultType}` is not Implemented yet!" );
 		}
 
-		if ( ResultType is ResultType.Void )
+		if ( Components == components )
 		{
-			if ( VoidComponents == components )
-				return Code;
+			return Code;
+		}
 
-			if ( VoidComponents > components )
-			{
-				return $"{Code}.{"xyzw"[..components]}";
-			}
-			else if ( VoidComponents == 1 )
-			{
-				return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
-			}
-			else
-			{
-				return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - VoidComponents ) )} )";
-			}
+		if ( Components > components )
+		{
+			return $"{Code}.{"xyzw"[..components]}";
+		}
+		else if ( Components == 1 )
+		{
+			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
 		}
 		else
 		{
-			if ( Components() == components )
-			{
-				return Code;
-			}
-				
+			if ( !string.IsNullOrWhiteSpace( Code ) )
+				return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - Components ) )} )";
 
-			if ( Components() > components )
-			{
-				return $"{Code}.{"xyzw"[..components]}";
-			}
-			else if ( Components() == 1 )
-			{
-				return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
-			}
-			else
-			{
-				return $"float{components}( {Code}, {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components - Components() ) )} )";
-			}
+			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( $"{defaultValue}", components ) )} )";
 		}
-	}
-
-	/// <summary>
-	/// Returns the components
-	/// </summary>
-	/// <returns></returns>
-	public readonly int Components()
-	{
-		int components = 0;
-		
-		switch ( ResultType )
-		{
-			case ResultType.Bool:
-				components = 1;
-				break;
-			case ResultType.Int:
-				components = 1;
-				break;
-			case ResultType.Float:
-				components = 1;
-				break;
-			case ResultType.Vector2:
-				components = 2;
-				break;
-			case ResultType.Vector3:
-				components = 3;
-				break;
-			case ResultType.Color:
-				components = 4;
-				break;
-			case ResultType.Float2x2:
-				components = 4;
-				break;
-			case ResultType.Float3x3:
-				components = 9;
-				break;
-			case ResultType.Float4x4:
-				components = 16;
-				break;
-			default:
-				throw new Exception( $"ResultType `{ResultType}` has no components!" );
-		}
-
-		return components;
 	}
 
 	public override readonly string ToString()
 	{
 		return Code;
+	}
+}
+
+public static class ResultTypeExtentions
+{
+	public static int GetComponentCount( this ResultType resultType )
+	{
+		switch ( resultType )
+		{
+			case ResultType.Bool:
+				return 1;
+			case ResultType.Int:
+				return 1;
+			case ResultType.Float:
+				return 1;
+			case ResultType.Vector2:
+				return 2;
+			case ResultType.Vector3:
+				return 3;
+			case ResultType.Color:
+				return 4;
+			case ResultType.Float2x2:
+				return 4;
+			case ResultType.Float3x3:
+				return 9;
+			case ResultType.Float4x4:
+				return 16;
+			default:
+				throw new Exception( $"ResultType `{resultType}` has no components" );
+		}
+	}
+
+	public static string GetHLSLDataType( this ResultType resultType )
+	{
+		switch ( resultType )
+		{
+			case ResultType.Bool:
+				return "bool";
+			case ResultType.Int:
+				return "int";
+			case ResultType.Float:
+				return "float";
+			case ResultType.Vector2:
+				return "float2";
+			case ResultType.Vector3:
+				return "float3";
+			case ResultType.Color:
+				return "float4";
+			case ResultType.Float2x2:
+				return "float2x2";
+			case ResultType.Float3x3:
+				return "float3x3";
+			case ResultType.Float4x4:
+				return "float4x4";
+			case ResultType.Gradient:
+				return "Gradient";
+			case ResultType.Sampler:
+				return "SamplerState";
+			case ResultType.Texture2DObject:
+				return "Texture2D";
+			case ResultType.TextureCubeObject:
+				return "TextureCube";
+			default:
+				//return "float";
+				throw new Exception( $"Unsupported ResultType `{resultType}`" );
+		}
+	}
+
+	public static Type GetRepresentedType( this ResultType resultType )
+	{
+		switch ( resultType )
+		{
+			case ResultType.Bool:
+				return typeof( bool );
+			case ResultType.Int:
+				return typeof( int );
+			case ResultType.Float:
+				return typeof( float );
+			case ResultType.Vector2:
+				return typeof ( Vector2 );
+			case ResultType.Vector3:
+				return typeof( Vector3 );
+			case ResultType.Color:
+				return typeof( Color );
+			case ResultType.Float2x2:
+				return typeof( Float2x2 );
+			case ResultType.Float3x3:
+				return typeof( Float3x3 );
+			case ResultType.Float4x4:
+				return typeof( Float4x4 );
+			case ResultType.Gradient:
+				return typeof( Gradient );
+			case ResultType.Sampler:
+				return typeof( Sampler );
+			case ResultType.Texture2DObject:
+				return typeof( Texture2DObject );
+			case ResultType.TextureCubeObject:
+				return typeof( TextureCubeObject );
+			default:
+				throw new Exception( $"Unsupported ResultType `{resultType}`" );
+		}
 	}
 }

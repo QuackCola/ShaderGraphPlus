@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic procedural box shape
@@ -6,6 +6,9 @@
 [Title( "Box Shape" ), Category( "Procedural/Shapes" ), Icon( "check_box_outline_blank" )]
 public sealed class BoxShapeNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -57,6 +60,9 @@ public sealed class BoxShapeNode : ShaderNodePlus
 [Title( "Elipse Shape" ), Category( "Procedural/Shapes" )]
 public sealed class ElipseShapeNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -108,6 +114,9 @@ public sealed class ElipseShapeNode : ShaderNodePlus
 [Title( "Polygon Shape" ), Category( "Procedural/Shapes" )]
 public sealed class PolygonShapeNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]

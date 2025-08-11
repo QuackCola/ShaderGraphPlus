@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 /// <summary>
 ///	

@@ -1,0 +1,113 @@
+{
+  "__version": 1,
+  "IsSubgraph": true,
+  "Path": "shaders/upgradetests/newsub.sgpfunc",
+  "Model": null,
+  "Title": "newsub",
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "SubgraphOutput",
+      "__version": 0,
+      "SubgraphFunctionOutput": {
+        "Id": "1cd8269a-3931-459d-a438-8d7c0e29e0a2",
+        "OutputName": "Out",
+        "OutputType": "Color",
+        "Preview": "Albedo"
+      },
+      "Identifier": "0",
+      "Position": "0,64",
+      "HandleOffsets": {},
+      "Out": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 0,
+      "InputName": "InSamp",
+      "InputDescription": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "InputData": {
+        "__class": "VariantValueSampler",
+        "InputType": "Sampler",
+        "Value": {
+          "Version": 2,
+          "Name": "",
+          "Filter": "Bilinear",
+          "MaxAnisotropy": 8
+        }
+      },
+      "Identifier": "1",
+      "Position": "-744,12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureSampler",
+      "__version": 0,
+      "SamplerState": {
+        "Version": 2,
+        "Name": "",
+        "Filter": "Bilinear",
+        "MaxAnisotropy": 8
+      },
+      "Image": "materials/dev/white_color.tga",
+      "UI": {
+        "Default": "1,1,1,1",
+        "ShowExtension": true,
+        "ImageFormat": "DXT5",
+        "SrgbRead": true
+      },
+      "Identifier": "2",
+      "Position": "-516,24",
+      "HandleOffsets": {},
+      "Sampler": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "TextureObject": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 0,
+      "InputName": "InTex",
+      "InputDescription": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "InputData": {
+        "__class": "VariantValueTexture2D",
+        "InputType": "Texture2DObject",
+        "Value": {
+          "Default": "1,1,1,1",
+          "ShowExtension": true,
+          "ImageFormat": "DXT5",
+          "SrgbRead": true
+        }
+      },
+      "Identifier": "3",
+      "Position": "-780,96",
+      "HandleOffsets": {}
+    }
+  ]
+}

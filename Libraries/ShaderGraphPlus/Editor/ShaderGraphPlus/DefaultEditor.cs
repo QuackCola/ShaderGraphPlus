@@ -1,7 +1,9 @@
-﻿using Editor.NodeEditor;
+﻿using Editor;
+using Sandbox.Rendering;
+using ShaderGraphPlus.Nodes;
+using System.Text.Json;
 
-namespace Editor.ShaderGraphPlus;
-
+namespace ShaderGraphPlus;
 
 public class DefaultEditor : ValueEditor
 {
@@ -49,40 +51,70 @@ public class DefaultEditor : ValueEditor
 		if ( Plug.Inner is IPlugOut plugOut ) return;
 		if ( Plug.Inner is IPlugIn plugIn )
 		{
-			if (plugIn.ConnectedOutput is not null) return;
+			if ( plugIn.ConnectedOutput is not null ) return;
 		}
-		
+
 		var lastTextHash = _textHash;
 		var lastLabelWidth = _labelWidth;
-		
+
 		var so = node.GetSerialized();
-		Type type = typeof(Type);
+		Type type = typeof( Type );
 		object rawVal = null;
 		string val = null;
-		foreach (var property in so)
+		foreach ( var property in so )
 		{
-			if (property.TryGetAttribute<BaseNodePlus.InputDefaultAttribute>(out var inputDefault))
+			if ( property.TryGetAttribute<BaseNodePlus.InputDefaultAttribute>( out var inputDefault ) )
 			{
-				if (inputDefault.Input == Plug.Inner.Identifier)
+				if ( inputDefault.Input == Plug.Inner.Identifier )
 				{
 					type = property.PropertyType;
 					rawVal = property.GetValue<object>();
 					val = rawVal.ToString();
+					break;
 				}
 			}
 		}
-		if (val is null) return;
-		
+		// TODO
+		//if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
+		//{
+		//	if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
+		//	{
+		//		var parameterNode = entry.Item1;
+		//		if ( parameterNode.IsAttribute ) return;
+		//		type = entry.Item2;
+		//		if ( innerPlugIn.ConnectedOutput is not null )
+		//		{
+		//			rawVal = parameterNode.GetValue();
+		//			val = rawVal.ToString();
+		//		}
+		//		else
+		//		{
+		//			if ( rawVal != null )
+		//			{
+		//				rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
+		//				val = rawVal?.ToString() ?? "";
+		//			}
+		//			else
+		//			{
+		//				val = "";
+		//			}
+		//		}
+		//	}
+		//}
+		if ( string.IsNullOrEmpty( val ) ) return;
+
 		Paint.Antialiasing = true;
 		Paint.TextAntialiasing = true;
 		var rect = Parent.LocalRect;
-		
+
 		var shrink = 10f;
 		var extraWidth = 0f;
-		val = PaintHelper.FormatValue(type, rawVal, out extraWidth, out rawVal);
+		val = PaintHelper.FormatValue( type, rawVal, out extraWidth, out rawVal );
 		var textSize = Paint.MeasureText( val ) + extraWidth;
 
-		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2, rect.Height ).Shrink( 0f, 2f, 0f, 2f );
+		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2,
+		rect.Height )
+				.Shrink( 0f, 2f, 0f, 2f );
 
 		//if ( eventArgs.Icon is not null )
 		//{
@@ -111,7 +143,12 @@ internal static class PaintHelper
 	{
 		extraWidth = 0f;
 		rawValue = value;
-		
+
+		if ( rawValue is JsonElement element )
+		{
+			rawValue = DeserializeElement( element, type );
+		}
+
 		switch ( rawValue )
 		{
 			case null when !type.IsValueType:
@@ -163,9 +200,57 @@ internal static class PaintHelper
 			case Angles angles:
 				return $"p: {angles.pitch:F2}, y: {angles.yaw:F2}, r: {angles.roll:F2}";
 
+			case Sampler sampler:
+				return $"{sampler.Name}";
+
+			case TextureInput input:
+				return $"{input.Name}";
+
 			default:
 				return $"{rawValue}";
 		}
+	}
+
+	private static object DeserializeElement( JsonElement element, Type type )
+	{
+		if ( type == typeof( bool ) )
+		{
+			return bool.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( int ) )
+		{
+			return int.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( float ) )
+		{
+			return float.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector2 ) )
+		{
+			return Vector2.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector3 ) )
+		{
+			return Vector3.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector4 ) )
+		{
+			return Vector4.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Color ) )
+		{
+			return Color.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Sampler ) )
+		{
+			return JsonSerializer.Deserialize<Sampler>( element, ShaderGraphPlus.SerializerOptions() )!;
+		}
+		else if ( type == typeof( Texture2DObject ) )
+		{
+			return JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() )!;
+		}
+
+		throw new Exception( $"Cannot Deserialize `{type}`" );
 	}
 
 	public static void DrawValue( HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null )
@@ -173,28 +258,28 @@ internal static class PaintHelper
 		var bg = Theme.ControlBackground;
 		var fg = Theme.TextControl;
 
-		var borderColor = handleConfig.Color.Desaturate(0.2f).Darken(0.3f);
+		var borderColor = handleConfig.Color.Desaturate( 0.2f ).Darken( 0.3f );
 
 		if ( pulseScale > 1f )
 		{
 			bg = Color.Lerp( bg, borderColor, (pulseScale - 1f) * 0.25f );
 		}
 
-		Paint.SetPen( borderColor, 2f * ( pulseScale * 0.5f + 0.5f ) );
+		Paint.SetPen( borderColor, 2f * (pulseScale * 0.5f + 0.5f) );
 		Paint.SetBrush( bg );
 		Paint.DrawRect( valueRect, 2 );
 
 		if ( rawValue is Color color )
 		{
 			ColorPalette.PaintSwatch( color, new Rect( valueRect.Left + 3f, valueRect.Top + 3f, 14f, 14f ), false, radius: 2, disabled: false );
-			valueRect = valueRect.Shrink(14f, 0f, 0f, 0f);
+			valueRect = valueRect.Shrink( 14f, 0f, 0f, 0f );
 		}
 
 		Paint.SetPen( fg );
 
 		if ( !string.IsNullOrEmpty( icon ) )
 		{
-			Paint.DrawIcon(	new Rect( valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height), icon, 16f );
+			Paint.DrawIcon( new Rect( valueRect.Left + 8f, valueRect.Top, 16f, valueRect.Height ), icon, 16f );
 			valueRect = valueRect.Shrink( 20f, 0f, 0f, 0f );
 		}
 

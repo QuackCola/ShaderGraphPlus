@@ -1,5 +1,5 @@
 ﻿
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public class UndoOp
 {

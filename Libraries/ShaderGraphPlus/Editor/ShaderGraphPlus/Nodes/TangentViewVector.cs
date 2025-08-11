@@ -1,6 +1,6 @@
 using Editor.ShaderGraph.Nodes;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
@@ -9,6 +9,9 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Get Tangent View Vector" ), Category( "Variables" ), Icon( "visibility" )]
 public sealed class GetTangentViewVectorNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Title( "Position" ), Hide]
 	[Input( typeof( Vector3 ) )]
 	public NodeInput WorldSpacePosition { get; set; }

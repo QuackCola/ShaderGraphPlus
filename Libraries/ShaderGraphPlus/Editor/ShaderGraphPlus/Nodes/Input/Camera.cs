@@ -1,5 +1,5 @@
 ﻿ 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Camera position and shit
@@ -7,6 +7,9 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Camera" ), Category( "Variables" ), Icon( "photo_camera" )]
 public sealed class Camera : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) ), Title( "Position" )]
 	[Hide]
 	public static NodeResult.Func WorldPosition => ( GraphCompiler compiler ) => new( ResultType.Vector3, "g_vCameraPositionWs" );
@@ -30,6 +33,9 @@ public sealed class Camera : ShaderNodePlus
 [Title( "Depth" ), Category( "Camera" )]
 public sealed class Depth : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	public enum DepthMode
 	{
 		///<summary>The raw value of the depth buffer.</summary>

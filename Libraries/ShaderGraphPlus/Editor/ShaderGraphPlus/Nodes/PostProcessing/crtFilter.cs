@@ -1,15 +1,17 @@
 ﻿using Facepunch.ActionGraphs;
 using static Sandbox.VideoWriter;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "CRT Filter" ), Category( "PostProcessing/Crt" )]
 [Description( "Crt Filter Ported from	" )]
 public class CrtFilterNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
-[Hide]
+	[Hide]
 public static string crtFilter => @"
 //
 // Ported from glsl to hlsl.

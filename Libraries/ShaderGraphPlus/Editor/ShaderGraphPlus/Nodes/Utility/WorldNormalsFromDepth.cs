@@ -1,9 +1,12 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 [Title("World Normals from Depth"), Category("Utility")]
 public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus
 {
-    [Title("Screen Pos")]
+	[Hide]
+	public override int Version => 1;
+
+	[Title("Screen Pos")]
     [Input(typeof(Vector2))]
     [Hide]
     public NodeInput Coords { get; set; }

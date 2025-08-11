@@ -1,50 +1,36 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Get the dimensions of a Texture2D Object in the width and height.
 /// </summary>
 [Title( "Get Dimensions" ), Category( "Textures" ), Icon( "straighten" )]
-public sealed class GetDimensionsNode : ShaderNodePlus//, IErroringNode
+public sealed class GetDimensionsNode : VoidFunctionBase
 {
-	[Title( "Tex Object" )]
+	[Hide]
+	public override int Version => 1;
+
+	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]
 	[Hide]
 	public NodeInput TextureObject { get; set; }
 
+	[JsonIgnore, Hide]
+	public override bool CanPreview => false;
+
+	[JsonIgnore, Hide]
+	public string TextureObjectSize { get; set; } = "";
+
+	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	{
+		args.Add( new VoidFunctionArgument( nameof( TextureObject ), "$in0", VoidFunctionArgumentType.Input, ResultType.TextureCubeObject ) );
+		args.Add( new VoidFunctionArgument( nameof( TextureObjectSize ), "$out0", VoidFunctionArgumentType.Output, ResultType.Vector2 ) );
+		
+		functionName = $"{args[0].VarName}.GetDimensions";
+		functionCall = $"{functionName}( {args[1].VarName}.x, {args[1].VarName}.y )";
+	}
+
 	[Output( typeof( Vector2 ) )]
 	[Title( "Tex Size" )]
 	[Hide]
-	public NodeResult.Func TextureSize => ( GraphCompiler compiler ) =>
-	{
-		var textureObject = compiler.Result( TextureObject );
-
-		if ( textureObject.IsValid )
-		{
-			var result = $"{textureObject.Code}_wh";
-
-			compiler.RegisterVoid(
-				ResultType.Vector2,
-				result,
-				$"{textureObject.Code}.GetDimensions( {result}.x, {result}.y );"
-			);
-
-			return new NodeResult( ResultType.Vector2, result, constant: false );
-		}
-		else
-		{
-			return NodeResult.MissingInput( $"Tex Object" );
-		}
-	};
-
-	//public List<string> GetErrors()
-	//{
-	//	var errors = new List<string>();
-	//
-	//	//if ( !TextureObject.IsValid )
-	//	//{
-	//	//	errors.Add( $"input `Tex Object` is missing!" );
-	//	//}
-	//
-	//	return errors;
-	//}
+	public NodeResult.Func TextureSize => ( GraphCompiler compiler ) => new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
 }

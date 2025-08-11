@@ -3,7 +3,7 @@ using Sandbox;
 using System.Xml.Linq;
 using static Sandbox.Material;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic round gradient.
@@ -11,6 +11,9 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Round Gradient" ), Category( "Procedural/Gradients" ), Icon( "gradient" )]
 public sealed class RoundGradientNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]

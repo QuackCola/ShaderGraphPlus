@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 public enum StaticSwitchMode
 {
@@ -19,9 +19,12 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 { 
 }
 
-[Title( "Static Switch" ), Category( "Utility" ), Icon( "alt_route" )]
+[Title( "Static Combo Switch" ), Category( "Utility" ), Icon( "alt_route" )]
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Hide]
 	public override string Title
 	{
@@ -92,7 +95,11 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 			{
 				if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, false, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 				{
-					return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
+					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
+
+					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
+
+					return result;
 				}
 				else
 				{
@@ -113,7 +120,11 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 
 				if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[FeatureReference], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 				{
-					return new NodeResult( switchResultType, switchResultVariableName, switchBody, constant: false );
+					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
+
+					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
+
+					return result;
 				}
 				else
 				{

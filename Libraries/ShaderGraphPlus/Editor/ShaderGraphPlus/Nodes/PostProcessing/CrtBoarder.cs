@@ -1,9 +1,12 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]
 public class CRTBoarderNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 
 [Hide]
 public static string CRTBoarder => @"

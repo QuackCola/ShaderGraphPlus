@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum BlendMode
 {
@@ -18,6 +18,8 @@ public enum ShadingModel
 	Lit,
 	[Icon( "brightness_3" )]
 	Unlit,
+	//[Icon( "build" )] // TODO
+	//Custom,
 }
 
 public enum MaterialDomain
@@ -41,8 +43,14 @@ public class PreviewSettings
 }
 
 [GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
-public partial class ShaderGraphPlus : IGraph
+public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 {
+	/// <summary>
+	/// Current shadergraphplus project version.
+	/// </summary>
+	[Hide, JsonIgnore]
+	public int Version => 1;
+
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
 
@@ -54,7 +62,7 @@ public partial class ShaderGraphPlus : IGraph
 
 	[Hide, JsonIgnore]
 	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
-	//
+
 	//[Hide, JsonIgnore]
 	//private readonly Dictionary<string, string> _features = new();
 
@@ -128,11 +136,18 @@ public partial class ShaderGraphPlus : IGraph
 
 	public ShaderGraphPlus()
 	{
+		SGPJsonUpgrader.UpdateUpgraders( EditorTypeLibrary );
 	}
 
 	public void AssignSwitchInfo( string name, GraphCompiler.ComboSwitchInfo info )
 	{
 		_nodes[name].ComboSwitchInfo = info;
+	}
+
+	public void ClearSwitchInfo( string name )
+	{
+		if ( _nodes.ContainsKey( name ) )
+			_nodes[name].ComboSwitchInfo = default;
 	}
 
 	public void AddNode( BaseNodePlus node )

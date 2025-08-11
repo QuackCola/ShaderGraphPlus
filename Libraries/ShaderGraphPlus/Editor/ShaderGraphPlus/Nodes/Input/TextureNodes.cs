@@ -1,4 +1,7 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿using Editor;
+using Sandbox.Rendering;
+
+namespace ShaderGraphPlus.Nodes;
 
 public interface ISyncableTextureNode
 {
@@ -92,7 +95,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		_resourceText = resourceText;
 
 		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
@@ -191,6 +194,10 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 [Title( "Texture 2D" ), Category( "Textures" ), Icon( "image" )]
 public sealed class TextureSampler : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
 	/// </summary>
@@ -216,8 +223,8 @@ public sealed class TextureSampler : TextureSamplerBase
 	public NodeInput TextureObject { get; set; }
 
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	//[HideIf( nameof( IsSubgraph ), true )]
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+	[HideIf( nameof( IsSubgraph ), true )]
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	/// <summary>
 	/// RGBA color result
@@ -232,8 +239,10 @@ public sealed class TextureSampler : TextureSamplerBase
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureObject = compiler.Result( TextureObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		
 		var coords = compiler.Result( Coords );
+
+		//SGPLog.Info( $"IsSubgraph? : {IsSubgraph}" , compiler.IsPreview);
 
 		if ( textureObject.IsValid )
 		{
@@ -262,7 +271,7 @@ public sealed class TextureSampler : TextureSamplerBase
 			//	var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
 			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 			//}
-
+			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 			var result = compiler.ResultTexture( sampler, input, texture );
 
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
@@ -289,7 +298,7 @@ public sealed class TextureSampler : TextureSamplerBase
 		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
 		{
 			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
+			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
 				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
@@ -338,6 +347,10 @@ public sealed class TextureSampler : TextureSamplerBase
 [Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
 public sealed class TextureCube : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[JsonIgnore, Hide]
 	public bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
@@ -394,8 +407,8 @@ public sealed class TextureCube : ShaderNodePlus
 	public string Texture { get; set; }
 
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	//[HideIf( nameof( IsSubgraph ), true )]
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+	[HideIf( nameof( IsSubgraph ), true )]
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	/// <summary>
 	/// Settings for how this texture shows up in material editor
@@ -447,7 +460,7 @@ public sealed class TextureCube : ShaderNodePlus
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureCubeObject = compiler.Result( TextureCubeObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var coords = compiler.Result( Coords );
 
 		if ( textureCubeObject.IsValid )
@@ -532,6 +545,10 @@ public sealed class TextureCube : ShaderNodePlus
 [Title( "Texture Triplanar" ), Category( "Textures" ), Icon( "photo_library" )]
 public sealed class TextureTriplanar : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -581,7 +598,8 @@ public sealed class TextureTriplanar : TextureSamplerBase
 	public NodeInput BlendFactor { get; set; }
 
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+	[HideIf( nameof( IsSubgraph ), true )]
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	public float DefaultTile { get; set; } = 1.0f;
 
@@ -606,7 +624,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -708,6 +726,10 @@ public sealed class TextureTriplanar : TextureSamplerBase
 [Title( "Normal Map Triplanar" ), Category( "Textures" ), Icon( "texture" )]
 public sealed class NormalMapTriplanar : TextureSamplerBase
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -771,8 +793,12 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 	[Hide]
 	public NodeInput BlendFactor { get; set; }
 
+	//[InlineEditor( Label = false ), Group( "Sampler" )]
+	//public Sampler DefaultSampler { get; set; } = new Sampler();
+
 	[InlineEditor( Label = false ), Group( "Sampler" )]
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+	[HideIf( nameof( IsSubgraph ), true )]
+	public Sampler SamplerState { get; set; } = new Sampler();
 
 	public float DefaultTile { get; set; } = 1.0f;
 
@@ -792,7 +818,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -869,6 +895,10 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 [Title( "Texture Coordinate" ), Category( "Variables" ), Icon( "texture" )]
 public sealed class TextureCoord : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// Use the secondary vertex coordinate
 	/// </summary>
@@ -909,6 +939,10 @@ public sealed class TextureCoord : ShaderNodePlus
 public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 {
 	[Hide]
+	public override int Version => 1;
+
+
+	[Hide]
 	public override string Title
 	{
 		get
@@ -933,6 +967,12 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 			}
 		}
 	}
+
+	[Hide,JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
+
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public int PortOrder { get; set; }
 
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
@@ -1027,7 +1067,17 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 	{
 		return Vector4.One;
 	}
-#endregion IParameterNode Region
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+
+		return subgraphInput;
+	}
+	#endregion IParameterNode Region
 
 	/// <summary>
 	/// TextureCube object result.
@@ -1065,8 +1115,22 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 /// Texture2D Object.
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode, IReplaceNode
 {
+	[Hide]
+	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		var subgraphInputNode = UpgradeToSubgraphInput();
+
+		return subgraphInputNode;
+	}
+
 	/// <summary>
 	/// Texture to sample in preview
 	/// </summary>
@@ -1093,6 +1157,8 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		{
 			string name = $"{DisplayInfo.For( this ).Name}";
 
+			UI.SetIsSubgraph( IsSubgraph );
+
 			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( UI.Name ) )
 			{
 				return $"{name} ( {UI.Name} )";
@@ -1111,6 +1177,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 			}
 		}
 	}
+
+	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
 
 	[Hide, JsonIgnore]
 	public bool AlreadyRegisterd { get; set; } = false;
@@ -1150,7 +1219,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		_resourceText = resourceText;
 
 		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = FileSystem.Root.GetFullPath( "/.source2/temp" );
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
@@ -1174,6 +1243,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 		SrgbRead = true,
 		Default = Color.White,
 	};
+
+	[ShowIf( nameof( IsSubgraph ), true )]
+	public int PortOrder { get; set; } = 0;
 
 	public Texture2DObjectNode() : base()
 	{
@@ -1232,7 +1304,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 
 	public object GetValue()
 	{
-		return null;
+		return new TextureInput();
 	}
 
 	public void SetValue( object val )
@@ -1249,7 +1321,19 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 	{
 		return Vector4.One;
 	}
-#endregion IParameterNode Region
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
+
+	#endregion IParameterNode Region
 
 #region ISyncableTextureNode Region
 	[Hide,JsonIgnore]
@@ -1336,8 +1420,22 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
 [Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
-public sealed class SamplerNode : ShaderNodePlus, IParameterNode
+[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 {
+	[Hide]
+	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+
+	public BaseNodePlus GetReplacementNode()
+	{
+		var subgraphInputNode = UpgradeToSubgraphInput();
+
+		return subgraphInputNode;
+	}
+
 	public SamplerNode() : base()
 	{
 		ExpandSize = new Vector2( 0, 8 );
@@ -1346,6 +1444,8 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	[InlineEditor( Label = false ), Group( "Sampler" )]
 	[HideIf( nameof( IsSubgraph ), true )]
 	public Sampler SamplerState { get; set; } = new Sampler();
+
+	public bool IsAttribute { get; set; } = false;
 
 	[Hide]
 	public override string Title
@@ -1374,6 +1474,9 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	}
 
 	[Hide, JsonIgnore]
+	public Vector2 ParameterNodePosition => Position;
+
+	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
 	[Hide]
@@ -1389,20 +1492,10 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	public NodeInput PreviewInput { get; set; }
 
 	[Hide, JsonIgnore]
-	public bool IsAttribute { get; set; }
-
-	[Hide, JsonIgnore]
 	public ParameterUI UI { get; set; }
 
 	[ShowIf( nameof( IsSubgraph ), true )]
-	public int PortOrder {
-		
-		get => UI.Priority;
-		set
-		{
-			UI.SetOrder( value );
-		}
-	}
+	public int PortOrder { get; set; } = 0;
 
 	public Type GetPortType()
 	{
@@ -1411,7 +1504,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 
 	public object GetValue()
 	{
-		return new Sampler() { Name = "TestSamp"};
+		return new Sampler();
 	}
 
 	public void SetValue( object val )
@@ -1421,28 +1514,32 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 
 	public Vector4 GetRangeMin()
 	{
-		return Vector4.Zero;
+		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMin" );
 	}
 
 	public Vector4 GetRangeMax()
 	{
-		return Vector4.One;
+		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMax" );
 	}
+
+	public SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphInputType.Sampler );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
+
 #endregion IParameterNode Region
 
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
 	{
-		// Register sampler	with the compiler.
-		var result = compiler.ResultSampler( SamplerState );
-
-		if ( !string.IsNullOrWhiteSpace( result ) )
-		{
-			return new NodeResult( ResultType.Sampler, result, true );
-		}
-		else
-		{
-			return NodeResult.Error( "Shits fucked..." );
-		}
+		//var sampler = compiler.ResultSampler( SamplerState, Processed );
+		//return new NodeResult( ResultType.Sampler, sampler, true );
+		return compiler.ResultParameter( SamplerState.Name, SamplerState, default, default, false, IsAttribute, default );
 	};
 }

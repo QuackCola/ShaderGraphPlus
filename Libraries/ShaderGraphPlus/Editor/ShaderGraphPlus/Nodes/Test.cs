@@ -1,11 +1,13 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 [Title("Test Matrix Input Node"), Description("Test for verifying a matrix can be passed into a node and not cause any issues."), Category("Dev")]
 [Hide]
 public sealed class TestMatrix4X4Node : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
-[Hide]
+	[Hide]
 public string TestMatrix => @"
 float4 TestMatrix( float4x4 test4x4, float3x3 test3x3, float2x2 test2x2 )
 {
@@ -46,8 +48,9 @@ float4 TestMatrix( float4x4 test4x4, float3x3 test3x3, float2x2 test2x2 )
 }
 
 [Title( "Test Node" ), Description( "Test node." ), Category( "Dev" )]
+[Hide]
 public sealed class TestNode : ShaderNodePlus
 {
-
+	public override int Version => 1;
 }
 

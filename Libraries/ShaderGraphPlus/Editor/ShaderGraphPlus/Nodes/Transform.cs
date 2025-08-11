@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 public enum BlendNodeMode
 {
@@ -49,7 +49,10 @@ public enum OutputNormalSpace
 [Title( "Invert Colors" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class InvertColorsNode : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
+	[Hide]
+	public override int Version => 1;
+
+	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput Color { get; set; }
 	
@@ -67,6 +70,9 @@ public class InvertColorsNode : ShaderNodePlus
 [Title( "Transform Normal" ), Category( "Transform" ), Icon( "shortcut" )]
 public sealed class TransformNormal : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	/// <summary>
 	/// Normal input. No input specified will output vertex normal in world space
 	/// </summary>
@@ -140,6 +146,8 @@ public sealed class TransformNormal : ShaderNodePlus
 [Title( "Apply TRS" ), Category( "Transform" ), Icon( "3d_rotation" )]
 public sealed class ApplyTrs : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput Vector { get; set; }
@@ -208,6 +216,8 @@ public sealed class ApplyTrs : ShaderNodePlus
 [Title( "Polar Coordinates" ), Category( "Transform" ), Icon( "explore" )]
 public sealed class PolarCoordinates : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Coords { get; set; }
@@ -257,22 +267,30 @@ public sealed class PolarCoordinates : ShaderNodePlus
 /// <summary>
 /// Blend two colors or textures together using various different blending modes
 /// </summary>
-[Title( "Blend" ), Category( "Transform" )]
+[Title( "Blend" ), Category( "Transform" ), Icon( "blender" )]
 public sealed class Blend : ShaderNodePlus
 {
-	[Input( typeof( float ) )]
+	public override int Version => 1;
+
+	[Input( typeof( Color ) )]
 	[Hide]
 	public NodeInput A { get; set; }
 
-	[Input( typeof( float ) )]
+	[Input( typeof( Color ) )]
 	[Hide]
 	public NodeInput B { get; set; }
 
 	[Input( typeof( float ) ), Title( "Fraction" )]
-	[Hide, NodeEditor( nameof( Fraction ) )]
+	[Hide, Editor( nameof( Fraction ) )]
 	public NodeInput C { get; set; }
 
-	[MinMax( 0, 1 )]
+	[InputDefault( nameof( A ) )]
+	public Color DefaultA { get; set; } = Color.Black;
+
+	[InputDefault( nameof( B ) )]
+	public Color DefaultB { get; set; } = Color.White;
+
+	[InputDefault( nameof( C ) ), MinMax( 0, 1 )]
 	public float Fraction { get; set; } = 0.5f;
 
 	public BlendNodeMode BlendMode { get; set; } = BlendNodeMode.Mix;
@@ -286,13 +304,15 @@ public sealed class Blend : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		var resultA = compiler.Result( A );
+		var resultB = compiler.Result( B );
 		var results = compiler.Result( A, B );
 		var fraction = compiler.Result( C );
-		var fractionType = fraction.IsValid && fraction.Components() > 1 ? Math.Max( results.Item1.Components(), results.Item2.Components() ) : 1;
+		var fractionType = fraction.IsValid && fraction.Components > 1 ? Math.Max( results.Item1.Components, results.Item2.Components ) : 1;
 
 		string fractionStr = $"{(fraction.IsValid ? fraction.Cast( fractionType ) : compiler.ResultValue( Fraction ))}";
-		string aStr = results.Item1.ToString();
-		string bStr = results.Item2.ToString();
+		string aStr = resultA.IsValid ? results.Item1.ToString() : compiler.ResultValue( DefaultA ).ToString();
+		string bStr = resultB.IsValid ? results.Item2.ToString() : compiler.ResultValue( DefaultB ).ToString();
 
 		string returnCall = string.Empty;
 
@@ -376,6 +396,8 @@ public sealed class Blend : ShaderNodePlus
 [Title( "Normal Blend" ), Category( "Transform" ), Icon( "gradient" )]
 public sealed class NormalBlend : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Hide]
 	public static string NormalBlendVector => @"
 float3 NormalBlendVector( float3 a, float3 b)
@@ -419,12 +441,11 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		var b = compiler.Result( B );
 
 		string func = compiler.RegisterFunction( NormalBlendVector );
+		
 		if ( Mode == BlendMode.Reoriented )
 		{
 			func = compiler.RegisterFunction( ReorientedNormalBlendVector );
 		}
-
-
 
 		string funcResult = compiler.ResultFunction( func,
 			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
@@ -432,7 +453,6 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		);
 
 		return new NodeResult( ResultType.Vector3, $"{funcResult}" );
-
 	};
 }
 
@@ -442,6 +462,9 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 [Title( "Reflection" ), Category( "Transform" ), Icon( "network_ping" )]
 public sealed class Reflection : ShaderNodePlus
 {
+	public override int Version => 1;
+
+
 	[Hide]
 	public static string ReflectVector => @"
 float3 ReflectVector( float3 a, float3 b)
@@ -485,6 +508,7 @@ float3 ReflectVector( float3 a, float3 b)
 [Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class RGBtoHSV : ShaderNodePlus
 {
+	public override int Version => 1;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -501,6 +525,8 @@ public sealed class RGBtoHSV : ShaderNodePlus
 [Title( "HSV to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoRGB : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput In { get; set; }
@@ -516,76 +542,86 @@ public sealed class HSVtoRGB : ShaderNodePlus
 [Title("RGB to Linear"), Category("Transform"), Icon( "invert_colors" )]
 public sealed class RGBtoLinear : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	public override int Version => 1;
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => (GraphCompiler compiler) =>
-    {
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => (GraphCompiler compiler) =>
+	{
+		return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Linear to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoRGB : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	public override int Version => 1;
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Linear to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoHSV : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	public override int Version => 1;
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+	
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "HSV to Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoLinear : ShaderNodePlus
 {
-    [Input( typeof( Vector3 ) )]
-    [Hide]
-    public NodeInput In { get; set; }
+	public override int Version => 1;
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-    };
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+	
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+	};
 }
 
 [Title( "Height to Normal" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HeightToNormal : ShaderNodePlus
 {
-    public enum OutputNormalSpace
-    {
-        Tangent,
-        World
-    }
+	public override int Version => 1;
 
-    /// <summary>
-    /// Should we output in world space or tangent space.
-    /// </summary>
-    public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
+	public enum OutputNormalSpace
+	{
+		Tangent,
+		World
+	}
+
+	/// <summary>
+	/// Should we output in world space or tangent space.
+	/// </summary>
+	public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
 
     /// <summary>
     /// The height to be converted into a normal.
@@ -655,6 +691,8 @@ public sealed class HeightToNormal : ShaderNodePlus
 [Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class MakeGreyscaleNode : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput ColorInput { get; set; }

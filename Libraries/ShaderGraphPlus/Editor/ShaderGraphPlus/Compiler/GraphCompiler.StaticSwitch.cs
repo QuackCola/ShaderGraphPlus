@@ -3,7 +3,7 @@
 
 using System.Text;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public enum StaticSwitchBlock
 {
@@ -77,7 +77,7 @@ public sealed partial class GraphCompiler
 		/// </summary>
 		public StaticSwitchBlock BoundSwitchBlock;
 
-		public bool IsValid => !string.IsNullOrWhiteSpace( BoundSwitch );
+		public bool IsValid => !string.IsNullOrWhiteSpace( BoundSwitch ) || BoundSwitchBlock != StaticSwitchBlock.None;
 
 		public override string ToString()
 		{
@@ -138,20 +138,20 @@ public sealed partial class GraphCompiler
 
 		ResetCurrentComboSwitchInfo();
 		
-		if ( resultA.Components() == resultB.Components() )
+		if ( resultA.Components == resultB.Components )
 		{
 			//SGPLog.Info( "Not casing" );
 			return (resultA, resultB);
 		}
 
-		if ( resultA.Components() < resultB.Components() )
+		if ( resultA.Components < resultB.Components )
 		{
 			//SGPLog.Info("Casting A to B compinents.");
-			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+			return (new NodeResult( resultB.ResultType, resultA.Cast( resultB.Components ) ), resultB);
 		}
 
 		//SGPLog.Info( "Casting B to A compinents." );
-		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+		return ( resultA, new NodeResult( resultA.ResultType, resultB.Cast( resultA.Components ) ) );
 	}
 
 	private void ResetCurrentComboSwitchInfo()
@@ -181,7 +181,7 @@ public sealed partial class GraphCompiler
 			// Handle the situation where the result of switch block is constant.
 			if ( constantResult.IsValid )
 			{
-				if ( constantResult.Components() == blockResultComponentCount )
+				if ( constantResult.Components == blockResultComponentCount )
 				{
 					sb.AppendLine( IndentString( $"{blockResultName} = {constantResult}; {(debug ? $"// result" : "")}", indentLevel ) );
 				}
@@ -198,7 +198,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( lastResult.Item1.Components() == blockResultComponentCount )
+			if ( lastResult.Item1.Components == blockResultComponentCount )
 			{
 				sb.AppendLine( IndentString( $"{blockResultName} = {lastResult.Item1}; {(debug ? $"// result" : "")}", indentLevel ) );
 			}
@@ -259,7 +259,7 @@ public sealed partial class GraphCompiler
 		//ResetCurrentComboSwitchInfo();
 
 		string nodeResultTypeName = results.Item1.TypeName;
-		int nodeResultComponentCount = results.Item1.Components();
+		int nodeResultComponentCount = results.Item1.Components;
 		
 		var sbTrueBody = new StringBuilder();
 		var sbFalseBody = new StringBuilder();
@@ -267,13 +267,13 @@ public sealed partial class GraphCompiler
 
 		// make sure our results go into the correct switch and the correct block. TODO : Support more than just true or false switches.
 		var shaderResultsTrue = ShaderResult.Results.Where( 
-			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
-			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.True
+			x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitch == resultNameInternal
+			&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitchBlock == StaticSwitchBlock.True
 		);
 
 		var shaderResultsFalse = ShaderResult.Results.Where( 
-			x => x.Item2.SwitchInfo.BoundSwitch == resultNameInternal
-			&& x.Item2.SwitchInfo.BoundSwitchBlock == StaticSwitchBlock.False
+			x => x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitch == resultNameInternal
+			&& x.funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true ).BoundSwitchBlock == StaticSwitchBlock.False
 		);
 
 		SGPLog.Info( $"There is a total of `{shaderResultsTrue.Count()}` true block shader results", IsNotPreview && ConCommands.VerboseDebgging );

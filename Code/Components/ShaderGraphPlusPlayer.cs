@@ -22,7 +22,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 400f, 1f )]
+	[Range( 0.0f, 400.0f )]
+	[Step( 1.0f )]
 	public float WalkSpeed { get; set; } = 120f;
 
 	/// <summary>
@@ -30,7 +31,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 800f, 1f )]
+	[Range( 0.0f, 800.0f )]
+	[Step( 1.0f )]
 	public float RunSpeed { get; set; } = 250f;
 
 	/// <summary>
@@ -38,7 +40,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 1000f, 10f )]
+	[Range( 0.0f, 1000.0f )]
+	[Step( 1.0f )]
 	public float JumpStrength { get; set; } = 400f;
 
 	/// <summary>

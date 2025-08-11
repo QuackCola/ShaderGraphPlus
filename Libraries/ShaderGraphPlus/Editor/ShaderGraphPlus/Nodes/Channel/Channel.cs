@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 public enum SwizzleChannel
 {
@@ -11,6 +11,9 @@ public enum SwizzleChannel
 [Title( "Component Mask" ), Category( "Channel" ), Icon( "call_split" )]
 public sealed class ComponentMask : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Hide]
 	public override string Title
 	{
@@ -69,7 +72,7 @@ public sealed class ComponentMask : ShaderNodePlus
 			var resultType = ResultType.Float;
 			var components = string.Empty;
 
-			switch ( result.Components() )
+			switch ( result.Components )
 			{
 				case 2:
 					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
@@ -118,6 +121,9 @@ public sealed class ComponentMask : ShaderNodePlus
 [Title( "Split" ), Category( "Channel" ), Icon( "call_split" )]
 public sealed class SplitVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -125,7 +131,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func X => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
+		if ( result.IsValid && result.Components > 0 ) return new NodeResult( ResultType.Float, $"{result}.x" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -133,7 +139,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func Y => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 1 ) return new NodeResult( ResultType.Float, $"{result}.y" );
+		if ( result.IsValid && result.Components > 1 ) return new NodeResult( ResultType.Float, $"{result}.y" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -141,7 +147,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func Z => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 2 ) return new NodeResult( ResultType.Float, $"{result}.z" );
+		if ( result.IsValid && result.Components > 2 ) return new NodeResult( ResultType.Float, $"{result}.z" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 
@@ -149,7 +155,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public NodeResult.Func W => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.Result( Input );
-		if ( result.IsValid && result.Components() > 3 ) return new NodeResult( ResultType.Float, $"{result}.w" );
+		if ( result.IsValid && result.Components > 3 ) return new NodeResult( ResultType.Float, $"{result}.w" );
 		return new NodeResult( ResultType.Float, "0.0f" );
 	};
 }
@@ -160,6 +166,9 @@ public sealed class SplitVector : ShaderNodePlus
 [Title( "Combine" ), Category( "Channel" ), Icon( "call_merge" )]
 public sealed class CombineVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput X { get; set; }
@@ -221,6 +230,9 @@ public sealed class CombineVector : ShaderNodePlus
 [Title( "Swizzle" ), Category( "Channel" ), Icon( "swap_horiz" )]
 public sealed class SwizzleVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -263,6 +275,9 @@ public sealed class SwizzleVector : ShaderNodePlus
 [Title( "Append" ), Category( "Channel" )]
 public sealed class AppendVector : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input, Hide]
 	public NodeInput A { get; set; }
 
@@ -275,7 +290,7 @@ public sealed class AppendVector : ShaderNodePlus
 		var resultA = compiler.ResultOrDefault( A, 0.0f );
 		var resultB = compiler.ResultOrDefault( B, 0.0f );
 
-		var components = resultB.Components() + resultA.Components();
+		var components = resultB.Components + resultA.Components;
 		if ( components < 1 || components > 4 )
 			return NodeResult.Error( $"Can't append {resultB.TypeName} to {resultA.TypeName}" );
 

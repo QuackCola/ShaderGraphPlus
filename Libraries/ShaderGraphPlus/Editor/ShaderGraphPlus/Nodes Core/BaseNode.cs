@@ -1,8 +1,24 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
 
-public abstract class BaseNodePlus : INode
+namespace ShaderGraphPlus;
+
+[System.AttributeUsage( AttributeTargets.Class )]
+internal class SubgraphOnlyAttribute : Attribute
+{
+	public SubgraphOnlyAttribute()
+	{
+	}
+}
+
+public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 {
 	public event Action Changed;
+
+	/// <summary>
+	/// Current version of this node. Used by ISGPJsonUpgradeable
+	/// </summary>
+	[Hide]
+	public abstract int Version { get; }
 
 	[Hide, Browsable( false )]
 	public string Identifier { get; set; }
@@ -19,6 +35,9 @@ public abstract class BaseNodePlus : INode
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual bool CanPreview => true;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual bool CanAddToGraph => true;
+
 	[Hide, Browsable( false )]
 	public Vector2 Position { get; set; }
 
@@ -27,6 +46,12 @@ public abstract class BaseNodePlus : INode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public int PreviewID { get; set; }
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool Processed { get; set; } = false;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool UpgradedToNewNode { get; set; } = false;
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
@@ -94,14 +119,32 @@ public abstract class BaseNodePlus : INode
 		return new NodeUI( view, this );
 	}
 
-    public Color GetPrimaryColor( GraphView view )
-    {
-        return PrimaryColor;
-    }
+	public Color GetPrimaryColor( GraphView view )
+	{
+		return PrimaryColor;
+	}
 
-    public virtual Menu CreateContextMenu( NodeUI node )
+	public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;
+	}
+
+	public virtual void DebugInfo( Menu menu )
+	{
+		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
+
+		var nodeIDLabel = menu.AddWidget( new Label( $"Node ID : {this.Identifier}" ) );
+		var previewIDLabel = menu.AddWidget( new Label( $"Preview ID : {this.PreviewID}" ) );
+		var isReachableLabel = menu.AddWidget( new Label( $"IsReachable? : {this.IsReachable}" ) );
+		var canPreviewLabel = menu.AddWidget( new Label( $"CanPreview? : {this.CanPreview}" ) );
+
+		if ( this.ComboSwitchInfo.IsValid )
+		{
+			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
+
+			var boundSwitchLabel = menu.AddWidget( new Label( $" BoundSwitch : {this.ComboSwitchInfo.BoundSwitch}" ) );
+			var boundSwitchLabelBlock = menu.AddWidget( new Label( $" BoundSwitchBlock : {this.ComboSwitchInfo.BoundSwitchBlock}" ) );
+		}
 	}
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -134,18 +177,18 @@ public abstract class BaseNodePlus : INode
 		}
 	}
 
-    [System.AttributeUsage(AttributeTargets.Property)]
-    public class InputDefaultAttribute : Attribute
-    {
-        public string Input;
+	[System.AttributeUsage(AttributeTargets.Property)]
+	public class InputDefaultAttribute : Attribute
+	{
+		public string Input;
 
-        public InputDefaultAttribute(string input)
-        {
-            Input = input;
-        }
-    }
+		public InputDefaultAttribute(string input)
+		{
+			Input = input;
+		}
+	}
 
-    [System.AttributeUsage( AttributeTargets.Property )]
+	[System.AttributeUsage( AttributeTargets.Property )]
 	public class OutputAttribute : Attribute
 	{
 		public System.Type Type;
@@ -168,35 +211,32 @@ public abstract class BaseNodePlus : INode
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class NodeEditorAttribute : Attribute
+	public class EditorAttribute : Attribute
 	{
 		public string ValueName;
 
-		public NodeEditorAttribute( string valueName )
+		public EditorAttribute( string valueName )
 		{
 			ValueName = valueName;
 		}
 	}
 
-    [System.AttributeUsage(AttributeTargets.Property)]
-    public class RangeAttribute : Attribute
-    {
-        public string Min;
-        public string Max;
-        public string Step;
+	[System.AttributeUsage(AttributeTargets.Property)]
+	public class RangeAttribute : Attribute
+	{
+		public string Min;
+		public string Max;
+		public string Step;
 
-        public RangeAttribute(string min, string max, string step)
-        {
-            Min = min;
-            Max = max;
-            Step = step;
-        }
-    }
+		public RangeAttribute(string min, string max, string step)
+		{
+			Min = min;
+			Max = max;
+			Step = step;
+		}
+	}
 
-
-
-
-    public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
+	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
@@ -219,16 +259,16 @@ public abstract class BaseNodePlus : INode
 		return (inputs, outputs);
 	}
 
-    private void FilterInputsAndOutputs()
-    {
-       if (_graph is not null)
-       {
-           if (Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn)
-           {
-               Inputs = new List<IPlugIn>();
-           }
-       }
-    }
+	private void FilterInputsAndOutputs()
+	{
+		if ( _graph is not null )
+		{
+			if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
+			{
+				Inputs = new List<IPlugIn>();
+			}
+		}
+	}
 
 }
 
@@ -236,12 +276,12 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
 	INode IPlug.Node => Node;
 
-    public string Identifier => Info.Name;
-    public DisplayInfo DisplayInfo => Info.DisplayInfo;
+	public string Identifier => Info.Name;
+	public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
-    public ValueEditor CreateEditor(NodeUI node, Plug plug)
-    {
-       	var editor = Info.CreateEditor( node, plug, Type );
+	public ValueEditor CreateEditor(NodeUI node, Plug plug)
+	{
+		var editor = Info.CreateEditor( node, plug, Type );
 		if ( editor is not null ) return editor;
 
 		// Default
@@ -250,9 +290,9 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 		}
 
 		return null;
-    }
+	}
 
-    public Menu CreateContextMenu( NodeUI node, Plug plug )
+	public Menu CreateContextMenu( NodeUI node, Plug plug )
 	{
 		return null;
 	}
@@ -264,9 +304,22 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 
 	public bool ShowLabel => true;
 	public bool AllowStretch => true;
-	public bool ShowConnection => true;
+	public bool ShowConnection => IsReachable;
 	public bool InTitleBar => false;
-	public bool IsReachable => true;
+
+	public bool IsReachable
+	{
+		get
+		{
+			var conditional = Info.Property?.GetCustomAttribute<ConditionalVisibilityAttribute>();
+			if ( conditional is not null )
+			{
+				if ( conditional.TestCondition( Node.GetSerialized() ) ) return false;
+			}
+
+			return true;
+		}
+	}
 
 	public string ErrorMessage => null;
 
@@ -277,9 +330,7 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 
 }
 
-
-public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
-	: BasePlug( Node, Info, Type ), IPlugIn
+public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugIn
 {
 	IPlugOut IPlugIn.ConnectedOutput
 	{
@@ -329,7 +380,7 @@ public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
 				return;
 			}
 
-			if (value is not BasePlug fromPlug)
+			if ( value is not BasePlug fromPlug )
 			{
 				return;
 			}
@@ -359,7 +410,6 @@ public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type )
 }
 
 public record BasePlugOut( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugOut;
-
 
 public class PlugInfo
 {
@@ -403,41 +453,42 @@ public class PlugInfo
 	{
 		if ( Property is null )
 		{
-			if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
-			{
-				var entry = subgraphNode.InputReferences[plugIn.Inner];
-				var parameterNode = entry.Item1;
-				var parameterType = entry.Item2;
-				if ( parameterNode.UI.Type == UIType.Default ) return null;
-
-				if ( parameterType == typeof( float ) )
-				{
-					var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
-					slider.Bind( "Value" ).From( parameterNode, "Value" );
-
-					var rangeMin = parameterNode.GetRangeMin();
-					var rangeMax = parameterNode.GetRangeMax();
-					var rangeStep = parameterNode.UI.Step;
-
-					slider.Bind( "Min" ).FromObject( rangeMin.x );
-					slider.Bind( "Max" ).FromObject( rangeMax.x );
-					slider.Bind( "Step" ).FromObject( rangeStep );
-
-					return slider;
-				}
-				else if ( parameterType == typeof( Color ) )
-				{
-					var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
-					slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
-
-					return slider;
-				}
-			}
+			// TODO 
+			//if ( plug is PlugIn plugIn && node.Node is SubgraphNode subgraphNode )
+			//{
+			//	var entry = subgraphNode.InputReferences[plugIn.Inner];
+			//	var parameterNode = entry.paramNode;
+			//	var parameterType = entry.paramNodeValueType;
+			//	if ( parameterNode.UI.Type == UIType.Default ) return null;
+			//
+			//	if ( parameterType == typeof( float ) )
+			//	{
+			//		var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+			//		slider.Bind( "Value" ).From( parameterNode, "Value" );
+			//
+			//		var rangeMin = parameterNode.GetRangeMin();
+			//		var rangeMax = parameterNode.GetRangeMax();
+			//		var rangeStep = parameterNode.UI.Step;
+			//
+			//		slider.Bind( "Min" ).FromObject( rangeMin.x );
+			//		slider.Bind( "Max" ).FromObject( rangeMax.x );
+			//		slider.Bind( "Step" ).FromObject( rangeStep );
+			//
+			//		return slider;
+			//	}
+			//	else if ( parameterType == typeof( Color ) )
+			//	{
+			//		var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+			//		slider.BindToParameter( subgraphNode, plug.Inner.Identifier );
+			//
+			//		return slider;
+			//	}
+			//}
 
 			return null;
 		}
 
-		var editor = Property?.GetCustomAttribute<BaseNodePlus.NodeEditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 
 		if ( editor is not null )
 		{

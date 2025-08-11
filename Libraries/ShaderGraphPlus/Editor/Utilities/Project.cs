@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Utilities;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Utilities;
 
 public static class Project
 {

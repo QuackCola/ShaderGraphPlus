@@ -1,0 +1,271 @@
+{
+  "__version": 1,
+  "IsSubgraph": true,
+  "Path": "shaders/shaderfunctions/vertexjitter2.sgpfunc",
+  "Model": "models/fauna/hare/hare.vmdl",
+  "Title": "Vertex Jitter B",
+  "Description": "",
+  "Category": null,
+  "Icon": "waves",
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "WorldPosition",
+      "__version": 1,
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "0",
+      "Position": "60,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "1",
+      "Position": "288,132",
+      "HandleOffsets": {},
+      "B": {
+        "Identifier": "0",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": null,
+      "Identifier": "2",
+      "Position": "564,312",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphOutput",
+      "__version": 1,
+      "SubgraphFunctionOutput": {
+        "Id": "71ef171b-d979-4286-a765-cb40d55125e6",
+        "OutputName": "VertexOffset",
+        "OutputDescription": null,
+        "OutputType": "Vector3",
+        "Preview": "PositionOffset",
+        "PortOrder": 0
+      },
+      "Identifier": "3",
+      "Position": "1140,84",
+      "HandleOffsets": {},
+      "VertexOffset": {
+        "Identifier": "11",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Floor",
+      "__version": 1,
+      "Identifier": "4",
+      "Position": "516,192",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Camera",
+      "__version": 1,
+      "Identifier": "5",
+      "Position": "60,24",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Divide",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "6",
+      "Position": "420,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "10",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "7",
+      "Position": "648,192",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Subtract",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "8",
+      "Position": "744,108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "9",
+      "Position": "756,192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "InputName": "GridSize",
+      "InputDescription": "",
+      "InputData": {
+        "__class": "VariantValueFloat",
+        "InputType": "Float",
+        "Value": 0.4,
+        "MinValue": 0,
+        "MaxValue": 2
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "10",
+      "Position": "192,276",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SwitchNode",
+      "__version": 1,
+      "Name": "",
+      "Enabled": true,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "11",
+      "Position": "960,84",
+      "HandleOffsets": {},
+      "InputPredicate": {
+        "Identifier": "12",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "True": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "False": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "InputName": "EnableJitter",
+      "InputDescription": "",
+      "InputData": {
+        "__class": "VariantValueBool",
+        "InputType": "Bool",
+        "Value": true
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "12",
+      "Position": "732,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "InputName": "In0",
+      "InputDescription": "",
+      "InputData": {
+        "__class": "VariantValueVector3",
+        "InputType": "Vector3",
+        "Value": "0,0,0",
+        "MinValue": "0,0,0",
+        "MaxValue": "1,1,1"
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "13",
+      "Position": "24,252",
+      "HandleOffsets": {}
+    }
+  ]
+}

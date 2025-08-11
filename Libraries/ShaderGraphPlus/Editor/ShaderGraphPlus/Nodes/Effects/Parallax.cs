@@ -1,4 +1,6 @@
-﻿using Editor.ShaderGraphPlus;
+﻿using Sandbox.Rendering;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic probabaly shit Parallax test.
@@ -7,6 +9,9 @@
 [Hide]
 public sealed class ParallaxNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Hide]
 	public static string SimpleParallax=> @"
 float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 vTangentViewDir, Texture2D vHeight, SamplerState vSampler)
@@ -85,7 +90,10 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 
 	public float DefaultSliceCount { get; set; } = 25.0f;
 	public float DefaultSliceDistance { get; set; } = 0.15f;
-	public Sampler DefaultSampler { get; set; } = new Sampler();
+
+	[InlineEditor( Label = false ), Group( "Sampler" )]
+	public Sampler SamplerState { get; set; } = new Sampler();
+
 
 	[Title( "Stock Texture Filtering" )]
 	[Description( "Toggle if you want to control the texture filtering in the Material Editor" )]
@@ -105,10 +113,10 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 		var coords = compiler.Result( Coords );
 		var tangentviewdir = compiler.Result( TangentViewDir );
 		var textureobject = compiler.Result( TextureObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, DefaultSampler );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 
 
-        if ( !textureobject.IsValid )
+		if ( !textureobject.IsValid )
         {
         	return NodeResult.MissingInput( nameof( TextureObject ) );
         }

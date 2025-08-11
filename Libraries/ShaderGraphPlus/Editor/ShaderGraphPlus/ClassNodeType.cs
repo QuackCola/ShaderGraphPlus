@@ -1,8 +1,9 @@
-﻿using System;
-using Editor.NodeEditor;
-using Editor.ShaderGraph;
+﻿
+//using Editor.ShaderGraph;
+using Editor;
 
-namespace Editor.ShaderGraphPlus;
+
+namespace ShaderGraphPlus;
 
 public class TextureNodeType : ClassNodeType
 {
@@ -57,7 +58,7 @@ public class ClassNodeType : INodeType
     public bool TryGetOutput(Type valueType, out string name)
     {
         var property = Type.Properties
-            .Select(x => (Property: x, Attrib: x.GetCustomAttribute<BaseNode.OutputAttribute>()))
+            .Select(x => (Property: x, Attrib: x.GetCustomAttribute<BaseNodePlus.OutputAttribute>()))
             .Where(x => x.Attrib != null)
             .FirstOrDefault(x => x.Attrib.Type?.IsAssignableTo(valueType) ?? true)
             .Property;

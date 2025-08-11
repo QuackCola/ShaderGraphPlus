@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Utilities;
+﻿namespace ShaderGraphPlus.Utilities;
 
 public static class Parse
 {

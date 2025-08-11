@@ -1,8 +1,14 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+using Editor;
+
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class Binary : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	[Title( "" )]
@@ -13,11 +19,11 @@ public abstract class Binary : ShaderNodePlus
 	[Title( "" )]
 	public NodeInput B { get; set; }
 
-    [InputDefault( nameof( A ) )]
-    public float DefaultA { get; set; } = 0.0f;
+	[InputDefault( nameof( A ) )]
+	public float DefaultA { get; set; } = 0.0f;
 
-    [InputDefault( nameof( B ) )]
-    public float DefaultB { get; set; } = 1.0f;
+	[InputDefault( nameof( B ) )]
+	public float DefaultB { get; set; } = 1.0f;
 
 	protected virtual string Op { get; }
 
@@ -26,15 +32,15 @@ public abstract class Binary : ShaderNodePlus
 		ExpandSize = new Vector3( -85, 5 );
 	}
 
-    public override void OnPaint(Rect rect)
-    {
-        rect = rect.Shrink(0, 20, 0, 0);
-        Paint.SetPen(Theme.TextControl);
-        Paint.SetFont("Poppins Bold", 20);
-        Paint.DrawText(rect, Op);
-    }
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Shrink( 0, 20, 0, 0 );
+		Paint.SetPen( Theme.TextControl );
+		Paint.SetFont( "Poppins Bold", 20 );
+		Paint.DrawText( rect, Op );
+	}
 
-    [Output]
+	[Output]
 	[Hide]
 	[Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -43,22 +49,22 @@ public abstract class Binary : ShaderNodePlus
 		return new NodeResult( results.Item1.ResultType, $"{results.Item1} {Op} {results.Item2}" );
 	};
 
-    [JsonIgnore, Hide, Browsable(false)]
-    public override DisplayInfo DisplayInfo
-    {
-        get
-        {
-            var info = base.DisplayInfo;
-            info.Icon = null;
-            return info;
-        }
-    }
+	[JsonIgnore, Hide, Browsable( false )]
+	public override DisplayInfo DisplayInfo
+	{
+		get
+		{
+			var info = base.DisplayInfo;
+			info.Icon = null;
+			return info;
+		}
+	}
 }
 
 /// <summary>
 /// Add two values together
 /// </summary>
-[Title( "Add" ), Category( "Binary" ), Icon( "+" )]
+[Title( "Add" ), Category( "Math/Binary" ), Icon( "+" )]
 public sealed class Add : Binary
 {
 	[Hide]
@@ -68,7 +74,7 @@ public sealed class Add : Binary
 /// <summary>
 /// Subtract two values together
 /// </summary>
-[Title( "Subtract" ), Category( "Binary" ), Icon( "-" )]
+[Title( "Subtract" ), Category( "Math/Binary" ), Icon( "-" )]
 public sealed class Subtract : Binary
 {
 	[Hide]
@@ -78,7 +84,7 @@ public sealed class Subtract : Binary
 /// <summary>
 /// Multiply two values together
 /// </summary>
-[Title( "Multiply" ), Category( "Binary" ), Icon( "*" )]
+[Title( "Multiply" ), Category( "Math/Binary" ), Icon( "*" )]
 public sealed class Multiply : Binary
 {
 	[Hide]
@@ -96,7 +102,7 @@ public sealed class Multiply : Binary
 /// <summary>
 /// Divide two values together
 /// </summary>
-[Title( "Divide" ), Category( "Binary" ), Icon( "/" )]
+[Title( "Divide" ), Category( "Math/Binary" ), Icon( "/" )]
 public sealed class Divide : Binary
 {
 	[Hide]
@@ -106,7 +112,7 @@ public sealed class Divide : Binary
 /// <summary>
 /// Computes the remainder of the division of two values
 /// </summary>
-[Title( "Mod" ), Category( "Binary" ), Icon( "percent" )]
+[Title( "Mod" ), Category( "Math/Binary" ), Icon( "percent" )]
 public sealed class Mod : Binary
 {
 	[Hide]
@@ -116,9 +122,12 @@ public sealed class Mod : Binary
 /// <summary>
 /// Linear interpolation between two values
 /// </summary>
-[Title( "Lerp" ), Category( "Binary" )]
+[Title( "Lerp" ), Category( "Math/Binary" )]
 public sealed class Lerp : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input]
 	[Hide]
 	public NodeInput A { get; set; }
@@ -128,18 +137,18 @@ public sealed class Lerp : ShaderNodePlus
 	public NodeInput B { get; set; }
 
 	[Input( typeof( float ) ), Title( "Fraction" )]
-	[Hide, NodeEditor( nameof( Fraction ) )]
+	[Hide, Editor( nameof( Fraction ) )]
 	public NodeInput C { get; set; }
 
-    [InputDefault( nameof( A ) )]
-    public float DefaultA { get; set; } = 0.0f;
+	[InputDefault( nameof( A ) )]
+	public float DefaultA { get; set; } = 0.0f;
 
-    [InputDefault( nameof( B ) )]
-    public float DefaultB { get; set; } = 1.0f;
+	[InputDefault( nameof( B ) )]
+	public float DefaultB { get; set; } = 1.0f;
 
-    [MinMax( 0, 1 )]
-    [InputDefault( nameof( C ) )]
-    public float Fraction { get; set; } = 0.5f;
+	[MinMax( 0, 1 )]
+	[InputDefault( nameof( C ) )]
+	public float Fraction { get; set; } = 0.5f;
 
 	[Output]
 	[Hide]
@@ -147,7 +156,7 @@ public sealed class Lerp : ShaderNodePlus
 	{
 		var results = compiler.Result( A, B );
 		var fraction = compiler.Result( C );
-		var fractionType = fraction.IsValid && fraction.Components() > 1 ? Math.Max( results.Item1.Components(), results.Item2.Components() ) : 1;
+		var fractionType = fraction.IsValid && fraction.Components > 1 ? Math.Max( results.Item1.Components, results.Item2.Components ) : 1;
 		return new NodeResult( results.Item1.ResultType, $"lerp( {results.Item1}, {results.Item2}," +
 			$" {(fraction.IsValid ? fraction.Cast( fractionType ) : compiler.ResultValue( Fraction ))} )" );
 	};
@@ -156,9 +165,13 @@ public sealed class Lerp : ShaderNodePlus
 /// <summary>
 /// Returns the cross product of two float3's
 /// </summary>
-[Title( "Cross Product" ), Category( "Binary" )]
+[Title( "Cross Product" ), Category( "Math/Binary" )]
 public sealed class CrossProduct : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// The first float3
 	/// </summary>
@@ -173,22 +186,22 @@ public sealed class CrossProduct : ShaderNodePlus
 	[Hide]
 	public NodeInput B { get; set; }
 
-    /// <summary>
-    /// Default value for when A input is missing
-    /// </summary>
-    [InputDefault (nameof( A ) )]
-    public Vector3 DefaultA { get; set; }
+	/// <summary>
+	/// Default value for when A input is missing
+	/// </summary>
+	[InputDefault (nameof( A ) )]
+	public Vector3 DefaultA { get; set; }
 
-    /// <summary>
-    /// Default value for when B input is missing
-    /// </summary>
-    [InputDefault( nameof( B ) )]
-    public Vector3 DefaultB { get; set; }
+	/// <summary>
+	/// Default value for when B input is missing
+	/// </summary>
+	[InputDefault( nameof( B ) )]
+	public Vector3 DefaultB { get; set; }
 
-    /// <summary>
-    /// The result of the cross product
-    /// </summary>
-    [Output( typeof( Vector3 ) )]
+	/// <summary>
+	/// The result of the cross product
+	/// </summary>
+	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -201,9 +214,13 @@ public sealed class CrossProduct : ShaderNodePlus
 /// <summary>
 /// Transform a value from range "In Min->In Max" to "Out Min->Out Max". When clamped values Less-than "In" map to "In Max", and Greater-than "In Min" maps to "Out Min".
 /// </summary>
-[Title( "Remap Value" ), Category( "Binary" )]
+[Title( "Remap Value" ), Category( "Math/Binary" )]
 public sealed class RemapValue : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	/// <summary>
 	/// Input value to be transformed
 	/// </summary>
@@ -215,35 +232,35 @@ public sealed class RemapValue : ShaderNodePlus
 	/// The minimum range of the input
 	/// </summary>
 	[Input( typeof( float ) ), Title( "In Min" )]
-	[Hide, NodeEditor( nameof( InMin ) )]
+	[Hide, Editor( nameof( InMin ) )]
 	public NodeInput B { get; set; }
 
 	/// <summary>
 	/// The maximum range of the input
 	/// </summary>
 	[Input( typeof( float ) ), Title( "In Max" )]
-	[Hide, NodeEditor( nameof( InMax ) )]
+	[Hide, Editor( nameof( InMax ) )]
 	public NodeInput C { get; set; }
 
 	/// <summary>
 	/// The output minimum range the input should map to
 	/// </summary>
 	[Input( typeof( float ) ), Title( "Out Min" )]
-	[Hide, NodeEditor( nameof( OutMin ) )]
+	[Hide, Editor( nameof( OutMin ) )]
 	public NodeInput D { get; set; }
 
 	/// <summary>
 	/// The output maximum range the input should map to
 	/// </summary>
 	[Input( typeof( float ) ), Title( "Out Max" )]
-	[Hide, NodeEditor( nameof( OutMax ) )]
+	[Hide, Editor( nameof( OutMax ) )]
 	public NodeInput E { get; set; }
 
-    /// <summary>
-    /// Input value to be transformed
-    /// </summary>
-    [InputDefault( nameof( A ) )]
-    public float In { get; set; } = 0.5f;
+	/// <summary>
+	/// Input value to be transformed
+	/// </summary>
+	[InputDefault( nameof( A ) )]
+	public float In { get; set; } = 0.5f;
 
 	/// <summary>
 	/// The minimum range of the input
@@ -276,7 +293,7 @@ public sealed class RemapValue : ShaderNodePlus
 		private NodeResult Result;
 		private float Attribute;
 
-		public int Components => Result.IsValid ? Result.Components() : 1;
+		public int Components => Result.IsValid ? Result.Components : 1;
 
 		public ResultHolder( GraphCompiler compiler, NodeInput input, float attribute )
 		{
@@ -335,9 +352,13 @@ public sealed class RemapValue : ShaderNodePlus
 /// <summary>
 /// Computes the angle (in radians) whose tangent is the quotient of two specified numbers.
 /// </summary>
-[Title( "Arctan2" ), Category( "Binary" )]
+[Title( "Arctan2" ), Category( "Math/Binary" )]
 public sealed class Arctan2 : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput Y { get; set; }
@@ -369,9 +390,13 @@ public sealed class Arctan2 : ShaderNodePlus
 /// <summary>
 /// Raise a value to the power of another value
 /// </summary>
-[Title( "Power" ), Category( "Binary" ), Icon( "^" )]
+[Title( "Power" ), Category( "Math/Binary" ), Icon( "^" )]
 public sealed class Power : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Input( typeof( float ) )]
 	[Hide]
 	[Title( "" )]

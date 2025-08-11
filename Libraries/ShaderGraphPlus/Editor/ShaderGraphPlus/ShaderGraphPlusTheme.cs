@@ -1,4 +1,7 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 internal static class ShaderGraphPlusTheme
 {
