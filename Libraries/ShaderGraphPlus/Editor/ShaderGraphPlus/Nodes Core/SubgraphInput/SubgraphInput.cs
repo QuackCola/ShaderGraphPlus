@@ -94,7 +94,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[TextArea]
 	public string InputDescription { get; set; } = "";
 
-	[global::Editor( "DefaultValue" ), InlineEditor( Label = false )]
+	[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
 	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
 
 	/// <summary>

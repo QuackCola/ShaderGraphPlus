@@ -3,7 +3,7 @@ using Editor;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( VariantValueBase ), NamedEditor = "DefaultValue", WithAllAttributes = [typeof( InlineEditorAttribute )] )]
+[CustomEditor( typeof( VariantValueBase ), NamedEditor = "SGP.VariantValue", WithAllAttributes = [typeof( InlineEditorAttribute )] )]
 internal class SubgraphInputVariantValueControlWidget : ControlWidget
 {
 	public override bool SupportsMultiEdit => false;
