@@ -128,6 +128,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		InputData.SetValue<T>( value );
 	}
+
 	internal void SetDefaultValueRangeMin<T>( T value )
 	{
 		InputData.SetValueRangeMin<T>( value );
