@@ -60,9 +60,9 @@ public sealed class ComparisonNode : ShaderNodePlus, IWarningNode
 		}
 	}
 
-	[Output]
+	[Output, Title( "Result" )]
 	[Hide]
-	public NodeResult.Func ComparisonResult => ( GraphCompiler compiler ) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var results = compiler.Result( True, False, 0.0f, 0.0f );
 		var resultA = compiler.ResultOrDefault( A, 0.0f );

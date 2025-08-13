@@ -3,7 +3,7 @@ using Editor;
 
 namespace ShaderGraphPlus;
 
-public enum SubgraphInputType
+public enum SubgraphPortType
 {
 	[Icon( "check_box" )]
 	Bool,
@@ -23,6 +23,26 @@ public enum SubgraphInputType
 	Invalid
 }
 
+//public enum SubgraphPortType
+//{
+//	[Icon( "check_box" )]
+//	Bool,
+//	[Icon( "filter_1" )]
+//	Float,
+//	[Icon( "filter_2" )]
+//	Vector2,
+//	[Icon( "filter_3" )]
+//	Vector3,
+//	[Icon( "palette" )]
+//	Color,
+//	[Icon( "colorize" )]
+//	Sampler,
+//	[Title( "Texture2D Object" ), Icon( "texture" )]
+//	Texture2DObject,
+//	[Hide]
+//	Invalid
+//}
+
 /// <summary>
 /// Input of a Subgraph.
 /// </summary>
@@ -31,6 +51,34 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 {
 	[Hide]
 	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public override bool CanPreview => false;
+
+	[Hide]
+	public override string Title => $"{InputName} ( {InputData.InputType} )";
+
+	[Hide]
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[Hide, JsonIgnore]
+	public Type PortType
+	{
+		get
+		{
+			return InputData.InputType switch
+			{
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
+			};
+		}
+	}
 
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
@@ -47,7 +95,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public string InputDescription { get; set; } = "";
 
 	[global::Editor( "DefaultValue" ), InlineEditor( Label = false )]
-	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphInputType.Vector3 );
+	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
 
 	/// <summary>
 	/// Is this input required to have a valid connection?
@@ -55,42 +103,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public bool IsRequired { get; set; } = false;
 
 	public int PortOrder { get; set; }
-
-	[Hide, JsonIgnore]
-	public override bool CanPreview => false;
-
-	[Hide]
-	public override string Title
-	{
-		get
-		{
-			string name = $"{DisplayInfo.For( this ).Name}";
-
-			return $"{InputName} ( {InputData.InputType} )";
-		}
-	}
-
-	[Hide, JsonIgnore]
-	public Type PortType
-	{
-		get
-		{
-			return InputData.InputType switch
-			{
-				SubgraphInputType.Bool => typeof( bool ),
-				SubgraphInputType.Float => typeof( float ),
-				SubgraphInputType.Vector2 => typeof( Vector2 ),
-				SubgraphInputType.Vector3 => typeof( Vector3 ),
-				SubgraphInputType.Color => typeof( Color ),
-				SubgraphInputType.Sampler => typeof( Sampler ),
-				SubgraphInputType.Texture2DObject => typeof( Texture2DObject ),
-				_ => throw new NotImplementedException(),
-			};
-		}
-	}
-
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	internal VariantParam<T> GetValueAsVariantParam<T>()
 	{
@@ -153,7 +165,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
 		}
 
-		if ( InputData.InputType == SubgraphInputType.Invalid )
+		if ( InputData.InputType == SubgraphPortType.Invalid )
 		{
 			errors.Add( $"SubgraphInput InputType is invalid!" );
 		}
@@ -210,13 +222,13 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
 		{
-			SubgraphInputType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}" ),
-			SubgraphInputType.Float => ( ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}" ),
-			SubgraphInputType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )" ),
-			SubgraphInputType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
-			SubgraphInputType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
-			SubgraphInputType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
-			SubgraphInputType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
+			SubgraphPortType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}" ),
+			SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}" ),
+			SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )" ),
+			SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
+			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
+			SubgraphPortType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
+			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
 			_ => throw new NotImplementedException()
 		};
 

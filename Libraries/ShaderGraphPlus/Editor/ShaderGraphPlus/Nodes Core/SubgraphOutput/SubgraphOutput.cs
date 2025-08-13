@@ -3,26 +3,6 @@ using System.Text;
 
 namespace ShaderGraphPlus;
 
-public enum SubgraphOutputType
-{
-	[Icon( "check_box" )]
-	Bool,
-	[Icon( "filter_1" )]
-	Float,
-	[Icon( "filter_2" )]
-	Vector2,
-	[Icon( "filter_3" )]
-	Vector3,
-	[Icon( "palette" )]
-	Color,
-	[Icon( "colorize" )]
-	Sampler,
-	[Title( "Texture2D Object" ), Icon( "texture" )]
-	Texture2DObject,
-	[Hide]
-	Invalid
-}
-
 public enum SubgraphOutputPreviewType
 {
 	[Icon( "clear" )]
@@ -64,7 +44,7 @@ public class ShaderFunctionOutput
 	/// Name of this output.
 	/// </summary>
 
-	public string OutputName { get; set; } = "In0";
+	public string OutputName { get; set; } = "Ouat0";
 
 	/// <summary>
 	/// Description of this output.
@@ -72,7 +52,7 @@ public class ShaderFunctionOutput
 	[TextArea]
 	public string OutputDescription { get; set; } = "";
 
-	public SubgraphOutputType OutputType { get; set; } = SubgraphOutputType.Vector3;
+	public SubgraphPortType OutputType { get; set; } = SubgraphPortType.Vector3;
 
 	public SubgraphOutputPreviewType Preview { get; set; } = SubgraphOutputPreviewType.None;
 
@@ -85,77 +65,42 @@ public class ShaderFunctionOutput
 		{
 			return OutputType switch
 			{
-				SubgraphOutputType.Bool => typeof( bool ),
-				SubgraphOutputType.Float => typeof( float ),
-				SubgraphOutputType.Vector2 => typeof( Vector2 ),
-				SubgraphOutputType.Vector3 => typeof( Vector3 ),
-				SubgraphOutputType.Color => typeof( Color ),
-				SubgraphOutputType.Sampler => typeof( Sampler ),
-				SubgraphOutputType.Texture2DObject => typeof( Texture2DObject ),
-				_ => throw new NotImplementedException(),
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
 			};
 		}
 	}
 
-	[Hide, JsonIgnore]
-	public string HLSLTypeName
-	{
-		get
-		{
-			switch ( OutputType )
-			{
-				case SubgraphOutputType.Bool:
-					return "bool";
-				case SubgraphOutputType.Float:
-					return "float";
-				case SubgraphOutputType.Vector2:
-					return "float2";
-				case SubgraphOutputType.Vector3:
-					return "float3";
-				case SubgraphOutputType.Color:
-					return "float4";
-				//case SubgraphOutputType.Float2x2:
-				//	return "float2x2";
-				//case SubgraphOutputType.Float3x3:
-				//	return "float3x3";
-				//case SubgraphOutputType.Float4x4:
-				//	return "float4x4";
-				case SubgraphOutputType.Sampler:
-					return "SamplerState";
-				case SubgraphOutputType.Texture2DObject:
-					return "Texture2D";
-				//case SubgraphOutputType.TextureCubeObject:
-				//	return "TextureCube";
-				default:
-					throw new NotImplementedException( $"Unknown OutputType \"{OutputType}\"" );
-			}
-		}
-	}
-
-	public void SetOutputTypeFromType( Type type )
+	public void SetSubgraphPortTypeFromType( Type type )
 	{
 		switch ( type )
 		{
 			case Type t when t == typeof( bool ):
-				OutputType = SubgraphOutputType.Bool;
+				OutputType = SubgraphPortType.Bool;
 				break;
 			//case Type t when t == typeof( int ):
 			//
 			//	break;
 			case Type t when t == typeof( float ):
-				OutputType = SubgraphOutputType.Float;
+				OutputType = SubgraphPortType.Float;
 				break;
 			case Type t when t == typeof( Vector2 ):
-				OutputType = SubgraphOutputType.Vector2;
+				OutputType = SubgraphPortType.Vector2;
 				break;
 			case Type t when t == typeof( Vector3 ):
-				OutputType = SubgraphOutputType.Vector3;
+				OutputType = SubgraphPortType.Vector3;
 				break;
 			case Type t when t == typeof( Vector4 ):
-				OutputType = SubgraphOutputType.Color;
+				OutputType = SubgraphPortType.Color;
 				break;
 			case Type t when t == typeof( Color ):
-				OutputType = SubgraphOutputType.Color;
+				OutputType = SubgraphPortType.Color;
 				break;
 			//case Type t when t == typeof( Float2x2 ):
 			//
@@ -167,22 +112,22 @@ public class ShaderFunctionOutput
 			//
 			//	break;
 			case Type t when t == typeof( Sampler ):
-				OutputType = SubgraphOutputType.Sampler;
+				OutputType = SubgraphPortType.Sampler;
 				break;
 			case Type t when t == typeof( Texture2DObject ):
-				OutputType = SubgraphOutputType.Texture2DObject;
+				OutputType = SubgraphPortType.Texture2DObject;
 				break;
 			//case Type t when t == typeof( TextureCubeObject ):
 			//
 			//	break;
 			default:
-				throw new NotImplementedException( $"Unknown type \"{type}\"" );
+				throw new Exception( $"Unknown type \"{type}\"" );
 		}
 	}
 
 	public override int GetHashCode()
 	{
-		return System.HashCode.Combine( Id, OutputName, OutputDescription, HLSLTypeName, PortOrder );
+		return System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType.GetHlslType(), PortOrder );
 	}
 }
 
@@ -259,7 +204,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 				{
 					errors.Add( $"{output.OutputType} Output has no name" );
 				}
-				if ( output.OutputType == SubgraphOutputType.Invalid )
+				if ( output.OutputType == SubgraphPortType.Invalid )
 				{
 					errors.Add( $"Output '{output.OutputName}' has no type" );
 				}

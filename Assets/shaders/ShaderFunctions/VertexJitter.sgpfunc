@@ -97,7 +97,7 @@
       "_class": "SubgraphOutput",
       "__version": 1,
       "SubgraphFunctionOutput": {
-        "Id": "6e14fbdc-b1c3-4d6a-9a26-0decac89c572",
+        "Id": "1181c67b-8fcf-4357-8fb8-b9091ba70bf7",
         "OutputName": "VertexOffset",
         "OutputDescription": null,
         "OutputType": "Vector3",

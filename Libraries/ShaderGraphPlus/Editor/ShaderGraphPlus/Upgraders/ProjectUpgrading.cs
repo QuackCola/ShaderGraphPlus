@@ -126,7 +126,7 @@ public static class ProjectUpgrading
 				Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview,
 			};
 
-			subgraphOutputNode.SubgraphFunctionOutput.SetOutputTypeFromType( funcResultInput.Type );
+			subgraphOutputNode.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( funcResultInput.Type );
 
 			// Chnage some stuff with a new PlugInfo & BasePlugIn.
 			var oldPlug = (BasePlugIn)funcResultInput;

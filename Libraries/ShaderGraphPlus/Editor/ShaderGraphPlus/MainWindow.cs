@@ -1265,7 +1265,7 @@ public class MainWindow : DockWindow
 			
 			var subgraphOutput = result.Node as SubgraphOutput;
 			subgraphOutput.SubgraphFunctionOutput.OutputName = "Out0";
-			subgraphOutput.SubgraphFunctionOutput.OutputType =  SubgraphOutputType.Vector3;
+			subgraphOutput.SubgraphFunctionOutput.OutputType =  SubgraphPortType.Vector3;
 			subgraphOutput.SubgraphFunctionOutput.Preview = SubgraphOutputPreviewType.Albedo;
 
 			_graphView.Scale = 1;

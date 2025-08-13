@@ -29,7 +29,7 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		if ( Node.InputData == null )
 		{
 			SGPLog.Info( $"Node.DefaultValue is  null setting default to Vector3" );
-			Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphInputType.Vector3 );
+			Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
 		}
 
 		property.TryGetAsObject( out var so );
@@ -37,7 +37,7 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		so.TryGetProperty( nameof( VariantValueBase.InputType ), out var inputType );
 		so.OnPropertyChanged += x =>
 		{
-			OnInputTypeChanged( x.GetValue<SubgraphInputType>() );
+			OnInputTypeChanged( x.GetValue<SubgraphPortType>() );
 		};
 
 		Layout.Add( Create( inputType ) );
@@ -48,30 +48,30 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		Rebuild();
 	}
 
-	private void OnInputTypeChanged( SubgraphInputType inputType )
+	private void OnInputTypeChanged( SubgraphPortType inputType )
 	{
 		switch ( inputType )
 		{
-			case SubgraphInputType.Bool:
-				Node.InputData = new VariantValueBool( false, SubgraphInputType.Bool );
+			case SubgraphPortType.Bool:
+				Node.InputData = new VariantValueBool( false, SubgraphPortType.Bool );
 				break;
-			case SubgraphInputType.Float:
-				Node.InputData = new VariantValueFloat( 0.0f, 0.0f, 1.0f, SubgraphInputType.Float );
+			case SubgraphPortType.Float:
+				Node.InputData = new VariantValueFloat( 0.0f, 0.0f, 1.0f, SubgraphPortType.Float );
 				break;
-			case SubgraphInputType.Vector2:
-				Node.InputData = new VariantValueVector2( Vector2.Zero, Vector2.Zero, Vector2.One, SubgraphInputType.Vector2 );
+			case SubgraphPortType.Vector2:
+				Node.InputData = new VariantValueVector2( Vector2.Zero, Vector2.Zero, Vector2.One, SubgraphPortType.Vector2 );
 				break;
-			case SubgraphInputType.Vector3:
-				Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphInputType.Vector3 );
+			case SubgraphPortType.Vector3:
+				Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
 				break;
-			case SubgraphInputType.Color:
-				Node.InputData = new VariantValueColor( Color.White, SubgraphInputType.Color );
+			case SubgraphPortType.Color:
+				Node.InputData = new VariantValueColor( Color.White, SubgraphPortType.Color );
 				break;
-			case SubgraphInputType.Sampler:
-				Node.InputData = new VariantValueSampler( new Sampler(), SubgraphInputType.Sampler ) ;
+			case SubgraphPortType.Sampler:
+				Node.InputData = new VariantValueSampler( new Sampler(), SubgraphPortType.Sampler ) ;
 				break;
-			case SubgraphInputType.Texture2DObject:
-				Node.InputData = new VariantValueTexture2D( new TextureInput(), SubgraphInputType.Texture2DObject );
+			case SubgraphPortType.Texture2DObject:
+				Node.InputData = new VariantValueTexture2D( new TextureInput(), SubgraphPortType.Texture2DObject );
 				break;
 		}
 

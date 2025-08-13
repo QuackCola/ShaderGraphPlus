@@ -430,7 +430,7 @@ public class ShaderGraphPlusView : GraphView
 					{
 						OutputName = inputName,
 					};
-					subgraphOutput.SubgraphFunctionOutput.SetOutputTypeFromType( output.Type );
+					subgraphOutput.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( output.Type );
 
 					subgraphOutput.InitializeNode();
 		

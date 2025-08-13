@@ -1073,7 +1073,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
 		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
 
 		return subgraphInput;
 	}
@@ -1326,7 +1326,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphInputType.Texture2DObject );
+		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
@@ -1526,7 +1526,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphInputType.Sampler );
+		subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphPortType.Sampler );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 

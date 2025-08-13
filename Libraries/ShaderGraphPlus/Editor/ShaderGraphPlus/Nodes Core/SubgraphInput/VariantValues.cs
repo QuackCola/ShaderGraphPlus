@@ -14,7 +14,7 @@
 [JsonDerivedType( typeof( VariantValueTexture2D ) )]
 public abstract class VariantValueBase
 {
-	public virtual SubgraphInputType InputType { get; set; }
+	public virtual SubgraphPortType InputType { get; set; }
 
 	[Hide, JsonIgnore]
 	public virtual bool HasRange => false;
@@ -23,28 +23,28 @@ public abstract class VariantValueBase
 	{
 	}
 
-	public VariantValueBase( SubgraphInputType inputType )
+	public VariantValueBase( SubgraphPortType inputType )
 	{
 		InputType = inputType;
 	}
 
-	public static VariantValueBase CreateNew( object typeInstance, object minValueTypeInstance, object maxValueTypeInstance, SubgraphInputType inputType )
+	public static VariantValueBase CreateNew( object typeInstance, object minValueTypeInstance, object maxValueTypeInstance, SubgraphPortType inputType )
 	{
 
 		if ( minValueTypeInstance == null )
 		{
 			switch ( inputType )
 			{
-				case SubgraphInputType.Float:
+				case SubgraphPortType.Float:
 					minValueTypeInstance = 0.0f;
 					break;
-				case SubgraphInputType.Vector2:
+				case SubgraphPortType.Vector2:
 					minValueTypeInstance = Vector2.Zero;
 					break;
-				case SubgraphInputType.Vector3:
+				case SubgraphPortType.Vector3:
 					minValueTypeInstance = Vector3.Zero;
 					break;
-				case SubgraphInputType.Color:
+				case SubgraphPortType.Color:
 					minValueTypeInstance = Color.Black;
 					break;
 				default:
@@ -57,16 +57,16 @@ public abstract class VariantValueBase
 		{
 			switch ( inputType )
 			{
-				case SubgraphInputType.Float:
+				case SubgraphPortType.Float:
 					maxValueTypeInstance = 0.0f;
 					break;
-				case SubgraphInputType.Vector2:
+				case SubgraphPortType.Vector2:
 					maxValueTypeInstance = Vector2.One;
 					break;
-				case SubgraphInputType.Vector3:
+				case SubgraphPortType.Vector3:
 					maxValueTypeInstance = Vector3.One;
 					break;
-				case SubgraphInputType.Color:
+				case SubgraphPortType.Color:
 					maxValueTypeInstance = Color.Black;
 					break;
 				default:
@@ -77,14 +77,14 @@ public abstract class VariantValueBase
 
 		return typeInstance switch
 		{
-			bool => new VariantValueBool( (bool)typeInstance, SubgraphInputType.Bool),
-			float => new VariantValueFloat( (float)typeInstance, (float)minValueTypeInstance, (float)maxValueTypeInstance, SubgraphInputType.Float ),
-			Vector2 => new VariantValueVector2( (Vector2)typeInstance, (Vector2)minValueTypeInstance, (Vector2)maxValueTypeInstance, SubgraphInputType.Vector2 ),
-			Vector3 => new VariantValueVector3( (Vector3)typeInstance, (Vector3)minValueTypeInstance, (Vector3)maxValueTypeInstance, SubgraphInputType.Vector3 ),
-			Vector4 => new VariantValueVector4( (Vector4)typeInstance, (Vector4)minValueTypeInstance, (Vector4)maxValueTypeInstance, SubgraphInputType.Color ),
-			Color => new VariantValueColor( (Color)typeInstance, (Color)minValueTypeInstance, (Color)maxValueTypeInstance, SubgraphInputType.Color ),
-			Sampler => new VariantValueSampler( (Sampler)typeInstance, SubgraphInputType.Sampler ),
-			TextureInput => new VariantValueTexture2D( (TextureInput)typeInstance, SubgraphInputType.Texture2DObject ),
+			bool => new VariantValueBool( (bool)typeInstance, SubgraphPortType.Bool),
+			float => new VariantValueFloat( (float)typeInstance, (float)minValueTypeInstance, (float)maxValueTypeInstance, SubgraphPortType.Float ),
+			Vector2 => new VariantValueVector2( (Vector2)typeInstance, (Vector2)minValueTypeInstance, (Vector2)maxValueTypeInstance, SubgraphPortType.Vector2 ),
+			Vector3 => new VariantValueVector3( (Vector3)typeInstance, (Vector3)minValueTypeInstance, (Vector3)maxValueTypeInstance, SubgraphPortType.Vector3 ),
+			Vector4 => new VariantValueVector4( (Vector4)typeInstance, (Vector4)minValueTypeInstance, (Vector4)maxValueTypeInstance, SubgraphPortType.Color ),
+			Color => new VariantValueColor( (Color)typeInstance, (Color)minValueTypeInstance, (Color)maxValueTypeInstance, SubgraphPortType.Color ),
+			Sampler => new VariantValueSampler( (Sampler)typeInstance, SubgraphPortType.Sampler ),
+			TextureInput => new VariantValueTexture2D( (TextureInput)typeInstance, SubgraphPortType.Texture2DObject ),
 			_ => throw new NotImplementedException( $"Unknown object of type \"{typeInstance}\"" ),
 		};
 	}
@@ -241,7 +241,7 @@ public abstract class VariantValue<T> : VariantValueBase
 		Value = value;
 	}
 
-	public VariantValue( T value, SubgraphInputType inputType ) : this( value )
+	public VariantValue( T value, SubgraphPortType inputType ) : this( value )
 	{
 		InputType = inputType;
 	}
@@ -251,7 +251,7 @@ public abstract class VariantValue<T> : VariantValueBase
 		Value = default( T );
 	}
 
-	public VariantValue( SubgraphInputType inputType ) : base( inputType )
+	public VariantValue( SubgraphPortType inputType ) : base( inputType )
 	{
 	}
 }
@@ -265,7 +265,7 @@ public class VariantValueBool : VariantValue<bool>
 	[Hide, JsonIgnore]
 	public override bool MinValue { get; set; }
 
-	public VariantValueBool( bool value, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueBool( bool value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 	}
 
@@ -298,7 +298,7 @@ public class VariantValueInt : VariantValue<int>
 	[Hide, JsonIgnore]
 	public override bool HasRange => true;
 
-	public VariantValueInt( int value, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueInt( int value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 	}
 
@@ -371,7 +371,7 @@ public class VariantValueFloat : VariantValue<float>
 	public override float MinValue { get; set; } = 0.0f;
 	public override float MaxValue { get; set; } = 1.0f;
 
-	public VariantValueFloat( float value, float minValue, float maxValue, SubgraphInputType inputType ) : base( value , inputType )
+	public VariantValueFloat( float value, float minValue, float maxValue, SubgraphPortType inputType ) : base( value , inputType )
 	{
 		MinValue = minValue;
 		MaxValue = maxValue;
@@ -446,7 +446,7 @@ public class VariantValueVector2 : VariantValue<Vector2>
 	public override Vector2 MinValue { get; set; } = Vector2.Zero;
 	public override Vector2 MaxValue { get; set; } = Vector2.One;
 
-	public VariantValueVector2( Vector2 value, Vector2 minValue, Vector2 maxValue, SubgraphInputType inputType ) : base( value, inputType)
+	public VariantValueVector2( Vector2 value, Vector2 minValue, Vector2 maxValue, SubgraphPortType inputType ) : base( value, inputType)
 	{
 		MinValue = minValue;
 		MaxValue = maxValue;
@@ -516,7 +516,7 @@ public class VariantValueVector3 : VariantValue<Vector3>
 	public override Vector3 MinValue { get; set; } = Vector3.Zero;
 	public override Vector3 MaxValue { get; set; } = Vector3.One;
 
-	public VariantValueVector3( Vector3 value, Vector3 minValue, Vector3 maxValue, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueVector3( Vector3 value, Vector3 minValue, Vector3 maxValue, SubgraphPortType inputType ) : base( value, inputType )
 	{
 		MinValue = minValue;
 		MaxValue = maxValue;
@@ -588,7 +588,7 @@ public class VariantValueVector4 : VariantValue<Vector4>
 	public override Vector4 MinValue { get; set; } = Vector4.Zero;
 	public override Vector4 MaxValue { get; set; } = Vector4.One;
 
-	public VariantValueVector4( Vector4 value, Vector4 minValue, Vector4 maxValue, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueVector4( Vector4 value, Vector4 minValue, Vector4 maxValue, SubgraphPortType inputType ) : base( value, inputType )
 	{
 		MinValue = minValue;
 		MaxValue = maxValue;
@@ -658,13 +658,13 @@ public class VariantValueColor : VariantValue<Color>
 	public override Color MinValue { get; set; } = Color.Black;
 	public override Color MaxValue { get; set; } = Color.White;
 
-	public VariantValueColor( Color value, Color minValue, Color maxValue, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueColor( Color value, Color minValue, Color maxValue, SubgraphPortType inputType ) : base( value, inputType )
 	{
 		MinValue = minValue; 
 		MaxValue = maxValue;
 	}
 
-	public VariantValueColor( Color value, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueColor( Color value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 
 	}
@@ -730,7 +730,7 @@ public class VariantValueSampler : VariantValue<Sampler>
 	[Hide, JsonIgnore]
 	public override Sampler MinValue { get; set; }
 
-	public VariantValueSampler( Sampler value, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueSampler( Sampler value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 	}
 
@@ -738,7 +738,7 @@ public class VariantValueSampler : VariantValue<Sampler>
 	{
 
 	}
-	public VariantValueSampler( SubgraphInputType inputType ) : base( inputType )
+	public VariantValueSampler( SubgraphPortType inputType ) : base( inputType )
 	{
 	}
 
@@ -769,7 +769,7 @@ public class VariantValueTexture2D : VariantValue<TextureInput>
 	[Hide, JsonIgnore]
 	public override TextureInput MinValue { get; set; }
 
-	public VariantValueTexture2D( TextureInput value, SubgraphInputType inputType ) : base( value, inputType )
+	public VariantValueTexture2D( TextureInput value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 	}
 

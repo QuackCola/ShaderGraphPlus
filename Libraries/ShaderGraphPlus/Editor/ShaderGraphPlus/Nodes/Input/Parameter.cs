@@ -30,7 +30,7 @@ public sealed class Bool : ParameterNode<bool>
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueBool( Value, SubgraphInputType.Bool );
+		subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
@@ -102,7 +102,7 @@ public sealed class Float : ParameterNode<float>
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphInputType.Float );
+		subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
@@ -183,7 +183,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphInputType.Vector2 );
+		subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
@@ -213,7 +213,7 @@ public sealed class Float3 : ParameterNode<Vector3>
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphInputType.Vector3 );
+		subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
@@ -299,7 +299,7 @@ public sealed class Float4 : ParameterNode<Color>
 	{
 		var subgraphInput = new SubgraphInput();
 		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueColor( Value, SubgraphInputType.Color );
+		subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
 		subgraphInput.PortOrder = PortOrder;
 		subgraphInput.IsRequired = IsAttribute;
 
