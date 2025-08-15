@@ -154,10 +154,12 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return errors;
 	}
 
-	private string CompileTexture( string imagePath, TextureInput UI )
+	private string CompileTexture( TextureInput UI )
 	{
 		//if ( _asset == null )
 		//	return;
+
+		var imagePath = UI.PreviewImage;
 
 		if ( string.IsNullOrWhiteSpace( imagePath ) )
 			return "";
@@ -177,11 +179,9 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
-		string _texture = null;
-
 		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
 		{
-			return _texture = assetPath;
+			return assetPath;
 		}
 		else
 		{
@@ -191,11 +191,16 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		}
 	}
 
+	//[Hide, JsonIgnore]
+	//private string _textureGlobal;
+
 	private string ResultTexture( GraphCompiler compiler )
 	{
-		var texpath = CompileTexture( InputData.GetValue<TextureInput>().PreviewImage, InputData.GetValue<TextureInput>() );
+		var textureInput = InputData.GetValue<TextureInput>();
+		var texturePath = CompileTexture( textureInput );
 
-		return compiler.ResultTexture( "PlaceHolderTexture2D", default, Texture.Load( texpath ) ).TextureGlobal;
+		// TODO : Stop it from registering duplicates.
+		return compiler.ResultTexture( "", textureInput, Texture.Load( texturePath ) ).TextureGlobal;
 	}
 
 	[Output, Hide]
@@ -212,6 +217,8 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
+
+		SGPLog.Info( $"ResultType \"{defaultResult.resultType}\" with DefaultResult code \"{defaultResult.defaultCode}\"", compiler.IsPreview );
 
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
 	};
