@@ -192,15 +192,28 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	//[Hide, JsonIgnore]
-	//private string _textureGlobal;
-
+	private string _textureId;
 	private string ResultTexture( GraphCompiler compiler )
 	{
 		var textureInput = InputData.GetValue<TextureInput>();
 		var texturePath = CompileTexture( textureInput );
+		bool cleanName = true;
+		
+		//// TODO : Stop it from registering duplicates.
+		//if ( string.IsNullOrWhiteSpace( textureInput.Name ) && string.IsNullOrWhiteSpace( _textureId ) )
+		//{
+		//	var result = compiler.ResultTexture( textureInput, Texture.Load( texturePath ), false );
+		//	_textureId = result.samplerGlobal;
+		//	
+		//	return result.TextureGlobal;
+		//}
+		//else if ( string.IsNullOrWhiteSpace( textureInput.Name ) && !string.IsNullOrWhiteSpace( _textureId ) )
+		//{
+		//	textureInput = textureInput with { Name = _textureId };
+		//	cleanName = false;
+		//}
 
-		// TODO : Stop it from registering duplicates.
-		return compiler.ResultTexture( "", textureInput, Texture.Load( texturePath ) ).TextureGlobal;
+		return compiler.ResultTexture( textureInput, Texture.Load( texturePath ), cleanName );
 	}
 
 	[Output, Hide]

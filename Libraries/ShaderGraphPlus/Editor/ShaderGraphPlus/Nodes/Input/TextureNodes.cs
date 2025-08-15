@@ -274,17 +274,17 @@ public sealed class TextureSampler : TextureSamplerBase
 			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 			//}
 			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
-			var result = compiler.ResultTexture( sampler, input, texture );
+			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
 
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
-				return new NodeResult( ResultType.Color, $"{result.TextureGlobal}.SampleLevel(" +
-					$" {result.samplerGlobal}," +
+				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.SampleLevel(" +
+					$" {sampler}," +
 					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
 			}
 			else
 			{
-				return new NodeResult( ResultType.Color, $"{result.TextureGlobal}.Sample( {result.samplerGlobal}," +
+				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.Sample( {sampler}," +
 					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
 			}
 		}
@@ -485,10 +485,10 @@ public sealed class TextureCube : ShaderNodePlus
 		// If TextureCubeObject input is not valid and we are not in a SubGraph then register the texture here instead.
 		if ( !textureCubeObject.IsValid && !IsSubgraph )
 		{
-			var textureResult = compiler.ResultTexture( sampler, input, Sandbox.Texture.Load( Texture ) );
+			var resultTextureGlobal = compiler.ResultTexture( input, Sandbox.Texture.Load( Texture ) );
 
-			return new NodeResult( ResultType.Color, $"TexCubeS( {textureResult.TextureGlobal}," +
-				$" {textureResult.samplerGlobal}," +
+			return new NodeResult( ResultType.Color, $"TexCubeS( {resultTextureGlobal}," +
+				$" {sampler}," +
 				$" {(coords.IsValid ? $"{coords.Cast( 3 )}" : ViewDirection.Result.Invoke( compiler ))} )" );
 		}
 
@@ -657,11 +657,11 @@ public sealed class TextureTriplanar : TextureSamplerBase
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
 
-			var textureResult = compiler.ResultTexture( sampler, input, texture );
+			var resultTextureGlobal = compiler.ResultTexture( input, texture );
 
 			var result = compiler.ResultFunction( "TexTriplanar_Color",
-			textureResult.TextureGlobal,
-			textureResult.samplerGlobal,
+			resultTextureGlobal,
+			sampler,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 			$"{blendfactor}"
@@ -851,11 +851,11 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
 			texture ??= Texture.White;
 
-			var textureResult = compiler.ResultTexture( sampler, input, texture );
+			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
 
 			var result = compiler.ResultFunction( "TexTriplanar_Normal",
-			textureResult.TextureGlobal,
-			textureResult.samplerGlobal,
+			resultTextureGlobal,
+			sampler,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 			$"{blendfactor}"
@@ -1107,9 +1107,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 		}
 
-		var result = compiler.ResultTexture( null, input, Sandbox.Texture.Load( Texture ) );
+		var resultTextureGlobal = compiler.ResultTexture( input, Sandbox.Texture.Load( Texture ) );
 
-		return new NodeResult( ResultType.TextureCubeObject, result.TextureGlobal, constant: true ) { ImagePath = Sandbox.Texture.Load( Texture ).ResourcePath };
+		return new NodeResult( ResultType.TextureCubeObject, resultTextureGlobal, constant: true ) { ImagePath = Sandbox.Texture.Load( Texture ).ResourcePath };
 	};
 }
 
@@ -1389,9 +1389,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 			//return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`:" );
 		}
 		
-		var result = compiler.ResultTexture( null, input, texture );
+		var resultTextureGlobal = compiler.ResultTexture(  input, texture );
 
-		return new NodeResult( ResultType.Texture2DObject, result.TextureGlobal, constant: true ) { ImagePath = Image };
+		return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true ) { ImagePath = Image };
 	};
 
 	public List<string> GetErrors()

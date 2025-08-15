@@ -475,9 +475,9 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public (string TextureGlobal, string samplerGlobal) ResultTexture( string samplerinput, TextureInput input, Texture texture )
+	public string ResultTexture( TextureInput input, Texture texture, bool cleanName = true )
 	{
-		var name = CleanName( input.Name );
+		var name = cleanName ? CleanName( input.Name ) : input.Name;
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
 		var id = name;
 		//int count = 0;
@@ -516,7 +516,7 @@ public sealed partial class GraphCompiler
 			result.RepresentativeTexture = $"g_t{id}";
 		}
 
-		return new( $"g_t{id}", samplerinput );
+		return $"g_t{id}";
 	}
 
 	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
@@ -1409,9 +1409,9 @@ public sealed partial class GraphCompiler
 					if ( value is TextureInput textureInput )
 					{
 						var texurePath = CompileTexture( textureInput.PreviewImage, textureInput );
-						var textureResult = ResultTexture( "", textureInput, Texture.Load( texurePath ) );
+						var resultTextureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
 
-						return new NodeResult( ResultType.Texture2DObject, textureResult.TextureGlobal, constant: true );
+						return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true );
 					}
 				}
 			}
