@@ -210,7 +210,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
 			SubgraphPortType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
-			_ => throw new NotImplementedException()
+			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
 
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
