@@ -23,26 +23,6 @@ public enum SubgraphPortType
 	Invalid
 }
 
-//public enum SubgraphPortType
-//{
-//	[Icon( "check_box" )]
-//	Bool,
-//	[Icon( "filter_1" )]
-//	Float,
-//	[Icon( "filter_2" )]
-//	Vector2,
-//	[Icon( "filter_3" )]
-//	Vector3,
-//	[Icon( "palette" )]
-//	Color,
-//	[Icon( "colorize" )]
-//	Sampler,
-//	[Title( "Texture2D Object" ), Icon( "texture" )]
-//	Texture2DObject,
-//	[Hide]
-//	Invalid
-//}
-
 /// <summary>
 /// Input of a Subgraph.
 /// </summary>
