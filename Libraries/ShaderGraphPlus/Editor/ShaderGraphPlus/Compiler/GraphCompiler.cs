@@ -527,7 +527,14 @@ public sealed partial class GraphCompiler
 
 		if ( IsNotPreview )
 		{
-			ShaderResult.SamplerStates.Add( id, (SamplerState)sampler );
+			if ( !ShaderResult.SamplerStates.ContainsKey( id ) )
+			{
+				ShaderResult.SamplerStates.Add( id, (SamplerState)sampler );
+			}
+			else
+			{
+				SGPLog.Info( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
+			}
 
 			return $"g_s{id}";
 		}
