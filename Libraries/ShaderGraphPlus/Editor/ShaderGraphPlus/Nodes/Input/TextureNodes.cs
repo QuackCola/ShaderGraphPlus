@@ -255,7 +255,9 @@ public sealed class TextureSampler : TextureSamplerBase
 			IsTextureObjectConnected = false;
 		}
 
-		CompileTexture();
+		if ( !IsSubgraph )
+			CompileTexture();
+
 
 		// If TextureObject input is not valid and we are not in a SubGraph then register a texture here and use that instead.
 		if ( !textureObject.IsValid && !IsSubgraph )
