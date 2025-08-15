@@ -185,8 +185,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		}
 		else
 		{
-
-			Log.Warning( $"Failed to compile {imagePath}" );
+			SGPLog.Warning( $"Failed to compile \"{imagePath}\"" );
 			return "";
 		}
 	}
