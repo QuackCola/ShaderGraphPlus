@@ -230,7 +230,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
 
-		SGPLog.Info( $"ResultType \"{defaultResult.resultType}\" with DefaultResult code \"{defaultResult.defaultCode}\"", compiler.IsPreview );
+		//SGPLog.Info( $"ResultType \"{defaultResult.resultType}\" with DefaultResult code \"{defaultResult.defaultCode}\"", compiler.IsPreview );
 
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
 	};
