@@ -191,8 +191,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		}
 	}
 
-	//[Hide, JsonIgnore]
-	private string _textureId;
+	private string _textureGlobal;
 	private string ResultTexture( GraphCompiler compiler )
 	{
 		var textureInput = InputData.GetValue<TextureInput>();
@@ -200,18 +199,19 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		bool cleanName = true;
 		
 		//// TODO : Stop it from registering duplicates.
-		//if ( string.IsNullOrWhiteSpace( textureInput.Name ) && string.IsNullOrWhiteSpace( _textureId ) )
-		//{
-		//	var result = compiler.ResultTexture( textureInput, Texture.Load( texturePath ), false );
-		//	_textureId = result.samplerGlobal;
-		//	
-		//	return result.TextureGlobal;
-		//}
-		//else if ( string.IsNullOrWhiteSpace( textureInput.Name ) && !string.IsNullOrWhiteSpace( _textureId ) )
-		//{
-		//	textureInput = textureInput with { Name = _textureId };
-		//	cleanName = false;
-		//}
+		if ( string.IsNullOrWhiteSpace( textureInput.Name ) && string.IsNullOrWhiteSpace( _textureGlobal ) )
+		{
+			var result = compiler.ResultTexture( textureInput, Texture.Load( texturePath ), false );
+			_textureGlobal = result;
+			
+			return result;
+		}
+		else if ( string.IsNullOrWhiteSpace( textureInput.Name ) && !string.IsNullOrWhiteSpace( _textureGlobal ) )
+		{
+			// Trim off g_t from _textureId and then make that the name of the preview Texture2D.
+			textureInput = textureInput with { Name = _textureGlobal.TrimStart( ['g', '_', 't'] ) };
+			cleanName = false;
+		}
 
 		return compiler.ResultTexture( textureInput, Texture.Load( texturePath ), cleanName );
 	}
