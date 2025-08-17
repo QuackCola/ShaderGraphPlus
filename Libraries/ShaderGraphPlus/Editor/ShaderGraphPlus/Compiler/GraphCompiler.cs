@@ -38,10 +38,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Float4x4 ), ( "float4x4", true ) },
 	};
 
-	/// <summary>
-	/// Types that have no defualts.
-	/// </summary>
-	public static HashSet<Type> NoDefaultValues => new()
+	internal static HashSet<Type> VoidFuncNoDefaultValues => new()
 	{
 		{ typeof( Sampler ) },
 		{ typeof( Texture2DObject ) },
@@ -215,7 +212,7 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				if ( !NoDefaultValues.Contains( inputAttribute.Type ) )
+				if ( !VoidFuncNoDefaultValues.Contains( inputAttribute.Type ) )
 				{
 					funcResult = ResultOrDefault( nodeInput, defaultValue );
 				}
