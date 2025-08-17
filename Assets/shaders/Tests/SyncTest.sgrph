@@ -30,7 +30,12 @@
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "0,0",
-      "HandleOffsets": {}
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
     },
     {
       "_class": "TextureSampler",
