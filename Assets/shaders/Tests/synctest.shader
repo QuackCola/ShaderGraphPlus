@@ -76,12 +76,18 @@ PS
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+		
+	SamplerState g_sSampler0 < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
+	CreateInputTexture2D( MyTextureA, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
+	Texture2D g_tMyTextureA < Channel( RGBA, Box( MyTextureA ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	
     float4 MainPs( PixelInput i ) : SV_Target0
     {
 
+		
+		float4 l_0 = g_tMyTextureA.Sample( g_sSampler0,i.vTextureCoords.xy );
+		
 
-
-		return float4( float4( 1, 1, 1, 1 ).xyz, 1 );
+		return float4( l_0.xyz, 1 );
     }
 }
