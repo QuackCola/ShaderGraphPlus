@@ -45,7 +45,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 	public IGraph _graph;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public int PreviewID { get; set; }
+	internal int PreviewID { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool Processed { get; set; } = false;

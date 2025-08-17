@@ -507,6 +507,14 @@ public class MainWindow : DockWindow
 		}
 	}
 
+	private void PreRegister( out List<GraphCompiler.Issue> registrationIssues )
+	{
+		registrationIssues = new();
+
+		// Go ahead and register any StaticSwitches.
+		RegisterStaticCombos( ref registrationIssues );
+	}
+
 	private string GeneratePreviewCode()
 	{
 		if ( _autoCompile )
@@ -514,12 +522,12 @@ public class MainWindow : DockWindow
 			ClearAttributes();
 		}
 
-		// Go ahead and register any StaticSwitches.
-		RegisterStaticCombos();
+		// Go ahead preregister anything before iterating over all the nodes in the graph.
+		PreRegister( out List<GraphCompiler.Issue> registrationIssues );
 
-		if ( ComboRegistrationErrors.Any() )
+		if ( registrationIssues.Any() )
 		{
-			_output.GraphIssues = ComboRegistrationErrors;
+			_output.GraphIssues = registrationIssues;
 
 			DockManager.RaiseDock( "Output" );
 
@@ -547,10 +555,6 @@ public class MainWindow : DockWindow
 			if ( node.CanPreview )
 			{
 				node.PreviewID = compiler.PreviewID++;
-
-				//SGPLog.Info( $"Setting Preview ID of node `{node}` to `{node.PreviewID}`" );
-
-				//compiler.ReservedPreviewIDs.Add( compiler.PreviewID );
 			}
 
 			if ( node is IWarningNode warningNode )
@@ -570,14 +574,9 @@ public class MainWindow : DockWindow
 				var errors = erroring.GetErrors();
 				if ( errors.Count > 0 )
 				{
-					//_shaderCompileErrors.AddRange( errors );
-
-					//if ( IsSubgraph )
+					foreach ( var error in errors )
 					{
-						foreach ( var error in errors )
-						{
-							iErroringNodeErrors.Add( new() { Message = error, Node = node, IsWarning = false } );
-						}
+						iErroringNodeErrors.Add( new() { Message = error, Node = node, IsWarning = false } );
 					}
 				}
 			}
@@ -592,56 +591,23 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-			//if ( node is IVoidFunctionNode IVoidFunctionNode )
-			//{
-			//	IVoidFunctionNode.RegisterVoidFunction( compiler );
-			//}
-
-#region ITextureParameterNode Region
-			if ( node is ITextureParameterNode textureParameterNode )
+			if ( node is ITextureInputNode iTextureInputNode )
 			{
-				if ( string.IsNullOrWhiteSpace( textureParameterNode.UI.Name ) )
+				if ( string.IsNullOrWhiteSpace( iTextureInputNode.TextureInputName ) )
 				{
-					textureParameterNode.AlreadyRegisterd = false;
+					iTextureInputNode.AlreadyRegisterd = false;
 				}
 				else
 				{
 					// Register ISyncableTextureNode SyncID with the compiler.
 					if ( node is ISyncableTextureNode syncableTextureNode )
 					{
-						compiler.RegisterSyncID( syncableTextureNode.SyncID, textureParameterNode.UI.Name );
+						compiler.RegisterSyncID( syncableTextureNode.SyncID, iTextureInputNode.TextureInputName );
 					}
 
-					textureParameterNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( textureParameterNode.UI.Name );
+					iTextureInputNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( iTextureInputNode.TextureInputName );
 				}
 			}
-#endregion ITextureParameterNode Region
-			
-			if ( node is TextureCubeObjectNode textureCubeObjectNode )
-			{
-				if ( string.IsNullOrWhiteSpace( textureCubeObjectNode.UI.Name ) )
-				{
-					textureCubeObjectNode.AlreadyRegisterd = false;
-				}
-				else
-				{
-					textureCubeObjectNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( textureCubeObjectNode.UI.Name );
-				}
-			}
-
-			if ( node is TextureCube textureCubeNode )
-			{
-				if ( string.IsNullOrWhiteSpace( textureCubeNode.UI.Name ) )
-				{
-					textureCubeNode.AlreadyRegisterd = false;
-				}
-				else
-				{
-					textureCubeNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( textureCubeNode.UI.Name );
-				}
-			}
-
-			//SGPLog.Info( $"Preview Evaluating Node : `{node}ID:{node.Identifier}`" );
 
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
@@ -652,21 +618,9 @@ public class MainWindow : DockWindow
 				samplerNode.Processed = true;
 			}
 
-#region ITextureParameterNode Region
-			if ( node is ITextureParameterNode textureParameterNodePost )
+			if ( node is ITextureInputNode iTextureInputNodePost )
 			{
-				textureParameterNodePost.AlreadyRegisterd = false;
-			}
-#endregion ITextureParameterNode Region
-
-			if ( node is TextureCube textureCubeNodePost )
-			{
-				textureCubeNodePost.AlreadyRegisterd = false;
-			}
-
-			if ( node is TextureCubeObjectNode textureCubeObjectNodePost )
-			{
-				textureCubeObjectNodePost.AlreadyRegisterd = false;
+				iTextureInputNodePost.AlreadyRegisterd = false;
 			}
 
 			var componentType = result.ComponentType;
@@ -742,6 +696,8 @@ public class MainWindow : DockWindow
 		}
 
 		var code = compiler.Generate();
+
+#region Errors & Warnings
 		iErroringNodeErrors.AddRange( compiler.Errors );
 
 		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
@@ -790,6 +746,7 @@ public class MainWindow : DockWindow
 		{
 			_output.ClearErrors();
 		}
+#endregion Errors & Warnings
 
 		if ( _generatedCode != code )
 		{
@@ -823,10 +780,10 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void RegisterStaticCombos()
+	private void RegisterStaticCombos( ref List<GraphCompiler.Issue> registrationIssues )
 	{
 		ShaderFeatures.Clear();
-		ComboRegistrationErrors.Clear();
+		//ComboRegistrationErrors.Clear();
 		//var errors = new List<string>();
 
 		foreach ( var node in _graph.Nodes.OfType<StaticSwitchNode>() )
@@ -843,7 +800,7 @@ public class MainWindow : DockWindow
 					if ( ShaderFeatures.ContainsKey( node.Feature.FeatureName ) )
 					{
 						var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` was already registerd!", IsWarning = false };
-						ComboRegistrationErrors.Add( error );
+						registrationIssues.Add( error );
 					}
 
 					shaderFeatureInfo = new ShaderFeatureInfo
@@ -863,7 +820,7 @@ public class MainWindow : DockWindow
 				else
 				{
 					var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` is not valid!", IsWarning = false };
-					ComboRegistrationErrors.Add( error );
+					registrationIssues.Add( error );
 				}
 			}
 		}
@@ -871,8 +828,8 @@ public class MainWindow : DockWindow
 
 	private string GenerateShaderCode()
 	{
-		// Go ahead and register any StaticSwitches.
-		RegisterStaticCombos();
+		// Go ahead preregister anything before iterating over all the nodes in the graph.
+		PreRegister( out _ );
 
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, false );
 		return compiler.Generate();

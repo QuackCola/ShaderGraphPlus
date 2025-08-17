@@ -16,7 +16,7 @@ public interface ISyncableTextureNode
 	void Sync( ISyncableTextureNode targetNode );
 }
 
-public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode, IErroringNode
+public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode
 {
 	[Hide]
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
@@ -36,11 +36,17 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureParameterNode
 		}
 	}
 
-	[JsonIgnore, Hide]
-	protected bool IsTextureObjectConnected { get; set; } = false;
+
+#region ITextureInputNode
+	[JsonIgnore, Hide, Browsable( false )]
+	public string TextureInputName => UI.Name;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool AlreadyRegisterd { get; set; } = false;
+#endregion
 
 	[JsonIgnore, Hide]
-	public bool AlreadyRegisterd { get; set; } = false;
+	protected bool IsTextureObjectConnected { get; set; } = false;
 
 	/// <summary>
 	/// Texture to sample in preview
@@ -347,7 +353,7 @@ public sealed class TextureSampler : TextureSamplerBase
 /// Sample a Cube Texture
 /// </summary>
 [Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
-public sealed class TextureCube : ShaderNodePlus
+public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -371,11 +377,18 @@ public sealed class TextureCube : ShaderNodePlus
 		}
 	}
 
+
+
 	[JsonIgnore, Hide]
 	public bool IsTextureObjectConnected { get; set; } = false;
 
-	[JsonIgnore, Hide]
+#region ITextureInputNode
+	[JsonIgnore, Hide, Browsable( false )]
+	public string TextureInputName => UI.Name;
+
+	[JsonIgnore, Hide, Browsable( false )]
 	public bool AlreadyRegisterd { get; set; } = false;
+#endregion
 
 	/// <summary>
 	/// Coordinates to sample this cubemap
@@ -549,7 +562,6 @@ public sealed class TextureTriplanar : TextureSamplerBase
 {
 	[Hide]
 	public override int Version => 1;
-
 
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
@@ -731,7 +743,6 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 	[Hide]
 	public override int Version => 1;
 
-
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -900,7 +911,6 @@ public sealed class TextureCoord : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-
 	/// <summary>
 	/// Use the secondary vertex coordinate
 	/// </summary>
@@ -938,11 +948,10 @@ public sealed class TextureCoord : ShaderNodePlus
 /// TextureCube Object.
 /// </summary>
 [Title( "Texture Cube Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
+public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITextureInputNode
 {
 	[Hide]
 	public override int Version => 1;
-
 
 	[Hide]
 	public override string Title
@@ -955,20 +964,18 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 			{
 				return $"{name} ( {UI.Name} )";
 			}
-			else if ( !IsSubgraph )
-			{
-				return name;
-			}
-			else if ( IsSubgraph && !string.IsNullOrWhiteSpace( Name ) )
-			{
-				return $"{name} ( {Name} )";
-			}
-			else
-			{
-				return name;
-			}
+
+			return name;
 		}
 	}
+
+#region ITextureInputNode
+	[JsonIgnore, Hide, Browsable( false )]
+	public string TextureInputName => UI.Name;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool AlreadyRegisterd { get; set; } = false;
+#endregion
 
 	[Hide,JsonIgnore]
 	public Vector2 ParameterNodePosition => Position;
@@ -998,9 +1005,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 		Default = Color.White,
 	};
 
-	[JsonIgnore, Hide]
-	public bool AlreadyRegisterd { get; set; } = false;
-
 	public TextureCubeObjectNode() : base()
 	{
 		Texture = "materials/default/default.vtex";//"materials/skybox/skybox_workshop.vtex";
@@ -1027,8 +1031,8 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 	}
 
 #region IParameterNode Region
-	[ShowIf( nameof( IsSubgraph ), true )]
-	[Title( "Input Name" )]
+
+	[Hide, JsonIgnore]
 	public string Name { get; set; }
 
 	[Hide, JsonIgnore]
@@ -1118,7 +1122,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
 [NodeReplace( ReplacementMode.SubgraphOnly )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode, IReplaceNode
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode, IReplaceNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -1132,6 +1136,14 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 
 		return subgraphInputNode;
 	}
+
+#region ITextureInputNode
+	[JsonIgnore, Hide, Browsable( false )]
+	public string TextureInputName => UI.Name;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool AlreadyRegisterd { get; set; } = false;
+#endregion
 
 	/// <summary>
 	/// Texture to sample in preview
@@ -1182,9 +1194,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureParameterNode,
 
 	[Hide, JsonIgnore]
 	public Vector2 ParameterNodePosition => Position;
-
-	[Hide, JsonIgnore]
-	public bool AlreadyRegisterd { get; set; } = false;
 
 	[Hide]
 	private Asset _asset;
