@@ -1,0 +1,148 @@
+{
+  "IsSubgraph": false,
+  "Path": "shaders/tests/customfunctionnode/customfunction_inline_sampler.sgrph",
+  "Model": "models/dev/plane.vmdl",
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "EnableShadows": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-240,-108",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "Name": "Function0",
+      "Type": "Inline",
+      "Body": "\tOut0 = float4(1,0,0,1);\n\tOut1 =  float4(1,0,1,1);\n\n// In0\n// In1",
+      "Source": null,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "53d5b780-ca7d-43c9-a259-3045e9f4e04c",
+          "Name": "In0",
+          "Type": "float"
+        },
+        {
+          "Id": "bb300169-bf20-4699-8f73-26a64498ac42",
+          "Name": "In1",
+          "Type": "Vector2"
+        },
+        {
+          "Id": "6360d2e8-9f6d-41b2-951a-a159eb191335",
+          "Name": "SamplerIn",
+          "Type": "Sampler"
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "f5933d05-1fb4-4506-9152-2c094766d70a",
+          "Name": "Out0",
+          "Type": "Color"
+        },
+        {
+          "Id": "c61f85cd-ca0f-49e4-99f3-3f916f7a86f8",
+          "Name": "Out1",
+          "Type": "Color"
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-912,-108",
+      "HandleOffsets": {},
+      "In0": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "In1": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "TestFloat0",
+      "IsAttribute": false,
+      "UI": {},
+      "Identifier": "2",
+      "Position": "-1140,-108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TextureCoord",
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "3",
+      "Position": "-1140,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Lerp",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Fraction": 0.45001286,
+      "Identifier": "4",
+      "Position": "-468,-108",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "C": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "Comment": null,
+      "Identifier": "5",
+      "Position": "-636,-72",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "Out0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "VoronoiNoise",
+      "AngleOffset": 3.1415925,
+      "CellDensity": 10,
+      "Worley": false,
+      "Identifier": "6",
+      "Position": "-660,-24",
+      "HandleOffsets": {}
+    }
+  ]
+}
