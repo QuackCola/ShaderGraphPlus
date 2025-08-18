@@ -1,15 +1,20 @@
-﻿using Microsoft.CodeAnalysis;
+using Editor;
+using Microsoft.CodeAnalysis;
+using Sandbox.Rendering;
+using ShaderGraphPlus.Diagnostics;
+using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
 {
-	public struct Error
+	public struct Issue
 	{
 		public BaseNodePlus Node;
 		public string Message;
+		public bool IsWarning;
 	}
 
 	public struct Warning
@@ -18,19 +23,30 @@ public sealed partial class GraphCompiler
 		public string Message;
 	}
 
-	public static Dictionary<Type, string> ValueTypes => new()
+	public static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
 	{
-		{ typeof( Color ), "float4" },
-		{ typeof( Vector4 ), "float4" },
-		{ typeof( Vector3 ), "float3" },
-		{ typeof( Vector2 ), "float2" },
-		{ typeof( float ), "float" },
-		{ typeof( bool ), "bool" },
-		//{ typeof( TextureObject ), "Texture2D" }
+		{ typeof( Color ), ( "float4", false ) },
+		{ typeof( Vector4 ),( "float4", false ) },
+		{ typeof( Vector3 ),( "float3", false ) },
+		{ typeof( Vector2 ),( "float2", false ) },
+		{ typeof( float ), ( "float", false ) },
+		{ typeof( bool ), ( "bool", false ) },
+		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
+		{ typeof( Sampler ), ( "SamplerState", true ) },
+		{ typeof( Float2x2 ), ( "float2x2", true ) },
+		{ typeof( Float3x3 ), ( "float3x3", true ) },
+		{ typeof( Float4x4 ), ( "float4x4", true ) },
+	};
+
+	internal static HashSet<Type> VoidFuncNoDefaultValues => new()
+	{
+		{ typeof( Sampler ) },
+		{ typeof( Texture2DObject ) },
+		{ typeof( TextureCubeObject ) },
 	};
 
 	public bool Debug { get; private set; } = false;
-	
+
 	/// <summary>
 	/// Current graph we're compiling
 	/// </summary>
@@ -43,12 +59,16 @@ public sealed partial class GraphCompiler
 	private SubgraphNode SubgraphNode = null;
 	private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
+	public Dictionary<string, string> CompiledTextures { get; private set; } = new();
+
 	/// <summary>
 	/// The loaded sub-graphs
 	/// </summary>
 	public List<ShaderGraphPlus> Subgraphs { get; private set; }
 	public HashSet<string> PixelIncludes { get; private set; } = new();
 	public HashSet<string> VertexIncludes { get; private set; } = new();
+
+	public Dictionary<string,string> SyncIDs = new();
 
 	public Asset _Asset { get; private set; }
 
@@ -58,25 +78,23 @@ public sealed partial class GraphCompiler
 	public bool IsPreview { get; private set; }
 	public bool IsNotPreview => !IsPreview;
 
-	private class CompileResult
+	private partial class CompileResult
 	{
-		public List<(NodeResult, NodeResult)> Results = new();
+		public List<(NodeResult localResult, NodeResult funcResult)> Results = new();
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
+
 		public Dictionary<string, Sampler> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
 		public Dictionary<string, Gradient> Gradients = new();
-		public Dictionary<string, (ShaderFeatureInfo, bool)> ShaderFeatures = new();
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
 		public Dictionary<string, object> Attributes { get; private set; } = new();
 		public HashSet<string> Functions { get; private set; } = new();
-		public Dictionary<string,string> Globals { get; private set; } = new();
-		
-		public string RepresentativeTexture { get; set; }
-		
-		/// A group of Void Locals that belongs to a Custom Function Node
-		/// </summary>
-		public Dictionary<string, List<CustomCodeOutputData>> VoidLocalGroups { get; private set; } = new();
+		public Dictionary<string, string> Globals { get; private set; } = new();
+		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
+		public List<VoidData> CustomCodeResults { get; private set; } = new();
+
 		public int VoidLocalCount { get; set; } = 0;
+		public string RepresentativeTexture { get; set; }
 	}
 
 	public enum ShaderStage
@@ -96,32 +114,128 @@ public sealed partial class GraphCompiler
 	private readonly CompileResult PixelResult = new();
 	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
 
-	public Action<string, object> OnAttribute { get; set; }
+	public Action<string, object, bool> OnAttribute { get; set; }
 
-	public List<BaseNodePlus> Nodes { get; private set; } = new();
+	// Init to 1, 0 is reserved.
+	public int PreviewID { get; internal set; } = 1;
+
 	private List<NodeInput> InputStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
 
-
 	/// <summary>
 	/// Error list, doesn't give you much information currently
 	/// </summary>
-	public IEnumerable<Error> Errors => NodeErrors
-		.Select(x => new Error { Node = x.Key, Message = x.Value.FirstOrDefault() });
+	public IEnumerable<Issue> Errors => NodeErrors
+		.Select( x => new Issue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
-	public IEnumerable<Warning> Warnings => NodeWarnings
-	.Select(x => new Warning { Node = x.Key, Message = x.Value.FirstOrDefault() });
-
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, bool preview )
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
 	{
 		Graph = graph;
+		Graph.Features = shaderFeatures;
+		ShaderFeatures = shaderFeatures;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
 		Subgraphs = new();
 		AddSubgraphs( Graph );
+	}
+
+	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
+	{
+		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
+	}
+
+	public static string CleanName( string name )
+	{
+		if ( string.IsNullOrWhiteSpace( name ) )
+			return "";
+
+		name = name.Trim().Replace( " ", string.Empty );
+		name = new string( name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
+
+		return name;
+	}
+
+	internal void PostProcessVoidFunctionResult( VoidFunctionBase node, string funcName = "" )
+	{
+		if ( ShaderResult.VoidLocals.TryGetValue( node.Identifier, out VoidData data ) )
+		{
+			if ( data.AlreadyPostProcessed )
+				return;
+
+			var functionCall = data.FunctionCall;
+
+			foreach ( var targetProperty in data.TargetProperties )
+			{
+				var property  = node.GetType().GetProperty( targetProperty.Key.targetProperty );
+				
+				if ( property == null && property.PropertyType != typeof( NodeInput ) )
+				{
+					SGPLog.Error( $"\"{property.PropertyType}\" is not of type \"{typeof( NodeInput )}\"" );
+					continue;
+				}
+
+				var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
+				var titleAttribute = property.GetCustomAttribute<TitleAttribute>();
+
+				var title = "";
+				if ( titleAttribute is not null )
+				{
+					title = titleAttribute.Value;
+				}
+
+				//SGPLog.Info( $"targetProperty `{targetProperty.Key.targetProperty}`", IsPreview );
+
+				var nodeInput = (NodeInput)property.GetValue( node, null );
+				var funcResult = new NodeResult();
+				object defaultValue = EditorTypeLibrary.Create( inputAttribute.Type.Name, inputAttribute.Type );
+
+				PropertyInfo defaultPropertyInfo = node.GetType().GetProperty( targetProperty.Value );
+
+				// Check if we have a valid Default Value property name reference.
+				if ( !string.IsNullOrWhiteSpace( targetProperty.Value ) )
+				{
+					if ( defaultPropertyInfo != null )
+					{
+						defaultValue = defaultPropertyInfo.GetValue( node );
+
+						if ( defaultValue.GetType() != inputAttribute.Type )
+						{
+							Exeptions.SGPExeption( $"Default value \"{targetProperty.Value}\" does not match type of \"{title}\" node input!" );
+						}
+					}
+					else
+					{
+						Exeptions.SGPExeption( $"Could not find property with the name \"{targetProperty.Value}\"" );
+					}
+				}
+
+				if ( !VoidFuncNoDefaultValues.Contains( inputAttribute.Type ) )
+				{
+					funcResult = ResultOrDefault( nodeInput, defaultValue );
+				}
+				else
+				{
+					funcResult = Result( nodeInput );
+				}
+
+				if ( !funcResult.IsValid )
+				{
+					NodeErrors.Add( node, [ $"Missing required input \"{title}\"." ] );
+				}
+
+				functionCall = functionCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
+			}
+
+			ShaderResult.VoidLocals[node.Identifier] = data with { FunctionCall = functionCall, AlreadyPostProcessed = true };
+		}
+	}
+
+	public void SetNodeError( BaseNodePlus node, string error )
+	{
+		NodeErrors.Add( node, [error] );
 	}
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
@@ -141,22 +255,130 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	private static string CleanName( string name )
+	public void ResultComboPreview( string comboName, object value )
 	{
-		if ( string.IsNullOrWhiteSpace( name ) )
-			return "";
+		OnAttribute?.Invoke( comboName, value, true );
+	}
 
-		name = name.Trim().Replace( " ", string.Empty );
-		name = new string(name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
+	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> args, out List<(string userAssigned, string compilerAssigned)> Outputs )
+	{
+		List<TargetResultData> targetResults = new();
+		Outputs = new();
 
-		return name;
+		if ( !ShaderResult.VoidLocals.ContainsKey( nodeID ) )
+		{
+			var funcCall = functionCall;
+			Dictionary<string, string> functionOutputs = new();
+			Dictionary<(string,string), string> targetProperties = new();
+
+			foreach ( var inputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Input ).Index() )
+			{
+				targetProperties.Add( ( inputArg.Item.TargetProperty, inputArg.Item.VarName ), inputArg.Item.DefaultTargetProperty );
+			}
+
+			foreach ( var outputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Output ).Index() )
+			{
+				funcCall = funcCall.Replace( outputArg.Item.VarName, outputArg.Item.TargetProperty );
+
+				var userAssignedname = outputArg.Item.TargetProperty;
+				var hlslType = outputArg.Item.ResultType.GetHLSLDataType();
+				var id = ShaderResult.VoidLocalCount++;
+				var varName = $"ol_{id}";
+				TargetResultData data = new();
+
+				funcCall = funcCall.Replace( userAssignedname, varName );
+
+				data.CompilerAssignedName = varName;
+				data.UserAssignedName = userAssignedname;
+				data.ResultType = GetResultTypeFromHLSLDataType( hlslType );
+
+				Outputs.Add( new( userAssignedname, varName ) );
+
+				targetResults.Add( data );
+			}
+
+			var voidData = new VoidData()
+			{
+				TargetResults = targetResults,
+
+				TargetProperties = targetProperties,
+				ResultType = ResultType.Invalid,
+				FunctionCall = funcCall,
+				AlreadyDefined = false,
+				InlineCode = false,
+				BoundNodeIdentifier = nodeID
+			};
+
+			ShaderResult.VoidLocals.Add( nodeID, voidData );
+		}
+	}
+
+	internal string CustomCodeRegister( string functionName, string functionInputs, string nodeID, StringBuilder inlineCodeSb, Dictionary<string,string> outputResults, bool isInlineCode = false )
+	{
+		var functionOutputsSb = new StringBuilder();
+		List<TargetResultData> targetResults = new ();
+		//int count = 0;
+
+		foreach ( var output in outputResults.Index() )
+		{
+			var userAssignedname = output.Item.Key;
+			var id = ShaderResult.VoidLocalCount++; // name;
+			var varName = $"ol_{id}";
+			TargetResultData data = new();
+
+			if ( !isInlineCode )
+			{
+				functionOutputsSb.Append( (output.Index + 1) == outputResults.Count ? $"{varName}" : $" {varName}, " );
+			}
+			else
+			{
+				inlineCodeSb.Replace( userAssignedname, varName );
+			}
+
+			data.CompilerAssignedName = varName;
+			data.UserAssignedName = userAssignedname;
+			data.ResultType = GetResultTypeFromHLSLDataType( output.Item.Value );
+
+			targetResults.Add( data );
+		}
+
+		// Assemble the function call
+		var funcCall = "";
+
+		if ( !isInlineCode )
+		{
+			funcCall = $"{functionName}( {functionInputs},{functionOutputsSb.ToString()} )";
+		}
+		else
+		{
+			funcCall = $"{inlineCodeSb.ToString()}";
+		}
+
+		var voidData = new VoidData()
+		{
+			TargetResults = targetResults,
+			ResultType = ResultType.Invalid,
+			FunctionCall = funcCall,
+			AlreadyDefined = false,
+			InlineCode = isInlineCode,//false,
+			BoundNodeIdentifier = nodeID
+		};
+
+		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
+		{
+			ShaderResult.CustomCodeResults.Add( voidData );
+		
+			return funcCall;
+		}
 	}
 
 	public void RegisterInclude( string path )
 	{
 		var list = IsVs ? VertexIncludes : PixelIncludes;
+
 		if ( list.Contains( path ) )
 			return;
+
 		list.Add( path );
 	}
 
@@ -176,11 +398,11 @@ public sealed partial class GraphCompiler
 	{
 		if ( !GraphHLSLFunctions.HasFunction( name ) )
 			return null;
-		
+
 		var result = ShaderResult;
 		if ( !result.Functions.Contains( name ) )
 			result.Functions.Add( name );
-		
+
 		return $"{name}( {string.Join( ", ", args )} )";
 	}
 
@@ -194,92 +416,14 @@ public sealed partial class GraphCompiler
 	}
 
 	/// <summary>
-	/// Slightly tweaked version of the original. Only used by the Custom Expression node.
-	/// </summary>
-	internal string ResultFunctionCustomExpression( BaseNodePlus node, string code, string functionName, string args = "", bool includeFile = false )
-	{
-		var result = ShaderResult;
-		
-		if ( !includeFile )
-		{
-			if ( !GraphHLSLFunctions.HasFunction( functionName ) )
-			{
-				GraphHLSLFunctions.RegisterFunction( functionName, code );
-			}
-			else
-			{
-				//SGPLog.Warning( $"Function `{functionName}` already registerd..." );
-			}
-		}
-		else
-		{
-			RegisterInclude( code );
-		}
-		
-		return $"{functionName}( {args} )";
-	}
-
-	public void RegisterVoidFunctionResults( CustomFunctionNode node, Dictionary<string, string> values, out List<CustomCodeOutputData> outputDataList, out List<string> functionOutputs, bool inlineMode = false )
-	{
-		var result = ShaderResult;
-		var sb = new StringBuilder();
-		
-		outputDataList = new List < CustomCodeOutputData >();
-		functionOutputs = new List < string >();
-		
-		//SGPLog.Info( $" RV : AlreadyEvaluated? = {!result.VoidLocalGroupsTest.Any(x => x.Key == node.Identifier)}");
-		
-		if ( !result.VoidLocalGroups.Any( x => x.Key == node.Identifier ) )
-		{
-			foreach ( var value in values )
-			{
-				//SGPLog.Info($" RV : Starting to process `{value.Key}`:`{value.Value}`");
-				
-				var varName = $"vl_{result.VoidLocalCount++}";
-				var dataType = value.Value;
-				
-				//SGPLog.Info( $" RV : Created compiler name `{varName}` for freindly name `{value.Key}`" );
-				
-				CustomCodeOutputData outputData = new CustomCodeOutputData();
-				outputData.CompilerName = varName;
-				outputData.FriendlyName = value.Key;
-				outputData.DataType = dataType;
-				outputData.ComponentCount = GetComponentCountFromHLSLDataType( dataType );
-				outputData.ResultType = GetResultTypeFromHLSLDataType( dataType );
-				outputData.NodeId = node.Identifier;
-				
-				
-				//SGPLog.Info( $" RV : Created outputData for `{value.Key}`" );
-				
-				outputDataList.Add( outputData );
-				functionOutputs.Add( outputData.CompilerName );
-			}
-			
-			if ( !result.VoidLocalGroups.ContainsKey( node.Identifier ) )
-			{
-				//SGPLog.Info( $" RV : Adding new Entry for NodeID `{node.Identifier}` " );
-				result.VoidLocalGroups.Add(node.Identifier, outputDataList);
-			}
-			else
-			{
-				//SGPLog.Warning($" RV : NodeID `{node.Identifier}` already exists in Dict... ");
-			}
-		}
-		else
-		{
-			//SGPLog.Warning( $" RV : We have already registerd the outputs for this node..." );
-		}
-	}
-
-	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
 	/// </summary>
 	public Gradient GetGradient( string gradient_name )
 	{
 		var result = ShaderResult;
-		
+
 		Gradient gradient = new();
-		
+
 		foreach ( var g in result.Gradients )
 		{
 			if ( g.Key == gradient_name )
@@ -287,105 +431,8 @@ public sealed partial class GraphCompiler
 				gradient = g.Value;
 			}
 		}
-		
+
 		return gradient;
-	}
-
-	/// <summary>
-	/// Register and Build a Shader Feature.
-	/// </summary>
-	public void RegisterShaderFeature(ShaderFeature feature, string falseResult, string trueResult, bool previewToggle)
-	{
-		var result = ShaderResult;
-		var sfinfo = new ShaderFeatureInfo();
-
-		var feature_body = new StringBuilder();
-
-		//Log.Info($"Shader feature : {feature.ToFeatureName()} result true : {trueResult}");
-		//Log.Info($"Shader feature : {feature.ToFeatureName()} defualt result : {falseResult}");
-
-		if ( feature.IsValid )
-		{
-			var featureDeclaration = "";
-			var featureDeclarationOptionAmount = 0;
-
-			feature_body.AppendLine();
-			feature_body.AppendLine($"#if S_{feature.FeatureName.ToUpper()}" + " == {0} ");
-			feature_body.AppendLine($"{falseResult} = {trueResult};");
-			feature_body.AppendLine("#endif");
-
-			if (feature.IsDynamicCombo is not true)
-			{
-				var featureDeclarationName = $"F_{feature.FeatureName.ToUpper()}";
-				var featureDeclarationHeaderName = feature.HeaderName;
-				featureDeclarationOptionAmount = feature.Options.Count - 1;
-				var featureDeclarationOptions = BuildFeatureOptions(feature.Options);
-
-				if (!string.IsNullOrWhiteSpace(featureDeclarationOptions))
-				{
-					featureDeclaration = $"Feature({featureDeclarationName}, 0..{featureDeclarationOptionAmount}({featureDeclarationOptions}), \"{featureDeclarationHeaderName}\");";
-					//if ( DebugSpew )
-					{
-						// Log.Info($"Generated Static Combo Feature : {_feature}.");
-					}
-				
-				}
-			}
-			else
-			{
-				Log.Info($"Generated Dynamic Combo Feature.");
-			}
-
-			sfinfo.FeatureName = feature.FeatureName.Replace(" ", "_");
-			sfinfo.FeatureDeclaration = featureDeclaration;
-			sfinfo.FeatureBody = feature_body.ToString();
-			sfinfo.OptionsCount = featureDeclarationOptionAmount;
-			sfinfo.TrueResult = trueResult;
-			sfinfo.FalseResult = falseResult;
-			sfinfo.IsDynamicCombo = feature.IsDynamicCombo;
-
-			var id = sfinfo.FeatureName;
-
-			if ( !result.ShaderFeatures.ContainsKey( id ) )
-			{
-				result.ShaderFeatures.Add( id, (sfinfo, previewToggle));
-			}
-
-		}
-		else
-		{
-			Log.Warning("invalid feature!");
-		}
-
-	}
-
-	private string BuildFeatureOptions( List<string> options )
-	{
-		var options_body = "";
-		int count = 0;
-
-		foreach  (var option in options )
-		{
-			if ( count == 0 ) // first option starts at 0 :)
-			{
-				options_body += $"0=\"{option}\",";
-				count++;
-			}
-			else if ( count != ( options.Count - 1 ) )  // These options dont get the privilege of being the first >:)
-			{
-				options_body += $"{count}=\"{option}\",";
-				count++;
-			}
-			else // Last option in the list oh well...:(
-			{
-				options_body += $"{count}=\"{option}\"";
-			}
-		}
-
-		//Log.Info($"Feature Options Count is : {options.Count}");
-		//Log.Info($"Feature Option Option String : {options_body}");
-
-		return options_body;
 	}
 
 	/// <summary>
@@ -401,7 +448,7 @@ public sealed partial class GraphCompiler
 
 		var id = name;
 
-		if (!result.Gradients.ContainsKey( id ) )
+		if ( !result.Gradients.ContainsKey( id ) )
 		{
 			result.Gradients.Add( id, gradient );
 		}
@@ -409,71 +456,96 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	/// <summary>
-	/// Register a sampler and return the name of it
-	/// </summary>
-	public string ResultSampler( Sampler sampler )
+	internal void RegisterSyncID( string syncID, string name )
 	{
-		var name = CleanName( sampler.Name );
-
-		var result = ShaderResult;
-
-		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{result.SamplerStates.Count}" : name;
-
-		var id = name;
-
-		if (!result.SamplerStates.ContainsKey( id ) )
+		if ( !SyncIDs.ContainsKey( syncID ) )
 		{
-			result.SamplerStates.Add( id, sampler ); // Add the Name of the sampler and its associated options.
-
+			SyncIDs.Add( syncID, name );
 		}
-
-		var result_sampler = $"g_s{id}";
-
-		return result_sampler;
 	}
 
-	public string ResultSamplerOrDefault( NodeInput sampler, Sampler defaultsampler )
+	internal bool CheckTextureInputRegistration( string name )
 	{
-		if ( sampler.IsValid )
-		{
-			return Result( sampler ).Code;
-		}
-		else
-		{
-			// Register the default sampler
-			return ResultSampler( defaultsampler );
-		}
+		return ShaderResult.TextureInputs.ContainsKey( name );
 	}
 
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public (string, string) ResultTexture( string samplerinput, TextureInput input, Texture texture )
+	public string ResultTexture( TextureInput input, Texture texture, bool cleanName = true )
 	{
-		var name = CleanName( input.Name );
+		var name = cleanName ? CleanName( input.Name ) : input.Name;
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-
 		var id = name;
-		int count = 0;
+		//int count = 0;
 
 		var result = ShaderResult;
 
+		// Dont append _count++ to the end until the key dosent exists.
+		// This can cause problems resulting in unnecessary Texture2D declarations with Combo Switches and inside subgraphs when the subgraphs are instanced.
+		/*
 		while ( result.TextureInputs.ContainsKey( id ) )
 		{
-			id = $"{name}_{count++}";
+			id = $"{name}_{count++}";	
 		}
-
-		OnAttribute?.Invoke( id, texture );
-
+		
+		OnAttribute?.Invoke( id, texture, false );
+		
 		result.TextureInputs.Add( id, input );
+		*/
+
+		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
+		{
+			// Do not Invoke OnAttribute or add to the TextureInputs Dictionary...
+		}
+		else
+		{
+			if ( texture != null )
+			{
+				OnAttribute?.Invoke( id, texture, false );
+			}
+
+			result.TextureInputs.Add( id, input );
+		}
 
 		if ( CurrentResultInput == "Albedo" )
 		{
 			result.RepresentativeTexture = $"g_t{id}";
 		}
 
-		return new( $"g_t{id}", samplerinput );
+		return $"g_t{id}";
+	}
+
+	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
+	{
+		var name = CleanName( sampler.Name );
+		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
+		var id = name;
+		
+		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+			return ResultValue( sampler ).Code;
+
+		if ( IsNotPreview )
+		{
+			if ( !ShaderResult.SamplerStates.ContainsKey( id ) )
+			{
+				ShaderResult.SamplerStates.Add( id, sampler );
+			}
+			else
+			{
+				SGPLog.Warning( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
+			}
+
+			return $"g_s{id}";
+		}
+
+		return $"g_s{id}";
+	}
+
+	public string ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultSampler )
+	{
+		var resultSampler = Result( samplerInput );
+		return resultSampler.IsValid ? resultSampler.Code : ResultSampler( defaultSampler );
 	}
 
 	/// <summary>
@@ -485,31 +557,22 @@ public sealed partial class GraphCompiler
 		return result.IsValid ? result : ResultValue( defaultValue );
 	}
 
-	public void DepreciationWarning(BaseNodePlus node, string oldnode, string newnode)
-	{
-		var warnings = new List<string>();
-
-
-		//NodeErrors.Add( node, warnings );
-		NodeWarnings.Add(node, warnings);
-
-		warnings.Add($"'{oldnode}' is depreciated please use '{newnode}' instead.");
-	}
-
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result(NodeInput input)
+	public NodeResult Result( NodeInput input, bool subgraphResult = false )
 	{
 		if (!input.IsValid)
 			return default;
-		
+
 		BaseNodePlus node = null;
 		if ( string.IsNullOrEmpty( input.Subgraph ) )
 		{
+			// Local results.
 			if ( Subgraph is not null )
 			{
 				var nodeId = string.Join( ',', SubgraphStack.Select( x => x.Item1.Identifier ) );
+				
 				return Result( new()
 				{
 					Identifier = input.Identifier,
@@ -518,6 +581,7 @@ public sealed partial class GraphCompiler
 					SubgraphNode = nodeId
 				} );
 			}
+
 			node = Graph.FindNode( input.Identifier );
 		}
 		else
@@ -528,19 +592,70 @@ public sealed partial class GraphCompiler
 				node = subgraph.FindNode( input.Identifier );
 			}
 		}
-		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+
+#region ComboSwitch Region
+		ComboSwitchInfo lastComboSwitchInfo = new();
+
+		// Set CurrentSwitchInfo to the current incoming SwitchInfo from the input.
+		if ( input.ComboSwitchInfo.IsValid )
 		{
-			return result;
+			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
+			SGPLog.Info( $"Setting {nameof( CurrentComboSwitchInfo )} To: {input.ComboSwitchInfo}", IsPreview && ConCommands.VerboseDebgging );
+			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
+
+			CurrentComboSwitchInfo = input.ComboSwitchInfo;
+			ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+
+			//SGPLog.Info( $"Setting ComboSwitchInfo from nodeInput : {CurrentComboSwitchInfo}", IsNotPreview );
+
+			// Clear any existing Results & InputResults from a previous block.
+			{
+				ShaderResult.SwitchBlockInputResults.Clear();
+				ShaderResult.SwitchBlockResults.Clear();
+			}
 		}
-		if (node == null)
+		if ( CurrentComboSwitchInfo.IsValid )
+		{
+			lastComboSwitchInfo = CurrentComboSwitchInfo;
+
+			if ( lastComboSwitchInfo.IsValid )
+			{
+				//SGPLog.Info( $"lastComboSwitchInfo : {lastComboSwitchInfo}", IsNotPreview );
+
+				ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+			}
+		}
+
+		if ( IsInComboSwitch )
+		{
+			Graph.AssignSwitchInfo( input.Identifier, CurrentComboSwitchInfo );
+
+			if ( ShaderResult.SwitchBlockInputResults.TryGetValue( input, out var exisitingResultSB ) )
+			{
+				return exisitingResultSB;
+			}
+		}
+#endregion ComboSwitch Region
+		else
+		{
+
+			Graph.ClearSwitchInfo( input.Identifier );
+
+			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
+			{
+				return result;
+			}
+		}
+
+		if ( node == null )
 		{
 			return default;
 		}
-		
+
 		var nodeType = node.GetType();
 		var property = nodeType.GetProperty(input.Output);
 
-		if (property == null)
+		if ( property == null )
 		{
 			// Search for alias
 			var allProperties = nodeType.GetProperties();
@@ -570,7 +685,7 @@ public sealed partial class GraphCompiler
 		}
 
 		InputStack.Add( input );
-		
+
 		if ( Subgraph is not null && node.Graph != Subgraph )
 		{
 			if ( node.Graph != Graph )
@@ -582,78 +697,109 @@ public sealed partial class GraphCompiler
 				Subgraph = null;
 			}
 		}
-		
+
+		if ( node is VoidFunctionBase VoidFunctionBase )
+		{
+			VoidFunctionBase.Register( this );
+
+			if ( !ShaderResult.VoidLocals.ContainsKey( VoidFunctionBase.Identifier ) )
+			{
+				VoidFunctionBase.RegisterVoidFunction( this );
+			}
+			else
+			{
+				//SGPLog.Info( $"Node with ID `{Identifier}` has already been registerd!", compiler.IsPreview );
+			}
+
+			PostProcessVoidFunctionResult( VoidFunctionBase );
+		}
+
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			var funcResult = customFunctionNode.GetResult( this );
-			var outputData = new CustomCodeOutputData();
-			
-			foreach ( var entry in customFunctionNode.OutputData )
-			{
+			var funcResult = customFunctionNode.GetResult( this, nameof( MetadataType.VoidResultUserDefinedName ), input.Output );
 
-				if ( entry.FriendlyName == input.Output )
-				{
-				    outputData = entry;
-				    break;
-				}
-			}
-			
-			if ( !customFunctionNode.ExpressionOutputs.Any() )
+			if ( !funcResult.IsValid )
 			{
-				//Utilities.EdtiorSound.OhFiddleSticks();
-				
-				NodeErrors[node] = new List<string> { $"`{customFunctionNode.DisplayInfo.Name}` has no outputs." };
-				
+				if ( !NodeErrors.TryGetValue( node, out var errors ) )
+				{
+					errors = new();
+					NodeErrors.Add( node, errors );
+				}
+
+				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
+				{
+					errors.Add( $"Missing input" );
+				}
+				else
+				{
+					foreach ( var error in funcResult.Errors )
+						errors.Add( error );
+				}
+
+				InputStack.Remove( input );
 				return default;
 			}
-			
-			if ( !outputData.IsValid )
+
+			var voidData = ShaderResult.CustomCodeResults.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
+			var userAssignedVariableName = input.Output;
+			var compilerAssignedVariableName = voidData.GetCompilerAssignedName( userAssignedVariableName );
+
+			if ( !voidData.IsValid )
 			{
-				//Utilities.EdtiorSound.OhFiddleSticks();
-				
-				NodeErrors[node] = new List<string> { $"Unable to find valid CustomCodeOutputData entry for `{node.DisplayInfo.Name}`" };
-				
+				SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
+
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
+
 				return default;
 			}
-			
-			var localResult = new NodeResult(outputData.ResultType, $"{outputData.CompilerName}", voidComponents: outputData.ComponentCount );
 
-			// return the localResult if we are getting a result from a node that we have already evaluated. 
-			foreach ( var inputResult in ShaderResult.InputResults )
+			if ( voidData.IsValid )
 			{
-				if ( inputResult.Key.Identifier == input.Identifier )
+				var resultType = voidData.GetResultResultType( compilerAssignedVariableName );
+
+				var localResult = new NodeResult( resultType, $"{compilerAssignedVariableName}", false, funcResult.Metadata );
+
+				// return the localResult if we are getting a result from a node that we have already evaluated. 
+				foreach ( var inputResult in ShaderResult.InputResults )
 				{
-				    InputStack.Remove( input );
-				    return localResult;
+					if ( inputResult.Key.Identifier == input.Identifier )
+					{
+						InputStack.Remove( input );
+						return localResult;
+					}
 				}
+
+				ShaderResult.InputResults.Add( input, localResult );
+				ShaderResult.Results.Add( (localResult, funcResult) );
+				
+				InputStack.Remove( input );
+				
+				return localResult;
 			}
-			
-			ShaderResult.InputResults.Add( input, localResult );
-			ShaderResult.Results.Add( ( localResult, funcResult ) );
-			
-			if ( IsPreview )
+			else
 			{
-			    Nodes.Add( node );
+				SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
+
+				return default;
 			}
-			
-			InputStack.Remove( input );
-			
-			return localResult;
 		}
-		
+
 		if ( node is SubgraphNode subgraphNode )
 		{
 			var newStack = (subgraphNode, Subgraph);
 			var lastNode = SubgraphNode;
+
 			SubgraphStack.Add( newStack );
 			Subgraph = subgraphNode.Subgraph;
 			SubgraphNode = subgraphNode;
+
 			if ( !Subgraphs.Contains( Subgraph ) )
 			{
 				Subgraphs.Add( Subgraph );
 			}
 
-			var resultNode = Subgraph.Nodes.FirstOrDefault( x => x is FunctionResult ) as FunctionResult;
+			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.SubgraphFunctionOutput.OutputName == input.Output ).FirstOrDefault();
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
 			{
@@ -665,15 +811,23 @@ public sealed partial class GraphCompiler
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
 				};
-				var newResult = Result( newConnection );
+				var newResult = Result( newConnection, true );
+
+				if ( NodeErrors.Any() )
+				{
+					InputStack.Remove( input );
+					return default;
+				}
+
 				InputStack.Remove( input );
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				Subgraph = newStack.Item2;
 				SubgraphNode = lastNode;
+
 				return newResult;
 			}
 			else
-			{
+			{	
 				value = GetDefaultValue( subgraphNode, input.Output, resultInput.Type );
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
 				Subgraph = newStack.Item2;
@@ -684,9 +838,18 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
-				if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) )
+				if ( node is SubgraphInput subgraphInput )
 				{
-					var newResult = ResolveParameterNode( parameterNode, ref value );
+					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value, out var error );
+
+					if ( !string.IsNullOrWhiteSpace( error.ErrorString ) )
+					{
+						NodeErrors.Add( error.Node, new List<string> { error.ErrorString } );
+
+						InputStack.Remove( input );
+						return default;
+					}
+					
 					if ( newResult.IsValid )
 					{
 						InputStack.Remove( input );
@@ -696,13 +859,14 @@ public sealed partial class GraphCompiler
 			}
 			else if ( Graph.IsSubgraph )
 			{
-				if ( node is IParameterNode parameterNode )
+				if ( node is SubgraphInput subgraphInput )
 				{
-					if ( parameterNode.PreviewInput.IsValid )
+					if ( subgraphInput.PreviewInput.IsValid )
 					{
-						var paramResult = Result( parameterNode.PreviewInput );
+						var subgraphInputResult = Result( subgraphInput.PreviewInput );
+						
 						InputStack.Remove( input );
-						return paramResult;
+						return subgraphInputResult;
 					}
 				}
 			}
@@ -724,7 +888,7 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 		}
-		
+
 		if ( value is NodeResult nodeResult )
 		{
 			InputStack.Remove( input );
@@ -737,14 +901,16 @@ public sealed partial class GraphCompiler
 				InputStack.Remove( input );
 				return default;
 			}
+
 			var newResult = Result( nodeInput );
+
 			InputStack.Remove( input );
 			return newResult;
 		}
 		else if ( value is NodeResult.Func resultFunc )
 		{
 			var funcResult = resultFunc.Invoke( this );
-		
+
 			if ( !funcResult.IsValid )
 			{
 				if ( !NodeErrors.TryGetValue( node, out var errors ) )
@@ -766,35 +932,93 @@ public sealed partial class GraphCompiler
 				InputStack.Remove( input );
 				return default;
 			}
-		
+
+			funcResult.SetVoidLocalTargetID( node.Identifier );
+			funcResult.ShouldPreview = node.CanPreview;
+
+			if ( lastComboSwitchInfo.IsValid )
+			{
+				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), lastComboSwitchInfo );
+
+				//ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+
+				if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( lastComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
+				{
+					funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), input.ComboSwitchInfo );
+					funcResult.SkipLocalGeneration = true;
+				}
+
+				var switchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true );
+
+				if ( switchInfo.IsValid && switchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
+				{
+					funcResult.SkipLocalGeneration = true;
+				}
+			}
+
+			if ( IsPreview && !IsInComboSwitch )
+			{
+				funcResult.SetPreviewID( node.PreviewID );
+			}
+
+			if ( subgraphResult )
+			{
+				funcResult.SetPreviewID( SubgraphNode.PreviewID );
+				//SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
+			}
+
 			// We can return this result without making it a local variable because it's constant
 			if ( funcResult.Constant )
 			{
+				//SGPLog.Info( $"Result from node : `{node}` is constant! which is `{funcResult.Code}`", IsNotPreview );
 				InputStack.Remove( input );
+
+				if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info1 ) )
+				{
+					if ( ComboSwitchInfoStack.Any() )
+						ComboSwitchInfoStack.Remove( info1 );
+				}
+
 				return funcResult;
 			}
-		
-			var id = ShaderResult.InputResults.Count;
+
+			int id = IsInComboSwitch ? ShaderResult.SwitchBlockInputResults.Count : ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
-			var localResult = new NodeResult( funcResult.ResultType, varName );
-		
-			ShaderResult.InputResults.Add( input, localResult );
-			ShaderResult.Results.Add( (localResult, funcResult) );
-		
-			if ( IsPreview )
+			var localResult = new NodeResult( funcResult.ResultType, varName, false, funcResult.Metadata );
+			localResult.SetPreviewID( funcResult.PreviewID );
+			localResult.SetVoidLocalTargetID( funcResult.VoidLocalTargetID );
+			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
+			localResult.ShouldPreview = funcResult.ShouldPreview;
+
+			if ( IsInComboSwitch && !ShaderResult.SwitchBlockInputResults.ContainsKey( input ) )
 			{
-				Nodes.Add( node );
+				ShaderResult.SwitchBlockInputResults.Add( input, localResult );
 			}
-		
+			else if ( !ShaderResult.InputResults.ContainsKey( input ) )
+			{
+				ShaderResult.InputResults.Add( input, localResult );
+			}
+	
+			ShaderResult.Results.Add( (localResult, funcResult) );
+
 			InputStack.Remove( input );
+
+			if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info2 ) )
+			{
+				if ( ComboSwitchInfoStack.Any() )
+					ComboSwitchInfoStack.Remove( info2 );
+			}
+
 			return localResult;
 		}
-		
+
 		var resultVal = ResultValue( value );
+
 		InputStack.Remove( input );
+
 		return resultVal;
 	}
-
+	
 	/// <summary>
 	/// Get result of two inputs and cast to the largest component of the two (a float2 and float3 will both become float3 results)
 	/// </summary>
@@ -803,13 +1027,13 @@ public sealed partial class GraphCompiler
 		var resultA = ResultOrDefault( a, defaultA );
 		var resultB = ResultOrDefault( b, defaultB );
 
-		if ( resultA.Components() == resultB.Components() )
+		if ( resultA.Components == resultB.Components )
 			return (resultA, resultB);
 
-		if ( resultA.Components() < resultB.Components() )
-			return (new(resultB.ResultType, resultA.Cast( resultB.Components() ) ), resultB);
+		if ( resultA.Components < resultB.Components )
+			return (new(resultB.ResultType, resultA.Cast( resultB.Components ) ), resultB);
 
-		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components() ) ) );
+		return (resultA, new(resultA.ResultType, resultB.Cast( resultA.Components ) ) );
 	}
 
 	/// <summary>
@@ -818,15 +1042,26 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-			return ResultValue( value );
+		{
+			var res = ResultValue( value );
 
-		name = CleanName(name);
+			return res;
+		}
 
+		name = CleanName( name );
 		var attribName = name;
-
 		var prefix = GetLocalPrefix( value );
-       
-        if ( !name.StartsWith( prefix ) )
+
+		// Make sure the type T is can have a Default();
+		bool canHaveDefualt = typeof( T ) switch
+		{
+			Type t when t == typeof( Float2x2 ) => false,
+			Type t when t == typeof( Float3x3 ) => false,
+			Type t when t == typeof( Float4x4 ) => false,
+			_ => true,
+		};
+
+		if ( !name.StartsWith( prefix ) )
 			name = prefix + name;
 
 		if ( ShaderResult.Parameters.TryGetValue( name, out var parameter ) )
@@ -841,67 +1076,95 @@ public sealed partial class GraphCompiler
 		{
 			options.Write($"Attribute( \"{attribName}\" ); ");
 
+			if ( value is bool boolValue )
+			{
+				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
+			}
+			else if ( canHaveDefualt )
+			{
+				options.Write( $"Default{parameter.Result.Components}( {value} );" );
+			}
+		}
+		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
+		{
+			if (ui.Type != UIType.Default)
+			{
+				options.Write($"UiType( {ui.Type} ); ");
+			}
+
+			if (ui.Step > 0.0f)
+			{
+				options.Write($"UiStep( {ui.Step} ); ");
+			}
+
+			options.Write($"UiGroup( \"{ui.UIGroup}\" ); ");
+
 			if (value is bool boolValue)
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
-			else
+			else if ( canHaveDefualt )
 			{
-				options.Write($"Default{parameter.Result.Components()}( {value} ); ");
+				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
-		}
-		else
-		{
-			if (value is Float2x2 or Float3x3 or Float4x4)
+
+			if ( value is not bool && parameter.Result.Components > 0 && isRange )
 			{
-				//parameter.Options = options.ToString().Trim();
-
-				if (!ShaderResult.Parameters.ContainsKey(name))
-				{
-					ShaderResult.Parameters.Add(name, parameter);
-				}
-
-			}
-			else
-			{
-				if (ui.Type != UIType.Default)
-				{
-					options.Write($"UiType( {ui.Type} ); ");
-				}
-
-				if (ui.Step > 0.0f)
-				{
-					options.Write($"UiStep( {ui.Step} ); ");
-				}
-
-				options.Write($"UiGroup( \"{ui.UIGroup}\" ); ");
-
-				if (value is bool boolValue)
-				{
-					options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
-				}
-				else
-				{
-					options.Write($"Default{parameter.Result.Components()}( {value} ); ");
-				}
-
-				if (parameter.Result.Components() > 0 && isRange)
-				{
-					options.Write($"Range{parameter.Result.Components()}( {min}, {max} ); ");
-				}
+				options.Write($"Range{parameter.Result.Components}( {min}, {max} ); ");
 			}
 		}
 
 		parameter.Options = options.ToString().Trim();
 
-		ShaderResult.Parameters.Add( name, parameter );
+		// Avoid adding a matrix parameter to the graph if isAttribute is false. Which would make it code to the shader code and unable to be set externally via C#.
+		if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
+		{
+			ShaderResult.Parameters.Add( name, parameter );
+		}
 
 		return parameter.Result;
 	}
 
+	private string CompileTexture( string path, TextureInput textureInput )
+	{
+		if ( string.IsNullOrWhiteSpace( path ) )
+			return "";
+
+		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
+			path,
+			textureInput.ColorSpace,
+			textureInput.ImageFormat,
+			textureInput.Processor 
+		);
+
+		var assetPath = $"shadergraphplus/{path.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
+
+		if ( !CompiledTextures.ContainsKey( resourceText ) )
+		{
+			CompiledTextures.Add( resourceText, assetPath );
+		}
+		else
+		{
+			return CompiledTextures[resourceText];
+		}
+
+		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
+		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
+
+		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
+		{
+			return assetPath;
+		}
+		else
+		{
+			Log.Warning( $"Failed to compile {path}" );
+			return "";
+		}
+	}
+
 	/// <summary>
 	/// Get result of a value, in preview mode an attribute will be registered and returned
-	/// Only supports float, Vector2, Vector3, Vector4, Color, Float2x2, Float3x3, Float4x4, Sampler and bool.
+	/// Only supports float, Vector2, Vector3, Vector4, Color.
 	/// </summary>
 	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
 	{
@@ -913,24 +1176,25 @@ public sealed partial class GraphCompiler
 
 		if ( isConstant )
 		{
-			OnAttribute?.Invoke( name, value );
+			OnAttribute?.Invoke( name, value, false );
 			ShaderResult.Attributes[name] = value;
 		}
 
 		return value switch
 		{
-			bool v => isNamed ? new NodeResult(ResultType.Bool, $"{name}") : new NodeResult(ResultType.Bool, $"{v.ToString().ToLower()}"),
-			int v => isNamed ? new NodeResult(ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
-			float v => isNamed ? new NodeResult(ResultType.Float, $"{name}") : new NodeResult(ResultType.Float, $"{v}", true),
-			Vector2 v => isNamed ? new NodeResult(ResultType.Vector2, $"{name}") : new NodeResult(ResultType.Vector2, $"float2( {v.x}, {v.y} )"),
-			Vector3 v => isNamed ? new NodeResult(ResultType.Vector3, $"{name}") : new NodeResult(ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )"),
-			Vector4 v => isNamed ? new NodeResult(ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )"),
-			Color v => isNamed ? new NodeResult(ResultType.Color, $"{name}") : new NodeResult(ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )"),
-			Float2x2 v => isNamed ? new NodeResult(ResultType.Float2x2, $"{value}") : new NodeResult(ResultType.Float2x2, $"float2x2({v.M11}, {v.M12}, {v.M21}, {v.M22})"),
-			Float3x3 v => isNamed ? new NodeResult(ResultType.Float3x3, $"{value}") : new NodeResult(ResultType.Float3x3, $"float3x3({v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33})"),
-			Float4x4 v => isNamed ? new NodeResult(ResultType.Float4x4, $"{value}") : new NodeResult(ResultType.Float4x4, $"float4x4({v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44})"),
-			Sampler v => new NodeResult(ResultType.Sampler, $"{v}", true, true),
-			_ => throw new ArgumentException("Unsupported attribute type", nameof(value))
+			bool v => isNamed ? new NodeResult( ResultType.Bool, $"{name}" ) : new NodeResult( ResultType.Bool, $"{v.ToString().ToLower()}" ) { },
+			int v => isNamed ? new NodeResult( ResultType.Int, $"{name}" ) : new NodeResult( ResultType.Int, $"{v}", true ),
+			float v => isNamed ? new NodeResult( ResultType.Float, $"{name}" ) : new NodeResult( ResultType.Float, $"{v}", true ),
+			Vector2 v => isNamed ? new NodeResult( ResultType.Vector2, $"{name}" ) : new NodeResult( ResultType.Vector2, $"float2( {v.x}, {v.y} )" ),
+			Vector3 v => isNamed ? new NodeResult( ResultType.Vector3, $"{name}" ) : new NodeResult( ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )" ),
+			Vector4 v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )" ),
+			Color v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )" ),
+			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}" ) : new NodeResult( ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
+			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}" ) : new NodeResult( ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )" ),
+			Float4x4 v => isNamed ? new NodeResult( ResultType.Float4x4, $"{value}" ) : new NodeResult( ResultType.Float4x4, $"float4x4( {v.M11}, {v.M12}, {v.M13}, {v.M14}, {v.M21}, {v.M22}, {v.M23}, {v.M24}, {v.M31}, {v.M32}, {v.M33}, {v.M34}, {v.M41}, {v.M42}, {v.M43}, {v.M44} )" ),
+			Sampler v => new NodeResult( ResultType.Sampler, $"{name}", true ),
+			TextureInput v => new NodeResult( ResultType.Texture2DObject, $"{name}", true ),
+			_ => throw new ArgumentException( $"Unsupported attribute type `{value.GetType()}`" )
 		};
 	}
 
@@ -944,34 +1208,15 @@ public sealed partial class GraphCompiler
 			Vector2 _ => "g_v",
 			float _ => "g_fl",
 			int _ => "g_n",
-			//int _ => "g_fl",
 			bool _ => "g_b",
 			Float2x2 _ => "g_m",
 			Float3x3 _ => "g_m",
 			Float4x4 _ => "g_m",
-			_ => throw new ArgumentException("Unsupported value type", nameof(value))
+			Sampler _ => "g_s",
+			_ => throw new Exception( $"Unsupported value type \"{value.GetType()}\"" )
 		};
 
 		return prefix;
-	}
-
-	public string GetHLSLDataType( ResultType resultType )
-	{
-		return resultType switch
-		{
-			ResultType r when r == ResultType.Bool => "bool",
-			//ResultType r when r == ResultType.Int => "int",
-			ResultType r when r == ResultType.Float => "float",
-			ResultType r when r == ResultType.Vector2 => "float2",
-			ResultType r when r == ResultType.Vector3 => "float3",
-			ResultType r when r == ResultType.Color => "float4",
-			ResultType r when r == ResultType.Gradient => "Gradient",
-			ResultType r when r == ResultType.Float2x2 => "float2x2",
-			ResultType r when r == ResultType.Float3x3 => "float3x3",
-			ResultType r when r == ResultType.Float4x4 => "float4x4",
-			ResultType r when r == ResultType.Void => "void",
-			_ => throw new ArgumentException("Unsupported value type", nameof(resultType))
-		};
 	}
 
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
@@ -994,15 +1239,19 @@ public sealed partial class GraphCompiler
 					return 0.0f;
 				case Type t when t == typeof( bool ):
 					return false;
+				case Type t when t == typeof( Sampler ):
+					return new Sampler();
+				case Type t when t == typeof( Texture2DObject ):
+					return new TextureInput();
+				default:
+					throw new Exception( $"Type `{type}` has no default!" );
 			}
+		
 		}
+		
 		if ( value is JsonElement el )
 		{
-			if ( type == typeof( int ) )
-			{
-				value = el.GetInt32();
-			}
-			else if ( type == typeof( float ) )
+			if ( type == typeof( float ) )
 			{
 				value = el.GetSingle();
 			}
@@ -1026,18 +1275,29 @@ public sealed partial class GraphCompiler
 			{
 				value = el.GetBoolean();
 			}
+			else if ( type == typeof( Sampler ) )
+			{
+				value = JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() );
+			}
+			else if ( type == typeof( Texture2DObject ) )
+			{
+				value = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
+			}
 		}
-
+		
 		return value;
+		
 	}
 
-	private NodeResult ResolveParameterNode( IParameterNode node, ref object value )
+	private NodeResult ResolveSubgraphInputNode( SubgraphInput inputNode, ref object value, out (SubgraphNode Node, string ErrorString) error )
 	{
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
-		if ( lastNodeEntered is not null )
+		error = new();
+
+		if ( lastNodeEntered != null )
 		{
-			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == node.Name );
+			var parentInput = lastNodeEntered.InputReferences.FirstOrDefault( x => x.Key.Identifier == inputNode.InputName );
 			if ( parentInput.Key is not null )
 			{
 				var lastSubgraph = Subgraph;
@@ -1045,7 +1305,7 @@ public sealed partial class GraphCompiler
 				Subgraph = lastStack.Item2;
 				SubgraphNode = (Subgraph is null) ? null : lastNodeEntered;
 				SubgraphStack.RemoveAt( SubgraphStack.Count - 1 );
-
+				
 				var connectedPlug = parentInput.Key.ConnectedOutput;
 				if ( connectedPlug is not null )
 				{
@@ -1064,13 +1324,47 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
-					value = GetDefaultValue( lastNodeEntered, node.Name, parentInput.Value.Item2 );
+					if ( Graph.IsSubgraph )
+					{
+						if ( parentInput.Value.paramNodeValueType == typeof( Sampler ) )
+						{
+							
+							error = new( lastNode, $"Sampler Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
+							value = null;
+							return new();
+						}
+						if ( parentInput.Value.paramNodeValueType == typeof( Texture2DObject ) )
+						{
+							
+							error = new( lastNode, $"Texture2DObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
+							value = null;
+							return new();
+						}
+
+					}
+
+					value = GetDefaultValue( lastNodeEntered, inputNode.InputName, parentInput.Value.paramNodeValueType );
+
 					SubgraphStack.Add( lastStack );
 					Subgraph = lastSubgraph;
 					SubgraphNode = lastNode;
+
+					if ( value is Sampler sampler )
+					{
+						var samplerResult = ResultSampler( sampler );
+						return new NodeResult( ResultType.Sampler, samplerResult, constant: true );
+					}
+					if ( value is TextureInput textureInput )
+					{
+						var texurePath = CompileTexture( textureInput.PreviewImage, textureInput );
+						var resultTextureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
+
+						return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true );
+					}
 				}
 			}
 		}
+
 		return new();
 	}
 
@@ -1090,31 +1384,23 @@ public sealed partial class GraphCompiler
 		};
 	}
 
-	private static ResultType GetResultTypeFromHLSLDataType(string DataType)
+	private static ResultType GetResultTypeFromHLSLDataType( string DataType )
 	{
 		return DataType switch
 		{
 			"bool" => ResultType.Bool,
-			//"int" => ResultType.Int,
+			"int" => ResultType.Int,
 			"float" => ResultType.Float,
 			"float2" => ResultType.Vector2,
 			"float3" => ResultType.Vector3,
 			"float4" => ResultType.Color,
-			_ => throw new ArgumentException( "Unknown ResultType" )
-		};
-	}
-
-	private static int GetComponentCountFromHLSLDataType( string DataType )
-	{
-		return DataType switch
-		{
-			"bool" => 0,
-			"int" => 1,
-			"float" => 1,
-			"float2" => 2,
-			"float3" => 3,
-			"float4" => 4,
-			_ => throw new ArgumentException("DataType is not valid : ", DataType )
+			"float2x2" => ResultType.Float2x2,
+			"float3x3" => ResultType.Float3x3,
+			"float4x4" => ResultType.Float4x4,
+			"SamplerState" => ResultType.Sampler,
+			"Texture2D" => ResultType.Texture2DObject,
+			"TextureCube" => ResultType.TextureCubeObject,
+			_ => throw new ArgumentException( $"Unknown DataType `{DataType}`" )
 		};
 	}
 
@@ -1134,16 +1420,27 @@ public sealed partial class GraphCompiler
 		// Register any Graph level Shader Features...
 		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
 		
-		if (Graph.MaterialDomain is MaterialDomain.BlendingSurface)
+		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
 		{
 			sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
 		}
 		
-		foreach (var feature in result.ShaderFeatures)
+		foreach (var feature in ShaderFeatures )
 		{
-			sb.AppendLine( feature.Value.Item1.FeatureDeclaration );
+			sb.AppendLine( feature.Value.CreateFeatureDeclaration() );
 		}
 		
+		//if ( Graph.FeatureRules.Any() )
+		//{
+		//	foreach ( var rule in Graph.FeatureRules )
+		//	{
+		//		if ( rule.IsValid )
+		//		{
+		//			sb.AppendLine( $"FeatureRule(Allow1( {String.Join( ", ", rule.Features )} ), \"{rule.HoverHint}\");" );
+		//		}
+		//	}
+		//}
+
 		return sb.ToString();
 	}
 
@@ -1151,17 +1448,30 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		if ( ShaderFeatures.Any() )
+		{
+			sb.AppendLine( $"#ifndef SWITCH_TRUE" );
+			sb.AppendLine( $"#define SWITCH_TRUE 1" );
+			sb.AppendLine( $"#endif" );
+
+			sb.AppendLine( $"#ifndef SWITCH_FALSE" );
+			sb.AppendLine( $"#define SWITCH_FALSE 0" );
+			sb.AppendLine( $"#endif" );
+
+			sb.AppendLine();
+		}
+
 		var blendMode = Graph.BlendMode;
 		var alphaTest = blendMode == BlendMode.Masked ? 1 : 0;
 		var translucent = blendMode == BlendMode.Translucent ? 1 : 0;
 
-		sb.AppendLine($"#ifndef S_ALPHA_TEST");
-		sb.AppendLine($"#define S_ALPHA_TEST {alphaTest}");
-		sb.AppendLine($"#endif");
+		sb.AppendLine( $"#ifndef S_ALPHA_TEST" );
+		sb.AppendLine( $"#define S_ALPHA_TEST {alphaTest}" );
+		sb.AppendLine( $"#endif" );
 
-		sb.AppendLine($"#ifndef S_TRANSLUCENT");
-		sb.AppendLine($"#define S_TRANSLUCENT {translucent}");
-		sb.AppendLine($"#endif");
+		sb.AppendLine( $"#ifndef S_TRANSLUCENT" );
+		sb.AppendLine( $"#define S_TRANSLUCENT {translucent}" );
+		sb.AppendLine( $"#endif" );
 
 		return sb.ToString();
 	}
@@ -1171,114 +1481,34 @@ public sealed partial class GraphCompiler
 		var ppcb = new PostProcessingComponentBuilder( postProcessiComponentInfo );
 		var type = "";
 
-		foreach (var parameter in ShaderResult.Parameters)
+		foreach ( var parameter in ShaderResult.Parameters )
 		{
 			type = parameter.Value.Result.ComponentType.ToSimpleString();
 			
 			if ( type is "System.Boolean" )
 			{
-				ppcb.AddBoolProperty(parameter.Key, parameter.Value.Options);
+				ppcb.AddBoolProperty( parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "float" )
 			{
-				ppcb.AddFloatProperty(type, parameter.Key, parameter.Value.Options);
+				ppcb.AddFloatProperty( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Vector2" )
 			{
-				ppcb.AddVector2Property(type, parameter.Key, parameter.Value.Options);
+				ppcb.AddVector2Property( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Vector3" )
 			{
-				ppcb.AddVector3Property(type, parameter.Key, parameter.Value.Options);
+				ppcb.AddVector3Property( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Color" )
 			{
-				ppcb.AddVector4Property(type, parameter.Key, parameter.Value.Options);
+				ppcb.AddVector4Property( type, parameter.Key, parameter.Value.Options );
 			}
 		}
 
 			return ppcb.Finish( className, shaderPath );
 	}
-
-	// <summary>
-	// Generate shader code, will evaluate the graph if it hasn't already.
-	// Different code is generated for preview and not preview.
-	// </summary>
-	//public (string,string) Generate()
-	//{
-	//	// May have already evaluated and there's errors
-	//	if (Errors.Any())
-	//		return (string.Empty, string.Empty); //null;
-	//
-	//	// If we have any errors after evaluating, no point going further
-	//	if ( Errors.Any() )
-	//		return (string.Empty, string.Empty);
-	//
-	//	var shader_tempalte = "";
-	//	var shaderCode = "";
-	//
-	//	// Handle Lit & Unlit shaders as well as Post Processing and regular material shaders.
-	//	if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
-	//	{
-	//		shader_tempalte = ShaderTemplateBlending.Code;
-	//	}
-	//	else if ( Graph.MaterialDomain is MaterialDomain.Surface )
-	//	{
-	//		if ( Graph.ShadingModel is ShadingModel.Lit )
-	//		{
-	//			shader_tempalte = ShaderTemplateLit.Code;
-	//		}
-	//		else
-	//		{
-	//			shader_tempalte = ShaderTemplateUnlit.Code;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		var postprocessing_material = GeneratePostprocessingMaterial();
-	//
-	//		shaderCode = string.Format( ShaderTemplatePostProcessing.Code,
-	//			Graph.Description,  // {0}
-	//			IndentString( GenerateGlobals(), 1 ), // {1}
-	//			IndentString( GenerateLocals(), 2 ), // {2}
-	//			IndentString( postprocessing_material, 2 ), // {3}
-	//			IndentString( GenerateFunctions( PixelResult ), 1 ) // {4}
-	//		);
-	//
-	//		var postProcessClass = "";
-	//
-	//
-	//		if (Graph.postProcessComponentInfo.GenerateClass is true)
-	//		{
-	//			postProcessClass = GeneratePostProcessingComponent(
-	//			Graph.postProcessComponentInfo,
-	//			$"{CleanName(_Asset.Name)}_PostProcess",
-	//			$"{System.IO.Path.ChangeExtension(_Asset.Path, ".shader")}"
-	//			);
-	//		}
-	//
-	//		return (shaderCode, postProcessClass);
-	//	}
-	//
-	//	var material = GenerateMaterial();
-	//
-	//	shaderCode = string.Format( shader_tempalte,
-	//	Graph.Description,
-	//	IndentString( GenerateFeatures(), 1 ),
-	//	IndentString( GenerateCommon(), 1 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateLocals(), 2 ),
-	//	IndentString( material, 2 ),
-	//	IndentString( GenerateVertex(), 2 ),
-	//	IndentString( GenerateGlobals(), 1 ),
-	//	IndentString( GenerateVertexComboRules(), 1 ),
-	//	IndentString( GeneratePixelComboRules(), 1 ),
-	//	IndentString( GenerateFunctions( PixelResult ), 1 ),
-	//	IndentString( GenerateFunctions( VertexResult ), 1 ) );
-	//
-	//
-	//	return ( shaderCode , string.Empty );
-	//}
 
 	/// <summary>
 	/// Generate shader code, will evaluate the graph if it hasn't already.
@@ -1286,10 +1516,18 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public string Generate()
 	{
+		if ( Graph.IsSubgraph )
+		{
+			if ( !Graph.Nodes.OfType<SubgraphOutput>().Any() )
+			{
+				NodeErrors.Add( new DummyNode(), [ $"There must be atleast one Subgraph Output node!" ] );
+			}
+		}
+
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
 			return null;
-
+		
 		var material = GenerateMaterial();
 		var pixelOutput = GeneratePixelOutput();
 
@@ -1322,18 +1560,6 @@ public sealed partial class GraphCompiler
 		);
 	}
 
-	//private static string GenerateFunctions( CompileResult result )
-	//{
-	//	var sb = new StringBuilder();
-	//
-	//	foreach ( var entry in result.Functions )
-	//	{
-	//		sb.Append( entry.Value );
-	//	}
-	//
-	//	return sb.ToString();
-	//}
-
 	private static string GenerateFunctions( CompileResult result )
 	{
 		if ( !result.Functions.Any() )
@@ -1351,10 +1577,10 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-
-
 	public static string IndentString( string input, int tabCount )
 	{
+		if ( tabCount == 0 ) return input;
+
 		if ( string.IsNullOrWhiteSpace( input ) )
 			return input;
 
@@ -1399,7 +1625,7 @@ public sealed partial class GraphCompiler
 		
 		foreach ( var include in pixelIncludes )
 		{
-			sb.AppendLine($"#include \"{include}\"");
+			sb.AppendLine( $"#include \"{include}\"" );
 		}
 		
 		sb.AppendLine();
@@ -1430,9 +1656,9 @@ public sealed partial class GraphCompiler
 			if ( resultNode == null )
 				return null;
 			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3(1.00,1.00,1.00)";
+			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3( 1.0f, 1.0f, 1.0f )";
 			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.00";
+			string opacity = opacityResult.Cast( 1 ) ?? "1.0f";
 		
 			return $"return float4( {albedo}, {opacity} );";
 		}
@@ -1482,36 +1708,30 @@ public sealed partial class GraphCompiler
 	private string GenerateGlobals()
 	{
 		var sb = new StringBuilder();
-		
-		// Static & Dynamic shader feature combos
-		foreach ( var feature in ShaderResult.ShaderFeatures )
+
+		foreach ( var feature in ShaderFeatures )
 		{
-			if ( feature.Value.Item1.IsDynamicCombo is not true )
+			//SGPLog.Info( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );", IsPreview );
+			
+			var combo = feature.Value.CreateCombo( feature.Key, IsPreview );
+
+			if ( feature.Value.IsDynamicCombo || IsPreview )
 			{
-				sb.Append( $"StaticCombo( {feature.Value.Item1.ToStaticComboString()}, {feature.Value.Item1.ToFeatureName()}, Sys( ALL ) );" );
+				sb.AppendLine( $"DynamicCombo( {combo}, 0..{feature.Value.OptionsCount - 1}, Sys( ALL ) );" );
 			}
 			else
 			{
-				sb.Append( $"DynamicCombo( {feature.Value.Item1.ToDynamicComboString()}, 0..{feature.Value.Item1.OptionsCount}, Sys( PC ) )" );
+				sb.AppendLine( $"StaticCombo( {combo}, {feature.Value.CreateFeature}, Sys( ALL ) );" );
 			}
-		
+
 			sb.AppendLine();
 		}
-		
+
 		foreach ( var global in ShaderResult.Globals )
 		{
-		    sb.AppendLine( global.Value );
+			sb.AppendLine( global.Value );
 		}
-		
-		foreach ( var Sampler in ShaderResult.SamplerStates )
-		{
-			sb.Append( $"{Sampler.Value.CreateSampler( Sampler.Key )} <" )
-			  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
-			  .Append( $" AddressU( {Sampler.Value.AddressU.ToString().ToUpper()} );" )
-			  .Append( $" AddressV( {Sampler.Value.AddressV.ToString().ToUpper()} ); >;" )
-			  .AppendLine();
-		}
-		
+
 		if ( IsPs )
 		{
 			if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
@@ -1529,9 +1749,17 @@ public sealed partial class GraphCompiler
 				  .Append( $" SrgbRead( {result.Value.SrgbRead} ); >;" )
 				  .AppendLine();
 			}
-		
+
+			//foreach ( var result in ShaderResult.SamplerStates )
+			//{
+			//	sb.AppendLine( $"SamplerState {result.Key} < Attribute( \"{result.Key}\" ); >;" );
+			//}
+
 			foreach ( var result in ShaderResult.Attributes )
 			{
+				if ( result.Value is Float2x2 || result.Value is Float3x3 || result.Value is Float4x4 )
+					continue;
+
 				var typeName = result.Value switch
 				{
 					Color _ => "float4",
@@ -1539,14 +1767,12 @@ public sealed partial class GraphCompiler
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
 					float _ => "float",
-		            int _ => "float", // treat int internally as a float.
-		            bool _ => "bool",
-					Float2x2 _ => "float2x2",
-					Float3x3 _ => "float3x3",
-					Float4x4 _ => "float4x4",
+					int _ => "float", // treat int internally as a float.
+					bool _ => "bool",
+					Sampler _ => "SamplerState",
 					_ => null
 				};
-		
+				
 				sb.AppendLine( $"{typeName} {result.Key} < Attribute( \"{result.Key}\" ); >;" );
 			}
 		
@@ -1555,6 +1781,24 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
+			foreach ( var sampler in ShaderResult.SamplerStates )
+			{
+				if ( sampler.Value.IsAttribute )
+				{
+					sb.AppendLine( $"SamplerState g_s{sampler.Key} < Attribute( \"{sampler.Key}\" ); >;" );
+				}
+				else
+				{
+					sb.Append( $"SamplerState g_s{sampler.Key} <" )
+					  .Append( $" Filter( {sampler.Value.Filter.ToString().ToUpper()} );" )
+					  .Append( $" AddressU( {sampler.Value.AddressModeU.ToString().ToUpper()} );" )
+					  .Append( $" AddressV( {sampler.Value.AddressModeV.ToString().ToUpper()} );" )
+					  .Append( $" AddressW( {sampler.Value.AddressModeW.ToString().ToUpper()} );" )
+					  .Append( $" MaxAniso( {sampler.Value.MaxAnisotropy.ToString()} ); >;" )
+					  .AppendLine();
+				}
+			}
+
 			foreach ( var result in ShaderResult.TextureInputs )
 			{
 				// If we're an attribute, we don't care about texture inputs
@@ -1593,6 +1837,8 @@ public sealed partial class GraphCompiler
 
 			foreach ( var parameter in ShaderResult.Parameters )
 			{
+				var resultType = parameter.Value.Result.ResultType;
+
 				sb.AppendLine( $"{parameter.Value.Result.TypeName} {parameter.Key} < {parameter.Value.Options} >;" );
 			}
 		}
@@ -1603,6 +1849,108 @@ public sealed partial class GraphCompiler
 		}
 		
 		return sb.ToString();
+	}
+
+	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult localResult, NodeResult funcResult)> shaderResults, out (NodeResult localResult, NodeResult funcResult) lastResult, bool preview, bool appendOverride = false, int indentLevel = 0 )
+	{
+		lastResult = (new NodeResult(), new NodeResult());
+
+		foreach ( var result in shaderResults )
+		{
+			lastResult = result;
+			var shouldSkip = result.funcResult.SkipLocalGeneration;
+
+			if ( !shouldSkip || appendOverride )
+			{
+				string comboBody = string.Empty;
+
+				if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
+				{
+					comboBody = comboSwitchBody;
+
+					if ( !string.IsNullOrWhiteSpace( comboSwitchBody ) )
+					{
+						sb.AppendLine( IndentString( comboSwitchBody, indentLevel ) );
+					}
+				}
+
+				if ( ShaderResult.VoidLocals.Any() && ShaderResult.VoidLocals.ContainsKey( result.funcResult.VoidLocalTargetID ) )
+				{
+					var data = ShaderResult.VoidLocals[result.funcResult.VoidLocalTargetID];
+					sb.AppendLine();
+
+					if ( !data.AlreadyDefined )
+					{
+						ShaderResult.VoidLocals[result.funcResult.VoidLocalTargetID] = data with { AlreadyDefined = true, InlineCode = false };
+
+						// Init all the output results.
+						foreach ( var outResult in data.TargetResults )
+						{
+							sb.AppendLine( IndentString( data.ResultInit( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
+						}
+
+						sb.AppendLine( IndentString( $"{data.FunctionCall};", indentLevel ) );
+					}
+				}
+
+				if ( ShaderResult.CustomCodeResults.Count > 0 && result.localResult.Metadata.Count > 0 )
+				{
+					var voidData = ShaderResult.CustomCodeResults
+						.FirstOrDefault( vd => vd.TargetResults.Any( targetData => targetData.UserAssignedName == result.localResult.GetMetadata<string>( nameof( MetadataType.VoidResultUserDefinedName ) )
+						&& targetData.CompilerAssignedName == result.localResult.Code
+					) );
+
+					if ( voidData.IsValid )
+					{
+						if ( voidData.InlineCode )
+							sb.AppendLine();
+
+						// Init all the output results.
+						foreach ( var outResult in voidData.TargetResults )
+						{
+							sb.AppendLine( IndentString( voidData.ResultInit( outResult.CompilerAssignedName, outResult.ResultType ), indentLevel ) );
+						}
+
+						if ( !voidData.InlineCode )
+						{
+							sb.AppendLine( IndentString( $"{voidData.FunctionCall};", indentLevel ) );
+						}
+						else
+						{
+							sb.AppendLine( IndentString( $"{voidData.FunctionCall}", indentLevel ) );
+						}
+
+					}
+				}
+
+				if ( result.funcResult.ResultType != ResultType.Void )
+				{
+					if ( result.funcResult.ResultType == ResultType.Float2x2
+					 || result.funcResult.ResultType == ResultType.Float3x3
+					 || result.funcResult.ResultType == ResultType.Float4x4 )
+					{
+						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.TypeName}( {result.funcResult.Code} );", indentLevel ) );
+					}
+					else
+					{
+						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.Code};", indentLevel ) );
+					}
+				}
+
+				if ( preview && string.IsNullOrWhiteSpace( comboBody ) )
+				{
+					if ( result.localResult.ResultType == ResultType.Bool )
+					{
+						// TODO : There is no way to know what the actual value of the result is.
+					}
+					else if ( result.localResult.CanPreview && result.localResult.ShouldPreview && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
+					{
+						sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
+					}
+				}
+
+			}
+		}
 	}
 
 	private string GenerateLocals()
@@ -1616,16 +1964,16 @@ public sealed partial class GraphCompiler
 		
 		if ( Debug )
 		{
-		    if ( IsPreview )
-		    {
-		        Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
-		    }
-		    else
-		    {
-		        Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
-		    }
+			if ( IsPreview )
+			{
+				Log.Info($"Registerd Gradient Count for Preview Is : {ShaderResult.Gradients.Count}");
+			}
+			else
+			{
+				Log.Info($"Registerd Gradient Count for Compile Is : {ShaderResult.Gradients.Count}");
+			}
 		}
-		
+
 		foreach ( var gradient in ShaderResult.Gradients )
 		{
 			//Log.Info($"Found Gradient : {gradient.Key}");
@@ -1646,7 +1994,7 @@ public sealed partial class GraphCompiler
 				{
 					Log.Info( $"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}" );
 				}
-		
+
 				// All good with time as the 4th component?
 			sb.AppendLine( $"{gradient.Key}.colors[{colorindex++}] = float4( {color.Value.r}, {color.Value.g}, {color.Value.b}, {color.Time} );" );
 			}
@@ -1658,145 +2006,9 @@ public sealed partial class GraphCompiler
 
 			sb.AppendLine();
 		}
-		
-		foreach ( var voidLocal in ShaderResult.VoidLocalGroups )
-		{
-			sb.AppendLine();
-			
-			foreach ( var data in voidLocal.Value )
-			{
-				var initialValue = "";
-				
-				if ( data.DataType == "bool" )
-				{
-					initialValue = "false";
-				}
-				else if ( data.DataType == "int" )
-				{
-					initialValue = "0";
-				}
-				else if ( data.DataType == "float" )
-				{
-					initialValue = "0.0f";
-				}
-				else if ( data.DataType == "float2" )
-				{
-					initialValue = "float2( 0.0f, 0.0f )";
-				}
-				else if ( data.DataType == "float3" )
-				{
-					initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-				}
-				else if ( data.DataType == "float4" )
-				{
-					initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-				}
-				
-				sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
-			}
-		}
-		
-		sb.AppendLine();
-		
-		string TrueIndex = "0";
-		
-		if ( IsPreview )
-		{
-			int localId = 1;
-			
-			foreach ( var result in ShaderResult.Results )
-			{
-				if ( result.Item2.ResultType is ResultType.TextureObject )
-				{
-					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-					sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item2.Code}.Sample( g_sAniso, i.vTextureCoords.xy );" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float2x2 )
-				{
-					sb.AppendLine( $"float2x2 {result.Item1} = float2x2( {result.Item2.Code} );" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float3x3 )
-				{
-					sb.AppendLine( $"float3x3 {result.Item1} = float3x3( {result.Item2.Code} );" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float4x4 )
-				{
-					sb.AppendLine( $"float4x4 {result.Item1} = float4x4( {result.Item2.Code} );" );
-				}
-				else
-				{
-					if ( result.Item2.ResultType is ResultType.Void )
-					{
-						sb.AppendLine();
-		
-						sb.AppendLine( $"{result.Item2.Code}" );
-		
-						sb.AppendLine();
-					}
-					else
-					{
-						sb.AppendLine( $"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};" );
-						sb.AppendLine( $"if ( g_iStageId == {localId++} ) return {result.Item1.Cast( 4, 1.0f )};" );
-					}
-				}
-				
-				foreach ( var feature in ShaderResult.ShaderFeatures )
-				{
-					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
-					{
-						TrueIndex = feature.Value.Item2 ? "0" : "1";
-						sb.AppendLine( string.Format(feature.Value.Item1.FeatureBody, TrueIndex ) );
-					}
-				}
-			}
-		}
-		else
-		{
-			foreach ( var result in ShaderResult.Results )
-			{
-				if ( result.Item2.ResultType is ResultType.TextureObject )
-				{
-					sb.AppendLine( $"Texture2D {result.Item1} = {result.Item2.Code};" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float2x2 )
-				{
-					sb.AppendLine( $"float2x2 {result.Item1} = float2x2({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float2x2({result.Item2.Code});" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float3x3 )
-				{
-					sb.AppendLine( $"float3x3 {result.Item1} = float3x3({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float3x3({result.Item2.Code});" );
-				}
-				else if ( result.Item2.ResultType is ResultType.Float4x4 )
-				{
-					sb.AppendLine( $"float4x4 {result.Item1} = float4x4({result.Item2.Code});" );
-					//Log.Info( $"Generated Local : float4x4({result.Item2.Code});" );
-				}
-				else
-				{
-					if ( result.Item2.ResultType is ResultType.Void )
-					{
-						sb.AppendLine();
-						sb.AppendLine( $"{result.Item2.Code}" );
-						sb.AppendLine();
-					}
-					else
-					{
-						sb.AppendLine($"{result.Item2.TypeName} {result.Item1} = {result.Item2.Code};");
-					}
-				}
-				
-				foreach ( var feature in ShaderResult.ShaderFeatures )
-				{
-					if ( result.Item1.Code == feature.Value.Item1.TrueResult )
-					{
-						sb.AppendLine( string.Format( feature.Value.Item1.FeatureBody, TrueIndex) );
-					}
-				}
-			}
-		}
-		
+
+		GenerateLocalResults( ref sb, ShaderResult.Results, out _, IsPreview, false, 0 );
+
 		return sb.ToString();
 	}
 
@@ -1806,10 +2018,10 @@ public sealed partial class GraphCompiler
 		Subgraph = null;
 		SubgraphStack.Clear();
 
-		if (Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess) return "";
-
+		if ( Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess ) return "";
 
 		var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
+
 		if ( resultNode == null )
 			return null;
 
@@ -1859,13 +2071,38 @@ public sealed partial class GraphCompiler
 			sb.AppendLine( $"m.{property.Name} = {result.Cast( componentCount )};" );
 		}
 
-		if ( resultNode is FunctionResult functionResult )
+		if ( Graph.IsSubgraph )
 		{
-			functionResult.AddMaterialOutputs( this, sb, visited );
+			var subgraphOutputs = Graph.Nodes.OfType<SubgraphOutput>();
+			var reservedPreview = new Dictionary<string, BaseNodePlus>();
+
+			foreach ( var subgraphOutput in subgraphOutputs )
+			{
+				if ( reservedPreview.ContainsKey( $"{subgraphOutput.SubgraphFunctionOutput.Preview}" ) )
+				{
+					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.SubgraphFunctionOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.SubgraphFunctionOutput.Preview}\" as its preview type"] );
+					continue;
+				}
+
+				if ( subgraphOutput.SubgraphFunctionOutput.Preview == SubgraphOutputPreviewType.None )
+					continue;
+
+				reservedPreview.Add( $"{subgraphOutput.SubgraphFunctionOutput.Preview}", subgraphOutput );
+
+				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.SubgraphFunctionOutput.Preview, out var errors );
+
+				if ( errors.Any() )
+				{
+					NodeErrors.Add( new DummyNode(), errors );
+
+					return "";
+				}
+			}
+
+			reservedPreview.Clear();
 		}
 
 		visited.Clear();
-
 		CurrentResultInput = null;
 
 		return sb.ToString();
@@ -1883,7 +2120,7 @@ public sealed partial class GraphCompiler
 
 		var sb = new StringBuilder();
 
-		switch (Graph.MaterialDomain)
+		switch ( Graph.MaterialDomain )
 		{
 		case MaterialDomain.Surface:
 				sb.AppendLine(@"
@@ -1906,8 +2143,8 @@ i.vPaintValues = v.vColorPaintValues;
 case MaterialDomain.PostProcess:
 				sb.AppendLine(@"
 PixelInput i;
-i.vPositionPs = float4(v.vPositionOs.xy, 0.0f, 1.0f );
-i.vPositionWs = float3(v.vTexCoord, 0.0f);
+i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
+i.vPositionWs = float3( v.vTexCoord, 0.0f );
 ");
 				break;
 		}
@@ -1916,63 +2153,14 @@ i.vPositionWs = float3(v.vTexCoord, 0.0f);
 		
 		if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
 		{
-			result = Result(connection);
+			result = Result( connection );
 			
 			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
-				
-				sb.AppendLine();
-				
-				foreach ( var group in ShaderResult.VoidLocalGroups )
-				{
-					sb.AppendLine();
-					
-					foreach ( var data in group.Value )
-					{
-						var initialValue = "";
-						
-						if ( data.DataType == "bool" )
-						{
-						    initialValue = "false";
-						}
-						else if ( data.DataType == "int" )
-						{
-						    initialValue = "0";
-						}
-						else if ( data.DataType == "float" )
-						{
-						    initialValue = "0.0f";
-						}
-						else if ( data.DataType == "float2" )
-						{
-						    initialValue = "float2( 0.0f, 0.0f )";
-						}
-						else if ( data.DataType == "float3" )
-						{
-						    initialValue = "float3( 0.0f, 0.0f, 0.0f )";
-						}
-						else if ( data.DataType == "float4" )
-						{
-						    initialValue = "float4( 0.0f, 0.0f, 0.0f, 0.0f )";
-						}
-						
-						sb.AppendLine( $"{data.DataType} {data.CompilerName} = {initialValue};");
-					}
-				}
-				
-				foreach ( var local in ShaderResult.Results)
-				{
-					if ( local.Item2.ResultType is ResultType.Void )
-					{
-					    sb.AppendLine( $"{local.Item2.Code};" );
-					}
-					else
-					{
-					    sb.AppendLine( $"{local.Item2.TypeName} {local.Item1} = {local.Item2.Code};" );
-					}
-				}
-				
+
+				GenerateLocalResults( ref sb, ShaderResult.Results, out _, false, false, 0 );
+
 				sb.AppendLine( $"i.vPositionWs.xyz += { result.Cast( componentCount ) };" );
 				sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );
 			}

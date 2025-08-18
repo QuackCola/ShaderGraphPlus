@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Vertex normal in world space
@@ -6,6 +6,9 @@
 [Title( "World Normal" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldNormal : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalWs", compiler.IsNotPreview );
@@ -17,6 +20,9 @@ public sealed class WorldNormal : ShaderNodePlus
 [Title( "World Tangent" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldTangent : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func U => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vTangentUWs", compiler.IsNotPreview );
@@ -31,6 +37,10 @@ public sealed class WorldTangent : ShaderNodePlus
 [Title( "Is Front Face" ), Category( "Variables" ), Icon( "start" )]
 public sealed class IsFrontFace : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Output( typeof( int ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -45,12 +55,13 @@ public sealed class IsFrontFace : ShaderNodePlus
 [Title( "Object Space Normal" ), Category( "Variables" ), Icon( "view_in_ar" )]
 public sealed class ObjectSpaceNormal : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalOs", compiler.IsNotPreview );
 }
-
-
 
 /// <summary>
 /// Return the current screen position of the object
@@ -58,53 +69,55 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 [Title( "Screen Position" ), Category( "Variables" ), Icon( "install_desktop" )]
 public sealed class ScreenPosition : ShaderNodePlus
 {
-    // Note: We could make all of these constants but I don't like the situation where it can generated something like
-    // "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
+	[Hide]
+	public override int Version => 1;
 
-    public enum ScreenPositionMode
+	// Note: We could make all of these constants but I don't like the situation where it can generated something like
+	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
+
+	public enum ScreenPositionMode
     {
         Raw,
         Center,
         //Tiled,
         //Pixel
-
     }
 
     [Hide]
     public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
-	private string GetMode( string components, GraphCompiler compiler)
+	private string GetMode( string components, GraphCompiler compiler )
 	{
         string returnCall = string.Empty;
 
-        switch (Mode)
+        switch ( Mode )
         {
             case ScreenPositionMode.Raw:
-                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
+                returnCall = $"{( compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}" )}";
                 break;
             case ScreenPositionMode.Center:
-                returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1")}";
+                returnCall = $"{( compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1" )}";
                 break;
         }
 
         return returnCall;
     }
 
-    [Output(typeof(Vector3))]
+    [Output( typeof( Vector3 ) )]
 	[Hide]
-	public NodeResult.Func XYZ => (GraphCompiler compiler) => new (ResultType.Vector3, GetMode("xyz", compiler));
+	public NodeResult.Func XYZ => ( GraphCompiler compiler ) => new ( ResultType.Vector3, GetMode( "xyz", compiler ) );
  
-	[Output(typeof(Vector2))]
+	[Output( typeof( Vector2 ) )]
 	[Hide]
-	public NodeResult.Func XY => ( GraphCompiler compiler ) => new(ResultType.Vector2, GetMode("xy", compiler));
+	public NodeResult.Func XY => ( GraphCompiler compiler ) => new( ResultType.Vector2, GetMode( "xy", compiler ) );
 
-    [Output(typeof(float))]
+    [Output( typeof( float ) )]
 	[Hide]
-	public NodeResult.Func Z => ( GraphCompiler compiler ) => new(ResultType.Vector3, GetMode("z", compiler));
+	public NodeResult.Func Z => ( GraphCompiler compiler ) => new( ResultType.Vector3, GetMode( "z", compiler ) );
 
-    [Output(typeof(float))]
+    [Output( typeof( float ) )]
 	[Hide]
-	public NodeResult.Func W => (GraphCompiler compiler) => new(ResultType.Float, GetMode("w", compiler));
+	public NodeResult.Func W => ( GraphCompiler compiler ) => new( ResultType.Float, GetMode( "w", compiler ) );
 }
 
 /// <summary>
@@ -113,6 +126,9 @@ public sealed class ScreenPosition : ShaderNodePlus
 [Title( "Screen Coordinate" ), Category( "Variables" ), Icon( "tv" )]
 public sealed class ScreenCoordinate : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -127,6 +143,9 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 [Title( "Projected Screen Space" ), Category( "Variables" )]
 public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector2 ) ), Title( "UV" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -141,6 +160,9 @@ public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 [Title( "World Space Position" ), Category( "Variables" ), Icon( "public" )]
 public sealed class WorldPosition : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	public bool NoHighPrecisionLightingOffsets { get; set; } = false;
 
 	[Output( typeof( Vector3 ) )]
@@ -157,6 +179,9 @@ public sealed class WorldPosition : ShaderNodePlus
 [Title( "Object Space Position" ), Category( "Variables" ), Icon( "view_in_ar" )]
 public sealed class ObjectPosition : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vPositionOs" );
@@ -168,6 +193,8 @@ public sealed class ObjectPosition : ShaderNodePlus
 [Title( "View Direction" ), Category( "Variables" ), Icon( "cameraswitch" )]
 public sealed class ViewDirection : ShaderNodePlus
 {
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -182,6 +209,9 @@ public sealed class ViewDirection : ShaderNodePlus
 [Title( "Vertex Color" ), Category( "Variables" ), Icon( "format_color_fill" )]
 public sealed class VertexColor : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func RGB => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vColor.rgb" );
@@ -197,6 +227,10 @@ public sealed class VertexColor : ShaderNodePlus
 [Title( "Vertex Blend" ), Category( "Variables" ), Icon( "blender" )]
 public sealed class VertexBlend : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Output( typeof( float ) )]
 	[Hide]
 	public static NodeResult.Func R => ( GraphCompiler compiler ) => new( ResultType.Float, "i.vBlendValues.r" );
@@ -220,6 +254,10 @@ public sealed class VertexBlend : ShaderNodePlus
 [Title( "Vertex Paint" ), Category( "Variables" ), Icon( "brush" )]
 public sealed class VertexPaint : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func RGB => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vPaintValues.rgb" );
@@ -235,6 +273,10 @@ public sealed class VertexPaint : ShaderNodePlus
 [Title( "Tint" ), Category( "Variables" ), Icon( "palette" )]
 public sealed class Tint : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[Hide, Output( typeof( Color ) )]
 	public static NodeResult.Func RGBA => ( GraphCompiler compiler ) => new( ResultType.Color, "i.vTintColor" );
 }

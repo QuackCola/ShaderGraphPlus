@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 public struct NodeInput : IValid
 {
@@ -18,6 +15,10 @@ public struct NodeInput : IValid
 	[Hide, Browsable( false )]
 	[JsonIgnore]
 	public string SubgraphNode { get; set; }
+	
+	[Hide, Browsable( false )]
+	[JsonIgnore]
+	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; }
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
@@ -35,6 +36,7 @@ public struct NodeInput : IValid
 		Identifier = "";
 		Output = "";
 		Subgraph = null;
+		ComboSwitchInfo = default;
 	}
 
 	public static bool operator ==( NodeInput a, NodeInput b ) => a.Identifier == b.Identifier && a.Output == b.Output && a.Subgraph == b.Subgraph && a.SubgraphNode == b.SubgraphNode;

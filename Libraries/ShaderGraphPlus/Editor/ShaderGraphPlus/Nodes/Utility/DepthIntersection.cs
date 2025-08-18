@@ -1,4 +1,4 @@
-﻿namespace Editor.ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// WIP Depth Intersection Effect. May not be "Correct".
@@ -6,6 +6,8 @@
 [Title("Depth Intersection"), Category( "Utility" ), Icon( "join_inner" )]
 public sealed class DepthIntersectionNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
 
 	[Hide]
 	public static string DepthIntersect => @"
@@ -19,7 +21,7 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 
 	float l_3 = smoothstep( l_2, flDepthOffset, Depth );
 
-	/ One Minus the result before return
+	// One Minus the result before return
 	return 1 - l_3;
 }
 ";
@@ -51,7 +53,7 @@ float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
 		var coords = "i.vPositionSs.xy";
 		var worldpos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
 
-		var depthoffset = compiler.ResultOrDefault(DepthOffset, DefaultDepthOffset);
+		var depthoffset = compiler.ResultOrDefault( DepthOffset, DefaultDepthOffset );
 
 		string func = compiler.RegisterFunction( DepthIntersect );
 		string funcCall = compiler.ResultFunction( func, $"{worldpos}, {coords}, {depthoffset}" );

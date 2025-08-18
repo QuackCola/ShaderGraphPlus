@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Editor.ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 public enum TextureExtension
 {
@@ -37,10 +35,51 @@ public enum TextureColorSpace
 
 public enum TextureFormat
 {
-	DXT5,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (1).
+	/// Usage : Diffuse Map, Roughness Map, Normal Map
+	/// </summary>
 	DXT1,
-	RGBA8888,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (4).
+	/// Usage : Diffuse Map with Transparency
+	/// </summary>
+	DXT3,
+	/// <summary>
+	/// RGB color (5:6:5) and alpha (8).
+	/// Usage : Diffuse Map with High Quality Transparency
+	/// </summary>
+	DXT5,
+	/// <summary>
+	/// Three-channel HDR color (16:16:16).
+	/// Usage : Skyboxes
+	/// </summary>
+	BC6H,
+	/// <summary>
+	/// RGB (4-7 bits per channel) and alpha (0-8 bits).
+	/// Usage : Diffuse Map, Roughness Map, Normal Map
+	/// </summary>
 	BC7,
+	/// <summary>
+	/// Single-channel (8).
+	/// Usage : Height Map, Displacement Map, Ambient Occlusion Map
+	/// </summary>
+	ATI1N,
+	/// <summary>
+	/// Two-channel color (8:8).
+	/// Usage :
+	/// </summary>
+	ATI2N,
+	/// <summary>
+	/// RGB color and alpha (8 bits each).
+	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
+	/// </summary>
+	RGBA8888 ,
+	/// <summary>
+	/// Three-channel HDR color and alpha (16 bits each).
+	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
+	/// </summary>
+	RGBA16161616F
 }
 
 public enum TextureType
@@ -67,27 +106,38 @@ public struct TextureInput
 	/// <summary>
 	/// Name that shows up in material editor
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public string Name { get; set; }
+
+	/// <summary>
+	/// Image that is used for preview.
+	/// </summary>
+	[ImageAssetPath]
+	public string PreviewImage { get; set; }
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public bool IsAttribute { get; set; }
 
 	/// <summary>
 	/// Default color that shows up in material editor when using color control
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public Color Default { get; set; }
 
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
 	/// </summary>
 	[ShowIf( nameof( ShowExtension ), true )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureExtension Extension { get; set; }
 
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public string CustomExtension { get; set; }
 
     public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
@@ -114,21 +164,25 @@ public struct TextureInput
 	/// <summary>
 	/// Processor used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureProcessor Processor { get; set; }
 
 	/// <summary>
 	/// Color space used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureColorSpace ColorSpace { get; set; }
 
 	/// <summary>
 	/// Format used when compiling this texture
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public TextureFormat ImageFormat { get; set; }
 
 	/// <summary>
 	/// Sample this texture as srgb
 	/// </summary>
+	[HideIf( nameof( IsSubgraph ), true )]
 	public bool SrgbRead { get; set; }
 
 	/// <summary>
@@ -140,12 +194,14 @@ public struct TextureInput
 	/// Primary group
 	/// </summary>
 	[InlineEditor( Label = false ), Group( "Group" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public UIGroup PrimaryGroup { get; set; }
 
 	/// <summary>
 	/// Group within the primary group
 	/// </summary>
 	[InlineEditor( Label = false ), Group( "Sub Group" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public UIGroup SecondaryGroup { get; set; }
 
 	[JsonIgnore, Hide]
@@ -171,9 +227,39 @@ public struct TextureInput
 			return default;
 		}
 	}
+
+#region Graph Editor Only
+	[JsonIgnore, Hide]
+	public StaticSwitchBlock SwitchBlock { get; set; }
+
+	[JsonIgnore, Hide]
+	public string BoundNode { get; set; }
+
+	[JsonIgnore, Hide]
+	public string BoundNodeId { get; set; }
+#endregion Graph Editor Only
+
+	public void SetOrder( int order )
+	{
+		Priority = order;
+	}
+
+	public void SetIsSubgraph( bool isSubgraph )
+	{
+		IsSubgraph = isSubgraph;
+	}
+
+	[JsonIgnore, Hide]
+	public bool IsSubgraph { get; set; }
+
 }
 
-public struct TextureObject
+public struct Texture2DObject
+{
+
+}
+
+public struct TextureCubeObject
 {
 
 }

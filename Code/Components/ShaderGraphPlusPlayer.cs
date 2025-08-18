@@ -22,7 +22,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 400f, 1f )]
+	[Range( 0.0f, 400.0f )]
+	[Step( 1.0f )]
 	public float WalkSpeed { get; set; } = 120f;
 
 	/// <summary>
@@ -30,7 +31,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 800f, 1f )]
+	[Range( 0.0f, 800.0f )]
+	[Step( 1.0f )]
 	public float RunSpeed { get; set; } = 250f;
 
 	/// <summary>
@@ -38,7 +40,8 @@ public sealed class ShaderGraphPlusPlayer : Component
 	/// </summary>
 	[Property]
 	[Category( "Stats" )]
-	[Range( 0f, 1000f, 10f )]
+	[Range( 0.0f, 1000.0f )]
+	[Step( 1.0f )]
 	public float JumpStrength { get; set; } = 400f;
 
 	/// <summary>
@@ -60,7 +63,7 @@ public sealed class ShaderGraphPlusPlayer : Component
 	{
 		EyeAngles += Input.AnalogLook;
 		EyeAngles = EyeAngles.WithPitch( MathX.Clamp( EyeAngles.pitch, -80f, 80f ) );
-		Transform.Rotation = Rotation.FromYaw( EyeAngles.yaw );
+		WorldRotation = Rotation.FromYaw( EyeAngles.yaw );
 
 		if ( Camera != null )
 			Camera.Transform.Local = _initialCameraTransform.RotateAround( EyePosition, EyeAngles.WithYaw( 0f ) );
@@ -73,7 +76,7 @@ public sealed class ShaderGraphPlusPlayer : Component
 		if ( Controller == null ) return;
 
 		var wishSpeed = Input.Down( "Run" ) ? RunSpeed : WalkSpeed;
-		var wishVelocity = Input.AnalogMove.Normal * wishSpeed * Transform.Rotation;
+		var wishVelocity = Input.AnalogMove.Normal * wishSpeed * WorldRotation;
 
 		Controller.Accelerate( wishVelocity );
 

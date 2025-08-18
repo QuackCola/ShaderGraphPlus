@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 public sealed partial class PostProcessingComponentBuilder
 {

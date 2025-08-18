@@ -17,7 +17,7 @@ public sealed class BoomArm : Component
     [Property]
     public Vector3 _socketOffset;
 
-    private Vector3 _finalOffset;
+    //private Vector3 _finalOffset;
 
     protected override void OnStart()
     {

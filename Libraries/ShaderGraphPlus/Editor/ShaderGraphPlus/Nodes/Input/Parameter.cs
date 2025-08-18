@@ -1,69 +1,5 @@
-﻿
-using System;
+﻿namespace ShaderGraphPlus.Nodes;
 
-namespace Editor.ShaderGraphPlus.Nodes;
-
-public abstract class MatrixParameterNode<T> : ShaderNodePlus
-{
-
-    public string Name { get; set; } = "";
-
-    [Hide]
-    public override string Title => string.IsNullOrWhiteSpace(Name) ?
-        $"{DisplayInfo.For(this).Name}" :
-        $"{DisplayInfo.For(this).Name} ({Name})";
-
-    [InlineEditor]
-
-    public T Value { get; set; }
-
-    /// <summary>
-    /// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
-    /// </summary>
-    //[Hide]
-    //public bool IsAttribute { get; set; } = false;
-
-    // Material Editor dosent have a Matrix Property Type.
-    //[Hide]
-    //public ParameterUI UI { get; set; }
-
-}
-
-[Title("Float 2x2"), Category("Constants")]
-public sealed class Float2x2Node : MatrixParameterNode<Float2x2>
-{
-    [Output(typeof(Float2x2)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
-}
-
-[Title("Float 3x3"), Category("Constants")]
-public sealed class Float3x3Node : MatrixParameterNode<Float3x3>
-{
-    [Output(typeof(Float3x3)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
-}
-
-[Title("Float 4x4"), Category("Constants")]
-public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
-{
-    [Output(typeof(Float4x4)), Title("Value")]
-    [Hide]
-    [Editor(nameof(Value))]
-    public NodeResult.Func Result => (GraphCompiler compiler) =>
-    {
-        return compiler.ResultParameter(Name, Value, default, default, false, false, default);
-    };
-}
 
 /// <summary>
 /// Bool value for use in the material editor.
@@ -71,17 +7,40 @@ public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 [Title( "Bool" ), Category( "Constants" ), Icon( "check_box" )]
 public sealed class Bool : ParameterNode<bool>
 {
+	[Hide]
+	public override int Version => 1;
+
+	public Bool() : base()
+	{
+
+	}
+
+	[Hide, JsonIgnore]
+	public override bool CanPreview => false;
+
 	[Output( typeof( bool ) ), Title( "Value" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Bool, $"{compiler.ResultParameter( Name, Value, default, default, false, isAttribute: true, UI )}", true , true);
+		UI = UI with { HideProps = true };
+		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
 }
 
-/// <summary>
-/// Single int32 value stored as a float internally.
-/// </summary>
+// <summary>
+// Single int32 value stored as a float internally.
+// </summary>
 //[Title("Int"), Category("Constants"), Icon("looks_one")]
 //public sealed class Int : ParameterNode<int>
 //{
@@ -108,6 +67,9 @@ public sealed class Bool : ParameterNode<bool>
 [Title( "Float" ), Category( "Constants" ), Icon( "looks_one" )]
 public sealed class Float : ParameterNode<float>
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Hide] public float Step => UI.Step;
 
 	[Output( typeof( float ) ), Title( "Value" )]
@@ -135,6 +97,17 @@ public sealed class Float : ParameterNode<float>
 	{
 		return new( Max );
 	}
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
 }
 
 /// <summary>
@@ -143,6 +116,9 @@ public sealed class Float : ParameterNode<float>
 [Title( "Float2" ), Category( "Constants" ), Icon( "looks_two" )]
 public sealed class Float2 : ParameterNode<Vector2>
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -202,6 +178,17 @@ public sealed class Float2 : ParameterNode<Vector2>
 	{
 		return new( Max.x, Max.y, 0, 0 );
 	}
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
 }
 
 /// <summary>
@@ -210,6 +197,9 @@ public sealed class Float2 : ParameterNode<Vector2>
 [Title( "Float3" ), Category( "Constants" ), Icon( "looks_3" )]
 public sealed class Float3 : ParameterNode<Vector3>
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
@@ -218,6 +208,17 @@ public sealed class Float3 : ParameterNode<Vector3>
 
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
 
 	public Float3()
 	{
@@ -284,12 +285,26 @@ public sealed class Float3 : ParameterNode<Vector3>
 [Title( "Color" ), Category( "Constants" )]
 public sealed class Float4 : ParameterNode<Color>
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
+
+	public override SubgraphInput UpgradeToSubgraphInput()
+	{
+		var subgraphInput = new SubgraphInput();
+		subgraphInput.InputName = Name;
+		subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
+		subgraphInput.PortOrder = PortOrder;
+		subgraphInput.IsRequired = IsAttribute;
+
+		return subgraphInput;
+	}
 
 	[JsonIgnore, Hide]
 	public float ValueR

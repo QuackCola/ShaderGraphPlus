@@ -1,5 +1,4 @@
 global using Editor.NodeEditor;
-global using Editor.ShaderGraphPlus.Nodes;
 global using System;
 global using System.Diagnostics;
 global using System.Reflection;
@@ -13,3 +12,4 @@ global using System.Text.Json;
 global using System.ComponentModel;
 global using System.IO;
 global using System.Text.RegularExpressions;
+

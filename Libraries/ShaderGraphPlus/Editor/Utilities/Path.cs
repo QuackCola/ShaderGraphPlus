@@ -1,4 +1,6 @@
-﻿namespace Editor.ShaderGraphPlus.Utilities;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Utilities;
 
 public static class Path
 {
@@ -54,7 +56,7 @@ public static class Path
 	/// </summary>
 	public static string GetLibaryAbsolutePath( string path )
 	{
-		return FileSystem.Libraries.GetFullPath( path ).Replace( '\\', '/' );
+		return Editor.FileSystem.Libraries.GetFullPath( path ).Replace( '\\', '/' );
 	}
 
     public static string GetProjectCodePath()

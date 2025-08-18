@@ -1,6 +1,11 @@
-﻿namespace Editor.ShaderGraphPlus;
+﻿using Editor;
+using Sandbox.Rendering;
+using ShaderGraphPlus.Nodes;
+using System.Collections.Generic;
 
-[EditorForAssetType("sgpfunc")]
+namespace ShaderGraphPlus;
+
+[EditorForAssetType( "sgpfunc" )]
 public class MainWindowFunc : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => true;
@@ -13,7 +18,7 @@ public class MainWindowFunc : MainWindow, IAssetEditor
 	}
 }
 
-[EditorForAssetType("sgrph")]
+[EditorForAssetType( "sgrph" )]
 [EditorApp("Shader Graph Plus", "gradient", "edit shaders")]
 public class MainWindowShader : MainWindow, IAssetEditor
 {
@@ -29,11 +34,11 @@ public class MainWindowShader : MainWindow, IAssetEditor
 
 public class MainWindow : DockWindow
 {
-    public virtual bool IsSubgraph => false;
-    public virtual string FileType => "Shader Graph Plus";
-    public virtual string FileExtension => "sgrph";
+	public virtual bool IsSubgraph => false;
+	public virtual string FileType => "Shader Graph Plus";
+	public virtual string FileExtension => "sgrph";
 
-    private ShaderGraphPlus _graph;
+	private ShaderGraphPlus _graph;
 	private ShaderGraphPlusView _graphView;
 	private Asset _asset;
 
@@ -45,6 +50,7 @@ public class MainWindow : DockWindow
 	private Output _output;
 	private UndoHistory _undoHistory;
 	private PaletteWidget _palette;
+	private TextView _generatedCodeTextView;
 
 	private readonly UndoStack _undoStack = new();
 
@@ -54,11 +60,17 @@ public class MainWindow : DockWindow
 	private Option _undoMenuOption;
 	private Option _redoMenuOption;
 
+	private Option AutoCompileOption;
+
+	private Option _nodeDebugInfoOption;
+
 	public UndoStack UndoStack => _undoStack;
 
 	private bool _dirty = false;
+	private bool _autoCompile = true;
 
 	private string _generatedCode;
+	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
 	private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private readonly Dictionary<string, Float3x3> _float3x3Attributes = new();
@@ -66,11 +78,13 @@ public class MainWindow : DockWindow
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
-    //private readonly Dictionary<string, int> _intAttributes = new();
-    private readonly Dictionary<string, float> _floatAttributes = new();
+	private readonly Dictionary<string, int> _intAttributes = new();
+	private readonly Dictionary<string, float> _floatAttributes = new();
 	private readonly Dictionary<string, bool> _boolAttributes = new();
+	private readonly Dictionary<string, int> _comboIntAttributes = new();
+	private readonly Dictionary<string, bool> _comboBoolAttributes = new();
 
-	private readonly List<BaseNodePlus> _compiledNodes = new();
+	//private readonly List<BaseNodePlus> _compiledNodes = new();
 
 	private bool _isCompiling = false;
 	private bool _isPendingCompile = false;
@@ -78,40 +92,48 @@ public class MainWindow : DockWindow
 
 	private Menu _recentFilesMenu;
 	private readonly List<string> _recentFiles = new();
-    private Option _fileHistoryBack;
-    private Option _fileHistoryForward;
-    private Option _fileHistoryHome;
-   
-	private List<string> _fileHistory = new();
-    private int _fileHistoryPosition = 0;
+	private Option _fileHistoryBack;
+	private Option _fileHistoryForward;
+	private Option _fileHistoryHome;
 
-    private string _defaultDockState;
+	private List<string> _fileHistory = new();
+	private int _fileHistoryPosition = 0;
+
+	private string _defaultDockState;
+
+	private bool _syncLinkedTextureNodes = false;
+	private string _sourceSyncID = "";
+	private string _sourceParameterName = "";
 
 	public bool CanOpenMultipleAssets => true;
+	public bool EnableNodePreview => _preview.Preview.EnableNodePreview;
 
 	private ProjectCreator ProjectCreator { get; set; }
+
+	private Dictionary<string, ShaderFeatureInfo> ShaderFeatures = new();
+	private List<GraphCompiler.Issue> ComboRegistrationErrors { get; set; } = new();
 
 	public MainWindow()
 	{
 		DeleteOnClose = true;
 
-        Title = FileType;
-        Size = new Vector2( 1700, 1050 );
+		Title = FileType;
+		Size = new Vector2( 1700, 1050 );
 
 		_graph = new();
-        _graph.IsSubgraph = IsSubgraph;
+		_graph.IsSubgraph = IsSubgraph;
 
-        CreateToolBar();
+		CreateToolBar();
 		
-		_recentFiles = FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
-		    .Where(x => System.IO.File.Exists(x)).ToList();
+		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
+			.Where(x => System.IO.File.Exists(x)).ToList();
 		
 		CreateUI();
 		Show();
 		CreateNew();
 
-        OpenProjectCreationDialog();
-    }
+		OpenProjectCreationDialog();
+	}
 
 	private void OpenProjectCreationDialog()
 	{
@@ -128,10 +150,14 @@ public class MainWindow : DockWindow
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
 		
-		// We dont need the project creator when opening an existing asset. So lets forceably close it.
-		ProjectCreator.Close();
-		ProjectCreator = null;
-		
+		if ( ProjectCreator != null )
+		{
+			// We dont need the project creator when opening an existing asset. So lets forceably close it.
+			ProjectCreator.Close();
+			ProjectCreator = null;
+		}
+
+
 		Open( asset.AbsolutePath );
 	}
 
@@ -147,8 +173,20 @@ public class MainWindow : DockWindow
 	public void OnNodeSelected( BaseNodePlus node )
 	{
 		_properties.Target = node != null ? node : _graph;
+		
+		if ( EnableNodePreview && ( node != null && node.CanPreview ) )
+		{
+			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`", EnableNodePreview );
 
-		_preview.SetStage( _compiledNodes.IndexOf( node ) + 1 );
+			_preview.SetStage( node.PreviewID );
+		}
+		else
+		{
+			SGPLog.Info( $"Graph is now the Target.", EnableNodePreview );
+			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
+		}
+
+		//_preview.SetStage( _compiledNodes.IndexOf( node ) + 1 );
 	}
 
 	private void OpenGeneratedShader()
@@ -161,7 +199,7 @@ public class MainWindow : DockWindow
 		{
 			var path = System.IO.Path.ChangeExtension( _asset.AbsolutePath, ".shader" );
 			var asset = AssetSystem.FindByPath( path );
-			Log.Info( path );
+
 			asset?.OpenInEditor();
 		}
 	}
@@ -174,7 +212,7 @@ public class MainWindow : DockWindow
 		}
 
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-		var resourcePath = System.IO.Path.Combine( FileSystem.Temporary.GetFullPath( "/temp" ), assetPath );
+		var resourcePath = System.IO.Path.Combine( Editor.FileSystem.Temporary.GetFullPath( "/temp" ), assetPath );
 		var asset = AssetSystem.FindByPath( resourcePath );
 
 		asset?.OpenInEditor();
@@ -198,7 +236,7 @@ public class MainWindow : DockWindow
 		if (_asset is null)
 			return;
 	
-		var path = FileSystem.Root.GetFullPath($"/screenshots/shadergraphplus/{_asset.Name}.png");
+		var path = Editor.FileSystem.Root.GetFullPath($"/screenshots/shadergraphplus/{_asset.Name}.png");
 		System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
 	
 		_graphView.Capture($"screenshots/shadergraphplus/{_asset.Name}.png");
@@ -209,8 +247,8 @@ public class MainWindow : DockWindow
 	protected virtual void Compile()
 	{
 		_shaderCompileErrors.Clear();
-
-
+		
+		/*
 		var compileErrors = new List<GraphCompiler.Error>();
 		foreach ( var node in _graph.Nodes )
 		{
@@ -220,7 +258,7 @@ public class MainWindow : DockWindow
 				if ( errors.Count > 0 )
 				{
 					_shaderCompileErrors.AddRange( errors );
-
+		
 					if ( IsSubgraph )
 					{
 						foreach ( var error in errors )
@@ -232,7 +270,7 @@ public class MainWindow : DockWindow
 			}
 		}
 		_output.Errors = compileErrors;
-
+		*/
 
 		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
@@ -251,8 +289,8 @@ public class MainWindow : DockWindow
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 		var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
 
-		FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
-		FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
+		Editor.FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
+		Editor.FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
 		_isCompiling = true;
 		_preview.IsCompiling = _isCompiling;
@@ -271,11 +309,11 @@ public class MainWindow : DockWindow
 			ConsoleOutput = true
 		};
 		
-		var result = await EditorUtility.CompileShader( FileSystem.Root, path, options );
+		var result = await EditorUtility.CompileShader( Editor.FileSystem.Root, path, options );
 		
 		if ( result.Success )
 		{
-			var asset = AssetSystem.RegisterFile( FileSystem.Root.GetFullPath( path ) );
+			var asset = AssetSystem.RegisterFile( Editor.FileSystem.Root.GetFullPath( path ) );
 		
 			while ( !asset.IsCompiledAndUpToDate )
 			{
@@ -287,7 +325,6 @@ public class MainWindow : DockWindow
 	}
 
 	private readonly List<string> _shaderCompileErrors = new();
-	//private readonly List<string> _Warnings = new();
 
 	private struct StatusMessage
 	{
@@ -345,8 +382,8 @@ public class MainWindow : DockWindow
 		
 			return;
 		}
-		
-		if ( exitCode == 0 )
+
+		if ( exitCode == 0 && _shaderCompileErrors.Count == 0 )
 		{
 			Log.Info( $"Compile finished in {_timeSinceCompile}" );
 		
@@ -354,7 +391,7 @@ public class MainWindow : DockWindow
 		
 			// Reload the shader otherwise it's gonna be the old wank
 			// Alternatively Material.Create could be made to force reload the shader
-			ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
+			Editor.ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 		
 			_preview.Material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
 		}
@@ -362,7 +399,7 @@ public class MainWindow : DockWindow
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
 		
-			_output.Errors = _shaderCompileErrors.Select( x => new GraphCompiler.Error { Message = x } );
+			_output.GraphIssues = (List<GraphCompiler.Issue>)_shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
 			DockManager.RaiseDock( "Output" );
 		
 			RestoreShader();
@@ -375,10 +412,45 @@ public class MainWindow : DockWindow
 		_shaderCompileErrors.Clear();
 	}
 
-	private void OnAttribute( string name, object value )
+	//private void OnComboAttribute( string name, object value )
+	//{
+	//	if ( !_comboBoolAttributes.ContainsKey( name ) )
+	//	{
+	//		_comboBoolAttributes.Add( name, (bool)value );
+	//		_preview?.SetCombo( name, (bool)value );
+	//	}
+	//}
+
+	private void OnAttribute( string name, object value, bool isCombo = false )
 	{
 		if ( value == null )
 			return;
+
+		if ( isCombo )
+		{
+			if ( value is bool )
+			{
+				if ( !_comboBoolAttributes.ContainsKey( name ) )
+				{
+					_comboBoolAttributes.Add( name, (bool)value );
+					_preview?.SetCombo( name, (bool)value );
+				}
+			}
+			else if ( value is int )
+			{
+				if ( !_comboIntAttributes.ContainsKey( name ) )
+				{
+					_comboIntAttributes.Add( name, (int)value );
+					_preview?.SetCombo( name, (int)value );
+				}
+			}
+			else if ( value.GetType().IsEnum )
+			{
+				// TODO : Support enum combos
+			}
+
+			return;
+		}
 
 		switch ( value )
 		{
@@ -398,12 +470,12 @@ public class MainWindow : DockWindow
 				_float2Attributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
-			case int v: // 
-				_floatAttributes.Add(name, v);
-				_preview?.SetAttribute(name, v);
-				break;
 			case float v:
 				_floatAttributes.Add( name, v );
+				_preview?.SetAttribute( name, v );
+				break;
+			case int v:
+				_intAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
 				break;
 			case bool v:
@@ -413,6 +485,10 @@ public class MainWindow : DockWindow
 			case Texture v:
 				_textureAttributes.Add( name, v );
 				_preview?.SetAttribute( name, v );
+				break;
+			case Sampler v:
+				_samplerStateAttributes.Add( name, (SamplerState)v );
+				_preview?.SetAttribute( name, (SamplerState)v );
 				break;
 			case Float2x2 v: // Stub - Quack
 				_float2x2Attributes.Add( name, v );
@@ -431,17 +507,80 @@ public class MainWindow : DockWindow
 		}
 	}
 
+	private void PreRegister( out List<GraphCompiler.Issue> registrationIssues )
+	{
+		registrationIssues = new();
+
+		// Go ahead and register any StaticSwitches.
+		RegisterStaticCombos( ref registrationIssues );
+	}
+
 	private string GeneratePreviewCode()
 	{
-		ClearAttributes();
+		if ( _autoCompile )
+		{
+			ClearAttributes();
+		}
+
+		// Go ahead preregister anything before iterating over all the nodes in the graph.
+		PreRegister( out List<GraphCompiler.Issue> registrationIssues );
+
+		if ( registrationIssues.Any() )
+		{
+			_output.GraphIssues = registrationIssues;
+
+			DockManager.RaiseDock( "Output" );
+
+			_generatedCode = null;
+			_generatedCodeTextView.SetTextContents( "" );
+
+			RestoreShader();
+
+			return null;
+		}
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-		var compiler = new GraphCompiler( _asset, _graph, true );
-		compiler.OnAttribute = OnAttribute;
+		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
+		var iErroringNodeErrors = new List<GraphCompiler.Issue>();
+		var iWarningNodeWarnings = new List<GraphCompiler.Issue>();
 
-		// Evaluate all nodes
+		if ( _autoCompile )
+		{
+			compiler.OnAttribute = OnAttribute;
+		}
+
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
+			// Assign a PreviewID to any Previewable node.
+			if ( node.CanPreview )
+			{
+				node.PreviewID = compiler.PreviewID++;
+			}
+
+			if ( node is IWarningNode warningNode )
+			{
+				var warnings = warningNode.GetWarnings();
+				if ( warnings.Count > 0 )
+				{
+					foreach ( var error in warnings )
+					{
+						iWarningNodeWarnings.Add( new() { Message = error, Node = node, IsWarning = true } );
+					}
+				}
+			}
+
+			if ( node is IErroringNode erroring )
+			{
+				var errors = erroring.GetErrors();
+				if ( errors.Count > 0 )
+				{
+					foreach ( var error in errors )
+					{
+						iErroringNodeErrors.Add( new() { Message = error, Node = node, IsWarning = false } );
+					}
+				}
+			}
+
 			var property = node.GetType().GetProperties( BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static )
 				.FirstOrDefault( x => x.GetGetMethod() != null && x.PropertyType == typeof( NodeResult.Func ) );
 
@@ -452,16 +591,43 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
+			if ( node is ITextureInputNode iTextureInputNode )
+			{
+				if ( string.IsNullOrWhiteSpace( iTextureInputNode.TextureInputName ) )
+				{
+					iTextureInputNode.AlreadyRegisterd = false;
+				}
+				else
+				{
+					// Register ISyncableTextureNode SyncID with the compiler.
+					if ( node is ISyncableTextureNode syncableTextureNode )
+					{
+						compiler.RegisterSyncID( syncableTextureNode.SyncID, iTextureInputNode.TextureInputName );
+					}
+
+					iTextureInputNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( iTextureInputNode.TextureInputName );
+				}
+			}
+
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
+
+			if ( node is SamplerNode samplerNode )
+			{
+				samplerNode.Processed = true;
+			}
+
+			if ( node is ITextureInputNode iTextureInputNodePost )
+			{
+				iTextureInputNodePost.AlreadyRegisterd = false;
+			}
 
 			var componentType = result.ComponentType;
 			if ( componentType == null )
 				continue;
 
 			// While we're here, let's check the output plugs and update their handle configs to the result type
-
 			var nodeUI = _graphView.FindNode( node );
 			if ( !nodeUI.IsValid() )
 				continue;
@@ -485,66 +651,187 @@ public class MainWindow : DockWindow
 			}
 		}
 
-		_compiledNodes.Clear();
-		_compiledNodes.AddRange( compiler.Nodes );
-
-		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode )
+		//_compiledNodes.Clear();
+		//_compiledNodes.AddRange( compiler.Nodes );
+#region ISyncableTextureNode Region
+		// Sync any texture nodes with the name _sourceParameterName name
+		if ( _syncLinkedTextureNodes )
 		{
-			_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
+			var sourceSyncableNode = _graph.Nodes.Where( x => x.Identifier == _sourceSyncID ).OfType<ISyncableTextureNode>().FirstOrDefault();
+
+			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
+			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != _sourceSyncID ).Where( x => x.Value == _sourceParameterName );
+
+			foreach ( var targetNodeID in targetNodeIDs )
+			{
+				var targetSyncableNode = _graph.Nodes.Where( x => x.Identifier == targetNodeID.Key ).OfType<ISyncableTextureNode>().FirstOrDefault();
+
+				sourceSyncableNode.Sync( targetSyncableNode );
+			}
+
+			_syncLinkedTextureNodes = false;
+		}
+#endregion ISyncableTextureNode Region
+
+		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode && targetNode.CanPreview )
+		{
+			_preview.SetStage( targetNode.PreviewID );
+			//_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
+		}
+		else
+		{
+			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
-		if ( resultNode != null )
+		if ( resultNode != null && !IsSubgraph )
 		{
-			var nodeUI = _graphView.FindNode( resultNode );
-			if ( nodeUI.IsValid() )
+			UpdateNodeUI( resultNode );
+		}
+		else if ( IsSubgraph )
+		{
+			foreach ( var subgraphOutput in _graph.Nodes.OfType<SubgraphOutput>() )
 			{
-				nodeUI.Update();
-
-				foreach ( var input in nodeUI.Inputs )
-				{
-					if ( !input.IsValid() || !input.Connection.IsValid() )
-						continue;
-
-					input.Connection.Update();
-				}
+				UpdateNodeUI( subgraphOutput );
 			}
 		}
 
 		var code = compiler.Generate();
 
-		//if ( compiler.Warnings.Any() )
-		//{
-		//	_output.Warnings = compiler.Warnings;
-		//	DockManager.RaiseDock( "Output" );
-		//}
+#region Errors & Warnings
+		iErroringNodeErrors.AddRange( compiler.Errors );
 
-		if ( compiler.Errors.Any() )
+		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
 		{
-			_output.Errors = compiler.Errors;
+			// Add any iErroringNodeErrors to the end of the iWarningNodeWarning list.
+			if ( iErroringNodeErrors.Any() )
+			{
+				iWarningNodeWarnings.AddRange( iErroringNodeErrors );
+				_output.GraphIssues = iWarningNodeWarnings;
+
+				DockManager.RaiseDock( "Output" );
+
+				_generatedCode = null;
+				_generatedCodeTextView.SetTextContents( "" );
+
+				RestoreShader();
+
+				return null;
+			}
+			else // No Errors to add :) not great not terrible
+			{
+				_output.GraphIssues = iWarningNodeWarnings;
+
+				DockManager.RaiseDock( "Output" );
+			}
+		}
+		else // No warnings? clear em.
+		{
+			_output.ClearWarnings();
+		}
+
+		if ( iErroringNodeErrors.Any() )
+		{
+			_output.GraphIssues = iErroringNodeErrors;
+
 			DockManager.RaiseDock( "Output" );
 
 			_generatedCode = null;
+			//_generatedCodeTextView.SetTextContents( "" );
 
 			RestoreShader();
 
 			return null;
 		}
-
-		_output.Clear();
+		else // No errors :o? clear em :D.
+		{
+			_output.ClearErrors();
+		}
+#endregion Errors & Warnings
 
 		if ( _generatedCode != code )
 		{
 			_generatedCode = code;
-
-			Compile();
+			//_generatedCodeTextView.SetTextContents( code );
+	
+			if ( _autoCompile )
+			{
+				Compile();
+			}
 		}
 
 		return code;
 	}
 
+	private void UpdateNodeUI( BaseNodePlus node )
+	{
+		var nodeUI = _graphView.FindNode( node );
+
+		if ( nodeUI.IsValid() )
+		{
+			nodeUI.Update();
+
+			foreach ( var input in nodeUI.Inputs )
+			{
+				if ( !input.IsValid() || !input.Connection.IsValid() )
+					continue;
+
+				input.Connection.Update();
+			}
+		}
+	}
+
+	private void RegisterStaticCombos( ref List<GraphCompiler.Issue> registrationIssues )
+	{
+		ShaderFeatures.Clear();
+		//ComboRegistrationErrors.Clear();
+		//var errors = new List<string>();
+
+		foreach ( var node in _graph.Nodes.OfType<StaticSwitchNode>() )
+		{	
+			if ( node.Mode == StaticSwitchMode.Create )
+			{
+				//SGPLog.Info( $"Registering feature : `{node.Feature.FeatureName}`" );
+
+				var shaderFeatureInfo = new ShaderFeatureInfo();
+				var optionCount = 2;
+
+				if ( node.Feature.IsValid )
+				{
+					if ( ShaderFeatures.ContainsKey( node.Feature.FeatureName ) )
+					{
+						var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` was already registerd!", IsWarning = false };
+						registrationIssues.Add( error );
+					}
+
+					shaderFeatureInfo = new ShaderFeatureInfo
+					(
+						node.Feature.FeatureName,
+						node.Feature.Description,
+						node.Feature.HeaderName,
+						optionCount,
+						node.Feature.IsDynamicCombo
+					);
+
+					if ( !ShaderFeatures.ContainsKey( shaderFeatureInfo.UserDefinedName ) )
+					{
+						ShaderFeatures.Add( shaderFeatureInfo.UserDefinedName, shaderFeatureInfo );
+					}
+				}
+				else
+				{
+					var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` is not valid!", IsWarning = false };
+					registrationIssues.Add( error );
+				}
+			}
+		}
+	}
+
 	private string GenerateShaderCode()
 	{
-		var compiler = new GraphCompiler( _asset, _graph, false );
+		// Go ahead preregister anything before iterating over all the nodes in the graph.
+		PreRegister( out _ );
+
+		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, false );
 		return compiler.Generate();
 	}
 
@@ -718,9 +1005,22 @@ public class MainWindow : DockWindow
 		toolBar.AddSeparator();
 
 		toolBar.AddOption( "Compile", "refresh", () => Compile() ).StatusTip = "Compile Graph";
-		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
-		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot).StatusTip = "Take Screenshot";
+		AutoCompileOption = toolBar.AddOption( "Toggle Auto Compile", "model_editor/auto_recompile.png", () =>
+		{
+			_autoCompile = !_autoCompile;
+			
+			if ( _autoCompile )
+			{
+				Compile();
+				//SetDirty();
+			}
 
+			AutoCompileOption.Icon = $"{( _autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png" )}";
+		} );
+		AutoCompileOption.StatusTip = "Enable or Disable graph auto compile.";
+
+		toolBar.AddOption( "Open Generated Shader", "common/edit.png", () => OpenGeneratedShader() ).StatusTip = "Open Generated Shader";
+		toolBar.AddOption( "Take Screenshot", "photo_camera", Screenshot ).StatusTip = "Take Screenshot";
 
 		_undoOption.Enabled = false;
 		_redoOption.Enabled = false;
@@ -757,7 +1057,21 @@ public class MainWindow : DockWindow
 		var debug = MenuBar.AddMenu( "Debug" );
 		debug.AddSeparator();
 		debug.AddOption( "Open Temp Shader", "common/edit.png", OpenTempGeneratedShader );
-		debug.AddOption("Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt);
+		debug.AddOption( "Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt );
+		debug.AddSeparator();
+		_nodeDebugInfoOption = debug.AddOption( "Toggle Node Debug Info", "common/setting.png", () => 
+		{ 
+			ConCommands.NodeDebugInfo = !ConCommands.NodeDebugInfo; 
+		
+			if ( ConCommands.NodeDebugInfo )
+			{
+				_nodeDebugInfoOption.Icon = "common/widgetdebugger_focus.png";
+			}
+			else
+			{
+				_nodeDebugInfoOption.Icon = "common/widgetdebugger_none.png";
+			}
+		});
 
 		RefreshRecentFiles();
 
@@ -812,7 +1126,7 @@ public class MainWindow : DockWindow
 
 		view.AddSeparator();
 
-		var style = view.AddOption("Grid-Aligned Wires", "turn_sharp_right");
+		var style = view.AddOption( "Grid-Aligned Wires", "turn_sharp_right" );
 		style.Checkable = true;
 		style.Checked = ShaderGraphPlusView.EnableGridAlignedWires;
 		style.Toggled += b => ShaderGraphPlusView.EnableGridAlignedWires = b;
@@ -849,7 +1163,7 @@ public class MainWindow : DockWindow
 
 	private void SaveRecentFiles()
 	{
-		FileSystem.Temporary.WriteJson( "shadergraphplus_recentfiles.json", _recentFiles );
+		Editor.FileSystem.Temporary.WriteJson( "shadergraphplus_recentfiles.json", _recentFiles );
 	}
 
 	private void PromptSave( Action action )
@@ -890,9 +1204,11 @@ public class MainWindow : DockWindow
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
+		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
 
-		_output.Clear();
+		_output.ClearErrors();
+		_output.ClearWarnings();
 
 		if ( !IsSubgraph )
 		{
@@ -902,7 +1218,13 @@ public class MainWindow : DockWindow
 		}
 		else
 		{
-			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( FunctionResult ) ), 0 );
+			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( SubgraphOutput ) ), 0 );
+			
+			var subgraphOutput = result.Node as SubgraphOutput;
+			subgraphOutput.SubgraphFunctionOutput.OutputName = "Out0";
+			subgraphOutput.SubgraphFunctionOutput.OutputType =  SubgraphPortType.Vector3;
+			subgraphOutput.SubgraphFunctionOutput.Preview = SubgraphOutputPreviewType.Albedo;
+
 			_graphView.Scale = 1;
 			_graphView.CenterOn( result.Size * 0.5f );
 		}
@@ -914,6 +1236,7 @@ public class MainWindow : DockWindow
 
 	private void ClearAttributes()
 	{
+		_samplerStateAttributes.Clear();
 		_textureAttributes.Clear();
 		_float2x2Attributes.Clear();
 		_float3x3Attributes.Clear();
@@ -922,8 +1245,11 @@ public class MainWindow : DockWindow
 		_float3Attributes.Clear();
 		_float2Attributes.Clear();
 		_floatAttributes.Clear();
+		_intAttributes.Clear();
 		_boolAttributes.Clear();
-		_compiledNodes.Clear();
+		_comboBoolAttributes.Clear();
+		_comboIntAttributes.Clear();
+		//_compiledNodes.Clear();
 
 		_preview?.ClearAttributes();
 	}
@@ -978,12 +1304,14 @@ public class MainWindow : DockWindow
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
+		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
 
 		if ( addToPath )
 			AddFileHistory( path );
 
-		_output.Clear();
+		_output.ClearErrors();
+		_output.ClearWarnings();
 
 		var center = Vector2.Zero;
 		var resultNode = graph.Nodes.OfType<BaseResult>().FirstOrDefault();
@@ -1113,17 +1441,39 @@ public class MainWindow : DockWindow
 		if ( IsSubgraph )
 		{
 			Compile();
+
+			_generatedCodeTextView.SetTextContents( _generatedCode );
 		}
 		else
 		{
 			var shaderPath = System.IO.Path.ChangeExtension( savePath, ".shader" );
 		
 			var code = GenerateShaderCode();
+
 			if ( string.IsNullOrWhiteSpace( code ) )
 				return false;
-		
+
+			_generatedCodeTextView.SetTextContents( code );
+
 			// Write generated shader to file
-			System.IO.File.WriteAllText( shaderPath, code );
+			if ( System.IO.File.Exists( shaderPath ) )
+			{
+				FileInfo fileInfo = new FileInfo( shaderPath );
+
+				if ( !fileInfo.IsReadOnly )
+				{
+					System.IO.File.WriteAllText( shaderPath, code );
+				}
+				else
+				{
+					SGPLog.Warning( $"Asset at path \"{_asset.Path}\" is read only!" );
+				}
+			}
+			else
+			{
+				System.IO.File.WriteAllText( shaderPath, code );
+			}
+
 		}
 		
 		
@@ -1182,7 +1532,8 @@ public class MainWindow : DockWindow
 		DockManager.RegisterDockType( "Console", "text_snippet", null, false );
 		DockManager.RegisterDockType( "Undo History", "history", null, false );
 		DockManager.RegisterDockType( "Palette", "palette", null, false );
-		
+		DockManager.RegisterDockType( "Generated Code", "", null, false );
+
 		_graphCanvas = new Widget( this ) { WindowTitle = $"{(_asset != null ? _asset.Name : "untitled")}{(_dirty ? "*" : "")}" };
 		_graphCanvas.Name = "Graph";
 		_graphCanvas.SetWindowIcon( "account_tree" );
@@ -1201,7 +1552,6 @@ public class MainWindow : DockWindow
 		_fileHistoryForward.Enabled = false;
 		_fileHistoryHome.Enabled = false;
 		
-		
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
 		stretcher.Layout.AddStretchCell( 1 );
@@ -1217,8 +1567,17 @@ public class MainWindow : DockWindow
 		//_graphView.SetBackgroundImage( "toolimages:/grapheditor/grapheditorbackgroundpattern_shader.png" );
 		_graphView.BilinearFiltering = false;
 		
-		var types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
+		IOrderedEnumerable<TypeDescription> types = default;
+		if ( !IsSubgraph )
+		{
+			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
+				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && !x.HasAttribute<SubgraphOnlyAttribute>() ).OrderBy( x => x.Name );
+		}
+		else
+		{
+			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
+				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
+		}
 		
 		foreach ( var type in types )
 		{
@@ -1231,7 +1590,7 @@ public class MainWindow : DockWindow
 			// Skip any _c compiled subgraph files.
 			if ( subgraph.CanRecompile )
 			{
-			    _graphView.AddNodeType( subgraph.Path );
+				_graphView.AddNodeType( subgraph.Path );
 			}
 		}
 		
@@ -1247,21 +1606,17 @@ public class MainWindow : DockWindow
 			_graphView.Scale = 1;
 			_graphView.CenterOn( nodeUI.Center );
 		};
-		
+
 		_preview = new PreviewPanel( this, _graph.Model )
 		{
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
-		
-		//if ( _graph.MaterialDomain is MaterialDomain.PostProcess )
-		//{
-		//	_preview.IsPostProcessShader = true;
-		//}
-		//else
-		//{
-		//	_preview.IsPostProcessShader = false;
-		//}
-		
+
+		foreach ( var value in _samplerStateAttributes )
+		{
+			_preview.SetAttribute( value.Key, value.Value );
+		}
+
 		foreach ( var value in _textureAttributes )
 		{
 			_preview.SetAttribute( value.Key, value.Value );
@@ -1306,7 +1661,17 @@ public class MainWindow : DockWindow
 		{
 			_preview.SetAttribute( value.Key, value.Value );
 		}
-		
+
+		foreach ( var value in _comboBoolAttributes )
+		{
+			_preview.SetCombo( value.Key, value.Value );
+		}
+
+		foreach ( var value in _comboIntAttributes )
+		{
+			_preview.SetCombo( value.Key, value.Value );
+		}
+
 		_properties = new Properties( this );
 		_properties.Target = _graph;
 		_properties.PropertyUpdated += OnPropertyUpdated;
@@ -1317,19 +1682,20 @@ public class MainWindow : DockWindow
 		_undoHistory.OnHistorySelected = SetUndoLevel;
 		
 		_palette = new PaletteWidget( this, IsSubgraph );
-		
+		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
+
 		DockManager.AddDock( null, _preview, DockArea.Left, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
 		DockManager.AddDock( _preview, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
-		
+
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		
+		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.25f );
+
 		DockManager.RaiseDock( "Output" );
 		DockManager.Update();
 		
@@ -1345,19 +1711,31 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnPropertyUpdated()
+	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
 		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
-
 		if ( _properties.Target is BaseNodePlus node )
 		{
+			SGPLog.Info( $"Property `{serializedProperty.Name}` changed", ConCommands.OnPropertyUpdatedDebug );
+
+			if ( node is ISyncableTextureNode syncableTexturePreview )
+			{
+				// Avoid Syncing when the changed property was the Name property of the TextureInput UI property.
+				if ( serializedProperty.Name != nameof( syncableTexturePreview.UI.Name ) )
+				{
+					_syncLinkedTextureNodes = true;
+					_sourceSyncID = syncableTexturePreview.SyncID;
+					_sourceParameterName = syncableTexturePreview.SourceParameterName;
+				}
+			}
+
 			_graphView.UpdateNode( node );
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
-		
-		SetDirty(shouldEvaluate);
+
+		SetDirty( shouldEvaluate );
 	}
 
 	protected override void RestoreDefaultDockLayout()
@@ -1395,7 +1773,7 @@ public class MainWindow : DockWindow
 		MenuBar.Clear();
 	
 		CreateUI();
-		//Compile();
+		Compile(); // Testing ONLY!
 	}
 
 	[Event( "shadergraphplus.update.subgraph" )]

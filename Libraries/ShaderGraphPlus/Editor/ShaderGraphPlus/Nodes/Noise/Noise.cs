@@ -1,8 +1,11 @@
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class NoiseNode : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	protected virtual string Func { get; }
 
 	[Input( typeof( Vector2 ) )]
@@ -67,6 +70,9 @@ public sealed class SimplexNoise : NoiseNode
 [Title( "Voronoi Noise" ), Category( "Noise" ), Icon( "ssid_chart" )]
 public sealed class VoronoiNoise : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Coords { get; set; }

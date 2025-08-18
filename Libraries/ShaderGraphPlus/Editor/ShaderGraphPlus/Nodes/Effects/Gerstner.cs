@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
@@ -9,7 +9,10 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Gerstner Waves" ), Category( "Effects" )]
 public sealed class GerstnerWavesNode : ShaderNodePlus
 {
-[Hide]
+	[Hide]
+	public override int Version => 1;
+
+	[Hide]
 public static string GerstnerWaves => @"
 float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWaveLength, float flSpeed, float flAmplitude, float flSteepness, float flNumWaves, float flGravityConstant )
 {

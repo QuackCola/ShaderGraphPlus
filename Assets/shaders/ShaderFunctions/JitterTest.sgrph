@@ -1,0 +1,84 @@
+{
+  "__version": 1,
+  "IsSubgraph": false,
+  "Path": "shaders/shaderfunctions/jittertest.sgrph",
+  "Model": "models/fauna/hare/hare.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1.25,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-144,-180",
+      "HandleOffsets": {},
+      "PositionOffset": {
+        "Identifier": "1",
+        "Output": "VertexOffset",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphNode",
+      "__version": 1,
+      "SubgraphPath": "shaders/shaderfunctions/vertexjitter.sgpfunc",
+      "DefaultValues": {
+        "ToggleSnapping": true,
+        "GridSize": 0.4
+      },
+      "Identifier": "1",
+      "Position": "-456,-96",
+      "HandleOffsets": {},
+      "GridSize": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": "shaders/shaderfunctions/vertexjitter.sgpfunc"
+      }
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0.4,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-708,-72",
+      "HandleOffsets": {}
+    }
+  ]
+}

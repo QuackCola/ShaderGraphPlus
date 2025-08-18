@@ -1,5 +1,5 @@
 ﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Current time
@@ -7,6 +7,10 @@ namespace Editor.ShaderGraphPlus.Nodes;
 [Title( "Time" ), Category( "Variables" ), Icon( "timer" )]
 public sealed class Time : ShaderNodePlus
 {
+	[Hide]
+	public override int Version => 1;
+
+
 	[JsonIgnore]
 	public float Value => RealTime.Now;
 

@@ -1,6 +1,7 @@
-﻿using MaterialDesign;
+﻿using Editor;
+using MaterialDesign;
 using static Editor.WidgetGalleryWindow;
-namespace Editor.ShaderGraphPlus;
+namespace ShaderGraphPlus;
 
 internal class FieldTitle : Label
 {
@@ -54,7 +55,7 @@ public class ProjectCreator : Dialog
     private TemplateUserConfig templateUserConfig;
     private  bool debugLayout = false;
 
-    private Layout headerLayout;
+    //private Layout headerLayout;
 
     public ProjectCreator(Widget parent = null) : base(null, true)
     {
@@ -339,7 +340,7 @@ public class ProjectCreator : Dialog
     private ShaderGraphPlus ReadTemplate( string templatePath )
     {
         var shaderGraphPlusTemplate = new ShaderGraphPlus();
-        shaderGraphPlusTemplate.Deserialize(System.IO.File.ReadAllText(ShaderGraphPlusFileSystem.Root.GetFullPath($"{templatePath}/$name.sgrph")));
+        shaderGraphPlusTemplate.Deserialize( System.IO.File.ReadAllText( ShaderGraphPlusFileSystem.Root.GetFullPath( $"{templatePath}/$name.sgrph" ) ) );
 
         // configure the template.
         ConfigureTemplate(shaderGraphPlusTemplate);

@@ -1,5 +1,6 @@
-﻿
-namespace Editor.ShaderGraphPlus.Nodes;
+﻿using Editor;
+
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 {
@@ -11,6 +12,9 @@ public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 	[Input, Hide, Title( "" )]
 	public NodeInput Input { get; set; }
 
+	[Hide, JsonIgnore]
+	public override bool CanPreview => false;
+
 	public override NodeUI CreateUI( GraphView view )
 	{
 		return new RerouteUI( view, this );
@@ -19,6 +23,9 @@ public abstract class RerouteNode : BaseNodePlus, IRerouteNode
 
 public sealed class ReroutePlus : RerouteNode
 {
+	[Hide]
+	public override int Version => 1;
+
 	[Output, Hide,Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
