@@ -399,8 +399,8 @@ public class MainWindow : DockWindow
 		{
 			Log.Error( $"Compile failed in {_timeSinceCompile}" );
 		
-			_output.GraphIssues = (List<GraphCompiler.Issue>)_shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
-			DockManager.RaiseDock( "Output" );
+			//_output.GraphIssues = _shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
+			//DockManager.RaiseDock( "Output" );
 		
 			RestoreShader();
 			ClearAttributes();
