@@ -492,7 +492,7 @@ public class ShaderGraphPlusView : GraphView
 		// Save the newly created sub-graph
 		System.IO.File.WriteAllText( filePath, subgraph.Serialize() );
 		var asset = AssetSystem.RegisterFile( filePath );
-		MainAssetBrowser.Instance?.UpdateAssetList();
+		MainAssetBrowser.Instance?.Local.UpdateAssetList();
 
 		PushUndo( "Create Subgraph from Selection" );
 

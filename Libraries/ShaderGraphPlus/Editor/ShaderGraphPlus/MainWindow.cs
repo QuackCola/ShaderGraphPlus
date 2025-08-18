@@ -1432,9 +1432,9 @@ public class MainWindow : DockWindow
 		
 			return false;
 		}
-		
-		MainAssetBrowser.Instance?.UpdateAssetList();
-		
+
+		MainAssetBrowser.Instance?.Local.UpdateAssetList();
+
 		_dirty = false;
 		_graphCanvas.WindowTitle = _asset.Name;
 		
