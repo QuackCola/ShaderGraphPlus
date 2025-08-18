@@ -81,11 +81,6 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 	[JsonIgnore, Hide]
 	protected string TexturePath => _texture;
 
-	protected void Reg()
-	{
-
-	}
-
 	protected void CompileTexture()
 	{
 		if ( _asset == null )
