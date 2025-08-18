@@ -83,7 +83,7 @@ public sealed partial class GraphCompiler
 		public List<(NodeResult localResult, NodeResult funcResult)> Results = new();
 		public Dictionary<NodeInput, NodeResult> InputResults = new();
 
-		public Dictionary<string, SamplerState> SamplerStates = new();
+		public Dictionary<string, Sampler> SamplerStates = new();
 		public Dictionary<string, TextureInput> TextureInputs = new();
 		public Dictionary<string, Gradient> Gradients = new();
 		public Dictionary<string, (string Options, NodeResult Result)> Parameters = new();
@@ -521,12 +521,15 @@ public sealed partial class GraphCompiler
 		var name = CleanName( sampler.Name );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
 		var id = name;
+		
+		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+			return ResultValue( sampler ).Code;
 
 		if ( IsNotPreview )
 		{
 			if ( !ShaderResult.SamplerStates.ContainsKey( id ) )
 			{
-				ShaderResult.SamplerStates.Add( id, (SamplerState)sampler );
+				ShaderResult.SamplerStates.Add( id, sampler );
 			}
 			else
 			{
@@ -536,62 +539,13 @@ public sealed partial class GraphCompiler
 			return $"g_s{id}";
 		}
 
-		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-			return ResultValue( sampler ).Code;
-
-		if ( ShaderResult.SamplerStates.ContainsKey( id ) )
-		{
-
-		}
-		else
-		{
-			OnAttribute?.Invoke( id, sampler, false );
-
-			ShaderResult.SamplerStates.Add( id, (SamplerState)sampler );
-		}
-
 		return $"g_s{id}";
 	}
 
-	public string ResultSamplerOrDefault2( NodeInput samplerInput, Sampler defautlSampler )
+	public string ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultSampler )
 	{
 		var resultSampler = Result( samplerInput );
-
-		return resultSampler.IsValid ? resultSampler.Code : ResultSampler( defautlSampler );
-	}
-
-
-	/// <summary>
-	/// Get result of an input sampler with an optional default sampler if it failed to resolve
-	/// </summary>
-	public NodeResult ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultsampler, bool isAttribute = true, bool isSubgraph = false )
-	{
-		var resultSampler = Result( samplerInput );
-
-		if ( resultSampler.IsValid )
-		{
-			return resultSampler;
-		}
-		else
-		{
-			//if ( !isSubgraph )
-			//{
-			//	var defaultSamplerName = string.IsNullOrWhiteSpace( defaultsampler.Name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : defaultsampler.Name;
-			//
-			//	var result = ResultParameter( defaultSamplerName, defaultsampler, default, default, false, isAttribute, default );
-			//
-			//	if ( result.IsValid )
-			//	{
-			//		return result;
-			//	}
-			//	else
-			//	{
-			//		throw new Exception( "default result is not valid" );
-			//	}
-			//}
-
-			return default;
-		}
+		return resultSampler.IsValid ? resultSampler.Code : ResultSampler( defaultSampler );
 	}
 
 	/// <summary>
@@ -1088,15 +1042,24 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-			return ResultValue( value );
-
-		if ( value is not Sampler )
 		{
-			name = CleanName( name );
+			var res = ResultValue( value );
+
+			return res;
 		}
 
+		name = CleanName( name );
 		var attribName = name;
 		var prefix = GetLocalPrefix( value );
+
+		// Make sure the type T is can have a Default();
+		bool canHaveDefualt = typeof( T ) switch
+		{
+			Type t when t == typeof( Float2x2 ) => false,
+			Type t when t == typeof( Float3x3 ) => false,
+			Type t when t == typeof( Float4x4 ) => false,
+			_ => true,
+		};
 
 		if ( !name.StartsWith( prefix ) )
 			name = prefix + name;
@@ -1117,20 +1080,12 @@ public sealed partial class GraphCompiler
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
-			else if ( value is not Sampler )
+			else if ( canHaveDefualt )
 			{
-				options.Write($"Default{parameter.Result.Components}( {value} ); ");
+				options.Write( $"Default{parameter.Result.Components}( {value} );" );
 			}
 		}
-		else if ( value is Sampler sampler )
-		{
-			options.Write( $" Filter( {sampler.Filter.ToString().ToUpper()} );" );
-			options.Write( $" AddressU( {sampler.AddressModeU.ToString().ToUpper()} );" );
-			options.Write( $" AddressV( {sampler.AddressModeV.ToString().ToUpper()} );" );
-			options.Write( $" AddressW( {sampler.AddressModeW.ToString().ToUpper()} );" );
-			options.Write( $" MaxAniso( {sampler.MaxAnisotropy} );" );
-		}
-		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4  )
+		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
 		{
 			if (ui.Type != UIType.Default)
 			{
@@ -1148,7 +1103,7 @@ public sealed partial class GraphCompiler
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
-			else
+			else if ( canHaveDefualt )
 			{
 				options.Write($"Default{parameter.Result.Components}( {value} ); ");
 			}
@@ -1162,20 +1117,9 @@ public sealed partial class GraphCompiler
 		parameter.Options = options.ToString().Trim();
 
 		// Avoid adding a matrix parameter to the graph if isAttribute is false. Which would make it code to the shader code and unable to be set externally via C#.
-		if ( value is Float2x2 || value is Float3x3 || value is Float4x4 ) 
+		if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
 		{
-			if ( isAttribute )
-				ShaderResult.Parameters.Add( name, parameter );
-		}
-		else
-		{
-
 			ShaderResult.Parameters.Add( name, parameter );
-		}
-
-		if ( value is Sampler samplerValue )
-		{ 
-			ShaderResult.SamplerStates.Add( name, (SamplerState)samplerValue );
 		}
 
 		return parameter.Result;
@@ -1837,15 +1781,22 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			foreach ( var Sampler in ShaderResult.SamplerStates )
+			foreach ( var sampler in ShaderResult.SamplerStates )
 			{
-				sb.Append( $"SamplerState g_s{Sampler.Key} <" )
-				  .Append( $" Filter( {Sampler.Value.Filter.ToString().ToUpper()} );" )
-				  .Append( $" AddressU( {Sampler.Value.AddressModeU.ToString().ToUpper()} );" )
-				  .Append( $" AddressV( {Sampler.Value.AddressModeV.ToString().ToUpper()} );" )
-				  .Append( $" AddressW( {Sampler.Value.AddressModeW.ToString().ToUpper()} );" )
-				  .Append( $" MaxAniso( {Sampler.Value.MaxAnisotropy.ToString()} ); >;" )
-				  .AppendLine();
+				if ( sampler.Value.IsAttribute )
+				{
+					sb.AppendLine( $"SamplerState g_s{sampler.Key} < Attribute( \"{sampler.Key}\" ); >;" );
+				}
+				else
+				{
+					sb.Append( $"SamplerState g_s{sampler.Key} <" )
+					  .Append( $" Filter( {sampler.Value.Filter.ToString().ToUpper()} );" )
+					  .Append( $" AddressU( {sampler.Value.AddressModeU.ToString().ToUpper()} );" )
+					  .Append( $" AddressV( {sampler.Value.AddressModeV.ToString().ToUpper()} );" )
+					  .Append( $" AddressW( {sampler.Value.AddressModeW.ToString().ToUpper()} );" )
+					  .Append( $" MaxAniso( {sampler.Value.MaxAnisotropy.ToString()} ); >;" )
+					  .AppendLine();
+				}
 			}
 
 			foreach ( var result in ShaderResult.TextureInputs )

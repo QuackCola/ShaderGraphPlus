@@ -81,6 +81,11 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 	[JsonIgnore, Hide]
 	protected string TexturePath => _texture;
 
+	protected void Reg()
+	{
+
+	}
+
 	protected void CompileTexture()
 	{
 		if ( _asset == null )
@@ -279,18 +284,18 @@ public sealed class TextureSampler : TextureSamplerBase
 			//	var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
 			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 			//}
-			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+			var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
 
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
 				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.SampleLevel(" +
-					$" {sampler}," +
+					$" {samplerGlobal}," +
 					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
 			}
 			else
 			{
-				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.Sample( {sampler}," +
+				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.Sample( {samplerGlobal}," +
 					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
 			}
 		}
@@ -306,7 +311,7 @@ public sealed class TextureSampler : TextureSamplerBase
 		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
 		{
 			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-			var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+			var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
 				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
@@ -475,7 +480,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureCubeObject = compiler.Result( TextureCubeObject );
-		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var coords = compiler.Result( Coords );
 
 		if ( textureCubeObject.IsValid )
@@ -638,7 +643,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+		var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -673,7 +678,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 			var result = compiler.ResultFunction( "TexTriplanar_Color",
 			resultTextureGlobal,
-			sampler,
+			samplerGlobal,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 			$"{blendfactor}"
@@ -696,7 +701,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 			var result = compiler.ResultFunction( "TexTriplanar_Color",
 					$"{textureObject.Code}",
-					$"{sampler}",
+					$"{samplerGlobal}",
 					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 					normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 					$"{blendfactor}"
@@ -831,7 +836,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 		var textureObject = compiler.Result( TextureObject );
 		var coords = compiler.Result( Coords );
-		var sampler = compiler.ResultSamplerOrDefault2( Sampler, SamplerState );
+		var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
 		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
 		var normal = compiler.Result( Normal );
 		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
@@ -866,7 +871,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 			var result = compiler.ResultFunction( "TexTriplanar_Normal",
 			resultTextureGlobal,
-			sampler,
+			samplerGlobal,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 			$"{blendfactor}"
@@ -889,7 +894,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 			var result = compiler.ResultFunction( "TexTriplanar_Normal",
 					$"{textureObject.Code}",
-					$"{sampler}",
+					$"{samplerGlobal}",
 					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
 					normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
 					$"{blendfactor}"
@@ -1456,6 +1461,8 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 	[HideIf( nameof( IsSubgraph ), true )]
 	public Sampler SamplerState { get; set; } = new Sampler();
 
+	// TODO : Remove in future update.
+	[Hide]
 	public bool IsAttribute { get; set; } = false;
 
 	[Hide]
@@ -1549,8 +1556,8 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
 	{
-		//var sampler = compiler.ResultSampler( SamplerState, Processed );
-		//return new NodeResult( ResultType.Sampler, sampler, true );
-		return compiler.ResultParameter( SamplerState.Name, SamplerState, default, default, false, IsAttribute, default );
+		var samplerResult = compiler.ResultSampler( SamplerState, Processed );
+
+		return new NodeResult( ResultType.Sampler, samplerResult, true );
 	};
 }

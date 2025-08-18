@@ -15,6 +15,11 @@ public struct Sampler : ISGPJsonUpgradeable
 	public string Name { get; set; }
 
 	/// <summary>
+	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
+	/// </summary>
+	public bool IsAttribute { get; set; }
+
+	/// <summary>
 	/// The texture filtering mode used for sampling (e.g., point, bilinear, trilinear).
 	/// </summary>
 	public FilterMode Filter { get; init; }
