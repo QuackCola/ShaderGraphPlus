@@ -38,7 +38,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Hide]
 	public override string Title => $"{InputName} ( {InputData.InputType} )";
 
-	[Hide]
+	[Hide, JsonIgnore]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[Hide, JsonIgnore]
@@ -59,6 +59,9 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			};
 		}
 	}
+
+	[Hide, JsonIgnore]
+	private string _textureGlobal;
 
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
@@ -190,7 +193,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		}
 	}
 
-	private string _textureGlobal;
 	private string ResultTexture( GraphCompiler compiler )
 	{
 		var textureInput = InputData.GetValue<TextureInput>();
