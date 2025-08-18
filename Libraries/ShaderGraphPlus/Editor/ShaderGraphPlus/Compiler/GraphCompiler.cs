@@ -533,7 +533,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				SGPLog.Info( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
+				SGPLog.Warning( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
 			}
 
 			return $"g_s{id}";
