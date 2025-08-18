@@ -83,6 +83,7 @@
       "SamplerState": {
         "Version": 2,
         "Name": "",
+        "IsAttribute": false,
         "Filter": "Bilinear",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
@@ -143,6 +144,7 @@
       "SamplerState": {
         "Version": 2,
         "Name": "",
+        "IsAttribute": false,
         "Filter": "Bilinear",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
@@ -194,6 +196,7 @@
       "SamplerState": {
         "Version": 2,
         "Name": "",
+        "IsAttribute": false,
         "Filter": "Bilinear",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
@@ -339,6 +342,7 @@
       "SamplerState": {
         "Version": 2,
         "Name": "TestSampler",
+        "IsAttribute": false,
         "Filter": "Bilinear",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
