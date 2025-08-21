@@ -1722,7 +1722,9 @@ public sealed partial class GraphCompiler
 			pixelIncludes.Add( "postprocess/functions.hlsl" );
 			pixelIncludes.Add( "postprocess/common.hlsl" );
 		}
-		
+
+		sb.AppendLine();
+
 		foreach ( var include in pixelIncludes )
 		{
 			sb.AppendLine( $"#include \"{include}\"" );
@@ -1809,6 +1811,11 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		foreach ( var global in ShaderResult.Globals )
+		{
+			sb.AppendLine( global.Value );
+		}
+
 		foreach ( var feature in ShaderFeatures )
 		{
 			//SGPLog.Info( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );", IsPreview );
@@ -1827,19 +1834,12 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		foreach ( var global in ShaderResult.Globals )
+		// Support for color buffer in post-process shaders
+		if ( IsPs && Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
-			sb.AppendLine( global.Value );
+			sb.AppendLine( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead ( true ); >;" );
 		}
 
-		if ( IsPs )
-		{
-			if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-			{
-				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
-			}
-		}
-		
 		if ( IsPreview )
 		{
 			foreach ( var result in ShaderResult.TextureInputs )
@@ -2241,18 +2241,24 @@ VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSi
 		" );
 				break;
 			case MaterialDomain.BlendingSurface:
-				sb.AppendLine(@"
+				sb.AppendLine( $@"
 PixelInput i = ProcessVertex( v );
+
+{sb2.ToString()}
+
 i.vBlendValues = v.vColorBlendValues;
 i.vPaintValues = v.vColorPaintValues;
-");
+" );
 				break;
 case MaterialDomain.PostProcess:
-				sb.AppendLine(@"
+				sb.AppendLine( $@"
 PixelInput i;
+
+{sb2.ToString()}
+
 i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
 i.vPositionWs = float3( v.vTexCoord, 0.0f );
-");
+" );
 				break;
 		}
 
