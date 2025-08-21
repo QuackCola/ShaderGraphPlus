@@ -6,8 +6,8 @@ public abstract class GBufferSampleNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-	[Input( typeof( Vector2 ) ), Hide]
-	public NodeInput ScreenPos { get; set; }
+	[Input( typeof( Vector2 ) ), Title( "ScreenPos" ) , Hide]
+	public NodeInput ScreenPosition { get; set; }
 
 	[Hide, JsonIgnore]
 	public virtual string Buffer { get; }
@@ -16,7 +16,7 @@ public abstract class GBufferSampleNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var screenPostion = compiler.Result( ScreenPos );
+		var screenPostion = compiler.Result( ScreenPosition );
 
 		var result = "";
 		if ( !screenPostion.IsValid )
