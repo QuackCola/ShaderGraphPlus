@@ -66,17 +66,15 @@ VS
 		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
-		//i.vColor = v.vColor;
-				
-		i.vColor = v.vColor; // Test
-		i.vInstanceID = v.vInstanceID; // Test
+		
+		i.vColor = v.vColor;
+		i.vInstanceID = v.vInstanceID;
 		
 		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 				
-		
 		float l_0 = i.vInstanceID;
 		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
 		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );

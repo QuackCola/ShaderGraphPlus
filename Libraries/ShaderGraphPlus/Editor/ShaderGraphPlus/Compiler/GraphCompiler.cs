@@ -2211,31 +2211,6 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	private string SurfaceVertexInit()
-	{
-		var sb = new StringBuilder();
-
-		sb.AppendLine( @"
-PixelInput i = ProcessVertex( v );
-i.vPositionOs = v.vPositionOs.xyz;
-//i.vColor = v.vColor;
-		");
-
-		foreach ( var vertexInput in VertexInputs )
-		{
-			sb.AppendLine( $"i.{vertexInput.Key} = v.{vertexInput.Key}; // Test" );
-		}
-
-		sb.AppendLine( @"
-ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
-i.vTintColor = extraShaderData.vTint;
-
-VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
-		");
-
-		return sb.ToString();
-	}
-
 	private string GenerateVertex()
 	{
 		Stage = ShaderStage.Vertex;
@@ -2247,11 +2222,26 @@ VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSi
 		var positionOffsetInput = resultNode.GetPositionOffset();
 
 		var sb = new StringBuilder();
+		var sb2 = new StringBuilder();
+
+		foreach ( var vertexInput in VertexInputs )
+		{
+			sb2.AppendLine( $"i.{vertexInput.Key} = v.{vertexInput.Key};" );
+		}
 
 		switch ( Graph.MaterialDomain )
 		{
 		case MaterialDomain.Surface:
-				sb.AppendLine( SurfaceVertexInit() );
+				sb.AppendLine( $@"
+PixelInput i = ProcessVertex( v );
+i.vPositionOs = v.vPositionOs.xyz;
+
+{sb2.ToString()}
+ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
+i.vTintColor = extraShaderData.vTint;
+
+VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
+		" );
 				break;
 			case MaterialDomain.BlendingSurface:
 				sb.AppendLine(@"
