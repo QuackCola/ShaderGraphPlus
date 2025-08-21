@@ -144,7 +144,7 @@ public sealed partial class GraphCompiler
 		Subgraphs = new();
 		AddSubgraphs( Graph );
 
-		// Set the Initial Vertex and Pixel stage inputs from ShaderTemplate
+		// Set the Initial Vertex and Pixel stage inputs from ShaderTemplate.
 		VertexInputs = ShaderTemplate.VertexInputs;
 		PixelInputs = ShaderTemplate.PixelInputs;
 	}
