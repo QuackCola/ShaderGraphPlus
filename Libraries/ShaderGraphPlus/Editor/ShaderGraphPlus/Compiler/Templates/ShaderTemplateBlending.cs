@@ -38,6 +38,7 @@ struct VertexInput
 	float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;
 	float4 vColor : COLOR0 < Semantic( Color ); >;
 	#include ""common/vertexinput.hlsl""
+{3}
 }};
 
 struct PixelInput
@@ -46,6 +47,7 @@ struct PixelInput
 	float4 vBlendValues		 : TEXCOORD14;
 	float4 vPaintValues		 : TEXCOORD15;
 	#include ""common/pixelinput.hlsl""
+{4}
 }};
 
 VS
@@ -60,10 +62,10 @@ VS
 	BoolAttribute( VertexPaintUI5Layer, F_MULTIBLEND == 4 );
 	BoolAttribute( VertexPaintUIPickColor, true );
 
-{8}{7}{11}
+{9}{10}{13}
 	PixelInput MainVs( VertexInput v )
 	{{
-{6}
+{8}
 	}}
 }}
 
@@ -72,13 +74,13 @@ PS
 	StaticCombo( S_MULTIBLEND, F_MULTIBLEND, Sys( PC ) );
 
 	#include ""common/pixel.hlsl""
-{9}{3}{10}
+{5}{11}{12}
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{{
-{12}
-{4}
-{5}
-{13}
+{14}
+{6}
+{7}
+{15}
 	}}
 }}
 ";
