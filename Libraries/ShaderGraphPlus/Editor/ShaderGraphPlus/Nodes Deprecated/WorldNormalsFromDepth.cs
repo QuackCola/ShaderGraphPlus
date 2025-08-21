@@ -1,7 +1,7 @@
 ﻿namespace ShaderGraphPlus.Nodes;
 
 [Title("World Normals from Depth"), Category("Utility")]
-public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus
+public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus, IWarningNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -32,4 +32,13 @@ public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus
 
         return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "GetWorldSpaceNormal", $"{coords}" ) );
     };
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+		warnings.Add( $"\"World Normals from Depth\" node is depreciated and will be removed in a future update. Use \"Sample Normal GBuffer\" node instead " );
+
+		return warnings;
+	}
 }
