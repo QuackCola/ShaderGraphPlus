@@ -33,14 +33,20 @@ public abstract class GBufferSampleNode : ShaderNodePlus
 	};
 }
 
-[Title( "Sample Normal GBuffer" ), Category( "GBuffer" ), Icon( "dropper_eye" )]
+/// <summary>
+/// Sample the normal gbuffer.
+/// </summary>
+[Title( "Sample Normal GBuffer" ), Category( "GBuffer" ), Icon( "colorize" )]
 public sealed class SampleNormalGBufferNode : GBufferSampleNode
 {
 	[Hide,JsonIgnore]
 	public override string Buffer => "Normals";
 }
 
-[Title( "Sample Roughness GBuffer" ), Category( "GBuffer" ), Icon( "grain" )]
+/// <summary>
+/// Sample the roughness gbuffer.
+/// </summary>
+[Title( "Sample Roughness GBuffer" ), Category( "GBuffer" ), Icon( "colorize" )]
 public sealed class SampleRoughnessGBufferNode : GBufferSampleNode
 {
 	[Hide, JsonIgnore]
