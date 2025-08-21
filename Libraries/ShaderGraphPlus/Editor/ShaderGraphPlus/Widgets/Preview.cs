@@ -549,6 +549,7 @@ public class Preview : SceneRenderingWidget
 
 		_postProcessCmdList.Reset();
 		_postProcessCmdList.Attributes.GrabFrameTexture( "ColorBuffer" );
+		_postProcessCmdList.Blit( _material, _sceneObject.Attributes );
 	}
 
 
