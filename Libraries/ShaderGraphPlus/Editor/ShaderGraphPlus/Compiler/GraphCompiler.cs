@@ -145,19 +145,8 @@ public sealed partial class GraphCompiler
 		AddSubgraphs( Graph );
 
 		// Set the Initial Vertex and Pixel stage inputs from the ShaderTemplate
-		switch ( Graph.MaterialDomain )
-		{
-			case MaterialDomain.Surface:
-				VertexInputs = ShaderTemplate.VertexInputs;
-				PixelInputs = ShaderTemplate.PixelInputs;
-				break;
-			case MaterialDomain.BlendingSurface:
-				throw new NotImplementedException();
-			case MaterialDomain.PostProcess:
-				VertexInputs = ShaderTemplate.VertexInputs;
-				PixelInputs = ShaderTemplate.PixelInputs;
-			break;
-		}
+		VertexInputs = ShaderTemplate.VertexInputs;
+		PixelInputs = ShaderTemplate.PixelInputs;
 	}
 
 	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
