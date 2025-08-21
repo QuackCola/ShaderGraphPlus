@@ -1591,7 +1591,13 @@ public sealed partial class GraphCompiler
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
 			return null;
-		
+
+		// Pre-Register anything before we Generate anything. Shouldn't cause any issues i hope.
+		foreach ( var node in Graph.Nodes.OfType<IPreRegisterNodeData>() )
+		{
+			node.PreRegister( this );
+		}
+
 		var material = GenerateMaterial();
 		var pixelOutput = GeneratePixelOutput();
 
@@ -1604,15 +1610,6 @@ public sealed partial class GraphCompiler
 		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
 		{
 			template = ShaderTemplateBlending.Code;
-		}
-
-		// Hack
-		if ( IsNotPreview )
-		{
-			foreach ( var node in Graph.Nodes.OfType<InstanceIdNode>() )
-			{
-				node.RegisterStageInputs( this );
-			}
 		}
 
 		return string.Format( template,
