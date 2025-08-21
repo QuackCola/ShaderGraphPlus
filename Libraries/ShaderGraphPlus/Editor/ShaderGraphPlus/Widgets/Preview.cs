@@ -93,19 +93,19 @@ public class PreviewPanel : Widget
 		set => _preview.Tint = value;
 	}
 
-    public bool PostProcessing
-    {
-        get => _preview.EnablePostProcessing;
-        set
-        {
-            if (_preview.EnablePostProcessing == value)
-                return;
+	public bool PostProcessing
+	{
+		get => _preview.EnablePostProcessing;
+		set
+		{
+			if ( _preview.EnablePostProcessing == value )
+				return;
 
-            _preview.EnablePostProcessing = value;
-            _preview.UpdateMaterial();
-            _preview.UpdatePostProcessing();
-        }
-    }
+			_preview.EnablePostProcessing = value;
+			_preview.UpdateMaterial();
+			_preview.UpdatePostProcessing();
+		}
+	}
 
     private void UpdateAnimationCombo()
 	{
