@@ -1592,6 +1592,17 @@ public sealed partial class GraphCompiler
 		if ( Errors.Any() )
 			return null;
 
+		/*
+		if ( Graph.MaterialDomain == MaterialDomain.BlendingSurface )
+		{
+			VertexInputs.Add( "vColorBlendValues", "float4 vColorBlendValues : TEXCOORD4 < Semantic( VertexPaintBlendParams ); >;" );
+			VertexInputs.Add( "vColorPaintValues", "float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;" );
+		
+			PixelInputs.Add( "vBlendValues", "float4 vBlendValues : TEXCOORD14;" );
+			PixelInputs.Add( "vPaintValues", "float4 vPaintValues : TEXCOORD15;" );
+		}
+		*/
+
 		// Pre-Register anything before we Generate anything. Shouldn't cause any issues i hope.
 		foreach ( var node in Graph.Nodes.OfType<IPreRegisterNodeData>() )
 		{
