@@ -656,6 +656,7 @@ public class Preview : SceneRenderingWidget
 			}
 
 			_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
+			UpdatePostProcessing();
 		}
 	}
 
