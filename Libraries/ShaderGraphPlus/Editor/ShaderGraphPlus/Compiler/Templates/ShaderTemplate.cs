@@ -10,61 +10,61 @@ HEADER
 
 FEATURES
 {{
-    #include ""common/features.hlsl""
+	#include ""common/features.hlsl""
 {1}
 }}
 
 MODES
 {{
-    Forward();
-    Depth();
-    ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
+	Forward();
+	Depth();
+	ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
 }}
 
 COMMON
 {{
 {2}
-    #include ""common/shared.hlsl""
-    #include ""common/gradient.hlsl""
-    #include ""procedural.hlsl""
-    
-    #define S_UV2 1
-    #define CUSTOM_MATERIAL_INPUTS
+	#include ""common/shared.hlsl""
+	#include ""common/gradient.hlsl""
+	#include ""procedural.hlsl""
+
+	#define S_UV2 1
+	#define CUSTOM_MATERIAL_INPUTS
 }}
 
 struct VertexInput
 {{
-    #include ""common/vertexinput.hlsl""
+	#include ""common/vertexinput.hlsl""
 {3}
 }};
 
 struct PixelInput
 {{
-    #include ""common/pixelinput.hlsl""
+	#include ""common/pixelinput.hlsl""
 {4}
 }};
 
 VS
 {{
-    #include ""common/vertex.hlsl""
+	#include ""common/vertex.hlsl""
 {9}{10}{13}
-    PixelInput MainVs( VertexInput v )
-    {{
+	PixelInput MainVs( VertexInput v )
+	{{
 {8}
-    }}
+	}}
 }}
 
 PS
 {{
-    #include ""common/pixel.hlsl""
+	#include ""common/pixel.hlsl""
 {5}{11}{12}
-    float4 MainPs( PixelInput i ) : SV_Target0
-    {{
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{{
 {14}
 {6}
 {7}
 {15}
-    }}
+	}}
 }}
 ";
 
