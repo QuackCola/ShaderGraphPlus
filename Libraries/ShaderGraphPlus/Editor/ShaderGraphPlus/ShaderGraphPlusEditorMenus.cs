@@ -50,7 +50,7 @@ internal static class ShaderGraphPlusEditorMenus
 	[Menu( "Editor", "Shader Graph Plus/Convert ShaderGraph projects to ShaderGraphPlus projects ( Experimental )" )]
 	public static void ConvertShaderGraphToShaderGraphPlus()
 	{
-		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders/Vanilla/Matrix", "*.shdrgrph", SearchOption.AllDirectories );
+		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrgrph", SearchOption.AllDirectories );
 
 		var projectItems = new List<ProjectItem>();
 		foreach ( var path in projectPaths )
