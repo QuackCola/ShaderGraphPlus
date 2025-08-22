@@ -42,7 +42,7 @@ partial class ShaderGraphPlus
 		return options;
 	}
 
-	public string Serialize()
+	public string Serialize( JsonArray nodes = null )
 	{
 		var doc = new JsonObject();
 		var options = SerializerOptions( true );
@@ -50,7 +50,15 @@ partial class ShaderGraphPlus
 		doc.Add( VersioningInfo.VersionJsonPropertyName, Version );
 
 		SerializeObject( this, doc, options );
-		SerializeNodes( Nodes, doc, options );
+
+		if ( nodes != null )
+		{
+			doc.Add( "nodes", nodes );
+		}
+		else
+		{
+			SerializeNodes( Nodes, doc, options );
+		}
 
 		return doc.ToJsonString( options );
 	}
