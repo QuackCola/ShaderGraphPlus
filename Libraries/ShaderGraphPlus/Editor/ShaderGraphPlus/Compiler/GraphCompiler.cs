@@ -2245,7 +2245,6 @@ VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSi
 PixelInput i = ProcessVertex( v );
 
 {sb2.ToString()}
-
 i.vBlendValues = v.vColorBlendValues;
 i.vPaintValues = v.vColorPaintValues;
 " );
@@ -2255,7 +2254,6 @@ case MaterialDomain.PostProcess:
 PixelInput i;
 
 {sb2.ToString()}
-
 i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
 i.vPositionWs = float3( v.vTexCoord, 0.0f );
 " );
