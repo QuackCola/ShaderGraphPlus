@@ -66,13 +66,6 @@ public enum ResultType
 	Invalid,
 }
 
-public enum CastType
-{
-	FloatToInt,
-	FloatToFloat,
-	IntToFloat,
-}
-
 internal enum MetadataType
 {
 	ImagePath,
@@ -331,7 +324,7 @@ public struct NodeResult : IValid
 	/// <summary>
 	/// "Cast" this result to different float types
 	/// </summary>
-	public string Cast( int components, float defaultValue = 0.0f, CastType castType = CastType.FloatToFloat )
+	public string Cast( int components, float defaultValue = 0.0f )
 	{
 		if ( components > 4 )
 		{
