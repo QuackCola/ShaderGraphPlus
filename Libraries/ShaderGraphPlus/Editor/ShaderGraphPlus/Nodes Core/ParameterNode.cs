@@ -7,9 +7,13 @@ namespace ShaderGraphPlus;
 public interface IParameterNode
 {
 	string Name { get; set; }
+	
 	bool IsAttribute { get; set; }
+	
 	ParameterUI UI { get; set; }
+	
 	public int PortOrder { get; set; }
+	
 	NodeInput PreviewInput { get; set; }
 
 	public Vector2 ParameterNodePosition { get; }
@@ -92,6 +96,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
+
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{
 		if ( compiler.IsPreview )
@@ -142,7 +147,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 
 		if ( Name.Contains( ' ' ) )
 		{
-			errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
+			//errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
 		}
 
 		foreach ( var parameterNode in Graph.Nodes )
