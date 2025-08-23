@@ -41,7 +41,7 @@ public sealed class Bool : ParameterNode<bool>
 }
 
 ///<summary>
-///Single int32 value.
+/// Single int value.
 ///</summary>
 [Title( "Int" ), Category( "Constants" ), Icon( "looks_one" )]
 public sealed class Int : ParameterNode<int>
