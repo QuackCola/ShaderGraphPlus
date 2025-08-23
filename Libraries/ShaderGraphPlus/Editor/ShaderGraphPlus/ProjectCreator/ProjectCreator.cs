@@ -69,7 +69,8 @@ public class ProjectCreator : Dialog
 		//Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
 
 		Init();
-    }
+		OkayButton.Enabled = true;
+	}
 
 
     private void Init()
@@ -312,12 +313,12 @@ public class ProjectCreator : Dialog
     {
         bool enabled = true;
 
-        if (string.IsNullOrWhiteSpace(FolderEdit.Text))
+        if ( string.IsNullOrWhiteSpace( FolderEdit.Text ) )
         {
             enabled = false;
         }
 
-        if (string.IsNullOrWhiteSpace(TitleEdit.Text))
+        if ( string.IsNullOrWhiteSpace( TitleEdit.Text ) )
         {
             enabled = false;
         }
@@ -356,7 +357,7 @@ public class ProjectCreator : Dialog
             return;
         }
 
-        string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
+        string shaderGraphProjectPath = $"{FolderEdit.Text}/";//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
 
         //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");
