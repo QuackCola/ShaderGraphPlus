@@ -69,13 +69,14 @@ internal class ProjectTemplatesListView : ListView
         }   
     }
 
-    protected override void OnPaint()
-    {
-        base.OnPaint();
-        //Paint.ClearPen();
-        //Paint.SetBrush(Theme.WidgetBackground);
-        //Paint.DrawRect(LocalRect);
-    }
+	protected override void OnPaint()
+	{
+		Paint.ClearPen();
+		Paint.SetBrush( Theme.ControlBackground );
+		Paint.DrawRect( LocalRect );
+
+		base.OnPaint();
+	}
 
     protected override void PaintItem( VirtualWidget v )
 	{
