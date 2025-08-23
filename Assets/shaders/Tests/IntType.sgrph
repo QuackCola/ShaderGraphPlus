@@ -64,7 +64,7 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "CastTest",
+      "_class": "IntCastTest",
       "__version": 1,
       "CastType": 2,
       "Identifier": "2",

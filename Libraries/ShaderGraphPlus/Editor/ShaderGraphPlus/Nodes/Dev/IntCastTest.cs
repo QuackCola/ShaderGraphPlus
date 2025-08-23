@@ -1,7 +1,7 @@
 ﻿namespace ShaderGraphPlus.Nodes;
 
 [Title( "Int Cast Test" ), Category( "Dev" ), Icon( "arrow" ), Hide]
-public sealed class CastTest : ShaderNodePlus
+public sealed class IntCastTest : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
