@@ -81,6 +81,8 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
+	int g_nMyInt < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
+		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
@@ -98,7 +100,11 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-
+		
+		int l_0 = g_nMyInt;
+		float2 l_1 = float2( l_0, l_0 );
+		
+		m.Albedo = float3( l_1, 0 );
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

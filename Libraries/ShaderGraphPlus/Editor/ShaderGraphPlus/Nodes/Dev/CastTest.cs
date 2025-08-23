@@ -18,13 +18,28 @@ public sealed class CastTest : ShaderNodePlus
 	{
 		var input = compiler.ResultOrDefault( Input, 1 );
 	
+		var castResult = input.Cast( CastType );
 
+		SGPLog.Info( $"Casted int to \"{castResult}\"", compiler.IsPreview );
 
-		var castTest = input.Cast( CastType );
+		var resultType = ResultType.Invalid;
+		switch ( CastType )
+		{
+			case 1:
+				resultType = ResultType.Float;
+				break;
+			case 2:
+				resultType = ResultType.Vector2;
+				break;
+			case 3:
+				resultType = ResultType.Vector3;
+				break;
+			case 4:
+				resultType = ResultType.Color;
+				break;
+		}
 
-		SGPLog.Info( $"Casted int to \"{castTest}\"" );
-
-		return new NodeResult( ResultType.Float, "0.0f" );
+		return new NodeResult( resultType, castResult );
 	};
 
 }
