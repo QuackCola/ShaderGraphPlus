@@ -24,7 +24,7 @@ public sealed class Bool : ParameterNode<bool>
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { HideProps = true };
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
@@ -53,6 +53,7 @@ public sealed class Int : ParameterNode<int>
 	[Hide, Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 	
@@ -61,6 +62,7 @@ public sealed class Int : ParameterNode<int>
 	
 	public Int()
 	{
+
 		Min = 0;
 		Max = 1;
 	}
@@ -81,6 +83,7 @@ public sealed class Float : ParameterNode<float>
 	[Hide, Editor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -127,6 +130,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -208,6 +212,7 @@ public sealed class Float3 : ParameterNode<Vector3>
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -297,6 +302,7 @@ public sealed class Float4 : ParameterNode<Color>
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
