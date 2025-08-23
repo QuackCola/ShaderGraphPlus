@@ -1861,7 +1861,7 @@ public sealed partial class GraphCompiler
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
 					float _ => "float",
-					int _ => "float", // treat int internally as a float.
+					int _ => "int",
 					bool _ => "bool",
 					Sampler _ => "SamplerState",
 					_ => null
