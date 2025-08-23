@@ -139,7 +139,14 @@ public class MainWindow : DockWindow
 	{
 		ProjectCreator = new ProjectCreator();
 		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = $"{Project.Current.GetAssetsPath().Replace( "\\", "/" )}/Shaders/";
+
+		var initialPath = $"{Project.Current.GetAssetsPath().Replace( "\\", "/" )}/Shaders";
+		if ( !Directory.Exists( initialPath ) )
+		{
+			Directory.CreateDirectory( initialPath );
+		}
+
+		ProjectCreator.FolderEditPath = initialPath;
 		ProjectCreator.Show();
 		ProjectCreator.OnProjectCreated += OpenProject;
 
