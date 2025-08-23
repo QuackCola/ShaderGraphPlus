@@ -17,12 +17,6 @@ public sealed partial class GraphCompiler
 		public bool IsWarning;
 	}
 
-	public struct Warning
-	{
-		public BaseNodePlus Node;
-		public string Message;
-	}
-
 	public static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
 	{
 		{ typeof( Color ), ( "float4", false ) },
