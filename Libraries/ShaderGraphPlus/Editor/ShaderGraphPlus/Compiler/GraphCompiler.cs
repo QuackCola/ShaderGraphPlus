@@ -1859,10 +1859,10 @@ public sealed partial class GraphCompiler
 					bool _ => "bool",
 					int _ => "int",
 					float _ => "float",
-					Color _ => "float4",
-					Vector4 _ => "float4",
-					Vector3 _ => "float3",
 					Vector2 _ => "float2",
+					Vector3 _ => "float3",
+					Vector4 _ => "float4",
+					Color _ => "float4",
 					Sampler _ => "SamplerState",
 					_ => null
 				};
