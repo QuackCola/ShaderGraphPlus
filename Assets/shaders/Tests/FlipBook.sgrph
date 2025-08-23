@@ -1,7 +1,7 @@
 {
   "__version": 1,
   "IsSubgraph": false,
-  "Path": "shaders/tests/my project 1.sgrph",
+  "Path": "shaders/tests/FlipBook.sgrph",
   "Model": "models/dev/plane.vmdl",
   "Title": null,
   "Description": null,
