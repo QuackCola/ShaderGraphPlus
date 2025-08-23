@@ -54,7 +54,7 @@ public sealed class Int : ParameterNode<int>
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
-		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 	
 	[Group("Range")] public int Min { get; set; }
