@@ -361,7 +361,6 @@ public static string FlipBook => @"
 float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool InvertX, bool InvertY )
 {
 	float flTile = fmod( (float)nTileIndex, flWidth * flHeight );
-
 	float2 InvertXY = float2( ( InvertX ? 1 : 0 ), ( InvertY ? 1 : 0 ));
 
 	float2 vtileCount = float2( 1.0f, 1.0f ) / float2( flWidth, flHeight );
