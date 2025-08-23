@@ -139,7 +139,7 @@ public class MainWindow : DockWindow
 	{
 		ProjectCreator = new ProjectCreator();
 		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+		ProjectCreator.FolderEditPath = $"{Project.Current.GetAssetsPath().Replace( "\\", "/" )}/Shaders/";
 		ProjectCreator.Show();
 		ProjectCreator.OnProjectCreated += OpenProject;
 

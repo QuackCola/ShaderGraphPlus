@@ -66,10 +66,9 @@ public class ProjectCreator : Dialog
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
-        //Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
+		//Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
 
-
-        Init();
+		Init();
     }
 
 
@@ -199,7 +198,6 @@ public class ProjectCreator : Dialog
                 {
                     FolderEdit = setupBody.Add(new FolderEdit(null));
                     FolderEdit.PlaceholderText = "";
-                    FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/Shaders/";
                     FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
                     FolderEdit.TextEdited += delegate
                     {
