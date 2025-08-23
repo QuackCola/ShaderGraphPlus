@@ -1,7 +1,7 @@
 {
   "__version": 1,
   "IsSubgraph": false,
-  "Path": "shaders/tests/inttype.sgrph",
+  "Path": "shaders/tests/IntCastTest.sgrph",
   "Model": null,
   "Title": null,
   "Description": null,
