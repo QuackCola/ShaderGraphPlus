@@ -40,9 +40,9 @@ public sealed class Bool : ParameterNode<bool>
 	}
 }
 
-// <summary>
-// Single int32 value stored as a float internally.
-// </summary>
+///<summary>
+///Single int32 value.
+///</summary>
 [Title( "Int" ), Category( "Constants" ), Icon( "looks_one" )]
 public sealed class Int : ParameterNode<int>
 {
@@ -65,7 +65,6 @@ public sealed class Int : ParameterNode<int>
 		Max = 1;
 	}
 }
-
 
 /// <summary>
 /// Single float value
