@@ -1856,13 +1856,13 @@ public sealed partial class GraphCompiler
 
 				var typeName = result.Value switch
 				{
+					bool _ => "bool",
+					int _ => "int",
+					float _ => "float",
 					Color _ => "float4",
 					Vector4 _ => "float4",
 					Vector3 _ => "float3",
 					Vector2 _ => "float2",
-					float _ => "float",
-					int _ => "int",
-					bool _ => "bool",
 					Sampler _ => "SamplerState",
 					_ => null
 				};
