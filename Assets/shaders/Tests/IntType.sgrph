@@ -1,7 +1,7 @@
 {
   "__version": 1,
   "IsSubgraph": false,
-  "Path": "shaders/Tests/inttype.sgrph",
+  "Path": "shaders/tests/inttype.sgrph",
   "Model": null,
   "Title": null,
   "Description": null,
@@ -61,7 +61,7 @@
     {
       "_class": "CastTest",
       "__version": 1,
-      "CastType": 3,
+      "CastType": 4,
       "Identifier": "2",
       "Position": "-324,24",
       "HandleOffsets": {},
