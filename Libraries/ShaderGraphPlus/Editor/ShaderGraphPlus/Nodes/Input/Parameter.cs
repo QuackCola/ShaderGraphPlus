@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using static Sandbox.Material;
+
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
@@ -41,25 +43,29 @@ public sealed class Bool : ParameterNode<bool>
 // <summary>
 // Single int32 value stored as a float internally.
 // </summary>
-//[Title("Int"), Category("Constants"), Icon("looks_one")]
-//public sealed class Int : ParameterNode<int>
-//{
-//    [Output(typeof(float)), Title("Value")]
-//    [Hide, Range(nameof(Min), nameof(Max), nameof(Step))]
-//    public NodeResult.Func Result => (GraphCompiler compiler) =>
-//    {
-//        return compiler.ResultParameter(Name, Value, default, default, false, IsAttribute, UI);
-//    };
-//
-//    [Group("Range")] public int Min { get; set; }
-//    [Group("Range")] public int Max { get; set; }
-//
-//    public Int()
-//    {
-//        Min = 0;
-//        Max = 1;
-//    }
-//}
+[Title( "Int" ), Category( "Constants" ), Icon( "looks_one" )]
+public sealed class Int : ParameterNode<int>
+{
+	[Hide]
+	public override int Version => 1;
+
+	[Output( typeof( int ) ), Title( "Value" )]
+	[Hide, Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
+	};
+	
+	[Group("Range")] public int Min { get; set; }
+	[Group("Range")] public int Max { get; set; }
+	
+	public Int()
+	{
+		Min = 0;
+		Max = 1;
+	}
+}
+
 
 /// <summary>
 /// Single float value
