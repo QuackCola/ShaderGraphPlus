@@ -77,6 +77,8 @@ partial class ShaderGraphPlus
 		
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath );
+
+		
 	}
 
 	public static int GetProjectVersion( JsonElement root )
@@ -215,21 +217,6 @@ partial class ShaderGraphPlus
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
-
-				// Replace named IParameter nodes with a SubgraphInput node.
-				//if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
-				//{
-				//	node.UpgradedToNewNode = true;
-				//
-				//	var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
-				//	subgraphInputNode.Position = parameterNode.ParameterNodePosition;
-				//	
-				//	// Take the Identifier of the node that we are replacing.
-				//	subgraphInputNode.Identifier = node.Identifier;
-				//
-				//	nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
-				//	AddNode( subgraphInputNode );
-				//}
 
 				if ( replaceAttribute != null && node is IReplaceNode iReplaceNode && iReplaceNode.ReplacementCondition )
 				{
