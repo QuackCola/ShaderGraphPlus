@@ -1435,7 +1435,7 @@ public class MainWindow : DockWindow
 		
 		if ( _asset == null )
 		{
-			Log.Warning( $"Unable to register asset {savePath}" );
+			SGPLog.Warning( $"Unable to register asset {savePath}" );
 		
 			return false;
 		}
