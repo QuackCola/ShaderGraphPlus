@@ -179,7 +179,7 @@ public class VariantValueBool : VariantValue<bool>
 		public override bool Value
 		{
 			get => Accessor.GetValue<bool>();
-			set => Accessor.SetValue<bool>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -209,7 +209,7 @@ public class VariantValueInt : VariantValue<int>
 		public override int Value
 		{
 			get => Accessor.GetValue<int>();
-			set => Accessor.SetValue<int>( value );
+			set => Accessor.SetValue( value );
 		}
 
 	}
@@ -242,7 +242,7 @@ public class VariantValueFloat : VariantValue<float>
 		public override float Value
 		{
 			get => Accessor.GetValue<float>();
-			set => Accessor.SetValue<float>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -272,7 +272,7 @@ public class VariantValueVector2 : VariantValue<Vector2>
 		public override Vector2 Value
 		{
 			get => Accessor.GetValue<Vector2>();
-			set => Accessor.SetValue<Vector2>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -302,7 +302,7 @@ public class VariantValueVector3 : VariantValue<Vector3>
 		public override Vector3 Value
 		{
 			get => Accessor.GetValue<Vector3>();
-			set => Accessor.SetValue<Vector3>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -333,7 +333,7 @@ public class VariantValueVector4 : VariantValue<Vector4>
 		public override Vector4 Value
 		{
 			get => Accessor.GetValue<Vector4>();
-			set => Accessor.SetValue<Vector4>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -363,7 +363,7 @@ public class VariantValueColor : VariantValue<Color>
 		public override Color Value
 		{
 			get => Accessor.GetValue<Color>();
-			set => Accessor.SetValue<Color>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -396,7 +396,7 @@ public class VariantValueSampler : VariantValue<Sampler>
 		public override Sampler Value
 		{
 			get => Accessor.GetValue<Sampler>();
-			set => Accessor.SetValue<Sampler>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
@@ -425,7 +425,7 @@ public class VariantValueTexture2D : VariantValue<TextureInput>
 		public override TextureInput Value
 		{
 			get => Accessor.GetValue<TextureInput>();
-			set => Accessor.SetValue<TextureInput>( value );
+			set => Accessor.SetValue( value );
 		}
 	}
 }
