@@ -846,7 +846,7 @@ public sealed partial class GraphCompiler
 				Subgraphs.Add( Subgraph );
 			}
 
-			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.SubgraphFunctionOutput.OutputName == input.Output ).FirstOrDefault();
+			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.OutputName == input.Output ).FirstOrDefault();
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
 			{
@@ -2136,18 +2136,18 @@ public sealed partial class GraphCompiler
 
 			foreach ( var subgraphOutput in subgraphOutputs )
 			{
-				if ( reservedPreview.ContainsKey( $"{subgraphOutput.SubgraphFunctionOutput.Preview}" ) )
+				if ( reservedPreview.ContainsKey( $"{subgraphOutput.Preview}" ) )
 				{
-					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.SubgraphFunctionOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.SubgraphFunctionOutput.Preview}\" as its preview type"] );
+					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
 					continue;
 				}
 
-				if ( subgraphOutput.SubgraphFunctionOutput.Preview == SubgraphOutputPreviewType.None )
+				if ( subgraphOutput.Preview == SubgraphOutputPreviewType.None )
 					continue;
 
-				reservedPreview.Add( $"{subgraphOutput.SubgraphFunctionOutput.Preview}", subgraphOutput );
+				reservedPreview.Add( $"{subgraphOutput.Preview}", subgraphOutput );
 
-				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.SubgraphFunctionOutput.Preview, out var errors );
+				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.Preview, out var errors );
 
 				if ( errors.Any() )
 				{
