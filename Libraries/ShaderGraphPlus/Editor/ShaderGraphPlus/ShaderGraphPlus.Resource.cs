@@ -44,7 +44,7 @@ public class PreviewSettings
 
 //[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
 [AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding )]
-public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
+public partial class ShaderGraphPlus : IGraph//, ISGPJsonUpgradeable
 {
 	[Hide, JsonPropertyName( "__version" )]
 	public int Version { get; set; } = 2;
