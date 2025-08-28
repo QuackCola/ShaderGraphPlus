@@ -107,49 +107,34 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		InputData.SetValueRangeMax<T>( value );
 	}
 
-	public List<string> GetWarnings()
+	public SubgraphInput()
 	{
-		var warnings = new List<string>();
-
-		return warnings;
 	}
 
-	public List<string> GetErrors()
+	/*
+	public object GetValue()
 	{
-		List<string> errors = new List<string>();
-
-		if ( string.IsNullOrWhiteSpace( InputName ) )
-		{
-			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
-		}
-
-		if ( InputName.Contains( ' ' ) )
-		{
-			// TODO : Un-Comment if issues arise.
-			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
-		}
-
-		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
-		{
-			foreach ( var node in Graph.Nodes )
-			{
-				if ( node == this ) continue;
-
-				if ( node is SubgraphInput otherInput && otherInput.InputName == InputName )
-				{
-					errors.Add( $"Duplicate input name \"{InputName}\"" );
-					break;
-				}
-			}
-		}
-
-		if ( InputData.InputType == SubgraphPortType.Invalid )
-		{
-			errors.Add( $"SubgraphInput InputType is invalid!" );
-		}
-
-		return errors;
+		return GetOutputValue();
 	}
+
+	private object GetOutputValue()
+	{
+		return InputData.InputType switch
+		{
+			SubgraphPortType.Bool => InputData.GetValue<bool>(),
+			SubgraphPortType.Float => InputData.GetValue<float>(),
+			SubgraphPortType.Vector2 => InputData.GetValue<Vector2>(),
+			SubgraphPortType.Vector3 => InputData.GetValue<Vector3>(),
+			SubgraphPortType.Color => InputData.GetValue<Color>(),
+			SubgraphPortType.Texture2DObject => InputData.GetValue<TextureInput>(),
+			SubgraphPortType.Sampler => InputData.GetValue<Sampler>(),
+			_ => 1.0f,
+		};
+	}
+	*/
+
+	[JsonIgnore, Hide]
+	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
 
 	private string CompileTexture( TextureInput UI )
 	{
@@ -258,32 +243,47 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		*/
 	};
 
-	public SubgraphInput()
+	public List<string> GetWarnings()
 	{
+		var warnings = new List<string>();
+
+		return warnings;
 	}
 
-	/*
-	public object GetValue()
+	public List<string> GetErrors()
 	{
-		return GetOutputValue();
-	}
+		List<string> errors = new List<string>();
 
-	private object GetOutputValue()
-	{
-		return InputData.InputType switch
+		if ( string.IsNullOrWhiteSpace( InputName ) )
 		{
-			SubgraphPortType.Bool => InputData.GetValue<bool>(),
-			SubgraphPortType.Float => InputData.GetValue<float>(),
-			SubgraphPortType.Vector2 => InputData.GetValue<Vector2>(),
-			SubgraphPortType.Vector3 => InputData.GetValue<Vector3>(),
-			SubgraphPortType.Color => InputData.GetValue<Color>(),
-			SubgraphPortType.Texture2DObject => InputData.GetValue<TextureInput>(),
-			SubgraphPortType.Sampler => InputData.GetValue<Sampler>(),
-			_ => 1.0f,
-		};
-	}
-	*/
+			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
+		}
 
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
+		if ( InputName.Contains( ' ' ) )
+		{
+			// TODO : Un-Comment if issues arise.
+			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
+		}
+
+		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
+		{
+			foreach ( var node in Graph.Nodes )
+			{
+				if ( node == this ) continue;
+
+				if ( node is SubgraphInput otherInput && otherInput.InputName == InputName )
+				{
+					errors.Add( $"Duplicate input name \"{InputName}\"" );
+					break;
+				}
+			}
+		}
+
+		if ( InputData.InputType == SubgraphPortType.Invalid )
+		{
+			errors.Add( $"SubgraphInput InputType is invalid!" );
+		}
+
+		return errors;
+	}
 }
