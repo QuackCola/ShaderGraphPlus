@@ -72,6 +72,13 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
 
+	[JsonIgnore, Hide]
+	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
+
+	public SubgraphInput()
+	{
+	}
+
 	internal VariantParam<T> GetValueAsVariantParam<T>()
 	{
 		return InputData.GetAsVariantParam<T>( InputDescription );
@@ -82,37 +89,9 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return InputData.GetValue<T>();
 	}
 
-	/*
-	internal T GetDefaultValueRangeMin<T>()
-	{
-		return InputData.GetValueRangeMin<T>();
-	}
-
-	internal T GetDefaultValueRangeMax<T>()
-	{
-		return InputData.GetValueRangeMax<T>();
-	}
-	*/
-
 	internal void SetDefaultValue<T>( T value )
 	{
 		InputData.SetValue<T>( value );
-	}
-
-	/*
-	internal void SetDefaultValueRangeMin<T>( T value )
-	{
-		InputData.SetValueRangeMin<T>( value );
-	}
-
-	internal void SetDefaultValueRangeMax<T>( T value )
-	{
-		InputData.SetValueRangeMax<T>( value );
-	}
-	*/
-
-	public SubgraphInput()
-	{
 	}
 
 	/*
@@ -136,9 +115,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		};
 	}
 	*/
-
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
 
 	private string CompileTexture( TextureInput UI )
 	{
