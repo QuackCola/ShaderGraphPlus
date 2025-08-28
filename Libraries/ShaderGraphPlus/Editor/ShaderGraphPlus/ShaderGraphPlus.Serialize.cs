@@ -421,11 +421,6 @@ partial class ShaderGraphPlus
 
 		if ( obj is INode node )
 		{
-			//string subgraphPath = null;
-			//if ( obj is SubgraphNode subgraphNode )
-			//{
-			//	subgraphPath = subgraphNode.SubgraphPath;
-			//}
 			foreach ( var input in node.Inputs )
 			{
 				if ( input.ConnectedOutput is not { } output )
@@ -435,7 +430,6 @@ partial class ShaderGraphPlus
 				{
 					Identifier = identifiers?.TryGetValue( output.Node.Identifier, out var newIdent ) ?? false ? newIdent : output.Node.Identifier,
 					Output = output.Identifier,
-					//Subgraph = subgraphPath
 				} ) );
 			}
 		}
