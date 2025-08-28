@@ -146,7 +146,7 @@ public abstract class VariantValue<T> : VariantValueBase
 
 	public VariantValue() : base()
 	{
-		Value = default( T );
+		Value = default;
 	}
 
 	public VariantValue( SubgraphPortType inputType ) : base( inputType )
