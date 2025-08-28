@@ -34,19 +34,17 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
-
-	[Hide]
-	public override string Title => $"{InputName} ( {InputData.InputType} )";
-
-	[Hide, JsonIgnore]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[Hide, JsonIgnore]
+	
+	//[Hide, JsonIgnore]
+	//private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[Hide, JsonIgnore]
 	private string _textureGlobal;
 
-	public NodeInput PreviewInput { get; set; }
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace( InputName ) ?
+	$"Subgraph Input" :
+	$"{InputName} ({InputData.InputType})";
 
 	/// <summary>
 	/// Name of this input.
@@ -68,6 +66,9 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public bool IsRequired { get; set; } = false;
 
 	public int PortOrder { get; set; }
+
+	[Input, Title( "Preview" ), Hide]
+	public NodeInput PreviewInput { get; set; }
 
 	internal VariantParam<T> GetValueAsVariantParam<T>()
 	{
@@ -104,11 +105,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		InputData.SetValueRangeMax<T>( value );
 	}
 
-	public void OnNodeCreated()
-	{
-
-	}
-
 	public List<string> GetWarnings()
 	{
 		var warnings = new List<string>();
@@ -129,6 +125,20 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		{
 			// TODO : Un-Comment if issues arise.
 			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
+		}
+
+		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
+		{
+			foreach ( var node in Graph.Nodes )
+			{
+				if ( node == this ) continue;
+
+				if ( node is SubgraphInput otherInput && otherInput.InputName == InputName )
+				{
+					errors.Add( $"Duplicate input name \"{InputName}\"" );
+					break;
+				}
+			}
 		}
 
 		if ( InputData.InputType == SubgraphPortType.Invalid )
@@ -214,8 +224,35 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
 
-		//SGPLog.Info( $"ResultType \"{defaultResult.resultType}\" with DefaultResult code \"{defaultResult.defaultCode}\"", compiler.IsPreview );
-
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
+
+		/*
+		// In subgraphs, check if preview input is connected
+		if ( compiler.Graph.IsSubgraph && PreviewInput.IsValid )
+		{
+			return compiler.Result( PreviewInput );
+		}
+		
+		// Use the appropriate default value based on input type
+		var outputValue = GetOutputValue();
+		
+		// If we're in a subgraph context, just return the value directly
+		if ( compiler.Graph.IsSubgraph )
+		{
+			if ( InputData.InputType == SubgraphPortType.Sampler )
+			{
+				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
+			}
+			if ( InputData.InputType == SubgraphPortType.Texture2DObject )
+			{
+				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
+			}
+		
+			return compiler.ResultValue( outputValue );
+		}
+		
+		// For normal graphs, use ResultParameter to create a material parameter
+		return compiler.ResultParameter( InputName, outputValue, default, default, false, IsRequired, new() );
+		*/
 	};
 }
