@@ -23,36 +23,6 @@ internal abstract class ParamProperty : SerializedProperty
 		};
 	}
 
-	public static ParamProperty CreateRangeMin( VariantValueSerializedObject parent )
-	{
-		var variantProperty = parent.Node.InputData;
-
-		return variantProperty switch
-		{
-			VariantValueFloat => new VariantValueFloat.ParamPropertyFloatRangeMin( parent, "Default Float Min" ),
-			VariantValueVector2 => new VariantValueVector2.ParamPropertyVector2RangeMin( parent, "Default Vector2 Min" ),
-			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3RangeMin( parent, "Default Vector3 Min" ),
-			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4RangeMin( parent, "Default Vector4 Min" ),
-			VariantValueColor => new VariantValueColor.ParamPropertyColorRangeMin( parent, "Default Color Min" ),
-			_ => null,
-		};
-	}
-
-	public static ParamProperty CreateRangeMax( VariantValueSerializedObject parent )
-	{
-		var variantProperty = parent.Node.InputData;
-
-		return variantProperty switch
-		{
-			VariantValueFloat => new VariantValueFloat.ParamPropertyFloatRangeMax( parent, "Default Float Max" ),
-			VariantValueVector2 => new VariantValueVector2.ParamPropertyVector2RangeMax( parent, "Default Vector2 Max" ),
-			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3RangeMax( parent, "Default Vector3 Max" ),
-			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4RangeMax( parent, "Default Vector4 Max" ),
-			VariantValueColor => new VariantValueColor.ParamPropertyColorRangeMax( parent, "Default Color Max" ),
-			_ => null,
-		};
-	}
-
 	private VariantValueSerializedObject _parent;
 
 	public override SerializedObject Parent => _parent;

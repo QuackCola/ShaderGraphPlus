@@ -60,7 +60,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public string InputDescription { get; set; } = "";
 
 	[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
-	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 
 	/// <summary>
 	/// Is this input required to have a valid connection?
@@ -82,6 +82,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return InputData.GetValue<T>();
 	}
 
+	/*
 	internal T GetDefaultValueRangeMin<T>()
 	{
 		return InputData.GetValueRangeMin<T>();
@@ -91,12 +92,14 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		return InputData.GetValueRangeMax<T>();
 	}
+	*/
 
 	internal void SetDefaultValue<T>( T value )
 	{
 		InputData.SetValue<T>( value );
 	}
 
+	/*
 	internal void SetDefaultValueRangeMin<T>( T value )
 	{
 		InputData.SetValueRangeMin<T>( value );
@@ -106,6 +109,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		InputData.SetValueRangeMax<T>( value );
 	}
+	*/
 
 	public SubgraphInput()
 	{

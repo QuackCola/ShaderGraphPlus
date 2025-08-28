@@ -542,7 +542,7 @@ partial class ShaderGraphPlus
 				subgraphInput.InputData.InputType = SubgraphPortType.Float;
 				if ( element.TryGetProperty( "Value", out var floatValue ) )
 				{
-					subgraphInput.InputData = new VariantValueFloat( floatValue.GetSingle(), 0, 1, SubgraphPortType.Float );
+					subgraphInput.InputData = new VariantValueFloat( floatValue.GetSingle(), SubgraphPortType.Float );
 				}
 				break;
 			case "Float2":
@@ -550,7 +550,7 @@ partial class ShaderGraphPlus
 				if ( element.TryGetProperty( "Value", out var float2Value ) )
 				{
 					var vector2 = JsonSerializer.Deserialize<Vector2>( float2Value.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueVector2( vector2, Vector2.Zero, Vector2.One, SubgraphPortType.Vector2 );
+					subgraphInput.InputData = new VariantValueVector2( vector2, SubgraphPortType.Vector2 );
 				}
 				break;
 			case "Float3":
@@ -558,7 +558,7 @@ partial class ShaderGraphPlus
 				if ( element.TryGetProperty( "Value", out var float3Value ) )
 				{
 					var vector3 = JsonSerializer.Deserialize<Vector3>( float3Value.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueVector3( vector3, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+					subgraphInput.InputData = new VariantValueVector3( vector3, SubgraphPortType.Vector3 );
 				}
 				break;
 			case "Float4":
@@ -566,7 +566,7 @@ partial class ShaderGraphPlus
 				if ( element.TryGetProperty( "Value", out var ColorValue ) )
 				{
 					var vector4 = JsonSerializer.Deserialize<Vector4>( ColorValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueColor( vector4, Vector4.Zero, Vector4.One, SubgraphPortType.Color );
+					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Color );
 				}
 				break;
 			case "Texture2DObjectNode":
@@ -574,7 +574,7 @@ partial class ShaderGraphPlus
 				if ( element.TryGetProperty( "UI", out var TextureInputValue ) )
 				{
 					var vector4 = JsonSerializer.Deserialize<Vector4>( TextureInputValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueColor( vector4, Vector4.Zero, Vector4.One, SubgraphPortType.Texture2DObject );
+					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Texture2DObject );
 				}
 				break;
 			case "SamplerNode":
