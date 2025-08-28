@@ -1,4 +1,5 @@
-﻿using ShaderGraphPlus.Nodes;
+﻿using Sandbox.Resources;
+using ShaderGraphPlus.Nodes;
 using System.Text;
 
 namespace ShaderGraphPlus;
@@ -102,6 +103,9 @@ public class ShaderFunctionOutput
 			case Type t when t == typeof( Color ):
 				OutputType = SubgraphPortType.Color;
 				break;
+			case Type t when t == typeof( ColorTextureGenerator ):
+				OutputType = SubgraphPortType.Color;
+				break;
 			//case Type t when t == typeof( Float2x2 ):
 			//
 			//	break;
@@ -171,6 +175,8 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public void InitializeNode()
 	{
 		CreateInput();
+		IsDirty = true;
+		Update();
 	}
 
 	public List<string> GetErrors()
