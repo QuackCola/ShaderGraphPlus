@@ -124,14 +124,14 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			plugs.Add( plug );
 
-			InputReferences[plug] = (inputNode, type);
+			InputReferences[plug] = (subgraphInput, type);
 
 			// TODO 
 			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			{
 				//if ( parameterNode.GetValue() != null )
 				{
-					DefaultValues[plug.Identifier] = inputNode.InputData.GetValueAsObject();//parameterNode.GetValue();
+					DefaultValues[plug.Identifier] = subgraphInput.InputData.GetValueAsObject();//parameterNode.GetValue();
 				}
 			}
 		}
