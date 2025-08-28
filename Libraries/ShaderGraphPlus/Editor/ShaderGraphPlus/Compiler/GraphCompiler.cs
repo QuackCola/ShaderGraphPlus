@@ -887,7 +887,7 @@ public sealed partial class GraphCompiler
 			{
 				if ( node is SubgraphInput subgraphInput )
 				{
-					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value, out var error );
+					var newResult = ResolveSubgraphInput( subgraphInput, ref value, out var error );
 
 					if ( !string.IsNullOrWhiteSpace( error.ErrorString ) )
 					{
@@ -1332,7 +1332,7 @@ public sealed partial class GraphCompiler
 		
 	}
 
-	private NodeResult ResolveSubgraphInputNode( SubgraphInput inputNode, ref object value, out (SubgraphNode Node, string ErrorString) error )
+	private NodeResult ResolveSubgraphInput( SubgraphInput inputNode, ref object value, out (SubgraphNode Node, string ErrorString) error )
 	{
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
