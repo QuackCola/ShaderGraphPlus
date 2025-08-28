@@ -885,7 +885,7 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
-				if ( node is SubgraphInput subgraphInput )
+				if ( node is SubgraphInput subgraphInput && !string.IsNullOrWhiteSpace( subgraphInput.InputName ) )
 				{
 					var newResult = ResolveSubgraphInput( subgraphInput, ref value, out var error );
 
