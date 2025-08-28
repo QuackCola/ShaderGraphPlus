@@ -149,6 +149,12 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 			_nodes[name].ComboSwitchInfo = default;
 	}
 
+	public bool ContainsNode( string id )
+	{
+		if ( _nodes.ContainsKey( id ) ) return true;
+		return false;
+	}
+
 	public void AddNode( BaseNodePlus node )
 	{
 		node.Graph = this;
