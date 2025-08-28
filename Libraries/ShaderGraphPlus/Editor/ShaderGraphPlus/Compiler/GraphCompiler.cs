@@ -1089,11 +1089,7 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-		{
-			var res = ResultValue( value );
-
-			return res;
-		}
+			return ResultValue( value );
 
 		name = CleanName( name );
 		var attribName = name;
