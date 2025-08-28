@@ -1268,6 +1268,12 @@ public sealed partial class GraphCompiler
 		{
 			switch ( type )
 			{
+				case Type t when t == typeof( bool ):
+					return false;
+				case Type t when t == typeof( int ):
+					return 0;
+				case Type t when t == typeof( float ):
+					return 0.0f;
 				case Type t when t == typeof( Vector2 ):
 					return Vector2.Zero;
 				case Type t when t == typeof( Vector3 ):
@@ -1276,12 +1282,6 @@ public sealed partial class GraphCompiler
 					return Vector4.Zero;
 				case Type t when t == typeof( Color ):
 					return Color.White;
-				case Type t when t == typeof( int ):
-					return 0;
-				case Type t when t == typeof( float ):
-					return 0.0f;
-				case Type t when t == typeof( bool ):
-					return false;
 				case Type t when t == typeof( Sampler ):
 					return new Sampler();
 				case Type t when t == typeof( Texture2DObject ):
@@ -1294,7 +1294,15 @@ public sealed partial class GraphCompiler
 		
 		if ( value is JsonElement el )
 		{
-			if ( type == typeof( float ) )
+			if ( type == typeof( bool ) )
+			{
+				value = el.GetBoolean();
+			}
+			else if ( type == typeof( int ) )
+			{
+				value = el.GetInt32();
+			}
+			else if ( type == typeof( float ) )
 			{
 				value = el.GetSingle();
 			}
@@ -1313,10 +1321,6 @@ public sealed partial class GraphCompiler
 			else if ( type == typeof( Color ) )
 			{
 				value = Color.Parse( el.GetString() ) ?? Color.White;
-			}
-			else if ( type == typeof( bool ) )
-			{
-				value = el.GetBoolean();
 			}
 			else if ( type == typeof( Sampler ) )
 			{
