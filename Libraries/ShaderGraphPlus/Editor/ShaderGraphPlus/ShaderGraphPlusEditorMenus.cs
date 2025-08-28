@@ -20,8 +20,14 @@ internal static class ShaderGraphPlusEditorMenus
 			{
 				var graph = new ShaderGraphPlus();
 				var file = System.IO.File.ReadAllText( projectPath );
-
-				if ( ShaderGraphPlus.GetProjectVersion( JsonDocument.Parse( file ).RootElement ) == 0 )
+				
+				var currentVersion = 0;
+				if ( JsonDocument.Parse( file ).RootElement.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
+				{
+					currentVersion = ver.GetInt32();
+				}
+				
+				if ( currentVersion == 0 )
 				{
 					graph.Deserialize( file );
 
