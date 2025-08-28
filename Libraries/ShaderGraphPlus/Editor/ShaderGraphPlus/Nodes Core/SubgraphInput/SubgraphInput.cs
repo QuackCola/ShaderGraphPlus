@@ -259,11 +259,11 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
 		}
 
-		if ( InputName.Contains( ' ' ) )
-		{
-			// TODO : Un-Comment if issues arise.
-			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
-		}
+		// TODO : Un-Comment if issues arise.
+		//if ( InputName.Contains( ' ' ) )
+		//{
+		//	errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
+		//}
 
 		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
 		{
