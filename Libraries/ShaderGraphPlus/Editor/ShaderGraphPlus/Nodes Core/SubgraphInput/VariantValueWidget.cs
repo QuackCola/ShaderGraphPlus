@@ -72,6 +72,7 @@ internal class VariantValueSerializedObject : SerializedObject
 			var paramProp = ParamProperty.Create( this );
 			PropertyList.Add( paramProp );
 
+			/*
 			if ( Node.InputData.HasRange )
 			{
 				var paramPropRangeMin = ParamProperty.CreateRangeMin( this );
@@ -79,6 +80,7 @@ internal class VariantValueSerializedObject : SerializedObject
 				PropertyList.Add( paramPropRangeMin );
 				PropertyList.Add( paramPropRangeMax );
 			}
+			*/
 		}
 	}
 }
