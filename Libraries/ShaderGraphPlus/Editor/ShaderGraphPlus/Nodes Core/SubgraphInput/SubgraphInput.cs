@@ -255,4 +255,33 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return compiler.ResultParameter( InputName, outputValue, default, default, false, IsRequired, new() );
 		*/
 	};
+
+	public SubgraphInput()
+	{
+	}
+
+	/*
+	public object GetValue()
+	{
+		return GetOutputValue();
+	}
+
+	private object GetOutputValue()
+	{
+		return InputData.InputType switch
+		{
+			SubgraphPortType.Bool => InputData.GetValue<bool>(),
+			SubgraphPortType.Float => InputData.GetValue<float>(),
+			SubgraphPortType.Vector2 => InputData.GetValue<Vector2>(),
+			SubgraphPortType.Vector3 => InputData.GetValue<Vector3>(),
+			SubgraphPortType.Color => InputData.GetValue<Color>(),
+			SubgraphPortType.Texture2DObject => InputData.GetValue<TextureInput>(),
+			SubgraphPortType.Sampler => InputData.GetValue<Sampler>(),
+			_ => 1.0f,
+		};
+	}
+	*/
+
+	[JsonIgnore, Hide]
+	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
 }
