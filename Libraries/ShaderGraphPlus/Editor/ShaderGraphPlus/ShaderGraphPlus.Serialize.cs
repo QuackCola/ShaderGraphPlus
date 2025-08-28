@@ -197,7 +197,7 @@ partial class ShaderGraphPlus
 			else
 			{
 				//var replaceAttribute = node.GetType().GetCustomAttribute<NodeReplaceAttribute>();
-	
+
 				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
 				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
 				if ( IsSubgraph && fileVersion < 1 && ShouldUpgradeToSubgraphInput( typeName, element ) )
@@ -205,11 +205,20 @@ partial class ShaderGraphPlus
 					node = CreateUpgradedSubgraphInput( typeName, element, options );
 					fileVersion = 1; // We've upgraded now, useful if there are future upgraders.
 				}
+				else if ( IsSubgraph && typeName == "SubgraphOutput" && fileVersion < 2 )
+				{
+					SGPLog.Info( $"Upgrading subgraph output since \"{fileVersion}\" < 2" );
+					
+					var missingNode = new MissingNode( typeName, element );
+					node = missingNode;
+					DeserializeObject( node, element, options );
+				}
 				else
 				{
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 					DeserializeObject( node, element, options );
 				}
+				
 
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{

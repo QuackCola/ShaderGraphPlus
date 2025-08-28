@@ -1,6 +1,8 @@
-﻿using Sandbox.Resources;
+﻿using Editor.ShaderGraph;
+using Sandbox.Resources;
 using ShaderGraphPlus.Nodes;
 using System.Text;
+
 
 namespace ShaderGraphPlus;
 
@@ -130,10 +132,10 @@ public class ShaderFunctionOutput
 		}
 	}
 
-	public override int GetHashCode()
-	{
-		return System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType.GetHlslType(), PortOrder );
-	}
+	//public override int GetHashCode()
+	//{
+	//	return System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType.GetHlslType(), PortOrder );
+	//}
 }
 
 /// <summary>
@@ -142,7 +144,7 @@ public class ShaderFunctionOutput
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
 public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 {
-	[Hide]
+	[Hide] // TODO : Bump up to 2 and move everything out from ShaderFunctionOutput.
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
@@ -154,22 +156,92 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	[InlineEditor( Label = false )]
 	public ShaderFunctionOutput SubgraphFunctionOutput { get; set; } = new ShaderFunctionOutput();
 
+	[Hide]
+	public Guid Id { get; internal set; } = Guid.NewGuid();
+
+	public string OutputName { get; set; } = "Ouat0";
+
+	[TextArea]
+	public string OutputDescription { get; set; } = "";
+
+	public SubgraphPortType OutputType { get; set; } = SubgraphPortType.Vector3;
+
+	public SubgraphOutputPreviewType Preview { get; set; } = SubgraphOutputPreviewType.None;
+
+	public int PortOrder { get; set; } = 0;
+
 	public override void OnFrame()
 	{
-		var hashCode = 0;
-		
-		hashCode += SubgraphFunctionOutput.GetHashCode();
+		var hashCode = new HashCode();
+		hashCode.Add( Id );
+		hashCode.Add( OutputName );
+		hashCode.Add( OutputDescription );
+		hashCode.Add( OutputType.GetHlslType() );
+		hashCode.Add( PortOrder );
 
-		if ( hashCode != _lastHashCode )
+		var hc = hashCode.ToHashCode();
+
+		if ( hc != _lastHashCode )
 		{
-			var oldhashCode = _lastHashCode;
-			_lastHashCode = hashCode;
-
+			//var oldhashCode = _lastHashCode;
+			_lastHashCode = hc;
+			
 			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 			
 			CreateInput();
 			IsDirty = true;
 			Update();
+		}
+	}
+
+	public void SetSubgraphPortTypeFromType( Type type )
+	{
+		switch ( type )
+		{
+			case Type t when t == typeof( bool ):
+				OutputType = SubgraphPortType.Bool;
+				break;
+			case Type t when t == typeof( int ):
+				OutputType = SubgraphPortType.Int;
+				break;
+			case Type t when t == typeof( float ):
+				OutputType = SubgraphPortType.Float;
+				break;
+			case Type t when t == typeof( Vector2 ):
+				OutputType = SubgraphPortType.Vector2;
+				break;
+			case Type t when t == typeof( Vector3 ):
+				OutputType = SubgraphPortType.Vector3;
+				break;
+			case Type t when t == typeof( Vector4 ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			case Type t when t == typeof( Color ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			case Type t when t == typeof( ColorTextureGenerator ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			//case Type t when t == typeof( Float2x2 ):
+			//
+			//	break;
+			//case Type t when t == typeof( Float3x3 ):
+			//
+			//	break;
+			//case Type t when t == typeof( Float4x4 ):
+			//
+			//	break;
+			case Type t when t == typeof( Sampler ):
+				OutputType = SubgraphPortType.Sampler;
+				break;
+			case Type t when t == typeof( Texture2DObject ):
+				OutputType = SubgraphPortType.Texture2DObject;
+				break;
+			//case Type t when t == typeof( TextureCubeObject ):
+			//
+			//	break;
+			default:
+				throw new Exception( $"Unknown type \"{type}\"" );
 		}
 	}
 
@@ -183,27 +255,21 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public List<string> GetErrors()
 	{
 		var errors = new List<string>();
-		if ( SubgraphFunctionOutput == null )
-		{
-			errors.Add( "No output defined" );
-		}
-		else
-		{
-			if ( Graph is ShaderGraphPlus shaderGraphPlus && shaderGraphPlus.IsSubgraph )
-			{
-				foreach ( var node in Graph.Nodes )
-				{
-					if ( node == this ) continue;
 
-					if ( node is SubgraphOutput otherOutput && otherOutput.SubgraphFunctionOutput.OutputName == SubgraphFunctionOutput.OutputName )
-					{
-						errors.Add( $"Duplicate output name \"{SubgraphFunctionOutput.OutputName}\"" );
-						break;
-					}
+		if ( Graph is ShaderGraphPlus shaderGraphPlus && shaderGraphPlus.IsSubgraph )
+		{
+			foreach ( var node in Graph.Nodes )
+			{
+				if ( node == this ) continue;
+
+				if ( node is SubgraphOutput otherOutput && otherOutput.OutputName == OutputName )
+				{
+					errors.Add( $"Duplicate output name \"{OutputName}\"" );
+					break;
 				}
 			}
-
 		}
+
 		return errors;
 	}
 
@@ -224,16 +290,29 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	private void CreateInput()
 	{
+		var outputType = OutputType switch
+		{
+			SubgraphPortType.Bool => typeof( bool ),
+			SubgraphPortType.Int => typeof( int ),
+			SubgraphPortType.Float => typeof( float ),
+			SubgraphPortType.Vector2 => typeof( Vector2 ),
+			SubgraphPortType.Vector3 => typeof( Vector3 ),
+			SubgraphPortType.Color => typeof( Color ),
+			SubgraphPortType.Sampler => typeof( Sampler ),
+			SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+			_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
+		};
+
 		var plugInfo = new PlugInfo()
 		{
-			Id = SubgraphFunctionOutput.Id,
-			Name = SubgraphFunctionOutput.OutputName,
-			Type = SubgraphFunctionOutput.Type,
+			Id = Id,
+			Name = OutputName,
+			Type = outputType,
 			DisplayInfo = new()
 			{
-				Name = SubgraphFunctionOutput.OutputName,
-				Fullname = SubgraphFunctionOutput.Type.FullName,
-				Description = SubgraphFunctionOutput.OutputDescription,
+				Name = OutputName,
+				Fullname = outputType.FullName,
+				Description = OutputDescription,
 			}
 		};
 		
@@ -323,10 +402,9 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	public NodeInput? GetInputFromPreview( SubgraphOutputPreviewType previewType )
 	{
-		var albedoOutput = SubgraphFunctionOutput;
-		if ( albedoOutput is not null && SubgraphFunctionOutput.Preview == previewType )
+		if ( Preview == previewType )
 		{
-			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == albedoOutput.Id );
+			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == Id );
 			if ( input is BasePlugIn plugIn )
 			{
 				
@@ -342,6 +420,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 				return plugIn.Info.GetInput( plugIn.Node );
 			}
 		}
+
 		return null;
 	}
 

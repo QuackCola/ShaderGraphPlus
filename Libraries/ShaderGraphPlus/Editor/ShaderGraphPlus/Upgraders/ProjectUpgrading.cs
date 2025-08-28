@@ -120,13 +120,10 @@ public static class ProjectUpgrading
 			lastOffset.y += 64;
 			subgraphOutputNode.Position = functionResult.Position + new Vector2( 0, lastOffset.y );
 
-			subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput( ((BasePlugIn)funcResultInput).Info.Id )
-			{
-				OutputName = funcResultInput.Identifier,
-				Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview,
-			};
-
-			subgraphOutputNode.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( funcResultInput.Type );
+			subgraphOutputNode.Id = ((BasePlugIn)funcResultInput).Info.Id;
+			subgraphOutputNode.OutputName = funcResultInput.Identifier;
+			subgraphOutputNode.Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview;
+			subgraphOutputNode.SetSubgraphPortTypeFromType( funcResultInput.Type );
 
 			// Chnage some stuff with a new PlugInfo & BasePlugIn.
 			var oldPlug = (BasePlugIn)funcResultInput;
