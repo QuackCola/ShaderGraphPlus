@@ -144,7 +144,7 @@ public class ShaderFunctionOutput
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
 public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 {
-	[Hide] // TODO : Bump up to 2 and move everything out from ShaderFunctionOutput.
+	[Hide]
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
@@ -152,9 +152,6 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	[Hide, JsonIgnore]
 	int _lastHashCode = 0;
-
-	[InlineEditor( Label = false )]
-	public ShaderFunctionOutput SubgraphFunctionOutput { get; set; } = new ShaderFunctionOutput();
 
 	[Hide]
 	public Guid Id { get; internal set; } = Guid.NewGuid();
