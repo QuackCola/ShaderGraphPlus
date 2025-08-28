@@ -98,7 +98,17 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
 
-			var type = subgraphInput.PortType;
+			var type = subgraphInput.InputData.InputType switch
+			{
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{subgraphInput.InputData.InputType}\"" )
+			};
 
 			var plugInfo = new PlugInfo()
 			{
