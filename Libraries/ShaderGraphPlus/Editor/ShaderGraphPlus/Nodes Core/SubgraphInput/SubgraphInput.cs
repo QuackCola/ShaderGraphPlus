@@ -8,6 +8,8 @@ public enum SubgraphPortType
 	[Icon( "check_box" )]
 	Bool,
 	[Icon( "filter_1" )]
+	Int,
+	[Icon( "filter_1" )]
 	Float,
 	[Icon( "filter_2" )]
 	Vector2,
