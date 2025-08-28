@@ -46,11 +46,8 @@ public class PreviewSettings
 [AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding )]
 public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 {
-	/// <summary>
-	/// Current shadergraphplus project version.
-	/// </summary>
-	[Hide, JsonIgnore]
-	public int Version => 1;
+	[Hide, JsonPropertyName( "__version" )]
+	public int Version { get; set; } = 2;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
@@ -99,6 +96,7 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public bool AddToNodeLibrary { get; set; }
+
 	public BlendMode BlendMode { get; set; }
 
     [ShowIf( nameof( ShowShadingModel ), true )]
