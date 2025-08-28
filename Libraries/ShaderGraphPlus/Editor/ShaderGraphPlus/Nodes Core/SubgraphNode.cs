@@ -86,13 +86,19 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
 
-		foreach ( var inputNode in Subgraph.Nodes.OfType<SubgraphInput>().OrderBy( x => x.PortOrder ) )
+		// Get all SubgraphInput nodes only - no more legacy IParameterNode support
+		var subgraphInputs = Subgraph.Nodes.OfType<SubgraphInput>()
+			.Where( x => !string.IsNullOrWhiteSpace( x.InputName ) )
+			.OrderBy( x => x.PortOrder )
+			.ThenBy( x => x.InputName );
+
+		foreach ( var subgraphInput in subgraphInputs )
 		{
-			var inputName = inputNode.InputName;
+			var inputName = subgraphInput.InputName;
 
 			if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
 
-			var type = inputNode.PortType;
+			var type = subgraphInput.PortType;
 
 			var plugInfo = new PlugInfo()
 			{
@@ -102,7 +108,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 				{
 					Name = inputName,
 					Fullname = type.FullName,
-					Description = inputNode.InputDescription
+					Description = subgraphInput.InputDescription
 				}
 			};
 
