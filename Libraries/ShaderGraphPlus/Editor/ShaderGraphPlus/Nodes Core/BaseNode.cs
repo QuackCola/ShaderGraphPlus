@@ -236,6 +236,17 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		}
 	}
 
+			else
+			{
+				SGPLog.Error( $"Unable to find input with name \"{sourceNode.SourceInputName}\" on node \"{sourceNode.Source}\"" );
+			}
+		}
+		else
+		{
+			//SGPLog.Error( $"Unable to find output with name \"{targetNodeOutputName}\" on node \"{DisplayInfo.Name}\"" );
+		}
+	}
+
 	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
