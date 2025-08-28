@@ -1702,7 +1702,6 @@ public sealed partial class GraphCompiler
 			return null;
 		
 		sb.AppendLine();
-		sb.AppendLine( "DynamicComboRule( Allow0( D_MORPH ) );" );
 		return sb.ToString();
 	}
 
