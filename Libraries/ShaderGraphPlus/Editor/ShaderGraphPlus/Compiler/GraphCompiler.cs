@@ -896,7 +896,7 @@ public sealed partial class GraphCompiler
 						InputStack.Remove( input );
 						return default;
 					}
-					
+
 					if ( newResult.IsValid )
 					{
 						InputStack.Remove( input );
