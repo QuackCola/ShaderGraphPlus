@@ -205,13 +205,10 @@ partial class ShaderGraphPlus
 					node = CreateUpgradedSubgraphInput( typeName, element, options );
 					fileVersion = 1; // We've upgraded now, useful if there are future upgraders.
 				}
-				else if ( IsSubgraph && typeName == "SubgraphOutput" && fileVersion < 2 )
+				else if ( IsSubgraph && fileVersion < 2 && typeName == "SubgraphOutput" )
 				{
-					SGPLog.Info( $"Upgrading subgraph output since \"{fileVersion}\" < 2" );
-					
-					var missingNode = new MissingNode( typeName, element );
-					node = missingNode;
-					DeserializeObject( node, element, options );
+					node = UpdateSubgraphOutput( element, options );
+					fileVersion = 2;
 				}
 				else
 				{
@@ -403,9 +400,6 @@ partial class ShaderGraphPlus
 			if ( !property.CanRead)
 				continue;
 
-			if ( property.Name == VersioningInfo.VersionClassPropertyName )
-				continue;
-
 			if ( property.PropertyType == typeof( NodeInput ) )
 				continue;
 	
@@ -512,6 +506,44 @@ partial class ShaderGraphPlus
 			"SamplerNode" => true,
 			_ => false
 		};
+	}
+
+	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
+	{ 
+		var subgraphOutput = new SubgraphOutput();
+
+		// Copy basic node properties
+		DeserializeObject( subgraphOutput, element, options );
+
+		if ( element.TryGetProperty( "SubgraphFunctionOutput", out var subgraphFunctionOutputProperty ) )
+		{
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
+			{
+				subgraphOutput.Id = id.GetGuid();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
+			{
+				subgraphOutput.OutputName = outputName.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputDescription", out var outputDescription ) )
+			{
+				subgraphOutput.OutputDescription = outputDescription.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputType", out var outputType ) )
+			{
+				subgraphOutput.OutputType = JsonSerializer.Deserialize<SubgraphPortType>( outputType, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Preview", out var preview ) )
+			{
+				subgraphOutput.Preview = JsonSerializer.Deserialize<SubgraphOutputPreviewType>( preview, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "PortOrder", out var portOrder ) )
+			{
+				subgraphOutput.PortOrder = portOrder.GetInt32();
+			}
+		}
+
+		return subgraphOutput;
 	}
 
 	/// <summary>
