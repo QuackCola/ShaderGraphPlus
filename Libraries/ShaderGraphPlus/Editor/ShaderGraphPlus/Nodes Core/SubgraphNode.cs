@@ -101,6 +101,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 			var type = subgraphInput.InputData.InputType switch
 			{
 				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Int => typeof( int ),
 				SubgraphPortType.Float => typeof( float ),
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
