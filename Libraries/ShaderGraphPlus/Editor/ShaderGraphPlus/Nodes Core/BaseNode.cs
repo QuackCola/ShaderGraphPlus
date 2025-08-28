@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Sandbox;
 
 namespace ShaderGraphPlus;
 
@@ -236,6 +237,23 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		}
 	}
 
+	internal void ConnectNode( (BaseNodePlus Source, string SourceInputName) sourceNode, string targetNodeOutputName )
+	{
+		var targetPlugOut = Outputs.FirstOrDefault( x => x.Identifier == targetNodeOutputName );
+	
+		if ( targetPlugOut != null )
+		{
+			//SGPLog.Info( $"Found output with name \"{targetNodeOutputName}\" on node \"{DisplayInfo.Name}\"" );
+			var plugIn = sourceNode.Source.Inputs.Where( x => x.Identifier == sourceNode.SourceInputName ).FirstOrDefault();
+
+			if ( plugIn != null )
+			{
+				//SGPLog.Info( $"Found input with name \"{sourceNode.SourceInputName}\" on node \"{sourceNode.Source.DisplayInfo.Name}\"" );
+			
+				SGPLog.Info( $"Connected Node \"{this}\" output \"{targetNodeOutputName}\" to \"{sourceNode.Source}\" input \"{sourceNode.SourceInputName}\"" );
+				
+				plugIn.ConnectedOutput = targetPlugOut;
+			}
 			else
 			{
 				SGPLog.Error( $"Unable to find input with name \"{sourceNode.SourceInputName}\" on node \"{sourceNode.Source}\"" );
