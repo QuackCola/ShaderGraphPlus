@@ -156,20 +156,31 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		var plugs = new List<IPlugOut>();
 
-		foreach ( var output in Subgraph.Nodes.OfType<SubgraphOutput>().OrderBy( x => x.SubgraphFunctionOutput.PortOrder ) )
+		foreach ( var subgraphOutput in Subgraph.Nodes.OfType<SubgraphOutput>().OrderBy( x => x.PortOrder ) )
 		{
-			var outputType = output.SubgraphFunctionOutput.Type;
+			var outputType = subgraphOutput.OutputType switch
+			{
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Int => typeof( int ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{subgraphOutput.OutputType}\"" )
+			};
 
 			if ( outputType is null ) continue;
 			var info = new PlugInfo()
 			{
-				Name = output.SubgraphFunctionOutput.OutputName,
+				Name = subgraphOutput.OutputName,
 				Type = outputType,
 				DisplayInfo = new DisplayInfo()
 				{
-					Name = output.SubgraphFunctionOutput.OutputName,
+					Name = subgraphOutput.OutputName,
 					Fullname = outputType.FullName,
-					Description = output.SubgraphFunctionOutput.OutputDescription
+					Description = subgraphOutput.OutputDescription
 				}
 			};
 			var plug = new BasePlugOut( this, info, outputType );
