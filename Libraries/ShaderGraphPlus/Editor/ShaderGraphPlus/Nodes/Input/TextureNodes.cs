@@ -1074,15 +1074,15 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 		return Vector4.One;
 	}
 
-	public SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
-
-		return subgraphInput;
-	}
+	//public SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
+	//
+	//	return subgraphInput;
+	//}
 	#endregion IParameterNode Region
 
 	/// <summary>
@@ -1121,21 +1121,21 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 /// Texture2D Object.
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
-[NodeReplace( ReplacementMode.SubgraphOnly )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode, IReplaceNode
+//[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode//, IReplaceNode
 {
 	[Hide]
 	public override int Version => 1;
 
-	[Hide, JsonIgnore]
-	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-
-	public BaseNodePlus GetReplacementNode()
-	{
-		var subgraphInputNode = UpgradeToSubgraphInput();
-
-		return subgraphInputNode;
-	}
+	//[Hide, JsonIgnore]
+	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+	//
+	//public BaseNodePlus GetReplacementNode()
+	//{
+	//	var subgraphInputNode = UpgradeToSubgraphInput();
+	//
+	//	return subgraphInputNode;
+	//}
 
 #region ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]
@@ -1333,16 +1333,16 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 		return Vector4.One;
 	}
 
-	public SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 	#endregion IParameterNode Region
 
@@ -1431,21 +1431,21 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
 [Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
-[NodeReplace( ReplacementMode.SubgraphOnly )]
-public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
+//[NodeReplace( ReplacementMode.SubgraphOnly )]
+public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
 {
 	[Hide]
 	public override int Version => 1;
 
-	[Hide, JsonIgnore]
-	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-
-	public BaseNodePlus GetReplacementNode()
-	{
-		var subgraphInputNode = UpgradeToSubgraphInput();
-
-		return subgraphInputNode;
-	}
+	//[Hide, JsonIgnore]
+	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+	//
+	//public BaseNodePlus GetReplacementNode()
+	//{
+	//	var subgraphInputNode = UpgradeToSubgraphInput();
+	//
+	//	return subgraphInputNode;
+	//}
 
 	public SamplerNode() : base()
 	{
@@ -1535,16 +1535,16 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode, IReplaceNode
 		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMax" );
 	}
 
-	public SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphPortType.Sampler );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphPortType.Sampler );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 #endregion IParameterNode Region
 

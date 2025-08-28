@@ -26,7 +26,7 @@ public interface IParameterNode
 	Vector4 GetRangeMin();
 	Vector4 GetRangeMax();
 
-	public SubgraphInput UpgradeToSubgraphInput();
+	//public SubgraphInput UpgradeToSubgraphInput();
 }
 
 public interface ITextureParameterNode
@@ -40,19 +40,19 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-[NodeReplace( ReplacementMode.SubgraphOnly )]
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode, IReplaceNode
+//[NodeReplace( ReplacementMode.SubgraphOnly )]
+public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode//, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
-	[Hide, JsonIgnore]
-	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-
-	public BaseNodePlus GetReplacementNode()
-	{
-		return UpgradeToSubgraphInput();
-	}
+	//[Hide, JsonIgnore]
+	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+	//
+	//public BaseNodePlus GetReplacementNode()
+	//{
+	//	return UpgradeToSubgraphInput();
+	//}
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
@@ -136,10 +136,10 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		Value = (T)val;
 	}
 
-	public virtual SubgraphInput UpgradeToSubgraphInput()
-	{
-		return default ( SubgraphInput );
-	}
+	//public virtual SubgraphInput UpgradeToSubgraphInput()
+	//
+	//	return default ( SubgraphInput );
+	//
 
 	public List<string> GetErrors()
 	{

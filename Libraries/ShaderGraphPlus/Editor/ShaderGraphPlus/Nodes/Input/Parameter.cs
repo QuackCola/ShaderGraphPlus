@@ -28,16 +28,16 @@ public sealed class Bool : ParameterNode<bool>
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
 ///<summary>
@@ -106,16 +106,16 @@ public sealed class Float : ParameterNode<float>
 		return new( Max );
 	}
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
 /// <summary>
@@ -188,16 +188,16 @@ public sealed class Float2 : ParameterNode<Vector2>
 		return new( Max.x, Max.y, 0, 0 );
 	}
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
 /// <summary>
@@ -219,16 +219,16 @@ public sealed class Float3 : ParameterNode<Vector3>
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 	public Float3()
 	{
@@ -306,16 +306,16 @@ public sealed class Float4 : ParameterNode<Color>
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 	[JsonIgnore, Hide]
 	public float ValueR
