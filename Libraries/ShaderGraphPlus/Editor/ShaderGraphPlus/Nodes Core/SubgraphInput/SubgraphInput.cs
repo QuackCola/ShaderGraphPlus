@@ -211,7 +211,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return compiler.ResultTexture( textureInput, Texture.Load( texturePath ), cleanName );
 	}
 
-	[Output, Hide]
+	[Output( typeof( float ) ), Title( "Value" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
