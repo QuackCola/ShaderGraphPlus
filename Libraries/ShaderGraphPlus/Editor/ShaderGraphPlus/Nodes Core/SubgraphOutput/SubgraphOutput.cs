@@ -67,6 +67,7 @@ public class ShaderFunctionOutput
 			return OutputType switch
 			{
 				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Int => typeof( int ),
 				SubgraphPortType.Float => typeof( float ),
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
@@ -85,9 +86,9 @@ public class ShaderFunctionOutput
 			case Type t when t == typeof( bool ):
 				OutputType = SubgraphPortType.Bool;
 				break;
-			//case Type t when t == typeof( int ):
-			//
-			//	break;
+			case Type t when t == typeof( int ):
+				OutputType = SubgraphPortType.Int;
+				break;
 			case Type t when t == typeof( float ):
 				OutputType = SubgraphPortType.Float;
 				break;
@@ -188,40 +189,20 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 		}
 		else
 		{
-			Dictionary<string, int> namesSoFar = new();
-			var functionOutputs = new List<ShaderFunctionOutput>();
-			functionOutputs.Add( SubgraphFunctionOutput );
-			foreach ( var output in functionOutputs )
+			if ( Graph is ShaderGraphPlus shaderGraphPlus && shaderGraphPlus.IsSubgraph )
 			{
-				if ( output.OutputName is null )
+				foreach ( var node in Graph.Nodes )
 				{
-					errors.Add( $"{output.OutputType} Output has no name" );
-					continue;
-				}
-				if ( !namesSoFar.ContainsKey( output.OutputName ) )
-				{
-					namesSoFar.Add( output.OutputName, 1 );
-				}
-				else
-				{
-					namesSoFar[output.OutputName]++;
-				}
-				if ( string.IsNullOrEmpty( output.OutputName ) )
-				{
-					errors.Add( $"{output.OutputType} Output has no name" );
-				}
-				if ( output.OutputType == SubgraphPortType.Invalid )
-				{
-					errors.Add( $"Output '{output.OutputName}' has no type" );
+					if ( node == this ) continue;
+
+					if ( node is SubgraphOutput otherOutput && otherOutput.SubgraphFunctionOutput.OutputName == SubgraphFunctionOutput.OutputName )
+					{
+						errors.Add( $"Duplicate output name \"{SubgraphFunctionOutput.OutputName}\"" );
+						break;
+					}
 				}
 			}
-			foreach ( var name in namesSoFar )
-			{
-				if ( name.Value > 1 )
-				{
-					errors.Add( $"Output name '{name.Key}' is used {name.Value} times" );
-				}
-			}
+
 		}
 		return errors;
 	}
