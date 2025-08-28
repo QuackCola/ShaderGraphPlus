@@ -53,6 +53,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 		{
 
 			Subgraph = new ShaderGraphPlus();
+			if ( !Editor.FileSystem.Content.FileExists( SubgraphPath ) ) return;
 			var json = Editor.FileSystem.Content.ReadAllText( SubgraphPath );
 			Subgraph.Deserialize( json, SubgraphPath );
 			Subgraph.Path = SubgraphPath;
