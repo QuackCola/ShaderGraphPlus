@@ -11,9 +11,6 @@ public interface ISGPJsonUpgradeable
 
 partial class ShaderGraphPlus
 {
-	[JsonIgnore, Hide]
-	internal bool Upgrade { get; set; } = false;
-
 	internal static class VersioningInfo
 	{
 		/// <summary>
