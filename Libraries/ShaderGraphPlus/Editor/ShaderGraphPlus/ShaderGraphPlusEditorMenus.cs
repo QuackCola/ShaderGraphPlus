@@ -1,6 +1,7 @@
 ﻿using Editor;
 using MaterialDesign;
-using System.Text.Json.Nodes;
+using ShaderGraphPlus.Internal;
+using static ShaderGraphPlus.ShaderGraphPlus;
 
 namespace ShaderGraphPlus;
 
@@ -61,7 +62,7 @@ internal static class ShaderGraphPlusEditorMenus
 		var projectItems = new List<ProjectItem>();
 		foreach ( var path in projectPaths )
 		{
-			projectItems.Add( new ProjectItem( path ) );
+			projectItems.Add( new ProjectItem( path.Replace( '\\', '/' ) ) );
 		}
 
 		ProjectConverterDialog.DisplayDialog( projectItems );
@@ -107,12 +108,17 @@ file class ProjectConverterDialog : Dialog
 {
 	private ProjectList _projectList; 
 	
-	public Layout ListLayout { get; private set; }
-	public Layout ButtonLayout { get; private set; }
+	private Layout ListLayout;
+	private Layout ButtonLayout;
 	
+	private Button ConvertButton;
+	private Button CloseButton;
+
+	public Action ConverButtonClick { get; set; }
+
 	public ProjectConverterDialog( List<ProjectItem> projectItems ) : base( null, true )
 	{
-		Window.FixedWidth = 650f;
+		Window.FixedWidth = 700f;
 		Window.MaximumSize = Window.Size;
 		Window.MinimumSize = Window.Size;
 		Window.Title = "Convert ShaderGraph To ShaderGraphPlus";
@@ -140,9 +146,27 @@ file class ProjectConverterDialog : Dialog
 		ListLayout.Spacing = 8f;
 		ListLayout.Margin = 16f;
 
-		ButtonLayout = Layout.AddColumn();
+		ButtonLayout = Layout.AddRow();
 		ButtonLayout.Spacing = 8f;
 		ButtonLayout.Margin = 16f;
+
+		ConvertButton = ButtonLayout.Add ( new Button.Primary( "Convert Projects" )
+		{
+			Clicked = delegate
+			{
+				ConverButtonClick?.Invoke();
+				ConvertButton.Enabled = false;
+			}
+		} );
+
+		CloseButton = ButtonLayout.Add( new Button( "Close" )
+		{
+			Clicked = delegate
+			{
+				Destroy();
+				Close();
+			}
+		} );
 	}
 
 	private void SetItems( List<ProjectItem> projectItems )
@@ -159,16 +183,20 @@ file class ProjectConverterDialog : Dialog
 	{
 		var dialog = new ProjectConverterDialog( projectItems );
 
-		dialog.ButtonLayout.Add( new Button.Primary( "Convert Projects" )
+		foreach ( var project in projectItems )
 		{
-			Clicked = delegate
-			{
-				ConvertProjects( dialog );
+			var shaderGraph = new Editor.ShaderGraph.ShaderGraph();
+			shaderGraph.Deserialize( System.IO.File.ReadAllText( project.Path ) );
 
-				//dialog.Destroy();
-				//dialog.Close();
-			}
-		} );
+			projectItems[projectItems.IndexOf( project )].NodeCount = shaderGraph.Nodes.Count();
+		}
+
+		dialog.SetItems( projectItems );
+
+		dialog.ConverButtonClick = delegate
+		{
+			ConvertProjects( dialog );
+		};
 
 		dialog.SetModal( on: true, application: true );
 		dialog.Hide();
@@ -181,105 +209,43 @@ file class ProjectConverterDialog : Dialog
 
 		foreach ( var project in projects )
 		{
-			SGPLog.Info( $"Converting project at path \"{project}\"" );
+			SGPLog.Info( $"Converting project at path \"{project.Path}\"" );
 
-			var graph = new Editor.ShaderGraph.ShaderGraph();
-			var graphText = System.IO.File.ReadAllText( project.Path );
-			graph.Deserialize( graphText );
+			var shaderGraph = new Editor.ShaderGraph.ShaderGraph();
+			shaderGraph.Deserialize( System.IO.File.ReadAllText( project.Path ) );
+			var shaderGraphPlus = new ShaderGraphPlus();
 
-			var newGraph = new ShaderGraphPlus();
-			newGraph.IsSubgraph = graph.IsSubgraph;
-			newGraph.Path = graph.Path.Replace( ".shdrgrph", ".sgrph" );
-			newGraph.Model = graph.Model;
-			newGraph.Description = graph.Description;
+			var projectConverter = new ProjectConverter( shaderGraph, shaderGraphPlus, false );
+			var conversionResult = projectConverter.Convert();
 
-			switch ( graph.BlendMode )
-			{
-				case Editor.ShaderGraph.BlendMode.Opaque:
-					newGraph.BlendMode = BlendMode.Opaque;
-					break;
-				case Editor.ShaderGraph.BlendMode.Masked:
-					newGraph.BlendMode = BlendMode.Masked;
-					break;
-				case Editor.ShaderGraph.BlendMode.Translucent:
-					newGraph.BlendMode = BlendMode.Translucent;
-					break;
-			}
+			var shaderGraphPlusFullPath = project.Path.Replace( ".shdrgrph", ".sgrph" );
 
-			switch ( graph.ShadingModel )
-			{
-				case Editor.ShaderGraph.ShadingModel.Lit:
-					newGraph.ShadingModel = ShadingModel.Lit;
-					break;
-				case Editor.ShaderGraph.ShadingModel.Unlit:
-					newGraph.ShadingModel = ShadingModel.Unlit;
-					break;
-			}
-
-			switch ( graph.Domain )
-			{
-				case Editor.ShaderGraph.ShaderDomain.Surface:
-					newGraph.MaterialDomain = MaterialDomain.Surface;
-					break;
-				case Editor.ShaderGraph.ShaderDomain.PostProcess:
-					newGraph.MaterialDomain = MaterialDomain.PostProcess;
-					break;
-			}
-
-			newGraph.PreviewSettings.ShowGround = graph.PreviewSettings.ShowGround;
-			newGraph.PreviewSettings.ShowSkybox = graph.PreviewSettings.ShowSkybox;
-			newGraph.PreviewSettings.EnableShadows = graph.PreviewSettings.EnableShadows;
-			newGraph.PreviewSettings.BackgroundColor = graph.PreviewSettings.BackgroundColor;
-			newGraph.PreviewSettings.Tint = graph.PreviewSettings.Tint;
-
-			// Convert the nodes.
-			using var doc = JsonDocument.Parse( graphText );
-			var nodesElement = doc.RootElement.GetProperty( "nodes" );
-			var nodeArray = new JsonArray();
-
-			foreach ( var node in nodesElement.EnumerateArray() )
-			{
-				var nodeObject = JsonNode.Parse( node.GetRawText() ) as JsonObject;
-
-				if ( nodeObject != null )
-				{
-					SGPLog.Info( $"Found jsonObject : \n {nodeObject}" );
-
-					if ( nodeObject["_class"]?.ToString() == "SubgraphNode" )
-					{
-						var subgraphpath = nodeObject["SubgraphPath"]?.ToString();
-						var subgraphFullPath = $"{Project.Current.GetAssetsPath()}/{subgraphpath}".Replace("/","\\");
-
-						SGPLog.Info( $"Found subgraph with graph at path : {subgraphFullPath}" );
-
-						continue;
-					}
-
-					if ( nodeObject["_class"]?.ToString() == "Reroute" )
-					{
-						nodeObject["_class"] = "ReroutePlus";
-					}
-
-					nodeArray.Add( nodeObject );
-				}
-			}
-
-			System.IO.File.WriteAllText( project.Path.Replace( ".shdrgrph", ".sgrph" ), newGraph.Serialize( nodeArray ) );
+			System.IO.File.WriteAllText( shaderGraphPlusFullPath, conversionResult.Serialize() );
 			
-			AssetSystem.RegisterFile( newGraph.Path );
-			Utilities.EdtiorSound.Success();
-
-			projects[projects.IndexOf( project )].SetConverted();
+			var asset = AssetSystem.RegisterFile( shaderGraphPlusFullPath );
+		
+			if ( asset == null )
+			{
+				SGPLog.Error( $"Unable to register asset at path \"{shaderGraphPlusFullPath}\"" );
+				Utilities.EdtiorSound.Failure();
+			}
+			else
+			{
+				Utilities.EdtiorSound.Success();
+				projects[projects.IndexOf( project )].SetConverted();
+			}
+			
 		}
 
 		dialog.SetItems( projects );
 	}
 }
 
-internal class ProjectItem
+class ProjectItem
 {
 	public bool Converted { get; private set; } = false;
 	public string Path { get; private set; }
+	public int NodeCount { get; set; } = 0;
 
 	public ProjectItem( string path )
 	{
@@ -292,7 +258,7 @@ internal class ProjectItem
 	}
 }
 
-internal class ProjectList : Widget
+class ProjectList : Widget
 {
 	private List<ProjectItem> _projects;
 	public List<ProjectItem> Projects
@@ -345,7 +311,6 @@ internal class ProjectList : Widget
 
 			ItemContextMenu = OpenItemContextMenu;
 			ItemSize = new Vector2( 0, 48 );
-			ItemSpacing = 0;
 			Margin = 0;
 		}
 
@@ -385,12 +350,14 @@ internal class ProjectList : Widget
 				var iconRect = item.Rect.Shrink( 12, 0 );
 				iconRect.Width = 24;
 
-				Paint.DrawIcon( iconRect, "article", 24 );
+				Paint.DrawIcon( iconRect, "account_tree", 24 );
 
 				var rect = item.Rect.Shrink( 48, 8, 0, 8 );
-		
+	
 				Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
-				Paint.DrawText( rect, projectItem.Path, TextFlag.LeftCenter | TextFlag.SingleLine );
+				Paint.DrawText( rect, $"{projectItem.Path} - {projectItem.NodeCount} nodes", TextFlag.LeftCenter | TextFlag.SingleLine );
+
+				//Paint.DrawText( rect, $"{projectItem.NodeCount} nodes", TextFlag.RightCenter | TextFlag.SingleLine );
 			}
 		}
 	}

@@ -1,0 +1,89 @@
+{
+  "IsSubgraph": true,
+  "Path": "shaders/vanilla/param.shdrfunc",
+  "Model": null,
+  "Title": "Param",
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "Domain": "Surface",
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "Version": 1,
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "aeb15516-4fcb-45ba-9499-b1373ababc39",
+          "Name": "mYass",
+          "Type": "Vector3",
+          "Preview": "Albedo",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "mYass": {
+        "Identifier": "2",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "Float3",
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "Value": "0.6444287,0.3837686,0.8820896",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "1",
+      "Position": "-660,-108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "2",
+      "Position": "-264,84",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "B": {
+        "Identifier": "3",
+        "Output": "Result"
+      }
+    },
+    {
+      "_class": "IsFrontFace",
+      "Identifier": "3",
+      "Position": "-564,108",
+      "HandleOffsets": {}
+    }
+  ]
+}

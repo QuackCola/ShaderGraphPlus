@@ -1,17 +1,19 @@
 {
   "IsSubgraph": true,
   "Path": "shaders/vanilla/texturesample.shdrfunc",
-  "Model": null,
+  "Model": "models/dev/plane.vmdl",
   "Title": "Test",
   "Description": "",
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": true,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "Domain": "Surface",
   "PreviewSettings": {
+    "RenderBackfaces": false,
     "EnableShadows": true,
+    "ShowGround": false,
     "ShowSkybox": true,
     "BackgroundColor": "0,0,0,1",
     "Tint": "1,1,1,1"
@@ -21,13 +23,15 @@
       "_class": "FunctionResult",
       "FunctionOutputs": [
         {
-          "Id": "08b9f60e-289f-4f6a-a6ce-749ea8fa7ff8",
+          "Id": "7e3b81ee-7a75-4144-a70e-7313e43d9a19",
           "Name": "OutA",
-          "Type": "Color"
+          "Type": "Color",
+          "Preview": "Albedo",
+          "Priority": 0
         }
       ],
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "24,-84",
       "HandleOffsets": {},
       "OutA": {
         "Identifier": "3",
@@ -37,12 +41,31 @@
     {
       "_class": "TextureSampler",
       "Image": "textures/sbox_logo.png",
-      "Sampler": {},
+      "Sampler": {
+        "Filter": "Aniso",
+        "AddressU": "Wrap",
+        "AddressV": "Wrap"
+      },
       "UI": {
         "Name": "A",
+        "IsAttribute": false,
         "Default": "1,1,1,1",
+        "Extension": "Color",
+        "CustomExtension": null,
         "ShowExtension": true,
-        "SrgbRead": true
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
       },
       "Identifier": "1",
       "Position": "-420,-12",
@@ -55,7 +78,19 @@
       "Value": "1,0,1",
       "Name": "",
       "IsAttribute": false,
-      "UI": {},
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "2",
       "Position": "-408,-156",
       "HandleOffsets": {}
@@ -68,11 +103,11 @@
       "Position": "-120,-84",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "1",
+        "Identifier": "2",
         "Output": "Result"
       },
       "B": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result"
       }
     }
