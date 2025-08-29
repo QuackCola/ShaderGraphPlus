@@ -79,7 +79,8 @@ partial class ShaderGraphPlus
 	{
 		using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
 		var root = doc.RootElement;
-
+		
+		// Check for version in the JSON
 		var fileVersion = 1; // Default to current version
 		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
 		{
@@ -200,6 +201,7 @@ partial class ShaderGraphPlus
 
 				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
 				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
+				// TODO : Get a similar system setup to how SGPJsonUpgrader works or just make it work with SGPJsonUpgrader somehow? - Quack.
 				if ( IsSubgraph && fileVersion < 1 && ShouldUpgradeToSubgraphInput( typeName, element ) )
 				{
 					node = CreateUpgradedSubgraphInput( typeName, element, options );
