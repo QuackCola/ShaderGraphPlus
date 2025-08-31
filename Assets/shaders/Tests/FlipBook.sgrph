@@ -46,7 +46,7 @@
       "DefaultInvertX": false,
       "DefaultInvertY": false,
       "Identifier": "1",
-      "Position": "-528,-24",
+      "Position": "-504,-36",
       "HandleOffsets": {},
       "TileIndex": {
         "Identifier": "3",
@@ -124,7 +124,7 @@
         }
       },
       "Identifier": "3",
-      "Position": "-780,48",
+      "Position": "-756,36",
       "HandleOffsets": {}
     }
   ]
