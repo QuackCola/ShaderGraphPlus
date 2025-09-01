@@ -15,34 +15,15 @@ internal class FunctionResultConvert : BaseNodeConvert
 
 		//SGPLog.Info( "Convert functionResult node" );
 
-		//Vector2 lastOffset = Vector2.Zero;
+		Vector2 lastOffset = Vector2.Zero;
 		foreach ( var oldInput in oldFunctionResult.FunctionOutputs )
 		{
 			//var internalInput = oldFunctionResult.Inputs.Where( x => x.Identifier == oldInput.Name ).FirstOrDefault();
 
 			var newSubgraphOutput = new SubgraphOutput();
-			//lastOffset.y += 64;
-			//newSubgraphOutput.Position = oldFunctionResult.Position + new Vector2( 0, lastOffset.y );
-			newSubgraphOutput.Position = oldFunctionResult.Position;
-
-			//newSubgraphOutput.SubgraphFunctionOutput = new();
-			//newSubgraphOutput.SubgraphFunctionOutput.OutputName = oldInput.Name;
-			//newSubgraphOutput.SubgraphFunctionOutput.OutputDescription = "";
-			//newSubgraphOutput.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( oldInput.Type );
-			//newSubgraphOutput.SubgraphFunctionOutput.Preview = oldInput.Preview switch
-			//{
-			//	VanillaGraph.FunctionOutput.PreviewType.None => SubgraphOutputPreviewType.None,
-			//	VanillaGraph.FunctionOutput.PreviewType.Albedo => SubgraphOutputPreviewType.Albedo,
-			//	VanillaGraph.FunctionOutput.PreviewType.Emission => SubgraphOutputPreviewType.Emission,
-			//	VanillaGraph.FunctionOutput.PreviewType.Opacity => SubgraphOutputPreviewType.Opacity,
-			//	VanillaGraph.FunctionOutput.PreviewType.Normal => SubgraphOutputPreviewType.Normal,
-			//	VanillaGraph.FunctionOutput.PreviewType.Roughness => SubgraphOutputPreviewType.Roughness,
-			//	VanillaGraph.FunctionOutput.PreviewType.Metalness => SubgraphOutputPreviewType.Metalness,
-			//	VanillaGraph.FunctionOutput.PreviewType.AmbientOcclusion => SubgraphOutputPreviewType.AmbientOcclusion,
-			//	VanillaGraph.FunctionOutput.PreviewType.PositionOffset => SubgraphOutputPreviewType.PositionOffset,
-			//	_ => throw new NotImplementedException(),
-			//};
-			//newSubgraphOutput.SubgraphFunctionOutput.PortOrder = oldInput.Priority;
+			lastOffset.y += 64;
+			newSubgraphOutput.Position = oldFunctionResult.Position + new Vector2( 0, lastOffset.y );
+			//newSubgraphOutput.Position = oldFunctionResult.Position;
 
 			newSubgraphOutput.OutputName = oldInput.Name;
 			newSubgraphOutput.OutputDescription = "";
