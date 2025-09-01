@@ -24,10 +24,10 @@ public sealed class SwitchNode : ShaderNodePlus
 	public NodeInput False { get; set; }
 
 	public string Name { get; set; } = "";
-
-	public bool Enabled { get; set; } = true;
-
+	
 	public bool IsAttribute { get; set; } = true;
+	
+	public bool Enabled { get; set; } = true;
 
 	[InlineEditor( Label = false ), Group( "UI" )]
 	public ParameterUI UI { get; set; }
