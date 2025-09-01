@@ -211,7 +211,7 @@ internal class ProjectConverter
 		}
 	}
 
-	private List<ConnectionData> GetConnections( ShaderGraphBaseNode vanillaNode, Dictionary<string, string> mapping )
+	private List<ConnectionData> GetConnections( ShaderGraphBaseNode vanillaNode, Dictionary<string, string> mappings )
 	{
 		List<ConnectionData> connectionsData = new();
 
@@ -244,7 +244,7 @@ internal class ProjectConverter
 				};
 
 				// Change the InputName in the case where the input.Identifier is differnt from ShaderGraph to ShaderGraphPlus.
-				if ( mapping.TryGetValue( connectionData.InputName, out var newInputName ) )
+				if ( mappings.TryGetValue( connectionData.InputName, out var newInputName ) )
 				{ 
 					//SGPLog.Info( $"Changing InputName from \"{connectionData.InputName}\" to \"{newInputName}\"" );
 					connectionData.InputName = newInputName;
