@@ -21,6 +21,8 @@ internal class ProjectConverter
 
 	public List<string> ReservedIds { get; set; } = new();
 
+	public bool Errored { get; private set; } = false;
+
 	internal ProjectConverter( VanillaGraph.ShaderGraph shaderGraph, ShaderGraphPlus shaderGraphPlus, bool isSubgraph = false )
 	{
 		ShaderGraph = shaderGraph;
@@ -43,13 +45,18 @@ internal class ProjectConverter
 	internal ShaderGraphPlus Convert()
 	{
 		ConvertProjectRoot();
-		ConvertNodes();
-		CreateConnections();
+
+		if ( !Errored )
+		{
+			ConvertNodes();
+			CreateConnections();
+
+			return ShaderGraphPlus;
+		}
 
 		return ShaderGraphPlus;
 	}
 
-	[Event( "hotloaded" )]
 	private void RegisterConverters()
 	{
 		RegisterdNodes = new();
@@ -67,6 +74,13 @@ internal class ProjectConverter
 
 	private void ConvertProjectRoot()
 	{
+		if ( !SupportedVersions.Contains( ShaderGraph.Version ) )
+		{
+			SGPLog.Error( $"ShaderGraph version \"{ShaderGraph.Version}\" is unsupported" );
+			Errored = true;
+			return;
+		}
+
 		ShaderGraphPlus.IsSubgraph = ShaderGraph.IsSubgraph;
 		ShaderGraphPlus.Path = ShaderGraph.Path.Replace( !IsSubgraph ? ".shdrgrph" : ".shdrfunc", !IsSubgraph ? ".sgrph" : ".sgpfunc" );
 		ShaderGraphPlus.Model = ShaderGraph.Model;
@@ -254,6 +268,11 @@ internal class ProjectConverter
 			SubgraphOutputIds.Add( new( FunctionResultID, outputName ) );
 		}
 	}
+
+	private static readonly List<int> SupportedVersions = new List<int>()
+	{
+		1,
+	};
 }
 
 struct ConnectionData

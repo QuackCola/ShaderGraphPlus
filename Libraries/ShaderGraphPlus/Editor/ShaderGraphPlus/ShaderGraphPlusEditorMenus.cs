@@ -218,23 +218,30 @@ file class ProjectConverterDialog : Dialog
 			var projectConverter = new ProjectConverter( shaderGraph, shaderGraphPlus, false );
 			var conversionResult = projectConverter.Convert();
 
-			var shaderGraphPlusFullPath = project.Path.Replace( ".shdrgrph", ".sgrph" );
-
-			System.IO.File.WriteAllText( shaderGraphPlusFullPath, conversionResult.Serialize() );
-			
-			var asset = AssetSystem.RegisterFile( shaderGraphPlusFullPath );
-		
-			if ( asset == null )
+			if ( !projectConverter.Errored )
 			{
-				SGPLog.Error( $"Unable to register asset at path \"{shaderGraphPlusFullPath}\"" );
-				Utilities.EdtiorSound.Failure();
+				var shaderGraphPlusFullPath = project.Path.Replace( ".shdrgrph", ".sgrph" );
+
+				System.IO.File.WriteAllText( shaderGraphPlusFullPath, conversionResult.Serialize() );
+
+				var asset = AssetSystem.RegisterFile( shaderGraphPlusFullPath );
+
+				if ( asset == null )
+				{
+					SGPLog.Error( $"Unable to register asset at path \"{shaderGraphPlusFullPath}\"" );
+					Utilities.EdtiorSound.Failure();
+				}
+				else
+				{
+					Utilities.EdtiorSound.Success();
+					projects[projects.IndexOf( project )].SetConverted();
+				}
 			}
 			else
 			{
-				Utilities.EdtiorSound.Success();
-				projects[projects.IndexOf( project )].SetConverted();
+				SGPLog.Error( $"Unable to convert shadergraph project at path \"{project.Path}\"" );
+				Utilities.EdtiorSound.Failure();
 			}
-			
 		}
 
 		dialog.SetItems( projects );

@@ -19,9 +19,7 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 		newNode.Position = oldNode.Position;
 		newNode.SubgraphPath = oldSubgraphNode.SubgraphPath.Replace( ".shdrfunc", ".sgpfunc" );
 
-		var fullPath = Editor.FileSystem.Content.GetFullPath( oldSubgraphNode.SubgraphPath ).Replace( ".shdrfunc", ".sgpfunc" );
-
-		SGPLog.Info( $"Convert subgraph node \"{fullPath}\" " );
+		var fullPath = Editor.FileSystem.Content.GetFullPath( oldSubgraphNode.SubgraphPath );
 
 		var subgraph = new VanillaGraph.ShaderGraph();
 		subgraph.Deserialize( Editor.FileSystem.Content.ReadAllText( oldSubgraphNode.SubgraphPath ) );
@@ -32,23 +30,36 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 
 		var conversionResult = projectConverter.Convert();
 
-		System.IO.File.WriteAllText( fullPath, conversionResult.Serialize() );
-
-		var asset = AssetSystem.RegisterFile( fullPath );
-
-		if ( asset == null )
+		if ( !projectConverter.Errored )
 		{
-			SGPLog.Error( $"Unable to register asset at path \"{fullPath}\"" );
+			fullPath = fullPath.Replace( ".shdrfunc", ".sgpfunc" );
+
+			System.IO.File.WriteAllText( fullPath, conversionResult.Serialize() );
+
+			var asset = AssetSystem.RegisterFile( fullPath );
+
+			if ( asset == null )
+			{
+				SGPLog.Error( $"Unable to register asset at path \"{fullPath}\"" );
+			}
+			else
+			{
+				SGPLog.Info( $"Registerd subgraphplus asset at path \"{fullPath}\"" );
+			}
+
+			newNode.OnNodeCreated();
+
+			newNodes.Add( newNode );
+
+			return newNodes;
 		}
 		else
 		{
-			SGPLog.Info( $"Registerd subgraphplus asset at path \"{fullPath}\"" );
+			SGPLog.Error( $"Unable to convert shadergraph function at path \"{fullPath}\"" );
+
+			return newNodes;
 		}
 
-		newNode.OnNodeCreated();
 
-		newNodes.Add( newNode );
-
-		return newNodes;
 	}
 }
