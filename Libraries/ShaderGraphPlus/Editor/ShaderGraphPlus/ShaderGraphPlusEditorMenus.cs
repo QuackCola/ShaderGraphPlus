@@ -57,12 +57,20 @@ internal static class ShaderGraphPlusEditorMenus
 	[Menu( "Editor", "Shader Graph Plus/Convert ShaderGraph projects to ShaderGraphPlus projects ( Experimental )" )]
 	public static void ConvertShaderGraphToShaderGraphPlus()
 	{
-		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrgrph", SearchOption.AllDirectories );
+		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrgrph", SearchOption.AllDirectories ).ToList();
+		var subgraphProjectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrfunc", SearchOption.AllDirectories ).ToList();
+		
+		if ( subgraphProjectPaths != null )
+		{
+			projectPaths.AddRange( subgraphProjectPaths );
+		}
 
 		var projectItems = new List<ProjectItem>();
 		foreach ( var path in projectPaths )
 		{
-			projectItems.Add( new ProjectItem( path.Replace( '\\', '/' ) ) );
+			//SGPLog.Info( $"project at path \"{path}\"" );
+			var extention = Path.GetExtension( path );
+			projectItems.Add( new ProjectItem( path.Replace( '\\', '/' ), extention == ".shdrfunc" ) );
 		}
 
 		ProjectConverterDialog.DisplayDialog( projectItems );
@@ -220,7 +228,15 @@ file class ProjectConverterDialog : Dialog
 
 			if ( !projectConverter.Errored )
 			{
-				var shaderGraphPlusFullPath = project.Path.Replace( ".shdrgrph", ".sgrph" );
+				var extension = Path.GetExtension( project.Path );
+				var targetExtension = extension switch
+				{
+					".shdrgrph" => ".sgrph",
+					".shdrfunc" => ".sgpfunc",
+					_ => throw new NotImplementedException()
+				};
+
+				var shaderGraphPlusFullPath = project.Path.Replace( extension, targetExtension );
 
 				System.IO.File.WriteAllText( shaderGraphPlusFullPath, conversionResult.Serialize() );
 
@@ -252,11 +268,14 @@ class ProjectItem
 {
 	public bool Converted { get; private set; } = false;
 	public string Path { get; private set; }
+	public bool IsSubgraph { get; private set; } = false;
 	public int NodeCount { get; set; } = 0;
 
-	public ProjectItem( string path )
+
+	public ProjectItem( string path, bool isSubgraph )
 	{
 		Path = path;
+		IsSubgraph = isSubgraph;
 	}
 
 	public void SetConverted()
