@@ -78,7 +78,7 @@ internal class TileAndOffsetNodeConvert : BaseNodeConvert
 		return newNodes;
 	}
 
-	public override Dictionary<string, string> GetNodeInputNameMapping()
+	public override Dictionary<string, string> GetNodeInputNameMappings()
 	{
 		var nameMapping = new Dictionary<string, string>();
 

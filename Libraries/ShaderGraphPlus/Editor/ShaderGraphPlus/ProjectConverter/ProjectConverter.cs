@@ -144,7 +144,7 @@ internal class ProjectConverter
 			if ( RegisterdNodes.TryGetValue( vanillaNode.GetType(), out var nodeConvert ) )
 			{
 				var newConvertedNodes = nodeConvert.Convert( this, vanillaNode );
-				var connections = GetConnections( vanillaNode, nodeConvert.GetNodeInputNameMapping() );
+				var connections = GetConnections( vanillaNode, nodeConvert.GetNodeInputNameMappings() );
 
 				foreach ( var convertedNode in newConvertedNodes )
 				{
