@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "-528,-0",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "1",
@@ -92,7 +92,7 @@
         }
       ],
       "Identifier": "1",
-      "Position": "-240,-0",
+      "Position": "-708,-0",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "3",
@@ -146,7 +146,7 @@
         }
       },
       "Identifier": "2",
-      "Position": "-756,-168",
+      "Position": "-1224,-168",
       "HandleOffsets": {}
     },
     {
@@ -157,7 +157,7 @@
       "B": true,
       "A": false,
       "Identifier": "3",
-      "Position": "-588,-72",
+      "Position": "-1056,-72",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "2",
@@ -173,7 +173,7 @@
       "B": true,
       "A": false,
       "Identifier": "4",
-      "Position": "-588,-12",
+      "Position": "-1056,-12",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "5",
@@ -202,7 +202,7 @@
         }
       },
       "Identifier": "5",
-      "Position": "-756,-12",
+      "Position": "-1224,-12",
       "HandleOffsets": {}
     },
     {
@@ -210,14 +210,14 @@
       "__version": 1,
       "Mode": "Raw",
       "Identifier": "6",
-      "Position": "-588,48",
+      "Position": "-1056,48",
       "HandleOffsets": {}
     },
     {
       "_class": "WorldNormal",
       "__version": 1,
       "Identifier": "7",
-      "Position": "-588,180",
+      "Position": "-1056,180",
       "HandleOffsets": {}
     },
     {
@@ -225,14 +225,14 @@
       "__version": 1,
       "NoHighPrecisionLightingOffsets": false,
       "Identifier": "8",
-      "Position": "-588,240",
+      "Position": "-1056,240",
       "HandleOffsets": {}
     },
     {
       "_class": "ViewDirection",
       "__version": 1,
       "Identifier": "9",
-      "Position": "-588,300",
+      "Position": "-1056,300",
       "HandleOffsets": {}
     }
   ]
