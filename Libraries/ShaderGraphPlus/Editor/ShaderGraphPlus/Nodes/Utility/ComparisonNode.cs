@@ -40,7 +40,7 @@ public sealed class ComparisonNode : ShaderNodePlus, IWarningNode
 		LessThanOrEqual
 	}
 
-	public OperatorType Operator { get; set; }
+	public OperatorType Operator { get; set; } = OperatorType.Equal;
 
 	[Hide]
 	private string Op
