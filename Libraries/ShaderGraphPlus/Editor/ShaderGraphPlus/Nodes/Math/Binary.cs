@@ -345,7 +345,16 @@ public sealed class RemapValue : ShaderNodePlus
 		// Remap the normalized value to the output range
 		var remappedOutput = $"({normalizedInValue} * ( {outMaxValue} - {outMinValue} )) + {outMinValue}";
 
-		return new NodeResult( (ResultType)maxComponents, remappedOutput );
+		ResultType resultType = maxComponents switch
+		{
+			1 => ResultType.Float,
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Color,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, remappedOutput );
 	};
 }
 
