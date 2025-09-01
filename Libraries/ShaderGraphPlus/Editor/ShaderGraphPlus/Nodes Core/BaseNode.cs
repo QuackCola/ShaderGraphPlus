@@ -270,7 +270,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 				return;
 			}
 
-			SGPLog.Info( $"{graph.Path} Connecting \"{inputName}\" of graph node \"{this}\" to output \"{targetOutputName}\" of graph node \"{targetOutputNode}\"" );
+			//SGPLog.Info( $"{graph.Path} Connecting \"{inputName}\" of graph node \"{this}\" to output \"{targetOutputName}\" of graph node \"{targetOutputNode}\"" );
 
 			plugIn.ConnectedOutput = targetOutputPlug;
 		}
