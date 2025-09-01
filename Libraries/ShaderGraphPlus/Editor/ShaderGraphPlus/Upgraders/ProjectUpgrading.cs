@@ -1,10 +1,7 @@
-﻿using Editor.NodeEditor;
-using Sandbox;
+﻿
 using ShaderGraphPlus;
-using ShaderGraphPlus.Nodes;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
+/*
 public enum ReplacementMode
 {
 	SubgraphOnly,
@@ -22,10 +19,11 @@ public class NodeReplaceAttribute : Attribute
 		Mode = mode;
 	}
 }
-
+*/
 
 public static class ProjectUpgrading
 {
+	/*
 	// Key : ( Old Node type , Old output Name ) Value : New output name
 	public static Dictionary<(Type OldNodeType, string OldOutputName), string> NodeOutputMapping
 	{
@@ -37,6 +35,7 @@ public static class ProjectUpgrading
 			};
 		}
 	}
+	*/
 
 	public static Dictionary<string, string> NodeTypeNameMapping => new()
 	{
@@ -44,6 +43,7 @@ public static class ProjectUpgrading
 		{ "NormapMapTriplanar", "NormalMapTriplanar" },
 	};
 
+	/*
 	public static void ReplaceOutputReference( BaseNodePlus newNode, BaseNodePlus oldNode, 
 		string outputIdentifier, 
 		ref IPlugOut outputPlug )
@@ -87,26 +87,13 @@ public static class ProjectUpgrading
 	{
 		var jsonObject = JsonNode.Parse( oldElement.GetRawText() ) as JsonObject;
 
-
 		if ( jsonObject.ContainsKey( "FunctionOutputs" ) )
 		{
-			
-
-
-
-
-
-
 		}
-
-
-
-
-
 
 		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
 	}
-
+	*/
 
 	public static List<BaseNodePlus> ReplaceFunctionResult( FunctionResult functionResult, JsonElement element, string subgraphPath, ref List<(IPlugIn Plug, NodeInput Value)> connections )
 	{
@@ -120,13 +107,10 @@ public static class ProjectUpgrading
 			lastOffset.y += 64;
 			subgraphOutputNode.Position = functionResult.Position + new Vector2( 0, lastOffset.y );
 
-			subgraphOutputNode.SubgraphFunctionOutput = new ShaderFunctionOutput( ((BasePlugIn)funcResultInput).Info.Id )
-			{
-				OutputName = funcResultInput.Identifier,
-				Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview,
-			};
-
-			subgraphOutputNode.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( funcResultInput.Type );
+			subgraphOutputNode.Id = ((BasePlugIn)funcResultInput).Info.Id;
+			subgraphOutputNode.OutputName = funcResultInput.Identifier;
+			subgraphOutputNode.Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview;
+			subgraphOutputNode.SetSubgraphPortTypeFromType( funcResultInput.Type );
 
 			// Chnage some stuff with a new PlugInfo & BasePlugIn.
 			var oldPlug = (BasePlugIn)funcResultInput;

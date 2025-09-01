@@ -8,6 +8,8 @@ public enum SubgraphPortType
 	[Icon( "check_box" )]
 	Bool,
 	[Icon( "filter_1" )]
+	Int,
+	[Icon( "filter_1" )]
 	Float,
 	[Icon( "filter_2" )]
 	Vector2,
@@ -34,37 +36,17 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
-
-	[Hide]
-	public override string Title => $"{InputName} ( {InputData.InputType} )";
-
-	[Hide, JsonIgnore]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[Hide, JsonIgnore]
-	public Type PortType
-	{
-		get
-		{
-			return InputData.InputType switch
-			{
-				SubgraphPortType.Bool => typeof( bool ),
-				SubgraphPortType.Float => typeof( float ),
-				SubgraphPortType.Vector2 => typeof( Vector2 ),
-				SubgraphPortType.Vector3 => typeof( Vector3 ),
-				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.Sampler => typeof( Sampler ),
-				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
-				_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
-			};
-		}
-	}
+	
+	//[Hide, JsonIgnore]
+	//private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[Hide, JsonIgnore]
 	private string _textureGlobal;
 
-	[Input, Title( "Preview" ), Hide]
-	public NodeInput PreviewInput { get; set; }
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace( InputName ) ?
+	$"Subgraph Input" :
+	$"{InputName} ({InputData.InputType})";
 
 	/// <summary>
 	/// Name of this input.
@@ -78,7 +60,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public string InputDescription { get; set; } = "";
 
 	[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
-	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 
 	/// <summary>
 	/// Is this input required to have a valid connection?
@@ -86,6 +68,16 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public bool IsRequired { get; set; } = false;
 
 	public int PortOrder { get; set; }
+
+	[Input, Title( "Preview" ), Hide]
+	public NodeInput PreviewInput { get; set; }
+
+	[JsonIgnore, Hide]
+	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
+
+	public SubgraphInput()
+	{
+	}
 
 	internal VariantParam<T> GetValueAsVariantParam<T>()
 	{
@@ -97,65 +89,32 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return InputData.GetValue<T>();
 	}
 
-	internal T GetDefaultValueRangeMin<T>()
-	{
-		return InputData.GetValueRangeMin<T>();
-	}
-
-	internal T GetDefaultValueRangeMax<T>()
-	{
-		return InputData.GetValueRangeMax<T>();
-	}
-
 	internal void SetDefaultValue<T>( T value )
 	{
 		InputData.SetValue<T>( value );
 	}
 
-	internal void SetDefaultValueRangeMin<T>( T value )
+	/*
+	public object GetValue()
 	{
-		InputData.SetValueRangeMin<T>( value );
+		return GetOutputValue();
 	}
 
-	internal void SetDefaultValueRangeMax<T>( T value )
+	private object GetOutputValue()
 	{
-		InputData.SetValueRangeMax<T>( value );
-	}
-
-	public void OnNodeCreated()
-	{
-
-	}
-
-	public List<string> GetWarnings()
-	{
-		var warnings = new List<string>();
-
-		return warnings;
-	}
-
-	public List<string> GetErrors()
-	{
-		List<string> errors = new List<string>();
-
-		if ( string.IsNullOrWhiteSpace( InputName ) )
+		return InputData.InputType switch
 		{
-			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
-		}
-
-		if ( InputName.Contains( ' ' ) )
-		{
-			// TODO : Un-Comment if issues arise.
-			//errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
-		}
-
-		if ( InputData.InputType == SubgraphPortType.Invalid )
-		{
-			errors.Add( $"SubgraphInput InputType is invalid!" );
-		}
-
-		return errors;
+			SubgraphPortType.Bool => InputData.GetValue<bool>(),
+			SubgraphPortType.Float => InputData.GetValue<float>(),
+			SubgraphPortType.Vector2 => InputData.GetValue<Vector2>(),
+			SubgraphPortType.Vector3 => InputData.GetValue<Vector3>(),
+			SubgraphPortType.Color => InputData.GetValue<Color>(),
+			SubgraphPortType.Texture2DObject => InputData.GetValue<TextureInput>(),
+			SubgraphPortType.Sampler => InputData.GetValue<Sampler>(),
+			_ => 1.0f,
+		};
 	}
+	*/
 
 	private string CompileTexture( TextureInput UI )
 	{
@@ -217,7 +176,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 		return compiler.ResultTexture( textureInput, Texture.Load( texturePath ), cleanName );
 	}
 
-	[Output, Hide]
+	[Output( typeof( float ) ), Title( "Value" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
@@ -232,8 +191,79 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
 
-		//SGPLog.Info( $"ResultType \"{defaultResult.resultType}\" with DefaultResult code \"{defaultResult.defaultCode}\"", compiler.IsPreview );
-
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
+
+		/*
+		// In subgraphs, check if preview input is connected
+		if ( compiler.Graph.IsSubgraph && PreviewInput.IsValid )
+		{
+			return compiler.Result( PreviewInput );
+		}
+		
+		// Use the appropriate default value based on input type
+		var outputValue = GetOutputValue();
+		
+		// If we're in a subgraph context, just return the value directly
+		if ( compiler.Graph.IsSubgraph )
+		{
+			if ( InputData.InputType == SubgraphPortType.Sampler )
+			{
+				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
+			}
+			if ( InputData.InputType == SubgraphPortType.Texture2DObject )
+			{
+				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
+			}
+		
+			return compiler.ResultValue( outputValue );
+		}
+		
+		// For normal graphs, use ResultParameter to create a material parameter
+		return compiler.ResultParameter( InputName, outputValue, default, default, false, IsRequired, new() );
+		*/
 	};
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+		return warnings;
+	}
+
+	public List<string> GetErrors()
+	{
+		List<string> errors = new List<string>();
+
+		if ( string.IsNullOrWhiteSpace( InputName ) )
+		{
+			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
+		}
+
+		// TODO : Un-Comment if issues arise.
+		//if ( InputName.Contains( ' ' ) )
+		//{
+		//	errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
+		//}
+
+		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
+		{
+			foreach ( var node in Graph.Nodes )
+			{
+				if ( node == this ) continue;
+
+				if ( node is SubgraphInput otherInput && otherInput.InputName == InputName )
+				{
+					errors.Add( $"Duplicate input name \"{InputName}\"" );
+					break;
+				}
+			}
+		}
+
+		if ( InputData.InputType == SubgraphPortType.Invalid )
+		{
+			errors.Add( $"SubgraphInput InputType is invalid!" );
+		}
+
+		return errors;
+	}
 }

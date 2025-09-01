@@ -24,7 +24,9 @@ public sealed class SwitchNode : ShaderNodePlus
 	public NodeInput False { get; set; }
 
 	public string Name { get; set; } = "";
-
+	
+	public bool IsAttribute { get; set; } = true;
+	
 	public bool Enabled { get; set; } = true;
 
 	[InlineEditor( Label = false ), Group( "UI" )]
@@ -43,7 +45,7 @@ public sealed class SwitchNode : ShaderNodePlus
 		}
 		else
 		{
-			return new NodeResult( results.Item1.ResultType, $"{(compiler.ResultParameter( Name, Enabled, default, default, false, true, UI ))} ?" +
+			return new NodeResult( results.Item1.ResultType, $"{(compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI ))} ?" +
 				$" {results.Item1} :" +
 				$" {results.Item2}" );
 		}

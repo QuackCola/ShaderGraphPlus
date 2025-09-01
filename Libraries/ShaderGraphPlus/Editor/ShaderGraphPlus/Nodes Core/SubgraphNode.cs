@@ -53,6 +53,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 		{
 
 			Subgraph = new ShaderGraphPlus();
+			if ( !Editor.FileSystem.Content.FileExists( SubgraphPath ) ) return;
 			var json = Editor.FileSystem.Content.ReadAllText( SubgraphPath );
 			Subgraph.Deserialize( json, SubgraphPath );
 			Subgraph.Path = SubgraphPath;
@@ -86,13 +87,30 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
 
-		foreach ( var inputNode in Subgraph.Nodes.OfType<SubgraphInput>().OrderBy( x => x.PortOrder ) )
+		// Get all SubgraphInput nodes only - no more legacy IParameterNode support
+		var subgraphInputs = Subgraph.Nodes.OfType<SubgraphInput>()
+			.Where( x => !string.IsNullOrWhiteSpace( x.InputName ) )
+			.OrderBy( x => x.PortOrder )
+			.ThenBy( x => x.InputName );
+
+		foreach ( var subgraphInput in subgraphInputs )
 		{
-			var inputName = inputNode.InputName;
+			var inputName = subgraphInput.InputName;
 
 			if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
 
-			var type = inputNode.PortType;
+			var type = subgraphInput.InputData.InputType switch
+			{
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Int => typeof( int ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{subgraphInput.InputData.InputType}\"" )
+			};
 
 			var plugInfo = new PlugInfo()
 			{
@@ -102,7 +120,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 				{
 					Name = inputName,
 					Fullname = type.FullName,
-					Description = inputNode.InputDescription
+					Description = subgraphInput.InputDescription
 				}
 			};
 
@@ -118,14 +136,14 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			plugs.Add( plug );
 
-			InputReferences[plug] = (inputNode, type);
+			InputReferences[plug] = (subgraphInput, type);
 
 			// TODO 
 			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			{
 				//if ( parameterNode.GetValue() != null )
 				{
-					DefaultValues[plug.Identifier] = inputNode.InputData.GetValueAsObject();//parameterNode.GetValue();
+					DefaultValues[plug.Identifier] = subgraphInput.InputData.GetValueAsObject();//parameterNode.GetValue();
 				}
 			}
 		}
@@ -139,20 +157,31 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	{
 		var plugs = new List<IPlugOut>();
 
-		foreach ( var output in Subgraph.Nodes.OfType<SubgraphOutput>().OrderBy( x => x.SubgraphFunctionOutput.PortOrder ) )
+		foreach ( var subgraphOutput in Subgraph.Nodes.OfType<SubgraphOutput>().OrderBy( x => x.PortOrder ) )
 		{
-			var outputType = output.SubgraphFunctionOutput.Type;
+			var outputType = subgraphOutput.OutputType switch
+			{
+				SubgraphPortType.Bool => typeof( bool ),
+				SubgraphPortType.Int => typeof( int ),
+				SubgraphPortType.Float => typeof( float ),
+				SubgraphPortType.Vector2 => typeof( Vector2 ),
+				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				_ => throw new Exception( $"Unknown PortType \"{subgraphOutput.OutputType}\"" )
+			};
 
 			if ( outputType is null ) continue;
 			var info = new PlugInfo()
 			{
-				Name = output.SubgraphFunctionOutput.OutputName,
+				Name = subgraphOutput.OutputName,
 				Type = outputType,
 				DisplayInfo = new DisplayInfo()
 				{
-					Name = output.SubgraphFunctionOutput.OutputName,
+					Name = subgraphOutput.OutputName,
 					Fullname = outputType.FullName,
-					Description = output.SubgraphFunctionOutput.OutputDescription
+					Description = subgraphOutput.OutputDescription
 				}
 			};
 			var plug = new BasePlugOut( this, info, outputType );

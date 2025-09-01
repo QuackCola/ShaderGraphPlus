@@ -1,0 +1,239 @@
+{
+  "__version": 2,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/customshading/customshading.sgrph",
+  "Model": "models/citizen/citizen.vmdl",
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-528,-0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "ResultColor",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomShadingTest",
+      "Type": "File",
+      "Body": null,
+      "Source": "Tests/CustomShading/customShadingInc.hlsl",
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "df08576e-1bd5-4638-b68e-618af42e3aaf",
+          "Name": "Albedo",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "1bd75660-5e17-49b0-be75-b6ddbef4f77f",
+          "Name": "Ambient",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "f6915431-c94e-40b6-b795-82e17de9628b",
+          "Name": "ScreenPosition",
+          "Type": "Vector2",
+          "Priority": 0
+        },
+        {
+          "Id": "9cd1397c-6949-4bf9-81b6-6380693c7c4d",
+          "Name": "WorldNormal",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "4661f8d8-73dc-4e6b-a29c-600a63aafc6c",
+          "Name": "WorldPosition",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "74d1a20b-5e56-4f1a-87d8-04a237eaef4e",
+          "Name": "ViewDirection",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "7c3f430c-5e52-4576-86ef-96e437da1aa0",
+          "Name": "ResultColor",
+          "Type": "Color",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-708,-0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Ambient": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "ScreenPosition": {
+        "Identifier": "6",
+        "Output": "XY",
+        "Subgraph": null
+      },
+      "WorldNormal": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "WorldPosition": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "ViewDirection": {
+        "Identifier": "9",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "0.43333,0,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-1224,-168",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "3",
+      "Position": "-1056,-72",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "4",
+      "Position": "-1056,-12",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "0.52167,0.8,0.04093,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "5",
+      "Position": "-1224,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ScreenPosition",
+      "__version": 1,
+      "Mode": "Raw",
+      "Identifier": "6",
+      "Position": "-1056,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldNormal",
+      "__version": 1,
+      "Identifier": "7",
+      "Position": "-1056,180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldPosition",
+      "__version": 1,
+      "NoHighPrecisionLightingOffsets": false,
+      "Identifier": "8",
+      "Position": "-1056,240",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ViewDirection",
+      "__version": 1,
+      "Identifier": "9",
+      "Position": "-1056,300",
+      "HandleOffsets": {}
+    }
+  ]
+}

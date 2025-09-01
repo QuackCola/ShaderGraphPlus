@@ -12,13 +12,13 @@ public struct ParameterUI
 	/// <summary>
 	/// Control type used in the material editor
 	/// </summary>
-	[HideIf( nameof( HideProps ), true )]
+	[HideIf( nameof( ShowTypeProperty ), false )]
 	public UIType Type { get; set; }
 
 	/// <summary>
 	/// Step amount for sliders
 	/// </summary>
-	[HideIf( nameof( HideProps ), true )]
+	[HideIf( nameof( ShowStepProperty ), false )]
 	public float Step { get; set; }
 
 	/// <summary>
@@ -41,11 +41,17 @@ public struct ParameterUI
 	[JsonIgnore, Hide]
 	public readonly string UIGroup => $"{PrimaryGroup.Name},{PrimaryGroup.Priority}/{SecondaryGroup.Name},{SecondaryGroup.Priority}/{Priority}";
 
-	/// <summary>
-	/// Hide Type and Step properties.
-	/// </summary>
 	[JsonIgnore, Hide]
-	internal bool HideProps {  get; set; }
+	internal bool ShowStepProperty { get; set; }
+
+	[JsonIgnore, Hide]
+	internal bool ShowTypeProperty { get; set; }
+
+	public ParameterUI()
+	{
+		ShowTypeProperty = true;
+		ShowStepProperty = true;
+	}
 
 	public void SetOrder( int order )
 	{

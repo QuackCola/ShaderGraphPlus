@@ -93,19 +93,19 @@ public class PreviewPanel : Widget
 		set => _preview.Tint = value;
 	}
 
-    public bool PostProcessing
-    {
-        get => _preview.EnablePostProcessing;
-        set
-        {
-            if (_preview.EnablePostProcessing == value)
-                return;
+	public bool PostProcessing
+	{
+		get => _preview.EnablePostProcessing;
+		set
+		{
+			if ( _preview.EnablePostProcessing == value )
+				return;
 
-            _preview.EnablePostProcessing = value;
-            _preview.UpdateMaterial();
-            _preview.UpdatePostProcessing();
-        }
-    }
+			_preview.EnablePostProcessing = value;
+			_preview.UpdateMaterial();
+			_preview.UpdatePostProcessing();
+		}
+	}
 
     private void UpdateAnimationCombo()
 	{
@@ -549,6 +549,7 @@ public class Preview : SceneRenderingWidget
 
 		_postProcessCmdList.Reset();
 		_postProcessCmdList.Attributes.GrabFrameTexture( "ColorBuffer" );
+		_postProcessCmdList.Blit( _material, _sceneObject.Attributes );
 	}
 
 
@@ -655,6 +656,7 @@ public class Preview : SceneRenderingWidget
 			}
 
 			_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
+			UpdatePostProcessing();
 		}
 	}
 

@@ -17,12 +17,6 @@ public sealed partial class GraphCompiler
 		public bool IsWarning;
 	}
 
-	public struct Warning
-	{
-		public BaseNodePlus Node;
-		public string Message;
-	}
-
 	public static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
 	{
 		{ typeof( Color ), ( "float4", false ) },
@@ -67,6 +61,9 @@ public sealed partial class GraphCompiler
 	public List<ShaderGraphPlus> Subgraphs { get; private set; }
 	public HashSet<string> PixelIncludes { get; private set; } = new();
 	public HashSet<string> VertexIncludes { get; private set; } = new();
+	public Dictionary<string, string> VertexInputs { get; private set; } = new();
+	public Dictionary<string, string> PixelInputs { get; private set; } = new();
+
 
 	public Dictionary<string,string> SyncIDs = new();
 
@@ -140,6 +137,10 @@ public sealed partial class GraphCompiler
 		Stage = ShaderStage.Pixel;
 		Subgraphs = new();
 		AddSubgraphs( Graph );
+
+		// Set the Initial Vertex and Pixel stage inputs from ShaderTemplate.
+		VertexInputs = ShaderTemplate.VertexInputs;
+		PixelInputs = ShaderTemplate.PixelInputs;
 	}
 
 	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
@@ -252,6 +253,52 @@ public sealed partial class GraphCompiler
 			{
 				AddSubgraphs( subgraphNode.Subgraph );
 			}
+		}
+	}
+
+	public void RegisterVertexInput( string type, string name, string semantic )
+	{
+		name = CleanName( name );
+
+		if ( ShaderTemplate.InternalVertexInputs.ContainsKey( name ) )
+		{
+			SGPLog.Error( $"InternalVertexInputs already contains VetexInput \"{name}\"" );
+
+			return;
+		}
+
+		var vertexInput = $"{type} {name} : {semantic};";
+
+		if ( !VertexInputs.ContainsKey( name ) )
+		{
+			VertexInputs.Add( name, vertexInput );
+		}
+		else
+		{
+			SGPLog.Warning( $"VertexInputs already contains key \"{name}\"", IsNotPreview );
+		}
+	}
+
+	public void RegisterPixelInput( string type, string name, string semantic )
+	{
+		name = CleanName( name );
+
+		if ( ShaderTemplate.InternalPixelInputs.ContainsKey( name ) )
+		{
+			SGPLog.Error( $"InternalPixelInputs already contains PixelInput \"{name}\"" );
+
+			return;
+		}
+
+		var pixelInput = $"{type} {name} : {semantic};";
+
+		if ( !PixelInputs.ContainsKey( name ) )
+		{
+			PixelInputs.Add( name, pixelInput );
+		}
+		else
+		{
+			SGPLog.Warning( $"PixelInputs already contains key \"{name}\"", IsNotPreview );
 		}
 	}
 
@@ -799,7 +846,7 @@ public sealed partial class GraphCompiler
 				Subgraphs.Add( Subgraph );
 			}
 
-			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.SubgraphFunctionOutput.OutputName == input.Output ).FirstOrDefault();
+			var resultNode =  Subgraph.Nodes.OfType<SubgraphOutput>().Where( x => x.OutputName == input.Output ).FirstOrDefault();
 			var resultInput = resultNode.Inputs.FirstOrDefault( x => x.Identifier == input.Output );
 			if ( resultInput?.ConnectedOutput is not null )
 			{
@@ -838,9 +885,9 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
-				if ( node is SubgraphInput subgraphInput )
+				if ( node is SubgraphInput subgraphInput && !string.IsNullOrWhiteSpace( subgraphInput.InputName ) )
 				{
-					var newResult = ResolveSubgraphInputNode( subgraphInput, ref value, out var error );
+					var newResult = ResolveSubgraphInput( subgraphInput, ref value, out var error );
 
 					if ( !string.IsNullOrWhiteSpace( error.ErrorString ) )
 					{
@@ -849,7 +896,7 @@ public sealed partial class GraphCompiler
 						InputStack.Remove( input );
 						return default;
 					}
-					
+
 					if ( newResult.IsValid )
 					{
 						InputStack.Remove( input );
@@ -1042,11 +1089,7 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultParameter<T>(string name, T value, T min = default, T max = default, bool isRange = false, bool isAttribute = false, ParameterUI ui = default)
 	{
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
-		{
-			var res = ResultValue( value );
-
-			return res;
-		}
+			return ResultValue( value );
 
 		name = CleanName( name );
 		var attribName = name;
@@ -1225,6 +1268,12 @@ public sealed partial class GraphCompiler
 		{
 			switch ( type )
 			{
+				case Type t when t == typeof( bool ):
+					return false;
+				case Type t when t == typeof( int ):
+					return 0;
+				case Type t when t == typeof( float ):
+					return 0.0f;
 				case Type t when t == typeof( Vector2 ):
 					return Vector2.Zero;
 				case Type t when t == typeof( Vector3 ):
@@ -1233,12 +1282,6 @@ public sealed partial class GraphCompiler
 					return Vector4.Zero;
 				case Type t when t == typeof( Color ):
 					return Color.White;
-				case Type t when t == typeof( int ):
-					return 0;
-				case Type t when t == typeof( float ):
-					return 0.0f;
-				case Type t when t == typeof( bool ):
-					return false;
 				case Type t when t == typeof( Sampler ):
 					return new Sampler();
 				case Type t when t == typeof( Texture2DObject ):
@@ -1251,7 +1294,15 @@ public sealed partial class GraphCompiler
 		
 		if ( value is JsonElement el )
 		{
-			if ( type == typeof( float ) )
+			if ( type == typeof( bool ) )
+			{
+				value = el.GetBoolean();
+			}
+			else if ( type == typeof( int ) )
+			{
+				value = el.GetInt32();
+			}
+			else if ( type == typeof( float ) )
 			{
 				value = el.GetSingle();
 			}
@@ -1271,10 +1322,6 @@ public sealed partial class GraphCompiler
 			{
 				value = Color.Parse( el.GetString() ) ?? Color.White;
 			}
-			else if ( type == typeof( bool ) )
-			{
-				value = el.GetBoolean();
-			}
 			else if ( type == typeof( Sampler ) )
 			{
 				value = JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() );
@@ -1289,7 +1336,7 @@ public sealed partial class GraphCompiler
 		
 	}
 
-	private NodeResult ResolveSubgraphInputNode( SubgraphInput inputNode, ref object value, out (SubgraphNode Node, string ErrorString) error )
+	private NodeResult ResolveSubgraphInput( SubgraphInput inputNode, ref object value, out (SubgraphNode Node, string ErrorString) error )
 	{
 		var lastStack = SubgraphStack.LastOrDefault();
 		var lastNodeEntered = lastStack.Item1;
@@ -1527,7 +1574,24 @@ public sealed partial class GraphCompiler
 		// May have already evaluated and there's errors
 		if ( Errors.Any() )
 			return null;
+
+		/*
+		if ( Graph.MaterialDomain == MaterialDomain.BlendingSurface )
+		{
+			VertexInputs.Add( "vColorBlendValues", "float4 vColorBlendValues : TEXCOORD4 < Semantic( VertexPaintBlendParams ); >;" );
+			VertexInputs.Add( "vColorPaintValues", "float4 vColorPaintValues : TEXCOORD5 < Semantic( VertexPaintTintColor ); >;" );
 		
+			PixelInputs.Add( "vBlendValues", "float4 vBlendValues : TEXCOORD14;" );
+			PixelInputs.Add( "vPaintValues", "float4 vPaintValues : TEXCOORD15;" );
+		}
+		*/
+
+		// Pre-Register anything before we Generate anything. Shouldn't cause any issues i hope.
+		foreach ( var node in Graph.Nodes.OfType<IPreRegisterNodeData>() )
+		{
+			node.PreRegister( this );
+		}
+
 		var material = GenerateMaterial();
 		var pixelOutput = GeneratePixelOutput();
 
@@ -1543,21 +1607,51 @@ public sealed partial class GraphCompiler
 		}
 
 		return string.Format( template,
-			Graph.Description,
-			IndentString( GenerateFeatures(), 1),
-			IndentString( GenerateCommon(), 1 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateLocals(), 2 ),
-			IndentString( material, 2 ),
-			IndentString( GenerateVertex(), 2 ),
-			IndentString( GenerateGlobals(), 1 ),
-			IndentString( GenerateVertexComboRules(), 1 ),
-			IndentString( GeneratePixelComboRules(), 1 ),
-			IndentString( GenerateFunctions( PixelResult ), 1 ),
-			IndentString( GenerateFunctions( VertexResult ), 1 ),
-			IndentString( GeneratePixelInit(), 2 ),
-			IndentString( pixelOutput, 2 )
+			Graph.Description, // {0}
+			IndentString( GenerateFeatures(), 1), // {1}
+			IndentString( GenerateCommon(), 1 ), // {2}
+			IndentString( GenerateStageInputs( ShaderStage.Vertex ), 1 ), // {3}
+			IndentString( GenerateStageInputs( ShaderStage.Pixel ), 1 ), // {4}
+			IndentString( GenerateGlobals(), 1 ), // {5}
+			IndentString( GenerateLocals(), 2 ), // {6}
+			IndentString( material, 2 ), // {7}
+			IndentString( GenerateVertex(), 2 ), // {8}
+			IndentString( GenerateGlobals(), 1 ), // {9}
+			IndentString( GenerateVertexComboRules(), 1 ), // {10}
+			IndentString( GeneratePixelComboRules(), 1 ),  // {11}
+			IndentString( GenerateFunctions( PixelResult ), 1 ),  // {12}
+			IndentString( GenerateFunctions( VertexResult ), 1 ),  // {13}
+			IndentString( GeneratePixelInit(), 2 ), // {14}
+			IndentString( pixelOutput, 2 ) // {15}
 		);
+	}
+
+	private string GenerateStageInputs( ShaderStage shaderStage )
+	{
+		var sb = new StringBuilder();
+
+		if ( shaderStage == ShaderStage.Vertex )
+		{
+			foreach ( var vertexInput in VertexInputs )
+			{
+				if ( !ShaderTemplate.InternalVertexInputs.ContainsValue( vertexInput.Value ) )
+				{
+					sb.AppendLine( vertexInput.Value );
+				}
+			}
+		}
+		else
+		{
+			foreach ( var pixelInput in PixelInputs )
+			{
+				if ( !ShaderTemplate.InternalPixelInputs.ContainsValue( pixelInput.Value ) )
+				{
+					sb.AppendLine( pixelInput.Value );
+				}
+			}
+		}
+
+		return sb.ToString();
 	}
 
 	private static string GenerateFunctions( CompileResult result )
@@ -1608,7 +1702,6 @@ public sealed partial class GraphCompiler
 			return null;
 		
 		sb.AppendLine();
-		sb.AppendLine( "DynamicComboRule( Allow0( D_MORPH ) );" );
 		return sb.ToString();
 	}
 
@@ -1622,7 +1715,9 @@ public sealed partial class GraphCompiler
 			pixelIncludes.Add( "postprocess/functions.hlsl" );
 			pixelIncludes.Add( "postprocess/common.hlsl" );
 		}
-		
+
+		sb.AppendLine();
+
 		foreach ( var include in pixelIncludes )
 		{
 			sb.AppendLine( $"#include \"{include}\"" );
@@ -1670,44 +1765,14 @@ public sealed partial class GraphCompiler
 		return null;
 	}
 
-	private string GetPropertyValue(PropertyInfo property, Result resultNode)
-	{
-		NodeResult result;
-		var inputAttribute = property.GetCustomAttribute<BaseNodePlus.InputAttribute>();
-		var componentCount = GetComponentCount( inputAttribute.Type );
-
-		if ( property.GetValue( resultNode ) is NodeInput connection && connection.IsValid() )
-		{
-			result = Result( connection );
-		}
-		else
-		{
-			var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
-			if ( editorAttribute == null )
-				return null;
-
-			var valueProperty = resultNode.GetType().GetProperty( editorAttribute.ValueName );
-			if ( valueProperty == null )
-				return null;
-
-			result = ResultValue( valueProperty.GetValue( resultNode ), previewOverride: true );
-		}
-
-		if ( Errors.Any() )
-			return null;
-
-		if ( !result.IsValid() )
-			return null;
-
-		if ( string.IsNullOrWhiteSpace( result.Code ) )
-			return null;
-
-		return $"{result.Cast( componentCount )}";
-	}
-
 	private string GenerateGlobals()
 	{
 		var sb = new StringBuilder();
+
+		foreach ( var global in ShaderResult.Globals )
+		{
+			sb.AppendLine( global.Value );
+		}
 
 		foreach ( var feature in ShaderFeatures )
 		{
@@ -1727,19 +1792,12 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		foreach ( var global in ShaderResult.Globals )
+		// Support for color buffer in post-process shaders
+		if ( IsPs && Graph.MaterialDomain is MaterialDomain.PostProcess )
 		{
-			sb.AppendLine( global.Value );
+			sb.AppendLine( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead ( true ); >;" );
 		}
 
-		if ( IsPs )
-		{
-			if ( Graph.MaterialDomain is MaterialDomain.PostProcess )
-			{
-				sb.AppendLine("Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead( true ); >;");
-			}
-		}
-		
 		if ( IsPreview )
 		{
 			foreach ( var result in ShaderResult.TextureInputs )
@@ -1762,13 +1820,13 @@ public sealed partial class GraphCompiler
 
 				var typeName = result.Value switch
 				{
-					Color _ => "float4",
-					Vector4 _ => "float4",
-					Vector3 _ => "float3",
-					Vector2 _ => "float2",
-					float _ => "float",
-					int _ => "float", // treat int internally as a float.
 					bool _ => "bool",
+					int _ => "int",
+					float _ => "float",
+					Vector2 _ => "float2",
+					Vector3 _ => "float3",
+					Vector4 _ => "float4",
+					Color _ => "float4",
 					Sampler _ => "SamplerState",
 					_ => null
 				};
@@ -2078,18 +2136,18 @@ public sealed partial class GraphCompiler
 
 			foreach ( var subgraphOutput in subgraphOutputs )
 			{
-				if ( reservedPreview.ContainsKey( $"{subgraphOutput.SubgraphFunctionOutput.Preview}" ) )
+				if ( reservedPreview.ContainsKey( $"{subgraphOutput.Preview}" ) )
 				{
-					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.SubgraphFunctionOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.SubgraphFunctionOutput.Preview}\" as its preview type"] );
+					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
 					continue;
 				}
 
-				if ( subgraphOutput.SubgraphFunctionOutput.Preview == SubgraphOutputPreviewType.None )
+				if ( subgraphOutput.Preview == SubgraphOutputPreviewType.None )
 					continue;
 
-				reservedPreview.Add( $"{subgraphOutput.SubgraphFunctionOutput.Preview}", subgraphOutput );
+				reservedPreview.Add( $"{subgraphOutput.Preview}", subgraphOutput );
 
-				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.SubgraphFunctionOutput.Preview, out var errors );
+				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.Preview, out var errors );
 
 				if ( errors.Any() )
 				{
@@ -2119,33 +2177,44 @@ public sealed partial class GraphCompiler
 		var positionOffsetInput = resultNode.GetPositionOffset();
 
 		var sb = new StringBuilder();
+		var sb2 = new StringBuilder();
+
+		foreach ( var vertexInput in VertexInputs )
+		{
+			sb2.AppendLine( $"i.{vertexInput.Key} = v.{vertexInput.Key};" );
+		}
 
 		switch ( Graph.MaterialDomain )
 		{
 		case MaterialDomain.Surface:
-				sb.AppendLine(@"
+				sb.AppendLine( $@"
 PixelInput i = ProcessVertex( v );
 i.vPositionOs = v.vPositionOs.xyz;
-i.vColor = v.vColor;
 
-ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
+{sb2.ToString()}
+ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
 i.vTintColor = extraShaderData.vTint;
 
-VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );");
+VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
+		" );
 				break;
 			case MaterialDomain.BlendingSurface:
-				sb.AppendLine(@"
+				sb.AppendLine( $@"
 PixelInput i = ProcessVertex( v );
+
+{sb2.ToString()}
 i.vBlendValues = v.vColorBlendValues;
 i.vPaintValues = v.vColorPaintValues;
-");
+" );
 				break;
 case MaterialDomain.PostProcess:
-				sb.AppendLine(@"
+				sb.AppendLine( $@"
 PixelInput i;
+
+{sb2.ToString()}
 i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
 i.vPositionWs = float3( v.vTexCoord, 0.0f );
-");
+" );
 				break;
 		}
 
@@ -2154,7 +2223,7 @@ i.vPositionWs = float3( v.vTexCoord, 0.0f );
 		if ( positionOffsetInput is NodeInput connection && connection.IsValid() )
 		{
 			result = Result( connection );
-			
+
 			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );

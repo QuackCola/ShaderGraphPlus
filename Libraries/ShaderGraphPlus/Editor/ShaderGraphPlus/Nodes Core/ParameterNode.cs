@@ -7,9 +7,13 @@ namespace ShaderGraphPlus;
 public interface IParameterNode
 {
 	string Name { get; set; }
+	
 	bool IsAttribute { get; set; }
+	
 	ParameterUI UI { get; set; }
+	
 	public int PortOrder { get; set; }
+	
 	NodeInput PreviewInput { get; set; }
 
 	public Vector2 ParameterNodePosition { get; }
@@ -22,7 +26,7 @@ public interface IParameterNode
 	Vector4 GetRangeMin();
 	Vector4 GetRangeMax();
 
-	public SubgraphInput UpgradeToSubgraphInput();
+	//public SubgraphInput UpgradeToSubgraphInput();
 }
 
 public interface ITextureParameterNode
@@ -36,19 +40,19 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-[NodeReplace( ReplacementMode.SubgraphOnly )]
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode, IReplaceNode
+//[NodeReplace( ReplacementMode.SubgraphOnly )]
+public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode//, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
-	[Hide, JsonIgnore]
-	public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-
-	public BaseNodePlus GetReplacementNode()
-	{
-		return UpgradeToSubgraphInput();
-	}
+	//[Hide, JsonIgnore]
+	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
+	//
+	//public BaseNodePlus GetReplacementNode()
+	//{
+	//	return UpgradeToSubgraphInput();
+	//}
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
@@ -92,6 +96,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
+
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{
 		if ( compiler.IsPreview )
@@ -131,10 +136,10 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		Value = (T)val;
 	}
 
-	public virtual SubgraphInput UpgradeToSubgraphInput()
-	{
-		return default ( SubgraphInput );
-	}
+	//public virtual SubgraphInput UpgradeToSubgraphInput()
+	//
+	//	return default ( SubgraphInput );
+	//
 
 	public List<string> GetErrors()
 	{
@@ -142,7 +147,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 
 		if ( Name.Contains( ' ' ) )
 		{
-			errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
+			//errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
 		}
 
 		foreach ( var parameterNode in Graph.Nodes )

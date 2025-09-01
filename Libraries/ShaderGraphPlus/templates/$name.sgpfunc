@@ -1,13 +1,40 @@
 {
+  "__version": 1,
   "IsSubgraph": true,
-  "Model": null,
+  "Path": "",
+  "Model": "",
+  "Title": "",
   "Description": "",
+  "Category": null,
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
   "nodes": [
     {
-      "_class": "FunctionResult",
-      "FunctionOutputs": [],
+      "_class": "SubgraphOutput",
+      "__version": 1,
+      "SubgraphFunctionOutput": {
+        "Id": "1181c67b-8fcf-4357-8fb8-b9091ba70bf7",
+        "OutputName": "Out0",
+        "OutputDescription": "",
+        "OutputType": "Vector3",
+        "Preview": "None",
+        "PortOrder": 0
+      },
       "Identifier": "0",
-      "Position": "0,0"
+      "Position": "0,0",
+      "HandleOffsets": {}
     }
   ]
 }

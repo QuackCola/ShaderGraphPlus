@@ -7,14 +7,12 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 		if ( reader.TokenType != JsonTokenType.StartObject )
 		{
 			SGPLog.Error( $"Unable to read from \"{reader.TokenType}\"" );
-			return new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+			return new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 		}
 
 		string className = "";
 		SubgraphPortType inputType = SubgraphPortType.Invalid;
 		object typeInstance = null;
-		object minValueTypeInstance = null;
-		object maxValueTypeInstance = null;
 
 		while ( reader.Read() )
 		{
@@ -41,7 +39,7 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 						typeInstance = inputType switch
 						{
 							SubgraphPortType.Bool => JsonSerializer.Deserialize<bool>( ref reader, options ),
-							//SubgraphInputType.Int => JsonSerializer.Deserialize<int>( ref reader, options ),
+							SubgraphPortType.Int => JsonSerializer.Deserialize<int>( ref reader, options ),
 							SubgraphPortType.Float => JsonSerializer.Deserialize<float>( ref reader, options ),
 							SubgraphPortType.Vector2 => JsonSerializer.Deserialize<Vector2>( ref reader, options ),
 							SubgraphPortType.Vector3 => JsonSerializer.Deserialize<Vector3>( ref reader, options ),
@@ -51,42 +49,18 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 							_ => throw new JsonException( $"Unknown InputType \"{inputType}\"" )
 						};
 					break;
-					case "MinValue":
-						minValueTypeInstance = inputType switch
-						{
-							//SubgraphInputType.Int => JsonSerializer.Deserialize<int>( ref reader, options ),
-							SubgraphPortType.Float => JsonSerializer.Deserialize<float>( ref reader, options ),
-							SubgraphPortType.Vector2 => JsonSerializer.Deserialize<Vector2>( ref reader, options ),
-							SubgraphPortType.Vector3 => JsonSerializer.Deserialize<Vector3>( ref reader, options ),
-							//SubgraphInputType.Vector4 => JsonSerializer.Deserialize<Vector4>( ref reader, options ),
-							SubgraphPortType.Color => JsonSerializer.Deserialize<Color>( ref reader, options ),
-							_ => throw new JsonException( $"Unknown InputType \"{inputType}\"" )
-						};
-					break;
-					case "MaxValue":
-						maxValueTypeInstance = inputType switch
-						{
-							//SubgraphInputType.Int => JsonSerializer.Deserialize<int>( ref reader, options ),
-							SubgraphPortType.Float => JsonSerializer.Deserialize<float>( ref reader, options ),
-							SubgraphPortType.Vector2 => JsonSerializer.Deserialize<Vector2>( ref reader, options ),
-							SubgraphPortType.Vector3 => JsonSerializer.Deserialize<Vector3>( ref reader, options ),
-							//SubgraphInputType.Vector4 => JsonSerializer.Deserialize<Vector4>( ref reader, options ),
-							SubgraphPortType.Color => JsonSerializer.Deserialize<Color>( ref reader, options ),
-							_ => throw new JsonException( $"Unknown InputType \"{inputType}\"" )
-						};
-					break;
 				}
 			}
 		}
 
 		if ( typeInstance != null )
 		{
-			var variant = VariantValueBase.CreateNew( typeInstance, minValueTypeInstance, maxValueTypeInstance, inputType );
+			var variant = VariantValueBase.CreateNew( typeInstance, inputType );
 			return variant;
 		}
 
 		SGPLog.Warning( $"{nameof( VariantValueConverter )} - typeInstance is null. Returning default of \"{nameof( VariantValueVector3 )}\"" );
-		return new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+		return new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 	}
 
 	public override void Write( Utf8JsonWriter writer, VariantValueBase value, JsonSerializerOptions options )
@@ -102,44 +76,17 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 			case SubgraphPortType.Bool:
 				JsonSerializer.Serialize( writer, ((VariantValueBool)value).Value, options );
 				break;
-			//case SubgraphInputType.Int:
-			//	JsonSerializer.Serialize( writer, ((VariantValueInt)value).Value, options );
-			//
-			//	writer.WritePropertyName( "MinValue" );
-			//	JsonSerializer.Serialize( writer, ((VariantValueInt)value).MinValue, options );
-			//
-			//	writer.WritePropertyName( "MaxValue" );
-			//	JsonSerializer.Serialize( writer, ((VariantValueInt)value).MaxValue, options );
-			//
-			//	break;
+			case SubgraphPortType.Int:
+				JsonSerializer.Serialize( writer, ((VariantValueInt)value).Value, options );
+				break;
 			case SubgraphPortType.Float:
 				JsonSerializer.Serialize( writer, ((VariantValueFloat)value).Value, options );
-
-				writer.WritePropertyName( "MinValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueFloat)value).MinValue, options );
-
-				writer.WritePropertyName( "MaxValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueFloat)value).MaxValue, options );
-
 				break;
 			case SubgraphPortType.Vector2:
 				JsonSerializer.Serialize( writer, ((VariantValueVector2)value).Value, options );
-
-				writer.WritePropertyName( "MinValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueVector2)value).MinValue, options );
-
-				writer.WritePropertyName( "MaxValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueVector2)value).MaxValue, options );
-
 				break;
 			case SubgraphPortType.Vector3:
 				JsonSerializer.Serialize( writer, ((VariantValueVector3)value).Value, options );
-
-				writer.WritePropertyName( "MinValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueVector3)value).MinValue, options );
-
-				writer.WritePropertyName( "MaxValue" );
-				JsonSerializer.Serialize( writer, ((VariantValueVector3)value).MaxValue, options );
 				break;
 			case SubgraphPortType.Color:
 				JsonSerializer.Serialize( writer, ((VariantValueColor)value).Value, options );

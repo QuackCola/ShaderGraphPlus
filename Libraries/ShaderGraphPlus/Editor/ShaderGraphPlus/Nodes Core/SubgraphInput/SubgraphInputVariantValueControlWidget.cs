@@ -29,7 +29,7 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 		if ( Node.InputData == null )
 		{
 			SGPLog.Info( $"Node.DefaultValue is  null setting default to Vector3" );
-			Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+			Node.InputData = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 		}
 
 		property.TryGetAsObject( out var so );
@@ -56,13 +56,13 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 				Node.InputData = new VariantValueBool( false, SubgraphPortType.Bool );
 				break;
 			case SubgraphPortType.Float:
-				Node.InputData = new VariantValueFloat( 0.0f, 0.0f, 1.0f, SubgraphPortType.Float );
+				Node.InputData = new VariantValueFloat( 0.0f, SubgraphPortType.Float );
 				break;
 			case SubgraphPortType.Vector2:
-				Node.InputData = new VariantValueVector2( Vector2.Zero, Vector2.Zero, Vector2.One, SubgraphPortType.Vector2 );
+				Node.InputData = new VariantValueVector2( Vector2.Zero, SubgraphPortType.Vector2 );
 				break;
 			case SubgraphPortType.Vector3:
-				Node.InputData = new VariantValueVector3( Vector3.Zero, Vector3.Zero, Vector3.One, SubgraphPortType.Vector3 );
+				Node.InputData = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 				break;
 			case SubgraphPortType.Color:
 				Node.InputData = new VariantValueColor( Color.White, SubgraphPortType.Color );
@@ -116,30 +116,10 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 			return Node.GetDefaultValue<T>();
 		}
 
-		public T GetValueRangeMin<T>()
-		{
-			return Node.GetDefaultValueRangeMin<T>();
-		}
-
-		public T GetValueRangeMax<T>()
-		{
-			return Node.GetDefaultValueRangeMax<T>();
-		}
-
 		public void SetValue<T>( T value )
 		{
 			Node?.SetDefaultValue<T>( value );
 			OnPropertyUpdate?.Invoke();
-		}
-
-		public void SetValueRangeMin<T>( T value )
-		{
-			Node?.SetDefaultValueRangeMin<T>( value );
-		}
-
-		public void SetValueRangeMax<T>( T value )
-		{
-			Node?.SetDefaultValueRangeMax<T>( value );
 		}
 	}
 }

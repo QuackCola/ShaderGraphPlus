@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using static Sandbox.Material;
+
+namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
@@ -22,44 +24,49 @@ public sealed class Bool : ParameterNode<bool>
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { HideProps = true };
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueBool( Value, SubgraphPortType.Bool );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
-// <summary>
-// Single int32 value stored as a float internally.
-// </summary>
-//[Title("Int"), Category("Constants"), Icon("looks_one")]
-//public sealed class Int : ParameterNode<int>
-//{
-//    [Output(typeof(float)), Title("Value")]
-//    [Hide, Range(nameof(Min), nameof(Max), nameof(Step))]
-//    public NodeResult.Func Result => (GraphCompiler compiler) =>
-//    {
-//        return compiler.ResultParameter(Name, Value, default, default, false, IsAttribute, UI);
-//    };
-//
-//    [Group("Range")] public int Min { get; set; }
-//    [Group("Range")] public int Max { get; set; }
-//
-//    public Int()
-//    {
-//        Min = 0;
-//        Max = 1;
-//    }
-//}
+///<summary>
+/// Single int value.
+///</summary>
+[Title( "Int" ), Category( "Constants" ), Icon( "looks_one" )]
+public sealed class Int : ParameterNode<int>
+{
+	[Hide]
+	public override int Version => 1;
+
+	[Output( typeof( int ) ), Title( "Value" )]
+	[Hide, Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+	};
+	
+	[Group("Range")] public int Min { get; set; }
+	[Group("Range")] public int Max { get; set; }
+	
+	public Int()
+	{
+
+		Min = 0;
+		Max = 1;
+	}
+}
 
 /// <summary>
 /// Single float value
@@ -76,6 +83,7 @@ public sealed class Float : ParameterNode<float>
 	[Hide, Editor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -98,16 +106,16 @@ public sealed class Float : ParameterNode<float>
 		return new( Max );
 	}
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueFloat( Value, Min, Max, SubgraphPortType.Float );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
 /// <summary>
@@ -122,6 +130,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -179,16 +188,16 @@ public sealed class Float2 : ParameterNode<Vector2>
 		return new( Max.x, Max.y, 0, 0 );
 	}
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueVector2( Value, Min, Max, SubgraphPortType.Vector2 );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 }
 
 /// <summary>
@@ -203,22 +212,23 @@ public sealed class Float3 : ParameterNode<Vector3>
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueVector3( Value, Min, Max, SubgraphPortType.Vector3 );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 	public Float3()
 	{
@@ -292,19 +302,20 @@ public sealed class Float4 : ParameterNode<Color>
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
-	public override SubgraphInput UpgradeToSubgraphInput()
-	{
-		var subgraphInput = new SubgraphInput();
-		subgraphInput.InputName = Name;
-		subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
-		subgraphInput.PortOrder = PortOrder;
-		subgraphInput.IsRequired = IsAttribute;
-
-		return subgraphInput;
-	}
+	//public override SubgraphInput UpgradeToSubgraphInput()
+	//{
+	//	var subgraphInput = new SubgraphInput();
+	//	subgraphInput.InputName = Name;
+	//	subgraphInput.InputData = new VariantValueColor( Value, SubgraphPortType.Color );
+	//	subgraphInput.PortOrder = PortOrder;
+	//	subgraphInput.IsRequired = IsAttribute;
+	//
+	//	return subgraphInput;
+	//}
 
 	[JsonIgnore, Hide]
 	public float ValueR

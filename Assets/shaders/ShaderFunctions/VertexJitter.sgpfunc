@@ -1,5 +1,5 @@
 {
-  "__version": 1,
+  "__version": 2,
   "IsSubgraph": true,
   "Path": "shaders/shaderfunctions/vertexjitter.sgpfunc",
   "Model": "models/fauna/hare/hare.vmdl",
@@ -96,14 +96,11 @@
     {
       "_class": "SubgraphOutput",
       "__version": 1,
-      "SubgraphFunctionOutput": {
-        "Id": "1181c67b-8fcf-4357-8fb8-b9091ba70bf7",
-        "OutputName": "VertexOffset",
-        "OutputDescription": null,
-        "OutputType": "Vector3",
-        "Preview": "PositionOffset",
-        "PortOrder": 0
-      },
+      "OutputName": "VertexOffset",
+      "OutputDescription": null,
+      "OutputType": "Vector3",
+      "Preview": "PositionOffset",
+      "PortOrder": 0,
       "Identifier": "4",
       "Position": "1164,84",
       "HandleOffsets": {},
@@ -239,9 +236,7 @@
       "InputData": {
         "__class": "VariantValueFloat",
         "InputType": "Float",
-        "Value": 0.4,
-        "MinValue": 0,
-        "MaxValue": 2
+        "Value": 0.4
       },
       "IsRequired": false,
       "PortOrder": 0,

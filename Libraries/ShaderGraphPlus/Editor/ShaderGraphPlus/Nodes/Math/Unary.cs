@@ -575,7 +575,16 @@ public sealed class SmoothStep : ShaderNodePlus
 		var edge2String = edge2.IsValid ? edge2.ToString() : compiler.ResultValue( DefaultEdge2 ).ToString();
 		var inputString = input.IsValid ? input.ToString() : compiler.ResultValue( DefaultInput ).ToString();
 
-		return new NodeResult( (ResultType)maxComponents, $"smoothstep( {edge1String}, {edge2String}, {inputString} )" );
+		ResultType resultType = maxComponents switch
+		{
+			1 => ResultType.Float,
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Color,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, $"smoothstep( {edge1String}, {edge2String}, {inputString} )" );
 	};
 }
 

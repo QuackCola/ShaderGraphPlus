@@ -66,11 +66,11 @@ public class ProjectCreator : Dialog
         Window.Title = "Create New Shadergraph Plus Project";
         Window.SetWindowIcon(MaterialIcons.Gradient);
         Window.SetModal(true,true);
-        //Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
+		//Window.WindowFlags = WindowFlags.Dialog | WindowFlags.Customized | WindowFlags.WindowTitle | WindowFlags.CloseButton | WindowFlags.WindowSystemMenuHint;
 
-
-        Init();
-    }
+		Init();
+		OkayButton.Enabled = true;
+	}
 
 
     private void Init()
@@ -199,7 +199,6 @@ public class ProjectCreator : Dialog
                 {
                     FolderEdit = setupBody.Add(new FolderEdit(null));
                     FolderEdit.PlaceholderText = "";
-                    FolderEdit.Text = $"{Project.Current.GetAssetsPath().Replace("\\", "/")}/Shaders/";
                     FolderEdit.ToolTip = "Absolute path to where the Shader Graph Plus project will be saved to.";
                     FolderEdit.TextEdited += delegate
                     {
@@ -314,12 +313,12 @@ public class ProjectCreator : Dialog
     {
         bool enabled = true;
 
-        if (string.IsNullOrWhiteSpace(FolderEdit.Text))
+        if ( string.IsNullOrWhiteSpace( FolderEdit.Text ) )
         {
             enabled = false;
         }
 
-        if (string.IsNullOrWhiteSpace(TitleEdit.Text))
+        if ( string.IsNullOrWhiteSpace( TitleEdit.Text ) )
         {
             enabled = false;
         }
@@ -358,7 +357,7 @@ public class ProjectCreator : Dialog
             return;
         }
 
-        string shaderGraphProjectPath = FolderEdit.Text;//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
+        string shaderGraphProjectPath = $"{FolderEdit.Text}/";//ShaderGraphPlusFileSystem.FileSystem.GetFullPath($"Assets/{FolderEdit.Text}");
         Directory.CreateDirectory(shaderGraphProjectPath);
 
         //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");

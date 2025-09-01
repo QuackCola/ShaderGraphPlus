@@ -15,13 +15,7 @@ internal sealed class VariantValueWidget : Widget
 		public Action OnPropertyUpdate { get; set; }
 
 		public T GetValue<T>();
-		public T GetValueRangeMin<T>();
-		public T GetValueRangeMax<T>();
-
 		public void SetValue<T>( T value );
-		public void SetValueRangeMin<T>( T value );
-		public void SetValueRangeMax<T>( T value );
-
 	}
 
 	public VariantValueWidget( Widget parent ) : base( parent )
@@ -66,20 +60,9 @@ internal class VariantValueSerializedObject : SerializedObject
 	private void UpdateProperty()
 	{
 		PropertyList = new List<SerializedProperty>();
-
-		//if ( ParamProperty.Create( this ) is { } property )
-		{
-			var paramProp = ParamProperty.Create( this );
-			PropertyList.Add( paramProp );
-
-			if ( Node.InputData.HasRange )
-			{
-				var paramPropRangeMin = ParamProperty.CreateRangeMin( this );
-				var paramPropRangeMax = ParamProperty.CreateRangeMax( this );
-				PropertyList.Add( paramPropRangeMin );
-				PropertyList.Add( paramPropRangeMax );
-			}
-		}
+		
+		var paramProperty = ParamProperty.Create( this );
+		PropertyList.Add( paramProperty );
 	}
 }
 
@@ -92,6 +75,4 @@ public struct VariantParam<T>
 
 	public T Value;
 	public T DefaultValue;
-	public T MinValue;
-	public T MaxValue;
 }

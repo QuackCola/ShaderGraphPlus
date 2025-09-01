@@ -10,69 +10,117 @@ HEADER
 
 FEATURES
 {{
-    #include ""common/features.hlsl""
+	#include ""common/features.hlsl""
 {1}
 }}
 
 MODES
 {{
-    Forward();
-    Depth();
-    ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
+	Forward();
+	Depth();
+	ToolsShadingComplexity( ""tools_shading_complexity.shader"" );
 }}
 
 COMMON
 {{
 {2}
-    #include ""common/shared.hlsl""
-    #include ""common/gradient.hlsl""
-    #include ""procedural.hlsl""
-    
-    #define S_UV2 1
-    #define CUSTOM_MATERIAL_INPUTS
+	#include ""common/shared.hlsl""
+	#include ""common/gradient.hlsl""
+	#include ""procedural.hlsl""
+
+	#define S_UV2 1
+	#define CUSTOM_MATERIAL_INPUTS
 }}
 
 struct VertexInput
 {{
-    #include ""common/vertexinput.hlsl""
-    float4 vColor : COLOR0 < Semantic( Color ); >;
+	#include ""common/vertexinput.hlsl""
+{3}
 }};
 
 struct PixelInput
 {{
-    #include ""common/pixelinput.hlsl""
-    float3 vPositionOs : TEXCOORD14;
-    float3 vNormalOs : TEXCOORD15;
-    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
-    float4 vColor : COLOR0;
-    float4 vTintColor : COLOR1;
+	#include ""common/pixelinput.hlsl""
+{4}
 }};
 
 VS
 {{
-    #include ""common/vertex.hlsl""
-{8}{7}{11}
-    PixelInput MainVs( VertexInput v )
-    {{
-{6}
-    }}
+	#include ""common/vertex.hlsl""
+{9}{10}{13}
+	PixelInput MainVs( VertexInput v )
+	{{
+{8}
+	}}
 }}
 
 PS
 {{
-    #include ""common/pixel.hlsl""
-{9}{3}{10}
-    float4 MainPs( PixelInput i ) : SV_Target0
-    {{
-{12}
-{4}
-{5}
-{13}
-    }}
+	#include ""common/pixel.hlsl""
+{5}{11}{12}
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{{
+{14}
+{6}
+{7}
+{15}
+	}}
 }}
 ";
 
-    public static string Material_init => @"
+
+
+	// Included by common/vertexinput.hlsl
+	internal static Dictionary<string,string> InternalVertexInputs => new()
+	{
+		//{ "vColor", "float4 vColor : COLOR0 < Semantic( Color ); >;" },
+		{ "vTexCoord", "float2 vTexCoord : TEXCOORD0 < Semantic( LowPrecisionUv ); >;" },
+		{ "vTexCoord2", "float2 vTexCoord2 : TEXCOORD1 < Semantic( LowPrecisionUv1 ); >;" },
+		{ "vNormalOs", "float4 vNormalOs : NORMAL < Semantic( OptionallyCompressedTangentFrame ); >;" },
+		{ "vTangentUOs_flTangentVSign", "float4 vTangentUOs_flTangentVSign : TANGENT < Semantic( TangentU_SignV ); >;" },
+		{ "vBlendIndices", "uint4 vBlendIndices : BLENDINDICES < Semantic( BlendIndices ); >;" },
+		{ "vBlendWeight", "float4 vBlendWeight : BLENDWEIGHT < Semantic( BlendWeight ); >;" },
+		{ "flSSSCurvature", "float flSSSCurvature : TEXCOORD2 < Semantic( Curvature ); >;" },
+		{ "nVertexIndex", "float nVertexIndex : TEXCOORD14 < Semantic( MorphIndex ); >;" },
+		{ "nVertexCacheIndex", "float nVertexCacheIndex : TEXCOORD15 < Semantic( MorphIndex ); >;" },
+		{ "nInstanceTransformID", "uint nInstanceTransformID : TEXCOORD13 < Semantic( InstanceTransformUv ); >;" },
+		{ "vLightmapUV", "float2 vLightmapUV : TEXCOORD3 < Semantic( LightmapUV ); > ;" },
+	};
+
+	// Included by common/pixelinput.hlsl
+	internal static Dictionary<string, string> InternalPixelInputs => new()
+	{
+		{ "vPositionWithOffsetWs", "float3 vPositionWithOffsetWs : TEXCOORD0;" },
+		{ "vPositionWs", "float3 vPositionWs : TEXCOORD0;" },
+		{ "vNormalWs", "float3 vNormalWs : TEXCOORD1;" },
+		{ "vTextureCoords", "float4 vTextureCoords : TEXCOORD2;" },
+		{ "vVertexColor", "float4 vVertexColor : TEXCOORD4;" },
+		{ "vCentroidNormalWs", "centroid float3 vCentroidNormalWs : TEXCOORD5;" },
+		{ "vTangentUWs", "float3 vTangentUWs : TEXCOORD6;" },
+		{ "vTangentVWs", "float3 vTangentVWs : TEXCOORD7;" },
+		{ "flSSSCurvature", "float flSSSCurvature : TEXCOORD11;" },
+		{ "vLightmapUV", "centroid float2 vLightmapUV : TEXCOORD3;" },
+		{ "vPositionPs", "float4 vPositionPs : SV_Position;" },
+		{ "vPositionSs", "float4 vPositionSs : SV_Position;" },
+		{ "face", "bool face : SV_IsFrontFace;" },
+	};
+
+	internal static Dictionary<string, string> VertexInputs => new()
+	{
+		{ "vColor", "float4 vColor : COLOR0 < Semantic( Color ); >;" },
+	};
+
+	internal static Dictionary<string, string> PixelInputs => new()
+	{
+		{ "vPositionOs", "float3 vPositionOs : TEXCOORD14;" },
+		{ "vNormalOs", "float3 vNormalOs : TEXCOORD15;" },
+		{ "vTangentUOs_flTangentVSign", "float4 vTangentUOs_flTangentVSign : TANGENT\t< Semantic( TangentU_SignV ); >;" },
+		{ "vColor", "float4 vColor : COLOR0;" },
+		{ "vTintColor", "float4 vTintColor : COLOR1;" },
+		{ "vFrontFacing", "#if ( PROGRAM == VFX_PROGRAM_PS )\n\tbool vFrontFacing : SV_IsFrontFace;\n#endif" },
+	};
+
+	public static string Material_init => @"
 Material m = Material::Init();
 m.Albedo = float3( 1, 1, 1 );
 m.Normal = float3( 0, 0, 1 );

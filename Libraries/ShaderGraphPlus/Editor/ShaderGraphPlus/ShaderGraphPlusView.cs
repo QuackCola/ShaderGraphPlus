@@ -415,25 +415,20 @@ public class ShaderGraphPlusView : GraphView
 			foreach ( var output in node.Outputs )
 			{
 				
-				var subgraphOutputNode = FindNodeType( typeof( SubgraphOutput ) ).CreateNode( subgraph );
+				var iNode = FindNodeType( typeof( SubgraphOutput ) ).CreateNode( subgraph );
 
-				if ( subgraphOutputNode is SubgraphOutput subgraphOutput )
+				if ( iNode is SubgraphOutput subgraphOutput )
 				{
 					subgraphOutput.Position = rightmostPos + new Vector2( 240, 0 );
-					subgraphOutput.SubgraphFunctionOutput = new();
 
 					var correspondingNode = Graph.Nodes.FirstOrDefault( x => !subgraph.Nodes.Contains( x ) && x.Inputs.Any( x => x.ConnectedOutput == output ) );
 					if ( correspondingNode is null ) continue;
 					var inputName = $"{output.Identifier}_{output.Node.Identifier}";
 
-					subgraphOutput.SubgraphFunctionOutput = new ShaderFunctionOutput()
-					{
-						OutputName = inputName,
-					};
-					subgraphOutput.SubgraphFunctionOutput.SetSubgraphPortTypeFromType( output.Type );
-
+					subgraphOutput.OutputName = inputName;
+					subgraphOutput.SetSubgraphPortTypeFromType( output.Type );
 					subgraphOutput.InitializeNode();
-		
+
 					var input = subgraphOutput.Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == inputName );
 					input.ConnectedOutput = output;
 
@@ -492,7 +487,7 @@ public class ShaderGraphPlusView : GraphView
 		// Save the newly created sub-graph
 		System.IO.File.WriteAllText( filePath, subgraph.Serialize() );
 		var asset = AssetSystem.RegisterFile( filePath );
-		MainAssetBrowser.Instance?.UpdateAssetList();
+		MainAssetBrowser.Instance?.Local.UpdateAssetList();
 
 		PushUndo( "Create Subgraph from Selection" );
 

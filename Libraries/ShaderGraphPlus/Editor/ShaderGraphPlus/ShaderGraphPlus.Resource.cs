@@ -42,14 +42,12 @@ public class PreviewSettings
     public Color Tint { get; set; } = Color.White;
 }
 
-[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
-public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
+//[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
+[AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
+public partial class ShaderGraphPlus : IGraph//, ISGPJsonUpgradeable
 {
-	/// <summary>
-	/// Current shadergraphplus project version.
-	/// </summary>
-	[Hide, JsonIgnore]
-	public int Version => 1;
+	[Hide, JsonPropertyName( "__version" )]
+	public int Version { get; set; } = 2;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
@@ -98,6 +96,7 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public bool AddToNodeLibrary { get; set; }
+
 	public BlendMode BlendMode { get; set; }
 
     [ShowIf( nameof( ShowShadingModel ), true )]
@@ -148,6 +147,12 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 	{
 		if ( _nodes.ContainsKey( name ) )
 			_nodes[name].ComboSwitchInfo = default;
+	}
+
+	public bool ContainsNode( string id )
+	{
+		if ( _nodes.ContainsKey( id ) ) return true;
+		return false;
 	}
 
 	public void AddNode( BaseNodePlus node )
@@ -293,7 +298,8 @@ public partial class ShaderGraphPlus : IGraph, ISGPJsonUpgradeable
 }
 
 
-[GameResource("Shader Graph Plus Function", "sgpfunc", "Editor Resource", Icon = "account_tree" )]
+//[GameResource("Shader Graph Plus Function", "sgpfunc", "Editor Resource", Icon = "account_tree" )]
+[AssetType( Name = "Shader Graph Plus Function", Extension = "sgpfunc", Flags = AssetTypeFlags.NoEmbedding )]
 public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
 {
 

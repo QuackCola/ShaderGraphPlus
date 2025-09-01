@@ -37,17 +37,24 @@ COMMON
 struct VertexInput
 {
     #include "common/vertexinput.hlsl"
-    float4 vColor : COLOR0 < Semantic( Color ); >;
+	float4 vColor : COLOR0 < Semantic( Color ); >;
+	uint vInstanceID : SV_InstanceID;
+	
 };
 
 struct PixelInput
 {
     #include "common/pixelinput.hlsl"
-    float3 vPositionOs : TEXCOORD14;
-    float3 vNormalOs : TEXCOORD15;
-    float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
-    float4 vColor : COLOR0;
-    float4 vTintColor : COLOR1;
+	float3 vPositionOs : TEXCOORD14;
+	float3 vNormalOs : TEXCOORD15;
+	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
+	float4 vColor : COLOR0;
+	float4 vTintColor : COLOR1;
+	#if ( PROGRAM == VFX_PROGRAM_PS )
+		bool vFrontFacing : SV_IsFrontFace;
+	#endif
+	uint vInstanceID : SV_InstanceID;
+	
 };
 
 VS
@@ -59,12 +66,18 @@ VS
 		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
+		
 		i.vColor = v.vColor;
+		i.vInstanceID = v.vInstanceID;
 		
 		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
+				
+		float l_0 = i.vInstanceID;
+		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
+		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
     }
@@ -74,9 +87,6 @@ PS
 {
     #include "common/pixel.hlsl"
 	
-	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
-	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
-		
 	SamplerState g_sTestSampler < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", "Color,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -90,6 +100,9 @@ PS
 	float g_flReferencePlane < UiGroup( "Height,1/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
 	bool g_bBumpOffset < UiGroup( ",0/,0/0" ); Default( 1 ); >;
 	float g_flRoughness < UiGroup( ",0/,0/0" ); Default1( 0.124 ); Range1( 0, 1 ); >;
+		
+	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
+	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{

@@ -139,7 +139,14 @@ public class MainWindow : DockWindow
 	{
 		ProjectCreator = new ProjectCreator();
 		ProjectCreator.DeleteOnClose = true;
-		ProjectCreator.FolderEditPath = ShaderGraphPlusFileSystem.Content.GetFullPath("shaders");
+
+		var initialPath = $"{Project.Current.GetAssetsPath().Replace( "\\", "/" )}/Shaders";
+		if ( !Directory.Exists( initialPath ) )
+		{
+			Directory.CreateDirectory( initialPath );
+		}
+
+		ProjectCreator.FolderEditPath = initialPath;
 		ProjectCreator.Show();
 		ProjectCreator.OnProjectCreated += OpenProject;
 
@@ -1221,9 +1228,9 @@ public class MainWindow : DockWindow
 			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( SubgraphOutput ) ), 0 );
 			
 			var subgraphOutput = result.Node as SubgraphOutput;
-			subgraphOutput.SubgraphFunctionOutput.OutputName = "Out0";
-			subgraphOutput.SubgraphFunctionOutput.OutputType =  SubgraphPortType.Vector3;
-			subgraphOutput.SubgraphFunctionOutput.Preview = SubgraphOutputPreviewType.Albedo;
+			subgraphOutput.OutputName = "Out0";
+			subgraphOutput.OutputType =  SubgraphPortType.Vector3;
+			subgraphOutput.Preview = SubgraphOutputPreviewType.Albedo;
 
 			_graphView.Scale = 1;
 			_graphView.CenterOn( result.Size * 0.5f );
@@ -1428,13 +1435,13 @@ public class MainWindow : DockWindow
 		
 		if ( _asset == null )
 		{
-			Log.Warning( $"Unable to register asset {savePath}" );
+			SGPLog.Warning( $"Unable to register asset {savePath}" );
 		
 			return false;
 		}
-		
-		MainAssetBrowser.Instance?.UpdateAssetList();
-		
+
+		MainAssetBrowser.Instance?.Local.UpdateAssetList();
+
 		_dirty = false;
 		_graphCanvas.WindowTitle = _asset.Name;
 		

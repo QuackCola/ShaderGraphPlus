@@ -11,9 +11,6 @@ public interface ISGPJsonUpgradeable
 
 partial class ShaderGraphPlus
 {
-	[JsonIgnore, Hide]
-	internal bool Upgrade { get; set; } = false;
-
 	internal static class VersioningInfo
 	{
 		/// <summary>
@@ -47,7 +44,7 @@ partial class ShaderGraphPlus
 		var doc = new JsonObject();
 		var options = SerializerOptions( true );
 
-		doc.Add( VersioningInfo.VersionJsonPropertyName, Version );
+		//doc.Add( VersioningInfo.VersionJsonPropertyName, Version );
 
 		SerializeObject( this, doc, options );
 		SerializeNodes( Nodes, doc, options );
@@ -61,36 +58,46 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 
-		var projectFileVersion = GetProjectVersion( root );
-		if ( projectFileVersion < Version )
+		// Check for the version so we can handle upgrades
+		var latestVersion = Version;
+		var currentVersion = 0; // Assume 0 for files that don't have the Version property
+		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
 		{
-			//SGPLog.Info( $"Version of loading Project is \"{projectFileVersion}\" which is less than the defined version \"{Version}\"." );
+			currentVersion = ver.GetInt32();
 		}
-		
-		DeserializeObject( this, root, options );
-		DeserializeNodes( root, options, subgraphPath );
-	}
 
-	public static int GetProjectVersion( JsonElement root )
-	{
-		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) && versionElement.TryGetInt32( out var versionNum ) )
-		{
-			return versionNum;
-		}
-		else // Older Projects that dont contain a listed __version property
-		{
-			return 0;
-		}
+		// Deserialize everything using the current version
+		Version = currentVersion;
+		DeserializeObject( this, root, options );
+		DeserializeNodes( root, options, subgraphPath, currentVersion );
+
+		// Upgrade to the latest version
+		Version = latestVersion;
 	}
 
 	public IEnumerable<BaseNodePlus> DeserializeNodes( string json )
 	{
-		using var doc = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-		return DeserializeNodes(doc.RootElement, SerializerOptions());
+		using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
+		var root = doc.RootElement;
+		
+		// Check for version in the JSON
+		var fileVersion = 1; // Default to current version
+		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
+		{
+			fileVersion = ver.GetInt32();
+		}
+		else
+		{
+			fileVersion = 0; // Old file without version
+		}
+
+		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
 	}
 
 	public static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonProperty jsonProperty, JsonSerializerOptions serializerOptions )
 	{
+		ArgumentNullException.ThrowIfNull( jsonUpgradeable );
+
 		var jsonObject = JsonNode.Parse( jsonProperty.Value.GetRawText() ) as JsonObject;
 
 		SGPJsonUpgrader.Upgrade( versionNumber, jsonObject, type );
@@ -103,15 +110,6 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
-
-		//if ( obj is BaseNodePlus baseNode )
-		//{
-		//	SGPLog.Info( $"Deserializing BaseNodePlus object \"{type}\"" );
-		//}
-		//else
-		//{
-		//	SGPLog.Info( $"Deserializing object \"{type}\"" );
-		//}
 
 		// start deserilzing each property of the current type we are deserialzing. Also handle 
 		// any property that needs upgrading.
@@ -169,12 +167,12 @@ partial class ShaderGraphPlus
 		}
 	}
 
-	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null )
+	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, int fileVersion = -1 )
 	{
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
-		var replacedNodes = new Dictionary<string, BaseNodePlus>();
+		//var replacedNodes = new Dictionary<string, BaseNodePlus>();
 
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
@@ -199,30 +197,34 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
-				var replaceAttribute = node.GetType().GetCustomAttribute<NodeReplaceAttribute>();
-				DeserializeObject( node, element, options );
+				//var replaceAttribute = node.GetType().GetCustomAttribute<NodeReplaceAttribute>();
+
+				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
+				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
+				// TODO : Get a similar system setup to how SGPJsonUpgrader works or just make it work with SGPJsonUpgrader somehow? - Quack.
+				if ( IsSubgraph && fileVersion < 1 && ShouldUpgradeToSubgraphInput( typeName, element ) )
+				{
+					node = CreateUpgradedSubgraphInput( typeName, element, options );
+					fileVersion = 1; // We've upgraded now, useful if there are future upgraders.
+				}
+				else if ( IsSubgraph && fileVersion < 2 && typeName == "SubgraphOutput" )
+				{
+					node = UpdateSubgraphOutput( element, options );
+					fileVersion = 2;
+				}
+				else
+				{
+					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
+					DeserializeObject( node, element, options );
+				}
+				
 
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-				// Replace named IParameter nodes with a SubgraphInput node.
-				//if ( node is IParameterNode parameterNode && !string.IsNullOrWhiteSpace( parameterNode.Name ) && IsSubgraph )
-				//{
-				//	node.UpgradedToNewNode = true;
-				//
-				//	var subgraphInputNode = parameterNode.UpgradeToSubgraphInput();
-				//	subgraphInputNode.Position = parameterNode.ParameterNodePosition;
-				//	
-				//	// Take the Identifier of the node that we are replacing.
-				//	subgraphInputNode.Identifier = node.Identifier;
-				//
-				//	nodes.Add( subgraphInputNode.Identifier, subgraphInputNode );
-				//	AddNode( subgraphInputNode );
-				//}
-
+				/*
 				if ( replaceAttribute != null && node is IReplaceNode iReplaceNode && iReplaceNode.ReplacementCondition )
 				{
 					if ( replaceAttribute.Mode == ReplacementMode.SubgraphOnly && IsSubgraph )
@@ -262,8 +264,10 @@ partial class ShaderGraphPlus
 						AddNode( newNode );
 					}
 				}
+				*/
 
-				if ( node is not IReplaceNode && node is IInitializeNode initializeableNode )
+				//if ( node is not IReplaceNode && node is IInitializeNode initializeableNode )
+				if ( node is IInitializeNode initializeableNode )
 				{
 					initializeableNode.InitializeNode();
 				}
@@ -345,10 +349,10 @@ partial class ShaderGraphPlus
 
 				// Uprgraded node but the NodeResult property name on the new node output differs from the old one.
 				// Bit of a hack really.
-				if ( replacedNodes.TryGetValue( node.Identifier, out var oldNode ) && output is null )
-				{
-					ProjectUpgrading.ReplaceOutputReference( node, oldNode, value.Output, ref output );
-				}
+				//if ( replacedNodes.TryGetValue( node.Identifier, out var oldNode ) && output is null )
+				//{
+				//	ProjectUpgrading.ReplaceOutputReference( node, oldNode, value.Output, ref output );
+				//}
 
 				if ( output is null )
 				{
@@ -374,17 +378,17 @@ partial class ShaderGraphPlus
 
 	public string SerializeNodes()
 	{
-		return SerializeNodes(Nodes);
+		return SerializeNodes( Nodes );
 	}
 
-	public string SerializeNodes(IEnumerable<BaseNodePlus> nodes)
+	public string SerializeNodes( IEnumerable<BaseNodePlus> nodes )
 	{
 		var doc = new JsonObject();
 		var options = SerializerOptions();
 
 		SerializeNodes( nodes, doc, options );
 
-		return doc.ToJsonString(options);
+		return doc.ToJsonString( options );
 	}
 
 	private static void SerializeObject( object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null )
@@ -396,9 +400,6 @@ partial class ShaderGraphPlus
 		foreach ( var property in properties )
 		{
 			if ( !property.CanRead)
-				continue;
-
-			if ( property.Name == VersioningInfo.VersionClassPropertyName )
 				continue;
 
 			if ( property.PropertyType == typeof( NodeInput ) )
@@ -420,17 +421,11 @@ partial class ShaderGraphPlus
 				}
 			}
 
-
 			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
 		}
 
 		if ( obj is INode node )
 		{
-			string subgraphPath = null;
-			if ( obj is SubgraphNode subgraphNode )
-			{
-				subgraphPath = subgraphNode.SubgraphPath;
-			}
 			foreach ( var input in node.Inputs )
 			{
 				if ( input.ConnectedOutput is not { } output )
@@ -440,7 +435,6 @@ partial class ShaderGraphPlus
 				{
 					Identifier = identifiers?.TryGetValue( output.Node.Identifier, out var newIdent ) ?? false ? newIdent : output.Node.Identifier,
 					Output = output.Identifier,
-					Subgraph = subgraphPath
 				} ) );
 			}
 		}
@@ -469,11 +463,173 @@ partial class ShaderGraphPlus
 			//	nodeObject.Add( VersioningInfo.JsonPropertyName, upgradeable.Version );
 			//}
 
-			SerializeObject( node, nodeObject, options, identifiers);
+			SerializeObject( node, nodeObject, options, identifiers );
 
-			nodeArray.Add(nodeObject);
+			nodeArray.Add( nodeObject );
 		}
 
-		doc.Add("nodes", nodeArray);
+		doc.Add( "nodes", nodeArray );
+	}
+
+	/// <summary>
+	/// Check if a legacy parameter node should be upgraded to SubgraphInput.
+	/// </summary>
+	private static bool ShouldUpgradeToSubgraphInput( string typeName, JsonElement element )
+	{
+		// Only upgrade if it's a parameter node type
+		if ( !IsParameterNodeType( typeName ) )
+			return false;
+
+		// Only upgrade if it has a name (indicating it's meant to be an input)
+		if ( element.TryGetProperty( "Name", out var nameProperty ) )
+		{
+			var name = nameProperty.GetString();
+			return !string.IsNullOrWhiteSpace( name );
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the type name represents a parameter node
+	/// </summary>
+	private static bool IsParameterNodeType( string typeName )
+	{
+		return typeName switch
+		{
+			"Bool" => true,
+			"Int" => true,
+			"Float" => true,
+			"Float2" => true,
+			"Float3" => true,
+			"Float4" => true,
+			"TextureSampler" => true,
+			"Texture2DObjectNode" => true,
+			"SamplerNode" => true,
+			_ => false
+		};
+	}
+
+	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
+	{ 
+		var subgraphOutput = new SubgraphOutput();
+
+		// Copy basic node properties
+		DeserializeObject( subgraphOutput, element, options );
+
+		if ( element.TryGetProperty( "SubgraphFunctionOutput", out var subgraphFunctionOutputProperty ) )
+		{
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
+			{
+				subgraphOutput.Id = id.GetGuid();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
+			{
+				subgraphOutput.OutputName = outputName.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputDescription", out var outputDescription ) )
+			{
+				subgraphOutput.OutputDescription = outputDescription.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputType", out var outputType ) )
+			{
+				subgraphOutput.OutputType = JsonSerializer.Deserialize<SubgraphPortType>( outputType, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Preview", out var preview ) )
+			{
+				subgraphOutput.Preview = JsonSerializer.Deserialize<SubgraphOutputPreviewType>( preview, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "PortOrder", out var portOrder ) )
+			{
+				subgraphOutput.PortOrder = portOrder.GetInt32();
+			}
+		}
+
+		return subgraphOutput;
+	}
+
+	/// <summary>
+	/// Create a new SubgraphInput node from a legacy parameter node
+	/// </summary>
+	private SubgraphInput CreateUpgradedSubgraphInput( string typeName, JsonElement element, JsonSerializerOptions options )
+	{
+		var subgraphInput = new SubgraphInput();
+
+		// Copy basic node properties
+		DeserializeObject( subgraphInput, element, options );
+
+		// Set input name from the parameter's Name property
+		if ( element.TryGetProperty( "Name", out var nameProperty ) )
+		{
+			subgraphInput.InputName = nameProperty.GetString();
+		}
+
+		// Map the parameter type to InputType and set default values
+		switch ( typeName )
+		{
+			case "Bool":
+				subgraphInput.InputData.InputType = SubgraphPortType.Bool;
+				if ( element.TryGetProperty( "Value", out var boolValue ) )
+				{
+					subgraphInput.InputData = new VariantValueBool( boolValue.GetBoolean(), SubgraphPortType.Bool );
+				}
+				break;
+			case "Int":
+				subgraphInput.InputData.InputType = SubgraphPortType.Int;
+				if ( element.TryGetProperty( "Value", out var intValue ) )
+				{
+					subgraphInput.InputData = new VariantValueInt( intValue.GetInt32(), SubgraphPortType.Int );
+				}
+				break;
+			case "Float":
+				subgraphInput.InputData.InputType = SubgraphPortType.Float;
+				if ( element.TryGetProperty( "Value", out var floatValue ) )
+				{
+					subgraphInput.InputData = new VariantValueFloat( floatValue.GetSingle(), SubgraphPortType.Float );
+				}
+				break;
+			case "Float2":
+				subgraphInput.InputData.InputType = SubgraphPortType.Vector2;
+				if ( element.TryGetProperty( "Value", out var float2Value ) )
+				{
+					var vector2 = JsonSerializer.Deserialize<Vector2>( float2Value.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueVector2( vector2, SubgraphPortType.Vector2 );
+				}
+				break;
+			case "Float3":
+				subgraphInput.InputData.InputType = SubgraphPortType.Vector3;
+				if ( element.TryGetProperty( "Value", out var float3Value ) )
+				{
+					var vector3 = JsonSerializer.Deserialize<Vector3>( float3Value.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueVector3( vector3, SubgraphPortType.Vector3 );
+				}
+				break;
+			case "Float4":
+				subgraphInput.InputData.InputType = SubgraphPortType.Color;
+				if ( element.TryGetProperty( "Value", out var ColorValue ) )
+				{
+					var vector4 = JsonSerializer.Deserialize<Vector4>( ColorValue.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Color );
+				}
+				break;
+			case "Texture2DObjectNode":
+				subgraphInput.InputData.InputType = SubgraphPortType.Texture2DObject;
+				if ( element.TryGetProperty( "UI", out var TextureInputValue ) )
+				{
+					var vector4 = JsonSerializer.Deserialize<Vector4>( TextureInputValue.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Texture2DObject );
+				}
+				break;
+			case "SamplerNode":
+				subgraphInput.InputData.InputType = SubgraphPortType.Sampler;
+				if ( element.TryGetProperty( "SamplerState", out var SamplerStateValue ) )
+				{
+					var samplerState = JsonSerializer.Deserialize<Sampler>( SamplerStateValue.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueSampler( samplerState, SubgraphPortType.Sampler );
+				}
+				break;
+		}
+
+		return subgraphInput;
 	}
 }

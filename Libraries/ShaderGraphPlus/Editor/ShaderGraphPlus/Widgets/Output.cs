@@ -89,24 +89,7 @@ public class IssueListView : ListView
 		}
 
 	}
-	private void OnOpenItemContextMenuWarning( object item, Warning warning )
-	{
-		var m = new Menu();
 
-		if ( warning.Node != null && warning.Node is not DummyNode )
-		{
-			var nodeName = DisplayInfo.ForType( warning.Node.GetType() ).Name;
-
-			m.AddOption( "Go to Error", "arrow_upward", () => _output.OnNodeSelected?.Invoke( warning.Node ) );
-			m.AddOption( "Copy Error", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}\n{nodeName} #{warning.Node.Identifier}" ) );
-		}
-		else
-		{
-			m.AddOption( "Copy Error", "content_copy", () => EditorUtility.Clipboard.Copy( $"{warning.Message}" ) );
-		}
-
-		m.OpenAt( Editor.Application.CursorPosition );
-	}
 	private void OnOpenItemContextMenuError( object item , Issue error )
 	{
 		var m = new Menu();

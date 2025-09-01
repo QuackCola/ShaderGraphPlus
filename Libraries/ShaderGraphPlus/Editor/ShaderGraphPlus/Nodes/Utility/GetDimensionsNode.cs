@@ -32,5 +32,5 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[Output( typeof( Vector2 ) )]
 	[Title( "Tex Size" )]
 	[Hide]
-	public NodeResult.Func TextureSize => ( GraphCompiler compiler ) => new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
+	public NodeResult.Func Result => ( GraphCompiler compiler ) => new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
 }

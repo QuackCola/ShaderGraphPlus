@@ -66,13 +66,6 @@ public enum ResultType
 	Invalid,
 }
 
-public enum CastType
-{
-	FloatToInt,
-	FloatToFloat,
-	IntToFloat,
-}
-
 internal enum MetadataType
 {
 	ImagePath,
@@ -331,8 +324,13 @@ public struct NodeResult : IValid
 	/// <summary>
 	/// "Cast" this result to different float types
 	/// </summary>
-	public string Cast( int components, float defaultValue = 0.0f, CastType castType = CastType.FloatToFloat )
+	public string Cast( int components, float defaultValue = 0.0f )
 	{
+		if ( components > 4 )
+		{
+			throw new Exception( $"There is no float type with a component count of \"{components}\"" );
+		}
+
 		if ( !CanCast )
 		{
 			throw new Exception( $"ResultType `{ResultType}` cannot be cast." );
@@ -340,7 +338,12 @@ public struct NodeResult : IValid
 
 		if ( ResultType == ResultType.Int )
 		{
-			throw new NotImplementedException( $"{nameof( Cast )} : ResultType `{ResultType}` is not Implemented yet!" );
+			if ( Components == components )
+			{
+				return $"{Code}";
+			}
+
+			return $"float{components}( {string.Join( ", ", Enumerable.Repeat( Code, components ) )} )";
 		}
 
 		if ( Components == components )
@@ -431,7 +434,6 @@ public static class ResultTypeExtentions
 			case ResultType.TextureCubeObject:
 				return "TextureCube";
 			default:
-				//return "float";
 				throw new Exception( $"Unsupported ResultType `{resultType}`" );
 		}
 	}

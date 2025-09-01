@@ -358,13 +358,15 @@ public sealed class FlipBookNode : ShaderNodePlus
 
 [Hide]
 public static string FlipBook => @"
-float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 Invert)
+float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool InvertX, bool InvertY )
 {
-    flTile = fmod(flTile, flWidth * flHeight);
-    float2 vtileCount = float2(1.0, 1.0) / float2(flWidth, flHeight);
-    float tileY = abs(Invert.y * flHeight - (floor(flTile * vtileCount.x) + Invert.y * 1));
-    float tileX = abs(Invert.x * flWidth - ((flTile - flWidth * floor(flTile * vtileCount.x)) + Invert.x * 1));
-    return (vUV + float2(tileX, tileY)) * vtileCount;
+	float flTile = fmod( (float)nTileIndex, flWidth * flHeight );
+	float2 InvertXY = float2( ( InvertX ? 1 : 0 ), ( InvertY ? 1 : 0 ));
+
+	float2 vtileCount = float2( 1.0f, 1.0f ) / float2( flWidth, flHeight );
+	float tileY = abs( InvertXY.y * flHeight - ( floor( flTile * vtileCount.x ) + InvertXY.y * 1 ) );
+	float tileX = abs( InvertXY.x * flWidth - ( ( flTile - flWidth * floor( flTile * vtileCount.x) ) + InvertXY.x * 1 ) );
+	return ( vUV + float2( tileX, tileY ) ) * vtileCount;
 }
 ";
 	
@@ -380,9 +382,17 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 	[Hide]
 	public NodeInput Height { get; set; }
 
-	[Input( typeof( float ) )]
+	[Input( typeof( int ) )]
 	[Hide]
 	public NodeInput TileIndex { get; set; }
+
+	[Input( typeof( bool ) )]
+	[Hide]
+	public NodeInput InvertX { get; set; }
+
+	[Input( typeof( bool ) )]
+	[Hide]
+	public NodeInput InvertY { get; set; }
 
 	[InputDefault( nameof( Width ) )]
 	public float DefaultWidth { get; set; } = 1.0f;
@@ -393,9 +403,11 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 	[InputDefault( nameof( TileIndex ) )]
 	public int DefaultTileIndex { get; set; } = 1;
 
-	public bool InvertX { get; set; } = false;
+	[InputDefault( nameof( InvertX ) )]
+	public bool DefaultInvertX { get; set; } = false;
 
-	public bool InvertY { get; set; } = false;
+	[InputDefault( nameof( InvertY ) )]
+	public bool DefaultInvertY { get; set; } = false;
 
 	[Output( typeof( Vector2 ) ), Title( "Result" )]
 	[Hide]
@@ -410,10 +422,10 @@ float2 FlipBook(float2 vUV, float flWidth, float flHeight, float flTile, float2 
 		var width = compiler.ResultOrDefault( Width, DefaultWidth );
 		var height = compiler.ResultOrDefault(  Height, DefaultHeight );
 		var tileindex = compiler.ResultOrDefault( TileIndex, DefaultTileIndex );
-		
-		
+		var invertX = compiler.ResultOrDefault( InvertX, DefaultInvertX );
+		var invertY = compiler.ResultOrDefault( InvertY, DefaultInvertY );
 		string func = compiler.RegisterFunction( FlipBook );
-		string funcCall = compiler.ResultFunction( func, $"{( coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy" )}, {width}, {height}, {tileindex}, float2( {(InvertX ? 1 : 0)}, {(InvertY ? 1 : 0)} )" );
+		string funcCall = compiler.ResultFunction( func, $"{( coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy" )}, {width}, {height}, {tileindex}, {invertX}, {invertY}" );
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};
