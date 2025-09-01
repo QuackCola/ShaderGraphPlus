@@ -23,7 +23,7 @@ internal class BranchNodeConvert : BaseNodeConvert
 			newNode.Position = oldNode.Position;
 			newNode.Name = oldBranchNode.Name;
 			newNode.Enabled = oldBranchNode.Enabled;
-			//newNode.IsAttribute = oldBranchNode.IsAttribute;
+			newNode.IsAttribute = oldBranchNode.IsAttribute;
 
 			newNodes.Add( newNode );
 		}
