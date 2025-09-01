@@ -2192,9 +2192,8 @@ PixelInput i = ProcessVertex( v );
 i.vPositionOs = v.vPositionOs.xyz;
 
 {sb2.ToString()}
-//ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v ); 
-//i.vTintColor = extraShaderData.vTint; // TODO : figure out what same replaced this with.
-i.vTintColor = float4( 0.0f, 0.0f, 0.0f, 1.0f );
+ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
+i.vTintColor = extraShaderData.vTint;
 
 VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 		" );
