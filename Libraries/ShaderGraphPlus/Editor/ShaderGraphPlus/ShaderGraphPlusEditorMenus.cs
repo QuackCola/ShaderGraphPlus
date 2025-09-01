@@ -223,7 +223,7 @@ file class ProjectConverterDialog : Dialog
 			shaderGraph.Deserialize( System.IO.File.ReadAllText( project.Path ) );
 			var shaderGraphPlus = new ShaderGraphPlus();
 
-			var projectConverter = new ProjectConverter( shaderGraph, shaderGraphPlus, false );
+			var projectConverter = new ProjectConverter( shaderGraph, shaderGraphPlus, project.IsSubgraph );
 			var conversionResult = projectConverter.Convert();
 
 			if ( !projectConverter.Errored )
