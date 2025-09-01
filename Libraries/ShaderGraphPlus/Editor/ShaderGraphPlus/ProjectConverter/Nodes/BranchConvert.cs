@@ -16,14 +16,37 @@ internal class BranchNodeConvert : BaseNodeConvert
 
 		//SGPLog.Info( "Convert branch node" );
 		
-		// TODO : Replace with switch node or compare node depending on if the name is set.
-		var newNode = new Branch();
-		newNode.Identifier = oldNode.Identifier;
-		newNode.Position = oldNode.Position;
-		newNode.Name = oldBranchNode.Name;
-		newNode.IsAttribute = oldBranchNode.IsAttribute;
+		if ( !string.IsNullOrWhiteSpace( oldBranchNode.Name ) )
+		{
+			var newNode = new SwitchNode();
+			newNode.Identifier = oldNode.Identifier;
+			newNode.Position = oldNode.Position;
+			newNode.Name = oldBranchNode.Name;
+			newNode.Enabled = oldBranchNode.Enabled;
+			//newNode.IsAttribute = oldBranchNode.IsAttribute;
 
-		newNodes.Add( newNode );
+			newNodes.Add( newNode );
+		}
+		else
+		{
+			var newNode = new ComparisonNode();
+			newNode.Identifier = oldNode.Identifier;
+			newNode.Position = oldNode.Position;
+			newNode.Operator = oldBranchNode.Operator switch
+			{
+				VanillaNodes.Branch.OperatorType.Equal => ComparisonNode.OperatorType.Equal,
+				VanillaNodes.Branch.OperatorType.NotEqual => ComparisonNode.OperatorType.NotEqual,
+				VanillaNodes.Branch.OperatorType.GreaterThan => ComparisonNode.OperatorType.GreaterThan,
+				VanillaNodes.Branch.OperatorType.LessThan => ComparisonNode.OperatorType.LessThan,
+				VanillaNodes.Branch.OperatorType.GreaterThanOrEqual => ComparisonNode.OperatorType.GreaterThanOrEqual,
+				VanillaNodes.Branch.OperatorType.LessThanOrEqual => ComparisonNode.OperatorType.LessThanOrEqual,
+				_ => throw new NotImplementedException(),
+			};
+
+			newNodes.Add( newNode );
+		}
+
+
 
 		return newNodes;
 	}
