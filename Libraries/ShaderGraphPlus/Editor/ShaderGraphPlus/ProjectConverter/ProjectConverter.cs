@@ -243,7 +243,7 @@ internal class ProjectConverter
 					OutputNodeIdentifier = nodeInput.Identifier,
 				};
 
-				// Sometimes the NodeInput name is differnt from ShaderGraph to ShaderGraphPlus. In that case we change the InputName.
+				// Change the InputName in the case where the input.Identifier is differnt from ShaderGraph to ShaderGraphPlus.
 				if ( mapping.TryGetValue( connectionData.InputName, out var newInputName ) )
 				{ 
 					//SGPLog.Info( $"Changing InputName from \"{connectionData.InputName}\" to \"{newInputName}\"" );
