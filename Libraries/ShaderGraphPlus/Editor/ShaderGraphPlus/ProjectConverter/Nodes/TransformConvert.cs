@@ -80,11 +80,11 @@ internal class TileAndOffsetNodeConvert : BaseNodeConvert
 
 	public override Dictionary<string, string> GetNodeInputNameMapping()
 	{
-		var result = new Dictionary<string, string>();
+		var nameMapping = new Dictionary<string, string>();
 
-		result.Add( nameof( VanillaNodes.TileAndOffset.Coords ), nameof( TileAndOffset.UV ) );
+		nameMapping.Add( nameof( VanillaNodes.TileAndOffset.Coords ), nameof( TileAndOffset.UV ) );
 
-		return result;
+		return nameMapping;
 	}
 }
 
