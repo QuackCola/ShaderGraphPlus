@@ -17,6 +17,9 @@ internal abstract class BaseNodeConvert
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Key is the old <see cref="NodeInput"/> property name and Value is the new <see cref="NodeInput"/> property name.
+	/// </summary>
 	public virtual Dictionary<string, string> GetNodeInputNameMapping()
 	{
 		return new Dictionary<string, string>();
