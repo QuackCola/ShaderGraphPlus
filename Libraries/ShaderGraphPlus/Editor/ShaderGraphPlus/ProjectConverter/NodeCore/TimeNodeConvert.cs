@@ -1,5 +1,4 @@
-﻿using VanillaGraph = Editor.ShaderGraph;
-using VanillaNodes = Editor.ShaderGraph.Nodes;
+﻿using VanillaNodes = Editor.ShaderGraph.Nodes;
 using ShaderGraphBaseNode = Editor.ShaderGraph.BaseNode;
 
 namespace ShaderGraphPlus.Internal;
@@ -16,6 +15,8 @@ internal class TimeNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert time node" );
 
 		var newNode = new Nodes.Time();
+		newNode.Position = oldTimeNode.Position;
+
 
 		newNodes.Add( newNode );
 

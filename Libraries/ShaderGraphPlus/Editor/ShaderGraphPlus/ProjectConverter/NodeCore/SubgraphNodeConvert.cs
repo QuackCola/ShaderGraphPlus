@@ -14,13 +14,13 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 		var newNodes = new List<BaseNodePlus>();
 		var oldSubgraphNode = oldNode as VanillaGraph.SubgraphNode;
 
-		//SGPLog.Info( "Convert subgraph node" );
-
 		var newNode = new SubgraphNode();
 		newNode.SubgraphPath = oldSubgraphNode.SubgraphPath.Replace( ".shdrfunc", ".sgpfunc" );
 		newNode.Position = oldSubgraphNode.Position;
 
 		var fullPath = Editor.FileSystem.Content.GetFullPath( oldSubgraphNode.SubgraphPath ).Replace( ".shdrfunc", ".sgpfunc" );
+
+		SGPLog.Info( $"Convert subgraph node \"{fullPath}\" " );
 
 		var subgraph = new VanillaGraph.ShaderGraph();
 		subgraph.Deserialize( Editor.FileSystem.Content.ReadAllText( oldSubgraphNode.SubgraphPath ) );

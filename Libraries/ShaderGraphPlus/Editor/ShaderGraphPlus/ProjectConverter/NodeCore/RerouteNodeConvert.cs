@@ -16,9 +16,10 @@ internal class RerouteNodeConvert : BaseNodeConvert
 
 		//SGPLog.Info( "Convert reroute node" );
 
-		var newNode = new ReroutePlus();
-		newNode.Comment = oldReroute.Comment;
+		var newNode = new ReroutePlus(); 
 		newNode.Position = oldReroute.Position;
+		newNode.Comment = oldReroute.Comment;
+	
 
 		newNodes.Add( newNode );
 

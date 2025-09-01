@@ -14,6 +14,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 		var oldSubgraphInputNode = oldNode as VanillaGraph.SubgraphInput;
 
 		var newNode = new SubgraphInput();
+		newNode.Position = oldNode.Position;
 		newNode.InputName = oldSubgraphInputNode.InputName;
 		newNode.InputDescription = oldSubgraphInputNode.InputDescription;
 		newNode.InputData = oldSubgraphInputNode.InputType switch

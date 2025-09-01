@@ -6,6 +6,52 @@ using ShaderGraphBaseNode = Editor.ShaderGraph.BaseNode;
 
 namespace ShaderGraphPlus.Internal;
 
+
+internal class NormalizeNodeConvert : BaseNodeConvert
+{
+	public override Type NodeTypeToConvert => typeof( VanillaNodes.Normalize );
+
+	public override IEnumerable<BaseNodePlus> Convert( ProjectConverter converter, ShaderGraphBaseNode oldNode )
+	{
+		var newNodes = new List<BaseNodePlus>();
+		var oldNormalizeNode = oldNode as VanillaNodes.Normalize; ;
+
+		var newNode = new Nodes.Normalize();
+		newNode.Position = oldNormalizeNode.Position;
+
+		newNodes.Add( newNode );
+
+		return newNodes;
+	}
+}
+
+internal class TransformNormalNodeConvert : BaseNodeConvert
+{
+	public override Type NodeTypeToConvert => typeof( VanillaNodes.TransformNormal );
+
+	public override IEnumerable<BaseNodePlus> Convert( ProjectConverter converter, ShaderGraphBaseNode oldNode )
+	{
+		var newNodes = new List<BaseNodePlus>();
+		var oldTransformNormalNode = oldNode as VanillaNodes.TransformNormal;
+
+		//SGPLog.Info( "Convert tileAndOffset node" );
+
+		var newNode = new TransformNormal();
+		newNode.Position = oldTransformNormalNode.Position;
+		newNode.InputSpace = oldTransformNormalNode.InputSpace switch
+		{
+			VanillaNodes.NormalSpace.Tangent => NormalSpace.Tangent,
+			VanillaNodes.NormalSpace.Object => NormalSpace.Object,
+			VanillaNodes.NormalSpace.World => NormalSpace.World,
+			_ => throw new NotImplementedException(),
+		};
+
+		newNodes.Add( newNode );
+
+		return newNodes;
+	}
+}
+
 internal class TileAndOffsetNodeConvert : BaseNodeConvert
 {
 	public override Type NodeTypeToConvert => typeof( VanillaNodes.TileAndOffset );
@@ -18,11 +64,11 @@ internal class TileAndOffsetNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert tileAndOffset node" );
 
 		var newNode = new TileAndOffset();
-
+		newNode.Position = oldTileAndOffsetNode.Position;
 		newNode.DefaultTile = oldTileAndOffsetNode.DefaultTile;
 		newNode.DefaultOffset = oldTileAndOffsetNode.DefaultOffset;
 		newNode.WrapTo01 = oldTileAndOffsetNode.WrapTo01;
-		newNode.Position = oldTileAndOffsetNode.Position;
+
 
 		newNodes.Add( newNode );
 
@@ -42,6 +88,7 @@ internal class BlendNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert blend node" );
 
 		var newNode = new Blend();
+		newNode.Position = oldBlendNode.Position;
 		newNode.DefaultA = oldBlendNode.DefaultA;
 		newNode.DefaultB = oldBlendNode.DefaultB;
 		newNode.Fraction = oldBlendNode.Fraction;
@@ -70,7 +117,6 @@ internal class BlendNodeConvert : BaseNodeConvert
 			_ => throw new NotImplementedException(),
 		};
 		newNode.Clamp = oldBlendNode.Clamp;
-		newNode.Position = oldBlendNode.Position;
 
 		newNodes.Add( newNode );
 

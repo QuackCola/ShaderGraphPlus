@@ -123,11 +123,10 @@ internal class TextureSamplerNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert textureSampler node" );
 
 		var newNode = new TextureSampler();
-
+		newNode.Position = oldTextureSamplerNode.Position;
 		newNode.Image = oldTextureSamplerNode.Image;
 		newNode.SamplerState = oldTextureSamplerNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureSamplerNode.UI.ConvertVanillaTextureInput();
-		newNode.Position = oldTextureSamplerNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -147,11 +146,10 @@ internal class TextureCubeNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert textureSampler node" );
 
 		var newNode = new TextureCube();
-
+		newNode.Position = oldTextureCubeNode.Position;
 		newNode.Texture = oldTextureCubeNode.Texture;
 		newNode.SamplerState = oldTextureCubeNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureCubeNode.UI.ConvertVanillaTextureInput();
-		newNode.Position = oldTextureCubeNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -171,11 +169,10 @@ internal class TextureTriplanarNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert textureSampler node" );
 
 		var newNode = new TextureSampler();
-
+		newNode.Position = oldTextureTriplanarNode.Position;
 		newNode.Image = oldTextureTriplanarNode.Image;
 		newNode.SamplerState = oldTextureTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureTriplanarNode.UI.ConvertVanillaTextureInput();
-		newNode.Position = oldTextureTriplanarNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -195,11 +192,10 @@ internal class NormapMapTriplanarNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert textureSampler node" );
 
 		var newNode = new NormalMapTriplanar();
-
+		newNode.Position = oldNormapMapTriplanarNode.Position;
 		newNode.Image = oldNormapMapTriplanarNode.Image;
 		newNode.SamplerState = oldNormapMapTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldNormapMapTriplanarNode.UI.ConvertVanillaTextureInput();
-		newNode.Position = oldNormapMapTriplanarNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -219,9 +215,9 @@ internal class TextureCoordNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert textureCoord node" );
 
 		var newNode = new TextureCoord();
+		newNode.Position = oldTextureCoordNode.Position;
 		newNode.UseSecondaryCoord = oldTextureCoordNode.UseSecondaryCoord;
 		newNode.Tiling = oldTextureCoordNode.Tiling;
-		newNode.Position = oldTextureCoordNode.Position;
 
 		newNodes.Add( newNode );
 
