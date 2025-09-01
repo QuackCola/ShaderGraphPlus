@@ -1,0 +1,6 @@
+
+Layer0
+{
+	shader "shaders/tests/customshading/customshading.shader_c"
+
+}
