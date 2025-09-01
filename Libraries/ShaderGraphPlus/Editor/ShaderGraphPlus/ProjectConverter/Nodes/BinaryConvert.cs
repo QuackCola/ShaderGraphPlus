@@ -19,7 +19,8 @@ internal class AddNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert add node" );
 
 		var newNode = new Add();
-		newNode.Position = oldAddNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldAddNode.DefaultA;
 		newNode.DefaultB = oldAddNode.DefaultB;
 
@@ -43,7 +44,8 @@ internal class SubtractNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert subtract node" );
 
 		var newNode = new Subtract();
-		newNode.Position = oldSubtractNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldSubtractNode.DefaultA;
 		newNode.DefaultB = oldSubtractNode.DefaultB;
 
@@ -65,7 +67,8 @@ internal class MultiplyNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert multiply node" );
 
 		var newNode = new Multiply();
-		newNode.Position = oldMultiplyNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldMultiplyNode.DefaultA;
 		newNode.DefaultB = oldMultiplyNode.DefaultB;
 
@@ -87,7 +90,8 @@ internal class DivideNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert divide node" );
 
 		var newNode = new Divide();
-		newNode.Position = oldDivideNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldDivideNode.DefaultA;
 		newNode.DefaultB = oldDivideNode.DefaultB;
 
@@ -109,7 +113,8 @@ internal class ModNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert mod node" );
 
 		var newNode = new Mod();
-		newNode.Position = oldModNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldModNode.DefaultA;
 		newNode.DefaultB = oldModNode.DefaultB;
 
@@ -131,7 +136,8 @@ internal class LerpNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert lerp node" );
 
 		var newNode = new Lerp();
-		newNode.Position = oldLerpNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldLerpNode.DefaultA;
 		newNode.DefaultB = oldLerpNode.DefaultB;
 		newNode.Fraction = oldLerpNode.Fraction;
@@ -154,7 +160,8 @@ internal class CrossProductNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert crossProduct node" );
 
 		var newNode = new CrossProduct();
-		newNode.Position = oldCrossProductNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldCrossProductNode.DefaultA;
 		newNode.DefaultB = oldCrossProductNode.DefaultB;
 
@@ -176,12 +183,13 @@ internal class RemapValueNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert remapValue node" );
 
 		var newNode = new RemapValue();
-		newNode.Position = oldRemapValueNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.In = oldRemapValueNode.In;
 		newNode.InMin = oldRemapValueNode.InMin;
 		newNode.InMax = oldRemapValueNode.InMax;
-		newNode.OutMin = oldRemapValueNode.InMin;
-		newNode.OutMax = oldRemapValueNode.InMax;
+		newNode.OutMin = oldRemapValueNode.OutMin;
+		newNode.OutMax = oldRemapValueNode.OutMax;
 		newNode.Clamp = oldRemapValueNode.Clamp;
 
 		newNodes.Add( newNode );
@@ -202,7 +210,8 @@ internal class Arctan2NodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert arctan2 node" );
 
 		var newNode = new Arctan2();
-		newNode.Position = oldArctan2Node.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultY = oldArctan2Node.DefaultX;
 		newNode.DefaultX = oldArctan2Node.DefaultY;
 
@@ -224,7 +233,8 @@ internal class PowerNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert power node" );
 
 		var newNode = new Power();
-		newNode.Position = oldPowerNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldPowerNode.DefaultA;
 		newNode.DefaultB = oldPowerNode.DefaultB;
 

@@ -18,13 +18,9 @@ internal class FunctionResultConvert : BaseNodeConvert
 		Vector2 lastOffset = Vector2.Zero;
 		foreach ( var oldInput in oldFunctionResult.FunctionOutputs )
 		{
-			//var internalInput = oldFunctionResult.Inputs.Where( x => x.Identifier == oldInput.Name ).FirstOrDefault();
-
 			var newSubgraphOutput = new SubgraphOutput();
 			lastOffset.y += 64;
 			newSubgraphOutput.Position = oldFunctionResult.Position + new Vector2( 0, lastOffset.y );
-			//newSubgraphOutput.Position = oldFunctionResult.Position;
-
 			newSubgraphOutput.OutputName = oldInput.Name;
 			newSubgraphOutput.OutputDescription = "";
 			newSubgraphOutput.SetSubgraphPortTypeFromType( oldInput.Type );
@@ -43,8 +39,9 @@ internal class FunctionResultConvert : BaseNodeConvert
 			};
 			newSubgraphOutput.PortOrder = oldInput.Priority;
 
-
 			newSubgraphOutput.InitializeNode();
+
+			converter.AddNewSubgraphOutputID( newSubgraphOutput.OutputName );
 
 			newNodes.Add( newSubgraphOutput );
 		}

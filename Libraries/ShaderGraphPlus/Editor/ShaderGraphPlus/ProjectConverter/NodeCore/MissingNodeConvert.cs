@@ -14,7 +14,8 @@ internal class MissingNodeConvert : BaseNodeConvert
 
 
 		var newNode = new Nodes.MissingNode();
-
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Content = oldMissingNodeNode.Content;
 
 		newNodes.Add( newNode );

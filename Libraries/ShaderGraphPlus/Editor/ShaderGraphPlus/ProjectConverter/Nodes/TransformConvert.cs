@@ -17,7 +17,8 @@ internal class NormalizeNodeConvert : BaseNodeConvert
 		var oldNormalizeNode = oldNode as VanillaNodes.Normalize; ;
 
 		var newNode = new Nodes.Normalize();
-		newNode.Position = oldNormalizeNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -37,7 +38,8 @@ internal class TransformNormalNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert tileAndOffset node" );
 
 		var newNode = new TransformNormal();
-		newNode.Position = oldTransformNormalNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.InputSpace = oldTransformNormalNode.InputSpace switch
 		{
 			VanillaNodes.NormalSpace.Tangent => NormalSpace.Tangent,
@@ -64,7 +66,8 @@ internal class TileAndOffsetNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert tileAndOffset node" );
 
 		var newNode = new TileAndOffset();
-		newNode.Position = oldTileAndOffsetNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultTile = oldTileAndOffsetNode.DefaultTile;
 		newNode.DefaultOffset = oldTileAndOffsetNode.DefaultOffset;
 		newNode.WrapTo01 = oldTileAndOffsetNode.WrapTo01;
@@ -73,6 +76,15 @@ internal class TileAndOffsetNodeConvert : BaseNodeConvert
 		newNodes.Add( newNode );
 
 		return newNodes;
+	}
+
+	public override Dictionary<string, string> GetNodeInputNameMapping()
+	{
+		var result = new Dictionary<string, string>();
+
+		result.Add( nameof( VanillaNodes.TileAndOffset.Coords ), nameof( TileAndOffset.UV ) );
+
+		return result;
 	}
 }
 
@@ -88,7 +100,8 @@ internal class BlendNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert blend node" );
 
 		var newNode = new Blend();
-		newNode.Position = oldBlendNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldBlendNode.DefaultA;
 		newNode.DefaultB = oldBlendNode.DefaultB;
 		newNode.Fraction = oldBlendNode.Fraction;

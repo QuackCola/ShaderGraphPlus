@@ -15,14 +15,13 @@ internal class BranchNodeConvert : BaseNodeConvert
 		var oldBranchNode = oldNode as VanillaNodes.Branch;
 
 		//SGPLog.Info( "Convert branch node" );
-
-		var newNode = new Branch();
-
+		
 		// TODO : Replace with switch node or compare node depending on if the name is set.
-
+		var newNode = new Branch();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Name = oldBranchNode.Name;
 		newNode.IsAttribute = oldBranchNode.IsAttribute;
-		newNode.Position = oldBranchNode.Position;
 
 		newNodes.Add( newNode );
 

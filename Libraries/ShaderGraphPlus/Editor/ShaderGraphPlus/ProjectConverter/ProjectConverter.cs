@@ -1,6 +1,5 @@
-﻿using Editor;
-using Editor.ShaderGraph;
-using ShaderGraphPlus.Nodes;
+﻿using VanillaGraph = Editor.ShaderGraph;
+using VanillaNodes = Editor.ShaderGraph.Nodes;
 using ShaderGraphBaseNode = Editor.ShaderGraph.BaseNode;
 
 namespace ShaderGraphPlus.Internal;
@@ -10,23 +9,36 @@ namespace ShaderGraphPlus.Internal;
 /// </summary>
 internal class ProjectConverter
 {
-	private ShaderGraph ShaderGraph { get; }
+	private VanillaGraph.ShaderGraph ShaderGraph { get; }
 	private ShaderGraphPlus ShaderGraphPlus { get; }
 	private bool IsSubgraph { get; }
 
 	private Dictionary<Type, BaseNodeConvert> RegisterdNodes { get; set; }
-	private List<(IPlugIn Plug, Editor.ShaderGraph.NodeInput Value)> ShaderGraphConnections { get; set; }
+	private List<ConnectionData> ShaderGraphConnections { get; set; }
 
-	internal ProjectConverter( ShaderGraph shaderGraph, ShaderGraphPlus shaderGraphPlus, bool isSubgraph = false )
+	private string FunctionResultID { get; set; } = "";
+	private List<(string OldFuncResultID, string outputName)> SubgraphOutputIds { get; set; }
+
+	public List<string> ReservedIds { get; set; } = new();
+
+	internal ProjectConverter( VanillaGraph.ShaderGraph shaderGraph, ShaderGraphPlus shaderGraphPlus, bool isSubgraph = false )
 	{
 		ShaderGraph = shaderGraph;
 		ShaderGraphPlus = shaderGraphPlus;
 		IsSubgraph = isSubgraph;
-	
+		
+		if ( IsSubgraph )
+		{
+			FunctionResultID = ShaderGraph.Nodes.OfType<VanillaGraph.FunctionResult>().FirstOrDefault().Identifier;
+			SubgraphOutputIds = new();
+		}
+
+		ReservedIds = new();
 		ShaderGraphConnections = new();
 
 		RegisterConverters();
 	}
+
 
 	internal ShaderGraphPlus Convert()
 	{
@@ -46,10 +58,8 @@ internal class ProjectConverter
 		foreach ( var convert in converters )
 		{
 			var instance = EditorTypeLibrary.Create( convert.Name, convert.TargetType );
-
 			if ( instance != null && instance is BaseNodeConvert baseNodeConvert )
 			{
-				SGPLog.Info( $"Created Instance of target type \"{convert.TargetType}\"" );
 				RegisterdNodes.Add( baseNodeConvert.NodeTypeToConvert, baseNodeConvert );
 			}
 		}
@@ -112,40 +122,36 @@ internal class ProjectConverter
 	private void ConvertNodes()
 	{
 		var convertedNodes = new Dictionary<string, BaseNodePlus>();
-
+		var subgraphOutputNames = new List<string>();
+		
+		
 		foreach ( var vanillaNode in ShaderGraph.Nodes )
 		{
 			if ( RegisterdNodes.TryGetValue( vanillaNode.GetType(), out var nodeConvert ) )
 			{
 				var newConvertedNodes = nodeConvert.Convert( this, vanillaNode );
-				var connections = GetConnections( vanillaNode );
+				var connections = GetConnections( vanillaNode, nodeConvert.GetNodeInputNameMapping() );
 
 				foreach ( var convertedNode in newConvertedNodes )
 				{
+					if ( convertedNode is not SubgraphOutput && !ReservedIds.Contains( convertedNode.Identifier ) )
+					{
+						ReservedIds.Add( convertedNode.Identifier );
+					}
+
 					convertedNodes.Add( convertedNode.Identifier, convertedNode );
 				}
 
-				ShaderGraphConnections.AddRange( connections );
+				if ( vanillaNode is not VanillaGraph.FunctionResult )
+				{
+					ShaderGraphConnections.AddRange( connections );
+				}
 			}
 			else
 			{
 				throw new Exception( $"Node type \"{vanillaNode.GetType()}\" does not have an associated NodeConvert class" );
 			}
 		}
-
-		// FIXME : This isnt perfect as if i were to replace a single node with multiple other nodes. Connections would be fucked.
-		int id = 0;
-		var updatedConvertedNodes = new Dictionary<string, BaseNodePlus>();
-
-		foreach ( var convertedNode in convertedNodes.Values )
-		{
-			string newIdentifier = $"{id++}";
-			convertedNode.Identifier = newIdentifier;
-
-			updatedConvertedNodes[newIdentifier] = convertedNode;
-		}
-
-		convertedNodes = updatedConvertedNodes;
 
 		// Add the converted nodes to the new graph.
 		foreach ( var convertedNode in convertedNodes.Values )
@@ -156,32 +162,51 @@ internal class ProjectConverter
 
 	private void CreateConnections()
 	{
-		foreach ( var (input, value) in ShaderGraphConnections )
+		if ( IsSubgraph && !string.IsNullOrWhiteSpace( FunctionResultID ) )
 		{
-			var nodeA = ShaderGraphPlus.Nodes.Where( x => x.Identifier == value.Identifier ).FirstOrDefault();
-			var nodeB = ShaderGraphPlus.Nodes.Where( x => x.Identifier == input.Node.Identifier ).FirstOrDefault();
+			var functionResultNode = ShaderGraph.FindNode( FunctionResultID );
 
-			if ( nodeA != null && nodeB != null )
+			if ( functionResultNode != null )
 			{
-				//SGPLog.Info( $"{ShaderGraphPlus.Path} Connecting nodeA \"{nodeA}::{value.Identifier}\" output \"{value.Output}\" to nodeB \"{nodeB}::{input.Node.Identifier}\" Input : \"{input.Identifier}\"" );
-				nodeA.ConnectNode( (nodeB, input.Identifier), value.Output );
+				foreach ( var input in functionResultNode.Inputs )
+				{
+					if ( input.ConnectedOutput is not { } output )
+						continue;
+
+					if ( !string.IsNullOrWhiteSpace( output.Identifier ) )
+					{
+						var subgraphOutputName = SubgraphOutputIds.Where( x => x.outputName == input.Identifier ).FirstOrDefault();
+
+						var nodeToConnectTo = ShaderGraphPlus.Nodes.OfType<SubgraphOutput>().Where( x => x.OutputName == subgraphOutputName.outputName ).FirstOrDefault();
+						if ( nodeToConnectTo != null )
+						{
+							nodeToConnectTo.ConnectNode( subgraphOutputName.outputName, output.Identifier, output.Node.Identifier );
+						}
+					}
+				}
+			}
+		}
+
+		foreach ( var connectionData in ShaderGraphConnections )
+		{
+			var nodeToConnectTo = ShaderGraphPlus.Nodes.Where( x => x.Identifier == connectionData.InputNodeIdentifier ).FirstOrDefault();
+			if ( nodeToConnectTo != null )
+			{
+				nodeToConnectTo.ConnectNode( connectionData.InputName, connectionData.OutputName, connectionData.OutputNodeIdentifier );
 			}
 		}
 	}
 
-	/// <summary>
-	/// Get any valid connections of the node getting converted.
-	/// </summary>
-	private IEnumerable<(IPlugIn Plug, Editor.ShaderGraph.NodeInput Value)> GetConnections( ShaderGraphBaseNode vanillaNode )
+	private List<ConnectionData> GetConnections( ShaderGraphBaseNode vanillaNode, Dictionary<string, string> mapping )
 	{
-		List<(IPlugIn Plug, Editor.ShaderGraph.NodeInput Value)> connections = new();
+		List<ConnectionData> connectionsData = new();
 
 		foreach ( var input in vanillaNode.Inputs )
 		{
 			if ( input.ConnectedOutput is not { } output )
 				continue;
 
-			var nodeInput = new Editor.ShaderGraph.NodeInput()
+			var nodeInput = new VanillaGraph.NodeInput()
 			{
 				Identifier = output.Node.Identifier,
 				Output = output.Identifier,
@@ -189,9 +214,9 @@ internal class ProjectConverter
 
 			if ( nodeInput is { IsValid: true } )
 			{
-				if ( vanillaNode is Editor.ShaderGraph.SubgraphNode subgraphNode && !string.IsNullOrEmpty( subgraphNode.SubgraphPath ) )
+				if ( vanillaNode is VanillaGraph.SubgraphNode subgraphNode && !string.IsNullOrEmpty( subgraphNode.SubgraphPath ) )
 				{
-					nodeInput = new Editor.ShaderGraph.NodeInput()
+					nodeInput = new VanillaGraph.NodeInput()
 					{
 						Identifier = output.Node.Identifier,
 						Output = output.Identifier,
@@ -199,10 +224,45 @@ internal class ProjectConverter
 					};
 				}
 
-				connections.Add( (input, nodeInput) );
+				var connectionData = new ConnectionData()
+				{
+					InputName = input.Identifier,
+					InputType = input.Type,
+					InputNodeIdentifier = vanillaNode.Identifier,
+					OutputName = nodeInput.Output,
+					OutputType = output.Type,
+					OutputNodeIdentifier = nodeInput.Identifier,
+				};
+
+				if ( mapping.TryGetValue( connectionData.InputName, out var newInputName ) )
+				{ 
+					//SGPLog.Info( $"Changing InputName from \"{connectionData.InputName}\" to \"{newInputName}\"" );
+					connectionData.InputName = newInputName;
+				}
+
+				connectionsData.Add( connectionData );
 			}
 		}
 
-		return connections;
+		return connectionsData;
 	}
+
+	internal void AddNewSubgraphOutputID( string outputName )
+	{
+		if ( IsSubgraph )
+		{
+			SubgraphOutputIds.Add( new( FunctionResultID, outputName ) );
+		}
+	}
+}
+
+struct ConnectionData
+{
+	public string InputName { get; set; }
+	public Type InputType { get; set; }
+	public string InputNodeIdentifier { get; set; }
+	
+	public string OutputName { get; set; }
+	public Type OutputType { get; set; }
+	public string OutputNodeIdentifier { get; set; }
 }

@@ -42,13 +42,14 @@ internal class FloatNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert float node" );
 
 		var newNode = new Float();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Value = oldFloatNode.Value;
 		newNode.Name = oldFloatNode.Name;
 		newNode.IsAttribute = oldFloatNode.IsAttribute;
 		newNode.UI = oldFloatNode.UI.ConvertVanillaUI();
 		newNode.Min = oldFloatNode.Min;
 		newNode.Max = oldFloatNode.Max;
-		newNode.Position = oldFloatNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -68,13 +69,14 @@ internal class Float2NodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert float2 node" );
 
 		var newNode = new Float2();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Value = oldFloat2Node.Value;
 		newNode.Name = oldFloat2Node.Name;
 		newNode.IsAttribute = oldFloat2Node.IsAttribute;
 		newNode.UI = oldFloat2Node.UI.ConvertVanillaUI();
 		newNode.Min = oldFloat2Node.Min;
 		newNode.Max = oldFloat2Node.Max;
-		newNode.Position = oldFloat2Node.Position;
 
 		newNodes.Add( newNode );
 
@@ -94,13 +96,14 @@ internal class Float3NodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert float3 node" );
 
 		var newNode = new Float3();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Value = oldFloat3Node.Value;
 		newNode.Name = oldFloat3Node.Name;
 		newNode.IsAttribute = oldFloat3Node.IsAttribute;
 		newNode.UI = oldFloat3Node.UI.ConvertVanillaUI();
 		newNode.Min = oldFloat3Node.Min;
 		newNode.Max = oldFloat3Node.Max;
-		newNode.Position = oldFloat3Node.Position;
 
 		newNodes.Add( newNode );
 
@@ -120,11 +123,12 @@ internal class Float4NodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert float4 node" );
 
 		var newNode = new Float4();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Value = oldFloat4Node.Value;
 		newNode.Name = oldFloat4Node.Name;
 		newNode.IsAttribute = oldFloat4Node.IsAttribute;
 		newNode.UI = oldFloat4Node.UI.ConvertVanillaUI();
-		newNode.Position = oldFloat4Node.Position;
 
 		newNodes.Add( newNode );
 

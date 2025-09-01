@@ -18,7 +18,9 @@ internal class CosineNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert cosine node" );
 
 		var newNode = new Cosine();
-		newNode.Position = oldCosineNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
+
 		newNodes.Add( newNode );
 
 		return newNodes;
@@ -37,7 +39,8 @@ internal class AbsNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert abs node" );
 
 		var newNode = new Abs();
-		newNode.Position = oldAbsNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -57,7 +60,8 @@ internal class DotProductNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert dotProduct node" );
 
 		var newNode = new DotProduct();
-		newNode.Position = oldDotProductNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -77,6 +81,8 @@ internal class DDXNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert dDX node" );
 
 		var newNode = new DDX();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Precision = oldDDXNode.Precision switch
 		{
 			VanillaNodes.DerivativePrecision.Standard => DerivativePrecision.Standard,
@@ -84,7 +90,6 @@ internal class DDXNodeConvert : BaseNodeConvert
 			VanillaNodes.DerivativePrecision.Fine => DerivativePrecision.Fine,
 			_ => throw new NotImplementedException(),
 		};
-		newNode.Position = oldDDXNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -104,6 +109,8 @@ internal class DDYNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert dDY node" );
 
 		var newNode = new DDY();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Precision = oldDDYNode.Precision switch
 		{
 			VanillaNodes.DerivativePrecision.Standard => DerivativePrecision.Standard,
@@ -111,7 +118,6 @@ internal class DDYNodeConvert : BaseNodeConvert
 			VanillaNodes.DerivativePrecision.Fine => DerivativePrecision.Fine,
 			_ => throw new NotImplementedException(),
 		};
-		newNode.Position = oldDDYNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -131,7 +137,8 @@ internal class DDXYNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert dDXY node" );
 
 		var newNode = new DDXY();
-		newNode.Position = oldDDXYNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -151,13 +158,14 @@ internal class ExponentialNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert exponential node" );
 
 		var newNode = new Exponential();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Base = oldExponentialNode.Base switch
 		{
 			VanillaNodes.ExponentBase.BaseE => ExponentBase.BaseE,
 			VanillaNodes.ExponentBase.Base2 => ExponentBase.Base2,
 			_ => throw new NotImplementedException(),
 		};
-		newNode.Position = oldExponentialNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -177,7 +185,8 @@ internal class FracNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert frac node" );
 
 		var newNode = new Frac();
-		newNode.Position = oldFracNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -197,7 +206,8 @@ internal class FloorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert floor node" );
 
 		var newNode = new Floor();
-		newNode.Position = oldFloorNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -217,7 +227,8 @@ internal class LengthNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert length node" );
 
 		var newNode = new Length();
-		newNode.Position = oldLengthNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -237,6 +248,8 @@ internal class BaseLogNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert baseLog node" );
 
 		var newNode = new BaseLog();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Base = oldBaseLogNode.Base switch
 		{
 			VanillaNodes.LogBase.BaseE => LogBase.BaseE,
@@ -244,7 +257,6 @@ internal class BaseLogNodeConvert : BaseNodeConvert
 			VanillaNodes.LogBase.Base10 => LogBase.Base10,
 			_ => throw new NotImplementedException(),
 		};
-		newNode.Position = oldBaseLogNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -264,9 +276,10 @@ internal class MinNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert min node" );
 
 		var newNode = new Min();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldMinNode.DefaultA;
 		newNode.DefaultB = oldMinNode.DefaultB;
-		newNode.Position = oldMinNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -286,9 +299,10 @@ internal class MaxNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert max node" );
 
 		var newNode = new Max();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultA = oldMaxNode.DefaultA;
 		newNode.DefaultB = oldMaxNode.DefaultB;
-		newNode.Position = oldMaxNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -308,7 +322,8 @@ internal class SaturateNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert saturate node" );
 
 		var newNode = new Saturate();
-		newNode.Position = oldSaturateNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -328,7 +343,8 @@ internal class SineNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert sine node" );
 
 		var newNode = new Sine();
-		newNode.Position = oldSineNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -348,9 +364,10 @@ internal class StepNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert step node" );
 
 		var newNode = new Step();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultInput = oldStepNode.DefaultInput;
 		newNode.DefaultEdge = oldStepNode.DefaultEdge;
-		newNode.Position = oldStepNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -370,10 +387,11 @@ internal class SmoothStepNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert smoothStep node" );
 
 		var newNode = new SmoothStep();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultInput = oldSmoothStepNode.DefaultInput;
 		newNode.DefaultEdge1 = oldSmoothStepNode.DefaultEdge1;
 		newNode.DefaultEdge2 = oldSmoothStepNode.DefaultEdge2;
-		newNode.Position = oldSmoothStepNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -393,7 +411,8 @@ internal class TanNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert tan node" );
 
 		var newNode = new Tan();
-		newNode.Position = oldTanNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -413,7 +432,8 @@ internal class ArcsinNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert arcsin node" );
 
 		var newNode = new Arcsin();
-		newNode.Position = oldArcsinNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -433,7 +453,8 @@ internal class ArccosNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert arccos node" );
 
 		var newNode = new Arccos();
-		newNode.Position = oldArccosNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -453,7 +474,8 @@ internal class RoundNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert round node" );
 
 		var newNode = new Round();
-		newNode.Position = oldRoundNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -473,7 +495,8 @@ internal class CeilNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert ceil node" );
 
 		var newNode = new Ceil();
-		newNode.Position = oldCeilNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -493,7 +516,8 @@ internal class OneMinusNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert oneMinus node" );
 
 		var newNode = new OneMinus();
-		newNode.Position = oldOneMinusNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -513,7 +537,8 @@ internal class SqrtNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert sqrt node" );
 
 		var newNode = new Sqrt();
-		newNode.Position = oldSqrtNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -533,7 +558,8 @@ internal class DistanceNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert distance node" );
 
 		var newNode = new Distance();
-		newNode.Position = oldDistanceNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 

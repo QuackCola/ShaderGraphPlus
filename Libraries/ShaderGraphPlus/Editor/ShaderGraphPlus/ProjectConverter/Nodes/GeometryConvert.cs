@@ -17,7 +17,8 @@ internal class WorldNormalNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert worldNormal node" );
 
 		var newNode = new WorldNormal();
-		newNode.Position = oldWorldNormalNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -37,7 +38,8 @@ internal class WorldTangentNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert worldTangent node" );
 
 		var newNode = new WorldTangent();
-		newNode.Position = oldWorldTangentNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -57,7 +59,8 @@ internal class IsFrontFaceNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert isFrontFace node" );
 
 		var newNode = new IsFrontFace();
-		newNode.Position = oldIsFrontFaceNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -77,7 +80,8 @@ internal class ObjectSpaceNormalNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert ObjectSpaceNormal node" );
 
 		var newNode = new ObjectSpaceNormal();
-		newNode.Position = oldObjectSpaceNormalNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -97,7 +101,8 @@ internal class ScreenPositionNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert screenPosition node" );
 
 		var newNode = new ScreenPosition();
-		newNode.Position = oldScreenPositionNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -117,7 +122,8 @@ internal class ScreenCoordinateNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert screenCoordinate node" );
 
 		var newNode = new ScreenCoordinate();
-		newNode.Position = oldScreenCoordinateNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -137,7 +143,8 @@ internal class WorldPositionNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert worldPosition node" );
 
 		var newNode = new WorldPosition();
-		newNode.Position = oldWorldPositionNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -157,7 +164,8 @@ internal class ObjectPositionNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert objectPosition node" );
 
 		var newNode = new ObjectPosition();
-		newNode.Position = oldObjectPositionNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -177,7 +185,8 @@ internal class ViewDirectionNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert viewDirection node" );
 
 		var newNode = new ViewDirection();
-		newNode.Position = oldViewDirectionNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -197,7 +206,8 @@ internal class VertexColorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert vertexColor node" );
 
 		var newNode = new VertexColor();
-		newNode.Position = oldVertexColorNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -217,7 +227,8 @@ internal class TintNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert tint node" );
 
 		var newNode = new Tint();
-		newNode.Position = oldTintNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 

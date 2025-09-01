@@ -15,8 +15,8 @@ internal class TimeNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert time node" );
 
 		var newNode = new Nodes.Time();
-		newNode.Position = oldTimeNode.Position;
-
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 

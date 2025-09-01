@@ -17,12 +17,13 @@ internal class CommentNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert comment node" );
 
 		var newNode = new CommentNode();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.Size = oldCommentNode.Size;
 		newNode.Color = oldCommentNode.Color;
 		newNode.Title = oldCommentNode.Title;
 		newNode.Description = oldCommentNode.Description;
 		newNode.Layer = oldCommentNode.Layer;
-		newNode.Position = oldCommentNode.Position;
 
 		newNodes.Add( newNode );
 

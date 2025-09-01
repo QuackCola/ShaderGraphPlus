@@ -15,8 +15,9 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 		var oldSubgraphNode = oldNode as VanillaGraph.SubgraphNode;
 
 		var newNode = new SubgraphNode();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.SubgraphPath = oldSubgraphNode.SubgraphPath.Replace( ".shdrfunc", ".sgpfunc" );
-		newNode.Position = oldSubgraphNode.Position;
 
 		var fullPath = Editor.FileSystem.Content.GetFullPath( oldSubgraphNode.SubgraphPath ).Replace( ".shdrfunc", ".sgpfunc" );
 
@@ -43,6 +44,8 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 		{
 			SGPLog.Info( $"Registerd subgraphplus asset at path \"{fullPath}\"" );
 		}
+
+		newNode.OnNodeCreated();
 
 		newNodes.Add( newNode );
 

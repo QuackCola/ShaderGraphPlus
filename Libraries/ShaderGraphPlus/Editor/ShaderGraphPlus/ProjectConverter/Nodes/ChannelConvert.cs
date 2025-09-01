@@ -17,7 +17,8 @@ internal class SplitVectorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert splitVector node" );
 
 		var newNode = new SplitVector();
-		newNode.Position = oldSplitVectorNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -37,12 +38,12 @@ internal class CombineVectorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert combineVector node" );
 
 		var newNode = new CombineVector();
-
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultX = oldCombineVectorNode.DefaultX;
 		newNode.DefaultY = oldCombineVectorNode.DefaultY;
 		newNode.DefaultZ = oldCombineVectorNode.DefaultZ;
 		newNode.DefaultW = oldCombineVectorNode.DefaultW;
-		newNode.Position = oldCombineVectorNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -74,11 +75,12 @@ internal class SwizzleVectorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert swizzleVector node" );
 
 		var newNode = new SwizzleVector();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.RedOut = GetSwizzle( oldSwizzleVectorNode.RedOut );
 		newNode.GreenOut = GetSwizzle( oldSwizzleVectorNode.GreenOut );
 		newNode.BlueOut = GetSwizzle( oldSwizzleVectorNode.BlueOut );
 		newNode.AlphaOut = GetSwizzle( oldSwizzleVectorNode.AlphaOut );
-		newNode.Position = oldSwizzleVectorNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -98,7 +100,8 @@ internal class AppendVectorNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert appendVector node" );
 
 		var newNode = new AppendVector();
-		newNode.Position = oldAppendVectorNode.Position;
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 

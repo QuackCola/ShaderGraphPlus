@@ -16,6 +16,8 @@ internal class FuzzyNoiseNodeConvert : BaseNodeConvert
 		var oldFuzzyNoiseNode = oldNode as VanillaNodes.FuzzyNoise;
 
 		var newNode = new Nodes.FuzzyNoise();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -33,6 +35,8 @@ internal class ValueNoiseNodeConvert : BaseNodeConvert
 		var oldValueNoiseNode = oldNode as VanillaNodes.ValueNoise;
 
 		var newNode = new Nodes.ValueNoise();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -50,6 +54,8 @@ internal class SimplexNoiseNodeConvert : BaseNodeConvert
 		var oldSimplexNoiseNode = oldNode as VanillaNodes.SimplexNoise;;
 
 		var newNode = new Nodes.SimplexNoise();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 
 		newNodes.Add( newNode );
 
@@ -67,6 +73,8 @@ internal class VoronoiNoiseNodeConvert : BaseNodeConvert
 		var oldVoronoiNoiseNode = oldNode as VanillaNodes.VoronoiNoise; ;
 
 		var newNode = new Nodes.VoronoiNoise();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.AngleOffset = oldVoronoiNoiseNode.AngleOffset;
 		newNode.CellDensity = oldVoronoiNoiseNode.CellDensity;
 		newNode.Worley = oldVoronoiNoiseNode.Worley;

@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Sandbox;
 
 namespace ShaderGraphPlus;
 
@@ -96,6 +97,11 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		NewIdentifier();
 
 		(Inputs, Outputs) = GetPlugs( this );
+	}
+
+	public override string ToString()
+	{
+		return $"{DisplayInfo.Fullname}.{Identifier}";
 	}
 
 	public void Update()
@@ -227,7 +233,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		public string Min;
 		public string Max;
 		public string Step;
-
+		 
 		public RangeAttribute(string min, string max, string step)
 		{
 			Min = min;
@@ -236,31 +242,41 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		}
 	}
 
-	internal void ConnectNode( (BaseNodePlus Source, string SourceInputName) sourceNode, string targetNodeOutputName )
+	/// <summary>
+	/// Connects a <see cref="NodeResult.Func"/> property from another node to the <see cref="NodeInput"/> property on this <see cref="BaseNodePlus"/> instance.
+	/// </summary>
+	/// <param name="inputName">The name of the <see cref="NodeInput"/> property on this <see cref="BaseNodePlus"/> instance. That the specified <see cref="NodeResult.Func"/> property from another node in the graph will be connected to.</param>
+	/// <param name="targetOutputName">The name of the <see cref="NodeResult.Func"/> property from another node in the graph that will be connected to a <see cref="NodeInput"/> property on this <see cref="BaseNodePlus"/> instance.</param>
+	/// <param name="targetOutputNodeIdentifier">The Identifier of another <see cref="BaseNodePlus"/> from the graph that we are connecting from.</param>
+	internal void ConnectNode( string inputName, string targetOutputName, string targetOutputNodeIdentifier )
 	{
-		var targetPlugOut = Outputs.FirstOrDefault( x => x.Identifier == targetNodeOutputName );
-	
-		if ( targetPlugOut != null )
-		{
-			//SGPLog.Info( $"Found output with name \"{targetNodeOutputName}\" on node \"{DisplayInfo.Name}\"" );
-			var plugIn = sourceNode.Source.Inputs.Where( x => x.Identifier == sourceNode.SourceInputName ).FirstOrDefault();
+		var graph = Graph as ShaderGraphPlus;
+		var targetOutputNode = graph.Nodes.Where( x => x.Identifier == targetOutputNodeIdentifier ).FirstOrDefault();
 
-			if ( plugIn != null )
+		if ( targetOutputNode != null )
+		{
+			var plugIn = Inputs.Where( x => x.Identifier == inputName ).FirstOrDefault();
+			var targetOutputPlug = targetOutputNode.Outputs.FirstOrDefault( x => x.Identifier == targetOutputName );
+
+			if ( plugIn == null )
 			{
-				//SGPLog.Info( $"Found input with name \"{sourceNode.SourceInputName}\" on node \"{sourceNode.Source.DisplayInfo.Name}\"" );
-			
-				SGPLog.Info( $"Connected Node \"{this}\" output \"{targetNodeOutputName}\" to \"{sourceNode.Source}\" input \"{sourceNode.SourceInputName}\"" );
-				
-				plugIn.ConnectedOutput = targetPlugOut;
+				SGPLog.Error( $"{graph.Path} Cannot find input with name \"{inputName}\" on node \"{this}\"" );
+				return;
 			}
-			else
+
+			if ( targetOutputPlug == null )
 			{
-				SGPLog.Error( $"Unable to find input with name \"{sourceNode.SourceInputName}\" on node \"{sourceNode.Source}\"" );
+				SGPLog.Error( $"{graph.Path} Cannot find output with name \"{targetOutputName}\" on node \"{targetOutputNode}\"" );
+				return;
 			}
+
+			SGPLog.Info( $"{graph.Path} Connecting \"{inputName}\" of graph node \"{this}\" to output \"{targetOutputName}\" of graph node \"{targetOutputNode}\"" );
+
+			plugIn.ConnectedOutput = targetOutputPlug;
 		}
 		else
 		{
-			//SGPLog.Error( $"Unable to find output with name \"{targetNodeOutputName}\" on node \"{DisplayInfo.Name}\"" );
+			SGPLog.Error( $"{graph.Path} Cannot find node with Identifier \"{targetOutputNodeIdentifier}\"" );
 		}
 	}
 

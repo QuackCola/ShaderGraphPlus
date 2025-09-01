@@ -17,10 +17,7 @@ internal abstract class BaseNodeConvert
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// TODO : Figure out howto solve cases where the Node Result name of an equivalent vanilla node isnt the same.
-	/// </summary>
-	public virtual Dictionary<string, string> GetNodeResultNameMapping()
+	public virtual Dictionary<string, string> GetNodeInputNameMapping()
 	{
 		return new Dictionary<string, string>();
 	}

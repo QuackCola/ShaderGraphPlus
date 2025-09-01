@@ -16,11 +16,13 @@ internal class ResultNodeConvert : BaseNodeConvert
 		//SGPLog.Info( "Convert result node" );
 
 		var newNode = new Result();
+		newNode.Identifier = oldNode.Identifier;
+		newNode.Position = oldNode.Position;
 		newNode.DefaultAmbientOcclusion = oldResultNode.DefaultAmbientOcclusion;
 		newNode.DefaultMetalness = oldResultNode.DefaultMetalness;
 		newNode.DefaultOpacity = oldResultNode.DefaultOpacity;
 		newNode.DefaultRoughness = oldResultNode.DefaultRoughness;
-		newNode.Position = oldResultNode.Position;
+
 
 		newNodes.Add( newNode );
 
