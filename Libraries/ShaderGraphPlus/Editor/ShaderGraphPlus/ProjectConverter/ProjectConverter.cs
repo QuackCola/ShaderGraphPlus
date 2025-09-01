@@ -230,12 +230,7 @@ internal class ProjectConverter
 			{
 				if ( vanillaNode is VanillaGraph.SubgraphNode subgraphNode && !string.IsNullOrEmpty( subgraphNode.SubgraphPath ) )
 				{
-					nodeInput = new VanillaGraph.NodeInput()
-					{
-						Identifier = output.Node.Identifier,
-						Output = output.Identifier,
-						Subgraph = subgraphNode.SubgraphPath
-					};
+					nodeInput = nodeInput with { Subgraph = subgraphNode.SubgraphPath };
 				}
 
 				var connectionData = new ConnectionData()
