@@ -263,6 +263,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	{
 		var sb = new StringBuilder();
 
+		for ( int index = 0; index < ports.Count; index++ )
 		{
 			var argument = ports[index];
 			var keyword = isOutputs ? "out" : "";
