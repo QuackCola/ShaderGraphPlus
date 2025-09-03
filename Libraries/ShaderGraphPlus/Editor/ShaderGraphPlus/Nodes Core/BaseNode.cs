@@ -1,5 +1,14 @@
 ﻿using Editor;
+using NodeEditorPlus;
 using Sandbox;
+using FloatEditor = NodeEditorPlus.FloatEditor;
+using GraphView = NodeEditorPlus.GraphView;
+using IPlug = NodeEditorPlus.IPlug;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
+using Plug = NodeEditorPlus.Plug;
+using ValueEditor = NodeEditorPlus.ValueEditor;
 
 namespace ShaderGraphPlus;
 
@@ -11,7 +20,7 @@ internal class SubgraphOnlyAttribute : Attribute
 	}
 }
 
-public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
+public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 {
 	public event Action Changed;
 
@@ -43,7 +52,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 	public Vector2 Position { get; set; }
 
 	[JsonIgnore, Hide]
-	public IGraph _graph;
+	public IGraphPlus _graph;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	internal int PreviewID { get; set; }
@@ -56,7 +65,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
-	public IGraph Graph
+	public IGraphPlus Graph
 	{
 		get => _graph;
 		set
@@ -90,6 +99,12 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 	// Here so I can debug Switch Info without having to sort through the console.
 	[JsonIgnore, Hide, Browsable( false )]
 	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; } = new();
+
+	[Hide, JsonIgnore]
+	public virtual Color HeaderColor1 { get; } = Color.Gray;
+
+	[Hide, JsonIgnore]
+	public virtual Color HeaderColor2 { get; } = Color.Black;
 
 	public BaseNodePlus()
 	{
@@ -318,7 +333,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 
 public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
-	INode IPlug.Node => Node;
+	INodePlus IPlug.Node => Node;
 
 	public string Identifier => Info.Name;
 	public DisplayInfo DisplayInfo => Info.DisplayInfo;
@@ -557,13 +572,14 @@ public class PlugInfo
 				return slider;
 			}
 
-			if ( type == typeof( Color ) )
-			{
-				var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
-				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
-
-				return slider;
-			}
+			// FIXME!!!
+			//if ( type == typeof( Color ) )
+			//{
+			//	var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+			//	slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+			//
+			//	return slider;
+			//}
 		}
 		return null;
 	}

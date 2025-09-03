@@ -2,6 +2,7 @@
 using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
 using System.Collections.Generic;
+using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 

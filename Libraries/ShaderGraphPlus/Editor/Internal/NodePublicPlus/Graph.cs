@@ -5,25 +5,25 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NodeEditorPlus;
 
-public interface IGraph
+public interface IGraphPlus
 {
-	public IEnumerable<INode> Nodes { get; }
+	public IEnumerable<INodePlus> Nodes { get; }
 
-	void AddNode( INode node );
-	void RemoveNode( INode node );
+	void AddNode( INodePlus node );
+	void RemoveNode( INodePlus node );
 
-	string SerializeNodes( IEnumerable<INode> nodes );
-	IEnumerable<INode> DeserializeNodes( string serialized );
+	string SerializeNodes( IEnumerable<INodePlus> nodes );
+	IEnumerable<INodePlus> DeserializeNodes( string serialized );
 }
 
-public interface INodeType
+public interface INodeTypePlus
 {
-	public static bool DefaultMatches( INodeType nodeType, NodeQuery query )
+	public static bool DefaultMatches( INodeTypePlus nodeType, NodeQuery query )
 	{
 		return DefaultGetScore( nodeType, query ) != null;
 	}
 
-	public static int? DefaultGetScore( INodeType nodeType, NodeQuery query )
+	public static int? DefaultGetScore( INodeTypePlus nodeType, NodeQuery query )
 	{
 		if ( !nodeType.IsCommon && query.Filter.Count == 0 ) return null;
 		if ( query.GetScore( nodeType.Path ) is not { } score ) return null;
@@ -65,13 +65,13 @@ public interface INodeType
 	Menu.PathElement[] Path { get; }
 	bool TryGetInput( Type valueType, [NotNullWhen( true )] out string? name );
 	bool TryGetOutput( Type valueType, [NotNullWhen( true )] out string? name );
-	INode CreateNode( IGraph graph );
+	INodePlus CreateNode( IGraphPlus graph );
 
 	public bool Matches( NodeQuery query ) => GetScore( query ) is not null;
 	public int? GetScore( NodeQuery query ) => DefaultGetScore( this, query );
 }
 
-public interface INode
+public interface INodePlus
 {
 	event Action Changed;
 
@@ -104,14 +104,14 @@ public interface INode
 	Action? GoToDefinition => null;
 }
 
-public interface IRerouteNode : INode
+public interface IRerouteNode : INodePlus
 {
 	string? Comment { get; set; }
 }
 
 public interface IPlug
 {
-	INode Node { get; }
+	INodePlus Node { get; }
 	string Identifier { get; }
 	Type Type { get; }
 	DisplayInfo DisplayInfo { get; }

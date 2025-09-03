@@ -1,7 +1,10 @@
 ﻿
 using Editor;
-using Sandbox;
-using ShaderGraphPlus.Nodes;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -24,18 +27,13 @@ public abstract class ShaderNodePlus : BaseNodePlus
 		}
 	}
 
-	[Hide,JsonIgnore]
-	public virtual Color HeaderColor1 { get; } = Color.Gray;
-	
-	[Hide, JsonIgnore]
-	public virtual Color HeaderColor2 { get; } = Color.Black;
-
 	public override NodeUI CreateUI( GraphView view )
 	{
-		return new NodeUIPlus( view, this );//base.CreateUI( view );
+		return base.CreateUI( view );
 	}
 }
 
+/*
 internal sealed class NodeUIPlus : NodeUI
 {
 	ShaderNodePlus ShaderNodePlus;
@@ -73,3 +71,4 @@ internal sealed class NodeUIPlus : NodeUI
 		
 	}
 }
+*/

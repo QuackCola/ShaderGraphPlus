@@ -57,11 +57,11 @@ public record struct FilterPart( FilterModifier Modifier, string Value )
 	}
 }
 
-public record struct NodeQuery( IGraph Graph, IPlug? Plug, IReadOnlyList<FilterPart> Filter )
+public record struct NodeQuery( IGraphPlus Graph, IPlug? Plug, IReadOnlyList<FilterPart> Filter )
 {
 	public bool IsEmpty => Plug is null && Filter.Count == 0;
 
-	public NodeQuery( IGraph graph, IPlug? plug, string? filter = null )
+	public NodeQuery( IGraphPlus graph, IPlug? plug, string? filter = null )
 		: this( graph, plug, FilterPart.Parse( filter ) )
 	{
 
@@ -129,9 +129,9 @@ public record struct NodeQuery( IGraph Graph, IPlug? Plug, IReadOnlyList<FilterP
 
 public static class NodeQueryExtensions
 {
-	public static IEnumerable<INodeType> Filter( this IEnumerable<INodeType> nodes, NodeQuery query )
+	public static IEnumerable<INodeTypePlus> Filter( this IEnumerable<INodeTypePlus> nodes, NodeQuery query )
 	{
-		var bag = new ConcurrentBag<INodeType>();
+		var bag = new ConcurrentBag<INodeTypePlus>();
 
 		Parallel.ForEach( nodes, nodeType =>
 		{
@@ -144,7 +144,7 @@ public static class NodeQueryExtensions
 		return bag.ToArray();
 	}
 
-	public static void FilterInto( this IEnumerable<INodeType> nodes, NodeQuery query, ConcurrentBag<INodeType> output )
+	public static void FilterInto( this IEnumerable<INodeTypePlus> nodes, NodeQuery query, ConcurrentBag<INodeTypePlus> output )
 	{
 		Parallel.ForEach( nodes, nodeType =>
 		{

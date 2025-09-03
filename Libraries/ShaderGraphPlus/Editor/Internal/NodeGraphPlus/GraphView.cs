@@ -15,8 +15,8 @@ public interface IGridSizeView
 
 public class GraphView : GraphicsView, IGridSizeView
 {
-	IGraph _graph;
-	public IGraph Graph
+	IGraphPlus _graph;
+	public IGraphPlus Graph
 	{
 		get => _graph;
 		set
@@ -30,8 +30,8 @@ public class GraphView : GraphicsView, IGridSizeView
 
 	protected readonly List<Connection> Connections = new();
 
-	protected virtual INodeType RerouteNodeType { get; }
-	protected virtual INodeType CommentNodeType { get; }
+	protected virtual INodeTypePlus RerouteNodeType { get; }
+	protected virtual INodeTypePlus CommentNodeType { get; }
 
 	Vector2 lastMouseScenePosition;
 
@@ -388,7 +388,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		OnPaste( pasted );
 	}
 
-	private void OnPaste( IReadOnlyList<INode> nodes )
+	private void OnPaste( IReadOnlyList<INodePlus> nodes )
 	{
 		var average = new Vector2( nodes.Average( x => x.Position.x ), nodes.Average( x => x.Position.y ) );
 
@@ -507,9 +507,9 @@ public class GraphView : GraphicsView, IGridSizeView
 		OpenContextMenu( e.ScreenPosition, scenePosition );
 	}
 
-	protected virtual IEnumerable<INodeType> GetRelevantNodes( NodeQuery query )
+	protected virtual IEnumerable<INodeTypePlus> GetRelevantNodes( NodeQuery query )
 	{
-		return Enumerable.Empty<INodeType>();
+		return Enumerable.Empty<INodeTypePlus>();
 	}
 
 	protected virtual void OnPopulateNodeMenuSpecialOptions( Menu menu, Vector2 clickPos, Plug targetPlug, string filter )
@@ -615,7 +615,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return copy;
 	}
 
-	public static void PopulateNodeMenu( Menu menu, IEnumerable<INodeType> nodes, NodeQuery? query, Action<INodeType> selectedAction )
+	public static void PopulateNodeMenu( Menu menu, IEnumerable<INodeTypePlus> nodes, NodeQuery? query, Action<INodeTypePlus> selectedAction )
 	{
 		menu.AddOptions( nodes, query is { } q ? x => WithScore( x.Path, q ) : x => x.Path,
 			action: selectedAction,
@@ -731,13 +731,13 @@ public class GraphView : GraphicsView, IGridSizeView
 		CreateNewNode( RerouteNodeType, position );
 	}
 
-	public NodeUI CreateNewNode( INodeType type, Vector2 position )
+	public NodeUI CreateNewNode( INodeTypePlus type, Vector2 position )
 	{
 		return CreateNewNode( type, node =>
 			node.Position = position.SnapToGrid( GridSize ) );
 	}
 
-	public NodeUI CreateNewNode( INodeType type, Action<INode> onCreated = null )
+	public NodeUI CreateNewNode( INodeTypePlus type, Action<INodePlus> onCreated = null )
 	{
 		if ( type == null )
 			return null;
@@ -759,7 +759,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return nodeUI;
 	}
 
-	protected NodeUI CreateNodeUI( INode node )
+	protected NodeUI CreateNodeUI( INodePlus node )
 	{
 		var item = node.CreateUI( this );
 		Add( item );
@@ -767,7 +767,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return item;
 	}
 
-	public void CreateNewNode( INodeType type, Vector2 position, Plug targetPlug, bool selected = true )
+	public void CreateNewNode( INodeTypePlus type, Vector2 position, Plug targetPlug, bool selected = true )
 	{
 		using var undoScope = UndoScope( "Add Node" );
 
@@ -796,7 +796,7 @@ public class GraphView : GraphicsView, IGridSizeView
 
 	}
 
-	protected virtual void OnNodeCreated( INode node )
+	protected virtual void OnNodeCreated( INodePlus node )
 	{
 
 	}
@@ -1178,13 +1178,13 @@ public class GraphView : GraphicsView, IGridSizeView
 	}
 
 	/// <summary>
-	/// Create or update the <see cref="NodeUI"/> representation of a set of <see cref="INode"/>s and their connections.
+	/// Create or update the <see cref="NodeUI"/> representation of a set of <see cref="INodePlus"/>s and their connections.
 	/// </summary>
 	/// <param name="nodes">Set of nodes to create / update the UI for.</param>
 	/// <param name="insert">If true, we're inserting new nodes so there won't be any existing UI elements for them.</param>
 	/// <param name="offset">Optional position offset to apply to new nodes.</param>
 	/// <param name="selectNew">If true, select newly-created nodes and connections.</param>
-	public void BuildFromNodes( IEnumerable<INode> nodes, bool insert, Vector2 offset = default, bool selectNew = false )
+	public void BuildFromNodes( IEnumerable<INodePlus> nodes, bool insert, Vector2 offset = default, bool selectNew = false )
 	{
 		var nodesSet = nodes.ToImmutableHashSet();
 
@@ -1234,9 +1234,9 @@ public class GraphView : GraphicsView, IGridSizeView
 
 	}
 
-	public void UpdateConnections( IEnumerable<INode> nodes, bool selectNew = false )
+	public void UpdateConnections( IEnumerable<INodePlus> nodes, bool selectNew = false )
 	{
-		var nodeDict = new Dictionary<INode, NodeUI>();
+		var nodeDict = new Dictionary<INodePlus, NodeUI>();
 		var connectionSet = new HashSet<(IPlug, IPlug)>();
 
 		foreach ( var connection in Connections.ToArray() )
@@ -1260,7 +1260,7 @@ public class GraphView : GraphicsView, IGridSizeView
 			nodeDict.Add( nodeUi.Node, nodeUi );
 		}
 
-		var nodeSet = new HashSet<INode>( nodes );
+		var nodeSet = new HashSet<INodePlus>( nodes );
 
 		// Find inputs connected to the given set of nodes too
 
@@ -1342,7 +1342,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return HandleConfigCache[t] = config with { Name = config.Name ?? t.ToSimpleString( false ).HtmlEncode() };
 	}
 
-	public NodeUI FindNode( INode node )
+	public NodeUI FindNode( INodePlus node )
 	{
 		if ( node == null )
 			return null;
@@ -1350,7 +1350,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return Items.OfType<NodeUI>().FirstOrDefault( x => x.Node == node );
 	}
 
-	public NodeUI SelectNode( INode node )
+	public NodeUI SelectNode( INodePlus node )
 	{
 		if ( node == null )
 			return null;
@@ -1366,7 +1366,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		return nodeUI;
 	}
 
-	public void UpdateNode( INode node )
+	public void UpdateNode( INodePlus node )
 	{
 		if ( node == null )
 			return;
@@ -1378,7 +1378,7 @@ public class GraphView : GraphicsView, IGridSizeView
 		}
 	}
 
-	protected virtual INodeType NodeTypeFromDragEvent( DragEvent ev )
+	protected virtual INodeTypePlus NodeTypeFromDragEvent( DragEvent ev )
 	{
 		return null;
 	}

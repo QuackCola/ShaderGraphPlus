@@ -1,5 +1,9 @@
-﻿using ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using ShaderGraphPlus.Nodes;
 using System.Text.Json.Nodes;
+
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -424,7 +428,7 @@ partial class ShaderGraphPlus
 			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
 		}
 
-		if ( obj is INode node )
+		if ( obj is INodePlus node )
 		{
 			foreach ( var input in node.Inputs )
 			{

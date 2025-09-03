@@ -1,6 +1,7 @@
 ﻿using Editor;
 using MaterialDesign;
 using static Editor.WidgetGalleryWindow;
+
 namespace ShaderGraphPlus;
 
 internal class FieldTitle : Label

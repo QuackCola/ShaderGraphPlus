@@ -1,5 +1,6 @@
 ﻿
 using Editor;
+using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 

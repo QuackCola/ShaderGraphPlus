@@ -5,6 +5,12 @@ using ShaderGraphPlus.Nodes;
 using System.Text;
 using System.Text.Json.Serialization;
 
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
 namespace ShaderGraphPlus;
 
 public interface IWarningNode

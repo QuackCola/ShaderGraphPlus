@@ -1,4 +1,10 @@
 ﻿using Editor;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -31,7 +37,7 @@ public abstract class Unary : ShaderNodePlus
 	public override Color HeaderColor1 => Color.Parse( "#394d62" )!.Value;
 
 	[Hide, JsonIgnore]
-	public override Color HeaderColor2 => Color.Black;
+	public override Color HeaderColor2 => Color.Parse( "#394d62" )!.Value.Darken( .5f );
 
 	[Input]
 	[Hide]

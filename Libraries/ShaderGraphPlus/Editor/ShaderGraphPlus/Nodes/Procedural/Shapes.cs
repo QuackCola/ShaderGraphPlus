@@ -1,4 +1,11 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic procedural box shape

@@ -1,4 +1,8 @@
 using Editor;
+using NodeEditorPlus;
+using CommentColor = NodeEditorPlus.CommentColor;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 

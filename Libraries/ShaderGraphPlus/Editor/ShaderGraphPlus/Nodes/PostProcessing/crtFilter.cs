@@ -1,8 +1,13 @@
-﻿using Facepunch.ActionGraphs;
-using static Sandbox.VideoWriter;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
+
+// TODO : Remove?
 
 [Title( "CRT Filter" ), Category( "PostProcessing/Crt" )]
 [Description( "Crt Filter Ported from	" )]

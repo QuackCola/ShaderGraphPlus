@@ -1,4 +1,12 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+// TODO : Remove?
+
+namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]

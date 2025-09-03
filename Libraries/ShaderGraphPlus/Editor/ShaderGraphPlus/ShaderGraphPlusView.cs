@@ -1,5 +1,17 @@
 ﻿using Editor;
 using ShaderGraphPlus.Nodes;
+using NodeEditorPlus;
+
+using GraphView = NodeEditorPlus.GraphView;
+using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
+using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
+using Plug = NodeEditorPlus.Plug;
+using NodeQuery = NodeEditorPlus.NodeQuery;
+using HandleConfig = NodeEditorPlus.HandleConfig;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using CommentUI = NodeEditorPlus.CommentUI;
 
 namespace ShaderGraphPlus;
 
@@ -28,7 +40,7 @@ public class ShaderGraphPlusView : GraphView
 		set => base.Graph = value;
 	}
 
-	private readonly Dictionary<string, INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
+	private readonly Dictionary<string, INodeTypePlus> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
 	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
 	? GridConnectionStyle.Instance
@@ -69,8 +81,8 @@ public class ShaderGraphPlusView : GraphView
 	}
 	*/
 
-	protected override INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
-	protected override INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
+	protected override INodeTypePlus RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
+	protected override INodeTypePlus CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
 
 	public void AddNodeType<T>()
 		where T : BaseNodePlus
@@ -96,7 +108,7 @@ public class ShaderGraphPlusView : GraphView
 		AvailableNodes.TryAdd( nodeType.Identifier, nodeType );
 	}
 
-	public INodeType FindNodeType( Type type )
+	public INodeTypePlus FindNodeType( Type type )
 	{
 		return AvailableNodes.TryGetValue( type.FullName!, out var nodeType ) ? nodeType : null;
 	}
@@ -142,7 +154,7 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
+	protected override INodeTypePlus NodeTypeFromDragEvent( DragEvent ev )
 	{
 		if ( ev.Data.Assets.FirstOrDefault() is { } asset )
 		{
@@ -168,7 +180,7 @@ public class ShaderGraphPlusView : GraphView
 			: null;
 	}
 
-	protected override IEnumerable<INodeType> GetRelevantNodes( NodeQuery query )
+	protected override IEnumerable<INodeTypePlus> GetRelevantNodes( NodeQuery query )
 	{
 		return AvailableNodes.Values.Filter( query ).Where( x =>
 		{
@@ -564,7 +576,7 @@ public class ShaderGraphPlusView : GraphView
 		_window.OnNodeSelected( (BaseNodePlus)item.Node );
 	}
 
-	protected override void OnNodeCreated( INode node )
+	protected override void OnNodeCreated( INodePlus node )
 	{
 		if ( node is SubgraphNode subgraphNode )
 		{

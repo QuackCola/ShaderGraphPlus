@@ -6,6 +6,13 @@ using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using IRerouteNode = NodeEditorPlus.IRerouteNode;
+
 namespace ShaderGraphPlus;
 
 public sealed partial class GraphCompiler

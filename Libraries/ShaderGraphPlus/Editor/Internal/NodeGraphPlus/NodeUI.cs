@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using DisplayInfo = Sandbox.DisplayInfo;
 using Editor;
+using ShaderGraphPlus;
 
 namespace NodeEditorPlus;
 
@@ -58,7 +59,7 @@ public class RerouteUI : NodeUI
 
 	private Comment _comment;
 
-	public RerouteUI( GraphView graph, INode node ) : base( graph, node )
+	public RerouteUI( GraphView graph, INodePlus node ) : base( graph, node )
 	{
 		ZIndex = 0;
 		Position = node.Position;
@@ -120,7 +121,7 @@ public class RerouteUI : NodeUI
 
 public partial class NodeUI : GraphicsItem
 {
-	public INode Node { get; protected set; }
+	public INodePlus Node { get; protected set; }
 
 	public GraphView Graph { get; protected set; }
 
@@ -178,7 +179,7 @@ public partial class NodeUI : GraphicsItem
 		}
 	}
 
-	public NodeUI( GraphView graph, INode node )
+	public NodeUI( GraphView graph, INodePlus node )
 	{
 		ZIndex = 1;
 		Node = node;
@@ -496,8 +497,11 @@ public partial class NodeUI : GraphicsItem
 	{
 		var rect = new Rect( 0f, Size );
 		var radius = 4;
+		var baseNode = Node as BaseNodePlus;
 
 		PrimaryColor = Node.GetPrimaryColor( Graph );
+
+
 		if ( Paint.HasSelected ) PrimaryColor = SelectionOutline;
 		else
 		{
@@ -507,7 +511,8 @@ public partial class NodeUI : GraphicsItem
 		if ( Node.HasTitleBar )
 		{
 			Paint.ClearPen();
-			Paint.SetBrush( PrimaryColor.Darken( 0.5f ) );
+			//Paint.SetBrush( PrimaryColor.Darken( 0.5f ) );
+			Paint.SetBrushLinear( rect.Left, rect.TopRight, baseNode.HeaderColor1, baseNode.HeaderColor2 );
 			Paint.DrawRect( rect, radius );
 		}
 		else
@@ -521,6 +526,7 @@ public partial class NodeUI : GraphicsItem
 		Paint.ClearBrush();
 
 		Paint.ClearPen();
+		//Paint.SetBrush( PrimaryColor.WithAlpha( 0.05f ) );
 		Paint.SetBrush( PrimaryColor.WithAlpha( 0.05f ) );
 
 		var display = DisplayInfo;

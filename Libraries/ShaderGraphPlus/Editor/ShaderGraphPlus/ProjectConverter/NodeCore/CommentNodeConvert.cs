@@ -20,7 +20,7 @@ internal class CommentNodeConvert : BaseNodeConvert
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
 		newNode.Size = oldCommentNode.Size;
-		newNode.Color = oldCommentNode.Color;
+		newNode.Color = (NodeEditorPlus.CommentColor)oldCommentNode.Color;
 		newNode.Title = oldCommentNode.Title;
 		newNode.Description = oldCommentNode.Description;
 		newNode.Layer = oldCommentNode.Layer;

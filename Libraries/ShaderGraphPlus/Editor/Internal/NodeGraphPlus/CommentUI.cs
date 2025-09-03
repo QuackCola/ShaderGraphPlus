@@ -15,7 +15,7 @@ public enum CommentColor
 	Orange
 }
 
-public interface ICommentNode : INode
+public interface ICommentNode : INodePlus
 {
 	int Layer { get; set; }
 	Vector2 Size { get; set; }

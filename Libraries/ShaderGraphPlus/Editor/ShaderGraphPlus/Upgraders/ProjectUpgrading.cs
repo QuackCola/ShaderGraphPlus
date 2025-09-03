@@ -1,5 +1,8 @@
 ﻿
-using ShaderGraphPlus;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus;
 
 /*
 public enum ReplacementMode

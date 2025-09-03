@@ -1,5 +1,14 @@
 ﻿using Editor;
 
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using ICommentNode = NodeEditorPlus.ICommentNode;
+using CommentColor = NodeEditorPlus.CommentColor;
+using CommentUI = NodeEditorPlus.CommentUI;
+
 namespace ShaderGraphPlus;
 
 [Icon( "notes" ), Hide]
