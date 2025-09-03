@@ -88,6 +88,38 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	[Hide, JsonIgnore]
 	int _lastHashCodeOutputs = 0;
 
+	public override void OnFrame()
+	{
+		var hashCodeInput = 0;
+		var hashCodeOutput = 0;
+
+		foreach ( var input in ExpressionInputs )
+		{
+			hashCodeInput += input.GetHashCode();
+		}
+
+		foreach ( var output in ExpressionOutputs )
+		{
+			hashCodeOutput += output.GetHashCode();
+		}
+
+		if ( hashCodeInput != _lastHashCodeInputs )
+		{
+			_lastHashCodeInputs = hashCodeInput;
+
+			CreateInputs();
+			Update();
+		}
+
+		if ( hashCodeOutput != _lastHashCodeOutputs )
+		{
+			_lastHashCodeOutputs = hashCodeOutput;
+
+			CreateOutputs();
+			Update();
+		}
+	}
+
 	public void InitializeNode()
 	{
 		OnNodeCreated();
@@ -99,6 +131,87 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		CreateOutputs();
 
 		Update();
+	}
+
+	public void CreateInputs()
+	{
+		var inPlugs = new List<IPlugIn>();
+
+		if ( ExpressionInputs == null )
+		{
+			InternalInputs = new();
+		}
+		else
+		{
+			foreach ( var input in ExpressionInputs.OrderBy( x => x.Priority ) )
+			{
+				if ( input.Type is null ) continue;
+				var info = CreatePlugInfo( input.Id, input.Name, input.Type );
+				var plug = new BasePlugIn( this, info, info.Type );
+				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
+				if ( oldPlug is not null )
+				{
+					oldPlug.Info.Name = info.Name;
+					oldPlug.Info.Type = info.Type;
+					oldPlug.Info.DisplayInfo = info.DisplayInfo;
+					inPlugs.Add( oldPlug );
+				}
+				else
+				{
+					inPlugs.Add( plug );
+				}
+			}
+			;
+			InternalInputs = inPlugs;
+		}
+	}
+
+	public void CreateOutputs()
+	{
+		var outPlugs = new List<IPlugOut>();
+
+		if ( ExpressionOutputs == null )
+		{
+			InternalOutputs = new();
+		}
+		else
+		{
+			foreach ( var output in ExpressionOutputs.OrderBy( x => x.Priority ) )
+			{
+				if ( output.Type is null ) continue;
+				var info = CreatePlugInfo( output.Id, output.Name, output.Type );
+				var plug = new BasePlugOut( this, info, info.Type );
+				var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id ) as BasePlugOut;
+				if ( oldPlug is not null )
+				{
+					oldPlug.Info.Name = info.Name;
+					oldPlug.Info.Type = info.Type;
+					oldPlug.Info.DisplayInfo = info.DisplayInfo;
+					outPlugs.Add( oldPlug );
+				}
+				else
+				{
+					outPlugs.Add( plug );
+				}
+			}
+			;
+			InternalOutputs = outPlugs;
+		}
+	}
+
+	private PlugInfo CreatePlugInfo( Guid guid, string name, Type type )
+	{
+		return new PlugInfo()
+		{
+			Id = guid,
+			Name = name,
+			Type = type,
+			DisplayInfo = new()
+			{
+				Name = name,
+				Fullname = type.FullName
+			}
+		};
 	}
 
 	public NodeResult GetResult( GraphCompiler compiler, string metadataKey, object metadataValue )
@@ -129,6 +242,38 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 			{
 				return NodeResult.Error( outputsError );
 			}
+
+			/*
+			// Update shader function with any input and output changes.
+			if ( !string.IsNullOrWhiteSpace( Source ) && Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
+			{
+				string newFunctionHeader = $"	void {Name}({ConstructArguments( ExpressionInputs, false )}{(ExpressionInputs.Any() ? "," : "")}{ConstructArguments( ExpressionOutputs, true )})";
+				var shaderPath = Editor.FileSystem.Content.GetFullPath( $"shaders/{Source}" );
+			
+				var lines = File.ReadAllLines( shaderPath );
+			
+				for ( int i = 0; i < lines.Length; i++ )
+				{
+					if ( lines[i].TrimStart().StartsWith( $"void {Name}" ) )
+					{
+						if ( lines[i] != newFunctionHeader )
+						{
+							SGPLog.Info( $"Updating function" );
+							lines[i] = "";
+							lines[i] = newFunctionHeader;
+						}
+						else
+						{
+							SGPLog.Info( $"No need to update function" );
+						}
+			
+						break;
+					}
+				}
+			
+				File.WriteAllLines( shaderPath, lines );
+			}
+			*/
 
 			string funcCall = compiler.CustomCodeRegister( Name, functionInputs, Identifier, null, outputResults, false );
 	
@@ -269,7 +414,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 
 			if ( index == ports.Count - 1 )
 			{
-				sb.Append( $"{keyword} {argument.HLSLDataType} {argument.Name}{space}" );
+				sb.Append( $"{space}{keyword} {argument.HLSLDataType} {argument.Name}{space}" );
 			}
 			else
 			{
@@ -299,117 +444,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		return result;
 	}
 
-	public override void OnFrame()
-	{
-		var hashCodeInput = 0;
-		var hashCodeOutput = 0;
-	
-		foreach ( var input in ExpressionInputs )
-		{
-			hashCodeInput += input.GetHashCode();
-		}
-		
-		foreach ( var output in ExpressionOutputs )
-		{
-			hashCodeOutput += output.GetHashCode();
-		}
-		
-		if ( hashCodeInput != _lastHashCodeInputs )
-		{
-			_lastHashCodeInputs = hashCodeInput;
-			
-			CreateInputs();
-			Update();
-		}
-
-		if ( hashCodeOutput != _lastHashCodeOutputs )
-		{
-			_lastHashCodeOutputs = hashCodeOutput;
-
-			CreateOutputs();
-			Update();
-		}
-	}
-
-	public void CreateInputs()
-	{
-		var inPlugs = new List<IPlugIn>();
-
-		if ( ExpressionInputs == null )
-		{
-			InternalInputs = new();
-		}
-		else
-		{
-			foreach ( var input in ExpressionInputs.OrderBy( x => x.Priority ) )
-			{
-				if ( input.Type is null ) continue;
-				var info = CreatePlugInfo( input.Id, input.Name, input.Type );
-				var plug = new BasePlugIn( this, info, info.Type );
-				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
-				if ( oldPlug is not null )
-				{
-					oldPlug.Info.Name = info.Name;
-					oldPlug.Info.Type = info.Type;
-					oldPlug.Info.DisplayInfo = info.DisplayInfo;
-					inPlugs.Add( oldPlug );
-				}
-				else
-				{
-					inPlugs.Add( plug );
-				}
-			};
-			InternalInputs = inPlugs;
-		}
-	}
-
-	public void CreateOutputs()
-	{
-		var outPlugs = new List<IPlugOut>();
-		
-		if ( ExpressionOutputs == null )
-		{
-			InternalOutputs = new();
-		}
-		else
-		{
-			foreach ( var output in ExpressionOutputs.OrderBy( x => x.Priority ) )
-			{
-				if ( output.Type is null ) continue;
-				var info = CreatePlugInfo( output.Id, output.Name, output.Type );
-				var plug = new BasePlugOut( this, info, info.Type );
-				var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id ) as BasePlugOut;
-				if (oldPlug is not null)
-				{
-					oldPlug.Info.Name = info.Name;
-					oldPlug.Info.Type = info.Type;
-					oldPlug.Info.DisplayInfo = info.DisplayInfo;
-					outPlugs.Add( oldPlug );
-				}
-				else
-				{
-					outPlugs.Add( plug );
-				}
-			};
-			InternalOutputs = outPlugs;
-		}
-	}
-
-	private PlugInfo CreatePlugInfo( Guid guid, string name, Type type )
-	{
-		return new PlugInfo()
-		{
-			Id = guid,
-			Name = name,
-			Type = type,
-			DisplayInfo = new()
-			{
-				Name = name,
-				Fullname = type.FullName
-			}
-		};
-	}
-
 	public List<string> GetErrors()
 	{
 		OnNodeCreated();
@@ -417,14 +451,14 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		
 		if ( !ExpressionOutputs.Any() )
 		{
-			errors.Add( $"`{DisplayInfo.Name}` has no outputs." );
+			return [ $"`{DisplayInfo.Name}` must have atleast 1 output." ];
 		}
 
 		foreach ( var output in ExpressionOutputs )
 		{
 			if ( string.IsNullOrWhiteSpace( output.Name ) )
 			{
-				return new List<string> { $"An output is not allowed to have an empty name!" };
+				return [ $"An output is not allowed to have an empty name!" ];
 			}
 		}
 
@@ -432,11 +466,11 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		{
 			if ( Type is CustomCodeNodeMode.File )
 			{
-				return new List<string> { $"`{DisplayInfo.Name}` Cannot call function with no name!" };
+				return [ $"`{DisplayInfo.Name}` Cannot call function with no name!" ];
 			}
 			else
 			{
-				return new List<string> { $"`{DisplayInfo.Name}` Cannot generate a function with no name!" };
+				return [ $"`{DisplayInfo.Name}` Cannot generate a function with no name!" ];
 			}
 		}
 		
@@ -444,12 +478,12 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		{
 			if ( string.IsNullOrWhiteSpace( Source ) )
 			{
-				errors.Add( $"`{DisplayInfo.Name}` Source path is empty!" );
+				return [ $"`{DisplayInfo.Name}` Source path is empty!" ];
 			}
 			
 			if ( !Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
 			{
-				errors.Add( $"Include file `shaders/{Source}` does not exist." );
+				return [ $"Include file `shaders/{Source}` does not exist." ];
 			}
 		}
 		
