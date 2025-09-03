@@ -11,6 +11,12 @@ public sealed class Result : BaseResult
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override Color HeaderColor1 => Color.Parse( "#84705e" )!.Value;
+
+	[Hide, JsonIgnore]
+	public override Color HeaderColor2 => Color.Parse( "#39332a" )!.Value;
+
 	[Hide]
 	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
 

@@ -27,6 +27,11 @@ public abstract class Unary : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override Color HeaderColor1 => Color.Parse( "#394d62" )!.Value;
+
+	[Hide, JsonIgnore]
+	public override Color HeaderColor2 => Color.Black;
 
 	[Input]
 	[Hide]
