@@ -43,6 +43,8 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	[HLSLAssetPath]
 	public string Source { get; set; }
 
+	public bool PixelStageOnly { get; set; } = false;
+
 	[Hide]
 	public string CodeComment { get; set; } = "";
 
