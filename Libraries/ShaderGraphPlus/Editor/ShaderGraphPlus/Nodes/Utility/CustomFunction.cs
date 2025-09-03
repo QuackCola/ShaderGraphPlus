@@ -557,7 +557,7 @@ public class CustomCodeNodePorts
 					return "Sampler";
 			}
 
-			throw new ArgumentException("Unsupported value type", nameof( TypeName ) );
+			throw new ArgumentException("Unsupported value type", TypeName );
 		}
 	}
 
