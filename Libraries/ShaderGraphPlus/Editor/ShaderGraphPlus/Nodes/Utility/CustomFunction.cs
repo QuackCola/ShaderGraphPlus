@@ -259,31 +259,25 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		return inputResults;
 	}
 
-	internal string ConstructFunctionInputs()
+	internal string ConstructArguments( List<CustomCodeNodePorts> ports, bool isOutputs )
 	{
 		var sb = new StringBuilder();
 
-		for ( int index = 0; index < ExpressionInputs.Count; index++ )
 		{
-			var input = ExpressionInputs[index];
+			var argument = ports[index];
+			var keyword = isOutputs ? "out" : "";
+			var space = isOutputs ? " " : "";
 
-			sb.Append(index == ExpressionInputs.Count - 1 ? $" {input.HLSLDataType} {input.Name}" : $" {input.HLSLDataType} {input.Name},");
+			if ( index == ports.Count - 1 )
+			{
+				sb.Append( $"{keyword} {argument.HLSLDataType} {argument.Name}{space}" );
+			}
+			else
+			{
+				sb.Append( $"{space}{keyword} {argument.HLSLDataType} {argument.Name},{space}" );
+			}
 		}
 
-		return sb.ToString();
-	}
-
-	internal string ConstructFunctionOutputs()
-	{
-		var sb = new StringBuilder();
-		
-		for ( int index = 0; index < ExpressionOutputs.Count; index++ )
-		{
-			var input = ExpressionOutputs[index];
-			
-			sb.Append( index == ExpressionOutputs.Count - 1 ? $" out {input.HLSLDataType} {input.Name} " : $" out {input.HLSLDataType} {input.Name}," );
-		}
-		
 		return sb.ToString();
 	}
 

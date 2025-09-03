@@ -120,7 +120,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 	private void Generate( string functionName )
 	{
-		string functionHeader = $"void {functionName}({Node.ConstructFunctionInputs()}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructFunctionOutputs()})";
+		string functionHeader = $"void {functionName}({Node.ConstructArguments( Node.ExpressionInputs,  false)}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructArguments( Node.ExpressionOutputs, true )})";
 		StringBuilder functionBody = new StringBuilder();
 		
 		foreach ( var output in Node.ExpressionOutputs )
