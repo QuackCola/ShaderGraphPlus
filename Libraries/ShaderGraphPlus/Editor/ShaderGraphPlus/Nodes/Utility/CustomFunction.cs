@@ -33,13 +33,13 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
-	public string Name { get; set; }
+	public string Name { get; set; } = "CustomFunction0";
 
 	public CustomCodeNodeMode Type { get; set; } = CustomCodeNodeMode.Inline;
 
 	[TextArea]
 	[HideIf( nameof( Type ), CustomCodeNodeMode.File )]
-	public string Body { get; set; }
+	public string Body { get; set; } = $"\nOutFloat3_0 = float3( 1, 0, 1 );";
 
 	[HideIf( nameof( Type ), CustomCodeNodeMode.Inline )]
 	[HLSLAssetPath]
@@ -49,7 +49,16 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	public string CodeComment { get; set; } = "";
 
 	[Title( "Inputs" )]
-	public List<CustomCodeNodePorts> ExpressionInputs { get; set; }
+	public List<CustomCodeNodePorts> ExpressionInputs { get; set; } = new List<CustomCodeNodePorts>()
+	{
+		{ 
+			new CustomCodeNodePorts
+			{
+				Name = "InFloat3_0",
+				TypeName = "Vector3"
+			} 
+		},
+	};
 
 	[Hide]
 	private List<IPlugIn> InternalInputs = new();
@@ -58,7 +67,16 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
 	[Title( "Outputs" )]
-	public List<CustomCodeNodePorts> ExpressionOutputs { get; set; }
+	public List<CustomCodeNodePorts> ExpressionOutputs { get; set; } = new List<CustomCodeNodePorts>()
+	{
+		{
+			new CustomCodeNodePorts
+			{
+				Name = "OutFloat3_0",
+				TypeName = "Vector3"
+			}
+		},
+	};
 
 	[Hide]
 	private List<IPlugOut> InternalOutputs = new();
