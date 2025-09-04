@@ -93,9 +93,9 @@ PS
 		
 		MyGadient.colorsLength = 3;
 		MyGadient.alphasLength = 2;
-		MyGadient.colors[0] = float4( 1, 0.27058825, 0, 0 );
-		MyGadient.colors[1] = float4( 1, 0.84313726, 0, 0.5 );
-		MyGadient.colors[2] = float4( 0, 0, 0.54509807, 1 );
+		MyGadient.colors[0] = float4( 1, 0.27059, 0, 0 );
+		MyGadient.colors[1] = float4( 1, 0.84314, 0, 0.5 );
+		MyGadient.colors[2] = float4( 0, 0, 0.5451, 1 );
 		MyGadient.alphas[0] = float( 1 );
 		MyGadient.alphas[1] = float( 1 );
 		
