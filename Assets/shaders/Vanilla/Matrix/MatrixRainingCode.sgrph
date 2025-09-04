@@ -56,14 +56,14 @@
       "Description": "",
       "Layer": 2,
       "Identifier": "1",
-      "Position": "-528,-492",
+      "Position": "-144,-480",
       "HandleOffsets": {}
     },
     {
       "_class": "Time",
       "__version": 1,
       "Identifier": "2",
-      "Position": "-492,-432",
+      "Position": "-108,-420",
       "HandleOffsets": {}
     },
     {
@@ -89,7 +89,7 @@
         }
       },
       "Identifier": "3",
-      "Position": "-492,-372",
+      "Position": "-108,-360",
       "HandleOffsets": {}
     },
     {
@@ -98,7 +98,7 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "4",
-      "Position": "-240,-420",
+      "Position": "144,-408",
       "HandleOffsets": {},
       "A": {
         "Identifier": "2",
