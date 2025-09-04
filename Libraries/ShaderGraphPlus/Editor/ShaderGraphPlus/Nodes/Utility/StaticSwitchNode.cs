@@ -23,11 +23,14 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 { 
 }
 
-[Title( "Static Combo Switch" ), Category( "Utility" ), Icon( "alt_route" )]
+[Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#007762" )!.Value, Color.Parse( "#01372b" )!.Value );
 
 	[Hide]
 	public override string Title
