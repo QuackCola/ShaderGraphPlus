@@ -1,0 +1,200 @@
+{
+  "__version": 2,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/customshading/func.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "324,-300",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "OutFloat3_0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomFunction0",
+      "Type": "File",
+      "Body": "\nOutFloat3_0 = float3( 1, 0, 1 );",
+      "Source": "Tests/CustomShading/FuncTest.hlsl",
+      "PixelStageOnly": false,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "762f2d02-a567-4ca9-a23b-532355284241",
+          "Name": "InFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "1937952f-3a9b-499b-a0ff-edb28e679001",
+          "Name": "InFloat3_1",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "6f5af08f-b3df-4f3d-b55e-8951c9c97fb4",
+          "Name": "OutFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "fc3785a6-e56a-4a55-87e4-9b8af57d61f6",
+          "Name": "OutFloat3_1",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-456,-288",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomFunction0",
+      "Type": "File",
+      "Body": "\nOutFloat3_0 = float3( 1, 0, 1 );",
+      "Source": "Tests/CustomShading/ass.hlsl",
+      "PixelStageOnly": false,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "d359b759-0296-44b8-be82-13495166246f",
+          "Name": "InFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "5e4c873e-3975-4e15-95b6-257d5828c339",
+          "Name": "OutFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "2",
+      "Position": "-456,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Arccos",
+      "__version": 1,
+      "Identifier": "3",
+      "Position": "-408,-756",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 1,
+      "Size": "300,180",
+      "Color": "Green",
+      "Title": "Untitled",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "4",
+      "Position": "156,-696",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "PiNode",
+      "__version": 1,
+      "DefaultMultiplier": 0,
+      "Identifier": "5",
+      "Position": "-456,-468",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MathConstantsNode",
+      "__version": 1,
+      "Constant": "SQRT2",
+      "Identifier": "6",
+      "Position": "-456,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Time",
+      "__version": 1,
+      "Identifier": "7",
+      "Position": "-456,-408",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "RemapValue",
+      "__version": 1,
+      "In": 0.5,
+      "InMin": 0,
+      "InMax": 1,
+      "OutMin": 0,
+      "OutMax": 1,
+      "Clamp": true,
+      "Identifier": "8",
+      "Position": "-456,-696",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "9",
+      "Position": "-180,-768",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3x3Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "10",
+      "Position": "-288,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4x4Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "11",
+      "Position": "-288,-468",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldToProjectionNode",
+      "__version": 1,
+      "Identifier": "12",
+      "Position": "-288,-408",
+      "HandleOffsets": {}
+    }
+  ]
+}

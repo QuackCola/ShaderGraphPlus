@@ -81,7 +81,7 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	#include "Tests/CustomShading/customShadingInc.hlsl"
+	#include "Tests/CustomShading/FuncTest.hlsl"
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
@@ -90,17 +90,11 @@ PS
 	{
 
 		
-		float4 l_0 = float4( 0.43333, 0, 1, 1 );
-		float3 l_1 = l_0.xyz;
-		float4 l_2 = float4( 0.52167, 0.8, 0.04093, 1 );
-		float3 l_3 = l_2.xyz;
-		float2 l_4 = i.vPositionSs.xy;
-		float3 l_5 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;
-		float3 l_6 = CalculatePositionToCameraDirWs( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz );
-		float4 ol_0 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
-		CustomShadingTest( l_1, l_3, l_4, i.vNormalWs, l_5, l_6,ol_0 );
+		float3 ol_0 = float3( 0.0f, 0.0f, 0.0f );
+		float3 ol_1 = float3( 0.0f, 0.0f, 0.0f );
+		CustomFunction0( 0, 0, ol_0, ol_1 );
 		
 
-		return float4( ol_0.xyz, 1 );
+		return float4( ol_0, 1 );
 	}
 }
