@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "324,-300",
+      "Position": "156,-336",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -48,13 +48,13 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "e929eb14-ebbf-4dfe-90b9-c29a0ec9ad7f",
+          "Id": "358131b4-fc83-49e0-9a79-23100bd451b9",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "790f5475-f172-440e-b4ee-3a06128adc3d",
+          "Id": "ae3ca451-f69c-42dd-9f71-b2bdb632ae7b",
           "Name": "InFloat3_1",
           "Type": "Vector3",
           "Priority": 0
@@ -62,20 +62,20 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "31f82ef2-fb0d-4b90-b933-733f861f0245",
+          "Id": "e5dd93a6-cd4f-4370-8bfb-1482bf47b318",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "7f712428-69db-4fa2-b5ae-a88ec906398f",
+          "Id": "a09ac6b7-00df-4162-b4c1-0b41edf423c0",
           "Name": "OutFloat3_1",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "1",
-      "Position": "-228,-264",
+      "Position": "-108,-276",
       "HandleOffsets": {}
     },
     {
@@ -89,7 +89,7 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "6b42a5db-4a72-4a47-b3b4-1361a934c68d",
+          "Id": "5ae5b4a3-146d-4732-8ed7-ffeb9aaa0921",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
@@ -97,21 +97,21 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "449142ab-851b-4a4c-9e44-81577032fc57",
+          "Id": "9c94fc46-0927-42b3-b2cc-bcdac94cde54",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "2",
-      "Position": "-228,-324",
+      "Position": "-108,-336",
       "HandleOffsets": {}
     },
     {
       "_class": "Arccos",
       "__version": 1,
       "Identifier": "3",
-      "Position": "-408,-756",
+      "Position": "-288,-600",
       "HandleOffsets": {}
     },
     {
@@ -123,7 +123,7 @@
       "Description": "",
       "Layer": 1,
       "Identifier": "4",
-      "Position": "156,-696",
+      "Position": "60,-600",
       "HandleOffsets": {}
     },
     {
@@ -163,19 +163,12 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "SplitVector",
-      "__version": 1,
-      "Identifier": "9",
-      "Position": "-180,-768",
-      "HandleOffsets": {}
-    },
-    {
       "_class": "Float3x3Node",
       "__version": 1,
       "Name": "",
       "Value": "0,0,0,0,0,0,0,0,0",
       "IsAttribute": false,
-      "Identifier": "10",
+      "Identifier": "9",
       "Position": "-288,-528",
       "HandleOffsets": {}
     },
@@ -185,14 +178,14 @@
       "Name": "",
       "Value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
       "IsAttribute": false,
-      "Identifier": "11",
+      "Identifier": "10",
       "Position": "-288,-468",
       "HandleOffsets": {}
     },
     {
       "_class": "WorldToProjectionNode",
       "__version": 1,
-      "Identifier": "12",
+      "Identifier": "11",
       "Position": "-288,-408",
       "HandleOffsets": {}
     },
@@ -202,8 +195,8 @@
       "DefaultFrequency": 1,
       "DefaultPhase": 0,
       "DefaultStrength": 10,
-      "Identifier": "13",
-      "Position": "-228,-180",
+      "Identifier": "12",
+      "Position": "-108,-192",
       "HandleOffsets": {}
     },
     {
@@ -213,8 +206,8 @@
       "G": true,
       "B": true,
       "A": true,
-      "Identifier": "14",
-      "Position": "-588,-300",
+      "Identifier": "13",
+      "Position": "-456,-336",
       "HandleOffsets": {}
     },
     {
@@ -224,15 +217,15 @@
       "DefaultY": 0,
       "DefaultZ": 0,
       "DefaultW": 0,
-      "Identifier": "15",
-      "Position": "-420,-300",
+      "Identifier": "14",
+      "Position": "-288,-336",
       "HandleOffsets": {}
     },
     {
       "_class": "SplitVector",
       "__version": 1,
-      "Identifier": "16",
-      "Position": "-588,-240",
+      "Identifier": "15",
+      "Position": "-456,-276",
       "HandleOffsets": {}
     }
   ]
