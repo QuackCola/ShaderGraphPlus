@@ -40,7 +40,7 @@
     {
       "_class": "GradientNode",
       "__version": 1,
-      "Name": null,
+      "Name": "MyGadient",
       "Gradient": {
         "blend": "Linear",
         "color": [

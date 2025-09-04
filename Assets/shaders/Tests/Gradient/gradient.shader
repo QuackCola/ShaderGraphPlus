@@ -89,18 +89,18 @@ PS
 	{
 
 		
-		Gradient Gradient0 = Gradient::Init();
+		Gradient MyGadient = Gradient::Init();
 		
-		Gradient0.colorsLength = 3;
-		Gradient0.alphasLength = 2;
-		Gradient0.colors[0] = float4( 1, 0.27058825, 0, 0 );
-		Gradient0.colors[1] = float4( 1, 0.84313726, 0, 0.5 );
-		Gradient0.colors[2] = float4( 0, 0, 0.54509807, 1 );
-		Gradient0.alphas[0] = float( 1 );
-		Gradient0.alphas[1] = float( 1 );
+		MyGadient.colorsLength = 3;
+		MyGadient.alphasLength = 2;
+		MyGadient.colors[0] = float4( 1, 0.27058825, 0, 0 );
+		MyGadient.colors[1] = float4( 1, 0.84313726, 0, 0.5 );
+		MyGadient.colors[2] = float4( 0, 0, 0.54509807, 1 );
+		MyGadient.alphas[0] = float( 1 );
+		MyGadient.alphas[1] = float( 1 );
 		
 		float l_0 = VoronoiNoise( i.vTextureCoords.xy, 3.1415925, 10 );
-		float4 l_1 = Gradient::SampleGradient( Gradient0, l_0 );
+		float4 l_1 = Gradient::SampleGradient( MyGadient, l_0 );
 		
 
 		return float4( l_1.xyz, 1 );
