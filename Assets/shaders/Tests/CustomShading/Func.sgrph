@@ -32,7 +32,7 @@
       "Position": "324,-300",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "1",
+        "Identifier": "2",
         "Output": "OutFloat3_0",
         "Subgraph": null
       }
@@ -48,13 +48,13 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "762f2d02-a567-4ca9-a23b-532355284241",
+          "Id": "e929eb14-ebbf-4dfe-90b9-c29a0ec9ad7f",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "1937952f-3a9b-499b-a0ff-edb28e679001",
+          "Id": "790f5475-f172-440e-b4ee-3a06128adc3d",
           "Name": "InFloat3_1",
           "Type": "Vector3",
           "Priority": 0
@@ -62,20 +62,20 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "6f5af08f-b3df-4f3d-b55e-8951c9c97fb4",
+          "Id": "31f82ef2-fb0d-4b90-b933-733f861f0245",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "fc3785a6-e56a-4a55-87e4-9b8af57d61f6",
+          "Id": "7f712428-69db-4fa2-b5ae-a88ec906398f",
           "Name": "OutFloat3_1",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "1",
-      "Position": "-456,-288",
+      "Position": "-228,-264",
       "HandleOffsets": {}
     },
     {
@@ -89,7 +89,7 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "d359b759-0296-44b8-be82-13495166246f",
+          "Id": "6b42a5db-4a72-4a47-b3b4-1361a934c68d",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
@@ -97,14 +97,14 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "5e4c873e-3975-4e15-95b6-257d5828c339",
+          "Id": "449142ab-851b-4a4c-9e44-81577032fc57",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "2",
-      "Position": "-456,-348",
+      "Position": "-228,-324",
       "HandleOffsets": {}
     },
     {
@@ -194,6 +194,45 @@
       "__version": 1,
       "Identifier": "12",
       "Position": "-288,-408",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "OscillatorNode",
+      "__version": 1,
+      "DefaultFrequency": 1,
+      "DefaultPhase": 0,
+      "DefaultStrength": 10,
+      "Identifier": "13",
+      "Position": "-228,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": true,
+      "Identifier": "14",
+      "Position": "-588,-300",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CombineVector",
+      "__version": 1,
+      "DefaultX": 0,
+      "DefaultY": 0,
+      "DefaultZ": 0,
+      "DefaultW": 0,
+      "Identifier": "15",
+      "Position": "-420,-300",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "16",
+      "Position": "-588,-240",
       "HandleOffsets": {}
     }
   ]

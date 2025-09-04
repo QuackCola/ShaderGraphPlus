@@ -81,7 +81,7 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	#include "Tests/CustomShading/FuncTest.hlsl"
+	#include "Tests/CustomShading/ass.hlsl"
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
@@ -91,8 +91,7 @@ PS
 
 		
 		float3 ol_0 = float3( 0.0f, 0.0f, 0.0f );
-		float3 ol_1 = float3( 0.0f, 0.0f, 0.0f );
-		CustomFunction0( 0, 0, ol_0, ol_1 );
+		CustomFunction0( 0,ol_0 );
 		
 
 		return float4( ol_0, 1 );
