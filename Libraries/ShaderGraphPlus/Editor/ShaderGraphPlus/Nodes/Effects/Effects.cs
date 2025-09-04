@@ -15,6 +15,9 @@ public sealed class Fresnel : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
 	/// <summary>
 	/// Normal at the point being shaded.
 	/// </summary>

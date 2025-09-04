@@ -20,6 +20,9 @@ public sealed class ComponentMask : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
+
 	[Hide]
 	public override string Title
 	{
@@ -130,6 +133,9 @@ public sealed class SplitVector : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -174,6 +180,9 @@ public sealed class CombineVector : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -239,6 +248,9 @@ public sealed class SwizzleVector : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -283,6 +295,9 @@ public sealed class AppendVector : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Input, Hide]
 	public NodeInput A { get; set; }

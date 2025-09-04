@@ -12,6 +12,9 @@ public sealed class OscillatorNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
 	[Hide]
 public string Oscillator => @"
 float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )

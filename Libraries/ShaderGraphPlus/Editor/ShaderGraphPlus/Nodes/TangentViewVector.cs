@@ -13,8 +13,12 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Get Tangent View Vector" ), Category( "Variables" ), Icon( "visibility" )]
 public sealed class GetTangentViewVectorNode : ShaderNodePlus
 {
+	// #1f5468 1 #0e2630 2
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Title( "Position" ), Hide]
 	[Input( typeof( Vector3 ) )]
