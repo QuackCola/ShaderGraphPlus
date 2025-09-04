@@ -15,6 +15,9 @@ public sealed class InstanceIdNode : ShaderNodePlus, IPreRegisterNodeData
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	public void PreRegister( GraphCompiler compiler )
 	{
 		compiler.RegisterVertexInput( "uint", "vInstanceID", "SV_InstanceID" );

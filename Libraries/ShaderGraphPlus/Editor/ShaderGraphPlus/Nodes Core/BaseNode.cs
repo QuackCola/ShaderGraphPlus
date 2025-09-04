@@ -145,6 +145,11 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		return PrimaryColor;
 	}
 
+	public (Color LeftColor, Color RightColor) GetPrimaryHeaderTheme( GraphView view )
+	{
+		return PrimaryHeaderTheme;
+	}
+
 	public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;
@@ -174,6 +179,10 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual Color PrimaryColor { get; } = Color.Lerp( new Color( 0.7f, 0.7f, 0.7f ), Theme.Blue, 0.1f );
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual (Color LeftColor, Color RightColor) PrimaryHeaderTheme { get; } = new ( Color.Gray, Color.Gray.Darken( 0.5f ) );
+
+	
 	public virtual void OnPaint( Rect rect )
 	{
 

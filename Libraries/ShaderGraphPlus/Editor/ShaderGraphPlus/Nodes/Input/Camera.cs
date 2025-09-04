@@ -15,6 +15,9 @@ public sealed class Camera : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	[Output( typeof( Vector3 ) ), Title( "Position" )]
 	[Hide]
 	public static NodeResult.Func WorldPosition => ( GraphCompiler compiler ) => new( ResultType.Vector3, "g_vCameraPositionWs" );
@@ -41,6 +44,9 @@ public sealed class Depth : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	public enum DepthMode
 	{
 		///<summary>The raw value of the depth buffer.</summary>
@@ -52,8 +58,6 @@ public sealed class Depth : ShaderNodePlus
 		[Title("Linear ( View Space )")]
 		Linear
 	}
-
-
 
     [Hide]
     public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";

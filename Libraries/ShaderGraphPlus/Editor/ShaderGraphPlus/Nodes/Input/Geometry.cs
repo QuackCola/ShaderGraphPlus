@@ -15,6 +15,9 @@ public sealed class WorldNormal : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalWs", compiler.IsNotPreview );
@@ -28,6 +31,9 @@ public sealed class WorldTangent : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -46,6 +52,8 @@ public sealed class IsFrontFace : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( int ) ), Title( "Result" )]
 	[Hide]
@@ -63,7 +71,10 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-
+	
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vNormalOs", compiler.IsNotPreview );
@@ -77,7 +88,10 @@ public sealed class ScreenPosition : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-
+	
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	
 	// Note: We could make all of these constants but I don't like the situation where it can generated something like
 	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
 
@@ -135,6 +149,9 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -151,7 +168,10 @@ public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-
+	
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	
 	[Output( typeof( Vector2 ) ), Title( "UV" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -168,6 +188,9 @@ public sealed class WorldPosition : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	public bool NoHighPrecisionLightingOffsets { get; set; } = false;
 
@@ -188,6 +211,9 @@ public sealed class ObjectPosition : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public static NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vPositionOs" );
@@ -200,6 +226,9 @@ public sealed class ObjectPosition : ShaderNodePlus
 public sealed class ViewDirection : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -217,6 +246,9 @@ public sealed class VertexColor : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -236,6 +268,8 @@ public sealed class VertexBlend : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( float ) )]
 	[Hide]
@@ -263,6 +297,8 @@ public sealed class VertexPaint : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -282,6 +318,8 @@ public sealed class Tint : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Hide, Output( typeof( Color ) )]
 	public static NodeResult.Func RGBA => ( GraphCompiler compiler ) => new( ResultType.Color, "i.vTintColor" );

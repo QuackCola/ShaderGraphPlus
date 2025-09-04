@@ -15,6 +15,9 @@ public sealed class GradientNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	[Hide]
 	public override string Title => string.IsNullOrEmpty(Name) ?
 	$"{DisplayInfo.For(this).Name}" :

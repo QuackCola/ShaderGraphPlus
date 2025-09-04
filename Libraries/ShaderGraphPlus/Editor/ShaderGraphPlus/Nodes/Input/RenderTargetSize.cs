@@ -10,11 +10,14 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 ///
 /// </summary>
-[Title( "Render Target Size" ), Category( "PostProcessing/Variables" )]
+[Title( "Render Target Size" ), Category( "Variables/PostProcessing" )]
 public sealed class RenderTargetSizeNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]

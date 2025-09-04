@@ -15,6 +15,8 @@ public class PiNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
 
 	[Title( "Multiplier" )]
 	[Input( typeof( float ) )]

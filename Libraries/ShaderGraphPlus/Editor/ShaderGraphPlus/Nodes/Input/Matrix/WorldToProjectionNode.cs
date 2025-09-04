@@ -6,11 +6,14 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-[Title( "World To Projection" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
+[Title( "World To Projection" ), Category( "Variables/Matrix" ), Icon( "dataset" )]
 public sealed class WorldToProjectionNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;

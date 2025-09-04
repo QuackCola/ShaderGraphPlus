@@ -99,6 +99,7 @@ public interface INodePlus
 
 	NodeUI CreateUI( GraphView view );
 	Color GetPrimaryColor( GraphView view );
+	(Color LeftColor, Color RightColor) GetPrimaryHeaderTheme( GraphView view );
 	Menu? CreateContextMenu( NodeUI node );
 
 	Action? GoToDefinition => null;

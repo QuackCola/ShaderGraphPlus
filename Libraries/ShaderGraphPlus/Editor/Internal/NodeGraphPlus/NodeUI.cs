@@ -129,6 +129,7 @@ public partial class NodeUI : GraphicsItem
 
 	public Color SelectionOutline = Color.Parse( "#ff99c8" ) ?? default;
 	public Color PrimaryColor = Color.Parse( "#ff99c8" ) ?? default;
+	public (Color LeftColor, Color RightColor) PrimaryHeaderTheme = new (Color.Gray, Color.Gray.Darken( 0.5f ));
 
 	public List<PlugIn> Inputs = new();
 	public List<PlugOut> Outputs = new();
@@ -500,7 +501,7 @@ public partial class NodeUI : GraphicsItem
 		var baseNode = Node as BaseNodePlus;
 
 		PrimaryColor = Node.GetPrimaryColor( Graph );
-
+		PrimaryHeaderTheme = Node.GetPrimaryHeaderTheme( Graph );
 
 		if ( Paint.HasSelected ) PrimaryColor = SelectionOutline;
 		else
@@ -511,8 +512,8 @@ public partial class NodeUI : GraphicsItem
 		if ( Node.HasTitleBar )
 		{
 			Paint.ClearPen();
-			//Paint.SetBrush( PrimaryColor.Darken( 0.5f ) );
-			Paint.SetBrushLinear( rect.Left, rect.TopRight, baseNode.HeaderColor1, baseNode.HeaderColor2 );
+			Paint.SetBrush( PrimaryColor.Darken( 0.5f ) );
+			Paint.SetBrushLinear( rect.Left, rect.TopRight, PrimaryHeaderTheme.LeftColor, PrimaryHeaderTheme.RightColor );
 			Paint.DrawRect( rect, radius );
 		}
 		else
@@ -526,10 +527,11 @@ public partial class NodeUI : GraphicsItem
 		Paint.ClearBrush();
 
 		Paint.ClearPen();
-		//Paint.SetBrush( PrimaryColor.WithAlpha( 0.05f ) );
 		Paint.SetBrush( PrimaryColor.WithAlpha( 0.05f ) );
 
 		var display = DisplayInfo;
+
+		var titleWidth = rect.Width;
 
 		if ( Node.HasTitleBar )
 		{
@@ -552,11 +554,15 @@ public partial class NodeUI : GraphicsItem
 
 			if ( Node.Thumbnail is not null || Inputs.Any( x => !x.Inner.InTitleBar ) || Outputs.Any( x => !x.Inner.InTitleBar ) )
 			{
-				// body inner
-				float borderSize = 3;
+				// top rounding eliminator
 				Paint.ClearPen();
 				Paint.SetBrush( PrimaryColor.Darken( 0.6f ) );
-				Paint.DrawRect( rect.Shrink( borderSize, TitleHeight, borderSize, borderSize ), radius - 2 );
+				Paint.DrawRect( new Rect( rect.Shrink( 0, TitleHeight, 0, 0 ).Position, new Vector2( titleWidth, TitleHeight - 5 ) ) );
+
+				// body inner
+				Paint.ClearPen();
+				Paint.SetBrush( PrimaryColor.Darken( 0.6f ) );
+				Paint.DrawRect( rect.Shrink( 0, TitleHeight, 0, 0 ), radius );
 			}
 
 			if ( Node.Thumbnail is { } thumb )

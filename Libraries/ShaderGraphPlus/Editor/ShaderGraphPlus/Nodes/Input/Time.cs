@@ -15,6 +15,8 @@ public sealed class Time : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[JsonIgnore]
 	public float Value => RealTime.Now;
