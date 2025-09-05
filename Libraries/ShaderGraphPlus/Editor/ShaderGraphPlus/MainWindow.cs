@@ -880,7 +880,7 @@ public class MainWindow : DockWindow
 		_undoHistory.UndoLevel = _undoStack.UndoLevel;
 
 		CheckForChanges();
-		}
+	}
 
 	private void CheckForChanges()
 	{
