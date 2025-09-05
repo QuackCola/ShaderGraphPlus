@@ -1455,7 +1455,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
 
 	//[Hide, JsonIgnore]
 	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
