@@ -6,15 +6,15 @@ HEADER
 
 FEATURES
 {
-    #include "common/features.hlsl"
+	#include "common/features.hlsl"
 
 }
 
 MODES
 {
-    Forward();
-    Depth();
-    ToolsShadingComplexity( "tools_shading_complexity.shader" );
+	Forward();
+	Depth();
+	ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
 
 COMMON
@@ -26,17 +26,17 @@ COMMON
 	#define S_TRANSLUCENT 0
 	#endif
 	
-    #include "common/shared.hlsl"
-    #include "common/gradient.hlsl"
-    #include "procedural.hlsl"
-    
-    #define S_UV2 1
-    #define CUSTOM_MATERIAL_INPUTS
+	#include "common/shared.hlsl"
+	#include "common/gradient.hlsl"
+	#include "procedural.hlsl"
+
+	#define S_UV2 1
+	#define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
 {
-    #include "common/vertexinput.hlsl"
+	#include "common/vertexinput.hlsl"
 	float4 vColor : COLOR0 < Semantic( Color ); >;
 	uint vInstanceID : SV_InstanceID;
 	
@@ -44,7 +44,7 @@ struct VertexInput
 
 struct PixelInput
 {
-    #include "common/pixelinput.hlsl"
+	#include "common/pixelinput.hlsl"
 	float3 vPositionOs : TEXCOORD14;
 	float3 vNormalOs : TEXCOORD15;
 	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
@@ -59,10 +59,10 @@ struct PixelInput
 
 VS
 {
-    #include "common/vertex.hlsl"
+	#include "common/vertex.hlsl"
 
-    PixelInput MainVs( VertexInput v )
-    {
+	PixelInput MainVs( VertexInput v )
+	{
 		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
@@ -70,7 +70,7 @@ VS
 		i.vColor = v.vColor;
 		i.vInstanceID = v.vInstanceID;
 		
-		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
+		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
@@ -80,12 +80,12 @@ VS
 		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
-    }
+	}
 }
 
 PS
 {
-    #include "common/pixel.hlsl"
+	#include "common/pixel.hlsl"
 	
 	SamplerState g_sTestSampler < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -101,6 +101,7 @@ PS
 	bool g_bBumpOffset < UiGroup( ",0/,0/0" ); Default( 1 ); >;
 	float g_flRoughness < UiGroup( ",0/,0/0" ); Default1( 0.124 ); Range1( 0, 1 ); >;
 		
+	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
@@ -126,8 +127,8 @@ PS
 		return l_15;
 	}
 	
-    float4 MainPs( PixelInput i ) : SV_Target0
-    {
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
 		
 		Material m = Material::Init();
 		m.Albedo = float3( 1, 1, 1 );
@@ -174,5 +175,5 @@ PS
 		m.TextureCoords = i.vTextureCoords.xy;
 				
 		return ShadingModelStandard::Shade( i, m );
-    }
+	}
 }
