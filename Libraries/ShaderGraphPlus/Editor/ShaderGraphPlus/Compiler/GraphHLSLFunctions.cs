@@ -642,76 +642,77 @@ float3 Vec3OsToTs( float3 vVectorOs, float3 vNormalOs, float3 vTangentUOs, float
 }
 ";
 
-    [Function( "GetTangentViewVector" )]
-    public static string GetTangentViewVector => @"
+	[Function( "GetTangentViewVector" )]
+	public static string GetTangentViewVector => @"
 float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 {
-    float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
-    vNormalWs = normalize( vNormalWs.xyz );
-   	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
+	float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
+	vNormalWs = normalize( vNormalWs.xyz );
+	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
 	
 	// Result
 	return vTangentViewVector.xyz;
 }
 ";
 	[Function( "GetWorldSpaceNormal" )]
-    public static string GetWorldSpaceNormal => @"
+	public static string GetWorldSpaceNormal => @"
 // Code by Josh Wilson.
 float3 GetWorldSpaceNormal( float2 vUv )
 {
-    float3 pos = Depth::GetWorldPosition(vUv);
-    
-    float offsetAmount = 0.5;
-    float2 offset1 = float2(offsetAmount, 0.0);
-    float2 offset2 = float2(0.0, offsetAmount);
-    
-    float3 tangentX = (Depth::GetWorldPosition(vUv + offset1) - Depth::GetWorldPosition(vUv - offset1)) / 2.0;
-    float3 tangentY = (Depth::GetWorldPosition(vUv + offset2) - Depth::GetWorldPosition(vUv - offset2)) / 2.0;
-    
-    float3 normal = cross(tangentY, tangentX);
+	float3 pos = Depth::GetWorldPosition(vUv);
+	
+	float offsetAmount = 0.5f;
+	float2 offset1 = float2( offsetAmount, 0.0f );
+	float2 offset2 = float2( 0.0f, offsetAmount );
+	
+	float3 tangentX = ( Depth::GetWorldPosition( vUv + offset1 ) - Depth::GetWorldPosition( vUv - offset1 ) ) / 2.0f;
+	float3 tangentY = ( Depth::GetWorldPosition( vUv + offset2 ) - Depth::GetWorldPosition( vUv - offset2 ) ) / 2.0f;
 
-    return lerp(float3(0.0, 0.0, 0.0), normalize(normal), step(0.01f, Depth::Get(vUv)));
+	float3 normal = cross( tangentY, tangentX );
+
+	return lerp( float3( 0.0f, 0.0f, 0.0f ), normalize( normal ), step( 0.01f, Depth::Get( vUv ) ) );
 }
 ";
 
 	[Function( "BoxShape" )]
-    public static string BoxShape => @"
+	public static string BoxShape => @"
 float BoxShape( float2 UV, float Width, float Height )
 {
-	float2 d = abs(UV * 2 - 1) - float2(Width, Height);
-    d = 1 - d / fwidth(d);
-	return saturate(min(d.x, d.y));
+	float2 d = abs( UV * 2 - 1 ) - float2( Width, Height );
+	d = 1 - d / fwidth( d );
+	return saturate( min( d.x, d.y ) );
 }
 ";
 
 
-    [Function( "ElipseShape" )]
+	[Function( "ElipseShape" )]
 	public static string ElipseShape => @"
 float ElipseShape( float2 UV, float Width, float Height )
 {
-    float d = length((UV * 2 - 1) / float2(Width, Height));
-    return saturate((1 - d) / fwidth(d));
+	float d = length( ( UV * 2 - 1) / float2( Width, Height ) );
+	return saturate( ( 1 - d ) / fwidth( d ) );
 }
 ";
 
-    [Function( "PolygonShape" )]
-    public static string PolygonShape => @"
-float PolygonShape( float2 UV, float Sides, float Width, float Height )
+	[Function( "PolygonShape" )]
+	public static string PolygonShape => @"
+float PolygonShape( float2 UV, int Sides, float Width, float Height )
 {
-    float pi = 3.14159265359;
-    float aWidth = Width * cos(pi / Sides);
-    float aHeight = Height * cos(pi / Sides);
-    float2 uv = (UV * 2 - 1) / float2(aWidth, aHeight);
-    uv.y *= -1;
-    float pCoord = atan2(uv.x, uv.y);
-    float r = 2 * pi / Sides;
-    float distance = cos(floor(0.5 + pCoord / r) * r - pCoord) * length(uv);
-    return saturate((1 - distance) / fwidth(distance));
+	float shapeSides = (float)Sides;
+	float pi = 3.14159265359;
+	float aWidth = Width * cos( pi / shapeSides );
+	float aHeight = Height * cos( pi / shapeSides );
+	float2 uv = ( UV * 2 - 1 ) / float2( aWidth, aHeight );
+	uv.y *= -1;
+	float pCoord = atan2( uv.x, uv.y );
+	float r = 2 * pi / shapeSides;
+	float distance = cos( floor( 0.5 + pCoord / r ) * r - pCoord ) * length( uv );
+	return saturate( ( 1 - distance ) / fwidth( distance ) );
 }
 ";
 
 	[Function( "RoundGradient" )]
-    public static string RoundGradient => @"
+	public static string RoundGradient => @"
 float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensity, bool bInvert )
 {
 	float flDistance = length( vUV - flCenter );
