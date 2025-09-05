@@ -101,9 +101,9 @@ PS
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{
-	    float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
-	    vNormalWs = normalize( vNormalWs.xyz );
-	   	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
+		float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
+		vNormalWs = normalize( vNormalWs.xyz );
+		float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
 		
 		// Result
 		return vTangentViewVector.xyz;
