@@ -17,7 +17,7 @@ public sealed class UVRotationNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Hide]
 public string UVRotation => @"
@@ -96,7 +96,7 @@ public sealed class UVScaleNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Hide]
 	public string UVScale => @"
@@ -155,7 +155,7 @@ public sealed class UVScaleByPointNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Hide]
 public static string UVScaleByPoint => @"
@@ -230,9 +230,9 @@ public sealed class UVScrollNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
-[Hide]
+	[Hide]
 public static string UVScroll => @"
 float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 {
@@ -310,7 +310,7 @@ public sealed class TileAndOffset : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -376,9 +376,9 @@ public sealed class FlipBookNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#bf7e00" )!.Value, Color.Parse( "#563a01" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
-[Hide]
+	[Hide]
 public static string FlipBook => @"
 float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool InvertX, bool InvertY )
 {

@@ -49,7 +49,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#639f33" )!.Value, Color.Parse( "#264318" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
 
 	//[Hide, JsonIgnore]
 	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
