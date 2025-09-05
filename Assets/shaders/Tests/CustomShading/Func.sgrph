@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "156,-336",
+      "Position": "156,-348",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -48,13 +48,13 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "358131b4-fc83-49e0-9a79-23100bd451b9",
+          "Id": "6ffe5a60-6b5d-4891-8313-8bf55e18f361",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "ae3ca451-f69c-42dd-9f71-b2bdb632ae7b",
+          "Id": "c51dcfde-4591-4d5e-8b54-de806f9435fb",
           "Name": "InFloat3_1",
           "Type": "Vector3",
           "Priority": 0
@@ -62,20 +62,20 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "e5dd93a6-cd4f-4370-8bfb-1482bf47b318",
+          "Id": "acf2c4cd-5b9f-4b92-b9b0-54285ddb8dd8",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "a09ac6b7-00df-4162-b4c1-0b41edf423c0",
+          "Id": "03c08128-6c22-485e-87df-a8d46ae1c91e",
           "Name": "OutFloat3_1",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "1",
-      "Position": "-108,-276",
+      "Position": "-108,-288",
       "HandleOffsets": {}
     },
     {
@@ -89,7 +89,7 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "5ae5b4a3-146d-4732-8ed7-ffeb9aaa0921",
+          "Id": "2469d716-5fab-415e-b7a1-36548262648f",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
@@ -97,21 +97,21 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "9c94fc46-0927-42b3-b2cc-bcdac94cde54",
+          "Id": "3dc4e4bf-d3d2-40b0-9df9-37a09fc0d4a8",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         }
       ],
       "Identifier": "2",
-      "Position": "-108,-336",
+      "Position": "-108,-348",
       "HandleOffsets": {}
     },
     {
       "_class": "Arccos",
       "__version": 1,
       "Identifier": "3",
-      "Position": "-288,-600",
+      "Position": "-288,-588",
       "HandleOffsets": {}
     },
     {
@@ -123,7 +123,7 @@
       "Description": "",
       "Layer": 1,
       "Identifier": "4",
-      "Position": "60,-600",
+      "Position": "204,-600",
       "HandleOffsets": {}
     },
     {
@@ -159,7 +159,7 @@
       "OutMax": 1,
       "Clamp": true,
       "Identifier": "8",
-      "Position": "-456,-696",
+      "Position": "-456,-684",
       "HandleOffsets": {}
     },
     {
@@ -196,7 +196,7 @@
       "DefaultPhase": 0,
       "DefaultStrength": 10,
       "Identifier": "12",
-      "Position": "-108,-192",
+      "Position": "-108,-204",
       "HandleOffsets": {}
     },
     {
@@ -207,7 +207,7 @@
       "B": true,
       "A": true,
       "Identifier": "13",
-      "Position": "-456,-336",
+      "Position": "-456,-348",
       "HandleOffsets": {}
     },
     {
@@ -218,14 +218,14 @@
       "DefaultZ": 0,
       "DefaultW": 0,
       "Identifier": "14",
-      "Position": "-288,-336",
+      "Position": "-288,-348",
       "HandleOffsets": {}
     },
     {
       "_class": "SplitVector",
       "__version": 1,
       "Identifier": "15",
-      "Position": "-456,-276",
+      "Position": "-456,-288",
       "HandleOffsets": {}
     }
   ]
