@@ -13,7 +13,7 @@ namespace ShaderGraphPlus.Nodes;
 ///
 /// </summary>
 [Title( "Random" ), Category( "PostProcessing/Utility" )]
-public sealed class RandomNode : ShaderNodePlus
+public sealed class RandomNode : ShaderNodePlus, IWarningNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -42,4 +42,13 @@ float2 Random(float2 vUv)
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+		warnings.Add( $"RandomNode is depreciated and will be removed in a future update." );
+
+		return warnings;
+	}
 }
