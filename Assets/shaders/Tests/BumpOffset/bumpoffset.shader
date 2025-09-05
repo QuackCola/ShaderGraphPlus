@@ -38,7 +38,6 @@ struct VertexInput
 {
 	#include "common/vertexinput.hlsl"
 	float4 vColor : COLOR0 < Semantic( Color ); >;
-	uint vInstanceID : SV_InstanceID;
 	
 };
 
@@ -53,7 +52,6 @@ struct PixelInput
 	#if ( PROGRAM == VFX_PROGRAM_PS )
 		bool vFrontFacing : SV_IsFrontFace;
 	#endif
-	uint vInstanceID : SV_InstanceID;
 	
 };
 
@@ -68,16 +66,12 @@ VS
 		i.vPositionOs = v.vPositionOs.xyz;
 		
 		i.vColor = v.vColor;
-		i.vInstanceID = v.vInstanceID;
 		
 		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 				
-		float l_0 = i.vInstanceID;
-		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
-		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
 	}

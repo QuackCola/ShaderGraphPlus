@@ -45,11 +45,6 @@
         "Identifier": "9",
         "Output": "Result",
         "Subgraph": null
-      },
-      "PositionOffset": {
-        "Identifier": "17",
-        "Output": "Result",
-        "Subgraph": null
       }
     },
     {
@@ -476,13 +471,6 @@
         "Output": "Result",
         "Subgraph": null
       }
-    },
-    {
-      "_class": "InstanceIdNode",
-      "__version": 1,
-      "Identifier": "17",
-      "Position": "-228,396",
-      "HandleOffsets": {}
     }
   ]
 }
