@@ -118,10 +118,8 @@ public sealed class Result : BaseResult
 	//[HideIf( nameof( IsCustomLighting ), true )]
 	//public NodeInput CustomLighting { get; set; }
 
-
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
-
+	//[JsonIgnore, Hide]
+	//public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
 
 	public override NodeInput GetAlbedo() => Albedo;
 	public override NodeInput GetEmission() => Emission;
