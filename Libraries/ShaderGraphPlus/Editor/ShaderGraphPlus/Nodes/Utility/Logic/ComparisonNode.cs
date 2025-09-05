@@ -18,7 +18,7 @@ public sealed class ComparisonNode : ShaderNodePlus, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#007762" )!.Value, Color.Parse( "#006d5b" )!.Value );
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#006b54" )!.Value, Color.Parse( "#006b54" )!.Value.Darken( .5f ) );
 	
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} (A {Op} B)";
