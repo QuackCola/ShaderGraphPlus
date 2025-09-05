@@ -60,7 +60,7 @@ public class SQRT2 : ConstantsNode
 /// A container for common math constants
 /// </summary>
 [Title( "Math Constants" ), Category( "Constants" )]
-public class MathConstantsNode : ShaderNodePlus
+public sealed class MathConstantsNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
