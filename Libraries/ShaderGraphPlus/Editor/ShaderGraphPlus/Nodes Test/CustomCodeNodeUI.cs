@@ -104,10 +104,10 @@ public sealed class CustomCodeNodeUI : NodeUI
 		{
 			rect = new Rect( rect.Position, new Vector2( rect.Width, TitleHeight ) );
 
-			Paint.ClearPen();
-			Paint.SetBrush( CustomCodeNode.HeaderColor1 );
-			Paint.SetBrushLinear( rect.Left, rect.Right, CustomCodeNode.HeaderColor1, CustomCodeNode.HeaderColor2 );
-			Paint.DrawRect( rect, 5f );
+			//Paint.ClearPen();
+			//Paint.SetBrush( CustomCodeNode.HeaderColor1 );
+			//Paint.SetBrushLinear( rect.Left, rect.Right, CustomCodeNode.HeaderColor1, CustomCodeNode.HeaderColor2 );
+			//Paint.DrawRect( rect, 5f );
 
 
 			//if ( DisplayInfo.Icon != null )

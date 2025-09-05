@@ -100,12 +100,6 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; } = new();
 
-	[Hide, JsonIgnore]
-	public virtual Color HeaderColor1 { get; } = Color.Gray;
-
-	[Hide, JsonIgnore]
-	public virtual Color HeaderColor2 { get; } = Color.Black;
-
 	public BaseNodePlus()
 	{
 		DisplayInfo = DisplayInfo.For( this );

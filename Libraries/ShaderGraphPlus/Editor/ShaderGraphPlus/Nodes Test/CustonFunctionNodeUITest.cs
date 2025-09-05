@@ -20,12 +20,6 @@ public class CustonFunctionNodeUITest : ShaderNodePlus
 	[CustomCodeEdit]
 	public string Body { get; set; } = "";
 
-	[Hide, JsonIgnore]
-	public override Color HeaderColor1 => Color.Red;
-
-	[Hide, JsonIgnore]
-	public override Color HeaderColor2 => Color.Black;
-
 	public CustonFunctionNodeUITest()
 	{
 		ExpandSize = new Vector2( 180, 180 );
