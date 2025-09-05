@@ -26,31 +26,31 @@ public abstract class ConstantsNode : ShaderNodePlus
 }
 
 [Title( "Pi" ), Category( "Constants" )]
-public class PI : ConstantsNode
+public sealed class PI : ConstantsNode
 {
 	protected override string Constant => "3.1415926";
 }
 
 [Title( "Tau" ), Category( "Constants" )]
-public class TAU : ConstantsNode
+public sealed class TAU : ConstantsNode
 {
 	protected override string Constant => "6.28318530";
 }
 
 [Title( "Phi" ), Category( "Constants" )]
-public class PHI : ConstantsNode
+public sealed class PHI : ConstantsNode
 {
 	protected override string Constant => "1.618034";
 }
 
 [Title( "E" ), Category( "Constants" )]
-public class E : ConstantsNode
+public sealed class E : ConstantsNode
 {
 	protected override string Constant => "2.718282";
 } 
 
 [Title( "SQRT2" ), Category( "Constants" )]
-public class SQRT2 : ConstantsNode
+public sealed class SQRT2 : ConstantsNode
 {
 	protected override string Constant => "1.414214";
 }
