@@ -40,6 +40,9 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#e05b0a" )!.Value, Color.Parse( "#5f2600" )!.Value );
+
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 	
@@ -78,8 +81,8 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
 
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
+	//[JsonIgnore, Hide]
+	//public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
 
 	public SubgraphInput()
 	{
