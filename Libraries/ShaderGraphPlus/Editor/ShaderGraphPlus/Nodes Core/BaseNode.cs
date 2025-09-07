@@ -190,6 +190,12 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool HasTitleBar => true;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool HasError { get; set; } = false;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool HasWarning { get; set; } = false;
+
 	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputAttribute : Attribute
 	{

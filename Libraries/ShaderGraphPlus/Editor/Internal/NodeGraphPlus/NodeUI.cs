@@ -129,7 +129,10 @@ public partial class NodeUI : GraphicsItem
 
 	public Color SelectionOutline = Color.Parse( "#ff99c8" ) ?? default;
 	public Color PrimaryColor = Color.Parse( "#ff99c8" ) ?? default;
-	public (Color LeftColor, Color RightColor) PrimaryHeaderTheme = new (Color.Gray, Color.Gray.Darken( 0.5f ));
+	public Color ErrorOutline = Color.Red;
+	public Color WarningOutline = Color.Yellow.Lighten( .5f );
+	public (Color LeftColor, Color RightColor) PrimaryHeaderTheme = new ( Color.Gray, Color.Gray.Darken( 0.5f ) );
+
 
 	public List<PlugIn> Inputs = new();
 	public List<PlugOut> Outputs = new();
@@ -624,18 +627,37 @@ public partial class NodeUI : GraphicsItem
 
 		Node.OnPaint( rect );
 
+		var selectionOutline = SelectionOutline;
+
+		if ( Node.HasError )
+		{
+			selectionOutline = ErrorOutline;
+		}
+		else if ( Node.HasWarning )
+		{
+			selectionOutline = WarningOutline;
+		}
+
+		if ( Node.HasError || Node.HasWarning )
+		{
+			Paint.SetPen( selectionOutline, 1.0f );
+			Paint.ClearBrush();
+			Paint.DrawRect( rect, radius );
+		}
+
 		if ( Paint.HasSelected )
 		{
-			Paint.SetPen( SelectionOutline, 2.0f );
+			Paint.SetPen( selectionOutline, 2.0f );
 			Paint.ClearBrush();
 			Paint.DrawRect( rect, radius );
 		}
 		else if ( Paint.HasMouseOver )
 		{
-			Paint.SetPen( SelectionOutline, 1.0f );
+			Paint.SetPen( selectionOutline, 3.0f );
 			Paint.ClearBrush();
 			Paint.DrawRect( rect, radius );
 		}
+
 	}
 
 	protected override void OnMousePressed( GraphicsMouseEvent e )

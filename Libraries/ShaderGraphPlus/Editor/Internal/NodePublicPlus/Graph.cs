@@ -96,6 +96,8 @@ public interface INodePlus
 	void OnPaint( Rect rect );
 	void OnDoubleClick( MouseEvent e );
 	bool HasTitleBar { get; }
+	bool HasError { get; set; }
+	bool HasWarning { get; set; }
 
 	NodeUI CreateUI( GraphView view );
 	Color GetPrimaryColor( GraphView view );

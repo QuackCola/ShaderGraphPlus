@@ -13,7 +13,7 @@ namespace ShaderGraphPlus.Nodes;
 /// Container for HLSL code.
 /// </summary>
 [Title( "Custom Function" ), Category( "Utility" ), Icon( "code" )]
-public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
+public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, IInitializeNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -463,6 +463,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		
 		if ( !ExpressionOutputs.Any() )
 		{
+			HasError = true;
 			return [ $"`{DisplayInfo.Name}` must have atleast 1 output." ];
 		}
 
@@ -470,6 +471,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		{
 			if ( string.IsNullOrWhiteSpace( output.Name ) )
 			{
+				HasError = true;
 				return [ $"An output is not allowed to have an empty name!" ];
 			}
 		}
@@ -478,28 +480,60 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IInitializeNode
 		{
 			if ( Type is CustomCodeNodeMode.File )
 			{
+				HasError = true;
 				return [ $"`{DisplayInfo.Name}` Cannot call function with no name!" ];
 			}
 			else
 			{
+				HasError = true;
 				return [ $"`{DisplayInfo.Name}` Cannot generate a function with no name!" ];
 			}
+
+			
 		}
 		
 		if ( Type is CustomCodeNodeMode.File )
 		{
 			if ( string.IsNullOrWhiteSpace( Source ) )
 			{
+				HasError = true;
 				return [ $"`{DisplayInfo.Name}` Source path is empty!" ];
 			}
 			
 			if ( !Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
 			{
+				HasError = true;
 				return [ $"Include file `shaders/{Source}` does not exist." ];
 			}
 		}
-		
+
+		if ( errors.Any() )
+		{
+			HasError = true;
+		}
+		else
+		{
+			HasError = false;
+		}
+
 		return errors;
+	}
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+
+		if ( warnings.Any() )
+		{
+			HasWarning = true;
+		}
+		else
+		{
+			HasWarning = false;
+		}
+
+		return warnings;
 	}
 }
 
