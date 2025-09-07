@@ -1,5 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
+// TODO : Probably dont need sperate templates anymore. So remove this file if thats the case.
 public static class ShaderTemplateBlending
 {
     public static string Code => @"
@@ -29,7 +30,6 @@ COMMON
 	#include ""procedural.hlsl""
 	
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }}
 
 struct VertexInput
