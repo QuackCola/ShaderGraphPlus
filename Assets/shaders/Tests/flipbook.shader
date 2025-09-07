@@ -31,7 +31,6 @@ COMMON
 	#include "procedural.hlsl"
 
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
@@ -67,9 +66,8 @@ VS
 		
 		i.vColor = v.vColor;
 		
-		//ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v ); 
-		//i.vTintColor = extraShaderData.vTint; // TODO : figure out what same replaced this with.
-		i.vTintColor = float4( 0.0f, 0.0f, 0.0f, 1.0f );
+		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
+		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 				
@@ -142,6 +140,6 @@ PS
 		m.WorldTangentV = i.vTangentVWs;
 		m.TextureCoords = i.vTextureCoords.xy;
 				
-		return ShadingModelStandard::Shade( i, m );
+		return ShadingModelStandard::Shade( m );
 	}
 }

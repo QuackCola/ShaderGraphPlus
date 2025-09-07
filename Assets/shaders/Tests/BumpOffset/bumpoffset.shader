@@ -31,7 +31,6 @@ COMMON
 	#include "procedural.hlsl"
 
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput

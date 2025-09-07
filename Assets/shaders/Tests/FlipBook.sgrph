@@ -2,7 +2,7 @@
   "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/tests/flipbook.sgrph",
-  "Model": "models/dev/plane.vmdl",
+  "Model": "models/dev/box.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,

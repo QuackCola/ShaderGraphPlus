@@ -29,7 +29,6 @@ COMMON
 	#include ""procedural.hlsl""
 
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }}
 
 struct VertexInput
@@ -132,7 +131,7 @@ m.Opacity = 1;
 m.Emission = float3( 0, 0, 0 );
 m.Transmission = 0;";
 
-    public static string Material_output => @"
+	public static string Material_output => @"
 m.AmbientOcclusion = saturate( m.AmbientOcclusion );
 m.Roughness = saturate( m.Roughness );
 m.Metalness = saturate( m.Metalness );
@@ -146,7 +145,7 @@ m.WorldTangentU = i.vTangentUWs;
 m.WorldTangentV = i.vTangentVWs;
 m.TextureCoords = i.vTextureCoords.xy;
 		
-return ShadingModelStandard::Shade( i, m );";
+return ShadingModelStandard::Shade( m );";
 
 
 	public static string TextureDefinition => @"<!-- dmx encoding keyvalues2_noids 1 format vtex 1 -->
