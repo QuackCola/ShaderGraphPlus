@@ -1,7 +1,15 @@
 ﻿using Editor.ShaderGraph;
 using Sandbox.Resources;
-using ShaderGraphPlus.Nodes;
+
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+
 using System.Text;
+using ShaderGraphPlus.Nodes;
 
 
 namespace ShaderGraphPlus;
@@ -147,6 +155,9 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#e05b0a" )!.Value, Color.Parse( "#5f2600" )!.Value );
+
 	[Hide, JsonIgnore]
 	public override bool CanRemove => true;
 
@@ -186,7 +197,6 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 			
 			CreateInput();
-			IsDirty = true;
 			Update();
 		}
 	}
@@ -245,7 +255,6 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public void InitializeNode()
 	{
 		CreateInput();
-		IsDirty = true;
 		Update();
 	}
 

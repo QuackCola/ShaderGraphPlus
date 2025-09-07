@@ -1,4 +1,11 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 public enum BlendNodeMode
 {
@@ -52,15 +59,38 @@ public class InvertColorsNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
-	public NodeInput Color { get; set; }
+	public NodeInput Input { get; set; }
 	
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-        return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "InvertColors", $"{compiler.ResultOrDefault( Color, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "InvertColors", $"{compiler.ResultOrDefault( Input, Vector3.One )}" ) );
+	};
+}
+
+[Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]
+public class MakeGreyscaleNode : ShaderNodePlus
+{
+	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput ColorInput { get; set; }
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Float, compiler.ResultFunction( "ToGreyscale", $"{compiler.ResultOrDefault( ColorInput, Vector3.One )}" ) );
 	};
 }
 
@@ -72,6 +102,9 @@ public sealed class TransformNormal : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	/// <summary>
 	/// Normal input. No input specified will output vertex normal in world space
@@ -139,7 +172,6 @@ public sealed class TransformNormal : ShaderNodePlus
 	};
 }
 
-
 /// <summary>
 /// Translate, rotate and scale a <see cref="Vector3"/>.
 /// </summary>
@@ -147,6 +179,9 @@ public sealed class TransformNormal : ShaderNodePlus
 public sealed class ApplyTrs : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -218,6 +253,9 @@ public sealed class PolarCoordinates : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Coords { get; set; }
@@ -271,6 +309,9 @@ public sealed class PolarCoordinates : ShaderNodePlus
 public sealed class Blend : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	[Input( typeof( Color ) )]
 	[Hide]
@@ -398,6 +439,9 @@ public sealed class NormalBlend : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Hide]
 	public static string NormalBlendVector => @"
 float3 NormalBlendVector( float3 a, float3 b)
@@ -464,6 +508,8 @@ public sealed class Reflection : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	[Hide]
 	public static string ReflectVector => @"
@@ -510,6 +556,9 @@ public sealed class RGBtoHSV : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput In { get; set; }
@@ -526,6 +575,9 @@ public sealed class RGBtoHSV : ShaderNodePlus
 public sealed class HSVtoRGB : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -544,6 +596,9 @@ public sealed class RGBtoLinear : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput In { get; set; }
@@ -560,6 +615,9 @@ public sealed class RGBtoLinear : ShaderNodePlus
 public sealed class LineartoRGB : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -578,6 +636,9 @@ public sealed class LineartoHSV : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput In { get; set; }
@@ -595,6 +656,9 @@ public sealed class HSVtoLinear : ShaderNodePlus
 {
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
+
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput In { get; set; }
@@ -611,6 +675,9 @@ public sealed class HSVtoLinear : ShaderNodePlus
 public sealed class HeightToNormal : ShaderNodePlus
 {
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#6C3BAA" )!.Value, Color.Parse( "#31115d" )!.Value );
 
 	public enum OutputNormalSpace
 	{
@@ -686,21 +753,4 @@ public sealed class HeightToNormal : ShaderNodePlus
         return new NodeResult( ResultType.Vector3, result );
     };
 
-}
-
-[Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]
-public class MakeGreyscaleNode : ShaderNodePlus
-{
-	public override int Version => 1;
-
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput ColorInput { get; set; }
-
-	[Output( typeof( float ) )]
-	[Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "ToGreyscale", $"{compiler.ResultOrDefault( ColorInput, Vector3.One )}" ) );
-	};
 }

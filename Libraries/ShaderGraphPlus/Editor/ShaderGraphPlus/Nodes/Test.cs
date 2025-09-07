@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 [Title("Test Matrix Input Node"), Description("Test for verifying a matrix can be passed into a node and not cause any issues."), Category("Dev")]
 [Hide]

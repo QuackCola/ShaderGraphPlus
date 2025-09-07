@@ -1,5 +1,5 @@
 {
-  "__version": 1,
+  "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/tests/bumpoffset/bumpoffset.sgrph",
   "Model": "models/dev/box.vmdl",
@@ -443,6 +443,7 @@
       "_class": "SwitchNode",
       "__version": 1,
       "Name": "",
+      "IsAttribute": true,
       "Enabled": true,
       "UI": {
         "Type": "Default",

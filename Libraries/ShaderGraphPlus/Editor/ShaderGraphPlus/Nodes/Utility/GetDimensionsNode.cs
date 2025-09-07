@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Get the dimensions of a Texture2D Object in the width and height.
@@ -8,6 +14,9 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]

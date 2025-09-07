@@ -1,5 +1,6 @@
 ﻿
 using Editor;
+using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 
@@ -11,7 +12,7 @@ public partial class PaletteWidget : Widget
 
     private bool IsSubgraph { get; }
 
-    public PaletteWidget(Widget parent, bool isSubgraph) : base(parent)
+    public PaletteWidget( Widget parent, bool isSubgraph ) : base( parent )
     {
 		Name = "Palette";
 		WindowTitle = "Palette";

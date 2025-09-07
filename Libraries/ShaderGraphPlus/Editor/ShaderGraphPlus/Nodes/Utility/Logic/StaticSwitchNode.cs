@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -19,11 +23,14 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 { 
 }
 
-[Title( "Static Combo Switch" ), Category( "Utility" ), Icon( "alt_route" )]
+[Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 public sealed class StaticSwitchNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#006b54" )!.Value, Color.Parse( "#006b54" )!.Value.Darken( .5f ) );
 
 	[Hide]
 	public override string Title

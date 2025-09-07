@@ -1,4 +1,10 @@
 ﻿using Editor;
+using NodeEditorPlus;
+using ShaderGraphPlus.Nodes;
+using GraphView = NodeEditorPlus.GraphView;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 
@@ -10,6 +16,19 @@ public sealed class Result : BaseResult
 {
 	[Hide]
 	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#84705e" )!.Value, Color.Parse( "#39332a" )!.Value );
+
+	[Hide]
+	public override string Title
+	{
+		get
+		{
+			var graph = Graph as ShaderGraphPlus;
+			return $"{DisplayInfo.For( this ).Name} ( {graph.ShadingModel} )";
+		}
+	}
 
 	[Hide]
 	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
@@ -99,10 +118,8 @@ public sealed class Result : BaseResult
 	//[HideIf( nameof( IsCustomLighting ), true )]
 	//public NodeInput CustomLighting { get; set; }
 
-
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
-
+	//[JsonIgnore, Hide]
+	//public override Color PrimaryColor => Color.Lerp( Theme.Blue, Color.White, 0.25f );
 
 	public override NodeInput GetAlbedo() => Albedo;
 	public override NodeInput GetEmission() => Emission;

@@ -1,7 +1,8 @@
-﻿using Facepunch.ActionGraphs;
-using Sandbox;
-using System.Xml.Linq;
-using static Sandbox.Material;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -14,29 +15,37 @@ public sealed class RoundGradientNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Coords { get; set; }
 
+	/// <summary>
+	/// The center position of the round gradient.
+	/// </summary>
 	[Title( "Center" )]
-	[Description( "The center position of the round gradient." )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput CenterPos { get; set; }
 
+	/// <summary>
+	/// The radius of the round gradient.
+	/// </summary>
 	[Input( typeof( float ) )]
-	[Description("The radius of the round gradient.")]
 	[Hide]
 	public NodeInput Radius { get; set; }
 
+	/// <summary>
+	/// How dense you want the round gradient to be.
+	/// </summary>
 	[Input( typeof( float ) )]
-	[Description("How dense you want the round gradient to be.")]
 	[Hide]
 	public NodeInput Density { get; set; }
 
 	[Input( typeof( bool ) )]
-	[Description("")]
 	[Hide]
 	public NodeInput Invert { get; set; }
 

@@ -1,4 +1,9 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+
+namespace ShaderGraphPlus.Nodes;
 
 [Title("World Normals from Depth"), Category("Utility")]
 public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus, IWarningNode

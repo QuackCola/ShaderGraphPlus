@@ -1,7 +1,16 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 public abstract class MatrixParameterNode<T> : ShaderNodePlus
 {
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
+
 	public string Name { get; set; } = "";
 
 	[Hide]

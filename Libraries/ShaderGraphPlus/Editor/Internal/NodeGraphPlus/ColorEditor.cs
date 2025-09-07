@@ -1,17 +1,17 @@
 ﻿using Editor;
 
-namespace ShaderGraphPlus;
+namespace NodeEditorPlus;
 
-public class ColorEditorPlus : ValueEditor
+public class ColorEditor : ValueEditor
 {
 	public string Title { get; set; }
 	public Color Value { get; set; }
 	public NodeUI Node { get; set; }
 
-	private SubgraphNode BoundNode;
+	//private SubgraphNode BoundNode;
 	private string BoundParameter;
 
-	public ColorEditorPlus( GraphicsItem parent ) : base( parent )
+	public ColorEditor( GraphicsItem parent ) : base( parent )
 	{
 		HoverEvents = true;
 		Cursor = CursorShape.Finger;
@@ -96,10 +96,10 @@ public class ColorEditorPlus : ValueEditor
 		ColorPicker.OpenColorPopup( Value, ( v ) =>
 		{
 			Value = v;
-			if ( BoundNode is not null )
-			{
-				BoundNode.DefaultValues[BoundParameter] = v;
-			}
+			//if ( BoundNode is not null )
+			//{
+			//	BoundNode.DefaultValues[BoundParameter] = v;
+			//}
 			Node.Graph.ChildValuesChanged( null );
 			Node.Update();
 		}, position );
@@ -107,11 +107,11 @@ public class ColorEditorPlus : ValueEditor
 		e.Accepted = true;
 	}
 
-	public void BindToParameter( SubgraphNode subgraphNode, string parameter )
-	{
-		BoundNode = subgraphNode;
-		BoundParameter = parameter;
-
-		Value = Color.Parse( subgraphNode.DefaultValues[parameter].ToString() ) ?? Color.White;
-	}
+	//public void BindToParameter( SubgraphNode subgraphNode, string parameter )
+	//{
+	//	BoundNode = subgraphNode;
+	//	BoundParameter = parameter;
+	//
+	//	Value = Color.Parse( subgraphNode.DefaultValues[parameter].ToString() ) ?? Color.White;
+	//}
 }

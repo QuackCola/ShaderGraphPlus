@@ -1,43 +1,58 @@
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
 namespace ShaderGraphPlus.Nodes;
 
 /*
 public abstract class ConstantsNode : ShaderNodePlus
 {
-    protected virtual string Constant { get; }
+	[Hide]
+	public override int Version => 1;
 
-    [Output( typeof( float ) )]
-    [Hide] 
-    public NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Float, $"{Constant}" );
+	[Hide]
+	public override string Title => $"{DisplayInfo.For( this ).Name} ( {Constant} )";
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
+
+	protected virtual string Constant { get; }
+
+	[Output( typeof( float ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Float, $"{Constant}" );
 }
 
 [Title( "Pi" ), Category( "Constants" )]
-public class PI : ConstantsNode
+public sealed class PI : ConstantsNode
 {
-  protected override string Constant => "3.1415926";
+	protected override string Constant => "3.1415926";
 }
 
 [Title( "Tau" ), Category( "Constants" )]
-public class TAU : ConstantsNode
+public sealed class TAU : ConstantsNode
 {
-  protected override string Constant => "6.28318530";
+	protected override string Constant => "6.28318530";
 }
 
 [Title( "Phi" ), Category( "Constants" )]
-public class PHI : ConstantsNode
+public sealed class PHI : ConstantsNode
 {
-  protected override string Constant => "1.618034";
+	protected override string Constant => "1.618034";
 }
 
 [Title( "E" ), Category( "Constants" )]
-public class E : ConstantsNode
+public sealed class E : ConstantsNode
 {
-  protected override string Constant => "2.718282";
+	protected override string Constant => "2.718282";
 } 
 
 [Title( "SQRT2" ), Category( "Constants" )]
-public class SQRT2 : ConstantsNode
+public sealed class SQRT2 : ConstantsNode
 {
-  protected override string Constant => "1.414214";
+	protected override string Constant => "1.414214";
 }
 */
 
@@ -45,22 +60,25 @@ public class SQRT2 : ConstantsNode
 /// A container for common math constants
 /// </summary>
 [Title( "Math Constants" ), Category( "Constants" )]
-public class MathConstantsNode : ShaderNodePlus
+public sealed class MathConstantsNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
 
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} ({Constant})";
 
 	public enum ConstantValues
-    {
-        PI,
+	{
+		PI,
 		TWOPI,
 		FOURPI,
 		TAU,
-        PHI,
-        E,
+		PHI,
+		E,
 		LOG2E,
 		LOG10E,
 		LN2,
@@ -69,36 +87,36 @@ public class MathConstantsNode : ShaderNodePlus
 		SQRT1_2
 	}
 
-    public ConstantValues Constant { get; set; }
+	public ConstantValues Constant { get; set; }
 
-    [Hide]
-    private string ConstantResult
+	[Hide]
+	private string ConstantResult
 	{
 		get
 		{
-           return Constant switch
-		   {					     
+			return Constant switch
+			{
 				ConstantValues.PI      => "3.14159265359",
 				ConstantValues.TWOPI   => "6.28318530718",
-			    ConstantValues.FOURPI  => "0.78539816339",
-			    ConstantValues.TAU     => "6.28318530717",
-                ConstantValues.PHI     => "1.6180339887",
-                ConstantValues.E       => "2.718282",
-			    ConstantValues.LOG2E   => "1.44269504088",
-			    ConstantValues.LOG10E  => "0.43429448190",
-			    ConstantValues.LN2     => "0.69314718055",
-			    ConstantValues.LN10    => "2.30258509299",
-			    ConstantValues.SQRT2   => "1.41421356237",
-			    ConstantValues.SQRT1_2 => "0.70710678118",
-			   _ => throw new System.NotImplementedException(),
-            };
-        }
-    }
+				ConstantValues.FOURPI  => "0.78539816339",
+				ConstantValues.TAU     => "6.28318530717",
+				ConstantValues.PHI     => "1.6180339887",
+				ConstantValues.E       => "2.718282",
+				ConstantValues.LOG2E   => "1.44269504088",
+				ConstantValues.LOG10E  => "0.43429448190",
+				ConstantValues.LN2     => "0.69314718055",
+				ConstantValues.LN10    => "2.30258509299",
+				ConstantValues.SQRT2   => "1.41421356237",
+				ConstantValues.SQRT1_2 => "0.70710678118",
+				_ => throw new System.NotImplementedException(),
+			};
+		}
+	}
 
-    [Output( typeof( float ) )]
-    [Hide]
-    public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-    {
-        return new NodeResult( ResultType.Float, ConstantResult );
-    };
+	[Output( typeof( float ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Float, ConstantResult );
+	};
 }

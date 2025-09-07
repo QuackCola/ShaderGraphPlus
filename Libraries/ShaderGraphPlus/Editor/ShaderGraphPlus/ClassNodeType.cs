@@ -1,6 +1,7 @@
 ﻿
 //using Editor.ShaderGraph;
 using Editor;
+using NodeEditorPlus;
 
 
 namespace ShaderGraphPlus;
@@ -13,7 +14,7 @@ public class TextureNodeType : ClassNodeType
 	{
 		ImagePath = imagePath;
 	}
-	public override INode CreateNode( IGraph graph )
+	public override INodePlus CreateNode( IGraphPlus graph )
 	{
 		var node = base.CreateNode( graph );
 		if ( node is ITextureParameterNode textureNode )
@@ -24,7 +25,7 @@ public class TextureNodeType : ClassNodeType
 	}
 }
 
-public class ClassNodeType : INodeType
+public class ClassNodeType : INodeTypePlus
 {
 	public virtual string Identifier => Type.FullName;
 
@@ -67,7 +68,7 @@ public class ClassNodeType : INodeType
         return name is not null;
     }
 
-    public virtual INode CreateNode(IGraph graph)
+    public virtual INodePlus CreateNode(IGraphPlus graph)
     {
 		var node = Type.Create<BaseNodePlus>();
 
@@ -104,7 +105,7 @@ public class SubgraphNodeType : ClassNodeType
 		DisplayInfo = info;
 	}
 
-	public override INode CreateNode( IGraph graph )
+	public override INodePlus CreateNode( IGraphPlus graph )
 	{
 		var node = base.CreateNode( graph );
 

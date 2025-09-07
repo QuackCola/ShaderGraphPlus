@@ -1,4 +1,9 @@
-﻿using Sandbox.Rendering;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using Sandbox.Rendering;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -10,6 +15,9 @@ public sealed class PixelPlotNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[Hide]
 public string PixelPlot => @"	

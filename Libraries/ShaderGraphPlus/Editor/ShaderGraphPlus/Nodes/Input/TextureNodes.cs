@@ -1,5 +1,9 @@
 ﻿using Editor;
-using Sandbox.Rendering;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -18,6 +22,9 @@ public interface ISyncableTextureNode
 
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode
 {
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	[Hide]
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
@@ -203,7 +210,6 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Hide]
 	public override int Version => 1;
 
-
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
 	/// </summary>
@@ -358,6 +364,8 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[JsonIgnore, Hide]
 	public bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
@@ -743,6 +751,9 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex position)
 	/// </summary>
@@ -911,6 +922,9 @@ public sealed class TextureCoord : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+
 	/// <summary>
 	/// Use the secondary vertex coordinate
 	/// </summary>
@@ -952,6 +966,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[Hide]
 	public override string Title
@@ -1127,6 +1144,9 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	//[Hide, JsonIgnore]
 	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
 	//
@@ -1137,7 +1157,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	//	return subgraphInputNode;
 	//}
 
-#region ITextureInputNode
+	#region ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]
 	public string TextureInputName => UI.Name;
 
@@ -1436,6 +1456,9 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
 
 	//[Hide, JsonIgnore]
 	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );

@@ -1,4 +1,9 @@
-﻿
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
 namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
@@ -9,6 +14,9 @@ public sealed class InstanceIdNode : ShaderNodePlus, IPreRegisterNodeData
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	public void PreRegister( GraphCompiler compiler )
 	{

@@ -1,14 +1,22 @@
 ﻿using Editor;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
 public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 {
 	[Hide]
-	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#e05b0a" )!.Value, Color.Parse( "#5f2600" )!.Value );
 
 	[Hide]
-	public override int Version => 1;
+	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[Hide]
 	public string SubgraphPath { get; set; }
@@ -28,8 +36,8 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	[Hide]
 	public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
 
-	[JsonIgnore, Hide]
-	public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.Green, 0.5f );
+	//[JsonIgnore, Hide]
+	//public override Color PrimaryColor => Color.Lerp( Theme.Blue, Theme.Green, 0.5f );
 
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;

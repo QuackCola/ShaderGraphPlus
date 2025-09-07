@@ -1,5 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
+
 public struct NodeInput : IValid
 {
 	[Hide, Browsable( false )]

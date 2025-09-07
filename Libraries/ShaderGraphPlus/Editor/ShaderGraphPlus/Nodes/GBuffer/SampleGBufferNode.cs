@@ -1,10 +1,18 @@
-﻿
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
 namespace ShaderGraphPlus.Nodes;
 
 public abstract class GBufferSampleNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[Input( typeof( Vector2 ) ), Title( "ScreenPos" ) , Hide]
 	public NodeInput ScreenPosition { get; set; }

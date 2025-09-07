@@ -1,3 +1,4 @@
+using NodeEditorPlus;
 using System.Linq;
 
 namespace ShaderGraphPlus;
@@ -44,7 +45,7 @@ public class PreviewSettings
 
 //[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
 [AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
-public partial class ShaderGraphPlus : IGraph//, ISGPJsonUpgradeable
+public partial class ShaderGraphPlus : IGraphPlus//, ISGPJsonUpgradeable
 {
 	[Hide, JsonPropertyName( "__version" )]
 	public int Version { get; set; } = 2;
@@ -56,7 +57,7 @@ public partial class ShaderGraphPlus : IGraph//, ISGPJsonUpgradeable
 	private readonly Dictionary<string, BaseNodePlus> _nodes = new();
 
 	[Hide, JsonIgnore]
-	IEnumerable<INode> IGraph.Nodes => Nodes;
+	IEnumerable<INodePlus> IGraphPlus.Nodes => Nodes;
 
 	[Hide, JsonIgnore]
 	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
@@ -180,22 +181,22 @@ public partial class ShaderGraphPlus : IGraph//, ISGPJsonUpgradeable
 		_nodes.Clear();
 	}
 
-	string IGraph.SerializeNodes( IEnumerable<INode> nodes )
+	string IGraphPlus.SerializeNodes( IEnumerable<INodePlus> nodes )
 	{
 		return SerializeNodes( nodes.Cast<BaseNodePlus>() );
 	}
 
-	IEnumerable<INode> IGraph.DeserializeNodes( string serialized )
+	IEnumerable<INodePlus> IGraphPlus.DeserializeNodes( string serialized )
 	{
 		return DeserializeNodes( serialized );
 	}
 
-	void IGraph.AddNode( INode node )
+	void IGraphPlus.AddNode( INodePlus node )
 	{
 		AddNode( (BaseNodePlus)node );
 	}
 
-	void IGraph.RemoveNode( INode node )
+	void IGraphPlus.RemoveNode( INodePlus node )
 	{
 		RemoveNode( (BaseNodePlus)node );
 	}

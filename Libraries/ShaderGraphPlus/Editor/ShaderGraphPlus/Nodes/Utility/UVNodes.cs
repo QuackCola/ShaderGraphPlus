@@ -1,4 +1,8 @@
-﻿using System.Numerics;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -11,6 +15,9 @@ public sealed class UVRotationNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Hide]
 public string UVRotation => @"
@@ -88,6 +95,9 @@ public sealed class UVScaleNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
 	[Hide]
 	public string UVScale => @"
 	float2 UVScale( float2 vUv, float2 vScale )
@@ -144,7 +154,10 @@ public sealed class UVScaleByPointNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-[Hide]
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
+	[Hide]
 public static string UVScaleByPoint => @"
 //  vUv - UV coordinates input.
 //  flCenter - Center point to scale from. A flCenter 0f 0.5 would let you scale by the center. 
@@ -216,7 +229,10 @@ public sealed class UVScrollNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-[Hide]
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
+	[Hide]
 public static string UVScroll => @"
 float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 {
@@ -293,6 +309,9 @@ public sealed class TileAndOffset : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput UV { get; set; }
@@ -356,7 +375,10 @@ public sealed class FlipBookNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-[Hide]
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+
+	[Hide]
 public static string FlipBook => @"
 float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool InvertX, bool InvertY )
 {

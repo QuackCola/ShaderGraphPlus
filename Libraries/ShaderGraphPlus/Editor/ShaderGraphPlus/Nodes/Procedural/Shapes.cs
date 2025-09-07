@@ -1,4 +1,11 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Basic procedural box shape
@@ -8,6 +15,9 @@ public sealed class BoxShapeNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
@@ -63,6 +73,9 @@ public sealed class ElipseShapeNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -117,13 +130,16 @@ public sealed class PolygonShapeNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0f2851" )!.Value );
+
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
 	public NodeInput Coords { get; set; }
 
 	[Title( "Sides" )]
-	[Input( typeof( float ) )]
+	[Input( typeof( int ) )]
 	[Hide]
 	public NodeInput Sides { get; set; }
 

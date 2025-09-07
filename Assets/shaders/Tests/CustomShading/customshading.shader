@@ -90,9 +90,9 @@ PS
 	{
 
 		
-		float4 l_0 = float4( 0.4333334, 0, 1, 1 );
+		float4 l_0 = float4( 0.43333, 0, 1, 1 );
 		float3 l_1 = l_0.xyz;
-		float4 l_2 = float4( 0.52167445, 0.8, 0.040930223, 1 );
+		float4 l_2 = float4( 0.52167, 0.8, 0.04093, 1 );
 		float3 l_3 = l_2.xyz;
 		float2 l_4 = i.vPositionSs.xy;
 		float3 l_5 = i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz;

@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 [Title( "Float 3x3" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
 public sealed class Float3x3Node : MatrixParameterNode<Float3x3>

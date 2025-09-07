@@ -1,8 +1,16 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+// TODO : Remove?
+
+namespace ShaderGraphPlus.Nodes;
 
 
 [Title( "Crt Boarder" ), Category( "PostProcessing/Crt" )]
-public class CRTBoarderNode : ShaderNodePlus
+public class CRTBoarderNode : ShaderNodePlus, IWarningNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -53,4 +61,13 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 		
 		return new NodeResult( ResultType.Vector3, funcCall );
 	};
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+		warnings.Add( $"CRTBoarderNode is depreciated and will be removed in a future update." );
+
+		return warnings;
+	}
 }

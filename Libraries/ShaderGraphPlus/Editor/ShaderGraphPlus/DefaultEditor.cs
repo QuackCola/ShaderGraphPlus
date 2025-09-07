@@ -2,6 +2,13 @@
 using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
 using System.Text.Json;
+using NodeEditorPlus;
+
+using ValueEditor = NodeEditorPlus.ValueEditor;
+using Plug = NodeEditorPlus.Plug;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using HandleConfig = NodeEditorPlus.HandleConfig;
 
 namespace ShaderGraphPlus;
 

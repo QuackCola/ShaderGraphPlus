@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// WIP Depth Intersection Effect. May not be "Correct".
@@ -8,6 +14,9 @@ public sealed class DepthIntersectionNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Hide]
 	public static string DepthIntersect => @"

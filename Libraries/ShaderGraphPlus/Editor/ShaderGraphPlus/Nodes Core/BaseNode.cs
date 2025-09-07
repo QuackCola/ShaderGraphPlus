@@ -1,5 +1,14 @@
 ﻿using Editor;
+using NodeEditorPlus;
 using Sandbox;
+using FloatEditor = NodeEditorPlus.FloatEditor;
+using GraphView = NodeEditorPlus.GraphView;
+using IPlug = NodeEditorPlus.IPlug;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
+using Plug = NodeEditorPlus.Plug;
+using ValueEditor = NodeEditorPlus.ValueEditor;
 
 namespace ShaderGraphPlus;
 
@@ -11,7 +20,7 @@ internal class SubgraphOnlyAttribute : Attribute
 	}
 }
 
-public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
+public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 {
 	public event Action Changed;
 
@@ -43,7 +52,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 	public Vector2 Position { get; set; }
 
 	[JsonIgnore, Hide]
-	public IGraph _graph;
+	public IGraphPlus _graph;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	internal int PreviewID { get; set; }
@@ -56,7 +65,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
-	public IGraph Graph
+	public IGraphPlus Graph
 	{
 		get => _graph;
 		set
@@ -130,6 +139,11 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 		return PrimaryColor;
 	}
 
+	public (Color LeftColor, Color RightColor) GetPrimaryHeaderTheme( GraphView view )
+	{
+		return PrimaryHeaderTheme;
+	}
+
 	public virtual Menu CreateContextMenu( NodeUI node )
 	{
 		return null;
@@ -157,8 +171,12 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 	public virtual Pixmap Thumbnail { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual Color PrimaryColor { get; } = Color.Lerp( new Color( 0.7f, 0.7f, 0.7f ), Theme.Blue, 0.1f );
+	public virtual Color PrimaryColor { get; } = Color.Parse( "#303030" )!.Value.Lighten( 2.0f );//Color.Lerp( new Color( 0.7f, 0.7f, 0.7f ), Theme.Blue, 0.1f );
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public virtual (Color LeftColor, Color RightColor) PrimaryHeaderTheme { get; } = new ( Color.Gray, Color.Gray.Darken( 0.5f ) );
+
+	
 	public virtual void OnPaint( Rect rect )
 	{
 
@@ -171,6 +189,12 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool HasTitleBar => true;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool HasError { get; set; } = false;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool HasWarning { get; set; } = false;
 
 	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputAttribute : Attribute
@@ -318,7 +342,7 @@ public abstract class BaseNodePlus : INode, ISGPJsonUpgradeable
 
 public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
-	INode IPlug.Node => Node;
+	INodePlus IPlug.Node => Node;
 
 	public string Identifier => Info.Name;
 	public DisplayInfo DisplayInfo => Info.DisplayInfo;
@@ -557,13 +581,14 @@ public class PlugInfo
 				return slider;
 			}
 
-			if ( type == typeof( Color ) )
-			{
-				var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
-				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
-
-				return slider;
-			}
+			// FIXME!!!
+			//if ( type == typeof( Color ) )
+			//{
+			//	var slider = new ColorEditorPlus( plug ) { Title = DisplayInfo.Name, Node = node };
+			//	slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+			//
+			//	return slider;
+			//}
 		}
 		return null;
 	}

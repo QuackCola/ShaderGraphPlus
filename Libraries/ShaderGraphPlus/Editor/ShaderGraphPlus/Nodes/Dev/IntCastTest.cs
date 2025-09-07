@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 [Title( "Int Cast Test" ), Category( "Dev" ), Icon( "arrow" ), Hide]
 public sealed class IntCastTest : ShaderNodePlus

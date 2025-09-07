@@ -1,4 +1,8 @@
-using Editor.ShaderGraph.Nodes;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -11,6 +15,9 @@ public sealed class GetTangentViewVectorNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
 
 	[Title( "Position" ), Hide]
 	[Input( typeof( Vector3 ) )]

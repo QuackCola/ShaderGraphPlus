@@ -1,10 +1,19 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
-[Title( "View To Projection" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
+namespace ShaderGraphPlus.Nodes;
+
+[Title( "View To Projection" ), Category( "Variables/Matrix" ), Icon( "dataset" )]
 public sealed class ViewToProjectionNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;

@@ -1,5 +1,9 @@
-﻿
-using Editor;
+﻿using Editor;
+using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -8,6 +12,8 @@ public abstract class Binary : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#394d62" )!.Value, Color.Parse( "#394d62" )!.Value.Darken( .5f ) );
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -125,8 +131,12 @@ public sealed class Mod : Binary
 [Title( "Lerp" ), Category( "Math/Binary" )]
 public sealed class Lerp : ShaderNodePlus
 {
+
 	[Hide]
 	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#394d62" )!.Value, Color.Parse( "#394d62" )!.Value.Darken( .5f ) );
 
 	[Input]
 	[Hide]
@@ -171,6 +181,8 @@ public sealed class CrossProduct : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme { get; } = new( Color.Gray, Color.Gray.Darken( 0.5f ) );
 
 	/// <summary>
 	/// The first float3
@@ -220,6 +232,8 @@ public sealed class RemapValue : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#394d62" )!.Value, Color.Parse( "#394d62" )!.Value.Darken( .5f ) );
 
 	/// <summary>
 	/// Input value to be transformed
@@ -367,6 +381,8 @@ public sealed class Arctan2 : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#394d62" )!.Value, Color.Parse( "#394d62" )!.Value.Darken( .5f ) );
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -405,6 +421,8 @@ public sealed class Power : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[Hide, JsonIgnore]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#394d62" )!.Value, Color.Parse( "#394d62" )!.Value.Darken( .5f ) );
 
 	[Input( typeof( float ) )]
 	[Hide]

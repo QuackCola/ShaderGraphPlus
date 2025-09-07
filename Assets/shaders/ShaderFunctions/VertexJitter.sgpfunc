@@ -25,6 +25,7 @@
       "_class": "SwitchNode",
       "__version": 1,
       "Name": "",
+      "IsAttribute": true,
       "Enabled": true,
       "UI": {
         "Type": "Default",
@@ -249,7 +250,7 @@
       "__version": 1,
       "Operator": "GreaterThanOrEqual",
       "Identifier": "13",
-      "Position": "984,-84",
+      "Position": "972,-48",
       "HandleOffsets": {}
     }
   ]

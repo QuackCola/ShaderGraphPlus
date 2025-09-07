@@ -1,4 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
+
+namespace ShaderGraphPlus.Nodes;
 
 public enum SwizzleChannel
 {
@@ -13,6 +19,9 @@ public sealed class ComponentMask : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Hide]
 	public override string Title
@@ -69,11 +78,25 @@ public sealed class ComponentMask : ShaderNodePlus
 		}
 		else
 		{
+
+			if ( result.ResultType != ResultType.Float && result.ResultType != ResultType.Vector2 &&
+				result.ResultType != ResultType.Vector3 && result.ResultType != ResultType.Color )
+			{
+				HasError = true;
+				return NodeResult.Error( $"Cannot mask ResultType \"{result.ResultType}\"" );
+			}
+
+			HasError = false;
+
 			var resultType = ResultType.Float;
 			var components = string.Empty;
 
 			switch ( result.Components )
 			{
+				case 1:
+					(_showR, _showG, _showB, _showA) = (false, false, false, false);
+
+					break;
 				case 2:
 					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
 
@@ -99,10 +122,16 @@ public sealed class ComponentMask : ShaderNodePlus
 					break;
 			}
 
-			if ( components == string.Empty )
+			// result.ResultType was a float. So there is nothing to Mask.
+			if ( result.ResultType == ResultType.Float )
 			{
-				return new NodeResult( ResultType.Float, "0.0f" );
+				return new NodeResult( ResultType.Float, $"{result}" );
 			}
+
+			//if ( components == string.Empty )
+			//{
+			//	return new NodeResult( ResultType.Float, "0.0f" );
+			//}
 			
 			if ( components.Length == 1 ) resultType = ResultType.Float;
 			if ( components.Length == 2 ) resultType = ResultType.Vector2;
@@ -123,6 +152,9 @@ public sealed class SplitVector : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Input, Hide]
 	public NodeInput Input { get; set; }
@@ -168,6 +200,9 @@ public sealed class CombineVector : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -233,6 +268,9 @@ public sealed class SwizzleVector : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
+
 	[Input, Hide]
 	public NodeInput Input { get; set; }
 
@@ -277,6 +315,9 @@ public sealed class AppendVector : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#2e2a60" )!.Value, Color.Parse( "#1a1835" )!.Value );
 
 	[Input, Hide]
 	public NodeInput A { get; set; }

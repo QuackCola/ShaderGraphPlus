@@ -1,12 +1,17 @@
-﻿using Facepunch.ActionGraphs;
-using static Sandbox.VideoWriter;
+﻿using NodeEditorPlus;
+using GraphView = NodeEditorPlus.GraphView;
+using NodeUI = NodeEditorPlus.NodeUI;
+using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
 
+// TODO : Remove?
+
 [Title( "CRT Filter" ), Category( "PostProcessing/Crt" )]
 [Description( "Crt Filter Ported from	" )]
-public class CrtFilterNode : ShaderNodePlus
+public class CrtFilterNode : ShaderNodePlus, IWarningNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -358,4 +363,13 @@ float3 crtFilter(
 		
 		return new NodeResult( ResultType.Vector3, funcCall );
 	};
+
+	public List<string> GetWarnings()
+	{
+		var warnings = new List<string>();
+
+		warnings.Add( $"CrtFilterNode is depreciated and will be removed in a future update." );
+
+		return warnings;
+	}
 }
