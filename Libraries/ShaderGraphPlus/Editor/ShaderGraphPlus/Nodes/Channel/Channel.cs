@@ -78,11 +78,25 @@ public sealed class ComponentMask : ShaderNodePlus
 		}
 		else
 		{
+
+			if ( result.ResultType != ResultType.Float && result.ResultType != ResultType.Vector2 &&
+				result.ResultType != ResultType.Vector3 && result.ResultType != ResultType.Color )
+			{
+				HasError = true;
+				return NodeResult.Error( $"Cannot mask ResultType \"{result.ResultType}\"" );
+			}
+
+			HasError = false;
+
 			var resultType = ResultType.Float;
 			var components = string.Empty;
 
 			switch ( result.Components )
 			{
+				case 1:
+					(_showR, _showG, _showB, _showA) = (false, false, false, false);
+
+					break;
 				case 2:
 					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
 
@@ -108,10 +122,16 @@ public sealed class ComponentMask : ShaderNodePlus
 					break;
 			}
 
-			if ( components == string.Empty )
+			// result.ResultType was a float. So there is nothing to Mask.
+			if ( result.ResultType == ResultType.Float )
 			{
-				return new NodeResult( ResultType.Float, "0.0f" );
+				return new NodeResult( ResultType.Float, $"{result}" );
 			}
+
+			//if ( components == string.Empty )
+			//{
+			//	return new NodeResult( ResultType.Float, "0.0f" );
+			//}
 			
 			if ( components.Length == 1 ) resultType = ResultType.Float;
 			if ( components.Length == 2 ) resultType = ResultType.Vector2;

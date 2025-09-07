@@ -4,7 +4,7 @@
   "Path": "shaders/tests/customshading/func.sgrph",
   "Model": null,
   "Title": null,
-  "Description": null,
+  "Description": "",
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": false,
@@ -48,13 +48,13 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "02e4bdf0-7b13-4dd1-b02c-d9a1ba0b850d",
+          "Id": "ba3f02f9-7fd7-4e18-9625-1f692bdf8433",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "d67b39de-2906-4bc2-bc76-eb6608c45279",
+          "Id": "53e35d16-132b-47fe-bd58-90ea7e3a5f2d",
           "Name": "InFloat3_1",
           "Type": "Vector3",
           "Priority": 0
@@ -62,13 +62,13 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "03743d23-e02a-45ea-a2f7-c5637a383096",
+          "Id": "5a69d0f5-b04e-4f36-84bc-751f384d5ead",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
         },
         {
-          "Id": "71d01b0c-c08a-4643-bebb-bd687bc9625a",
+          "Id": "6240239b-8c9f-4d95-a254-630f8c8fa517",
           "Name": "OutFloat3_1",
           "Type": "Vector3",
           "Priority": 0
@@ -89,7 +89,7 @@
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "a1dc70fb-eb8a-43f8-8edd-6bff5fe85fc6",
+          "Id": "8e6fb426-7f7f-4608-ab50-312e966f5924",
           "Name": "InFloat3_0",
           "Type": "Vector3",
           "Priority": 0
@@ -97,7 +97,7 @@
       ],
       "ExpressionOutputs": [
         {
-          "Id": "bb742f23-33a8-4de0-8e3f-51c98dded7cf",
+          "Id": "40e82469-0cba-4534-ae13-c33eabdc927c",
           "Name": "OutFloat3_0",
           "Type": "Vector3",
           "Priority": 0
@@ -117,13 +117,13 @@
     {
       "_class": "CommentNode",
       "__version": 1,
-      "Size": "300,180",
+      "Size": "300,192",
       "Color": "Green",
       "Title": "Untitled",
       "Description": "",
       "Layer": 1,
       "Identifier": "4",
-      "Position": "204,-600",
+      "Position": "372,-636",
       "HandleOffsets": {}
     },
     {
@@ -226,6 +226,72 @@
       "__version": 1,
       "Identifier": "15",
       "Position": "-456,-288",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": false,
+      "G": true,
+      "B": true,
+      "A": true,
+      "Identifier": "16",
+      "Position": "168,-720",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "18",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "17",
+      "Position": "-240,-768",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "1,1,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "18",
+      "Position": "-96,-672",
       "HandleOffsets": {}
     }
   ]
