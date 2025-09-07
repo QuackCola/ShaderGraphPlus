@@ -127,7 +127,7 @@ public partial class NodeUI : GraphicsItem
 
 	public DisplayInfo DisplayInfo => Node.DisplayInfo;
 
-	public Color SelectionOutline = Color.Parse( "#ff99c8" ) ?? default;
+	public Color SelectionOutline = Color.White;// Color.Parse( "#ff99c8" ) ?? default;
 	public Color PrimaryColor = Color.Parse( "#ff99c8" ) ?? default;
 	public Color ErrorOutline = Color.Red;
 	public Color WarningOutline = Color.Yellow.Lighten( .5f );
