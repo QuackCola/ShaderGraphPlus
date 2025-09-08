@@ -451,7 +451,16 @@ public sealed class Min : ShaderNodePlus
 
 		int maxComponents = Math.Max( a.IsValid ? a.Components : 1, b.IsValid ? b.Components : 1 );
 
-		return new NodeResult( (ResultType)maxComponents, $"min( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
+		ResultType resultType = maxComponents switch
+		{
+			1 => ResultType.Float,
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Color,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, $"min( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
 	};
 }
 
@@ -484,7 +493,16 @@ public sealed class Max : ShaderNodePlus
 
 		int maxComponents = Math.Max( a.IsValid ? a.Components : 1, b.IsValid ? b.Components : 1 );
 
-		return new NodeResult( (ResultType)maxComponents, $"max( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
+		ResultType resultType = maxComponents switch
+		{
+			1 => ResultType.Float,
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Color,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, $"max( {(a.IsValid ? a : "0.0f")}, {(b.IsValid ? b : "0.0f")} )" );
 	};
 }
 
@@ -545,7 +563,16 @@ public sealed class Step : ShaderNodePlus
 
 		int maxComponents = Math.Max( edge.IsValid ? edge.Components : 1, input.IsValid ? input.Components : 1 );
 
-		return new NodeResult( (ResultType)maxComponents, $"step( {(edge.IsValid ? edge : "0.0f")}, {(input.IsValid ? input : "0.0f")} )" );
+		ResultType resultType = maxComponents switch
+		{
+			1 => ResultType.Float,
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Color,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, $"step( {(edge.IsValid ? edge : "0.0f")}, {(input.IsValid ? input : "0.0f")} )" );
 	};
 }
 
