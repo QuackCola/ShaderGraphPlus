@@ -517,7 +517,10 @@ public class Preview : SceneRenderingWidget
 			modelMaterial = Material.Load( "materials/dev/reflectivity_50.vmat" );
 		}
 
-		_sceneObject.SetMaterialOverride( modelMaterial );
+		if ( _sceneObject is SceneModel sceneModel )
+		{
+			sceneModel.SetMaterialOverride( modelMaterial );
+		}
 	}
 
 	private CommandList _postProcessCmdList;
