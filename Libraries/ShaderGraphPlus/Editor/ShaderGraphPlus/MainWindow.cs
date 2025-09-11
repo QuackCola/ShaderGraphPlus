@@ -175,7 +175,6 @@ public class MainWindow : DockWindow
 			return;
 
 		_preview.Material = Material.Load( "materials/core/shader_editor.vmat" );
-		//_preview.PostProcessingMaterial = Material.Load( "materials/core/ShaderGraphPlus/shader_editor_postprocess.vmat" );
 	}
 
 	public void OnNodeSelected( BaseNodePlus node )
