@@ -118,6 +118,8 @@ public sealed class Branch : ShaderNodePlus, IWarningNode
 
 		warnings.Add( $"Branch Node is depreciated and will be removed in a future update. Use \"Switch\" node for a true or false switch. And \"Comparison\" node for value comparisons." );
 
+		HasWarning = true;
+
 		return warnings;
 	}
 }

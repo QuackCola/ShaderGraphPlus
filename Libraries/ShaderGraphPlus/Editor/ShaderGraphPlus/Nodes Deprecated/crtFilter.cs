@@ -370,6 +370,8 @@ float3 crtFilter(
 
 		warnings.Add( $"CrtFilterNode is depreciated and will be removed in a future update." );
 
+		HasWarning = true;
+
 		return warnings;
 	}
 }

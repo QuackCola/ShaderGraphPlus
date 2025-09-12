@@ -68,6 +68,8 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 
 		warnings.Add( $"CRTBoarderNode is depreciated and will be removed in a future update." );
 
+		HasWarning = true;
+
 		return warnings;
 	}
 }
