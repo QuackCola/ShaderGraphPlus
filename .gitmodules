@@ -1,0 +1,3 @@
+[submodule "Libraries/ShaderGraphPlus/Editor/Internal/NodeEditorPlus"]
+	path = Libraries/ShaderGraphPlus/Editor/Internal/NodeEditorPlus
+	url = https://github.com/QuackCola/NodeEditorPlus.git
