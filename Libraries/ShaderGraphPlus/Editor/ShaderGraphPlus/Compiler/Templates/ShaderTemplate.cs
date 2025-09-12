@@ -120,7 +120,7 @@ PS
 	};
 
 	public static string Material_init => @"
-Material m = Material::Init();
+Material m = Material::Init( i );
 m.Albedo = float3( 1, 1, 1 );
 m.Normal = float3( 0, 0, 1 );
 m.Roughness = 1;
