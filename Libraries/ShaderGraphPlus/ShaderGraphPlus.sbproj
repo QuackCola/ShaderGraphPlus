@@ -1,8 +1,8 @@
 {
-  "Title": "Shader Graph Plus",
+  "Title": "Shader Graph Plus ( Staging )",
   "Type": "library",
   "Org": "quack",
-  "Ident": "shadergraphplus",
+  "Ident": "shadergraphplus_staging",
   "Schema": 1,
   "IncludeSourceFiles": false,
   "Resources": null,
