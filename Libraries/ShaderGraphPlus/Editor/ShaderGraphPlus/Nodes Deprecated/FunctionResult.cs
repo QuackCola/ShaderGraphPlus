@@ -13,16 +13,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
-public interface IWarningNode
-{
-	List<string> GetWarnings();
-}
-
-public interface IErroringNode
-{
-	List<string> GetErrors();
-}
-
 /// <summary>
 /// Final result
 /// </summary>
