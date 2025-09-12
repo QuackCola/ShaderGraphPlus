@@ -15,7 +15,7 @@ internal static class ShaderGraphPlusTheme
 	internal static class PrimaryNodeHeaderColors
 	{
 		public static Color SubgraphNode => Color.Parse( "#e05b0a" )!.Value;
-		public static Color GraphResultNode => Color.Parse( "#e05b0a" )!.Value;
+		public static Color GraphResultNode => Color.Parse( "#84705e" )!.Value;
 		public static Color UnaryNode => Color.Parse( "#394d62" )!.Value;
 		public static Color BinaryNode => Color.Parse( "#394d62" )!.Value;
 		public static Color ConstantNode => Color.Parse( "#5d9b31" )!.Value;
