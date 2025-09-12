@@ -129,10 +129,9 @@ public partial class NodeUI : GraphicsItem
 
 	public Color SelectionOutline = Color.White;// Color.Parse( "#ff99c8" ) ?? default;
 	public Color PrimaryColor = Color.Parse( "#ff99c8" ) ?? default;
+	public (Color LeftColor, Color RightColor) PrimaryHeaderTheme = new( Color.Gray, Color.Gray.Darken( 0.5f ) );
 	public Color ErrorOutline = Color.Red;
 	public Color WarningOutline = Color.Yellow.Lighten( .5f );
-	public (Color LeftColor, Color RightColor) PrimaryHeaderTheme = new ( Color.Gray, Color.Gray.Darken( 0.5f ) );
-
 
 	public List<PlugIn> Inputs = new();
 	public List<PlugOut> Outputs = new();
