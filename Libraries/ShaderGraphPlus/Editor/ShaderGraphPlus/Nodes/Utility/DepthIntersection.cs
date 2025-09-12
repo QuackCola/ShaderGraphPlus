@@ -16,7 +16,7 @@ public sealed class DepthIntersectionNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	public static string DepthIntersect => @"

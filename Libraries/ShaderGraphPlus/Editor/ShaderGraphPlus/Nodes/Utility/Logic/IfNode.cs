@@ -14,7 +14,7 @@ public sealed class IfNode : ShaderNodePlus, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#006b54" )!.Value, Color.Parse( "#006b54" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.LogicNode;
 
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} (A {Op} B)";

@@ -17,7 +17,7 @@ public sealed class UVRotationNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public string UVRotation => @"
@@ -96,7 +96,7 @@ public sealed class UVScaleNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	public string UVScale => @"
@@ -155,7 +155,7 @@ public sealed class UVScaleByPointNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public static string UVScaleByPoint => @"
@@ -230,7 +230,7 @@ public sealed class UVScrollNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public static string UVScroll => @"
@@ -310,7 +310,7 @@ public sealed class TileAndOffset : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -376,7 +376,7 @@ public sealed class FlipBookNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public static string FlipBook => @"

@@ -17,8 +17,8 @@ public sealed class Result : BaseResult
 	[Hide]
 	public override int Version => 1;
 
-	[Hide, JsonIgnore]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#84705e" )!.Value, Color.Parse( "#39332a" )!.Value );
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color PrimaryHeaderColor => Color.Parse( "#84705e" )!.Value;
 
 	[Hide]
 	public override string Title

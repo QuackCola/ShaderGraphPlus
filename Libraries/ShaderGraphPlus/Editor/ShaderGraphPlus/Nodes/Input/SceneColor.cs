@@ -18,7 +18,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	public string MapSceneColorCoords => @"
@@ -152,7 +152,7 @@ public sealed class FrameBufferCopyInvSizeAndUvScaleNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => Color.Parse( "#803334" )!.Value;
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]

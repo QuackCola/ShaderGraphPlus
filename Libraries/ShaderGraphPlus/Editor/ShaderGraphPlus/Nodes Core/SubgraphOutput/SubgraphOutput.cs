@@ -156,7 +156,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#e05b0a" )!.Value, Color.Parse( "#5f2600" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.SubgraphNode;
 
 	[Hide, JsonIgnore]
 	public override bool CanRemove => true;

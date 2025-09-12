@@ -17,7 +17,7 @@ public sealed class GetTangentViewVectorNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1d53ac" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "Position" ), Hide]
 	[Input( typeof( Vector3 ) )]

@@ -6,56 +6,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-/*
-public abstract class ConstantsNode : ShaderNodePlus
-{
-	[Hide]
-	public override int Version => 1;
-
-	[Hide]
-	public override string Title => $"{DisplayInfo.For( this ).Name} ( {Constant} )";
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
-
-	protected virtual string Constant { get; }
-
-	[Output( typeof( float ) )]
-	[Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) => new( ResultType.Float, $"{Constant}" );
-}
-
-[Title( "Pi" ), Category( "Constants" )]
-public sealed class PI : ConstantsNode
-{
-	protected override string Constant => "3.1415926";
-}
-
-[Title( "Tau" ), Category( "Constants" )]
-public sealed class TAU : ConstantsNode
-{
-	protected override string Constant => "6.28318530";
-}
-
-[Title( "Phi" ), Category( "Constants" )]
-public sealed class PHI : ConstantsNode
-{
-	protected override string Constant => "1.618034";
-}
-
-[Title( "E" ), Category( "Constants" )]
-public sealed class E : ConstantsNode
-{
-	protected override string Constant => "2.718282";
-} 
-
-[Title( "SQRT2" ), Category( "Constants" )]
-public sealed class SQRT2 : ConstantsNode
-{
-	protected override string Constant => "1.414214";
-}
-*/
-
 /// <summary>
 /// A container for common math constants
 /// </summary>
@@ -66,7 +16,7 @@ public sealed class MathConstantsNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#5d9b31" )!.Value, Color.Parse( "#284316" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.ConstantNode;
 
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} ({Constant})";

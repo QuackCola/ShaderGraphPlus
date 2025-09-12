@@ -19,7 +19,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#1f5468" )!.Value, Color.Parse( "#0e2630" )!.Value );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
 
 	public enum CustomCodeNodeMode
 	{

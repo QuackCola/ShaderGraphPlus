@@ -16,7 +16,7 @@ public sealed class Camera : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[Output( typeof( Vector3 ) ), Title( "Position" )]
 	[Hide]
@@ -45,7 +45,7 @@ public sealed class Depth : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	public enum DepthMode
 	{

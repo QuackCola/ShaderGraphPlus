@@ -17,9 +17,6 @@ public abstract class ShaderNodePlus : BaseNodePlus
 	public bool IsDirty = false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme { get; } = new( Color.Gray, Color.Gray.Darken( 0.5f ) );
-
-	[JsonIgnore, Hide, Browsable( false )]
 	public override DisplayInfo DisplayInfo
 	{
 		get

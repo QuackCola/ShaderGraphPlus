@@ -13,7 +13,7 @@ public sealed class ViewToProjectionNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override (Color LeftColor, Color RightColor) PrimaryHeaderTheme => new( Color.Parse( "#803334" )!.Value, Color.Parse( "#803334" )!.Value.Darken( .5f ) );
+	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
