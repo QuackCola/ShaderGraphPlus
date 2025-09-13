@@ -9,7 +9,7 @@ public static class CreateShaderGraphPlusAsset
 {
 	internal static void AddShaderGraphPlusOption( Menu parent, DirectoryInfo folder )
 	{
-		parent.AddOption( $"New Shader Graph Plus Asset...", "account_tree", () =>
+		parent.AddOption( $"New Shader Graph Plus", "account_tree", () =>
 		{
 			var ProjectCreator = new ProjectCreator();
 			ProjectCreator.DeleteOnClose = true;
@@ -24,7 +24,9 @@ public static class CreateShaderGraphPlusAsset
 		if ( e.Target != null )
 		{
 			e.Menu.AddSeparator();
-			AddShaderGraphPlusOption( e.Menu, e.Target );
+
+			var shaderMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
+			AddShaderGraphPlusOption( shaderMenu, e.Target );
 		}
 	}
 }
@@ -52,7 +54,7 @@ public static class CreateShaderGraphPlusSubgraphAsset
 
 	internal static void AddShaderGraphPlusOption( Menu parent, DirectoryInfo folder )
 	{
-		parent.AddOption( $"New Shader Graph Plus SubGraph...", "account_tree", () =>
+		parent.AddOption( $"New Shader Graph Plus Function", "account_tree", () =>
 		{
 			var extension = System.IO.Path.GetExtension( "$name.sgpfunc" ).Trim( '.' );
 
@@ -78,7 +80,10 @@ public static class CreateShaderGraphPlusSubgraphAsset
 		if ( e.Target != null )
 		{
 			e.Menu.AddSeparator();
-			AddShaderGraphPlusOption( e.Menu, e.Target );
+
+			var shaderMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
+
+			AddShaderGraphPlusOption( shaderMenu, e.Target );
 		}
 	}
 }
