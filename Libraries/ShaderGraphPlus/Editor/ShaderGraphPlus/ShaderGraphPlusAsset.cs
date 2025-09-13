@@ -23,8 +23,8 @@ public static class CreateShaderGraphPlusAsset
 	{
 		if ( e.Target != null )
 		{
-			var shaderMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
-			AddShaderGraphPlusOption( shaderMenu, e.Target );
+			var menu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
+			AddShaderGraphPlusOption( menu, e.Target );
 		}
 	}
 }
@@ -77,8 +77,8 @@ public static class CreateShaderGraphPlusSubgraphAsset
 	{
 		if ( e.Target != null )
 		{
-			var shaderMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
-			AddShaderGraphPlusOption( shaderMenu, e.Target );
+			var menu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
+			AddShaderGraphPlusOption( menu, e.Target );
 		}
 	}
 }
