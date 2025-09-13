@@ -131,7 +131,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 
 	public virtual NodeUI CreateUI( GraphView view )
 	{
-		return new NodeUI( view, this );
+		return new NodeUI( view, this, false );
 	}
 
 	public Color GetPrimaryColor( GraphView view )
