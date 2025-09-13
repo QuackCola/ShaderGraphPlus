@@ -176,6 +176,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual Color PrimaryHeaderColor { get; } = Color.Gray;
 
+	[JsonIgnore, Hide, Browsable( false )]
 	public NodeThemeConfig NodeThemeConfig { get; set; }
 
 	public virtual void OnPaint( Rect rect )
