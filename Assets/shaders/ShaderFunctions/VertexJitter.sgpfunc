@@ -64,7 +64,7 @@
       "__version": 1,
       "NoHighPrecisionLightingOffsets": false,
       "Identifier": "1",
-      "Position": "60,156",
+      "Position": "72,132",
       "HandleOffsets": {}
     },
     {
@@ -73,11 +73,11 @@
       "DefaultA": 0,
       "DefaultB": 1,
       "Identifier": "2",
-      "Position": "288,132",
+      "Position": "288,12",
       "HandleOffsets": {},
       "B": {
-        "Identifier": "1",
-        "Output": "Result",
+        "Identifier": "7",
+        "Output": "WorldPosition",
         "Subgraph": null
       }
     },
@@ -143,7 +143,7 @@
       "_class": "Camera",
       "__version": 1,
       "Identifier": "7",
-      "Position": "60,24",
+      "Position": "72,-12",
       "HandleOffsets": {}
     },
     {
@@ -155,7 +155,7 @@
       "Position": "420,192",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result",
         "Subgraph": null
       },
@@ -198,7 +198,7 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "2",
+        "Identifier": "1",
         "Output": "Result",
         "Subgraph": null
       }
@@ -243,14 +243,6 @@
       "PortOrder": 0,
       "Identifier": "12",
       "Position": "192,276",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "ComparisonNode",
-      "__version": 1,
-      "Operator": "GreaterThanOrEqual",
-      "Identifier": "13",
-      "Position": "972,-48",
       "HandleOffsets": {}
     }
   ]
