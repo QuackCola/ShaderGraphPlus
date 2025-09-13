@@ -220,7 +220,7 @@ public partial class ShaderGraphPlus : IGraphPlus//, ISGPJsonUpgradeable
 	/// <param name="keyname">The key to retrieve the value of.</param>
 	/// <param name="outvalue"> The value, if it was present in the metadata storage.</param>
 	/// <returns>Whether the value was successfully retrieved.</returns>
-    public bool TryGetMeta<T>(string keyname, out T outvalue)
+    public bool TryGetMeta<T>( string keyname, out T outvalue )
     {
         outvalue = default(T);
         if (Metadata == null)
