@@ -213,24 +213,13 @@ public partial class ShaderGraphPlus : IGraphPlus//, ISGPJsonUpgradeable
 	//	}
 	//}
 
-    //
-    // Summary:
-    //     Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
-    //
-    //
-    // Parameters:
-    //   keyname:
-    //     The key to retrieve the value of.
-    //
-    //   outvalue:
-    //     The value, if it was present in the metadata storage.
-    //
-    // Type parameters:
-    //   T:
-    //     Type of the value.
-    //
-    // Returns:
-    //     Whether the value was successfully retrieved.
+	/// <summary>
+	/// Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+	/// </summary>
+	/// <typeparam name="T">Type of the value.</typeparam>
+	/// <param name="keyname">The key to retrieve the value of.</param>
+	/// <param name="outvalue"> The value, if it was present in the metadata storage.</param>
+	/// <returns>Whether the value was successfully retrieved.</returns>
     public bool TryGetMeta<T>(string keyname, out T outvalue)
     {
         outvalue = default(T);
@@ -266,20 +255,12 @@ public partial class ShaderGraphPlus : IGraphPlus//, ISGPJsonUpgradeable
         return true;
     }
 
-    //
-    // Summary:
-    //     Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
-    //
-    //
-    // Parameters:
-    //   keyname:
-    //     The key for the data.
-    //
-    //   outvalue:
-    //     The data itself to store.
-    //
-    // Returns:
-    //     Always true.
+	/// <summary>
+	/// Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
+	/// </summary>
+	/// <param name="keyname">The key for the data.</param>
+	/// <param name="outvalue">The data itself to store.</param>
+	/// <returns>Always true.</returns>
     public bool SetMeta( string keyname, object outvalue )
     {
         if ( Metadata == null )
