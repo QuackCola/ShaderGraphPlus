@@ -14,7 +14,7 @@ public class TextureNodeType : ClassNodeType
 	{
 		ImagePath = imagePath;
 	}
-	public override INodePlus CreateNode( IGraphPlus graph )
+	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 		if ( node is ITextureParameterNode textureNode )
@@ -68,7 +68,7 @@ public class ClassNodeType : INodeTypePlus
         return name is not null;
     }
 
-    public virtual INodePlus CreateNode(IGraphPlus graph)
+    public virtual INodePlus CreateNode(INodeGraph graph)
     {
 		var node = Type.Create<BaseNodePlus>();
 
@@ -105,7 +105,7 @@ public class SubgraphNodeType : ClassNodeType
 		DisplayInfo = info;
 	}
 
-	public override INodePlus CreateNode( IGraphPlus graph )
+	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 

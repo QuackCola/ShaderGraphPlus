@@ -52,7 +52,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	public Vector2 Position { get; set; }
 
 	[JsonIgnore, Hide]
-	public IGraphPlus _graph;
+	public INodeGraph _graph;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	internal int PreviewID { get; set; }
@@ -65,7 +65,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 
 	[Browsable( false )]
 	[JsonIgnore, Hide]
-	public IGraphPlus Graph
+	public INodeGraph Graph
 	{
 		get => _graph;
 		set
