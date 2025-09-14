@@ -73,7 +73,7 @@ internal class ProjectTemplatesListView : ListView
 	{
 		Paint.ClearPen();
 		Paint.SetBrush( Theme.ControlBackground );
-		Paint.DrawRect( LocalRect );
+		Paint.DrawRect( LocalRect, 4 );
 
 		base.OnPaint();
 	}
