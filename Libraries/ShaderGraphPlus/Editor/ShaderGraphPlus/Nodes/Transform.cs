@@ -77,6 +77,7 @@ public class InvertColorsNode : ShaderNodePlus
 [Title( "Make Greyscale" ), Category( "Transform" ), Icon( "invert_colors" )]
 public class MakeGreyscaleNode : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -178,6 +179,7 @@ public sealed class TransformNormal : ShaderNodePlus
 [Title( "Apply TRS" ), Category( "Transform" ), Icon( "3d_rotation" )]
 public sealed class ApplyTrs : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -251,6 +253,7 @@ public sealed class ApplyTrs : ShaderNodePlus
 [Title( "Polar Coordinates" ), Category( "Transform" ), Icon( "explore" )]
 public sealed class PolarCoordinates : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -308,6 +311,7 @@ public sealed class PolarCoordinates : ShaderNodePlus
 [Title( "Blend" ), Category( "Transform" ), Icon( "blender" )]
 public sealed class Blend : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -437,6 +441,7 @@ public sealed class Blend : ShaderNodePlus
 [Title( "Normal Blend" ), Category( "Transform" ), Icon( "gradient" )]
 public sealed class NormalBlend : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -506,6 +511,7 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 [Title( "Reflection" ), Category( "Transform" ), Icon( "network_ping" )]
 public sealed class Reflection : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -554,6 +560,7 @@ float3 ReflectVector( float3 a, float3 b)
 [Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class RGBtoHSV : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -574,6 +581,7 @@ public sealed class RGBtoHSV : ShaderNodePlus
 [Title( "HSV to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoRGB : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -594,6 +602,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 [Title("RGB to Linear"), Category("Transform"), Icon( "invert_colors" )]
 public sealed class RGBtoLinear : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -614,6 +623,7 @@ public sealed class RGBtoLinear : ShaderNodePlus
 [Title( "Linear to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoRGB : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -634,6 +644,7 @@ public sealed class LineartoRGB : ShaderNodePlus
 [Title( "Linear to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class LineartoHSV : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -654,6 +665,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 [Title( "HSV to Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoLinear : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -674,6 +686,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 [Title( "Height to Normal" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HeightToNormal : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -690,67 +703,67 @@ public sealed class HeightToNormal : ShaderNodePlus
 	/// </summary>
 	public OutputNormalSpace OutputSpace { get; set; } = OutputNormalSpace.World;
 
-    /// <summary>
-    /// The height to be converted into a normal.
-    /// </summary>
-    [Input( typeof( float ) )]
-    [Hide]
-    public NodeInput Height { get; set; }
+	/// <summary>
+	/// The height to be converted into a normal.
+	/// </summary>
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Height { get; set; }
 
-    /// <summary>
-    /// How strong you want the normal map effect to be.
-    /// </summary>
-    [Input( typeof( float ) )]
-    [Hide]
-    public NodeInput Strength { get; set; }
+	/// <summary>
+	/// How strong you want the normal map effect to be.
+	/// </summary>
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Strength { get; set; }
 
-    //[Input(typeof(Vector3))]
-    //[Hide]
-    //[Title("Position")]
-    //public NodeInput WorldPos { get; set; }
+	//[Input(typeof(Vector3))]
+	//[Hide]
+	//[Title("Position")]
+	//public NodeInput WorldPos { get; set; }
 
-    //[Input(typeof(Vector3))]
-    //[Hide]
-    //public NodeInput Normal { get; set; }
+	//[Input(typeof(Vector3))]
+	//[Hide]
+	//public NodeInput Normal { get; set; }
 
-    public float DefaultStrength { get; set; } = 0.1f;
+	public float DefaultStrength { get; set; } = 0.1f;
 
-    [Output( typeof( Vector3 ) )]
-    [Hide]
-    public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-    {
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
 
-        var height = compiler.Result( Height );
-        var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
-        var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
-        var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
+	var height = compiler.Result( Height );
+	var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
+	var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
+	var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
 
-        if ( !height.IsValid() )
-        {
-            return NodeResult.MissingInput( nameof( Height ) );
-        }
-        //if (!worldpos.IsValid())
-        //{
-        //    return NodeResult.MissingInput(nameof(WorldPos));
-        //}
-        //if (!worldnormal.IsValid())
-        //{
-        //    return NodeResult.MissingInput(nameof(Normal));
-        //}
+	if ( !height.IsValid() )
+	{
+		return NodeResult.MissingInput( nameof( Height ) );
+	}
+	//if (!worldpos.IsValid())
+	//{
+	//	return NodeResult.MissingInput(nameof(WorldPos));
+	//}
+	//if (!worldnormal.IsValid())
+	//{
+	//	return NodeResult.MissingInput(nameof(Normal));
+	//}
 
 		var result = compiler.ResultFunction( "Height2Normal",
-            $"{height}", 
+			$"{height}", 
 			$"{strength}", 
 			$"{worldpos}", 
 			$"{worldnormal}"
-        );
+		);
 
-        if ( OutputSpace == OutputNormalSpace.Tangent )
-        {
-            result = $"Vec3WsToTs( {result}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs )";
-        }
+		if ( OutputSpace == OutputNormalSpace.Tangent )
+		{
+			result = $"Vec3WsToTs( {result}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs )";
+		}
 
-        return new NodeResult( ResultType.Vector3, result );
-    };
+		return new NodeResult( ResultType.Vector3, result );
+	};
 
 }
