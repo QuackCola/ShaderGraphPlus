@@ -1,18 +1,29 @@
 {
-  "Model": null,
-  "Description": null,
+  "IsSubgraph": false,
+  "Path": "",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": "",
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
   "BlendMode": "Translucent",
   "ShadingModel": "Lit",
   "MaterialDomain": "Surface",
-  "postProcessComponentInfo": {
-    "Order": 10
-  },
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "texture",
       "Order": 3,
       "Description": "You want to make a Glass Material Shader"
     }
+  },
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
   },
   "nodes": [
     {
@@ -52,9 +63,10 @@
       "_class": "SceneColorNode",
       "Identifier": "3",
       "Position": "-336,276",
-      "UV": {
+      "Coords": {
         "Identifier": "2",
-        "Output": "Result"
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {

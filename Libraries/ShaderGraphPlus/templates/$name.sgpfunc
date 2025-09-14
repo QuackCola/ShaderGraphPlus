@@ -15,7 +15,7 @@
   "PreviewSettings": {
     "RenderBackfaces": false,
     "EnableShadows": true,
-    "ShowGround": false,
+    "ShowGround": true,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
