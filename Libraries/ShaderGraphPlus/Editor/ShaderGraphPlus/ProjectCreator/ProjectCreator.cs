@@ -152,7 +152,7 @@ public class ProjectCreator : Dialog
                     Log.Info($"Active template : {ActiveTemplate.TemplatePath}");
                 }
 
-                listViewBody.AddSpacingCell(128f);
+                //listViewBody.AddSpacingCell(128f);
 
             }
 
