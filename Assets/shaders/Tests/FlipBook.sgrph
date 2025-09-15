@@ -48,8 +48,28 @@
       "Identifier": "1",
       "Position": "-504,-36",
       "HandleOffsets": {},
+      "Width": {
+        "Identifier": "5",
+        "Output": "X",
+        "Subgraph": null
+      },
+      "Height": {
+        "Identifier": "5",
+        "Output": "Y",
+        "Subgraph": null
+      },
       "TileIndex": {
         "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InvertX": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InvertY": {
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       }
@@ -132,6 +152,80 @@
       "__version": 1,
       "Identifier": "4",
       "Position": "-744,36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2",
+      "__version": 1,
+      "Min": "2,2",
+      "Max": "64,64",
+      "PortOrder": 0,
+      "Value": "4,4",
+      "Name": "SheetRowAndColumnAmount",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Slider",
+        "Step": 1,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "5",
+      "Position": "-744,-72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Bool",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": false,
+      "Name": "InvertSheetX",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "6",
+      "Position": "-744,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Bool",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": false,
+      "Name": "InvertSheetY",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "7",
+      "Position": "-744,216",
       "HandleOffsets": {}
     }
   ]
