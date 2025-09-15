@@ -2,14 +2,14 @@
   "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/tests/flipbook.sgrph",
-  "Model": "models/dev/box.vmdl",
+  "Model": "models/dev/plane.vmdl",
   "Title": null,
   "Description": null,
   "Category": null,
   "Icon": null,
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "-108,-36",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -49,7 +49,7 @@
       "Position": "-504,-36",
       "HandleOffsets": {},
       "TileIndex": {
-        "Identifier": "3",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
@@ -61,7 +61,7 @@
         "Version": 2,
         "Name": "",
         "IsAttribute": false,
-        "Filter": "Bilinear",
+        "Filter": "Point",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
         "AddressModeW": "Wrap",
@@ -124,7 +124,14 @@
         }
       },
       "Identifier": "3",
-      "Position": "-756,36",
+      "Position": "-744,96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Time",
+      "__version": 1,
+      "Identifier": "4",
+      "Position": "-744,36",
       "HandleOffsets": {}
     }
   ]
