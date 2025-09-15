@@ -1,4 +1,5 @@
 {
+  "__version": 2,
   "IsSubgraph": false,
   "Path": "",
   "Model": "models/dev/box.vmdl",
