@@ -10,7 +10,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// Returns the tangent view vector, which is the direction from the camera to the position in tangent space.
 /// </summary>
-[Title( "Get Tangent View Vector" ), Category( "Variables" ), Icon( "visibility" )]
+[Title( "Get Tangent View Vector" ), Category( "Utility" ), Icon( "visibility" )]
 public sealed class GetTangentViewVectorNode : ShaderNodePlus
 {
 	[Hide]
