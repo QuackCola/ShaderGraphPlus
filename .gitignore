@@ -12,6 +12,7 @@ Libraries/ShaderGraphPlus/Editor/obj/*
 Libraries/ShaderGraphPlus/Editor/Properties/*
 **/Editor/Properties/*
 *.sln
+*.slnx
 
 # Auto-generated code editor files
 .vs/*
@@ -32,7 +33,6 @@ code/Properties/*
 *.los
 *.vpk
 *launchSettings.json
-*.sln
 
 *idea
 
