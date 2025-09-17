@@ -44,7 +44,6 @@ public class PreviewSettings
 	public Color Tint { get; set; } = Color.White;
 }
 
-//[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
 [AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
 public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 {
@@ -292,8 +291,6 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 }
 
-
-//[GameResource("Shader Graph Plus Function", "sgpfunc", "Editor Resource", Icon = "account_tree" )]
 [AssetType( Name = "Shader Graph Plus Function", Extension = "sgpfunc", Flags = AssetTypeFlags.NoEmbedding )]
 public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
 {
