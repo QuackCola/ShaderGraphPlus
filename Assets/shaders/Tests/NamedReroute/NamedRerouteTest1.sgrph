@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "648,432",
+      "Position": "60,-180",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -55,7 +55,7 @@
       "__version": 1,
       "Name": "CursedThing",
       "Identifier": "2",
-      "Position": "456,432",
+      "Position": "-132,-180",
       "HandleOffsets": {}
     },
     {
@@ -79,7 +79,7 @@
         }
       },
       "Identifier": "3",
-      "Position": "-1248,-180",
+      "Position": "-900,-180",
       "HandleOffsets": {}
     },
     {
@@ -111,7 +111,7 @@
       "__version": 1,
       "Name": "Red",
       "Identifier": "5",
-      "Position": "-612,-456",
+      "Position": "-708,-348",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "4",
@@ -124,7 +124,7 @@
       "__version": 1,
       "Name": "CursedThing",
       "Identifier": "6",
-      "Position": "-384,-324",
+      "Position": "-324,-264",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "7",
@@ -137,7 +137,7 @@
       "__version": 1,
       "Name": "Magenta",
       "Identifier": "7",
-      "Position": "-576,-324",
+      "Position": "-516,-264",
       "HandleOffsets": {}
     }
   ]
