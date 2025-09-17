@@ -612,6 +612,25 @@ public sealed partial class GraphCompiler
 	}
 
 	/// <summary>
+	/// Get result of an named reroute
+	/// </summary>
+	internal NodeResult ResultNamedReroute( string name )
+	{
+		var node = Graph.FindNamedRerouteDeclarationNode( name );
+
+		if ( node != null )
+		{
+			var result = node.Result.Invoke( this );
+
+			return result;
+		}
+
+		SGPLog.Error( $"Could not find NamedReroute \"{name}\"" );
+
+		return default;
+	}
+
+	/// <summary>
 	/// Get result of an input
 	/// </summary>
 	public NodeResult Result( NodeInput input, bool subgraphResult = false )

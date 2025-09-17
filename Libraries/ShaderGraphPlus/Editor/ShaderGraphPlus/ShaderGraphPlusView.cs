@@ -219,6 +219,46 @@ public class ShaderGraphPlusView : GraphView
 		return base.OnGetHandleConfig( type );
 	}
 
+	protected override void OnPopulateNodeMenuSpecialOptions( Menu menu, Vector2 clickPos, Plug targetPlug, string filter )
+	{
+		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
+
+		var namedReroutes = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
+
+		if ( namedReroutes.Any() )
+		{
+			var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
+
+			foreach ( var namedReroute in namedReroutes )
+			{
+				optionsMenu.AddOption( namedReroute.Name, "route", () =>
+				{
+					CreateNewNamedReroute( namedReroute.Name, clickPos );
+				} );
+			}
+		}
+
+		menu.AddSeparator();
+	}
+
+	private NodeUI CreateNewNamedReroute( string name, Vector2 position )
+	{
+		using var undoScope = UndoScope( "Add Named Reroute" );
+		
+		var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>() );
+
+		var ui = CreateNewNode( nodeType, node =>
+		{
+			node.Position = position.SnapToGrid( GridSize );
+
+			var namedReroute = (NamedRerouteNode)node;
+			namedReroute.Name = name;
+
+		} );
+
+		return ui;
+	}
+
 	public override void ChildValuesChanged( Widget source )
 	{
 		BindSystem.Flush();

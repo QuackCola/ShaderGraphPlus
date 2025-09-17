@@ -6,7 +6,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-
 /// <summary>
 /// Rotate your texture coordinates.
 /// </summary>

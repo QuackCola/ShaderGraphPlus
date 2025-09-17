@@ -6,7 +6,7 @@ using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 
-public class TextureNodeType : ClassNodeType
+public sealed class TextureNodeType : ClassNodeType
 {
 	string ImagePath;
 
@@ -32,7 +32,6 @@ public class ClassNodeType : INodeTypePlus
 	public TypeDescription Type { get; }
 	public DisplayInfo DisplayInfo { get; protected set; }
 
-
 	public Menu.PathElement[] Path => Menu.GetSplitPath( DisplayInfo );
 	public bool LowPriority => false;
 
@@ -56,20 +55,20 @@ public class ClassNodeType : INodeTypePlus
 		return name is not null;
 	}
 
-    public bool TryGetOutput(Type valueType, out string name)
-    {
-        var property = Type.Properties
-            .Select(x => (Property: x, Attrib: x.GetCustomAttribute<BaseNodePlus.OutputAttribute>()))
-            .Where(x => x.Attrib != null)
-            .FirstOrDefault(x => x.Attrib.Type?.IsAssignableTo(valueType) ?? true)
-            .Property;
+	public bool TryGetOutput(Type valueType, out string name)
+	{
+		var property = Type.Properties
+			.Select( x => ( Property: x, Attrib: x.GetCustomAttribute<BaseNodePlus.OutputAttribute>() ) )
+			.Where( x => x.Attrib != null )
+			.FirstOrDefault( x => x.Attrib.Type?.IsAssignableTo( valueType ) ?? true )
+			.Property;
 
-        name = property?.Name;
-        return name is not null;
-    }
+		name = property?.Name;
+		return name is not null;
+	}
 
-    public virtual INodePlus CreateNode(INodeGraph graph)
-    {
+	public virtual INodePlus CreateNode(INodeGraph graph)
+	{
 		var node = Type.Create<BaseNodePlus>();
 
 		node.Graph = graph;
@@ -78,8 +77,15 @@ public class ClassNodeType : INodeTypePlus
 	}
 }
 
+public sealed class NamedRerouteNodeType : ClassNodeType
+{
+	public NamedRerouteNodeType( TypeDescription type ) : base( type )
+	{
 
-public class SubgraphNodeType : ClassNodeType
+	}
+}
+
+public sealed class SubgraphNodeType : ClassNodeType
 {
 	public override string Identifier => AssetPath;
 	string AssetPath { get; }

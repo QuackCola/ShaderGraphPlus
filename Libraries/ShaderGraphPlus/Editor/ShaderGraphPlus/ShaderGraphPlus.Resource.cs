@@ -1,5 +1,7 @@
 using NodeEditorPlus;
 using System.Linq;
+using ShaderGraphPlus.Nodes;
+
 
 namespace ShaderGraphPlus;
 
@@ -174,6 +176,18 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	{
 		_nodes.TryGetValue( name, out var node );
 		return node;
+	}
+
+	internal NamedRerouteDeclarationNode FindNamedRerouteDeclarationNode( string name )
+	{
+		var node = Nodes.OfType<NamedRerouteDeclarationNode>().Where( x => x.Name == name ).FirstOrDefault();
+
+		if ( node != null )
+		{
+			return node;
+		}
+
+		return null;
 	}
 
 	public void ClearNodes()
