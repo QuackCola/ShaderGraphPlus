@@ -225,12 +225,12 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( !targetPlug.IsValid() )
 		{
-			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
-			{
-				var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>() );
-
-				CreateNewNode( nodeType, clickPos, targetPlug );
-			} );
+			//menu.AddOption( "Add Named Reroute Declaration", "route", () =>
+			//{
+			//	var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>() );
+			//
+			//	CreateNewNode( nodeType, clickPos, targetPlug );
+			//} );
 
 			var namedRerouteDeclarations = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
 
