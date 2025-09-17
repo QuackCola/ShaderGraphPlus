@@ -160,8 +160,8 @@ public sealed partial class GraphCompiler
 		if ( string.IsNullOrWhiteSpace( name ) )
 			return "";
 
-		name = name.Trim().Replace( " ", string.Empty );
-		name = new string( name.Where( x => char.IsLetter( x ) || x == '_' ).ToArray() );
+		name = name.Trim();
+		name = new string( name.Where( x => char.IsLetter( x ) || char.IsNumber( x ) || x == '_' ).ToArray() );
 
 		return name;
 	}
@@ -1117,8 +1117,9 @@ public sealed partial class GraphCompiler
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
 			return ResultValue( value );
 
-		name = CleanName( name );
+		
 		var attribName = name;
+		name = CleanName( name );
 		var prefix = GetLocalPrefix( value );
 
 		// Make sure the type T is can have a Default();

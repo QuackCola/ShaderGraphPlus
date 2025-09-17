@@ -93,6 +93,7 @@ public struct UIGroup
 	/// <summary>
 	/// Name of this group
 	/// </summary>
+	[Editor( "shadergraphplusgroup" )]
 	public string Name { get; set; }
 
 	/// <summary>
