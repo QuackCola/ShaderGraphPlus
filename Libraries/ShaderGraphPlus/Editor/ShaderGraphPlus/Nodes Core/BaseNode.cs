@@ -554,6 +554,12 @@ public class PlugInfo
 			
 				return slider;
 			}
+
+			// TODO :
+			//if ( type == typeof( Gradient ) )
+			//{
+			//
+			//}
 		}
 		return null;
 	}
