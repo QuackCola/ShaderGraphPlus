@@ -184,7 +184,7 @@ public sealed class Preview2DPanel : Widget
 
 		Name = "Preview2DPanel";
 		WindowTitle = "Preview 2D";
-		SetWindowIcon( "emoji_emotions" );
+		SetWindowIcon( "photo" );
 
 		MinimumSize = new Vector2( 256, 256 );
 
