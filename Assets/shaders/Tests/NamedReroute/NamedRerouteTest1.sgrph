@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-204,-180",
+      "Position": "-144,-192",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -53,9 +53,9 @@
     {
       "_class": "NamedRerouteNode",
       "__version": 1,
-      "Name": "Magenta",
+      "Name": "CursedThing",
       "Identifier": "2",
-      "Position": "-408,-180",
+      "Position": "-324,-192",
       "HandleOffsets": {}
     },
     {
@@ -111,13 +111,34 @@
       "__version": 1,
       "Name": "Red",
       "Identifier": "5",
-      "Position": "-708,-348",
+      "Position": "-612,-456",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
+    },
+    {
+      "_class": "NamedRerouteDeclarationNode",
+      "__version": 1,
+      "Name": "CursedThing",
+      "Identifier": "6",
+      "Position": "-372,-348",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "NamedRerouteNode",
+      "__version": 1,
+      "Name": "Magenta",
+      "Identifier": "7",
+      "Position": "-564,-348",
+      "HandleOffsets": {}
     }
   ]
 }
