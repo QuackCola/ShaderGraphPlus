@@ -2,17 +2,16 @@ using NodeEditorPlus;
 using System.Linq;
 using ShaderGraphPlus.Nodes;
 
-
 namespace ShaderGraphPlus;
 
 public enum BlendMode
 {
-    [Icon("circle")]
-    Opaque,
-    [Icon("radio_button_unchecked")]
-    Masked,
-    [Icon("blur_on")]
-    Translucent,
+	[Icon("circle")]
+	Opaque,
+	[Icon("radio_button_unchecked")]
+	Masked,
+	[Icon("blur_on")]
+	Translucent,
 }
 
 public enum ShadingModel
@@ -27,22 +26,22 @@ public enum ShadingModel
 
 public enum MaterialDomain
 {
-    [Icon("view_in_ar")]
-    Surface,
+	[Icon("view_in_ar")]
+	Surface,
 	[Icon("brush")]
 	BlendingSurface,
-    [Icon("desktop_windows")]
-    PostProcess,
+	[Icon("desktop_windows")]
+	PostProcess,
 }
 
 public class PreviewSettings
 {
-    public bool RenderBackfaces { get; set; } = false;
-    public bool EnableShadows { get; set; } = true;
-    public bool ShowGround { get; set; } = false;
-    public bool ShowSkybox { get; set; } = true;
-    public Color BackgroundColor { get; set; } = Color.Black;
-    public Color Tint { get; set; } = Color.White;
+	public bool RenderBackfaces { get; set; } = false;
+	public bool EnableShadows { get; set; } = true;
+	public bool ShowGround { get; set; } = false;
+	public bool ShowSkybox { get; set; } = true;
+	public Color BackgroundColor { get; set; } = Color.Black;
+	public Color Tint { get; set; } = Color.White;
 }
 
 //[GameResource( "Shader Graph Plus", "sgrph", "Editor Resource", Icon = "account_tree" )]
@@ -76,7 +75,7 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	[Hide]
 	public string Model { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// The name of the Node when used in ShaderGraph
 	/// </summary>
 	[ShowIf( nameof( IsSubgraph ), true )]
@@ -84,7 +83,7 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	public string Description { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// The category of the Node when browsing the Node Library (optional)
 	/// </summary>
 	[ShowIf( nameof( AddToNodeLibrary ), true )]
@@ -93,7 +92,7 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	[IconName, ShowIf( nameof( IsSubgraph ), true )]
 	public string Icon { get; set; }
 
-    /// <summary>
+	/// <summary>
 	/// Whether or not this Node should appear when browsing the Node Library.
 	/// Otherwise can only be referenced by dragging the Subgraph asset into the graph.
 	/// </summary>
@@ -102,12 +101,12 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	public BlendMode BlendMode { get; set; }
 
-    [ShowIf( nameof( ShowShadingModel ), true )]
-    public ShadingModel ShadingModel { get; set; }
+	[ShowIf( nameof( ShowShadingModel ), true )]
+	public ShadingModel ShadingModel { get; set; }
 
-    [Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
+	[Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
 
-    public MaterialDomain MaterialDomain { get; set; }
+	public MaterialDomain MaterialDomain { get; set; }
 
 	//[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
 	//[InlineEditor]
@@ -228,68 +227,68 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	//}
 
 	/// <summary>
-	/// Try to get a value at given key in Editor.ShaderGraphPlus.Metadata.
+	/// Try to get a value at given key in <see cref="ShaderGraphPlus.Metadata"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of the value.</typeparam>
 	/// <param name="keyname">The key to retrieve the value of.</param>
 	/// <param name="outvalue"> The value, if it was present in the metadata storage.</param>
 	/// <returns>Whether the value was successfully retrieved.</returns>
-    public bool TryGetMeta<T>( string keyname, out T outvalue )
-    {
-        outvalue = default(T);
-        if (Metadata == null)
-        {
-            return false;
-        }
-
-        if (!Metadata.TryGetValue(keyname, out var value))
-        {
-            return false;
-        }
-
-        if (value is T val)
-        {
-            outvalue = val;
-            return true;
-        }
-
-        if (value is JsonElement element)
-        {
-            try
-            {
-                T val2 = element.Deserialize<T>(new JsonSerializerOptions());
-                outvalue = ((val2 != null) ? val2 : default(T));
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
+	public bool TryGetMeta<T>( string keyname, out T outvalue )
+	{
+		outvalue = default( T );
+		if ( Metadata == null )
+		{
+			return false;
+		}
+	
+		if ( !Metadata.TryGetValue( keyname, out var value ) )
+		{
+			return false;
+		}
+	
+		if ( value is T val )
+		{
+			outvalue = val;
+			return true;
+		}
+	
+		if (value is JsonElement element)
+		{
+			try
+			{
+				T val2 = element.Deserialize<T>( new JsonSerializerOptions() );
+				outvalue = ( ( val2 != null ) ? val2 : default( T ) );
+			}
+			catch ( Exception )
+			{
+				return false;
+			}
+		}
+	
+		return true;
+	}
 
 	/// <summary>
-	/// Store custom data at given key in the Editor.ShaderGraphPlus.Metadata.
+	/// Store custom data at given key in <see cref="ShaderGraphPlus.Metadata"/>.
 	/// </summary>
 	/// <param name="keyname">The key for the data.</param>
 	/// <param name="outvalue">The data itself to store.</param>
 	/// <returns>Always true.</returns>
-    public bool SetMeta( string keyname, object outvalue )
-    {
-        if ( Metadata == null )
-        {
-            Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
-        }
+	public bool SetMeta( string keyname, object outvalue )
+	{
+		if ( Metadata == null )
+		{
+			Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
+		}
+	
+		if ( outvalue == null )
+		{
+			return Metadata.Remove( keyname );
+		}
 
-        if ( outvalue == null )
-        {
-            return Metadata.Remove(keyname);
-        }
-
-        Metadata[keyname] = outvalue;
-        return true;
-    }
+		Metadata[keyname] = outvalue;
+		return true;
+	}
 
 }
 
