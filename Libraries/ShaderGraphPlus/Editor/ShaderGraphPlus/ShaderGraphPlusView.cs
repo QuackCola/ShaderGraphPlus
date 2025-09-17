@@ -279,6 +279,23 @@ public class ShaderGraphPlusView : GraphView
 		menu.AddSeparator();
 	}
 
+	protected override void OnDoubleClickNodeSpecial( NodeUI node )
+	{
+		base.OnDoubleClickNodeSpecial( node );
+
+		if ( node.Node is NamedRerouteNode namedRerouteNode )
+		{
+			var namedRerouteDeclaration = Graph.FindNamedRerouteDeclarationNode( namedRerouteNode.Name );
+
+			if ( namedRerouteDeclaration != null )
+			{
+				CenterOn( namedRerouteDeclaration.Position );
+				//SelectNode( namedRerouteDeclaration );
+				//_window.SetPropertiesTarget( namedRerouteDeclaration );
+			}
+		}
+	}
+
 	private NodeUI CreateNewNamedReroute( string name, Vector2 position )
 	{
 		using var undoScope = UndoScope( "Add Named Reroute" );

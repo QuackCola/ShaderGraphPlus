@@ -1282,6 +1282,11 @@ public class MainWindow : DockWindow
 		_preview2D?.ClearAttributes();
 	}
 
+	internal void SetPropertiesTarget( object target )
+	{
+		_properties.Target = target;
+	}
+
 	public void Open()
 	{
 		var fd = new FileDialog( null )
