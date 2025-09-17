@@ -85,6 +85,14 @@ public sealed class NamedRerouteNodeType : ClassNodeType
 	}
 }
 
+public sealed class NamedRerouteDeclarationNodeType : ClassNodeType
+{
+	public NamedRerouteDeclarationNodeType( TypeDescription type ) : base( type )
+	{
+
+	}
+}
+
 public sealed class SubgraphNodeType : ClassNodeType
 {
 	public override string Identifier => AssetPath;

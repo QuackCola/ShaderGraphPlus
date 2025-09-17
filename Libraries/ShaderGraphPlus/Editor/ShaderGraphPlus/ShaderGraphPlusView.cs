@@ -1,17 +1,17 @@
 ﻿using Editor;
-using ShaderGraphPlus.Nodes;
 using NodeEditorPlus;
-
-using GraphView = NodeEditorPlus.GraphView;
+using ShaderGraphPlus.Nodes;
+using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
+using GraphView = NodeEditorPlus.GraphView;
 using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
-using Plug = NodeEditorPlus.Plug;
-using NodeQuery = NodeEditorPlus.NodeQuery;
 using HandleConfig = NodeEditorPlus.HandleConfig;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-using CommentUI = NodeEditorPlus.CommentUI;
+using NodeQuery = NodeEditorPlus.NodeQuery;
+using NodeUI = NodeEditorPlus.NodeUI;
+using Plug = NodeEditorPlus.Plug;
+using PlugIn = NodeEditorPlus.PlugIn;
 
 namespace ShaderGraphPlus;
 
@@ -223,19 +223,40 @@ public class ShaderGraphPlusView : GraphView
 	{
 		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
 
-		var namedReroutes = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
-
-		if ( namedReroutes.Any() )
+		if ( !targetPlug.IsValid() )
 		{
-			var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
+			var namedReroutes = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
 
-			foreach ( var namedReroute in namedReroutes )
+			if ( namedReroutes.Any() )
 			{
-				optionsMenu.AddOption( namedReroute.Name, "route", () =>
+				var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
+
+				foreach ( var namedReroute in namedReroutes )
 				{
-					CreateNewNamedReroute( namedReroute.Name, clickPos );
-				} );
+					optionsMenu.AddOption( namedReroute.Name, "route", () =>
+					{
+						CreateNewNamedReroute( namedReroute.Name, clickPos );
+					} );
+				}
 			}
+		}
+		else if ( targetPlug is not PlugIn )
+		{
+			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
+			{
+				var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>() );
+
+				CreateNewNode( nodeType, clickPos, targetPlug );
+			} );
+		}
+		else if ( targetPlug is PlugIn )
+		{
+			menu.AddOption( "Add Named Reroute", "route", () =>
+			{
+				var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>() );
+
+				CreateNewNode( nodeType, clickPos, targetPlug );
+			} );
 		}
 
 		menu.AddSeparator();
