@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "-144,-192",
+      "Position": "-192,-192",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -55,7 +55,7 @@
       "__version": 1,
       "Name": "CursedThing",
       "Identifier": "2",
-      "Position": "-324,-192",
+      "Position": "-396,-180",
       "HandleOffsets": {}
     },
     {

@@ -225,13 +225,20 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( !targetPlug.IsValid() )
 		{
-			var namedReroutes = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
+			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
+			{
+				var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>() );
 
-			if ( namedReroutes.Any() )
+				CreateNewNode( nodeType, clickPos, targetPlug );
+			} );
+
+			var namedRerouteDeclarations = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
+
+			if ( namedRerouteDeclarations.Any() )
 			{
 				var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
 
-				foreach ( var namedReroute in namedReroutes )
+				foreach ( var namedReroute in namedRerouteDeclarations )
 				{
 					optionsMenu.AddOption( namedReroute.Name, "route", () =>
 					{
@@ -251,12 +258,22 @@ public class ShaderGraphPlusView : GraphView
 		}
 		else if ( targetPlug is PlugIn )
 		{
-			menu.AddOption( "Add Named Reroute", "route", () =>
+			var namedRerouteDeclarations = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
+			
+			if ( namedRerouteDeclarations.Any() )
 			{
-				var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>() );
+				var optionsMenu = menu.AddMenu( "Add Named Reroute", "route" );
 
-				CreateNewNode( nodeType, clickPos, targetPlug );
-			} );
+				foreach ( var namedRerouteDeclaration in namedRerouteDeclarations )
+				{
+					optionsMenu.AddOption( namedRerouteDeclaration.Name, "route", () =>
+					{
+						var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>(), namedRerouteDeclaration.Name );
+						
+						CreateNewNode( nodeType, clickPos, targetPlug );
+					} );
+				}
+			}
 		}
 
 		menu.AddSeparator();

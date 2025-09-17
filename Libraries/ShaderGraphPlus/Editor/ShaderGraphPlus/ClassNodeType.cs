@@ -2,6 +2,7 @@
 //using Editor.ShaderGraph;
 using Editor;
 using NodeEditorPlus;
+using ShaderGraphPlus.Nodes;
 
 
 namespace ShaderGraphPlus;
@@ -79,16 +80,42 @@ public class ClassNodeType : INodeTypePlus
 
 public sealed class NamedRerouteNodeType : ClassNodeType
 {
-	public NamedRerouteNodeType( TypeDescription type ) : base( type )
+	private string Name;
+
+	public NamedRerouteNodeType( TypeDescription type, string name = "" ) : base( type )
 	{
+		Name = name;
+	}
+
+	public override INodePlus CreateNode( INodeGraph graph )
+	{
+		var node = base.CreateNode( graph );
+		if ( node is NamedRerouteNode namedRerouteNode )
+		{
+			namedRerouteNode.Name = Name;
+		}
+		return node;
 
 	}
 }
 
 public sealed class NamedRerouteDeclarationNodeType : ClassNodeType
 {
-	public NamedRerouteDeclarationNodeType( TypeDescription type ) : base( type )
+	private string Name;
+
+	public NamedRerouteDeclarationNodeType( TypeDescription type, string name = "" ) : base( type )
 	{
+		Name = name;
+	}
+
+	public override INodePlus CreateNode( INodeGraph graph )
+	{
+		var node = base.CreateNode( graph );
+		if ( node is NamedRerouteDeclarationNode namedRerouteDeclarationNode )
+		{
+			namedRerouteDeclarationNode.Name = Name;
+		}
+		return node;
 
 	}
 }
