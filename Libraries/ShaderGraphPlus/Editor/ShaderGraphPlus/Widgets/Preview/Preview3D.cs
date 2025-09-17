@@ -348,7 +348,6 @@ public sealed class Preview3DPanel : Widget
 		settings.BackgroundColor = _preview.BackgroundColor;
 		settings.Tint = _preview.Tint;
 	}
-
 }
 
 
