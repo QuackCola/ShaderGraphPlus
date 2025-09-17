@@ -95,7 +95,6 @@ public sealed class NamedRerouteNodeType : ClassNodeType
 			namedRerouteNode.Name = Name;
 		}
 		return node;
-
 	}
 }
 
@@ -116,7 +115,6 @@ public sealed class NamedRerouteDeclarationNodeType : ClassNodeType
 			namedRerouteDeclarationNode.Name = Name;
 		}
 		return node;
-
 	}
 }
 
