@@ -1818,6 +1818,8 @@ public class MainWindow : DockWindow
 	
 		CreateUI();
 		Compile(); // Testing ONLY!
+
+		_preview3D.LoadSettings( _graph.PreviewSettings );
 	}
 
 	[Event( "shadergraphplus.update.subgraph" )]
