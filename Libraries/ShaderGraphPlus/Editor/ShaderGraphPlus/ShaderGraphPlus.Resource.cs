@@ -185,6 +185,8 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 			return node;
 		}
 
+		SGPLog.Error( $"Could not find NamedReroute \"{name}\"" );
+
 		return null;
 	}
 
