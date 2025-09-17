@@ -47,7 +47,8 @@ public class MainWindow : DockWindow
 
 	private Widget _graphCanvas;
 	private Properties _properties;
-	private PreviewPanel _preview;
+	private Preview3DPanel _preview3D;
+	private Preview2DPanel _preview2D;
 	private Output _output;
 	private UndoHistory _undoHistory;
 	private PaletteWidget _palette;
@@ -107,7 +108,7 @@ public class MainWindow : DockWindow
 	private string _sourceParameterName = "";
 
 	public bool CanOpenMultipleAssets => true;
-	public bool EnableNodePreview => _preview.Preview.EnableNodePreview;
+	public bool EnableNodePreview => _preview3D.Preview.EnableNodePreview;
 
 	private ProjectCreator ProjectCreator { get; set; }
 
@@ -171,10 +172,11 @@ public class MainWindow : DockWindow
 
 	private void RestoreShader()
 	{
-		if ( !_preview.IsValid() )
+		if ( !_preview3D.IsValid() && !_preview2D.IsValid() )
 			return;
 
-		_preview.Material = Material.Load( "materials/core/shader_editor.vmat" );
+		_preview3D.Material = Material.Load( "materials/core/shader_editor.vmat" );
+		_preview2D.Material = Material.Load( "materials/core/shader_editor.vmat" );
 	}
 
 	public void OnNodeSelected( BaseNodePlus node )
@@ -185,12 +187,12 @@ public class MainWindow : DockWindow
 		{
 			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`", EnableNodePreview );
 
-			_preview.SetStage( node.PreviewID );
+			_preview3D.SetStage( node.PreviewID );
 		}
 		else
 		{
 			SGPLog.Info( $"Graph is now the Target.", EnableNodePreview );
-			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
+			_preview3D.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
 		//_preview.SetStage( _compiledNodes.IndexOf( node ) + 1 );
@@ -300,7 +302,8 @@ public class MainWindow : DockWindow
 		Editor.FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
 
 		_isCompiling = true;
-		_preview.IsCompiling = _isCompiling;
+		_preview3D.IsCompiling = _isCompiling;
+		_preview2D.IsCompiling = _isCompiling;
 
 		RestoreShader();
 
@@ -400,7 +403,10 @@ public class MainWindow : DockWindow
 			// Alternatively Material.Create could be made to force reload the shader
 			Editor.ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
 		
-			_preview.Material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
+			var material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
+
+			_preview3D.Material = material;
+			_preview2D.Material = material;
 		}
 		else
 		{
@@ -413,9 +419,10 @@ public class MainWindow : DockWindow
 			ClearAttributes();
 		}
 		
-		_preview.IsCompiling = _isCompiling;
-		_preview.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
-		
+		_preview3D.IsCompiling = _isCompiling;
+		_preview3D.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
+		_preview2D.IsCompiling = _isCompiling;
+
 		_shaderCompileErrors.Clear();
 	}
 
@@ -440,7 +447,8 @@ public class MainWindow : DockWindow
 				if ( !_comboBoolAttributes.ContainsKey( name ) )
 				{
 					_comboBoolAttributes.Add( name, (bool)value );
-					_preview?.SetCombo( name, (bool)value );
+					_preview3D?.SetCombo( name, (bool)value );
+					_preview2D?.SetCombo( name, (bool)value );
 				}
 			}
 			else if ( value is int )
@@ -448,7 +456,8 @@ public class MainWindow : DockWindow
 				if ( !_comboIntAttributes.ContainsKey( name ) )
 				{
 					_comboIntAttributes.Add( name, (int)value );
-					_preview?.SetCombo( name, (int)value );
+					_preview3D?.SetCombo( name, (int)value );
+					_preview2D?.SetCombo( name, (int)value );
 				}
 			}
 			else if ( value.GetType().IsEnum )
@@ -463,51 +472,62 @@ public class MainWindow : DockWindow
 		{
 			case Color v:
 				_float4Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case Vector4 v:
 				_float4Attributes.Add( name, v );
-				_preview?.SetAttribute( name, (Color)v );
+				_preview3D?.SetAttribute( name, (Color)v );
+				_preview2D?.SetAttribute( name, (Color)v );
 				break;
 			case Vector3 v:
 				_float3Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
 				break;
 			case Vector2 v:
 				_float2Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case float v:
 				_floatAttributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case int v:
 				_intAttributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case bool v:
 				_boolAttributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case Texture v:
 				_textureAttributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case Sampler v:
 				_samplerStateAttributes.Add( name, (SamplerState)v );
-				_preview?.SetAttribute( name, (SamplerState)v );
+				_preview3D?.SetAttribute( name, (SamplerState)v );
+				_preview2D?.SetAttribute( name, (SamplerState)v );
 				break;
 			case Float2x2 v: // Stub - Quack
 				_float2x2Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case Float3x3 v: // Stub - Quack
 				_float3x3Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			case Float4x4 v: // Stub - Quack
 				_float4x4Attributes.Add( name, v );
-				_preview?.SetAttribute( name, v );
+				_preview3D?.SetAttribute( name, v );
+				_preview2D?.SetAttribute( name, v );
 				break;
 			default:
 				throw new InvalidOperationException( $"Unsupported attribute type: {value.GetType()}" );
@@ -682,12 +702,12 @@ public class MainWindow : DockWindow
 
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode && targetNode.CanPreview )
 		{
-			_preview.SetStage( targetNode.PreviewID );
+			_preview3D.SetStage( targetNode.PreviewID );
 			//_preview.SetStage( _compiledNodes.IndexOf( targetNode ) + 1 );
 		}
 		else
 		{
-			_preview.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
+			_preview3D.SetStage( ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID );
 		}
 
 		if ( resultNode != null && !IsSubgraph )
@@ -1206,8 +1226,8 @@ public class MainWindow : DockWindow
 		_dirty = false;
 		_graphView.Graph = _graph;
 		_graphCanvas.WindowTitle = "untitled";
-		_preview.Model = null;
-		_preview.Tint = Color.White;
+		_preview3D.Model = null;
+		_preview3D.Tint = Color.White;
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
@@ -1258,7 +1278,8 @@ public class MainWindow : DockWindow
 		_comboIntAttributes.Clear();
 		//_compiledNodes.Clear();
 
-		_preview?.ClearAttributes();
+		_preview3D?.ClearAttributes();
+		_preview2D?.ClearAttributes();
 	}
 
 	public void Open()
@@ -1300,8 +1321,8 @@ public class MainWindow : DockWindow
 		graph.Path = asset.RelativePath;
 		graph.IsSubgraph = IsSubgraph;
 
-		_preview.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
-		_preview.LoadSettings( graph.PreviewSettings );
+		_preview3D.Model = string.IsNullOrWhiteSpace( graph.Model ) ? null : Model.Load( graph.Model );
+		_preview3D.LoadSettings( graph.PreviewSettings );
 
 		_asset = asset;
 		_graph = graph;
@@ -1419,7 +1440,7 @@ public class MainWindow : DockWindow
 		if ( string.IsNullOrWhiteSpace( savePath ) )
 			return false;
 		
-		_preview.SaveSettings( _graph.PreviewSettings );
+		_preview3D.SaveSettings( _graph.PreviewSettings );
 		
 		// Write serialized graph to asset file
 		System.IO.File.WriteAllText( savePath, _graph.Serialize() );
@@ -1614,69 +1635,83 @@ public class MainWindow : DockWindow
 			_graphView.CenterOn( nodeUI.Center );
 		};
 
-		_preview = new PreviewPanel( this, _graph.Model )
+		_preview3D = new Preview3DPanel( this, _graph.Model )
 		{
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
 
+		_preview2D = new Preview2DPanel( this );
+
 		foreach ( var value in _samplerStateAttributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _textureAttributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float4x4Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float3x3Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float2x2Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float4Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float3Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float2Attributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _floatAttributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _boolAttributes )
 		{
-			_preview.SetAttribute( value.Key, value.Value );
+			_preview3D.SetAttribute( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _comboBoolAttributes )
 		{
-			_preview.SetCombo( value.Key, value.Value );
+			_preview3D.SetCombo( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _comboIntAttributes )
 		{
-			_preview.SetCombo( value.Key, value.Value );
+			_preview3D.SetCombo( value.Key, value.Value );
+			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		_properties = new Properties( this );
@@ -1691,10 +1726,12 @@ public class MainWindow : DockWindow
 		_palette = new PaletteWidget( this, IsSubgraph );
 		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
 
-		DockManager.AddDock( null, _preview, DockArea.Left, DockManager.DockProperty.HideOnClose );
+
+		DockManager.AddDock( null, _preview2D, DockArea.Left, DockManager.DockProperty.HideOnClose, split: 0.8f );
+		DockManager.AddDock( _preview2D, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
-		DockManager.AddDock( _preview, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _preview3D, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
 
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
@@ -1720,7 +1757,7 @@ public class MainWindow : DockWindow
 
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
-		_preview.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
+		_preview3D.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
 		{

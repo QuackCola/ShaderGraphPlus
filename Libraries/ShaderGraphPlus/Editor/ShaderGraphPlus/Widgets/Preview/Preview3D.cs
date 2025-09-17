@@ -22,9 +22,9 @@ public class Throbber : SceneCustomObject
 		}
 	}
 
-	private Preview _preview;
+	private Preview3D _preview;
 
-	public Throbber( SceneWorld sceneWorld, Preview preview ) : base( sceneWorld )
+	public Throbber( SceneWorld sceneWorld, Preview3D preview ) : base( sceneWorld )
 	{
 		_preview = preview;
 		_texture = Texture.Load( "tools/images/common/busy.png", true );
@@ -61,10 +61,10 @@ public class Throbber : SceneCustomObject
 	}
 }
 
-public class PreviewPanel : Widget
+public sealed class Preview3DPanel : Widget
 {
-	private readonly Preview _preview;
-	public Preview Preview => _preview;
+	private readonly Preview3D _preview;
+	public Preview3D Preview => _preview;
 	private readonly ComboBox _animationCombo;
 
 	public Model Model
@@ -214,13 +214,13 @@ public class PreviewPanel : Widget
 		_preview.ClearAttributes();
 	}
 
-	public PreviewPanel( Widget parent, string model ) : base( parent )
+	public Preview3DPanel( Widget parent, string model ) : base( parent )
 	{
 		Name = "Preview";
 		WindowTitle = "Preview";
 		SetWindowIcon( "photo" );
 
-		_preview = new Preview( this, model );
+		_preview = new Preview3D( this, model );
 
 		Layout = Layout.Column();
 
@@ -351,7 +351,9 @@ public class PreviewPanel : Widget
 
 }
 
-public class Preview : SceneRenderingWidget
+
+
+public sealed class Preview3D : SceneRenderingWidget
 {
 	private const int NoPreviewID = 0;
 	private SceneWorld _world => Scene.SceneWorld;
@@ -807,7 +809,7 @@ public class Preview : SceneRenderingWidget
 	private readonly SceneObject _ground;
 	private readonly SkyBox2D _sky;
 
-	public Preview( Widget parent, string model ) : base( parent )
+	public Preview3D( Widget parent, string model ) : base( parent )
 	{
 		MouseTracking = true;
 		FocusMode = FocusMode.Click;
@@ -1119,3 +1121,4 @@ public class Preview : SceneRenderingWidget
 		return mesh;
 	}
 }
+
