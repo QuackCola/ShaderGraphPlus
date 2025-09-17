@@ -216,8 +216,8 @@ public sealed class Preview3DPanel : Widget
 
 	public Preview3DPanel( Widget parent, string model ) : base( parent )
 	{
-		Name = "Preview";
-		WindowTitle = "Preview";
+		Name = "Preview3D";
+		WindowTitle = "Preview 3D";
 		SetWindowIcon( "photo" );
 
 		_preview = new Preview3D( this, model );
