@@ -192,9 +192,11 @@ public sealed class Preview2DPanel : Widget
 
 		var toolBar = new ToolBar( this, "Preview2DToolBar" );
 		toolBar.SetIconSize( 16 );
-		toolBar.AddOption( null, "check_box_outline_blank", () => Model = Model.Load( "models/preview_material_quad.vmdl" ) ).ToolTip = "Toggle No Tiling";
-		toolBar.AddOption( null, "grid_on", () => Model = Model.Load( "models/preview_material_quad_infinitetiling.vmdl" ) ).ToolTip = "Toggle Infinite Tiling";
-		toolBar.AddOption( null, "add", () => Model = Model.Load( "models/preview_material_quad_crosstiling.vmdl" ) ).ToolTip = "Toggle Cross Tiling";
+		// TODO : Fix up infinitetiling & crosstiling preview models so that the
+		// material tiles properly and has no ugly seams.
+		//toolBar.AddOption( null, "check_box_outline_blank", () => Model = Model.Load( "models/preview_material_quad.vmdl" ) ).ToolTip = "Toggle No Tiling";
+		//toolBar.AddOption( null, "grid_on", () => Model = Model.Load( "models/preview_material_quad_infinitetiling.vmdl" ) ).ToolTip = "Toggle Infinite Tiling";
+		//toolBar.AddOption( null, "add", () => Model = Model.Load( "models/preview_material_quad_crosstiling.vmdl" ) ).ToolTip = "Toggle Cross Tiling";
 
 		toolBar.AddSeparator();
 
