@@ -97,14 +97,7 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-		
-		float4 l_0 = float4( 1, 0, 0, 1 );
-		float4 l_1 = float4( 0, 0, 1, 1 );
-		float2 l_2 = g_vViewportSize;
-		float2 l_3 = float2( 0.91346216, 0.17785186 );
-		float4 l_4 = l_2.x > l_3.x ? l_0 : l_1;
-		
-		m.Albedo = l_4.xyz;
+
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;

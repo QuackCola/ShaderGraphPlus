@@ -30,47 +30,14 @@
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "-228,-24",
-      "HandleOffsets": {},
-      "Albedo": {
-        "Identifier": "2",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "HandleOffsets": {}
     },
     {
       "_class": "ViewportNode",
       "__version": 1,
       "Identifier": "1",
-      "Position": "-864,132",
+      "Position": "-696,72",
       "HandleOffsets": {}
-    },
-    {
-      "_class": "ComparisonNode",
-      "__version": 1,
-      "Operator": "GreaterThan",
-      "Identifier": "2",
-      "Position": "-444,-24",
-      "HandleOffsets": {},
-      "True": {
-        "Identifier": "3",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "False": {
-        "Identifier": "4",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "A": {
-        "Identifier": "1",
-        "Output": "ViewportSize",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "5",
-        "Output": "Result",
-        "Subgraph": null
-      }
     },
     {
       "_class": "Float4",
@@ -92,15 +59,15 @@
           "Priority": 0
         }
       },
-      "Identifier": "3",
-      "Position": "-804,-228",
+      "Identifier": "2",
+      "Position": "-696,-252",
       "HandleOffsets": {}
     },
     {
       "_class": "Float4",
       "__version": 1,
       "PortOrder": 0,
-      "Value": "0,0,1,1",
+      "Value": "0,1,0,1",
       "Name": "",
       "IsAttribute": false,
       "UI": {
@@ -116,8 +83,8 @@
           "Priority": 0
         }
       },
-      "Identifier": "4",
-      "Position": "-816,-48",
+      "Identifier": "3",
+      "Position": "-696,-96",
       "HandleOffsets": {}
     },
     {
@@ -126,7 +93,7 @@
       "Min": "0,0",
       "Max": "1,1",
       "PortOrder": 0,
-      "Value": "0.9134622,0.1778519",
+      "Value": "0,0",
       "Name": "",
       "IsAttribute": false,
       "UI": {
@@ -142,8 +109,8 @@
           "Priority": 0
         }
       },
-      "Identifier": "5",
-      "Position": "-672,204",
+      "Identifier": "4",
+      "Position": "-636,216",
       "HandleOffsets": {}
     }
   ]
