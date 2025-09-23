@@ -1,5 +1,4 @@
-﻿
-namespace ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Sample depth texture
@@ -32,8 +31,8 @@ public sealed class Depth : ShaderNodePlus
 	[Hide]
 	public override string Title => $"{DisplayInfo.For(this).Name} ({SamplingMode})";
 
-	[Input( typeof( Vector2 ) ), Hide]
-	public NodeInput UV { get; set; }
+	[Input( typeof( Vector2 ) ), Title( "Screen Pos" ), Hide]
+	public NodeInput ScreenPosition { get; set; }
 
 	/// <summary>
 	/// How to sample the depth buffer.
@@ -43,7 +42,7 @@ public sealed class Depth : ShaderNodePlus
 	[Output( typeof( float ) ), Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		var result = UV.IsValid() ? compiler.Result( UV ).Cast( 2 ) :
+		var result = ScreenPosition.IsValid() ? compiler.Result( ScreenPosition ).Cast( 2 ) :
 			compiler.IsVs ? "i.vPositionPs.xy" : "i.vPositionSs.xy";
 
 		string funcCall = "";
