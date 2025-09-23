@@ -1,7 +1,7 @@
 {
   "__version": 2,
   "IsSubgraph": false,
-  "Path": null,
+  "Path": "shaders/tests/empty/empty.sgrph",
   "Model": null,
   "Title": null,
   "Description": null,
