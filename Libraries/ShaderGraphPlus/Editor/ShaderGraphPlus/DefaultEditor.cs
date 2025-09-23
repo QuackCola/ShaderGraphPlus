@@ -186,19 +186,19 @@ internal static class PaintHelper
 				return $"{int32Val}";
 
 			case float floatVal:
-				return $"{floatVal:F2}";
+				return $"{floatVal:F3}";
 
 			case double doubleVal:
-				return $"{doubleVal:F2}";
+				return $"{doubleVal:F3}";
 
 			case Vector2 vec2:
-				return $"x: {vec2.x:F2}, y: {vec2.y:F2}";
+				return $"x: {vec2.x:F3}, y: {vec2.y:F3}";
 
 			case Vector3 vec3:
-				return $"x: {vec3.x:F2}, y: {vec3.y:F2}, z: {vec3.z:F2}";
+				return $"x: {vec3.x:F3}, y: {vec3.y:F3}, z: {vec3.z:F3}";
 
 			case Vector4 vec4:
-				return $"x: {vec4.x:F2}, y: {vec4.y:F2}, z: {vec4.z:F2}, w: {vec4.w:F2}";
+				return $"x: {vec4.x:F3}, y: {vec4.y:F3}, z: {vec4.z:F3}, w: {vec4.w:F3}";
 
 			case Rotation rot:
 				rawValue = (Angles)rot;
