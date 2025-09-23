@@ -40,13 +40,11 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 	[Input( typeof( float ) )]
 	[Title( "Depth Scale" )]
 	[Hide, Editor( nameof( DefaultDepthScale ) )]
-	[MinMax( 0.0f, 1.0f )]
 	public NodeInput InputDepthScale { get; set; }
 
 	[Input( typeof( float ) )]
 	[Title( "Reference Plane" )]
 	[Hide, Editor( nameof( DefaultReferencePlane ) )]
-	[MinMax( 0.0f, 1.0f )]
 	public NodeInput InputReferencePlane { get; set; }
 
 	[Input( typeof( Vector2 ) )]
@@ -58,19 +56,19 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 	public float DefaultHeight { get; set; } = 0.0f;
 
 	[Title( "Depth Scale" )]
-	[MinMax( 0.0f, 1.0f )]
+	[Sandbox.Range( 0.0f, 1.0f )]
 	public float DefaultDepthScale { get; set; } = 0.125f;
 
 	[Title( "ReferencePlane" )]
-	[MinMax( 0.0f, 1.0f )]
+	[Sandbox.Range( 0.0f, 1.0f )]
 	public float DefaultReferencePlane { get; set; } = 0.42f;
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var worldPos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
-		var tangentViewVector = compiler.ResultFunction( "GetTangentViewVector", $"{worldPos}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs" );
+		var worldPosition = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
+		var tangentViewVector = compiler.ResultFunction( "GetTangentViewVector", $"{worldPosition}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs" );
 
 		var inputHeight = compiler.ResultOrDefault( InputHeight, DefaultHeight );
 		var inputDepthScale = compiler.ResultOrDefault( InputDepthScale, DefaultDepthScale );
