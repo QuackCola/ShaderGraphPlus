@@ -23,7 +23,7 @@ public sealed class Depth : ShaderNodePlus
 		/// </summary>
 		Normalized,
 		/// <summary>
-		/// Linearized depth value.
+		/// Linearized depth value, which is absolute coordinates away from the camera
 		/// </summary>
 		Linear
 	}
