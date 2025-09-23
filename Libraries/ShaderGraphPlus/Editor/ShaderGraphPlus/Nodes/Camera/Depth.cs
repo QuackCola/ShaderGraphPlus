@@ -12,7 +12,7 @@ public sealed class Depth : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
 
-	public enum DepthMode
+	public enum DepthSamplingMode
 	{
 		///<summary>The raw value of the depth buffer.</summary>
 		Raw,
@@ -30,11 +30,11 @@ public sealed class Depth : ShaderNodePlus
     [Input( typeof( Vector2 ) ), Hide]
     public NodeInput UV { get; set; }
 
-    /// <summary>
-    /// What Mode to get 
-    /// </summary>
-	public DepthMode Mode { get; set; }
 
+	/// <summary>
+	/// How to sample the depth buffer.
+	/// </summary>
+	public DepthSamplingMode SamplingMode { get; set; } = DepthSamplingMode.Linear;
 
 	[Output( typeof( float ) ), Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -42,15 +42,15 @@ public sealed class Depth : ShaderNodePlus
 		var result = UV.IsValid() ? compiler.Result( UV ).Cast( 2 ) :
 			compiler.IsVs ? "i.vPositionPs.xy" : "i.vPositionSs.xy";
 
-        string returnCall = string.Empty;
-
-		switch (Mode)
+		string funcCall = "";
+		switch ( SamplingMode )
 		{
-            case DepthMode.Raw: returnCall = $"Depth::Get( {result} )"; break;
-            case DepthMode.Linear: returnCall = $"Depth::GetLinear( {result} )"; break;
-            case DepthMode.Normalized: returnCall = $"Depth::GetNormalized( {result} )"; break;
-        }
+			case DepthSamplingMode.Raw: funcCall = $"Depth::Get( {result} )"; break;
+			case DepthSamplingMode.Normalized: funcCall = $"Depth::GetNormalized( {result} )"; break;
+			case DepthSamplingMode.Linear: funcCall = $"Depth::GetLinear( {result} )"; break;
+			default: SGPLog.Error( $"Unknown Mode : \"{SamplingMode}\"" ); break;
+		}
 
-		return new NodeResult( ResultType.Float, returnCall );
+		return new NodeResult( ResultType.Float, funcCall );
 	};
 }
