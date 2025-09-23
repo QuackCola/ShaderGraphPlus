@@ -10,24 +10,26 @@ namespace ShaderGraphPlus.Nodes;
 [Title( "Bump Offset" ), Category( "Effects" ), Icon( "water" )]
 public sealed class BumpOffsetNode : ShaderNodePlus
 {
+	[Hide]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
-	[Hide]
-	public static string BumpOffset => @"
-float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane, float2 vTextureCoords, float3 vTangentViewVector )
-{
-	float l_10 = flReferencePlane - flHeightMap;
-	float2 l_11 = vTangentViewVector.xy * float2( l_10, l_10 );
-	
-	float2 l_13 = l_11 * float2( flDepthScale, flDepthScale );
-	float2 l_14 = l_13 * float2( 0.1f, 0.1f );
-	float2 l_15 = vTextureCoords.xy + l_14;
+	[JsonIgnore, Hide, Browsable( false )]
+	private const float HeightScale = 0.1f; 
 
-	return l_15;
-}
+	[Hide]
+	public static string BumpOffset => $@"
+float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane, float2 vTextureCoords, float3 vTangentViewVector )
+{{
+	float flHeight = flReferencePlane - flHeightMap;
+
+	float2 vUVOffset = vTangentViewVector.xy * float2( flHeight, flHeight ) * float2( flDepthScale, flDepthScale ) * float2( {HeightScale}f, {HeightScale}f );
+	float2 vDistortedUV = vTextureCoords.xy + vUVOffset;
+
+	return vDistortedUV;
+}}
 ";
 
 	[Input( typeof( float ) )]
