@@ -16,6 +16,10 @@ public sealed class ViewportNode : ShaderNodePlus
 	[Hide]
 	public static NodeResult.Func ViewportSize => ( GraphCompiler compiler ) => new( ResultType.Vector2, "g_vViewportSize" );
 
+	[Output( typeof( Vector2 ) ), Title( "Inverse Size" )]
+	[Hide]
+	public static NodeResult.Func ViewportInverseSize => ( GraphCompiler compiler ) => new( ResultType.Vector2, "g_vInvViewportSize" );
+
 	[Output( typeof( Vector2 ) ), Title( "Offset" )]
 	[Hide]
 	public static NodeResult.Func ViewportOffset => ( GraphCompiler compiler ) => new( ResultType.Vector2, "g_vViewportOffset" );
