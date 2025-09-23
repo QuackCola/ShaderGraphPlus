@@ -42,7 +42,7 @@
       "__version": 1,
       "SamplingMode": "Linear",
       "Identifier": "1",
-      "Position": "-384,-0",
+      "Position": "-384,0",
       "HandleOffsets": {}
     },
     {
@@ -51,7 +51,7 @@
       "DefaultA": 0,
       "DefaultB": 0.001,
       "Identifier": "2",
-      "Position": "-156,-0",
+      "Position": "-156,0",
       "HandleOffsets": {},
       "A": {
         "Identifier": "1",
