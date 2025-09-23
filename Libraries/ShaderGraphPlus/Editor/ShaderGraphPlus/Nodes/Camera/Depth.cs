@@ -1,9 +1,10 @@
-﻿namespace ShaderGraphPlus.Nodes;
+﻿
+namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
 /// Sample depth texture
 /// </summary>
-[Title( "Depth" ), Category( "Camera" )]
+[Title( "Scene Depth" ), Category( "Camera" )]
 public sealed class Depth : ShaderNodePlus
 {
 	[Hide]
@@ -14,22 +15,25 @@ public sealed class Depth : ShaderNodePlus
 
 	public enum DepthSamplingMode
 	{
-		///<summary>The raw value of the depth buffer.</summary>
+		/// <summary>
+		/// Depth value as-is from the depth buffer.
+		/// </summary>
 		Raw,
-		///<summary>Depth from 0..1 based on the z-near and z-far of the current viewport.</summary>
-		[Title("Normalized ( Projected Space )")]
+		/// <summary>
+		/// Normalized depth value.
+		/// </summary>
 		Normalized,
-		///<summary>Depth in world units from the camera.</summary>
-		[Title("Linear ( View Space )")]
+		/// <summary>
+		/// Linearized depth value.
+		/// </summary>
 		Linear
 	}
 
-    [Hide]
-    public override string Title => $"{DisplayInfo.For(this).Name} ({Mode})";
+	[Hide]
+	public override string Title => $"{DisplayInfo.For(this).Name} ({SamplingMode})";
 
-    [Input( typeof( Vector2 ) ), Hide]
-    public NodeInput UV { get; set; }
-
+	[Input( typeof( Vector2 ) ), Hide]
+	public NodeInput UV { get; set; }
 
 	/// <summary>
 	/// How to sample the depth buffer.
