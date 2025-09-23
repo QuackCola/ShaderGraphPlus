@@ -59,7 +59,7 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 	[Sandbox.Range( 0.0f, 1.0f )]
 	public float DefaultDepthScale { get; set; } = 0.125f;
 
-	[Title( "ReferencePlane" )]
+	[Title( "Reference Plane" )]
 	[Sandbox.Range( 0.0f, 1.0f )]
 	public float DefaultReferencePlane { get; set; } = 0.42f;
 
