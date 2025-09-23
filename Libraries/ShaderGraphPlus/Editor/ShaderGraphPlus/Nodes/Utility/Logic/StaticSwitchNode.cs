@@ -30,7 +30,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.LogicNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.LogicNode;
 
 	[Hide]
 	public override string Title

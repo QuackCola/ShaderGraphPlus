@@ -16,7 +16,7 @@ public sealed class WorldNormal : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -33,7 +33,7 @@ public sealed class WorldTangent : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -53,7 +53,7 @@ public sealed class IsFrontFace : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( int ) ), Title( "Result" )]
 	[Hide]
@@ -73,7 +73,7 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 	public override int Version => 1;
 	
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -90,7 +90,7 @@ public sealed class ScreenPosition : ShaderNodePlus
 	public override int Version => 1;
 	
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	// Note: We could make all of these constants but I don't like the situation where it can generated something like
 	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
@@ -150,7 +150,7 @@ public sealed class ScreenCoordinate : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]
@@ -170,7 +170,7 @@ public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 	public override int Version => 1;
 	
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector2 ) ), Title( "UV" )]
 	[Hide]
@@ -212,7 +212,7 @@ public sealed class ObjectPosition : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -228,7 +228,7 @@ public sealed class ViewDirection : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -248,7 +248,7 @@ public sealed class VertexColor : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -269,7 +269,7 @@ public sealed class VertexBlend : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( float ) )]
 	[Hide]
@@ -298,7 +298,7 @@ public sealed class VertexPaint : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -319,7 +319,7 @@ public sealed class Tint : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.StageInputNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	[Hide, Output( typeof( Color ) )]
 	public static NodeResult.Func RGBA => ( GraphCompiler compiler ) => new( ResultType.Color, "i.vTintColor" );

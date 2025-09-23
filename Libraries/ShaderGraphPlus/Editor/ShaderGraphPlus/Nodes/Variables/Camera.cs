@@ -16,7 +16,7 @@ public sealed class Camera : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[Output( typeof( Vector3 ) ), Title( "Position" )]
 	[Hide]

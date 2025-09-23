@@ -5,28 +5,28 @@ using HandleConfig = NodeEditorPlus.HandleConfig;
 
 namespace ShaderGraphPlus;
 
+/// <summary>
+/// Storing the Node Header Primary Colors here so that they are all in one place.
+/// </summary>
+public static class PrimaryNodeHeaderColors
+{
+	public static Color SubgraphNode => Color.Parse( "#e05b0a" )!.Value;
+	public static Color GraphResultNode => Color.Parse( "#84705e" )!.Value;
+	public static Color UnaryNode => Color.Parse( "#394d62" )!.Value;
+	public static Color BinaryNode => Color.Parse( "#394d62" )!.Value;
+	public static Color ConstantNode => Color.Parse( "#5d9b31" )!.Value;
+	public static Color ParameterNode => Color.Parse( "#5d9b31" )!.Value;
+	public static Color StageInputNode => Color.Parse( "#803334" )!.Value;
+	public static Color GlobalVariableNode => Color.Parse( "#803334" )!.Value;
+	public static Color FunctionNode => Color.Parse( "#1d53ac" )!.Value;
+	public static Color TransformNode => Color.Parse( "#6c3baa" )!.Value;
+	public static Color LogicNode => Color.Parse( "#006b54" )!.Value;
+	public static Color ChannelNode => Color.Parse( "#2e2a60" )!.Value;
+}
+
 internal static class ShaderGraphPlusTheme
 {
 	public static Dictionary<Type, HandleConfig> HandleConfigs { get; private set; }
-
-	/// <summary>
-	/// Storing the Node Header Primary Colors here so that they are all in one place.
-	/// </summary>
-	internal static class PrimaryNodeHeaderColors
-	{
-		public static Color SubgraphNode => Color.Parse( "#e05b0a" )!.Value;
-		public static Color GraphResultNode => Color.Parse( "#84705e" )!.Value;
-		public static Color UnaryNode => Color.Parse( "#394d62" )!.Value;
-		public static Color BinaryNode => Color.Parse( "#394d62" )!.Value;
-		public static Color ConstantNode => Color.Parse( "#5d9b31" )!.Value;
-		public static Color ParameterNode => Color.Parse( "#5d9b31" )!.Value;
-		public static Color StageInputNode => Color.Parse( "#803334" )!.Value;
-		public static Color GlobalVariableNode => Color.Parse( "#803334" )!.Value;
-		public static Color FunctionNode => Color.Parse( "#1d53ac" )!.Value;
-		public static Color TransformNode => Color.Parse( "#6c3baa" )!.Value;
-		public static Color LogicNode => Color.Parse( "#006b54" )!.Value;
-		public static Color ChannelNode => Color.Parse( "#2e2a60" )!.Value;
-	}
 
 	static ShaderGraphPlusTheme()
 	{

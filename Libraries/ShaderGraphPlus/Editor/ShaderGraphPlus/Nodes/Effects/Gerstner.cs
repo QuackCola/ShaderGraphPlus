@@ -18,7 +18,7 @@ public sealed class GerstnerWavesNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public static string GerstnerWaves => @"

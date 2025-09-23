@@ -12,7 +12,7 @@ public abstract class NoiseNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	protected virtual string Func { get; }
 
@@ -82,7 +82,7 @@ public sealed class VoronoiNoise : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Input( typeof( Vector2 ) )]
 	[Hide]

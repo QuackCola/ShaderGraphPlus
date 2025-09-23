@@ -17,7 +17,7 @@ public sealed class RenderTargetSizeNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GlobalVariableNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[Output( typeof( Vector2 ) ), Title( "Render Target Size" )]
 	[Hide]

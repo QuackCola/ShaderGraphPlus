@@ -13,7 +13,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.SubgraphNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.SubgraphNode;
 
 	[Hide]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);

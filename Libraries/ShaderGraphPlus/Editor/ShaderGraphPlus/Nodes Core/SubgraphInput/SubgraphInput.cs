@@ -41,7 +41,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.SubgraphNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.SubgraphNode;
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;

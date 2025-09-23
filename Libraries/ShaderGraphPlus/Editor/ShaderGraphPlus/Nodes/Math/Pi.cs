@@ -16,7 +16,7 @@ public class PiNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.ConstantNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ConstantNode;
 
 	[Title( "Multiplier" )]
 	[Input( typeof( float ) )]

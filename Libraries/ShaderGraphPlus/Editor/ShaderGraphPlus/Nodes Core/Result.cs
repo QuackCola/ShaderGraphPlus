@@ -18,7 +18,7 @@ public sealed class Result : BaseResult
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.GraphResultNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.GraphResultNode;
 
 	[Hide]
 	public override string Title

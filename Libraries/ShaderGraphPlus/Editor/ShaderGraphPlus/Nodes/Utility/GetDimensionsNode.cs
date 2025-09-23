@@ -16,7 +16,7 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => ShaderGraphPlusTheme.PrimaryNodeHeaderColors.FunctionNode;
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "Tex 2D" )]
 	[Input( typeof( Texture2DObject ) )]
