@@ -1,5 +1,7 @@
 ﻿using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
+using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 using IPlugIn = NodeEditorPlus.IPlugIn;
@@ -109,11 +111,51 @@ partial class ShaderGraphPlus
 		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
 	}
 
+	public static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonElement jsonElement, JsonSerializerOptions serializerOptions )
+	{
+		ArgumentNullException.ThrowIfNull( jsonUpgradeable );
+
+		var jsonObject = JsonNode.Parse( jsonElement.GetRawText() ) as JsonObject;
+
+		SGPJsonUpgrader.Upgrade( versionNumber, jsonObject, type );
+
+		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
+	}
+
 	private static void DeserializeObject( object obj, JsonElement doc, JsonSerializerOptions options )
 	{
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
+
+		// Check if we need to upgrade any nodes :).
+		if ( type.IsAssignableTo( typeof( BaseNodePlus ) ) )
+		{
+			// Handle any types that use the ISGPJsonUpgradeable interface
+			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( type ) )
+			{
+				var propertyTypeInstance = EditorTypeLibrary.Create( type.Name, type );
+				int oldVersionNumber = 0;
+
+				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
+				if ( doc.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
+				{
+					oldVersionNumber = versionElement.GetInt32();
+				}
+
+				//SGPLog.Info( $"Got \"{type}\" upgradeable version \"{oldVersionNumber}\"" );
+
+				// Dont even bother upgrading if we dont need to.
+				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
+				{
+					//SGPLog.Info( $"Upgrading \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"" );
+					
+					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, type, doc, options );
+
+					doc = upgradedElement;
+				}
+			}
+		}
 
 		// start deserilzing each property of the current type we are deserialzing. Also handle 
 		// any property that needs upgrading.
@@ -216,7 +258,7 @@ partial class ShaderGraphPlus
 					node = UpdateSubgraphOutput( element, options );
 					fileVersion = 2;
 				}
-				else
+				else // Nothing to upgrade.
 				{
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 					DeserializeObject( node, element, options );
@@ -425,7 +467,10 @@ partial class ShaderGraphPlus
 				}
 			}
 
-			doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
+			if ( propertyName != "Version" )
+			{
+				doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
+			}
 		}
 
 		if ( obj is INodePlus node )
