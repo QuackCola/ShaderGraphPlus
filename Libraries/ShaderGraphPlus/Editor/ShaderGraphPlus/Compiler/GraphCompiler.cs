@@ -674,7 +674,7 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public NodeResult Result( NodeInput input, bool subgraphResult = false )
 	{
-		if (!input.IsValid)
+		if ( !input.IsValid )
 			return default;
 
 		BaseNodePlus node = null;
