@@ -286,6 +286,8 @@ public sealed class Preview3DPanel : Widget
         toolBar.AddSeparator();
 
 		option = toolBar.AddOption( null, "settings", OpenSettings );
+		option.ToolTip = "Preview Settings";
+		option.StatusTip = "Preview Settings";
 
 		Layout.Add( toolBar );
 		Layout.Add( _preview );
@@ -322,8 +324,9 @@ public sealed class Preview3DPanel : Widget
 		cs.AddProperty(_preview, x => x.ShowGround);
 		cs.AddProperty(_preview, x => x.ShowSkybox);
 		cs.AddProperty(_preview, x => x.BackgroundColor);
-		cs.AddProperty(_preview, x => x.Tint);
-	
+		cs.AddProperty( _preview, x => x.Tint);
+		cs.AddProperty( _preview, x => x.SceneObjectHeightPosition );
+
 		popup.Layout.Add(cs);
 		popup.MaximumWidth = 300;
 		popup.OpenAtCursor();
@@ -575,6 +578,22 @@ public sealed class Preview3D : SceneRenderingWidget
 			_tint = value;
 			if (_sceneObject.IsValid())
 				_sceneObject.ColorTint = _tint;
+		}
+	}
+
+	private float _sceneObjectHeightPosition;
+	[Title("Object Height Position")]
+	public float SceneObjectHeightPosition
+	{
+		get => _sceneObjectHeightPosition;
+		set
+		{
+			_sceneObjectHeightPosition = value;
+			
+			if ( _sceneObject.IsValid() )
+			{
+				_sceneObject.Position = new Vector3( 0, 0, _sceneObjectHeightPosition );
+			}
 		}
 	}
 
