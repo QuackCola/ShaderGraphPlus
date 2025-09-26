@@ -251,9 +251,11 @@ public class ShaderGraphPlusView : GraphView
 		{
 			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
 			{
-				var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>() );
-
-				CreateNewNode( nodeType, clickPos, targetPlug );
+				Dialog.AskString( ( string namedRerouteName ) => 
+				{
+					CreateNewNamedRerouteDeclaration( namedRerouteName, clickPos, targetPlug );
+				}, 
+				"Specify a Named Reroute name" );
 			} );
 		}
 		else if ( targetPlug is PlugIn )
@@ -296,22 +298,20 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	private NodeUI CreateNewNamedReroute( string name, Vector2 position )
+	private void CreateNewNamedReroute( string name, Vector2 position )
 	{
 		using var undoScope = UndoScope( "Add Named Reroute" );
 		
-		var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>() );
+		var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>(), name );
 
-		var ui = CreateNewNode( nodeType, node =>
-		{
-			node.Position = position.SnapToGrid( GridSize );
+		CreateNewNode( nodeType, position );
+	}
 
-			var namedReroute = (NamedRerouteNode)node;
-			namedReroute.Name = name;
+	private void CreateNewNamedRerouteDeclaration( string name, Vector2 position, Plug targetPlug )
+	{
+		var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>(), name );
 
-		} );
-
-		return ui;
+		CreateNewNode( nodeType, position, targetPlug );
 	}
 
 	public override void ChildValuesChanged( Widget source )
