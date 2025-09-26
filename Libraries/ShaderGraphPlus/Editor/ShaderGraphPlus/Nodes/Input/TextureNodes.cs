@@ -1135,8 +1135,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 /// Texture2D Object.
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
-//[NodeReplace( ReplacementMode.SubgraphOnly )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode//, IReplaceNode
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -1441,8 +1440,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
 [Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
-//[NodeReplace( ReplacementMode.SubgraphOnly )]
-public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
+public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 {
 	[Hide]
 	public override int Version => 1;
