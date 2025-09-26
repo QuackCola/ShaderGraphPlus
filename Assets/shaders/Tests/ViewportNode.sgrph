@@ -42,7 +42,6 @@
     {
       "_class": "Float4",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "1,0,0,1",
       "Name": "",
       "IsAttribute": false,
@@ -66,7 +65,6 @@
     {
       "_class": "Float4",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "0,1,0,1",
       "Name": "",
       "IsAttribute": false,
@@ -92,7 +90,6 @@
       "__version": 1,
       "Min": "0,0",
       "Max": "1,1",
-      "PortOrder": 0,
       "Value": "0,0",
       "Name": "",
       "IsAttribute": false,
@@ -110,7 +107,7 @@
         }
       },
       "Identifier": "4",
-      "Position": "-636,216",
+      "Position": "-696,240",
       "HandleOffsets": {}
     }
   ]

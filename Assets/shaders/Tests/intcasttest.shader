@@ -20,7 +20,7 @@ MODES
 COMMON
 {
 	#ifndef S_ALPHA_TEST
-	#define S_ALPHA_TEST 1
+	#define S_ALPHA_TEST 0
 	#endif
 	#ifndef S_TRANSLUCENT
 	#define S_TRANSLUCENT 0
@@ -80,28 +80,49 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	float g_flTestFloat0 < UiGroup( ",0/,0/0" ); Default1( 0 ); Range1( 0, 1 ); >;
+	int g_nMyInt < UiGroup( ",0/,0/0" ); Default1( 1 ); Range1( 0, 1 ); >;
 		
-	#include "Tests/CustomFunctionNode/Function0.hlsl"
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
-
 		
-		float l_0 = g_flTestFloat0;
-		float2 l_1 = i.vTextureCoords.xy * float2( 1, 1 );
-		float4 ol_0 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
-		float4 ol_1 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
-		Function0( l_0, l_1, ol_0, ol_1 );
-		float4 l_3 = float4( 0.31667, 0, 1, 1 );
-		float l_4 = VoronoiNoise( i.vTextureCoords.xy, 3.099682, 61.599304 );
-		float4 l_5 = lerp( ol_0, l_3, l_4 );
-		float4 l_6 = lerp( l_5, ol_1, l_4 );
+		Material m = Material::Init( i );
+		m.Albedo = float3( 1, 1, 1 );
+		m.Normal = float3( 0, 0, 1 );
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		m.TintMask = 1;
+		m.Opacity = 1;
+		m.Emission = float3( 0, 0, 0 );
+		m.Transmission = 0;
 		
-
-		return float4( l_6.xyz, 1 );
+		int l_0 = g_nMyInt;
+		float2 l_1 = float2( l_0, l_0 );
+		
+		m.Albedo = float3( l_1, 0 );
+		m.Opacity = 1;
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		
+		
+		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
+		m.Roughness = saturate( m.Roughness );
+		m.Metalness = saturate( m.Metalness );
+		m.Opacity = saturate( m.Opacity );
+		
+		// Result node takes normal as tangent space, convert it to world space now
+		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		
+		// for some toolvis shit
+		m.WorldTangentU = i.vTangentUWs;
+		m.WorldTangentV = i.vTangentVWs;
+		m.TextureCoords = i.vTextureCoords.xy;
+				
+		return ShadingModelStandard::Shade( m );
 	}
 }

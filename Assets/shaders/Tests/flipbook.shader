@@ -80,7 +80,7 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	SamplerState g_sSampler0 < Filter( POINT ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
+	SamplerState g_sIconSheetSampler < Filter( POINT ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
 	CreateInputTexture2D( IconSheet, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tIconSheet < Channel( RGBA, Box( IconSheet ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
 	float2 g_vSheetRowAndColumnAmount < UiType( Slider ); UiStep( 1 ); UiGroup( ",0/,0/0" ); Default2( 4,4 ); Range2( 2,2, 64,64 ); >;
@@ -110,7 +110,7 @@ PS
 		bool l_1 = g_bInvertSheetX;
 		bool l_2 = g_bInvertSheetY;
 		float2 l_3 = FlipBook( i.vTextureCoords.xy, l_0.x, l_0.y, g_flTime, l_1, l_2 );
-		float4 l_4 = g_tIconSheet.Sample( g_sSampler0,l_3 );
+		float4 l_4 = g_tIconSheet.Sample( g_sIconSheetSampler,l_3 );
 		
 
 		return float4( l_4.xyz, 1 );

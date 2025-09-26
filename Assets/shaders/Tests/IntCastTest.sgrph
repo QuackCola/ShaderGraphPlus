@@ -1,7 +1,7 @@
 {
-  "__version": 1,
+  "__version": 2,
   "IsSubgraph": false,
-  "Path": "shaders/tests/IntCastTest.sgrph",
+  "Path": "shaders/tests/intcasttest.sgrph",
   "Model": null,
   "Title": null,
   "Description": null,
@@ -42,7 +42,6 @@
       "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 1,
       "Name": "MyInt",
       "IsAttribute": false,
