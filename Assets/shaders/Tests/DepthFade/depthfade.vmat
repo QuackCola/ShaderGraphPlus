@@ -1,0 +1,6 @@
+
+Layer0
+{
+	shader "shaders/tests/depthfade/depthfade.shader_c"
+
+}

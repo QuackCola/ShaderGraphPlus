@@ -1,7 +1,7 @@
 {
   "__version": 2,
   "IsSubgraph": false,
-  "Path": "shaders/tests/depthintersection/depthfade.sgrph",
+  "Path": "shaders/tests/depthfade/depthfade.sgrph",
   "Model": null,
   "Title": "",
   "Description": null,
