@@ -208,7 +208,6 @@
       "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0,
       "Name": "",
       "IsAttribute": false,
