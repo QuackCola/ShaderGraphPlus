@@ -278,7 +278,6 @@ partial class ShaderGraphPlus
 					DeserializeObject( node, element, options );
 				}
 				
-
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
