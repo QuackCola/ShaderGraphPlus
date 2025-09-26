@@ -1,6 +1,7 @@
 {
+  "__version": 2,
   "IsSubgraph": false,
-  "Path": "shaders/tests/bumpoffset/bumpoffset.sgrph",
+  "Path": "shaders/tests/bumpoffset/bumpoffsettest.sgrph",
   "Model": "models/dev/box.vmdl",
   "Title": null,
   "Description": null,
@@ -12,7 +13,9 @@
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "RenderBackfaces": false,
     "EnableShadows": true,
+    "ShowGround": false,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -20,6 +23,7 @@
   "nodes": [
     {
       "_class": "Result",
+      "__version": 1,
       "DefaultOpacity": 1,
       "DefaultRoughness": 0.124,
       "DefaultMetalness": 0,
@@ -45,6 +49,7 @@
     },
     {
       "_class": "BumpOffsetNode",
+      "__version": 1,
       "DefaultHeight": 0,
       "DefaultDepthScale": 0.125,
       "DefaultReferencePlane": 0.42,
@@ -74,20 +79,40 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {
-        "Name": ""
+      "__version": 1,
+      "SamplerState": {
+        "Version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
       },
       "Image": "textures/brick_height.png",
       "UI": {
         "Name": "Height",
+        "PreviewImage": null,
+        "IsAttribute": false,
         "Default": "1,1,1,1",
         "Extension": "Mask",
         "CustomExtension": "_height",
+        "ShowExtension": false,
+        "Processor": "None",
         "ColorSpace": "Linear",
         "ImageFormat": "ATI1N",
+        "SrgbRead": false,
+        "Priority": 0,
         "PrimaryGroup": {
           "Name": "Height",
           "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
         }
       },
       "Identifier": "2",
@@ -106,6 +131,7 @@
     },
     {
       "_class": "TextureCoord",
+      "__version": 1,
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
       "Identifier": "3",
@@ -114,17 +140,40 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {
-        "Name": ""
+      "__version": 1,
+      "SamplerState": {
+        "Version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
       },
       "Image": "textures/brick_color.png",
       "UI": {
         "Name": "Color",
+        "PreviewImage": null,
+        "IsAttribute": false,
         "Default": "1,1,1,1",
+        "Extension": "Color",
+        "CustomExtension": null,
         "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
         "SrgbRead": true,
+        "Priority": 0,
         "PrimaryGroup": {
-          "Name": "Color"
+          "Name": "Color",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
         }
       },
       "Identifier": "4",
@@ -143,18 +192,40 @@
     },
     {
       "_class": "TextureSampler",
-      "DefaultSampler": {
-        "Name": ""
+      "__version": 1,
+      "SamplerState": {
+        "Version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
       },
       "Image": "textures/brick_normal.png",
       "UI": {
         "Name": "Normal",
+        "PreviewImage": null,
+        "IsAttribute": false,
         "Default": "1,1,1,1",
         "Extension": "Normal",
+        "CustomExtension": null,
         "ShowExtension": true,
+        "Processor": "None",
         "ColorSpace": "Linear",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
         "PrimaryGroup": {
-          "Name": "Normal"
+          "Name": "Normal",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
         }
       },
       "Identifier": "5",
@@ -173,17 +244,23 @@
     },
     {
       "_class": "Float",
+      "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0.125,
       "Name": "Depth Scale",
       "IsAttribute": false,
       "UI": {
+        "Type": "Default",
+        "Step": 0,
         "Priority": 1,
         "PrimaryGroup": {
           "Name": "Height",
           "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
         }
       },
       "Identifier": "6",
@@ -192,17 +269,23 @@
     },
     {
       "_class": "Float",
+      "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0.42,
       "Name": "Reference Plane",
       "IsAttribute": false,
       "UI": {
+        "Type": "Default",
+        "Step": 0,
         "Priority": 2,
         "PrimaryGroup": {
           "Name": "Height",
           "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
         }
       },
       "Identifier": "7",
@@ -211,6 +294,7 @@
     },
     {
       "_class": "ComponentMask",
+      "__version": 1,
       "R": true,
       "G": true,
       "B": true,
@@ -226,30 +310,53 @@
     },
     {
       "_class": "Float",
+      "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0.19003093,
       "Name": "Roughness",
       "IsAttribute": false,
-      "UI": {},
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "9",
       "Position": "-228,264",
       "HandleOffsets": {}
     },
     {
       "_class": "SamplerNode",
+      "__version": 1,
       "SamplerState": {
-        "Name": "TestSampler"
+        "Version": 2,
+        "Name": "TestSampler",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
       },
+      "IsAttribute": false,
       "Name": null,
-      "PortOrder": 0,
       "Identifier": "10",
       "Position": "-2016,228",
       "HandleOffsets": {}
     },
     {
       "_class": "ReroutePlus",
+      "__version": 1,
       "Comment": null,
       "Identifier": "11",
       "Position": "-588,264",
@@ -262,6 +369,7 @@
     },
     {
       "_class": "ReroutePlus",
+      "__version": 1,
       "Comment": null,
       "Identifier": "12",
       "Position": "-1764,-24",
@@ -274,6 +382,7 @@
     },
     {
       "_class": "ReroutePlus",
+      "__version": 1,
       "Comment": null,
       "Identifier": "13",
       "Position": "-1068,156",
@@ -286,6 +395,7 @@
     },
     {
       "_class": "ReroutePlus",
+      "__version": 1,
       "Comment": null,
       "Identifier": "14",
       "Position": "-1092,-24",
@@ -298,11 +408,24 @@
     },
     {
       "_class": "Branch",
+      "__version": 1,
       "Name": "",
       "IsAttribute": false,
       "Operator": "Equal",
       "Enabled": true,
-      "UI": {},
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "15",
       "Position": "-756,72",
       "HandleOffsets": {},
@@ -324,17 +447,30 @@
     },
     {
       "_class": "Bool",
-      "PortOrder": 0,
+      "__version": 1,
       "Value": true,
       "Name": "Bump Offset",
       "IsAttribute": false,
-      "UI": {},
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "16",
       "Position": "-1008,-48",
       "HandleOffsets": {}
     },
     {
       "_class": "TransformNormal",
+      "__version": 1,
       "InputSpace": "Tangent",
       "OutputSpace": "Tangent",
       "DecodeNormal": false,
