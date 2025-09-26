@@ -35,7 +35,7 @@ public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus, IWarningNode
             coords = incoords.IsValid ? $"{incoords.Cast(2)}" : defaultpos;
         }
 
-        return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "GetWorldSpaceNormal", $"{coords}" ) );
+        return new NodeResult(ResultType.Vector3, compiler.ResultHLSLFunction( "GetWorldSpaceNormal", $"{coords}" ) );
     };
 
 	public List<string> GetWarnings()

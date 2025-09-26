@@ -58,7 +58,7 @@ float DepthFade( float3 vWorldPos, float3 vCameraPositionWs, float3 vCameraDirWs
 		var falloff = compiler.ResultOrDefault( Falloff, DefaultFalloff );
 
 		string func = compiler.RegisterHLSLFunction( DepthFade, "DepthFade" );
-		string funcCall = compiler.ResultFunction( func, $"{worldPosition}, {cameraPosition}, {cameraDirection}, {coords}, {depthoffset}, {falloff}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{worldPosition}, {cameraPosition}, {cameraDirection}, {coords}, {depthoffset}, {falloff}" );
 
 		return new NodeResult( ResultType.Float, funcCall );
 	};

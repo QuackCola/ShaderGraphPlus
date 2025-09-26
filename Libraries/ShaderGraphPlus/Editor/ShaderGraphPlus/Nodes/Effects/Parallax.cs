@@ -139,7 +139,7 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 		}
 
 		string func = compiler.RegisterHLSLFunction( SimpleParallax, "SimpleParallax" );
-		string funcCall = compiler.ResultFunction( func, $"{slicecount}, {slicedistance}, {( coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy" )}, {tangentviewdir}, {textureobject}, {( !UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{slicecount}, {slicedistance}, {( coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy" )}, {tangentviewdir}, {textureobject}, {( !UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}" );
 
 
 

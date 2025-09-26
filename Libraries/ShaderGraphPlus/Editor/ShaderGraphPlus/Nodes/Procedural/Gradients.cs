@@ -76,7 +76,7 @@ public sealed class RoundGradientNode : ShaderNodePlus
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "RoundGradient", $"{coords}", 
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "RoundGradient", $"{coords}", 
 			$"{center}", $"{radius}", $"{density}", $"{invert}" 
 		));
 	};

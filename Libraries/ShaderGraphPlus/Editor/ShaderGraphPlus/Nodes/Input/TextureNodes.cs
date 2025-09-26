@@ -679,7 +679,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 			var resultTextureGlobal = compiler.ResultTexture( input, texture );
 
-			var result = compiler.ResultFunction( "TexTriplanar_Color",
+			var result = compiler.ResultHLSLFunction( "TexTriplanar_Color",
 			resultTextureGlobal,
 			samplerGlobal,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
@@ -702,7 +702,7 @@ public sealed class TextureTriplanar : TextureSamplerBase
 		{
 			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
 
-			var result = compiler.ResultFunction( "TexTriplanar_Color",
+			var result = compiler.ResultHLSLFunction( "TexTriplanar_Color",
 					$"{textureObject.Code}",
 					$"{samplerGlobal}",
 					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
@@ -872,7 +872,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
 
-			var result = compiler.ResultFunction( "TexTriplanar_Normal",
+			var result = compiler.ResultHLSLFunction( "TexTriplanar_Normal",
 			resultTextureGlobal,
 			samplerGlobal,
 			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
@@ -895,7 +895,7 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 		{
 			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( NormalMapTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
 
-			var result = compiler.ResultFunction( "TexTriplanar_Normal",
+			var result = compiler.ResultHLSLFunction( "TexTriplanar_Normal",
 					$"{textureObject.Code}",
 					$"{samplerGlobal}",
 					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",

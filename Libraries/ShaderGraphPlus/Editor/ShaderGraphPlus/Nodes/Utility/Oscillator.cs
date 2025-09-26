@@ -76,7 +76,7 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 		}
 		
 		string func = compiler.RegisterHLSLFunction( Oscillator, "Oscillator" );
-		string funcCall = compiler.ResultFunction( func, $"{time}, {frequency}, {phase}, {strength}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{time}, {frequency}, {phase}, {strength}" );
 		
 		return new NodeResult( ResultType.Float, funcCall );
 	};

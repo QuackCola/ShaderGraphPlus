@@ -78,7 +78,7 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 		}
 		
 		string func = compiler.RegisterHLSLFunction( UVRotation, "UVRotation" );
-		string funcCall = compiler.ResultFunction( func, $"{coords}, {rotationcenter}, {rotation}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{coords}, {rotationcenter}, {rotation}" );
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};
@@ -212,7 +212,7 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 		
 		
 		string func = compiler.RegisterHLSLFunction( UVScaleByPoint, "UVScaleByPoint" );
-		string funcCall = compiler.ResultFunction( func, $"{coords}, {center}, {scale}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{coords}, {center}, {scale}" );
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};
@@ -446,7 +446,7 @@ float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool
 		var invertX = compiler.ResultOrDefault( InvertX, DefaultInvertX );
 		var invertY = compiler.ResultOrDefault( InvertY, DefaultInvertY );
 		string func = compiler.RegisterHLSLFunction( FlipBook, "FlipBook" );
-		string funcCall = compiler.ResultFunction( func, $"{( coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy" )}, {width}, {height}, {tileindex}, {invertX}, {invertY}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{( coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy" )}, {width}, {height}, {tileindex}, {invertX}, {invertY}" );
 		
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};

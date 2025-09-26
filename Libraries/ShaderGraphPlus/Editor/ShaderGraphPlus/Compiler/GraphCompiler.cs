@@ -448,7 +448,7 @@ public sealed partial class GraphCompiler
 		result.Globals.Add( name, global );
 	}
 
-	public string ResultFunction( string name, params string[] args )
+	public string ResultHLSLFunction( string name, params string[] args )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( name ) )
 			return null;

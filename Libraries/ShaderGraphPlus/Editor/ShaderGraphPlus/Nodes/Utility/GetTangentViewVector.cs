@@ -54,7 +54,7 @@ public sealed class GetTangentViewVectorNode : ShaderNodePlus
 		var tangentUws = compiler.Result( TangentUWs );
 		var tangentVws = compiler.Result( TangentVWs );
 
-		var result = compiler.ResultFunction( "GetTangentViewVector", 
+		var result = compiler.ResultHLSLFunction( "GetTangentViewVector", 
 				$"{(worldPosition.IsValid ? worldPosition : "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz")}",
 				$"{(worldNormal.IsValid ? worldNormal : "i.vNormalWs")}",
 				$"{(tangentUws.IsValid ? tangentUws : "i.vTangentUWs")}",

@@ -68,7 +68,7 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var worldPosition = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
-		var tangentViewVector = compiler.ResultFunction( "GetTangentViewVector", $"{worldPosition}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs" );
+		var tangentViewVector = compiler.ResultHLSLFunction( "GetTangentViewVector", $"{worldPosition}, i.vNormalWs, i.vTangentUWs, i.vTangentVWs" );
 
 		var inputHeight = compiler.ResultOrDefault( InputHeight, DefaultHeight );
 		var inputDepthScale = compiler.ResultOrDefault( InputDepthScale, DefaultDepthScale );
@@ -76,7 +76,7 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 		var inputCoords = compiler.Result( InputCoords );
 
 		string func = compiler.RegisterHLSLFunction( BumpOffset, "BumpOffset" );
-		string funcCall = compiler.ResultFunction( func, 
+		string funcCall = compiler.ResultHLSLFunction( func, 
 			$"{inputHeight}, " +
 			$"{inputDepthScale}, " +
 			$"{inputReferencePlane}, " +

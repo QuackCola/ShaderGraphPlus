@@ -70,7 +70,7 @@ public class InvertColorsNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "InvertColors", $"{compiler.ResultOrDefault( Input, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "InvertColors", $"{compiler.ResultOrDefault( Input, Vector3.One )}" ) );
 	};
 }
 
@@ -91,7 +91,7 @@ public class MakeGreyscaleNode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "ToGreyscale", $"{compiler.ResultOrDefault( ColorInput, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "ToGreyscale", $"{compiler.ResultOrDefault( ColorInput, Vector3.One )}" ) );
 	};
 }
 
@@ -159,7 +159,7 @@ public sealed class TransformNormal : ShaderNodePlus
 
 		if ( InputSpace == NormalSpace.Object )
 		{
-			inputNormal = compiler.ResultFunction( "Vec3OsToTs", inputNormal,
+			inputNormal = compiler.ResultHLSLFunction( "Vec3OsToTs", inputNormal,
 				"i.vNormalOs.xyz",
 				"i.vTangentUOs_flTangentVSign.xyz",
 				"cross( i.vNormalOs.xyz, i.vTangentUOs_flTangentVSign.xyz ) * i.vTangentUOs_flTangentVSign.w" );
@@ -225,7 +225,7 @@ public sealed class ApplyTrs : ShaderNodePlus
 
 		if ( compiler.Result( Rotation ) is { IsValid: true } rotationResult )
 		{
-			rotation = new NodeResult( ResultType.Color, compiler.ResultFunction( "Quaternion_FromAngles", rotationResult.Code ) );
+			rotation = new NodeResult( ResultType.Color, compiler.ResultHLSLFunction( "Quaternion_FromAngles", rotationResult.Code ) );
 		}
 		else
 		{
@@ -234,9 +234,9 @@ public sealed class ApplyTrs : ShaderNodePlus
 
 		string matrix = null;
 
-		if ( scale.IsValid ) ApplyMatrix( ref matrix, compiler.ResultFunction( "Matrix_FromScale", scale.Code ) );
-		if ( rotation.IsValid ) ApplyMatrix( ref matrix, compiler.ResultFunction( "Matrix_FromQuaternion", rotation.Code ) );
-		if ( translation.IsValid ) ApplyMatrix( ref matrix, compiler.ResultFunction( "Matrix_FromTranslation", translation.Code ) );
+		if ( scale.IsValid ) ApplyMatrix( ref matrix, compiler.ResultHLSLFunction( "Matrix_FromScale", scale.Code ) );
+		if ( rotation.IsValid ) ApplyMatrix( ref matrix, compiler.ResultHLSLFunction( "Matrix_FromQuaternion", rotation.Code ) );
+		if ( translation.IsValid ) ApplyMatrix( ref matrix, compiler.ResultHLSLFunction( "Matrix_FromTranslation", translation.Code ) );
 
 		return matrix is null ? vector : new NodeResult( ResultType.Vector3, $"mul( {matrix}, float4( {vector.Code}, 1.0 ) ).xyz" );
 	};
@@ -391,37 +391,37 @@ public sealed class Blend : ShaderNodePlus
 				returnCall = $"min( 1.0f, ({aStr}) + ({bStr}) )";
 				break;
 			case BlendNodeMode.ColorBurn:
-				returnCall = compiler.ResultFunction( "ColorBurn_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "ColorBurn_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.LinearBurn:
-				returnCall = compiler.ResultFunction( "LinearBurn_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "LinearBurn_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.ColorDodge:
-				returnCall = compiler.ResultFunction( "ColorDodge_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "ColorDodge_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.LinearDodge:
-				returnCall = compiler.ResultFunction( "LinearDodge_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "LinearDodge_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.Overlay:
-				returnCall = compiler.ResultFunction( "Overlay_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "Overlay_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.SoftLight:
-				returnCall = compiler.ResultFunction( "SoftLight_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "SoftLight_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.HardLight:
-				returnCall = compiler.ResultFunction( "HardLight_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "HardLight_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.VividLight:
-				returnCall = compiler.ResultFunction( "VividLight_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "VividLight_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.LinearLight:
-				returnCall = compiler.ResultFunction( "LinearLight_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "LinearLight_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.HardMix:
-				returnCall = compiler.ResultFunction( "HardMix_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "HardMix_blend", aStr, bStr );
 				break;
 			case BlendNodeMode.Divide:
-				returnCall = compiler.ResultFunction( "Divide_blend", aStr, bStr );
+				returnCall = compiler.ResultHLSLFunction( "Divide_blend", aStr, bStr );
 				break;
 		}
 
@@ -496,7 +496,7 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 			func = compiler.RegisterHLSLFunction( ReorientedNormalBlendVector, "ReorientedNormalBlendVector" );
 		}
 
-		string funcResult = compiler.ResultFunction( func,
+		string funcResult = compiler.ResultHLSLFunction( func,
 			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
 			$"{(b.IsValid ? b.Cast( 3 ) : "1.0")}"
 		);
@@ -548,7 +548,7 @@ float3 ReflectVector( float3 a, float3 b)
 		var b = compiler.Result( B );
 
 		string func = compiler.RegisterHLSLFunction( ReflectVector, "ReflectVector" );
-		string funcResult = compiler.ResultFunction( func,
+		string funcResult = compiler.ResultHLSLFunction( func,
 			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
 			$"{(b.IsValid ? b.Cast( 3 ) : "1.0")}"
 		);
@@ -574,7 +574,7 @@ public sealed class RGBtoHSV : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "RGB2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -595,7 +595,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "HSV2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -616,7 +616,7 @@ public sealed class RGBtoLinear : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => (GraphCompiler compiler) =>
 	{
-		return new NodeResult(ResultType.Vector3, compiler.ResultFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult(ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -637,7 +637,7 @@ public sealed class LineartoRGB : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "Linear2RGB", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -658,7 +658,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "Linear2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -679,7 +679,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "HSV2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -751,7 +751,7 @@ public sealed class HeightToNormal : ShaderNodePlus
 	//	return NodeResult.MissingInput(nameof(Normal));
 	//}
 
-		var result = compiler.ResultFunction( "Height2Normal",
+		var result = compiler.ResultHLSLFunction( "Height2Normal",
 			$"{height}", 
 			$"{strength}", 
 			$"{worldpos}", 

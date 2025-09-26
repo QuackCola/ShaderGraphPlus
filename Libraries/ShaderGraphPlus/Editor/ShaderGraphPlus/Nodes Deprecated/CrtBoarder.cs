@@ -57,7 +57,7 @@ float3 CRTBoarder(float2 vScreenUV , float3 vSceneColor, float2 vCurvature)
 		var curvature = compiler.ResultOrDefault( Curveature, DefaultCurvature );
 		
 		string func = compiler.RegisterHLSLFunction( CRTBoarder, "CRTBoarder" );
-		string funcCall = compiler.ResultFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {scenecolor}, {curvature}" );
+		string funcCall = compiler.ResultHLSLFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {scenecolor}, {curvature}" );
 		
 		return new NodeResult( ResultType.Vector3, funcCall );
 	};

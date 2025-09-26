@@ -128,8 +128,8 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 		{
 			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso, {(
 				coords.IsValid
-				? $"{compiler.ResultFunction( func, coords.Cast( 2 ), uvModes )}"
-				: $"CalculateViewportUv( {compiler.ResultFunction( func, "i.vPositionSs.xy", uvModes )} )"
+				? $"{compiler.ResultHLSLFunction( func, coords.Cast( 2 ), uvModes )}"
+				: $"CalculateViewportUv( {compiler.ResultHLSLFunction( func, "i.vPositionSs.xy", uvModes )} )"
 			)} ).rgb" );
 		}
 
@@ -137,8 +137,8 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 		compiler.RegisterGlobal( "g_tFrameBufferCopyTexture", "Texture2D g_tFrameBufferCopyTexture < Attribute( \"FrameBufferCopyTexture\"); SrgbRead( false ); >;" );
 
 		var sample = $"g_tFrameBufferCopyTexture.Sample( g_sAniso, {( coords.IsValid
-			? $"{compiler.ResultFunction( func, coords.Cast( 2 ), uvModes )}"
-			: $"CalculateViewportUv( {compiler.ResultFunction( func, "i.vPositionSs.xy", uvModes )} )" )}" +
+			? $"{compiler.ResultHLSLFunction( func, coords.Cast( 2 ), uvModes )}"
+			: $"CalculateViewportUv( {compiler.ResultHLSLFunction( func, "i.vPositionSs.xy", uvModes )} )" )}" +
 			$"{(compiler.IsPreview ? "* g_vFrameBufferCopyInvSizeAndUvScale.zw" : "")}).rgb";
 
 		return new NodeResult( ResultType.Vector3, sample );

@@ -59,7 +59,7 @@ public sealed class BoxShapeNode : ShaderNodePlus
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "BoxShape", $"{coords}", $"{width}", $"{height}" ) );
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "BoxShape", $"{coords}", $"{width}", $"{height}" ) );
 	};
 
 }
@@ -116,7 +116,7 @@ public sealed class ElipseShapeNode : ShaderNodePlus
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "ElipseShape", $"{coords}", $"{width}", $"{height}" ) );
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "ElipseShape", $"{coords}", $"{width}", $"{height}" ) );
 	};
 
 }
@@ -182,7 +182,7 @@ public sealed class PolygonShapeNode : ShaderNodePlus
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultFunction( "PolygonShape", $"{coords}", $"{sides}", $"{width}", $"{height}" ) );
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "PolygonShape", $"{coords}", $"{sides}", $"{width}", $"{height}" ) );
 	};
 
 }
