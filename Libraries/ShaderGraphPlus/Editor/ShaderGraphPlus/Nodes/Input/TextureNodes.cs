@@ -1144,15 +1144,8 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
-	//[Hide, JsonIgnore]
-	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-	//
-	//public BaseNodePlus GetReplacementNode()
-	//{
-	//	var subgraphInputNode = UpgradeToSubgraphInput();
-	//
-	//	return subgraphInputNode;
-	//}
+	[JsonIgnore, Hide, Browsable( false )]
+	public override bool CanPreview => false;
 
 	#region ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]
@@ -1508,9 +1501,6 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
 
 	[Hide, JsonIgnore]
 	public Vector2 ParameterNodePosition => Position;
-
-	[Hide, JsonIgnore]
-	public override bool CanPreview => false;
 
 	[Hide]
 	private bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
