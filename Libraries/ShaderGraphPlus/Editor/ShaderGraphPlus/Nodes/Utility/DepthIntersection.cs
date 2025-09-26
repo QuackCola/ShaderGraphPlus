@@ -7,10 +7,10 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 namespace ShaderGraphPlus.Nodes;
 
 /// <summary>
-/// WIP Depth Intersection Effect. May not be "Correct".
+/// 
 /// </summary>
-[Title("Depth Intersection"), Category( "Utility" ), Icon( "join_inner" )]
-public sealed class DepthIntersectionNode : ShaderNodePlus
+[Title( "Depth Fade" ), Category( "Utility" ), Icon( "join_inner" )]
+public sealed class DepthFadeNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
@@ -19,53 +19,45 @@ public sealed class DepthIntersectionNode : ShaderNodePlus
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
-	public static string DepthIntersect => @"
-float DepthIntersect( float3 vWorldPos, float2 vUv, float flDepthOffset )
+	public static string DepthFade => @"
+float DepthFade( float3 vWorldPos, float3 vCameraPositionWs, float3 vCameraDirWs, float2 vUv, float flDepthOffset, float flFalloff )
 {
-	float3 l_1 = vWorldPos - g_vCameraPositionWs;
-	float l_2 = dot( l_1, g_vCameraDirWs );
+	float3 l_1 = vWorldPos - vCameraPositionWs;
+	float l_2 = dot( l_1, normalize( vCameraDirWs ) );
 
-	flDepthOffset += l_2;
-	float Depth = Depth::GetLinear( vUv );
-
-	float l_3 = smoothstep( l_2, flDepthOffset, Depth );
-
-	// One Minus the result before return
-	return 1 - l_3;
+	float depth = Depth::GetLinear( vUv );
+	float l_3 = depth - l_2;
+	
+	return pow( saturate( l_3 / flDepthOffset ), flFalloff );
 }
-";
-
-	public DepthIntersectionNode() : base()
-	{
-
-	}
-
-	/// <summary>
-	/// Coordinates to use.
-	/// </summary>
-	//[Title( "ScreenUVs" )]
-	//[Input( typeof( Vector2 ) )]
-	//[Hide]
-	//public NodeInput Coords { get; set; }
-
+"; 
+	[Title( "Depth Offset" )]
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput DepthOffset { get; set; }
 
-	public float DefaultDepthOffset { get; set; } = 1.0f;
+	[Title( "Falloff" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput Falloff { get; set; }
 
+	public float DefaultDepthOffset { get; set; } = 1.0f;
+	public float DefaultFalloff { get; set; } = 0.5f;
 
 	[Output( typeof( float ) )]
 	[Hide]
 	public NodeResult.Func Result => (GraphCompiler compiler) =>
 	{
 		var coords = "i.vPositionSs.xy";
-		var worldpos = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
-
+		var worldPosition = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
+		var cameraPosition = "g_vCameraPositionWs";
+		var cameraDirection = "g_vCameraDirWs";
+		
 		var depthoffset = compiler.ResultOrDefault( DepthOffset, DefaultDepthOffset );
+		var falloff = compiler.ResultOrDefault( Falloff, DefaultFalloff );
 
-		string func = compiler.RegisterFunction( DepthIntersect );
-		string funcCall = compiler.ResultFunction( func, $"{worldpos}, {coords}, {depthoffset}" );
+		string func = compiler.RegisterFunction( DepthFade );
+		string funcCall = compiler.ResultFunction( func, $"{worldPosition}, {cameraPosition}, {cameraDirection}, {coords}, {depthoffset}, {falloff}" );
 
 		return new NodeResult( ResultType.Float, funcCall );
 	};
