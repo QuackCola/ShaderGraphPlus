@@ -46,6 +46,7 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		return new CommentUI( view, this );
 	}
 
+#region Upgraders 
 	[SGPJsonUpgrader( typeof( CommentNode ), 2 )]
 	public static void Upgrader_v2( JsonObject json )
 	{
@@ -56,37 +57,42 @@ public class CommentNode : BaseNodePlus, ICommentNode
 	
 		try
 		{
+			var color = Color.Parse( $"#c2b5b5" )!.Value;
+
 			switch ( json["Color"].ToString() )
 			{
 				case "White":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#c2b5b5" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#c2b5b5" )!.Value;
 				break;
 				case "Red":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#d60000" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#d60000" )!.Value;
 				break;
 				case "Green":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#33b679" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#33b679" )!.Value;
 				break;
 				case "Blue":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#039be5" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#039be5" )!.Value;
 				break;
 				case "Yellow":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#f6c026" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#f6c026" )!.Value;
 				break;
 				case "Purple":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#8e24aa" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#8e24aa" )!.Value;
 				break;
 				case "Orange":
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#f5511d" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#f5511d" )!.Value;
 				break;
 				default:
-					json["Color"] = JsonSerializer.SerializeToNode( Color.Parse( $"#c2b5b5" )!.Value, ShaderGraphPlus.SerializerOptions() );
+					color = Color.Parse( $"#c2b5b5" )!.Value;
 				break;
 			}
+
+			json["Color"] = JsonSerializer.SerializeToNode( color, ShaderGraphPlus.SerializerOptions() );
 		}
 		catch
 		{
 		}
 	}
+#endregion Upgraders 
 }
 
