@@ -965,6 +965,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
+	public override bool CanPreview => false;
+
+	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
@@ -996,9 +999,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 
 	[ShowIf( nameof( IsSubgraph ), true )]
 	public int PortOrder { get; set; }
-
-	[JsonIgnore, Hide]
-	public override bool CanPreview => false;
 
 	/// <summary>
 	/// Texture to sample in previewW
@@ -1450,15 +1450,8 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode//, IReplaceNode
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
 
-	//[Hide, JsonIgnore]
-	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-	//
-	//public BaseNodePlus GetReplacementNode()
-	//{
-	//	var subgraphInputNode = UpgradeToSubgraphInput();
-	//
-	//	return subgraphInputNode;
-	//}
+	[JsonIgnore, Hide, Browsable( false )]
+	public override bool CanPreview => false;
 
 	public SamplerNode() : base()
 	{
