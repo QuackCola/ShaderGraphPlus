@@ -141,18 +141,25 @@ partial class ShaderGraphPlus
 				if ( doc.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
+					SGPLog.Info( $"Got node \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
 				}
-
-				//SGPLog.Info( $"Got \"{type}\" upgradeable version \"{oldVersionNumber}\"" );
-
+				else
+				{
+					SGPLog.Info( $"Failed to get node \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
+				}
+				
 				// Dont even bother upgrading if we dont need to.
 				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
 				{
-					//SGPLog.Info( $"Upgrading \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"" );
+					SGPLog.Info( $"Upgrading node \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"", ConCommands.VerboseJsonUpgrader );
 					
 					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, type, doc, options );
 
 					doc = upgradedElement;
+				}
+				else
+				{
+					SGPLog.Info( $"Node \"{type}\" is already at the latest version :)", ConCommands.VerboseJsonUpgrader );
 				}
 			}
 		}
@@ -191,13 +198,18 @@ partial class ShaderGraphPlus
 				if ( jsonProperty.Value.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
+					SGPLog.Info( $"Got property \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
 				}
-
-				//SGPLog.Info( $"Got \"{propertyInfo.PropertyType}\" upgradeable version \"{oldVersionNumber}\"" );
+				else
+				{
+					SGPLog.Info( $"Failed to get property \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
+				}
 
 				// Dont even bother upgrading if we dont need to.
 				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
 				{
+					SGPLog.Info( $"Upgrading property \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"", ConCommands.VerboseJsonUpgrader );
+
 					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, propertyInfo.PropertyType, jsonProperty, options );
 
 					propertyInfo.SetValue( obj, JsonSerializer.Deserialize( upgradedElement.GetRawText(), propertyInfo.PropertyType, options ) );
@@ -205,8 +217,10 @@ partial class ShaderGraphPlus
 					// Continue to the next jsonProperty :)
 					continue;
 				}
-
-				//SGPLog.Info( $"\"{propertyInfo.PropertyType}\" is already at the latest version :)" );
+				else
+				{
+					SGPLog.Info( $"property \"{propertyInfo.PropertyType}\" is already at the latest version :)", ConCommands.VerboseJsonUpgrader );
+				}
 			}
 
 			propertyInfo.SetValue( obj, JsonSerializer.Deserialize( jsonProperty.Value.GetRawText(), propertyInfo.PropertyType, options ) );

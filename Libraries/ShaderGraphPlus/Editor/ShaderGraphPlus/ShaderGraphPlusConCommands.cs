@@ -4,6 +4,8 @@ internal static class ConCommands
 {
 	public static bool VerboseDebgging { get; internal set; } = false;
 
+	public static bool VerboseJsonUpgrader { get; internal set; } = false;
+
 	public static bool NodeDebugInfo { get; internal set; } = false;
 
 	public static bool OnPropertyUpdatedDebug { get; internal set; } = false;
@@ -19,6 +21,12 @@ internal static class ConCommands
 	public static void CC_VerboseDebugging( bool value )
 	{
 		VerboseDebgging = value;
+	}
+
+	[ConCmd( "sgp_verbosejsonupgrader" )]
+	public static void CC_VerboseJsonUpgrader( bool value )
+	{
+		VerboseJsonUpgrader = value;
 	}
 
 	[ConCmd( "sgp_debugnodeinfo" )]
