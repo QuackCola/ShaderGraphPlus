@@ -141,7 +141,7 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 		var gravityconstant = compiler.ResultOrDefault( GravityConstant, DefaultGravityConstant );
 		
 		
-		string func = compiler.RegisterFunction( GerstnerWaves );
+		string func = compiler.RegisterHLSLFunction( GerstnerWaves, "GerstnerWaves" );
 		string funcCall = compiler.ResultFunction( func, $" {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant}" );
 		
 		return new NodeResult( ResultType.Vector3, funcCall );

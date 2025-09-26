@@ -103,7 +103,7 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 		    return NodeResult.Error($"Input to TexObject is not a texture object!");
 		}
 		
-		string func = compiler.RegisterFunction( PixelPlot );
+		string func = compiler.RegisterHLSLFunction( PixelPlot, "PixelPlot" );
 		string funcCall = compiler.ResultFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, SamplerState )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
 		
 		return new NodeResult( ResultType.Color, funcCall );

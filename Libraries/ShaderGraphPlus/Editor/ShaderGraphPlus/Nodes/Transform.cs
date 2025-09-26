@@ -489,11 +489,11 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		var a = compiler.Result( A );
 		var b = compiler.Result( B );
 
-		string func = compiler.RegisterFunction( NormalBlendVector );
+		string func = compiler.RegisterHLSLFunction( NormalBlendVector, "NormalBlendVector" );
 		
 		if ( Mode == BlendMode.Reoriented )
 		{
-			func = compiler.RegisterFunction( ReorientedNormalBlendVector );
+			func = compiler.RegisterHLSLFunction( ReorientedNormalBlendVector, "ReorientedNormalBlendVector" );
 		}
 
 		string funcResult = compiler.ResultFunction( func,
@@ -547,7 +547,7 @@ float3 ReflectVector( float3 a, float3 b)
 		var a = compiler.Result( A );
 		var b = compiler.Result( B );
 
-		string func = compiler.RegisterFunction( ReflectVector );
+		string func = compiler.RegisterHLSLFunction( ReflectVector, "ReflectVector" );
 		string funcResult = compiler.ResultFunction( func,
 			$"{(a.IsValid ? a.Cast( 3 ) : "1.0")}",
 			$"{(b.IsValid ? b.Cast( 3 ) : "1.0")}"

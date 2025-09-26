@@ -56,7 +56,8 @@ void VoidOscillator( float flTime, float flFrequency, float flPhase, float flStr
 	{
 		compiler.RegisterInclude( $"TestFuncs.hlsl" );
 
-		compiler.ResultFunction( compiler.RegisterFunction( VoidOscillator ), $"" );
+		var func = compiler.RegisterHLSLFunction( VoidOscillator, "VoidOscillator" );
+		var funcCall = compiler.ResultFunction( func, $"" );
 	}
 
 	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )

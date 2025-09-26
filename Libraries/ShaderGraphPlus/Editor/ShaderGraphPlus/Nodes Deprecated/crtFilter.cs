@@ -335,7 +335,7 @@ float3 crtFilter(
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
 		
-		string func = compiler.RegisterFunction(  crtFilter );
+		string func = compiler.RegisterHLSLFunction( crtFilter, "crtFilter" );
 		string funcCall = compiler.ResultFunction( func, @$"
 		 {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")},
 		 {overlay},

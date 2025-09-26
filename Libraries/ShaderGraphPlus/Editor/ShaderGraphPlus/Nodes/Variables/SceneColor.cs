@@ -122,7 +122,7 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 		}
 
 		var uvModes = $"float2({(int)AddressU},{(int)AddressV})";
-		var func = compiler.RegisterFunction( MapSceneColorCoords );
+		var func = compiler.RegisterHLSLFunction( MapSceneColorCoords, "MapSceneColorCoords" );
 
 		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
 		{

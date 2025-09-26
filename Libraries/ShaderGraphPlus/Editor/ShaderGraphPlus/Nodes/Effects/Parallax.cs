@@ -125,24 +125,24 @@ float3 SimpleParallax(float flSlices, float flSliceDistance, float2 vUV, float3 
 
 
 		if ( !textureobject.IsValid )
-        {
-        	return NodeResult.MissingInput( nameof( TextureObject ) );
-        }
-        else if ( textureobject.ResultType is not ResultType.Texture2DObject )
-        {
-        	return NodeResult.Error( $"Input to Tex Object is not a texture object!" );
-        }
+		{
+			return NodeResult.MissingInput( nameof( TextureObject ) );
+		}
+		else if ( textureobject.ResultType is not ResultType.Texture2DObject )
+		{
+			return NodeResult.Error( $"Input to Tex Object is not a texture object!" );
+		}
+		
+		if ( !tangentviewdir.IsValid() )
+		{
+			return NodeResult.MissingInput( nameof( TangentViewDir ) );
+		}
 
-        if ( !tangentviewdir.IsValid() )
-        {
-        	return NodeResult.MissingInput( nameof( TangentViewDir ) );
-        }
-
-        string func = compiler.RegisterFunction( SimpleParallax );
-        string funcCall = compiler.ResultFunction( func, $"{slicecount}, {slicedistance}, {( coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy" )}, {tangentviewdir}, {textureobject}, {( !UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}" );
+		string func = compiler.RegisterHLSLFunction( SimpleParallax, "SimpleParallax" );
+		string funcCall = compiler.ResultFunction( func, $"{slicecount}, {slicedistance}, {( coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy" )}, {tangentviewdir}, {textureobject}, {( !UseStockTextureFiltering ? $"{sampler}" : "TextureFiltering" )}" );
 
 
 
-        return new NodeResult( ResultType.Vector3, funcCall );
+		return new NodeResult( ResultType.Vector3, funcCall );
 	};
 }

@@ -75,7 +75,7 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 		var inputReferencePlane = compiler.ResultOrDefault( InputReferencePlane, DefaultReferencePlane );
 		var inputCoords = compiler.Result( InputCoords );
 
-		string func = compiler.RegisterFunction( BumpOffset );
+		string func = compiler.RegisterHLSLFunction( BumpOffset, "BumpOffset" );
 		string funcCall = compiler.ResultFunction( func, 
 			$"{inputHeight}, " +
 			$"{inputDepthScale}, " +
