@@ -264,7 +264,7 @@ public class ShaderGraphPlusView : GraphView
 			
 			if ( namedRerouteDeclarations.Any() )
 			{
-				var optionsMenu = menu.AddMenu( "Add Named Reroute", "route" );
+				var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
 
 				foreach ( var namedRerouteDeclaration in namedRerouteDeclarations )
 				{
