@@ -13,22 +13,6 @@ public interface IParameterNode
 	bool IsAttribute { get; set; }
 	
 	ParameterUI UI { get; set; }
-	
-	public int PortOrder { get; set; }
-	
-	NodeInput PreviewInput { get; set; }
-
-	public Vector2 ParameterNodePosition { get; }
-
-	Type GetPortType();
-
-	object GetValue();
-	void SetValue( object val );
-
-	Vector4 GetRangeMin();
-	Vector4 GetRangeMax();
-
-	//public SubgraphInput UpgradeToSubgraphInput();
 }
 
 public interface ITextureParameterNode
@@ -51,34 +35,15 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
 
-	//[Hide, JsonIgnore]
-	//public bool ReplacementCondition => !string.IsNullOrWhiteSpace( Name );
-	//
-	//public BaseNodePlus GetReplacementNode()
-	//{
-	//	return UpgradeToSubgraphInput();
-	//}
-
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
 		$"{DisplayInfo.For( this ).Name} ( {Name} )";
 
-	//[Input, ShowIf( nameof( IsSubgraph ), true ), Title( "Preview" ), Hide]
-	[Hide]
-	public NodeInput PreviewInput { get; set; }
-
-	//[ShowIf( nameof( IsSubgraph ), true )]
-	[Hide]
-	public int PortOrder { get; set; }
-
 	public T Value { get; set; }
 
 	[HideIf( nameof( IsSubgraph ), true )]
 	public string Name { get; set; } = "";
-
-	[Hide, JsonIgnore]
-	public Vector2 ParameterNodePosition => Position;
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
@@ -86,21 +51,9 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 	[HideIf( nameof( IsSubgraph ), true )]
 	public bool IsAttribute { get; set; }
 
-	/// <summary>
-	/// If true, this parameter can be modified directly on the subgraph node.
-	/// </summary>
-	//[JsonIgnore, ShowIf( nameof( IsSubgraph ), true )]
-	[Hide]
-	protected bool IsRequiredInput
-	{
-		get => IsAttribute;
-		set => IsAttribute = value;
-	}
-
 	[InlineEditor( Label = false ), Group( "UI" )]
 	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
-
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{
@@ -110,41 +63,6 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
 		return new( ResultType.Float, $"{result}.{component}", true );
 	}
-
-	public Type GetPortType()
-	{
-		return typeof( T );
-	}
-
-	public virtual object GetDefaultValue()
-	{
-		return default( T );
-	}
-
-	public object GetValue()
-	{
-		return Value;
-	}
-
-	public virtual Vector4 GetRangeMin()
-	{
-		return Vector4.Zero;
-	}
-
-	public virtual Vector4 GetRangeMax()
-	{
-		return Vector4.Zero;
-	}
-
-	public void SetValue( object val )
-	{
-		Value = (T)val;
-	}
-
-	//public virtual SubgraphInput UpgradeToSubgraphInput()
-	//
-	//	return default ( SubgraphInput );
-	//
 
 	public List<string> GetErrors()
 	{

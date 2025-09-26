@@ -971,6 +971,9 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[Hide]
 	public override string Title
 	{
 		get
@@ -993,12 +996,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool AlreadyRegisterd { get; set; } = false;
 #endregion
-
-	[Hide,JsonIgnore]
-	public Vector2 ParameterNodePosition => Position;
-
-	[ShowIf( nameof( IsSubgraph ), true )]
-	public int PortOrder { get; set; }
 
 	/// <summary>
 	/// Texture to sample in previewW
@@ -1044,8 +1041,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 		}
 	}
 
-#region IParameterNode Region
-
 	[Hide, JsonIgnore]
 	public string Name { get; set; }
 
@@ -1054,50 +1049,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 
 	[Hide, JsonIgnore]
 	ParameterUI IParameterNode.UI { get; set; }
-
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-	//private bool HidePreviewInput => true;
-
-	[Input, Title( "Preview" ), Hide]
-	[HideIf( nameof( IsSubgraph ), false )]
-	public NodeInput PreviewInput { get; set; }
-
-	public Type GetPortType()
-	{
-		return typeof( TextureCubeObject );
-	}
-
-	public object GetValue()
-	{
-		return null;
-	}
-
-	public void SetValue( object val )
-	{
-		throw new NotImplementedException( $"{DisplayInfo.ClassName}.SetValue" );
-	}
-
-	public Vector4 GetRangeMin()
-	{
-		return Vector4.Zero;
-	}
-
-	public Vector4 GetRangeMax()
-	{
-		return Vector4.One;
-	}
-
-	//public SubgraphInput UpgradeToSubgraphInput()
-	//{
-	//	var subgraphInput = new SubgraphInput();
-	//	subgraphInput.InputName = Name;
-	//	subgraphInput.PortOrder = PortOrder;
-	//	subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
-	//
-	//	return subgraphInput;
-	//}
-	#endregion IParameterNode Region
 
 	/// <summary>
 	/// TextureCube object result.
@@ -1146,7 +1097,10 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;
 
-	#region ITextureInputNode
+	[Hide]
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+#region ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]
 	public string TextureInputName => UI.Name;
 
@@ -1200,9 +1154,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 			}
 		}
 	}
-
-	[Hide, JsonIgnore]
-	public Vector2 ParameterNodePosition => Position;
 
 	[Hide]
 	private Asset _asset;
@@ -1264,9 +1215,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 		Default = Color.White,
 	};
 
-	[ShowIf( nameof( IsSubgraph ), true )]
-	public int PortOrder { get; set; } = 0;
-
 	public Texture2DObjectNode() : base()
 	{
 		Image = "materials/dev/white_color.tga";
@@ -1289,17 +1237,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 		}
 	}
 
-	//[ShowIf( nameof( IsSubgraph ), true )]
-	//public int PortOrder
-	//{
-	//	get => IParameterNode.UI;
-	//	set
-	//	{
-	//		IParameterNode.UI.SetOrder( value );
-	//	}
-	//}
-#region IParameterNode Region
-	[ShowIf( nameof( IsSubgraph ), true )]
+	[Hide]
 	[Title( "Input Name" )]
 	public string Name { get; set; }
 
@@ -1308,52 +1246,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 
 	[Hide, JsonIgnore]
 	ParameterUI IParameterNode.UI { get; set; }
-
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-	//private bool HidePreviewInput => true;
-
-	[Input, Title( "Preview" ), Hide]
-	[HideIf( nameof( IsSubgraph ), false )]
-	public NodeInput PreviewInput { get; set; }
-
-	public Type GetPortType()
-	{
-		return typeof( Texture2DObject );
-	}
-
-	public object GetValue()
-	{
-		return new TextureInput();
-	}
-
-	public void SetValue( object val )
-	{
-		throw new NotImplementedException( $"{DisplayInfo.ClassName}.SetValue" );
-	}
-
-	public Vector4 GetRangeMin()
-	{
-		return Vector4.Zero;
-	}
-
-	public Vector4 GetRangeMax()
-	{
-		return Vector4.One;
-	}
-
-	//public SubgraphInput UpgradeToSubgraphInput()
-	//{
-	//	var subgraphInput = new SubgraphInput();
-	//	subgraphInput.InputName = Name;
-	//	subgraphInput.InputData = new VariantValueTexture2D( UI, SubgraphPortType.Texture2DObject );
-	//	subgraphInput.PortOrder = PortOrder;
-	//	subgraphInput.IsRequired = IsAttribute;
-	//
-	//	return subgraphInput;
-	//}
-
-	#endregion IParameterNode Region
 
 #region ISyncableTextureNode Region
 	[Hide,JsonIgnore]
@@ -1381,14 +1273,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 		input.Type = TextureType.Tex2D;
 		input.BoundNode = $"{Title}, ID:{Identifier}";
 		input.BoundNodeId = $"{Identifier}";;
-
-		if ( IsSubgraph )
-		{
-			if ( string.IsNullOrWhiteSpace( Name ) )
-			{
-				return NodeResult.Error( $"Missing required Input Name" );
-			}
-		}
 
 		CompileTexture();
 
@@ -1490,64 +1374,14 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 		}
 	}
 
-	[Hide, JsonIgnore]
-	public Vector2 ParameterNodePosition => Position;
-
 	[Hide]
 	private bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
-#region IParameterNode Region
-	[ShowIf( nameof( IsSubgraph ), true )]
-	[Title( "Input Name" )]
+	[Hide]
 	public string Name { get; set; }
-
-	[Input, Title( "Preview" ), Hide]
-	[HideIf( nameof( IsSubgraph ), false )]
-	public NodeInput PreviewInput { get; set; }
 
 	[Hide, JsonIgnore]
 	public ParameterUI UI { get; set; }
-
-	[ShowIf( nameof( IsSubgraph ), true )]
-	public int PortOrder { get; set; } = 0;
-
-	public Type GetPortType()
-	{
-		return typeof( Sampler );
-	}
-
-	public object GetValue()
-	{
-		return new Sampler();
-	}
-
-	public void SetValue( object val )
-	{
-		throw new NotImplementedException( $"{DisplayInfo.ClassName}.SetValue" );
-	}
-
-	public Vector4 GetRangeMin()
-	{
-		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMin" );
-	}
-
-	public Vector4 GetRangeMax()
-	{
-		throw new NotImplementedException( $"{DisplayInfo.ClassName}.GetRangeMax" );
-	}
-
-	//public SubgraphInput UpgradeToSubgraphInput()
-	//{
-	//	var subgraphInput = new SubgraphInput();
-	//	subgraphInput.InputName = Name;
-	//	subgraphInput.InputData = new VariantValueSampler( SamplerState, SubgraphPortType.Sampler );
-	//	subgraphInput.PortOrder = PortOrder;
-	//	subgraphInput.IsRequired = IsAttribute;
-	//
-	//	return subgraphInput;
-	//}
-
-#endregion IParameterNode Region
 
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>
