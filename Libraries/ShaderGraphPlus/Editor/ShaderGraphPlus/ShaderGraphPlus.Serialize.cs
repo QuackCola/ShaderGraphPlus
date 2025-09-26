@@ -284,48 +284,6 @@ partial class ShaderGraphPlus
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-				/*
-				if ( replaceAttribute != null && node is IReplaceNode iReplaceNode && iReplaceNode.ReplacementCondition )
-				{
-					if ( replaceAttribute.Mode == ReplacementMode.SubgraphOnly && IsSubgraph )
-					{
-						node.UpgradedToNewNode = true;
-						var newNode = iReplaceNode.GetReplacementNode();
-						newNode.Position = node.Position;
-
-						// Take the Identifier of the node that we are replacing.
-						newNode.Identifier = node.Identifier;
-
-						//SGPLog.Info( $"Upgraded subgraph node \"{node}\" to \"{newNode}\"" );
-
-						//foreach ( var plugOut in node.Outputs )
-						//{
-						//	SGPLog.Info( $"node output  \"{plugOut.Node}\"" );
-						//}
-
-						SGPLog.Info( $"Upgraded node \"{node}\" in subgraph only to \"{newNode}\"" );
-
-						replacedNodes.Add( node.Identifier, node );
-						nodes.Add( newNode.Identifier, newNode );
-						AddNode( newNode );
-					}
-					else if ( replaceAttribute.Mode == ReplacementMode.Both  )
-					{
-						node.UpgradedToNewNode = true;
-						var newNode = iReplaceNode.GetReplacementNode();
-						newNode.Position = node.Position;
-
-						// Take the Identifier of the node that we are replacing.
-						newNode.Identifier = node.Identifier;
-
-						SGPLog.Info( $"Upgraded node \"{node}\" to \"{newNode}\"" );
-
-						nodes.Add( newNode.Identifier, newNode );
-						AddNode( newNode );
-					}
-				}
-				*/
-
 				//if ( node is not IReplaceNode && node is IInitializeNode initializeableNode )
 				if ( node is IInitializeNode initializeableNode )
 				{
