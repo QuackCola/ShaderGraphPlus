@@ -477,17 +477,17 @@ public sealed partial class GraphCompiler
 	{
 		var result = ShaderResult;
 
-		Gradient gradient = new();
+		Gradient searchResult = new();
 
-		foreach ( var g in result.Gradients )
+		foreach ( var gradient in result.Gradients )
 		{
-			if ( g.Key == gradient_name )
+			if ( gradient.Key == gradient_name )
 			{
-				gradient = g.Value;
+				searchResult = gradient.Value;
 			}
 		}
 
-		return gradient;
+		return searchResult;
 	}
 
 	/// <summary>
@@ -630,6 +630,46 @@ public sealed partial class GraphCompiler
 	}
 
 	/// <summary>
+	/// Set or update combo switch info of a result. Used only by Result().
+	/// </summary>
+	private ComboSwitchInfo UpdateComboSwitchInfo( NodeInput input )
+	{
+		ComboSwitchInfo lastComboSwitchInfo = new();
+
+		if ( input.ComboSwitchInfo.IsValid )
+		{
+			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
+			SGPLog.Info( $"Setting {nameof( CurrentComboSwitchInfo )} To: {input.ComboSwitchInfo}", IsPreview && ConCommands.VerboseDebgging );
+			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
+
+			CurrentComboSwitchInfo = input.ComboSwitchInfo;
+			ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+
+			//SGPLog.Info( $"Setting ComboSwitchInfo from nodeInput : {CurrentComboSwitchInfo}", IsNotPreview );
+
+			// Clear any existing Results & InputResults from a previous block.
+			{
+				ShaderResult.SwitchBlockInputResults.Clear();
+				ShaderResult.SwitchBlockResults.Clear();
+			}
+		}
+
+		if ( CurrentComboSwitchInfo.IsValid )
+		{
+			lastComboSwitchInfo = CurrentComboSwitchInfo;
+
+			if ( lastComboSwitchInfo.IsValid )
+			{
+				//SGPLog.Info( $"lastComboSwitchInfo : {lastComboSwitchInfo}", IsNotPreview );
+
+				ComboSwitchInfoStack.Add( lastComboSwitchInfo );
+			}
+		}
+
+		return lastComboSwitchInfo;
+	}
+
+	/// <summary>
 	/// Get result of an input
 	/// </summary>
 	public NodeResult Result( NodeInput input, bool subgraphResult = false )
@@ -665,38 +705,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-#region ComboSwitch Region
-		ComboSwitchInfo lastComboSwitchInfo = new();
-
-		// Set CurrentSwitchInfo to the current incoming SwitchInfo from the input.
-		if ( input.ComboSwitchInfo.IsValid )
-		{
-			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
-			SGPLog.Info( $"Setting {nameof( CurrentComboSwitchInfo )} To: {input.ComboSwitchInfo}", IsPreview && ConCommands.VerboseDebgging );
-			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
-
-			CurrentComboSwitchInfo = input.ComboSwitchInfo;
-			ComboSwitchInfoStack.Add( lastComboSwitchInfo );
-
-			//SGPLog.Info( $"Setting ComboSwitchInfo from nodeInput : {CurrentComboSwitchInfo}", IsNotPreview );
-
-			// Clear any existing Results & InputResults from a previous block.
-			{
-				ShaderResult.SwitchBlockInputResults.Clear();
-				ShaderResult.SwitchBlockResults.Clear();
-			}
-		}
-		if ( CurrentComboSwitchInfo.IsValid )
-		{
-			lastComboSwitchInfo = CurrentComboSwitchInfo;
-
-			if ( lastComboSwitchInfo.IsValid )
-			{
-				//SGPLog.Info( $"lastComboSwitchInfo : {lastComboSwitchInfo}", IsNotPreview );
-
-				ComboSwitchInfoStack.Add( lastComboSwitchInfo );
-			}
-		}
+		var lastComboSwitchInfo = UpdateComboSwitchInfo( input );
 
 		if ( IsInComboSwitch )
 		{
@@ -707,7 +716,6 @@ public sealed partial class GraphCompiler
 				return exisitingResultSB;
 			}
 		}
-#endregion ComboSwitch Region
 		else
 		{
 
@@ -1006,13 +1014,10 @@ public sealed partial class GraphCompiler
 			}
 
 			funcResult.SetVoidLocalTargetID( node.Identifier );
-			funcResult.ShouldPreview = node.CanPreview;
 
 			if ( lastComboSwitchInfo.IsValid )
 			{
 				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), lastComboSwitchInfo );
-
-				//ComboSwitchInfoStack.Add( lastComboSwitchInfo );
 
 				if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( lastComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
 				{
@@ -1031,13 +1036,17 @@ public sealed partial class GraphCompiler
 			if ( IsPreview && !IsInComboSwitch )
 			{
 				funcResult.SetPreviewID( node.PreviewID );
+				funcResult.ShouldPreview = node.CanPreview;
+			}
+			else
+			{
+				funcResult.ShouldPreview = false;
 			}
 
-			if ( subgraphResult )
-			{
-				funcResult.SetPreviewID( SubgraphNode.PreviewID );
-				//SGPLog.Info( $"Getting Result of subgraphNode with id `{SubgraphNode.PreviewID}`", IsPreview );
-			}
+			//if ( subgraphResult )
+			//{
+			//	funcResult.SetPreviewID( SubgraphNode.PreviewID );
+			//}
 
 			// We can return this result without making it a local variable because it's constant
 			if ( funcResult.Constant )
@@ -1267,7 +1276,7 @@ public sealed partial class GraphCompiler
 		};
 	}
 
-	private static string GetLocalPrefix<T>( T value)
+	private static string GetLocalPrefix<T>( T value )
 	{
 		var prefix = value switch
 		{
@@ -1282,6 +1291,7 @@ public sealed partial class GraphCompiler
 			Float3x3 _ => "g_m",
 			Float4x4 _ => "g_m",
 			Sampler _ => "g_s",
+			Texture2DObject _ => "g_t",
 			_ => throw new Exception( $"Unsupported value type \"{value.GetType()}\"" )
 		};
 
@@ -1833,11 +1843,6 @@ public sealed partial class GraphCompiler
 				  .Append( $" SrgbRead( {result.Value.SrgbRead} ); >;" )
 				  .AppendLine();
 			}
-
-			//foreach ( var result in ShaderResult.SamplerStates )
-			//{
-			//	sb.AppendLine( $"SamplerState {result.Key} < Attribute( \"{result.Key}\" ); >;" );
-			//}
 
 			foreach ( var result in ShaderResult.Attributes )
 			{
