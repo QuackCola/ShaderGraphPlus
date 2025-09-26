@@ -1,7 +1,7 @@
 {
   "__version": 2,
   "IsSubgraph": false,
-  "Path": "shaders/tests/depth node/depthnodetest.sgrph",
+  "Path": "shaders/tests/depthnode/depthnodetest.sgrph",
   "Model": "models/dev/box.vmdl",
   "Title": "",
   "Description": null,
