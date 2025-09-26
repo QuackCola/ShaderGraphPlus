@@ -1,9 +1,6 @@
-﻿
-//using Editor.ShaderGraph;
-using Editor;
+﻿using Editor;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
-
 
 namespace ShaderGraphPlus;
 
