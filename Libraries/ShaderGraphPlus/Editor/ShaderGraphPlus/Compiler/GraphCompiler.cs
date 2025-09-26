@@ -460,16 +460,7 @@ public sealed partial class GraphCompiler
 		return $"{name}( {string.Join( ", ", args )} )";
 	}
 
-	//public string RegisterHLSLFunction( string code, [CallerArgumentExpression( "code" )] string propertyName = "" )
-	//{
-	//	if ( !GraphHLSLFunctions.HasFunction( propertyName ) )
-	//	{
-	//		GraphHLSLFunctions.RegisterFunction( propertyName, code );
-	//	}
-	//	return propertyName;
-	//}
-
-	public string RegisterHLSLFunction( string code, string functionName )
+	public string RegisterHLSLFunction( string code, [CallerArgumentExpression( nameof( code ) )] string functionName = "" )
 	{
 		if ( !GraphHLSLFunctions.HasFunction( functionName ) )
 		{
