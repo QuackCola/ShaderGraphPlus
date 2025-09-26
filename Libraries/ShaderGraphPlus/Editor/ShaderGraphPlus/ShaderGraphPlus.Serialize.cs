@@ -131,7 +131,6 @@ partial class ShaderGraphPlus
 		// Check if we need to upgrade any nodes :).
 		if ( type.IsAssignableTo( typeof( BaseNodePlus ) ) )
 		{
-			// Handle any types that use the ISGPJsonUpgradeable interface
 			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( type ) )
 			{
 				var propertyTypeInstance = EditorTypeLibrary.Create( type.Name, type );
