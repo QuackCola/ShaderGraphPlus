@@ -46,7 +46,8 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		return new CommentUI( view, this );
 	}
 
-#region Upgraders 
+#region Upgraders
+
 	[SGPJsonUpgrader( typeof( CommentNode ), 2 )]
 	public static void Upgrader_v2( JsonObject json )
 	{
@@ -93,6 +94,6 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		{
 		}
 	}
-#endregion Upgraders 
-}
 
+#endregion Upgraders
+}
