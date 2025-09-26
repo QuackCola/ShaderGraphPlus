@@ -100,7 +100,7 @@ partial class ShaderGraphPlus
 		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
 	}
 
-	public static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonProperty jsonProperty, JsonSerializerOptions serializerOptions )
+	private static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonProperty jsonProperty, JsonSerializerOptions serializerOptions )
 	{
 		ArgumentNullException.ThrowIfNull( jsonUpgradeable );
 
@@ -111,7 +111,7 @@ partial class ShaderGraphPlus
 		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
 	}
 
-	public static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonElement jsonElement, JsonSerializerOptions serializerOptions )
+	private static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonElement jsonElement, JsonSerializerOptions serializerOptions )
 	{
 		ArgumentNullException.ThrowIfNull( jsonUpgradeable );
 
