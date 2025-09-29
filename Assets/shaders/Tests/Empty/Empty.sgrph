@@ -32,5 +32,65 @@
       "Position": "0,0",
       "HandleOffsets": {}
     }
+  ],
+  "parameters": [
+    {
+      "_class": "Float4BlackboardParameter",
+      "Value": "1,1,1,1",
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Color"
+    },
+    {
+      "_class": "Float3BlackboardParameter",
+      "Min": "0,0,0",
+      "Max": "0,0,0",
+      "Value": "0,0,0",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Vector3"
+    },
+    {
+      "_class": "IntBlackboardParameter",
+      "Min": 0,
+      "Max": 0,
+      "Value": 0,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Int"
+    }
   ]
 }
