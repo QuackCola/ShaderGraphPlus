@@ -63,14 +63,17 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	public IEnumerable<BaseBlackboardParameter> Parameters => _parameters.Values;
 
 	[Hide, JsonIgnore]
-	public readonly Dictionary<string, BaseBlackboardParameter> _parameters = new();
+	public readonly Dictionary<Guid, BaseBlackboardParameter> _parameters = new();
 
 	// TODO : Remove this once i finish changing how you define shader features for a graph.
 	[Hide, JsonIgnore]
 	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
 
-	//[Hide, JsonIgnore]
-	//private readonly Dictionary<string, string> _features = new();
+	[Hide, JsonIgnore]
+	public IEnumerable<ShaderFeatureBase> FeaturesNew => _features;
+
+	[Hide, JsonIgnore]
+	private readonly List<ShaderFeatureBase> _features = new();
 
 	[Hide]
 	public bool IsSubgraph { get; set; }
@@ -147,9 +150,9 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
 	{
-		if ( !_parameters.ContainsKey( Parameter.Name ) )
+		if ( !_parameters.ContainsKey( Parameter.Identifier ) )
 		{
-			_parameters.Add( Parameter.Name, Parameter );
+			_parameters.Add( Parameter.Identifier, Parameter );
 
 			SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
 		}
@@ -169,14 +172,9 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	internal void UpdateParameterNode( BaseBlackboardParameter parameter )
 	{
-		//SGPLog.Info( $"Updating Parameter Node \"{parameter.Name}\" from the blackboard." );
-
-		foreach ( var node in Nodes.OfType<IBlackboardSyncable>() )
+		foreach ( var syncableNode in Nodes.OfType<IBlackboardSyncable>().Where( x => x.BlackboardParameterIdentifier == parameter.Identifier ) )
 		{
-			if ( node.BlackboardParameterIdentifier == parameter.Identifier )
-			{
-				node.UpdateFromBlackboard( parameter );
-			}
+			syncableNode.UpdateFromBlackboard( parameter );
 		}
 	}
 

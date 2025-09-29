@@ -17,7 +17,7 @@ public class Blackboard : Widget
 
 			_graph = value;
 
-			UpdateParameterList();
+			UpdateParameterList( null );
 		}
 	}
 
@@ -30,7 +30,7 @@ public class Blackboard : Widget
 	private Layout _leftLayout;
 	private Layout _rightLayout;
 	private bool GraphInit;
-
+	protected Layout BodyLayout;
 	public Blackboard( Widget parent ) : base( parent )
 	{
 		Name = "Blackboard";
@@ -40,20 +40,30 @@ public class Blackboard : Widget
 		//Graph = graph;
 
 		Layout = Layout.Column();
+		BodyLayout = Layout.Add( Layout.Column(), 1 );
 
 		_rowLayout = Layout.Row();
 		_rowLayout.Spacing = 8;
-		Layout.Add( _rowLayout );
+		BodyLayout.Add( _rowLayout );
 
 		_leftLayout = _rowLayout.AddColumn();
 		_leftLayout.Add( new Label( "Parameters" ) );
+		_leftLayout.Alignment = TextFlag.Center;
 		_leftLayout.Spacing = 8;
-
+		_leftLayout.Margin = 4;
 		{
-			_parameterListView = new( null );
-			_parameterListView.ItemSize = new Vector2( 0, 18 );
+			_parameterListView = new( this );
+			_parameterListView.ItemSize = new Vector2( 0, 32 );
 			_parameterListView.ItemSpacing = 4;
-			_parameterListView.OnPaintOverride = () => { Paint.ClearPen(); Paint.SetBrush( Theme.ControlBackground ); Paint.DrawRect( _parameterListView.LocalRect, Theme.ControlRadius ); return false; };
+			_parameterListView.ItemAlign = Sandbox.UI.Align.Center;
+			_parameterListView.OnPaintOverride = () => 
+			{ 
+				Paint.ClearPen(); 
+				Paint.SetBrush( Theme.ControlBackground ); 
+				Paint.DrawRect( _parameterListView.LocalRect, Theme.ControlRadius );
+
+				return false; 
+			};
 			_parameterListView.ItemPaint = PaintItem;
 			_parameterListView.ItemClicked = ClickItem;
 			_parameterListView.ItemDrag = ( a ) =>
@@ -67,25 +77,27 @@ public class Blackboard : Widget
 				return true;
 			};
 
+			
 			_leftLayout.Add( _parameterListView, 1 );
+			
 		}
 
 		_rightLayout = _rowLayout.AddColumn( 1 );
 		_rightLayout.Add( new Label( "Parameter Properties" ) );
 		_rightLayout.Spacing = 8;
-
+		_rightLayout.Alignment = TextFlag.Center;
+		_rightLayout.Margin = 4;
 		{
 			Sheet = new ControlSheet();
-
 			_rightLayout.Add( Sheet, 1 );
 			_rightLayout.AddStretchCell( 16 );
 		}
 
-		Layout.AddSpacingCell( 16 );
+		BodyLayout.AddSpacingCell( 16 );
 
 		var bottom = Layout.Column();
 		bottom.Spacing = 8;
-
+		bottom.Margin = 4;
 		{
 			var addButton = AddPrimaryButton( bottom, "Add", "new_label" );
 			addButton.Clicked += () =>
@@ -94,19 +106,18 @@ public class Blackboard : Widget
 				popup.OnSelect += ( t ) =>
 				{
 					AddBlackboardParameter( t );
-					UpdateParameterList();
 				};
 				popup.OpenAtCursor();
 			};
 		}
 
-		Layout.Add( bottom );
+		BodyLayout.Add( bottom );
 
 		GraphInit = true;
 
 		if ( Graph != null )
 		{
-			UpdateParameterList();
+			UpdateParameterList( null );
 		}
 	}
 
@@ -141,10 +152,12 @@ public class Blackboard : Widget
 
 		Paint.SetPen( textColor );
 		Paint.SetBrush( textColor );
-		Paint.DrawText( rect, $"{variable.Name}", TextFlag.CenterHorizontally | TextFlag.SingleLine );
+		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variable.Name}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
+
+		Paint.DrawText( rect.Shrink( 0 , 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
 	}
 
-	private void UpdateParameterList()
+	private void UpdateParameterList( BaseBlackboardParameter baseBlackboardParameter )
 	{
 		_parameterListView.Clear();
 
@@ -152,13 +165,23 @@ public class Blackboard : Widget
 
 		if ( parameters.Any() )
 		{
-			Sheet.AddObject( parameters.First().GetSerialized() );
+			Sheet.Clear( true );
+
+			if ( baseBlackboardParameter != null )
+			{
+				Sheet.AddObject( baseBlackboardParameter.GetSerialized() );
+				_parameterListView.SelectItem( baseBlackboardParameter );
+			}
+
+			//Sheet.AddObject( parameters.First().GetSerialized() );
+			//Sheet.AddObject( parameters.First().GetSerialized() );
 		}
 
 		foreach ( var parameter in parameters )
 		{
 			if ( GraphInit )
 			{
+				Sheet.AddObject( parameter.GetSerialized() );
 				_parameterListView.SelectItem( parameter );
 				GraphInit = false;
 			}
@@ -193,6 +216,8 @@ public class Blackboard : Widget
 		_graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();
+
+		UpdateParameterList( parameterInstance );
 	}
 
 	private Button.Primary AddPrimaryButton( Layout layout, string name = "My Button", string icon = "" )
@@ -219,12 +244,14 @@ internal class BlackboardUtils
 
 		return typeInstance switch
 		{
-			BoolBlackboardParameter => new BoolBlackboardParameter( false, id ) { Name = name },
-			IntBlackboardParameter => new IntBlackboardParameter( 0, id ) { Name = name },
-			FloatBlackboardParameter => new FloatBlackboardParameter( 0.0f, id ) { Name = name },
-			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero, id ) { Name = name },
-			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero, id ) { Name = name },
-			Float4BlackboardParameter => new Float4BlackboardParameter( Color.White, id ) { Name = name },
+			BoolBlackboardParameter => new BoolBlackboardParameter( false ) { Name = name },
+			IntBlackboardParameter => new IntBlackboardParameter( 0 ) { Name = name },
+			FloatBlackboardParameter => new FloatBlackboardParameter( 0.0f ) { Name = name },
+			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero) { Name = name },
+			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero) { Name = name },
+			Float4BlackboardParameter => new Float4BlackboardParameter( Color.White ) { Name = name },
+			ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new() ) { Name = name },
+			ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new() ) { Name = name },
 			_ => throw new NotImplementedException(),
 		};
 	}

@@ -1,42 +1,9 @@
 ﻿namespace ShaderGraphPlus;
 
-public abstract class BaseBlackboardParameter
-{
-	public string Name { get; set; } = "";
-
-	[Sandbox.ReadOnly, Browsable( false )]
-	public int Identifier { get; set; }
-
-	public BaseBlackboardParameter()
-	{
-	}
-
-	public BaseBlackboardParameter( int identifier )
-	{
-		Identifier = identifier;
-	}
-}
-
-public abstract class BlackboardValue<T> : BaseBlackboardParameter
-{
-	public T Value { get; set; }
-
-	[InlineEditor( Label = false ), Group( "UI" )]
-
-	public ParameterUI UI { get; set; }
-
-	public BlackboardValue() : base() { }
-
-	public BlackboardValue( T value, int identifier ) : base( identifier ) 
-	{ 
-		Value = value;
-	}
-}
-
 [Title( "Bool" )]
-public sealed class BoolBlackboardParameter : BlackboardValue<bool>
+public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
-	public BoolBlackboardParameter( bool value, int identifier ) : base( value, identifier )
+	public BoolBlackboardParameter( bool value ) : base( value )
 	{
 
 	}
@@ -45,7 +12,7 @@ public sealed class BoolBlackboardParameter : BlackboardValue<bool>
 }
 
 [Title( "Int" )]
-public sealed class IntBlackboardParameter : BlackboardValue<int>
+public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 {
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
@@ -56,7 +23,7 @@ public sealed class IntBlackboardParameter : BlackboardValue<int>
 		Max = 0;
 	}
 
-	public IntBlackboardParameter( int value, int identifier ) : base( value, identifier )
+	public IntBlackboardParameter( int value ) : base( value )
 	{
 		Min = 0;
 		Max = 0;
@@ -64,7 +31,7 @@ public sealed class IntBlackboardParameter : BlackboardValue<int>
 }
 
 [Title( "Float" )]
-public sealed class FloatBlackboardParameter : BlackboardValue<float>
+public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
 {
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
@@ -75,7 +42,7 @@ public sealed class FloatBlackboardParameter : BlackboardValue<float>
 		Max = 1;
 	}
 
-	public FloatBlackboardParameter( float value, int identifier ) : base( value, identifier )
+	public FloatBlackboardParameter( float value ) : base( value )
 	{
 		Min = 0;
 		Max = 0;
@@ -83,7 +50,7 @@ public sealed class FloatBlackboardParameter : BlackboardValue<float>
 }
 
 [Title( "Float2" )]
-public sealed class Float2BlackboardParameter : BlackboardValue<Vector2>
+public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
@@ -94,7 +61,7 @@ public sealed class Float2BlackboardParameter : BlackboardValue<Vector2>
 		Max = 1;
 	}
 
-	public Float2BlackboardParameter( Vector2 value, int identifier ) : base( value, identifier )
+	public Float2BlackboardParameter( Vector2 value ) : base( value )
 	{
 		Min = 0;
 		Max = 0;
@@ -124,7 +91,7 @@ public sealed class Float2BlackboardParameter : BlackboardValue<Vector2>
 }
 
 [Title( "Float3" )]
-public sealed class Float3BlackboardParameter : BlackboardValue<Vector3>
+public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
@@ -135,7 +102,7 @@ public sealed class Float3BlackboardParameter : BlackboardValue<Vector3>
 		Max = 1;
 	}
 
-	public Float3BlackboardParameter( Vector3 value, int identifier ) : base( value, identifier )
+	public Float3BlackboardParameter( Vector3 value ) : base( value )
 	{
 		Min = 0;
 		Max = 0;
@@ -173,10 +140,8 @@ public sealed class Float3BlackboardParameter : BlackboardValue<Vector3>
 }
 
 [Title( "Color" )]
-public sealed class Float4BlackboardParameter : BlackboardValue<Color>
+public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Color>
 {
-
-
 	[JsonIgnore, Hide]
 	public float ValueR
 	{
@@ -211,8 +176,32 @@ public sealed class Float4BlackboardParameter : BlackboardValue<Color>
 		UI = new ParameterUI { Type = UIType.Color };
 	}
 
-	public Float4BlackboardParameter( Color value, int identifier ) : base( value, identifier )
+	public Float4BlackboardParameter( Color value ) : base( value )
 	{
 		UI = new ParameterUI { Type = UIType.Color };
+	}
+}
+
+[Title( "Shader Feature Boolean" )]
+public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>
+{
+	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
+	{
+	}
+
+	public ShaderFeatureBooleanBlackboardParameter() : base() 
+	{ 
+	}
+}
+
+[Title( "Shader Feature Enum" )]
+public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>
+{
+	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
+	{
+	}
+
+	public ShaderFeatureEnumBlackboardParameter() : base()
+	{
 	}
 }

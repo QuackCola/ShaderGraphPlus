@@ -30,24 +30,17 @@
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "-600,60",
-      "HandleOffsets": {},
-      "Albedo": {
-        "Identifier": "2",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "HandleOffsets": {}
     },
     {
-      "_class": "Int",
+      "_class": "Float4",
       "__version": 1,
-      "Min": 0,
-      "Max": 1,
-      "BlackboardParameterIdentifier": 0,
-      "Value": 16,
-      "Name": "IntParam",
+      "BlackboardParameterIdentifier": "f5d8f827-c4eb-4e47-8e3e-cd38921fe71c",
+      "Value": "0.62791,0.36506,0.36506,1",
+      "Name": "Parameter3",
       "IsAttribute": false,
       "UI": {
-        "Type": "Default",
+        "Type": "Color",
         "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
@@ -60,18 +53,20 @@
         }
       },
       "Identifier": "1",
-      "Position": "-1008,252",
+      "Position": "-1260,108",
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
+      "_class": "Float2",
       "__version": 1,
-      "BlackboardParameterIdentifier": 0,
-      "Value": "1,0,0.48333,1",
-      "Name": "ColorParam",
+      "Min": "0,0",
+      "Max": "1,1",
+      "BlackboardParameterIdentifier": "155b1682-c179-4891-8056-121fc8d486c8",
+      "Value": "0.5600002,1.239999",
+      "Name": "Parameter0",
       "IsAttribute": false,
       "UI": {
-        "Type": "Color",
+        "Type": "Default",
         "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
@@ -84,14 +79,77 @@
         }
       },
       "Identifier": "2",
-      "Position": "-1008,60",
+      "Position": "-948,12",
       "HandleOffsets": {}
     }
   ],
   "parameters": [
     {
+      "_class": "Float2BlackboardParameter",
+      "Min": "0,0",
+      "Max": "0,0",
+      "Value": "0.5600002,1.239999",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Parameter0",
+      "Identifier": "155b1682-c179-4891-8056-121fc8d486c8"
+    },
+    {
+      "_class": "FloatBlackboardParameter",
+      "Min": 0,
+      "Max": 0,
+      "Value": 0,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Parameter1",
+      "Identifier": "768da46a-0770-4a67-ad19-f055cce302f4"
+    },
+    {
+      "_class": "IntBlackboardParameter",
+      "Min": 0,
+      "Max": 0,
+      "Value": 0,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Name": "Parameter2",
+      "Identifier": "34d0e469-a71a-4b61-8549-10c4a630493d"
+    },
+    {
       "_class": "Float4BlackboardParameter",
-      "Value": "1,0,0.48333,1",
+      "Value": "0.62791,0.36506,0.36506,1",
       "UI": {
         "Type": "Color",
         "Step": 0,
@@ -105,14 +163,12 @@
           "Priority": 0
         }
       },
-      "Name": "ColorParam",
-      "Identifier": 0
+      "Name": "Parameter3",
+      "Identifier": "f5d8f827-c4eb-4e47-8e3e-cd38921fe71c"
     },
     {
-      "_class": "Float3BlackboardParameter",
-      "Min": "0,0,0",
-      "Max": "0,0,0",
-      "Value": "22222,0,1",
+      "_class": "BoolBlackboardParameter",
+      "Value": false,
       "UI": {
         "Type": "Default",
         "Step": 0,
@@ -126,29 +182,8 @@
           "Priority": 0
         }
       },
-      "Name": "Vector3Param",
-      "Identifier": 1
-    },
-    {
-      "_class": "IntBlackboardParameter",
-      "Min": 0,
-      "Max": 0,
-      "Value": 16,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Name": "IntParam",
-      "Identifier": 2
+      "Name": "Parameter4",
+      "Identifier": "952a3e48-6b35-43ca-9b60-e12a19e70929"
     }
   ]
 }

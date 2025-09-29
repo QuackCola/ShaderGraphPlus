@@ -17,7 +17,7 @@ public interface IParameterNode
 
 internal interface IBlackboardSyncable
 {
-	public int BlackboardParameterIdentifier { get; set; }
+	public Guid BlackboardParameterIdentifier { get; set; }
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter );
 }
 
@@ -42,7 +42,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackb
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[Hide, Browsable( false )]
-	public int BlackboardParameterIdentifier { get; set; }
+	public Guid BlackboardParameterIdentifier { get; set; }
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?

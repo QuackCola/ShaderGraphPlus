@@ -96,8 +96,12 @@ public sealed class ParameterNodeType : ClassNodeType
 			Float2BlackboardParameter v => v.Name,
 			Float3BlackboardParameter v => v.Name,
 			Float4BlackboardParameter v => v.Name,
+			ShaderFeatureBooleanBlackboardParameter v => v.Name,
+			ShaderFeatureEnumBlackboardParameter v => v.Name,
 			_ => throw new NotImplementedException(),
 		};
+
+		Guid identifier = BaseBlackboardValue.Identifier;
 
 		object value = BaseBlackboardValue switch
 		{
@@ -107,10 +111,10 @@ public sealed class ParameterNodeType : ClassNodeType
 			Float2BlackboardParameter v => v.Value,
 			Float3BlackboardParameter v => v.Value,
 			Float4BlackboardParameter v => v.Value,
+			ShaderFeatureBooleanBlackboardParameter v => v.Value,
+			ShaderFeatureEnumBlackboardParameter v => v.Value,
 			_ => throw new NotImplementedException(),
 		};
-		
-		int identifier = BaseBlackboardValue.Identifier;
 
 		BaseNodePlus parameterNode = node switch
 		{

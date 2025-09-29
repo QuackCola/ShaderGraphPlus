@@ -80,8 +80,6 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	float4 g_vColorParam < UiType( Color ); UiGroup( ",0/,0/0" ); Default4( 1.00, 0.00, 0.48, 1.00 ); >;
-		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
@@ -99,10 +97,7 @@ PS
 		m.Opacity = 1;
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
-		
-		float4 l_0 = g_vColorParam;
-		
-		m.Albedo = l_0.xyz;
+
 		m.Opacity = 1;
 		m.Roughness = 1;
 		m.Metalness = 0;
