@@ -26,6 +26,7 @@ public class Blackboard : Widget
 	private Layout _rowLayout;
 	private Layout _leftLayout;
 	private Layout _rightLayout;
+	private bool GraphInit;
 
 	public Blackboard( Widget parent ) : base( parent )
 	{
@@ -98,6 +99,8 @@ public class Blackboard : Widget
 
 		Layout.Add( bottom );
 
+		GraphInit = true;
+
 		if ( Graph != null )
 		{
 			UpdateParameterList();
@@ -151,8 +154,15 @@ public class Blackboard : Widget
 
 		foreach ( var parameter in parameters )
 		{
+			if ( GraphInit )
+			{
+				_parameterListView.SelectItem( parameter );
+				GraphInit = false;
+			}
+	
 			_parameterListView.AddItem( parameter );
 		}
+
 	}
 
 	private void SetParameterTarget( BaseBlackboardParameter blackboardParameter )
