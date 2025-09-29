@@ -1,6 +1,6 @@
 using NodeEditorPlus;
-using System.Linq;
 using ShaderGraphPlus.Nodes;
+using System.Linq;
 
 namespace ShaderGraphPlus;
 
@@ -60,10 +60,10 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	IEnumerable<INodePlus> INodeGraph.Nodes => Nodes;
 
 	[Hide, JsonIgnore]
-	public IEnumerable<BaseBlackboardParameter> Parameters => _parameter.Values;
+	public IEnumerable<BaseBlackboardParameter> Parameters => _parameters.Values;
 
 	[Hide, JsonIgnore]
-	public readonly Dictionary<string, BaseBlackboardParameter> _parameter = new();
+	public readonly Dictionary<string, BaseBlackboardParameter> _parameters = new();
 
 	// TODO : Remove this once i finish changing how you define shader features for a graph.
 	[Hide, JsonIgnore]
@@ -147,12 +147,29 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
 	{
-		if ( !_parameter.ContainsKey( Parameter.Name ) )
+		if ( !_parameters.ContainsKey( Parameter.Name ) )
 		{
-			_parameter.Add( Parameter.Name, Parameter );
+			_parameters.Add( Parameter.Name, Parameter );
 
 			SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
 		}
+	}
+
+	internal BaseBlackboardParameter GetBlackboardParameterByIndex( int index )
+	{
+		var parameter = Parameters.ElementAt( index );
+
+		if ( parameter != null )
+		{
+			return parameter;
+		}
+
+		throw new Exception( $"No Graph Parameter entry with index `{index}` could be found..." );
+	}
+
+	internal void UpdateParameterNode( BaseBlackboardParameter Parameter, string oldName = "" )
+	{
+		
 	}
 
 	public void AddNode( BaseNodePlus node )

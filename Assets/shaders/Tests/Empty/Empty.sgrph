@@ -50,7 +50,8 @@
           "Priority": 0
         }
       },
-      "Name": "Color"
+      "Name": "Color",
+	  "Identifier": 0
     },
     {
       "_class": "Float3BlackboardParameter",
@@ -70,7 +71,8 @@
           "Priority": 0
         }
       },
-      "Name": "Vector3"
+      "Name": "Vector3",
+	  "Identifier": 1
     },
     {
       "_class": "IntBlackboardParameter",
@@ -90,7 +92,8 @@
           "Priority": 0
         }
       },
-      "Name": "Int"
+      "Name": "Int",
+	  "Identifier": 2
     }
   ]
 }

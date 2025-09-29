@@ -879,6 +879,18 @@ public class MainWindow : DockWindow
 			GeneratePreviewCode();
 	}
 
+	public void BlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
+	{
+		
+		foreach ( var parameter in _graph.Parameters )
+		{
+			_graph.UpdateParameterNode( parameter );
+		}
+
+
+		SetDirty();
+	}
+
 	[EditorEvent.Frame]
 	protected void Frame()
 	{
@@ -1724,6 +1736,7 @@ public class MainWindow : DockWindow
 		_blackboard = new Blackboard( this );
 		_blackboard.Graph = _graph;
 		_blackboard.OnDirty += ( ) => { SetDirty(); };
+		_blackboard.OnParameterChanged += ( p ) => { BlackboardParameterChanged( p ); };
 
 		_undoHistory = new UndoHistory( this, _undoStack );
 		_undoHistory.OnUndo = Undo;

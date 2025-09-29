@@ -20,6 +20,7 @@ public class Blackboard : Widget
 	}
 
 	public Action OnDirty { get; set; }
+	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
 	private ControlSheet Sheet;
 	private ListView _parameterListView;
@@ -169,6 +170,14 @@ public class Blackboard : Widget
 	{
 		Sheet.Clear( true );
 
+		var so = blackboardParameter.GetSerialized();
+		so.OnPropertyChanged += ( prop ) =>
+		{
+			var p = prop.GetValue<BaseBlackboardParameter>();
+
+			OnParameterChanged?.Invoke( p );
+		};
+
 		Sheet.AddObject( blackboardParameter.GetSerialized() );
 	}
 
@@ -176,9 +185,10 @@ public class Blackboard : Widget
 	{
 		//SGPLog.Info( $"Selected type : \"{typeDescription}\"" );
 
-		string name = $"Parameter{_graph._parameter.Count}";
+		int id = _graph._parameters.Count;
+		string name = $"Parameter{id}";
 
-		var parameterInstance = BlackboardUtils.CreateBaseBlackboardParameterInstance( typeDescription.TargetType, 0, name );
+		var parameterInstance = BlackboardUtils.CreateBaseBlackboardParameterInstance( typeDescription.TargetType, id, name );
 		_graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();
@@ -208,12 +218,12 @@ internal class BlackboardUtils
 
 		return typeInstance switch
 		{
-			BoolBlackboardParameter => new BoolBlackboardParameter( false ) { Name = name },
-			IntBlackboardParameter => new IntBlackboardParameter( 0 ) { Name = name },
-			FloatBlackboardParameter => new FloatBlackboardParameter( 0.0f ) { Name = name },
-			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero ) { Name = name },
-			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero ) { Name = name },
-			Float4BlackboardParameter => new Float4BlackboardParameter( Color.White ) { Name = name },
+			BoolBlackboardParameter => new BoolBlackboardParameter( false, id ) { Name = name },
+			IntBlackboardParameter => new IntBlackboardParameter( 0, id ) { Name = name },
+			FloatBlackboardParameter => new FloatBlackboardParameter( 0.0f, id ) { Name = name },
+			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero, id ) { Name = name },
+			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero, id ) { Name = name },
+			Float4BlackboardParameter => new Float4BlackboardParameter( Color.White, id ) { Name = name },
 			_ => throw new NotImplementedException(),
 		};
 	}
