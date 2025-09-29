@@ -1,6 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
-[Title( "Bool" )]
+[Title( "Bool" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
 	public BoolBlackboardParameter( bool value ) : base( value )
@@ -11,7 +11,7 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 	public BoolBlackboardParameter() : base() { }
 }
 
-[Title( "Int" )]
+[Title( "Int" ), Order( 1 )]
 public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 {
 	[Group( "Range" )] public int Min { get; set; }
@@ -30,7 +30,7 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	}
 }
 
-[Title( "Float" )]
+[Title( "Float" ), Order( 2 )]
 public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
 {
 	[Group( "Range" )] public float Min { get; set; }
@@ -49,7 +49,7 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 	}
 }
 
-[Title( "Float2" )]
+[Title( "Float2" ), Order( 3 )]
 public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
@@ -90,7 +90,7 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 
 }
 
-[Title( "Float3" )]
+[Title( "Float3" ), Order( 4 )]
 public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
@@ -139,7 +139,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Hide] public float Step => UI.Step;
 }
 
-[Title( "Color" )]
+[Title( "Color" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Color>
 {
 	[JsonIgnore, Hide]
@@ -182,7 +182,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Colo
 	}
 }
 
-[Title( "Shader Feature Boolean" )]
+[Title( "Shader Feature Boolean" ), Order( 6 )]
 public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>
 {
 	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
@@ -194,7 +194,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 	}
 }
 
-[Title( "Shader Feature Enum" )]
+[Title( "Shader Feature Enum" ), Order( 7 )]
 public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>
 {
 	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )

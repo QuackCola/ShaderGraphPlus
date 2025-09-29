@@ -160,7 +160,9 @@
       "_class": "ShaderFeatureBooleanBlackboardParameter",
       "Value": {
         "__version": 1,
-        "FeatureName": ""
+        "FeatureName": "",
+        "Description": null,
+        "HeaderName": null
       },
       "Name": "Parameter6",
       "Identifier": "03780e6b-0ec8-4446-9053-9f0d421704a5"
@@ -168,9 +170,16 @@
     {
       "_class": "ShaderFeatureEnumBlackboardParameter",
       "Value": {
-        "Options": [],
+        "Options": [
+          "Option1",
+          "Option2",
+          "Option3",
+          "Option4"
+        ],
         "__version": 1,
-        "FeatureName": ""
+        "FeatureName": "",
+        "Description": null,
+        "HeaderName": null
       },
       "Name": "Parameter7",
       "Identifier": "cafb53eb-a70d-4ed9-835f-3629d1cb5756"

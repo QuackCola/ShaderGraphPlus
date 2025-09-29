@@ -141,11 +141,9 @@ internal partial class TypeSelectorWidget : Widget
 	void UpdatedSelection( TypeSelection selection )
 	{
 		selection.Clear();
-		
-		//Log.Info( $"Updating Type Selection!" );
-		//selection.ItemList.Add( selection.CategoryHeader );
 
-		var types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() );
+		var types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract 
+		&& !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Order );
 
 		if ( !string.IsNullOrWhiteSpace( searchString ) )
 		{
@@ -156,7 +154,6 @@ internal partial class TypeSelectorWidget : Widget
 
 			foreach ( var type in query.OrderByDescending( x => x.score ).Select( x => x.x ) )
 			{
-				//Log.Info( $"Type Query : `{type.Name}`");
 				selection.AddEntry( new TypeEntry( selection, type ) { MouseClick = () => OnTypeSelected( type ) } );
 			}
 
