@@ -167,9 +167,10 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 		throw new Exception( $"No Graph Parameter entry with index `{index}` could be found..." );
 	}
 
-	internal void UpdateParameterNode( BaseBlackboardParameter Parameter, string oldName = "" )
+	internal void UpdateParameterNode( BaseBlackboardParameter Parameter )
 	{
 		
+		// TODO
 	}
 
 	public void AddNode( BaseNodePlus node )
