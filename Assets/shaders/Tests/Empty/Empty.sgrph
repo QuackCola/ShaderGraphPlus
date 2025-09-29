@@ -31,64 +31,11 @@
       "Identifier": "0",
       "Position": "-600,60",
       "HandleOffsets": {}
-    },
-    {
-      "_class": "Float4",
-      "__version": 1,
-      "BlackboardParameterIdentifier": "f5d8f827-c4eb-4e47-8e3e-cd38921fe71c",
-      "Value": "0.62791,0.36506,0.36506,1",
-      "Name": "Parameter3",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Identifier": "1",
-      "Position": "-1260,108",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "Float2",
-      "__version": 1,
-      "Min": "0,0",
-      "Max": "1,1",
-      "BlackboardParameterIdentifier": "155b1682-c179-4891-8056-121fc8d486c8",
-      "Value": "0.5600002,1.239999",
-      "Name": "Parameter0",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Identifier": "2",
-      "Position": "-948,12",
-      "HandleOffsets": {}
     }
   ],
   "parameters": [
     {
-      "_class": "Float2BlackboardParameter",
-      "Min": "0,0",
-      "Max": "0,0",
-      "Value": "0.5600002,1.239999",
+      "_class": "BoolBlackboardParameter",
       "UI": {
         "Type": "Default",
         "Step": 0,
@@ -102,35 +49,14 @@
           "Priority": 0
         }
       },
+      "Value": false,
       "Name": "Parameter0",
-      "Identifier": "155b1682-c179-4891-8056-121fc8d486c8"
-    },
-    {
-      "_class": "FloatBlackboardParameter",
-      "Min": 0,
-      "Max": 0,
-      "Value": 0,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Name": "Parameter1",
-      "Identifier": "768da46a-0770-4a67-ad19-f055cce302f4"
+      "Identifier": "86e10809-c454-4aeb-91a6-e458dd7f5c02"
     },
     {
       "_class": "IntBlackboardParameter",
       "Min": 0,
       "Max": 0,
-      "Value": 0,
       "UI": {
         "Type": "Default",
         "Step": 0,
@@ -144,12 +70,75 @@
           "Priority": 0
         }
       },
+      "Value": 0,
+      "Name": "Parameter1",
+      "Identifier": "28d677f8-119e-4bc3-9b84-5e0f14dea144"
+    },
+    {
+      "_class": "FloatBlackboardParameter",
+      "Min": 0,
+      "Max": 0,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": 0,
       "Name": "Parameter2",
-      "Identifier": "34d0e469-a71a-4b61-8549-10c4a630493d"
+      "Identifier": "2c5aae3f-2876-4089-a6ed-52ad1ce8352c"
+    },
+    {
+      "_class": "Float2BlackboardParameter",
+      "Min": "0,0",
+      "Max": "0,0",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": "0,0",
+      "Name": "Parameter3",
+      "Identifier": "4f9f707d-ba4c-49da-974f-10a3ed2c1bbc"
+    },
+    {
+      "_class": "Float3BlackboardParameter",
+      "Min": "0,0,0",
+      "Max": "0,0,0",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": "0,0,0",
+      "Name": "Parameter4",
+      "Identifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb"
     },
     {
       "_class": "Float4BlackboardParameter",
-      "Value": "0.62791,0.36506,0.36506,1",
       "UI": {
         "Type": "Color",
         "Step": 0,
@@ -163,27 +152,28 @@
           "Priority": 0
         }
       },
-      "Name": "Parameter3",
-      "Identifier": "f5d8f827-c4eb-4e47-8e3e-cd38921fe71c"
+      "Value": "1,1,1,1",
+      "Name": "Parameter5",
+      "Identifier": "cdffc8d9-8668-47fb-adba-339e62538592"
     },
     {
-      "_class": "BoolBlackboardParameter",
-      "Value": false,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
+      "_class": "ShaderFeatureBooleanBlackboardParameter",
+      "Value": {
+        "__version": 1,
+        "FeatureName": ""
       },
-      "Name": "Parameter4",
-      "Identifier": "952a3e48-6b35-43ca-9b60-e12a19e70929"
+      "Name": "Parameter6",
+      "Identifier": "03780e6b-0ec8-4446-9053-9f0d421704a5"
+    },
+    {
+      "_class": "ShaderFeatureEnumBlackboardParameter",
+      "Value": {
+        "Options": [],
+        "__version": 1,
+        "FeatureName": ""
+      },
+      "Name": "Parameter7",
+      "Identifier": "cafb53eb-a70d-4ed9-835f-3629d1cb5756"
     }
   ]
 }
