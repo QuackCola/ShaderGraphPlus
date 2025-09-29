@@ -31,6 +31,158 @@
       "Identifier": "0",
       "Position": "-600,60",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "BlackboardParameterIdentifier": "cdffc8d9-8668-47fb-adba-339e62538592",
+      "Value": "0.46512,0.11249,0.11249,1",
+      "Name": "Parameter5",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "1",
+      "Position": "-1416,624",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Bool",
+      "__version": 1,
+      "BlackboardParameterIdentifier": "86e10809-c454-4aeb-91a6-e458dd7f5c02",
+      "Value": false,
+      "Name": "Parameter0",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-1416,204",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Int",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "BlackboardParameterIdentifier": "28d677f8-119e-4bc3-9b84-5e0f14dea144",
+      "Value": 12,
+      "Name": "Parameter1",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-1416,264",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "BlackboardParameterIdentifier": "2c5aae3f-2876-4089-a6ed-52ad1ce8352c",
+      "Value": 1,
+      "Name": "Parameter2",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-1416,324",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2",
+      "__version": 1,
+      "Min": "0,0",
+      "Max": "1,1",
+      "BlackboardParameterIdentifier": "4f9f707d-ba4c-49da-974f-10a3ed2c1bbc",
+      "Value": "1,0",
+      "Name": "Parameter3",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "5",
+      "Position": "-1416,384",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3",
+      "__version": 1,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "BlackboardParameterIdentifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb",
+      "Value": "1,0,1",
+      "Name": "Parameter4",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "6",
+      "Position": "-1416,492",
+      "HandleOffsets": {}
     }
   ],
   "parameters": [
@@ -70,7 +222,7 @@
           "Priority": 0
         }
       },
-      "Value": 0,
+      "Value": 12,
       "Name": "Parameter1",
       "Identifier": "28d677f8-119e-4bc3-9b84-5e0f14dea144"
     },
@@ -91,7 +243,7 @@
           "Priority": 0
         }
       },
-      "Value": 0,
+      "Value": 1,
       "Name": "Parameter2",
       "Identifier": "2c5aae3f-2876-4089-a6ed-52ad1ce8352c"
     },
@@ -112,7 +264,7 @@
           "Priority": 0
         }
       },
-      "Value": "0,0",
+      "Value": "1,0",
       "Name": "Parameter3",
       "Identifier": "4f9f707d-ba4c-49da-974f-10a3ed2c1bbc"
     },
@@ -133,7 +285,7 @@
           "Priority": 0
         }
       },
-      "Value": "0,0,0",
+      "Value": "1,0,1",
       "Name": "Parameter4",
       "Identifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb"
     },
@@ -152,7 +304,7 @@
           "Priority": 0
         }
       },
-      "Value": "1,1,1,1",
+      "Value": "0.46512,0.11249,0.11249,1",
       "Name": "Parameter5",
       "Identifier": "cdffc8d9-8668-47fb-adba-339e62538592"
     },
