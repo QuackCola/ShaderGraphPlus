@@ -6,7 +6,20 @@ public class ShaderFeatureBase : ISGPJsonUpgradeable
 	[Hide, JsonPropertyName( "__version" )]
 	public int Version { get; set; } = 1;
 
-	public string Name { get; set; } = "";
+	/// <summary>
+	/// Name of this feature.
+	/// </summary>
+	public string FeatureName { get; set; } = "";
+
+	/// <summary>
+	/// What this feature does.
+	/// </summary>
+	public string Description { get; set; }
+
+	/// <summary>
+	/// Header Name of this Feature that shows up in the Material Editor.
+	/// </summary>
+	public string HeaderName { get; set; }
 
 	public ShaderFeatureBase()
 	{
