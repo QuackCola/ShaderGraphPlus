@@ -36,7 +36,7 @@
       "_class": "Float4",
       "__version": 1,
       "BlackboardParameterIdentifier": "cdffc8d9-8668-47fb-adba-339e62538592",
-      "Value": "0.46512,0.11249,0.11249,1",
+      "Value": "0.62791,0.28329,0.28329,1",
       "Name": "Parameter5",
       "IsAttribute": false,
       "UI": {
@@ -304,7 +304,7 @@
           "Priority": 0
         }
       },
-      "Value": "0.46512,0.11249,0.11249,1",
+      "Value": "0.62791,0.28329,0.28329,1",
       "Name": "Parameter5",
       "Identifier": "cdffc8d9-8668-47fb-adba-339e62538592"
     },
