@@ -2,10 +2,19 @@
 
 public abstract class BaseBlackboardParameter
 {
-
 	public string Name { get; set; } = "";
 
-	public BaseBlackboardParameter() { }
+	[Sandbox.ReadOnly, Browsable( false )]
+	public int Identifier { get; set; }
+
+	public BaseBlackboardParameter()
+	{
+	}
+
+	public BaseBlackboardParameter( int identifier )
+	{
+		Identifier = identifier;
+	}
 }
 
 public abstract class BlackboardValue<T> : BaseBlackboardParameter
@@ -18,7 +27,7 @@ public abstract class BlackboardValue<T> : BaseBlackboardParameter
 
 	public BlackboardValue() : base() { }
 
-	public BlackboardValue( T value ) : base() 
+	public BlackboardValue( T value, int identifier ) : base( identifier ) 
 	{ 
 		Value = value;
 	}
@@ -27,7 +36,10 @@ public abstract class BlackboardValue<T> : BaseBlackboardParameter
 [Title( "Bool" )]
 public sealed class BoolBlackboardParameter : BlackboardValue<bool>
 {
-	public BoolBlackboardParameter( bool value ) : base( value ) { }
+	public BoolBlackboardParameter( bool value, int identifier ) : base( value, identifier )
+	{
+
+	}
 
 	public BoolBlackboardParameter() : base() { }
 }
@@ -44,7 +56,7 @@ public sealed class IntBlackboardParameter : BlackboardValue<int>
 		Max = 0;
 	}
 
-	public IntBlackboardParameter( int value ) : base( value ) 
+	public IntBlackboardParameter( int value, int identifier ) : base( value, identifier )
 	{
 		Min = 0;
 		Max = 0;
@@ -63,7 +75,7 @@ public sealed class FloatBlackboardParameter : BlackboardValue<float>
 		Max = 1;
 	}
 
-	public FloatBlackboardParameter( float value ) : base( value )
+	public FloatBlackboardParameter( float value, int identifier ) : base( value, identifier )
 	{
 		Min = 0;
 		Max = 0;
@@ -82,7 +94,7 @@ public sealed class Float2BlackboardParameter : BlackboardValue<Vector2>
 		Max = 1;
 	}
 
-	public Float2BlackboardParameter( Vector2 value ) : base( value )
+	public Float2BlackboardParameter( Vector2 value, int identifier ) : base( value, identifier )
 	{
 		Min = 0;
 		Max = 0;
@@ -123,7 +135,7 @@ public sealed class Float3BlackboardParameter : BlackboardValue<Vector3>
 		Max = 1;
 	}
 
-	public Float3BlackboardParameter( Vector3 value ) : base( value )
+	public Float3BlackboardParameter( Vector3 value, int identifier ) : base( value, identifier )
 	{
 		Min = 0;
 		Max = 0;
@@ -199,7 +211,7 @@ public sealed class Float4BlackboardParameter : BlackboardValue<Color>
 		UI = new ParameterUI { Type = UIType.Color };
 	}
 
-	public Float4BlackboardParameter( Color value ) : base( value )
+	public Float4BlackboardParameter( Color value, int identifier ) : base( value, identifier )
 	{
 		UI = new ParameterUI { Type = UIType.Color };
 	}
