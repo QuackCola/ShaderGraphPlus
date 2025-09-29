@@ -25,7 +25,7 @@ public class TextView : Widget
 		var LineNumbers = Layout.AddRow( 1 );
 		LineNumbers.AddSpacingCell( 16f );
 
-		Layout.Add( LineNumbers );
+		//Layout.Add( LineNumbers );
 
 		TextEdit = new TextEdit( this );
 		TextEdit.ReadOnly = true;
