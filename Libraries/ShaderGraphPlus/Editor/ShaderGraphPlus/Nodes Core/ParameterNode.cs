@@ -15,6 +15,12 @@ public interface IParameterNode
 	ParameterUI UI { get; set; }
 }
 
+internal interface IBlackboardSyncable
+{
+	public int BlackboardParameterIdentifier { get; set; }
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter );
+}
+
 public interface ITextureParameterNode
 {
 	string Image { get; set; }
@@ -27,13 +33,16 @@ public interface ITextureParameterNode
 }
 
 //[NodeReplace( ReplacementMode.SubgraphOnly )]
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErroringNode//, IReplaceNode
+public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncable, IErroringNode//, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
+
+	[Hide, Browsable( false )]
+	public int BlackboardParameterIdentifier { get; set; }
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
@@ -62,6 +71,12 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IErrori
 
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
 		return new( ResultType.Float, $"{result}.{component}", true );
+	}
+
+	public virtual void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+
+
 	}
 
 	public List<string> GetErrors()

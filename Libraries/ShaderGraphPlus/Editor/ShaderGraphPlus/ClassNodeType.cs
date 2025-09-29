@@ -109,15 +109,17 @@ public sealed class ParameterNodeType : ClassNodeType
 			Float4BlackboardParameter v => v.Value,
 			_ => throw new NotImplementedException(),
 		};
+		
+		int identifier = BaseBlackboardValue.Identifier;
 
 		BaseNodePlus parameterNode = node switch
 		{
-			Bool => new Bool() { Name = name, Value = (bool)value },
-			Int  => new Int() { Name = name, Value = (int)value },
-			Float  => new Float() { Name = name, Value = (float)value },
-			Float2  => new Float2() { Name = name, Value = (Vector2)value },
-			Float3  => new Float3() { Name = name, Value = (Vector3)value },
-			Float4  => new Float4() { Name = name, Value = (Color)value },
+			Bool => new Bool() { Name = name, Value = (bool)value, BlackboardParameterIdentifier = identifier },
+			Int  => new Int() { Name = name, Value = (int)value, BlackboardParameterIdentifier = identifier },
+			Float  => new Float() { Name = name, Value = (float)value, BlackboardParameterIdentifier = identifier },
+			Float2  => new Float2() { Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier },
+			Float3  => new Float3() { Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier },
+			Float4  => new Float4() { Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
 

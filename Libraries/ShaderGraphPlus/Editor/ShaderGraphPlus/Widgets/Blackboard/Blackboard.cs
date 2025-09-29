@@ -1,4 +1,6 @@
 ﻿using Editor;
+using Sandbox;
+using System.ComponentModel;
 
 namespace ShaderGraphPlus;
 
@@ -173,12 +175,11 @@ public class Blackboard : Widget
 		var so = blackboardParameter.GetSerialized();
 		so.OnPropertyChanged += ( prop ) =>
 		{
-			var p = prop.GetValue<BaseBlackboardParameter>();
-
-			OnParameterChanged?.Invoke( p );
+			var propParent = prop.Parent;
+			OnParameterChanged?.Invoke( blackboardParameter );
 		};
 
-		Sheet.AddObject( blackboardParameter.GetSerialized() );
+		Sheet.AddObject( so );
 	}
 
 	private void AddBlackboardParameter( TypeDescription typeDescription )

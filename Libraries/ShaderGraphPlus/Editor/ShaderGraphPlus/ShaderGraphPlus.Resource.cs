@@ -169,9 +169,15 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	internal void UpdateParameterNode( BaseBlackboardParameter parameter )
 	{
-		SGPLog.Info( $"Updating Parameter Node \"{parameter.Name}\" from the blackboard." );
-		
-		// TODO
+		//SGPLog.Info( $"Updating Parameter Node \"{parameter.Name}\" from the blackboard." );
+
+		foreach ( var node in Nodes.OfType<IBlackboardSyncable>() )
+		{
+			if ( node.BlackboardParameterIdentifier == parameter.Identifier )
+			{
+				node.UpdateFromBlackboard( parameter );
+			}
+		}
 	}
 
 	public void AddNode( BaseNodePlus node )

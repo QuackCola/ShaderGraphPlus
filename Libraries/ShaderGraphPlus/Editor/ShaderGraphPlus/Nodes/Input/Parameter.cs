@@ -16,6 +16,16 @@ public sealed class Bool : ParameterNode<bool>
 	[Hide]
 	public override int Version => 1;
 
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is BoolBlackboardParameter boolBlackboardParameter )
+		{
+			Name = boolBlackboardParameter.Name;
+			Value = boolBlackboardParameter.Value;
+			UI = boolBlackboardParameter.UI;
+		}
+	}
+
 	public Bool() : base()
 	{
 
@@ -41,6 +51,16 @@ public sealed class Int : ParameterNode<int>
 {
 	[Hide]
 	public override int Version => 1;
+
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is IntBlackboardParameter intBlackboardParameter )
+		{
+			Name = intBlackboardParameter.Name;
+			Value = intBlackboardParameter.Value;
+			UI = intBlackboardParameter.UI;
+		}
+	}
 
 	[Output( typeof( int ) ), Title( "Value" )]
 	[Hide, Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
@@ -70,6 +90,16 @@ public sealed class Float : ParameterNode<float>
 	[Hide]
 	public override int Version => 1;
 
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is FloatBlackboardParameter floatBlackboardParameter )
+		{
+			Name = floatBlackboardParameter.Name;
+			Value = floatBlackboardParameter.Value;
+			UI = floatBlackboardParameter.UI;
+		}
+	}
+
 	[Hide] public float Step => UI.Step;
 
 	[Output( typeof( float ) ), Title( "Value" )]
@@ -98,6 +128,16 @@ public sealed class Float2 : ParameterNode<Vector2>
 {
 	[Hide]
 	public override int Version => 1;
+
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is Float2BlackboardParameter float2BlackboardParameter )
+		{
+			Name = float2BlackboardParameter.Name;
+			Value = float2BlackboardParameter.Value;
+			UI = float2BlackboardParameter.UI;
+		}
+	}
 
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -169,6 +209,16 @@ public sealed class Float3 : ParameterNode<Vector3>
 {
 	[Hide]
 	public override int Version => 1;
+
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is Float3BlackboardParameter float3BlackboardParameter )
+		{
+			Name = float3BlackboardParameter.Name;
+			Value = float3BlackboardParameter.Value;
+			UI = float3BlackboardParameter.UI;
+		}
+	}
 
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -247,6 +297,16 @@ public sealed class Float4 : ParameterNode<Color>
 {
 	[Hide]
 	public override int Version => 1;
+
+	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is Float4BlackboardParameter float4BlackboardParameter )
+		{
+			Name = float4BlackboardParameter.Name;
+			Value = float4BlackboardParameter.Value;
+			UI = float4BlackboardParameter.UI;
+		}
+	}
 
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	[Hide, Editor( nameof( Value ) )]
