@@ -881,12 +881,7 @@ public class MainWindow : DockWindow
 
 	public void BlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
 	{
-		
-		foreach ( var parameter in _graph.Parameters )
-		{
-			_graph.UpdateParameterNode( parameter );
-		}
-
+		_graph.UpdateParameterNode( blackboardParameter );
 
 		SetDirty();
 	}
