@@ -47,6 +47,7 @@ public class MainWindow : DockWindow
 
 	private Widget _graphCanvas;
 	private Properties _properties;
+	private Blackboard _blackboard;
 	private Preview3DPanel _preview3D;
 	private Preview2DPanel _preview2D;
 	private Output _output;
@@ -1334,6 +1335,7 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
+		_blackboard.Graph = _graph;
 
 		if ( addToPath )
 			AddFileHistory( path );
@@ -1556,6 +1558,7 @@ public class MainWindow : DockWindow
 		DockManager.RegisterDockType( "Graph", "account_tree", null, false );
 		DockManager.RegisterDockType( "Preview", "photo", null, false );
 		DockManager.RegisterDockType( "Properties", "edit", null, false );
+		DockManager.RegisterDockType( "Blackboard", "edit", null, false );
 		DockManager.RegisterDockType( "Output", "notes", null, false );
 		DockManager.RegisterDockType( "Console", "text_snippet", null, false );
 		DockManager.RegisterDockType( "Undo History", "history", null, false );
@@ -1718,6 +1721,10 @@ public class MainWindow : DockWindow
 		_properties.Target = _graph;
 		_properties.PropertyUpdated += OnPropertyUpdated;
 		
+		_blackboard = new Blackboard( this );
+		_blackboard.Graph = _graph;
+		_blackboard.OnDirty += ( ) => { SetDirty(); };
+
 		_undoHistory = new UndoHistory( this, _undoStack );
 		_undoHistory.OnUndo = Undo;
 		_undoHistory.OnRedo = Redo;
@@ -1731,7 +1738,8 @@ public class MainWindow : DockWindow
 		DockManager.AddDock( _preview2D, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
-		DockManager.AddDock( _preview3D, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _preview3D, _blackboard, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _blackboard, _properties, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.5f );
 
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;

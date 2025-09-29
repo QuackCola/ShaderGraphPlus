@@ -1,4 +1,5 @@
-﻿using NodeEditorPlus;
+﻿using Facepunch.ActionGraphs;
+using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using System.Reflection;
 using System.Text.Json;
@@ -54,6 +55,7 @@ partial class ShaderGraphPlus
 
 		SerializeObject( this, doc, options );
 		SerializeNodes( Nodes, doc, options );
+		SerializeParameters( Parameters, doc, options );
 
 		return doc.ToJsonString( options );
 	}
@@ -76,6 +78,7 @@ partial class ShaderGraphPlus
 		Version = currentVersion;
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath, currentVersion );
+		DeserializeParameters( root, options );
 
 		// Upgrade to the latest version
 		Version = latestVersion;
@@ -98,6 +101,44 @@ partial class ShaderGraphPlus
 		}
 
 		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
+	}
+
+	public IEnumerable<BaseBlackboardParameter> DeserializeParameters( string json )
+	{
+		using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
+		var root = doc.RootElement;
+
+		return DeserializeParameters( root, SerializerOptions() );
+	}
+
+	private IEnumerable<BaseBlackboardParameter> DeserializeParameters( JsonElement doc, JsonSerializerOptions options )
+	{
+		var parameters = new Dictionary<string, BaseBlackboardParameter>();
+	
+		if ( doc.TryGetProperty( "parameters", out var arrayProperty ) )
+		{
+			foreach ( var element in arrayProperty.EnumerateArray() )
+			{
+				var typeName = element.GetProperty( "_class" ).GetString();
+
+				var typeDesc = EditorTypeLibrary.GetType( typeName );
+				var type = typeDesc.TargetType;
+
+				BaseBlackboardParameter parameter;
+
+				if ( typeDesc != null )
+				{
+					parameter = EditorTypeLibrary.Create<BaseBlackboardParameter>( typeName );
+					DeserializeObject( parameter, element, options );
+
+					parameters.Add( parameter.Name, parameter );
+
+					AddBlackboardParameter( parameter );
+				}
+			}
+		}
+
+		return parameters.Values;
 	}
 
 	private static JsonElement UpgradeJsonUpgradeable( int versionNumber, ISGPJsonUpgradeable jsonUpgradeable, Type type, JsonProperty jsonProperty, JsonSerializerOptions serializerOptions )
@@ -488,6 +529,38 @@ partial class ShaderGraphPlus
 		}
 
 		doc.Add( "nodes", nodeArray );
+	}
+
+	public string SerializeParameters()
+	{
+		return SerializeParameters( Parameters );
+	}
+
+	private string SerializeParameters( IEnumerable<BaseBlackboardParameter> parameters )
+	{
+		var doc = new JsonObject();
+		var options = SerializerOptions();
+
+		SerializeParameters( parameters, doc, options );
+
+		return doc.ToJsonString( options );
+	}
+
+	private static void SerializeParameters( IEnumerable<BaseBlackboardParameter> parameters, JsonObject doc, JsonSerializerOptions options )
+	{
+		var parameterArray = new JsonArray();
+
+		foreach ( var parameter in parameters )
+		{
+			var type = parameter.GetType();
+			var parameterObject = new JsonObject { { "_class", type.Name } };
+
+			SerializeObject( parameter, parameterObject, options );
+
+			parameterArray.Add( parameterObject );
+		}
+
+		doc.Add( "parameters", parameterArray );
 	}
 
 	/// <summary>

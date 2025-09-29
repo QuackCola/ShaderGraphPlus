@@ -60,6 +60,13 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	IEnumerable<INodePlus> INodeGraph.Nodes => Nodes;
 
 	[Hide, JsonIgnore]
+	public IEnumerable<BaseBlackboardParameter> Parameters => _parameter.Values;
+
+	[Hide, JsonIgnore]
+	public readonly Dictionary<string, BaseBlackboardParameter> _parameter = new();
+
+	// TODO : Remove this once i finish changing how you define shader features for a graph.
+	[Hide, JsonIgnore]
 	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
 
 	//[Hide, JsonIgnore]
@@ -107,24 +114,6 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	public MaterialDomain MaterialDomain { get; set; }
 
-	//[ShowIf( nameof( this.MaterialDomain), MaterialDomain.PostProcess  )]
-	//[InlineEditor]
-	//[Group("Post Processing")]
-	//public PostProcessingComponentInfo postProcessComponentInfo { get; set; } = new PostProcessingComponentInfo(500);
-	
-	/// <summary>
-	/// Currently Registerd features for this graph.
-	/// </summary>
-	//[Hide]
-	//public Dictionary<string,string> Features { get; set; } = new();
-	
-	/// <summary>
-	/// TODO: Hook this up and read from a list of registerd features!
-	/// </summary>
-	//[InlineEditor]
-	//
-	//public List<FeatureRule> FeatureRules { get; set; } = new();
-
 	/// <summary>
 	///   Custom key-value storage for this project.
 	/// </summary>
@@ -154,6 +143,16 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 	{
 		if ( _nodes.ContainsKey( id ) ) return true;
 		return false;
+	}
+
+	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
+	{
+		if ( !_parameter.ContainsKey( Parameter.Name ) )
+		{
+			_parameter.Add( Parameter.Name, Parameter );
+
+			SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
+		}
 	}
 
 	public void AddNode( BaseNodePlus node )

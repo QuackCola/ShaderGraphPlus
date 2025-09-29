@@ -175,6 +175,27 @@ public class ShaderGraphPlusView : GraphView
 			}
 		}
 
+		if ( ev.Data.Object is BaseBlackboardParameter blackboardParameter )
+		{
+			string nodeFullName = blackboardParameter switch
+			{
+				BoolBlackboardParameter => DisplayInfo.ForType( typeof( Bool ) ).Fullname,
+				IntBlackboardParameter => DisplayInfo.ForType( typeof( Int ) ).Fullname,
+				FloatBlackboardParameter => DisplayInfo.ForType( typeof( Float ) ).Fullname,
+				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2 ) ).Fullname,
+				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3 ) ).Fullname,
+				Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4 ) ).Fullname,
+				_ => throw new NotImplementedException(),
+			};
+
+			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+			{
+				var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
+
+				return parameterNodeType;
+			}
+		}
+
 		return AvailableNodes.TryGetValue( ev.Data.Text, out var type )
 			? type
 			: null;
