@@ -51,7 +51,7 @@ internal class Blackboard : Widget
 		{
 			_parameterListView = new( this );
 			_parameterListView.Margin = 4;
-			_parameterListView.ItemSize = new Vector2( 0, 32 );
+			_parameterListView.ItemSize = new Vector2( 0, 24 );
 			_parameterListView.ItemSpacing = 4;
 			_parameterListView.OnPaintOverride = () => 
 			{ 
