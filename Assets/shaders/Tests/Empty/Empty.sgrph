@@ -37,7 +37,7 @@
       "__version": 2,
       "BlackboardParameterIdentifier": "cdffc8d9-8668-47fb-adba-339e62538592",
       "ParameterNodeType": "Property",
-      "Value": "0.62791,0.28329,0.28329,1",
+      "Value": "1,0,0,1",
       "Name": "Parameter5",
       "IsAttribute": false,
       "UI": {
@@ -310,7 +310,7 @@
           "Priority": 0
         }
       },
-      "Value": "0.62791,0.28329,0.28329,1",
+      "Value": "1,0,0,1",
       "Name": "Parameter5",
       "Identifier": "cdffc8d9-8668-47fb-adba-339e62538592"
     },
