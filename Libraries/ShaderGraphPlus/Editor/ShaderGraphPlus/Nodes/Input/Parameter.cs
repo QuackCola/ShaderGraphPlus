@@ -376,7 +376,7 @@ public sealed class Float4 : ParameterNode<Color>
 	}
 }
 
-public static class ParameterNodeUpgraders
+internal static class ParameterNodeUpgraders
 {
 	private static void SetEnumTypeUpgrader_v2( JsonObject json )
 	{
@@ -391,9 +391,8 @@ public static class ParameterNodeUpgraders
 		{
 		}
 
-		json["ParameterNodeType"] = JsonSerializer.SerializeToNode( nodeType, ShaderGraphPlus.SerializerOptions() );
+		json[nameof( IParameterNode.ParameterNodeType )] = JsonSerializer.SerializeToNode( nodeType, ShaderGraphPlus.SerializerOptions() );
 	}
-
 
 	[SGPJsonUpgrader( typeof( Bool ), 2 )]
 	public static void BoolNodeUpgrader_v2( JsonObject json )
