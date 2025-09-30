@@ -48,6 +48,20 @@ internal class Blackboard : Widget
 		_leftLayout.Spacing = 8;
 		_leftLayout.Margin = 4;
 		_leftLayout.Add( new Label( "Parameters" ) );
+		
+		var addButton = new Button.Primary( "Add", "new_label" );
+		addButton.Clicked += () =>
+		{
+			var popup = new PopupTypeSelector( this );
+			popup.OnSelect += ( t ) =>
+			{
+				AddBlackboardParameter( t );
+			};
+			popup.OpenAtCursor();
+		};
+
+		_leftLayout.Add( addButton );
+
 		{
 			_parameterListView = new( this );
 			_parameterListView.Margin = 4;
@@ -88,24 +102,6 @@ internal class Blackboard : Widget
 		}
 
 		_bodylayout.AddSpacingCell( 16 );
-
-		var bottom = Layout.Column();
-		bottom.Spacing = 8;
-		bottom.Margin = 4;
-		{
-			var addButton = AddPrimaryButton( bottom, "Add", "new_label" );
-			addButton.Clicked += () =>
-			{
-				var popup = new PopupTypeSelector( this );
-				popup.OnSelect += ( t ) =>
-				{
-					AddBlackboardParameter( t );
-				};
-				popup.OpenAtCursor();
-			};
-		}
-
-		_bodylayout.Add( bottom );
 
 		GraphInit = true;
 	}
