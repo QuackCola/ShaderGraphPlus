@@ -224,7 +224,6 @@ public class ShaderGraphPlusView : GraphView
 			return true;
 		}
 
-		//SGPLog.Info( $"failed to get HandleConfig type\"{type}\"" );
 		matchingType = null;
 		return false;
 	}
@@ -233,7 +232,6 @@ public class ShaderGraphPlusView : GraphView
 	{
 		if ( TryGetHandleConfig( type, out var matchingType, out var config ) )
 		{
-			//SGPLog.Info( $"Got HandleConfig type\"{type}\" matchingType\"{matchingType}\" config.Name\"{config.Name}\"" );
 			return config with { Name = type == matchingType ? config.Name : null };
 		}
 

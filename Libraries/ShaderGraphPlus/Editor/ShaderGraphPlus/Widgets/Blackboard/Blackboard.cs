@@ -1,10 +1,8 @@
 ﻿using Editor;
-using Sandbox;
-using System.ComponentModel;
 
 namespace ShaderGraphPlus;
 
-public class Blackboard : Widget
+internal class Blackboard : Widget
 {
 	private ShaderGraphPlus _graph;
 	public ShaderGraphPlus Graph
@@ -24,27 +22,26 @@ public class Blackboard : Widget
 	public Action OnDirty { get; set; }
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
-	private ControlSheet Sheet;
-	private ListView _parameterListView;
 	private Layout _rowLayout;
 	private Layout _leftLayout;
 	private Layout _rightLayout;
+	private Layout _bodylayout;
+	private ControlSheet _sheet;
+	private ListView _parameterListView;
 	private bool GraphInit;
-	protected Layout BodyLayout;
+
 	public Blackboard( Widget parent ) : base( parent )
 	{
 		Name = "Blackboard";
 		WindowTitle = "Blackboard";
 		SetWindowIcon( "edit" );
 
-		//Graph = graph;
-
 		Layout = Layout.Column();
-		BodyLayout = Layout.Add( Layout.Column(), 1 );
+		_bodylayout = Layout.Add( Layout.Column(), 1 );
 
 		_rowLayout = Layout.Row();
 		_rowLayout.Spacing = 8;
-		BodyLayout.Add( _rowLayout );
+		_bodylayout.Add( _rowLayout );
 
 		_leftLayout = _rowLayout.AddColumn();
 		_leftLayout.Add( new Label( "Parameters" ) );
@@ -77,9 +74,7 @@ public class Blackboard : Widget
 				return true;
 			};
 
-			
 			_leftLayout.Add( _parameterListView, 1 );
-			
 		}
 
 		_rightLayout = _rowLayout.AddColumn( 1 );
@@ -88,12 +83,12 @@ public class Blackboard : Widget
 		_rightLayout.Alignment = TextFlag.Center;
 		_rightLayout.Margin = 4;
 		{
-			Sheet = new ControlSheet();
-			_rightLayout.Add( Sheet, 1 );
+			_sheet = new ControlSheet();
+			_rightLayout.Add( _sheet, 1 );
 			_rightLayout.AddStretchCell( 16 );
 		}
 
-		BodyLayout.AddSpacingCell( 16 );
+		_bodylayout.AddSpacingCell( 16 );
 
 		var bottom = Layout.Column();
 		bottom.Spacing = 8;
@@ -111,14 +106,9 @@ public class Blackboard : Widget
 			};
 		}
 
-		BodyLayout.Add( bottom );
+		_bodylayout.Add( bottom );
 
 		GraphInit = true;
-
-		if ( Graph != null )
-		{
-			UpdateParameterList( null );
-		}
 	}
 
 	private void ClickItem( object item )
@@ -160,28 +150,13 @@ public class Blackboard : Widget
 	private void UpdateParameterList( BaseBlackboardParameter baseBlackboardParameter )
 	{
 		_parameterListView.Clear();
+		_sheet.Clear( true );
 
-		var parameters = Graph.Parameters;
-
-		if ( parameters.Any() )
-		{
-			Sheet.Clear( true );
-
-			if ( baseBlackboardParameter != null )
-			{
-				Sheet.AddObject( baseBlackboardParameter.GetSerialized() );
-				_parameterListView.SelectItem( baseBlackboardParameter );
-			}
-
-			//Sheet.AddObject( parameters.First().GetSerialized() );
-			//Sheet.AddObject( parameters.First().GetSerialized() );
-		}
-
-		foreach ( var parameter in parameters )
+		foreach ( var parameter in Graph.Parameters )
 		{
 			if ( GraphInit )
 			{
-				Sheet.AddObject( parameter.GetSerialized() );
+				_sheet.AddObject( parameter.GetSerialized() );
 				_parameterListView.SelectItem( parameter );
 				GraphInit = false;
 			}
@@ -189,26 +164,31 @@ public class Blackboard : Widget
 			_parameterListView.AddItem( parameter );
 		}
 
+		if ( baseBlackboardParameter != null && !GraphInit )
+		{
+			if ( Graph.Parameters.Any() )
+			{
+				_sheet.AddObject( baseBlackboardParameter.GetSerialized() );
+				_parameterListView.SelectItem( baseBlackboardParameter );
+			}
+		}
 	}
 
 	private void SetParameterTarget( BaseBlackboardParameter blackboardParameter )
 	{
-		Sheet.Clear( true );
+		_sheet.Clear( true );
 
 		var so = blackboardParameter.GetSerialized();
 		so.OnPropertyChanged += ( prop ) =>
 		{
-			var propParent = prop.Parent;
 			OnParameterChanged?.Invoke( blackboardParameter );
 		};
 
-		Sheet.AddObject( so );
+		_sheet.AddObject( so );
 	}
 
 	private void AddBlackboardParameter( TypeDescription typeDescription )
 	{
-		//SGPLog.Info( $"Selected type : \"{typeDescription}\"" );
-
 		int id = _graph._parameters.Count;
 		string name = $"Parameter{id}";
 
