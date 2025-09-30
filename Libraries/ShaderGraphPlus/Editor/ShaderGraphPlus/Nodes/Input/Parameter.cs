@@ -1,8 +1,9 @@
 ﻿using NodeEditorPlus;
+using System.Text.Json.Nodes;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -14,7 +15,7 @@ namespace ShaderGraphPlus.Nodes;
 public sealed class Bool : ParameterNode<bool>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -50,7 +51,7 @@ public sealed class Bool : ParameterNode<bool>
 public sealed class Int : ParameterNode<int>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -88,7 +89,7 @@ public sealed class Int : ParameterNode<int>
 public sealed class Float : ParameterNode<float>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -127,7 +128,7 @@ public sealed class Float : ParameterNode<float>
 public sealed class Float2 : ParameterNode<Vector2>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -208,7 +209,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 public sealed class Float3 : ParameterNode<Vector3>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -296,7 +297,7 @@ public sealed class Float3 : ParameterNode<Vector3>
 public sealed class Float4 : ParameterNode<Color>
 {
 	[Hide]
-	public override int Version => 1;
+	public override int Version => 2;
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
@@ -372,5 +373,127 @@ public sealed class Float4 : ParameterNode<Color>
 	{
 		Value = Color.White;
 		UI = new ParameterUI { Type = UIType.Color };
+	}
+}
+
+public static class ParameterNodeUpgraders
+{
+	private static void SetEnumTypev2Upgrade( JsonObject json )
+	{
+		var name = json["Name"].ToString();
+		var nodeType = ParameterNodeModeType.Constant;
+
+		if ( !string.IsNullOrWhiteSpace( name ) )
+		{
+			nodeType = ParameterNodeModeType.Property;
+		}
+		else
+		{
+		}
+
+		json["ParameterNodeType"] = JsonSerializer.SerializeToNode( nodeType, ShaderGraphPlus.SerializerOptions() );
+	}
+
+
+	[SGPJsonUpgrader( typeof( Bool ), 2 )]
+	public static void BoolNodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
+	}
+
+	[SGPJsonUpgrader( typeof( Int ), 2 )]
+	public static void IntNodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
+	}
+
+	[SGPJsonUpgrader( typeof( Float ), 2 )]
+	public static void FloatNodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
+	}
+
+	[SGPJsonUpgrader( typeof( Float2 ), 2 )]
+	public static void Float2NodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
+	}
+
+	[SGPJsonUpgrader( typeof( Float3 ), 2 )]
+	public static void Float3NodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
+	}
+
+	[SGPJsonUpgrader( typeof( Float4 ), 2 )]
+	public static void Float4NodeUpgrader_v2( JsonObject json )
+	{
+		if ( !json.ContainsKey( "Name" ) )
+		{
+			return;
+		}
+
+		try
+		{
+			SetEnumTypev2Upgrade( json );
+		}
+		catch
+		{
+		}
 	}
 }

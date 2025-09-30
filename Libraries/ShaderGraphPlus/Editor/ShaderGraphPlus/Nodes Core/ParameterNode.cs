@@ -6,6 +6,12 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
+public enum ParameterNodeModeType
+{
+	Constant,
+	Property,
+}
+
 public interface IParameterNode
 {
 	string Name { get; set; }
@@ -13,6 +19,8 @@ public interface IParameterNode
 	bool IsAttribute { get; set; }
 	
 	ParameterUI UI { get; set; }
+
+	ParameterNodeModeType ParameterNodeType { get; set; }
 }
 
 internal interface IBlackboardSyncable
@@ -36,13 +44,19 @@ public interface ITextureParameterNode
 public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncable, IErroringNode//, IReplaceNode
 {
 	[Hide]
-	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
+
+	[Hide]
+	protected bool ShowParameterUI => ( ParameterNodeType == ParameterNodeModeType.Property );
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Title( "Type" )]
+	public ParameterNodeModeType ParameterNodeType { get; set; } = ParameterNodeModeType.Constant;
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
@@ -61,7 +75,7 @@ public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackb
 	public bool IsAttribute { get; set; }
 
 	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( IsSubgraph ), true )]
+	[ShowIf( nameof( ShowParameterUI ), true )]
 	public ParameterUI UI { get; set; }
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
