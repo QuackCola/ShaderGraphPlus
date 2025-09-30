@@ -34,7 +34,7 @@ internal class Blackboard : Widget
 	{
 		Name = "Blackboard";
 		WindowTitle = "Blackboard";
-		SetWindowIcon( "edit" );
+		SetWindowIcon( "list" );
 
 		Layout = Layout.Row();
 		Layout.Spacing = 8;
