@@ -1,5 +1,9 @@
 ﻿namespace ShaderGraphPlus;
 
+internal interface IShaderFeature
+{
+}
+
 [Title( "Bool" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
@@ -183,7 +187,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Colo
 }
 
 [Title( "Shader Feature Boolean" ), Order( 6 )]
-public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>
+public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeature
 {
 	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
 	{
@@ -192,10 +196,11 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 	public ShaderFeatureBooleanBlackboardParameter() : base() 
 	{ 
 	}
+
 }
 
 [Title( "Shader Feature Enum" ), Order( 7 )]
-public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>
+public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeature
 {
 	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
 	{

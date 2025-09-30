@@ -535,12 +535,51 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void PreRegister( out List<GraphCompiler.Issue> registrationIssues )
+	private void RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues )
 	{
 		registrationIssues = new();
 
-		// Go ahead and register any StaticSwitches.
-		RegisterStaticCombos( ref registrationIssues );
+		ShaderFeatures.Clear();
+
+		var features = _graph.Parameters.OfType<IShaderFeature>();
+
+		foreach ( var feature in features )
+		{
+			var shaderFeatureInfo = new ShaderFeatureInfo();
+			var featureName = "";
+			var featureDescription = "";
+			var headerName = "";
+			var optionCount = 0;
+
+			if ( feature is ShaderFeatureBoolean featureBoolean )
+			{
+				featureName = featureBoolean.FeatureName;
+				featureDescription = featureBoolean.Description;
+				headerName = featureBoolean.HeaderName;
+				optionCount = 2;
+			}
+			else if ( feature is ShaderFeatureEnum featureEnum )
+			{
+				featureName = featureEnum.FeatureName;
+				featureDescription = featureEnum.Description;
+				headerName = featureEnum.HeaderName;
+				optionCount = featureEnum.Options.Count;
+			}
+
+			shaderFeatureInfo = new ShaderFeatureInfo
+			(
+				featureName,
+				featureDescription,
+				headerName,
+				optionCount,
+				false // TODO
+			);
+
+			if ( !ShaderFeatures.ContainsKey( shaderFeatureInfo.UserDefinedName ) )
+			{
+				ShaderFeatures.Add( shaderFeatureInfo.UserDefinedName, shaderFeatureInfo );
+			}
+		}
 	}
 
 	private string GeneratePreviewCode()
@@ -551,21 +590,21 @@ public class MainWindow : DockWindow
 		}
 
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
-		PreRegister( out List<GraphCompiler.Issue> registrationIssues );
+		//RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues );
 
-		if ( registrationIssues.Any() )
-		{
-			_output.GraphIssues = registrationIssues;
-
-			DockManager.RaiseDock( "Output" );
-
-			_generatedCode = null;
-			_generatedCodeTextView.SetTextContents( "" );
-
-			RestoreShader();
-
-			return null;
-		}
+		//if ( registrationIssues.Any() )
+		//{
+		//	_output.GraphIssues = registrationIssues;
+		//
+		//	DockManager.RaiseDock( "Output" );
+		//
+		//	_generatedCode = null;
+		//	_generatedCodeTextView.SetTextContents( "" );
+		//
+		//	RestoreShader();
+		//
+		//	return null;
+		//}
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
@@ -814,8 +853,9 @@ public class MainWindow : DockWindow
 		//ComboRegistrationErrors.Clear();
 		//var errors = new List<string>();
 
+		/*
 		foreach ( var node in _graph.Nodes.OfType<StaticSwitchNode>() )
-		{	
+		{
 			if ( node.Mode == StaticSwitchMode.Create )
 			{
 				//SGPLog.Info( $"Registering feature : `{node.Feature.FeatureName}`" );
@@ -852,12 +892,13 @@ public class MainWindow : DockWindow
 				}
 			}
 		}
+		*/
 	}
 
 	private string GenerateShaderCode()
 	{
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
-		PreRegister( out _ );
+		//RegisterShaderFeatures( out _ );
 
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, false );
 		return compiler.Generate();
