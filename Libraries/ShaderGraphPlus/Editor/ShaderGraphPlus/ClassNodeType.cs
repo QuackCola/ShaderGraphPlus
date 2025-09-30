@@ -118,12 +118,12 @@ public sealed class ParameterNodeType : ClassNodeType
 
 		BaseNodePlus parameterNode = node switch
 		{
-			Bool => new Bool() { Name = name, Value = (bool)value, BlackboardParameterIdentifier = identifier },
-			Int  => new Int() { Name = name, Value = (int)value, BlackboardParameterIdentifier = identifier },
-			Float  => new Float() { Name = name, Value = (float)value, BlackboardParameterIdentifier = identifier },
-			Float2  => new Float2() { Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier },
-			Float3  => new Float3() { Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier },
-			Float4  => new Float4() { Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier },
+			Bool => new Bool() { Name = name, Value = (bool)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			Int  => new Int() { Name = name, Value = (int)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			Float  => new Float() { Name = name, Value = (float)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			Float2  => new Float2() { Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			Float3  => new Float3() { Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			Float4  => new Float4() { Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
 			_ => throw new NotImplementedException(),
 		};
 
