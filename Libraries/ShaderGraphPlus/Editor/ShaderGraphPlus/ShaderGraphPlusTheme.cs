@@ -53,4 +53,20 @@ internal static class ShaderGraphPlusTheme
 		{ typeof( Color ), new HandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
 		};
 	}
+
+	public static Color GetBlackboardParameterTypeColor( BaseBlackboardParameter parameter )
+	{
+		return parameter switch
+		{
+			BoolBlackboardParameter => HandleConfigs[typeof(bool)].Color,
+			IntBlackboardParameter => HandleConfigs[typeof( int )].Color,
+			FloatBlackboardParameter => HandleConfigs[typeof( float )].Color,
+			Float2BlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
+			Float3BlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
+			Float4BlackboardParameter => HandleConfigs[typeof( Color )].Color,
+			ShaderFeatureBooleanBlackboardParameter => Color.White,
+			ShaderFeatureEnumBlackboardParameter => Color.White,
+			_ => throw new NotImplementedException(),
+		};
+	}
 }

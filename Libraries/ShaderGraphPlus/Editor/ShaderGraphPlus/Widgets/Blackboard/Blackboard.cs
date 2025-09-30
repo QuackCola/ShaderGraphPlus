@@ -152,15 +152,26 @@ internal class Blackboard : Widget
 			itemColor = Theme.Primary;
 		}
 
-		Paint.SetPen( itemColor );
-		Paint.SetBrush( itemColor );
-		Paint.DrawRect( rect, Theme.ControlRadius );
+		rect = rect = new Rect( rect.Position, new Vector2( rect.Width, item.Rect.Height ) ).Shrink( 3f );
 
-		Paint.SetPen( textColor );
-		Paint.SetBrush( textColor );
-		//Paint.SetFont( "" );
-		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variable.Name}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
-		Paint.DrawText( rect.Shrink( 0 , 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
+		Paint.ClearPen();
+		Paint.SetBrush( itemColor );
+		Paint.DrawRect( rect, 3f );
+
+		var typeColor = ShaderGraphPlusTheme.GetBlackboardParameterTypeColor( variable );
+
+		Paint.SetPen( typeColor.WithAlpha( 0.7f ) );
+		Paint.DrawIcon( rect.Shrink( 4f ), "circle", 12f, TextFlag.LeftCenter );
+		rect.Left += 24f;
+
+		var variableName = variable.Name;
+
+		Paint.SetPen( textColor.WithAlpha( 0.7f ) );
+		Paint.SetBrush( textColor.WithAlpha( 0.7f ) );
+
+		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variableName}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
+		Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
+
 	}
 
 	private void UpdateParameterList( BaseBlackboardParameter baseBlackboardParameter )
