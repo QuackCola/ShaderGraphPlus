@@ -45,7 +45,7 @@
         "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
-          "Name": null,
+          "Name": "",
           "Priority": 0
         },
         "SecondaryGroup": {
@@ -302,7 +302,7 @@
         "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
-          "Name": null,
+          "Name": "",
           "Priority": 0
         },
         "SecondaryGroup": {
