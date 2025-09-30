@@ -378,7 +378,7 @@ public sealed class Float4 : ParameterNode<Color>
 
 public static class ParameterNodeUpgraders
 {
-	private static void SetEnumTypev2Upgrade( JsonObject json )
+	private static void SetEnumTypeUpgrader_v2( JsonObject json )
 	{
 		var name = json["Name"].ToString();
 		var nodeType = ParameterNodeModeType.Constant;
@@ -405,7 +405,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
@@ -422,7 +422,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
@@ -439,7 +439,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
@@ -456,7 +456,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
@@ -473,7 +473,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
@@ -490,7 +490,7 @@ public static class ParameterNodeUpgraders
 
 		try
 		{
-			SetEnumTypev2Upgrade( json );
+			SetEnumTypeUpgrader_v2( json );
 		}
 		catch
 		{
