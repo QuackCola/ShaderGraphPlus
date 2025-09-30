@@ -145,6 +145,7 @@ internal class Blackboard : Widget
 		if ( item.Hovered )
 		{
 			textColor = Color.White;
+			itemColor = Theme.Primary.Lighten( 0.1f ).Desaturate( 0.3f ).WithAlpha( 0.4f * 0.6f );
 		}
 		if ( item.Selected )
 		{
