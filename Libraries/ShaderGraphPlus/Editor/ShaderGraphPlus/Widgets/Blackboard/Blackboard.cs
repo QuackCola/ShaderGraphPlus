@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Sandbox.Internal;
 
 namespace ShaderGraphPlus;
 
@@ -22,13 +23,12 @@ internal class Blackboard : Widget
 	public Action OnDirty { get; set; }
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
-	private Layout _rowLayout;
-	private Layout _leftLayout;
-	private Layout _rightLayout;
-	private Layout _bodylayout;
 	private ControlSheet _sheet;
+	private Button.Primary _addButton;
+	private Button.Danger _deleteButton;
 	private ListView _parameterListView;
 	private bool GraphInit;
+	private object SelectedItem;
 
 	public Blackboard( Widget parent ) : base( parent )
 	{
@@ -36,21 +36,42 @@ internal class Blackboard : Widget
 		WindowTitle = "Blackboard";
 		SetWindowIcon( "edit" );
 
-		Layout = Layout.Column();
-		_bodylayout = Layout.Add( Layout.Column(), 1 );
+		Layout = Layout.Row();
+		Layout.Spacing = 8;
+		Layout.Margin = 4;
 
-		_rowLayout = Layout.Row();
-		_rowLayout.Spacing = 8;
-		_rowLayout.Margin = 4;
-		_bodylayout.Add( _rowLayout );
+		var canvas = new Widget( null );
+		canvas.Layout = Layout.Row();
+		canvas.Layout.Spacing = 8;
+		canvas.Layout.Spacing = 4;
 
-		_leftLayout = _rowLayout.AddColumn();
-		_leftLayout.Spacing = 8;
-		_leftLayout.Margin = 4;
-		_leftLayout.Add( new Label( "Parameters" ) );
-		
-		var addButton = new Button.Primary( "Add", "new_label" );
-		addButton.Clicked += () =>
+		var leftColumn = canvas.Layout.AddColumn( 2, false );
+		leftColumn.Spacing = 8;
+		leftColumn.Spacing = 4;
+
+		var leftColumnTopLayout = leftColumn.AddRow( 2, false );
+		leftColumnTopLayout.Spacing = 8;
+		leftColumnTopLayout.Spacing = 4;
+
+		leftColumnTopLayout.AddStretchCell();
+
+		_deleteButton = new Button.Danger( "Delete", "delete" );
+		_deleteButton.Enabled = false;
+		_deleteButton.ToolTip = $"Delete selected item";
+		_deleteButton.Clicked += () =>
+		{
+			if ( SelectedItem != null )
+			{
+				SGPLog.Info( $"Delete selected item {SelectedItem}" );
+			}
+		};
+
+		leftColumnTopLayout.Add( _deleteButton );
+
+		_addButton = new Button.Primary( "Add", "new_label" );
+		_addButton.Enabled = true;
+		_addButton.ToolTip = $"Add new blackboard parameter";
+		_addButton.Clicked += () =>
 		{
 			var popup = new PopupTypeSelector( this );
 			popup.OnSelect += ( t ) =>
@@ -60,48 +81,48 @@ internal class Blackboard : Widget
 			popup.OpenAtCursor();
 		};
 
-		_leftLayout.Add( addButton );
+		leftColumnTopLayout.Add( _addButton );
 
+		_parameterListView = leftColumn.Add( new ListView(), 1 );//new ListView();
+		_parameterListView.Margin = 4;
+		_parameterListView.ItemSize = new Vector2( 0, 24 );
+		_parameterListView.ItemSpacing = 4;
+		_parameterListView.OnPaintOverride = () =>
 		{
-			_parameterListView = new( this );
-			_parameterListView.Margin = 4;
-			_parameterListView.ItemSize = new Vector2( 0, 24 );
-			_parameterListView.ItemSpacing = 4;
-			_parameterListView.OnPaintOverride = () => 
-			{ 
-				Paint.ClearPen(); 
-				Paint.SetBrush( Theme.ControlBackground ); 
-				Paint.DrawRect( _parameterListView.LocalRect, Theme.ControlRadius );
+			Paint.ClearPen();
+			Paint.SetBrush( Theme.ControlBackground );
+			Paint.DrawRect( _parameterListView.LocalRect, Theme.ControlRadius );
 
-				return false; 
-			};
-			_parameterListView.ItemPaint = PaintItem;
-			_parameterListView.ItemClicked = ClickItem;
-			_parameterListView.ItemDrag = ( a ) =>
-			{
-				var parameter = a as BaseBlackboardParameter;
-
-				var drag = new Drag( this );
-				drag.Data.Object = parameter;
-				drag.Execute();
-
-				return true;
-			};
-
-			_leftLayout.Add( _parameterListView, 1 );
-		}
-
-		_rightLayout = _rowLayout.AddColumn( 1 );
-		_rightLayout.Spacing = 8;
-		_rightLayout.Margin = 4;
-		_rightLayout.Add( new Label( "Parameter Properties" ) );
+			return false;
+		};
+		//_parameterListView.ItemSelected = ( item ) =>
+		//{
+		//
+		//};
+		_parameterListView.ItemPaint = PaintItem;
+		_parameterListView.ItemClicked = ClickItem;
+		_parameterListView.ItemDrag = ( a ) =>
 		{
-			_sheet = new ControlSheet();
-			_rightLayout.Add( _sheet, 1 );
-			_rightLayout.AddStretchCell( 16 );
-		}
+			var parameter = a as BaseBlackboardParameter;
 
-		_bodylayout.AddSpacingCell( 16 );
+			var drag = new Drag( this );
+			drag.Data.Object = parameter;
+			drag.Execute();
+
+			return true;
+		};
+
+		leftColumn.AddStretchCell();
+
+		var rightColumn = canvas.Layout.AddColumn( 2, false );
+		rightColumn.Spacing = 8;
+		rightColumn.Spacing = 4;
+
+		_sheet = new ControlSheet();
+		rightColumn.Add( _sheet );
+		rightColumn.AddStretchCell();
+
+		Layout.Add( canvas );
 
 		GraphInit = true;
 	}
@@ -153,10 +174,17 @@ internal class Blackboard : Widget
 			{
 				_sheet.AddObject( parameter.GetSerialized() );
 				_parameterListView.SelectItem( parameter );
+				SelectedItem = parameter;
+				_deleteButton.Enabled = true;
 				GraphInit = false;
 			}
 	
 			_parameterListView.AddItem( parameter );
+		}
+
+		if ( !Graph.Parameters.Any() )
+		{
+			_deleteButton.Enabled = false;
 		}
 
 		if ( baseBlackboardParameter != null && !GraphInit )
@@ -165,6 +193,13 @@ internal class Blackboard : Widget
 			{
 				_sheet.AddObject( baseBlackboardParameter.GetSerialized() );
 				_parameterListView.SelectItem( baseBlackboardParameter );
+
+				SelectedItem = baseBlackboardParameter;
+				_deleteButton.Enabled = true;
+			}
+			else
+			{
+				_deleteButton.Enabled = false;
 			}
 		}
 	}
@@ -178,6 +213,9 @@ internal class Blackboard : Widget
 		{
 			OnParameterChanged?.Invoke( blackboardParameter );
 		};
+
+		SelectedItem = blackboardParameter;
+		_deleteButton.Enabled = true;
 
 		_sheet.AddObject( so );
 	}
