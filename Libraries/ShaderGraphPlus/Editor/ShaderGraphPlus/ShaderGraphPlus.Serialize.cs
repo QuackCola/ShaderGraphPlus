@@ -456,7 +456,7 @@ partial class ShaderGraphPlus
 
 		foreach ( var property in properties )
 		{
-			if ( !property.CanRead)
+			if ( !property.CanRead )
 				continue;
 
 			if ( property.PropertyType == typeof( NodeInput ) )
@@ -469,7 +469,7 @@ partial class ShaderGraphPlus
 			if ( property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna )
 				propertyName = jpna.Name;
 	
-			var propertyValue = property.GetValue(obj);
+			var propertyValue = property.GetValue( obj );
 			if ( propertyName == "Identifier" && propertyValue is string identifier )
 			{
 				if ( identifiers.TryGetValue(identifier, out var newIdentifier ) )
@@ -481,6 +481,11 @@ partial class ShaderGraphPlus
 			if ( propertyName != "Version" )
 			{
 				doc.Add( propertyName, JsonSerializer.SerializeToNode( propertyValue, options ) );
+			}
+
+			if ( propertyValue is ISGPJsonUpgradeable upgradeable )
+			{
+				doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
 			}
 		}
 

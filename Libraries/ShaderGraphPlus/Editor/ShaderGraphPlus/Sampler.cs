@@ -1,13 +1,14 @@
 ﻿using Editor;
 using Sandbox.Rendering;
 using System.Text.Json.Nodes;
+using static ShaderGraphPlus.ShaderGraphPlus;
 
 namespace ShaderGraphPlus;
 
 public struct Sampler : ISGPJsonUpgradeable
 {
-	[Hide]
-	public int Version => 2;
+	[Hide, JsonPropertyName( VersioningInfo.VersionJsonPropertyName )]
+	public readonly int Version => 2;
 
 	/// <summary>
 	/// The name of this Sampler.

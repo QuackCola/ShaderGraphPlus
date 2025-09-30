@@ -40,7 +40,6 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-//[NodeReplace( ReplacementMode.SubgraphOnly )]
 public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncable, IErroringNode//, IReplaceNode
 {
 	[Hide]

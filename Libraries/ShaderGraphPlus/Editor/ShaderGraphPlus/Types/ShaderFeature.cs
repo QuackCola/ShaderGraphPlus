@@ -1,11 +1,7 @@
 ﻿namespace ShaderGraphPlus;
 
-
-public class ShaderFeatureBase : ISGPJsonUpgradeable
+public class ShaderFeatureBase
 {
-	[Hide, JsonPropertyName( "__version" )]
-	public int Version { get; set; } = 1;
-
 	/// <summary>
 	/// Name of this feature.
 	/// </summary>
@@ -23,23 +19,24 @@ public class ShaderFeatureBase : ISGPJsonUpgradeable
 
 	public ShaderFeatureBase()
 	{
-
 	}
 }
 
 public class ShaderFeatureBoolean : ShaderFeatureBase
 {
-	public ShaderFeatureBoolean() : base() { }
+	public ShaderFeatureBoolean() : base() 
+	{ 
+	}
 }
 
 public class ShaderFeatureEnum : ShaderFeatureBase
 {
 	/// <summary>
-	/// Name of your options. No special characters. Lowercase letters 
-	/// will be made uppercase.
+	/// Options of your feature. Must have no special characters. Note : all lowercase letters will be converted to uppercase.
 	/// </summary>
 	public List<string> Options { get; set; } = new List<string>();
 
-	public ShaderFeatureEnum() : base() { }
-
+	public ShaderFeatureEnum() : base() 
+	{
+	}
 }
