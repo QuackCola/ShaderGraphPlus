@@ -41,19 +41,18 @@ internal class Blackboard : Widget
 
 		_rowLayout = Layout.Row();
 		_rowLayout.Spacing = 8;
+		_rowLayout.Margin = 4;
 		_bodylayout.Add( _rowLayout );
 
 		_leftLayout = _rowLayout.AddColumn();
-		_leftLayout.Add( new Label( "Parameters" ) );
-		_leftLayout.Alignment = TextFlag.Center;
 		_leftLayout.Spacing = 8;
-		_leftLayout.Margin = 4	;
+		_leftLayout.Margin = 4;
+		_leftLayout.Add( new Label( "Parameters" ) );
 		{
 			_parameterListView = new( this );
 			_parameterListView.Margin = 4;
 			_parameterListView.ItemSize = new Vector2( 0, 32 );
 			_parameterListView.ItemSpacing = 4;
-			_parameterListView.ItemAlign = Sandbox.UI.Align.Center;
 			_parameterListView.OnPaintOverride = () => 
 			{ 
 				Paint.ClearPen(); 
@@ -79,10 +78,9 @@ internal class Blackboard : Widget
 		}
 
 		_rightLayout = _rowLayout.AddColumn( 1 );
-		_rightLayout.Add( new Label( "Parameter Properties" ) );
 		_rightLayout.Spacing = 8;
-		_rightLayout.Alignment = TextFlag.Center;
 		_rightLayout.Margin = 4;
+		_rightLayout.Add( new Label( "Parameter Properties" ) );
 		{
 			_sheet = new ControlSheet();
 			_rightLayout.Add( _sheet, 1 );
