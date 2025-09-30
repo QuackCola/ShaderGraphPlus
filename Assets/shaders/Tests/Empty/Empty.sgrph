@@ -171,7 +171,7 @@
       "BlackboardParameterIdentifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb",
       "ParameterNodeType": "Property",
       "Value": "1,0,1",
-      "Name": "Parameter4",
+      "Name": "HLX",
       "IsAttribute": false,
       "UI": {
         "Type": "Default",
@@ -292,7 +292,7 @@
         }
       },
       "Value": "1,0,1",
-      "Name": "Parameter4",
+      "Name": "HLX",
       "Identifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb"
     },
     {
