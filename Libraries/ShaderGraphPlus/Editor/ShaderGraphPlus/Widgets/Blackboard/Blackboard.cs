@@ -47,9 +47,10 @@ internal class Blackboard : Widget
 		_leftLayout.Add( new Label( "Parameters" ) );
 		_leftLayout.Alignment = TextFlag.Center;
 		_leftLayout.Spacing = 8;
-		_leftLayout.Margin = 4;
+		_leftLayout.Margin = 4	;
 		{
 			_parameterListView = new( this );
+			_parameterListView.Margin = 4;
 			_parameterListView.ItemSize = new Vector2( 0, 32 );
 			_parameterListView.ItemSpacing = 4;
 			_parameterListView.ItemAlign = Sandbox.UI.Align.Center;
@@ -142,8 +143,8 @@ internal class Blackboard : Widget
 
 		Paint.SetPen( textColor );
 		Paint.SetBrush( textColor );
+		//Paint.SetFont( "" );
 		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variable.Name}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
-
 		Paint.DrawText( rect.Shrink( 0 , 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
 	}
 
