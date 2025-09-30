@@ -318,7 +318,7 @@
       "_class": "ShaderFeatureBooleanBlackboardParameter",
       "Value": {
         "FeatureName": "MyBooleanFeature",
-        "Description": "A Boolean Feature",
+        "Description": "A description",
         "HeaderName": "My Boolean Feature"
       },
       "Name": "Parameter6",
@@ -334,7 +334,7 @@
           "Option4"
         ],
         "FeatureName": "MyRadioFeature",
-        "Description": "Some Options",
+        "Description": "A description",
         "HeaderName": "My Radio Feature Options"
       },
       "Name": "Parameter7",
