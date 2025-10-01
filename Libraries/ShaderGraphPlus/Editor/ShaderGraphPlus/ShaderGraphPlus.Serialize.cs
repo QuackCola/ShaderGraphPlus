@@ -51,8 +51,6 @@ partial class ShaderGraphPlus
 		var doc = new JsonObject();
 		var options = SerializerOptions( true );
 
-		//doc.Add( VersioningInfo.VersionJsonPropertyName, Version );
-
 		SerializeObject( this, doc, options );
 		SerializeNodes( Nodes, doc, options );
 		SerializeParameters( Parameters, doc, options );
@@ -89,15 +87,15 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		
 		// Check for version in the JSON
-		var fileVersion = 2;//1; // Default to current version
-		//if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
-		//{
-		//	fileVersion = ver.GetInt32();
-		//}
-		//else
-		//{
-		//	fileVersion = 0; // Old file without version
-		//}
+		var fileVersion = 1; // Default to current version
+		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
+		{
+			fileVersion = ver.GetInt32();
+		}
+		else
+		{
+			fileVersion = 0; // Old file without version
+		}
 
 		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
 	}
