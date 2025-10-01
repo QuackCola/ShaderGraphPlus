@@ -14,6 +14,7 @@ internal class BlackboardParameterList : ListView
 			if ( _graph == value ) return;
 
 			_graph = value;
+
 			BuildItems();
 		}
 	}
