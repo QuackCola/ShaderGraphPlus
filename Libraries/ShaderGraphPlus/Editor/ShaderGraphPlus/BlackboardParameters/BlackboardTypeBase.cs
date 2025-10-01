@@ -2,10 +2,10 @@
 
 public abstract class BaseBlackboardParameter
 {
-	public virtual string Name { get; set; } = "";
-
 	[Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; } = Guid.NewGuid();
+
+	public virtual string Name { get; set; } = "";
 
 	public BaseBlackboardParameter()
 	{
