@@ -1,5 +1,6 @@
 ﻿using Editor;
 using Sandbox.Internal;
+using ShaderGraphPlus;
 using System.Text.Json.Nodes;
 using static ShaderGraphPlus.ShaderGraphPlus;
 
@@ -25,7 +26,7 @@ public class SGPJsonUpgraderAttribute : Attribute
 
 internal static class SGPJsonUpgrader
 {
-	private static (MethodDescription Method, SGPJsonUpgraderAttribute Attribute)[] _methods;
+	private static ( MethodDescription Method, SGPJsonUpgraderAttribute Attribute )[] _methods;
 
 	public static void UpdateUpgraders( TypeLibrary typeLibrary )
 	{
@@ -50,10 +51,12 @@ internal static class SGPJsonUpgrader
 				MethodDescription item = item2.Method;
 				object[] parameters = new JsonObject[1] { json };
 				item.Invoke( null, parameters );
+
+				SGPLog.Info( $"Invoked json upgrader : {item.Name}", ConCommands.VerboseJsonUpgrader );
 			}
 			catch ( Exception exception )
 			{
-				Log.Warning( exception, $"A type version upgrader ({item2.Attribute.Type}, version {item2.Attribute.Version}) threw an exception while trying to upgrade, so we halted the upgrade." );
+				Log.Warning( exception, $"A type version upgrader ( {item2.Attribute.Type}, version {item2.Attribute.Version}) threw an exception while trying to upgrade, so we halted the upgrade." );
 				break;
 			}
 			finally
