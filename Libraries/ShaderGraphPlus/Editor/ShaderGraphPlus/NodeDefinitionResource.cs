@@ -1,5 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
+/*
 [AssetType( Name = "Node Definition", Extension = "nodedef", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
 public sealed class NodeDefinitionResource
 {
@@ -13,3 +14,4 @@ public sealed class NodeDefinitionResource
 
 	public string Code { get; set; } = "";
 }
+*/
