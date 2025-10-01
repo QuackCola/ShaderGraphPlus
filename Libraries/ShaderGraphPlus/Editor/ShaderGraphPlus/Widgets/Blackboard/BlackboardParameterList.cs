@@ -36,7 +36,6 @@ internal class BlackboardParameterList : ListView
 			SGPLog.Error( "Graph is null!!!" );
 			return;
 		}
-			
 
 		SetItems( Graph.Parameters.Cast<object>() );
 	}
