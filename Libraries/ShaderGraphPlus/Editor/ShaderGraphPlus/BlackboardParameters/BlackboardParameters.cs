@@ -189,6 +189,9 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Colo
 [Title( "Shader Feature Boolean" ), Order( 6 )]
 public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeature
 {
+	[JsonIgnore, Hide]
+	public override string Name { get; set; }
+
 	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
 	{
 	}
@@ -202,6 +205,9 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 [Title( "Shader Feature Enum" ), Order( 7 )]
 public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeature
 {
+	[JsonIgnore, Hide]
+	public override string Name { get; set; }
+
 	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
 	{
 	}

@@ -185,6 +185,7 @@ public class ShaderGraphPlusView : GraphView
 				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2 ) ).Fullname,
 				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3 ) ).Fullname,
 				Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4 ) ).Fullname,
+				ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
 				_ => throw new NotImplementedException(),
 			};
 

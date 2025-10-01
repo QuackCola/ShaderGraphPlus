@@ -24,8 +24,8 @@ public sealed class ParameterNodeType : ClassNodeType
 			Float2BlackboardParameter v => v.Name,
 			Float3BlackboardParameter v => v.Name,
 			Float4BlackboardParameter v => v.Name,
-			ShaderFeatureBooleanBlackboardParameter v => v.Name,
-			ShaderFeatureEnumBlackboardParameter v => v.Name,
+			ShaderFeatureBooleanBlackboardParameter v => v.Value.FeatureName,
+			ShaderFeatureEnumBlackboardParameter v => v.Value.FeatureName,
 			_ => throw new NotImplementedException(),
 		};
 
@@ -52,6 +52,7 @@ public sealed class ParameterNodeType : ClassNodeType
 			Float2  => new Float2() { Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
 			Float3  => new Float3() { Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
 			Float4  => new Float4() { Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier, ParameterNodeType = ParameterNodeModeType.Property },
+			StaticSwitchNode => new StaticSwitchNode { Feature = (ShaderFeatureBoolean)value, BlackboardParameterIdentifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
 

@@ -68,8 +68,8 @@ internal class BlackboardUtils
 			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero) { Name = name },
 			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero) { Name = name },
 			Float4BlackboardParameter => new Float4BlackboardParameter( Color.White ) { Name = name },
-			ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new() ) { Name = name },
-			ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new() ) { Name = name },
+			ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new() {  FeatureName = name } ) { Name = name },
+			ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new() { FeatureName = name } ) { Name = name },
 			_ => throw new NotImplementedException(),
 		};
 	}

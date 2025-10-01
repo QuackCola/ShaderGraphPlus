@@ -551,19 +551,21 @@ public class MainWindow : DockWindow
 			var headerName = "";
 			var optionCount = 0;
 
-			if ( feature is ShaderFeatureBoolean featureBoolean )
+			if ( feature is ShaderFeatureBooleanBlackboardParameter featureBoolean )
 			{
-				featureName = featureBoolean.FeatureName;
-				featureDescription = featureBoolean.Description;
-				headerName = featureBoolean.HeaderName;
+				featureName = featureBoolean.Value.FeatureName;
+				featureDescription = featureBoolean.Value.Description;
+				headerName = featureBoolean.Value.HeaderName;
 				optionCount = 2;
+				
 			}
-			else if ( feature is ShaderFeatureEnum featureEnum )
+			else if ( feature is ShaderFeatureEnumBlackboardParameter featureEnum )
 			{
-				featureName = featureEnum.FeatureName;
-				featureDescription = featureEnum.Description;
-				headerName = featureEnum.HeaderName;
-				optionCount = featureEnum.Options.Count;
+				featureName = featureEnum.Value.FeatureName;
+				featureDescription = featureEnum.Value.Description;
+				headerName = featureEnum.Value.HeaderName;
+				optionCount = featureEnum.Value.Options.Count;
+				
 			}
 
 			shaderFeatureInfo = new ShaderFeatureInfo
@@ -590,7 +592,7 @@ public class MainWindow : DockWindow
 		}
 
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
-		//RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues );
+		RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues );
 
 		//if ( registrationIssues.Any() )
 		//{
@@ -850,7 +852,7 @@ public class MainWindow : DockWindow
 	private string GenerateShaderCode()
 	{
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
-		//RegisterShaderFeatures( out _ );
+		RegisterShaderFeatures( out _ );
 
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, false );
 		return compiler.Generate();

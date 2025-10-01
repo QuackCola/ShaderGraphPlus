@@ -44,6 +44,15 @@ internal class BlackboardParameterList : ListView
 
 		var variableName = variable.Name;
 
+		if ( variable is ShaderFeatureBooleanBlackboardParameter sfBooleanBlackboardParameter )
+		{
+			variableName = sfBooleanBlackboardParameter.Value.FeatureName;
+		}
+		else if ( variable is ShaderFeatureEnumBlackboardParameter sfEnumBlackboardParameter )
+		{
+			variableName = sfEnumBlackboardParameter.Value.FeatureName;
+		}
+
 		Paint.SetPen( textColor.WithAlpha( 0.7f ) );
 		Paint.SetBrush( textColor.WithAlpha( 0.7f ) );
 

@@ -137,7 +137,6 @@ public sealed partial class GraphCompiler
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
 	{
 		Graph = graph;
-		//Graph.Features = shaderFeatures;
 		ShaderFeatures = shaderFeatures;
 		_Asset = asset;
 		IsPreview = preview;

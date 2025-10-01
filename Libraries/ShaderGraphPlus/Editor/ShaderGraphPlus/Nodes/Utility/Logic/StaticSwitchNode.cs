@@ -1,22 +1,11 @@
 ﻿using NodeEditorPlus;
+using static Sandbox.Material;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
-
-public enum StaticSwitchMode
-{
-	/// <summary>
-	/// Create a new Shader Feature from this node.
-	/// </summary>
-	Create,
-	/// <summary>
-	/// Reference an existing Shader Feature.
-	/// </summary>
-	Reference
-}
 
 [System.AttributeUsage( AttributeTargets.Property )]
 internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
@@ -24,7 +13,7 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 }
 
 [Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
-public sealed class StaticSwitchNode : ShaderNodePlus
+public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 {
 	[Hide]
 	public override int Version => 1;
@@ -32,19 +21,15 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.LogicNode;
 
+	[Hide, Browsable( false )]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
 	[Hide]
 	public override string Title
 	{
 		get
 		{
-			if ( Mode == StaticSwitchMode.Create )
-			{
-				return $"{DisplayInfo.For( this ).Name} ( {Feature.FeatureName} )";
-			}
-			else
-			{
-				return $"{DisplayInfo.For( this ).Name} Ref ( {FeatureReference} )";
-			}
+			return $"{DisplayInfo.For( this ).Name} ( F_{Feature.FeatureName.ToUpper().Replace( " ", "_" )} )";
 		}
 	}
 
@@ -62,24 +47,15 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	[Hide]
 	public NodeInput InputFalse { get; set; }
 
-	[ShowIf( nameof( Mode ), StaticSwitchMode.Create )]
+	//[ShowIf( nameof( Mode ), StaticSwitchMode.Create )]
 	public bool PreviewToggle { get; set; } = false;
 
-	//[Sandbox.ReadOnly]
-	public StaticSwitchMode Mode { get; set; } = StaticSwitchMode.Create;
-
-	[InlineEditor( Label = false ), ShowIf( nameof( Mode ), StaticSwitchMode.Create ), Group( "Feature" )]
-	public ShaderFeatureOld Feature { get; set; } = new();
-
-	//[JsonIgnore]
-	[Title( "Feature" ), ShowIf( nameof( Mode ), StaticSwitchMode.Reference )]
-	//[Editor( "FeatureReference" )]
-	[ShaderFeatureInfoReference]
-	public string FeatureReference { get; set; } = "None";
+	[Hide]
+	public ShaderFeatureBoolean Feature { get; set; } = new();
 
 	public StaticSwitchNode() : base()
 	{
-		ExpandSize = new Vector2( 8 + Inputs.Count() * 8, 0 );
+		ExpandSize = new Vector2( 48 , 0 );
 	}
 
 	public void OnNodeCreated()
@@ -87,63 +63,41 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 		Update();
 	}
 
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is ShaderFeatureBooleanBlackboardParameter sfboolParameter )
+		{
+			Feature = sfboolParameter.Value;
+		}
+	}
+
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( Mode == StaticSwitchMode.Create && string.IsNullOrWhiteSpace( Feature.FeatureName ) )
-			return NodeResult.Error( "Feature must have a valid name!" );
+		if ( string.IsNullOrWhiteSpace( Feature.FeatureName ) )
+			return NodeResult.Error( "Feature name cannot be blank." );
 
-		//if ( Mode == StaticSwitchMode.Create && compiler.ShaderFeatures.ContainsKey( Feature.FeatureName ) )
-		//	return NodeResult.Error( $"Feature name `{Feature.FeatureName}` is already registered!" );
-
-		if ( Mode is StaticSwitchMode.Create )
+		if ( compiler.ShaderFeatures.ContainsKey( Feature.FeatureName ) )//&& FeatureReference != "None" )
 		{
-			if ( compiler.ShaderFeatures.TryGetValue( Feature.FeatureName, out var shaderFeature ) )
+			//SGPLog.Info( $"GraphFeatures contains feature {FeatureReference} ? : {compiler.Graph.Features.ContainsKey( FeatureReference )}", compiler.IsNotPreview );
+
+			if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[Feature.FeatureName], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 			{
-				if ( compiler.GenerateComboSwitch( shaderFeature, InputTrue, InputFalse, PreviewToggle, false, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
-				{
-					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
+				var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
 
-					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
+				result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
 
-					return result;
-				}
-				else
-				{
-					return new NodeResult( ResultType.Float, $"{1.0f}" );
-					//return NodeResult.Error( "Switch body could not be generated!" );
-				}
+				return result;
 			}
 			else
 			{
-				return NodeResult.Error( "Feature Is Invalid!" );
+				return new NodeResult( ResultType.Float, $"{1.0f}" );
+				//return NodeResult.Error( "Switch body could not be generated!" );
 			}
 		}
 		else
 		{
-			if ( compiler.ShaderFeatures.ContainsKey( FeatureReference ) && FeatureReference != "None" )
-			{
-				//SGPLog.Info( $"GraphFeatures contains feature {FeatureReference} ? : {compiler.Graph.Features.ContainsKey( FeatureReference )}", compiler.IsNotPreview );
-
-				if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[FeatureReference], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
-				{
-					var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
-
-					result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
-
-					return result;
-				}
-				else
-				{
-					return new NodeResult( ResultType.Float, $"{1.0f}" );
-					//return NodeResult.Error( "Switch body could not be generated!" );
-				}
-			}
-			else
-			{
-				return NodeResult.Error( "You must select an available registered feature from the dropdown!" );
-			}
-
+			return NodeResult.Error( $"Shader Featue \"{Feature.FeatureName}\" is not a valid registerd feature." );
 		}
 	};
 }
