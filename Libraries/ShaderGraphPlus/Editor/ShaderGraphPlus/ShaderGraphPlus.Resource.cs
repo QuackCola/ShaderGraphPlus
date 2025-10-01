@@ -128,6 +128,12 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	public ShaderGraphPlus()
 	{
+		UpdateUpgraders();
+	}
+
+	[Event( "hotloaded" )]
+	static void UpdateUpgraders()
+	{
 		SGPJsonUpgrader.UpdateUpgraders( EditorTypeLibrary );
 	}
 
