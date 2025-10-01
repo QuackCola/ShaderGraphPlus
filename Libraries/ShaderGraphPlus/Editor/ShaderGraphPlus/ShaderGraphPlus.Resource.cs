@@ -150,31 +150,45 @@ public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
 
 	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
 	{
-		if ( !_parameters.ContainsKey( Parameter.Identifier ) )
+		if ( _parameters.TryAdd( Parameter.Identifier, Parameter ) )
 		{
-			_parameters.Add( Parameter.Identifier, Parameter );
-
-			SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
+			//SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
 		}
 	}
 
-	internal BaseBlackboardParameter GetBlackboardParameterByIndex( int index )
+	internal bool TryUpdateBlackboardParameter( BaseBlackboardParameter newBlackboardParameter )
 	{
-		var parameter = Parameters.ElementAt( index );
+		var identifier = newBlackboardParameter.Identifier;
 
-		if ( parameter != null )
+		if ( _parameters.ContainsKey( identifier ) )
+		{
+			_parameters[identifier] = newBlackboardParameter;
+
+			return true;
+		}
+		else
+		{
+			SGPLog.Error( $"Graph does not contain parameter with guid : {identifier}" );
+		}
+
+		return false;
+	}
+
+	internal BaseBlackboardParameter GetBlackboardParameterByGuid( Guid guid )
+	{
+		if ( _parameters.TryGetValue( guid, out var parameter ) )
 		{
 			return parameter;
 		}
 
-		throw new Exception( $"No Graph Parameter entry with index `{index}` could be found..." );
+		return null;
 	}
 
 	internal void UpdateParameterNode( BaseBlackboardParameter parameter )
 	{
-		foreach ( var syncableNode in Nodes.OfType<IBlackboardSyncable>().Where( x => x.BlackboardParameterIdentifier == parameter.Identifier ) )
+		foreach ( var iBlackboardSyncable in Nodes.OfType<IBlackboardSyncable>().Where( x => x.BlackboardParameterIdentifier == parameter.Identifier ) )
 		{
-			syncableNode.UpdateFromBlackboard( parameter );
+			iBlackboardSyncable.UpdateFromBlackboard( parameter );
 		}
 	}
 

@@ -1,4 +1,7 @@
 ﻿using Editor;
+using Editor.MapEditor;
+using Facepunch.ActionGraphs;
+
 
 namespace ShaderGraphPlus;
 
@@ -7,9 +10,12 @@ internal class BlackboardView : Widget
 	private ControlSheet _controlSheet;
 	private Button.Primary _addButton;
 	private Button.Danger _deleteButton;
-	private ListView _parameterListView;
-	private bool _graphInit;
+	private BlackboardParameterList _parameterListView;
+	private Blackboard _parentBlackboard;
 	private object _selectedItem;
+	private Guid _selectedItemGuid;
+
+	public Action OnDirty { get; set; }
 
 	private ShaderGraphPlus _graph;
 	public ShaderGraphPlus Graph
@@ -17,25 +23,38 @@ internal class BlackboardView : Widget
 		get => _graph;
 		set
 		{
-			if ( value == null )
-				return;
-
+			if ( value == null ) return;
+			if ( _graph == value ) return;
+			
 			_graph = value;
+			_parameterListView.Graph = _graph;
+
+			// If we have nothing selected then set an initital selection.
+			if ( _selectedItem == null )
+			{
+				var firstParameter = _parentBlackboard.Graph.Parameters.FirstOrDefault();
+
+				if ( firstParameter != null )
+				{
+					SetSelectedItem( firstParameter );
+
+					_deleteButton.Enabled = true;
+				}
+			}
 		}
 	}
-
-	public Action OnDirty { get; set; }
 
 	/// <summary>
 	/// Invoked when a blackboard parameter changes.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
-	public BlackboardView( Widget parent ) : base( parent )
+	public BlackboardView( Blackboard parent ) : base( parent )
 	{
 		Layout = Layout.Row();
-
 		FocusMode = FocusMode.TabOrClickOrWheel;
+
+		_parentBlackboard = parent;
 
 		var canvas = new Widget( null );
 		canvas.Layout = Layout.Row();
@@ -80,24 +99,9 @@ internal class BlackboardView : Widget
 
 		leftColumnTopLayout.Add( _addButton );
 
-		_parameterListView = leftColumn.Add( new ListView(), 1 );//new ListView();
-		_parameterListView.Margin = 4;
-		_parameterListView.ItemSize = new Vector2( 0, 24 );
-		_parameterListView.ItemSpacing = 4;
-		_parameterListView.OnPaintOverride = () =>
-		{
-			Paint.ClearPen();
-			Paint.SetBrush( Theme.ControlBackground );
-			Paint.DrawRect( _parameterListView.LocalRect, Theme.ControlRadius );
-
-			return false;
-		};
-		//_parameterListView.ItemSelected = ( item ) =>
-		//{
-		//
-		//};
-		_parameterListView.ItemPaint = PaintItem;
-		_parameterListView.ItemClicked = ClickItem;
+		_parameterListView = leftColumn.Add( new BlackboardParameterList( null ), 1 );//new ListView();
+		_parameterListView.ItemClicked = OnItemClicked;
+		_parameterListView.ItemSelected = OnItemSelected;
 		_parameterListView.ItemDrag = ( a ) =>
 		{
 			var parameter = a as BaseBlackboardParameter;
@@ -108,7 +112,6 @@ internal class BlackboardView : Widget
 
 			return true;
 		};
-		//leftColumn.AddStretchCell();
 
 		var rightColumn = canvas.Layout.AddColumn( 1, false );
 		rightColumn.Spacing = 8;
@@ -123,132 +126,77 @@ internal class BlackboardView : Widget
 		rightColumn.AddStretchCell();
 
 		Layout.Add( canvas );
-
-		_graphInit = true;
 	}
 
-	private void ClickItem( object item )
+	private void OnItemSelected( object item )
+	{
+		var variable = item as BaseBlackboardParameter;
+		
+		//SGPLog.Info( $"Selected item : {variable}" );
+		
+		SetControlSheetTarget( variable );
+	}
+
+	private void OnItemClicked( object item )
 	{
 		var variable = item as BaseBlackboardParameter;
 
-		SetBlackboardParameterTarget( variable );
+		//SGPLog.Info( $"Clicked item : {variable}" );
+
+		SetSelectedItem( variable );
+		//SetControlSheetTarget( variable );
 	}
 
-	private void PaintItem( VirtualWidget item )
+	public void BuildItems( bool preserveCurrentSelection = false )
 	{
-		var variable = item.Object as BaseBlackboardParameter;
-		var rect = item.Rect;
-		var rowRect = rect.Grow( 0, 0, 0, 0 );
+		_parameterListView?.BuildItems();
 
-		var textColor = Theme.TextControl;
-		var itemColor = Theme.ControlBackground;
-
-		if ( item.Hovered )
+		if ( preserveCurrentSelection )
 		{
-			textColor = Color.White;
-			itemColor = Theme.Primary.Lighten( 0.1f ).Desaturate( 0.3f ).WithAlpha( 0.4f * 0.6f );
+			var selection = _graph.GetBlackboardParameterByGuid( _selectedItemGuid );
+
+			//SGPLog.Info( $"Preserving selected item : {selection}" );
+
+			_parameterListView.SelectItem( selection );
 		}
-		if ( item.Selected )
-		{
-			textColor = Theme.TextControl;
-			itemColor = Theme.Primary;
-		}
-
-		Paint.ClearPen();
-		Paint.SetBrush( itemColor );
-		Paint.DrawRect( rect, 3f );
-
-		var typeColor = ShaderGraphPlusTheme.GetBlackboardParameterTypeColor( variable );
-
-		Paint.SetPen( typeColor.WithAlpha( 0.7f ) );
-		Paint.DrawIcon( rect.Shrink( 4f ), "circle", 12f, TextFlag.LeftCenter );
-		rect.Left += 24f;
-
-		var variableName = variable.Name;
-
-		Paint.SetPen( textColor.WithAlpha( 0.7f ) );
-		Paint.SetBrush( textColor.WithAlpha( 0.7f ) );
-
-		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variableName}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
-		Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
-
-		//Paint.SetPen( Color.Gray.WithAlpha( 0.77f ) );
-		//Paint.SetBrush( Color.Gray.WithAlpha( 0.77f ) );
-		//Paint.DrawRect( rowRect  );
-	}
-
-	public void UpdateParameterList()
-	{
-		UpdateParameterList( null );
-	}
-
-	private void UpdateParameterList( BaseBlackboardParameter baseBlackboardParameter )
-	{
-		_parameterListView.Clear();
-		_controlSheet.Clear( true );
-
-		foreach ( var parameter in Graph.Parameters )
-		{
-			if ( _graphInit )
-			{
-				_controlSheet.AddObject( parameter.GetSerialized() );
-				_parameterListView.SelectItem( parameter );
-				_selectedItem = parameter;
-				_deleteButton.Enabled = true;
-				_graphInit = false;
-			}
-
-			_parameterListView.AddItem( parameter );
-		}
-
-		if ( !Graph.Parameters.Any() )
-		{
-			_deleteButton.Enabled = false;
-		}
-
-		if ( baseBlackboardParameter != null && !_graphInit )
-		{
-			if ( Graph.Parameters.Any() )
-			{
-				_controlSheet.AddObject( baseBlackboardParameter.GetSerialized() );
-				_parameterListView.SelectItem( baseBlackboardParameter );
-
-				_selectedItem = baseBlackboardParameter;
-				_deleteButton.Enabled = true;
-			}
-			else
-			{
-				_deleteButton.Enabled = false;
-			}
-		}
-	}
-
-	private void SetBlackboardParameterTarget( BaseBlackboardParameter blackboardParameter )
-	{
-		_controlSheet.Clear( true );
-
-		var so = blackboardParameter.GetSerialized();
-		so.OnPropertyChanged += ( prop ) =>
-		{
-			OnParameterChanged?.Invoke( blackboardParameter );
-		};
-
-		_selectedItem = blackboardParameter;
-		_deleteButton.Enabled = true;
-
-		_controlSheet.AddObject( so );
 	}
 
 	private void AddBlackboardParameter( TypeDescription typeDescription )
 	{
-		int id = _graph._parameters.Count;
+		int id = _parentBlackboard.Graph._parameters.Count;
 		string name = $"Parameter{id}";
 
 		var parameterInstance = BlackboardUtils.CreateBaseBlackboardParameterInstance( typeDescription.TargetType, id, name );
-		_graph.AddBlackboardParameter( parameterInstance );
+		_parentBlackboard.Graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();
 
-		UpdateParameterList( parameterInstance );
+		_parameterListView?.BuildItems();
+
+		SetSelectedItem( parameterInstance );
+	}
+
+	private void SetSelectedItem( BaseBlackboardParameter blackboardParameter )
+	{
+		_selectedItem = blackboardParameter;
+		_selectedItemGuid = blackboardParameter.Identifier;
+
+		_parameterListView.SelectItem( blackboardParameter );
+		SetControlSheetTarget( blackboardParameter );
+
+		_deleteButton.Enabled = true;
+	}
+
+	private void SetControlSheetTarget( BaseBlackboardParameter newTarget )
+	{
+		_controlSheet.Clear( true );
+
+		var so = newTarget.GetSerialized();
+		so.OnPropertyChanged += ( prop ) =>
+		{
+			OnParameterChanged?.Invoke( newTarget );
+		};
+
+		_controlSheet.AddObject( so );
 	}
 }

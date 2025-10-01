@@ -920,13 +920,6 @@ public class MainWindow : DockWindow
 			GeneratePreviewCode();
 	}
 
-	public void BlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
-	{
-		_graph.UpdateParameterNode( blackboardParameter );
-
-		SetDirty();
-	}
-
 	[EditorEvent.Frame]
 	protected void Frame()
 	{
@@ -1812,6 +1805,13 @@ public class MainWindow : DockWindow
 		}
 	}
 
+	public void BlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
+	{
+		_graph.UpdateParameterNode( blackboardParameter );
+
+		SetDirty();
+	}
+
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
 		_preview3D.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
@@ -1828,6 +1828,40 @@ public class MainWindow : DockWindow
 					_syncLinkedTextureNodes = true;
 					_sourceSyncID = syncableTexturePreview.SyncID;
 					_sourceParameterName = syncableTexturePreview.SourceParameterName;
+				}
+			}
+
+			if ( node is IParameterNode parameterNode )
+			{
+				BaseBlackboardParameter newBlackboardParameter;
+
+				switch ( parameterNode )
+				{
+					case Bool boolParam:
+						newBlackboardParameter = new BoolBlackboardParameter( boolParam.Value ) { Name = boolParam.Name, Identifier = boolParam.BlackboardParameterIdentifier, UI = boolParam.UI };
+						break;
+					case Int intParam:
+						newBlackboardParameter = new IntBlackboardParameter( intParam.Value ) { Name = intParam.Name, Identifier = intParam.BlackboardParameterIdentifier, UI = intParam.UI };
+						break;
+					case Float floatParam:
+						newBlackboardParameter = new FloatBlackboardParameter( floatParam.Value ) { Name = floatParam.Name, Identifier = floatParam.BlackboardParameterIdentifier, UI = floatParam.UI };
+						break;
+					case Float2 float2Param:
+						newBlackboardParameter = new Float2BlackboardParameter( float2Param.Value ) { Name = float2Param.Name, Identifier = float2Param.BlackboardParameterIdentifier, UI = float2Param.UI };
+						break;
+					case Float3 float3Param:
+						newBlackboardParameter = new Float3BlackboardParameter( float3Param.Value ) { Name = float3Param.Name, Identifier = float3Param.BlackboardParameterIdentifier, UI = float3Param.UI };
+						break;
+					case Float4 float4Param:
+						newBlackboardParameter = new Float4BlackboardParameter( float4Param.Value ) { Name = float4Param.Name, Identifier = float4Param.BlackboardParameterIdentifier, UI = float4Param.UI };
+						break;
+					default:
+						throw new NotImplementedException();
+				}
+
+				if ( _graph.TryUpdateBlackboardParameter( newBlackboardParameter ) )
+				{
+					_blackboard.UpdateBlackboard( true );
 				}
 			}
 

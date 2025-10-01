@@ -1,4 +1,5 @@
 ﻿using Editor;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -10,13 +11,12 @@ internal class Blackboard : Widget
 		get => _graph;
 		set
 		{
-			if ( value == null )
-				return;
+			if ( value == null ) return;
+			if ( _graph == value ) return;
 
 			_graph = value;
 
-			_blackboardView.Graph = _graph;
-			_blackboardView.UpdateParameterList();
+			_blackboardView.Graph = value;
 		}
 	}
 
@@ -46,6 +46,11 @@ internal class Blackboard : Widget
 		};
 
 		Layout.Add( _blackboardView );
+	}
+
+	public void UpdateBlackboard( bool preserveCurrentSelection = false )
+	{
+		_blackboardView?.BuildItems( preserveCurrentSelection );
 	}
 }
 
