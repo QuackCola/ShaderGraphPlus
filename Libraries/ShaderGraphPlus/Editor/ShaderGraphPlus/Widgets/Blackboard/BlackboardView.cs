@@ -65,7 +65,7 @@ internal class BlackboardView : Widget
 
 		_deleteButton = new Button.Danger( "Delete", "delete" );
 		_deleteButton.Enabled = false;
-		_deleteButton.ToolTip = $"Delete selected parameter";
+		_deleteButton.ToolTip = $"Delete selected blackboard parameter";
 		_deleteButton.Clicked += () =>
 		{
 			DeleteSelectedBlackboardParameter();
@@ -194,6 +194,13 @@ internal class BlackboardView : Widget
 
 			SGPLog.Info( $"Deleted selected parameter : {parameter}" );
 		}
+
+		if ( !_graph.Parameters.Any() )
+		{
+			_controlSheet.Clear( true );
+			_deleteButton.Enabled = false;
+		}
+
 	}
 
 	private void SetSelectedItem( BaseBlackboardParameter blackboardParameter )
