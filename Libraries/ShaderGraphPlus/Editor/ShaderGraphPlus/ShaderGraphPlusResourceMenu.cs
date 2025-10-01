@@ -2,10 +2,7 @@
 
 namespace ShaderGraphPlus.AssetBrowser;
 
-/// <summary>
-/// For adding an option to create a default .sgrph in the Asset Browser.
-/// </summary>
-public static class CreateShaderGraphPlusAsset
+internal static class CreateShaderGraphPlusAsset
 {
 	internal static void AddShaderGraphPlusOption( Menu parent, DirectoryInfo folder )
 	{
@@ -19,7 +16,7 @@ public static class CreateShaderGraphPlusAsset
 	}
 	
 	[Event("folder.contextmenu", Priority = 101)]
-	internal static void OnFolderContextMenu_BottomSection( FolderContextMenu e )
+	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
 		if ( e.Target != null )
 		{
@@ -29,7 +26,7 @@ public static class CreateShaderGraphPlusAsset
 	}
 }
 
-public static class CreateShaderGraphPlusSubgraphAsset
+internal static class CreateShaderGraphPlusSubgraphAsset
 {
 	internal static void Create( string targetPath )
 	{
@@ -73,7 +70,7 @@ public static class CreateShaderGraphPlusSubgraphAsset
 	}
 
 	[Event( "folder.contextmenu", Priority = 101 )]
-	internal static void OnFolderContextMenu_BottomSection( FolderContextMenu e )
+	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
 		if ( e.Target != null )
 		{
