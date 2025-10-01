@@ -3,7 +3,7 @@
 /// <summary>
 ///	
 /// </summary>
-public struct ShaderFeature : IValid
+public struct ShaderFeatureOld : IValid
 {
 	public string FeatureName { get; set; }
 

@@ -69,7 +69,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus
 	public StaticSwitchMode Mode { get; set; } = StaticSwitchMode.Create;
 
 	[InlineEditor( Label = false ), ShowIf( nameof( Mode ), StaticSwitchMode.Create ), Group( "Feature" )]
-	public ShaderFeature Feature { get; set; } = new();
+	public ShaderFeatureOld Feature { get; set; } = new();
 
 	//[JsonIgnore]
 	[Title( "Feature" ), ShowIf( nameof( Mode ), StaticSwitchMode.Reference )]
