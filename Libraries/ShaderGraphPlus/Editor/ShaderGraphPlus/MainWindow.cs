@@ -1779,6 +1779,10 @@ public class MainWindow : DockWindow
 			if ( node is IBlackboardSyncable blackboardSyncable && blackboardSyncable.BlackboardParameterIdentifier == identifier && blackboardSyncable is BaseNodePlus baseNode )
 			{
 				_graph.RemoveNode( baseNode );
+
+				if ( _properties.Target == baseNode )
+					_properties.Target = _graph;
+
 				_graphView.RebuildFromGraph();
 
 				break;
