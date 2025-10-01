@@ -192,7 +192,7 @@ internal class BlackboardView : Widget
 
 			OnParameterDeleated?.Invoke( parameter );
 
-			SGPLog.Info( $"Deleted selected parameter : {parameter}" );
+			//SGPLog.Info( $"Deleted selected parameter : {parameter}" );
 		}
 
 		if ( !_graph.Parameters.Any() )
