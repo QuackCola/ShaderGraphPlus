@@ -45,10 +45,10 @@ public class PreviewSettings
 }
 
 [AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
-public partial class ShaderGraphPlus : INodeGraph//, ISGPJsonUpgradeable
+public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 {
-	[Hide, JsonPropertyName( VersioningInfo.VersionJsonPropertyName )]
-	public int Version { get; set; } = 2;
+	[Hide]
+	public int Version => 3;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;

@@ -67,21 +67,20 @@ partial class ShaderGraphPlus
 		var options = SerializerOptions();
 
 		// Check for the version so we can handle upgrades
-		var latestVersion = Version;
 		var currentVersion = 0; // Assume 0 for files that don't have the Version property
 		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
 		{
 			currentVersion = ver.GetInt32();
 		}
 
-		// Deserialize everything using the current version
-		Version = currentVersion;
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath, currentVersion );
 		DeserializeParameters( root, options );
 
-		// Upgrade to the latest version
-		Version = latestVersion;
+		if ( currentVersion < 3 )
+		{
+			GraphV3Upgrade();
+		}
 	}
 
 	public IEnumerable<BaseNodePlus> DeserializeNodes( string json )
@@ -90,15 +89,15 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		
 		// Check for version in the JSON
-		var fileVersion = 1; // Default to current version
-		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
-		{
-			fileVersion = ver.GetInt32();
-		}
-		else
-		{
-			fileVersion = 0; // Old file without version
-		}
+		var fileVersion = 2;//1; // Default to current version
+		//if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
+		//{
+		//	fileVersion = ver.GetInt32();
+		//}
+		//else
+		//{
+		//	fileVersion = 0; // Old file without version
+		//}
 
 		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
 	}
@@ -168,6 +167,41 @@ partial class ShaderGraphPlus
 		var type = obj.GetType();
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
+
+		// Check if we need to upgrade the core graph.
+		if ( obj is ShaderGraphPlus )
+		{
+			if ( typeof( ISGPJsonUpgradeable ).IsAssignableFrom( type ) )
+			{
+				var propertyTypeInstance = EditorTypeLibrary.Create( type.Name, type );
+				int oldVersionNumber = 0;
+
+				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
+				if ( doc.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
+				{
+					oldVersionNumber = versionElement.GetInt32();
+					SGPLog.Info( $"Got graph \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
+				}
+				else
+				{
+					SGPLog.Info( $"Failed to get graph \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
+				}
+
+				// Dont even bother upgrading if we dont need to.
+				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
+				{
+					SGPLog.Info( $"Upgrading grapg \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"", ConCommands.VerboseJsonUpgrader );
+
+					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, type, doc, options );
+
+					doc = upgradedElement;
+				}
+				else
+				{
+					SGPLog.Info( $"Graph \"{type}\" is already at the latest version :)", ConCommands.VerboseJsonUpgrader );
+				}
+			}
+		}
 
 		// Check if we need to upgrade any nodes :).
 		if ( type.IsAssignableTo( typeof( BaseNodePlus ) ) )
@@ -454,6 +488,11 @@ partial class ShaderGraphPlus
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 
+		if ( obj is ShaderGraphPlus sgp && sgp is ISGPJsonUpgradeable upgradeable )
+		{
+			doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
+		}
+
 		foreach ( var property in properties )
 		{
 			if ( !property.CanRead )
@@ -566,6 +605,87 @@ partial class ShaderGraphPlus
 		}
 
 		doc.Add( "parameters", parameterArray );
+	}
+
+	private void GraphV3Upgrade()
+	{
+		foreach ( var parameterNode in Nodes.OfType<IParameterNode>() )
+		{
+			if ( string.IsNullOrWhiteSpace( parameterNode.Name ) )
+				continue;
+
+			BaseBlackboardParameter blackboardParameter = null;
+
+			if ( parameterNode is Int intNode )
+			{
+				blackboardParameter = new IntBlackboardParameter()
+				{
+					Name = intNode.Name,
+					Value = intNode.Value,
+					UI = intNode.UI,
+				};
+
+				intNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+			}
+			else if ( parameterNode is Bool boolNode )
+			{
+				blackboardParameter = new BoolBlackboardParameter()
+				{
+					Name = boolNode.Name,
+					Value = boolNode.Value,
+					UI = boolNode.UI,
+				};
+
+				boolNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+			}
+			else if ( parameterNode is Float floatNode )
+			{
+				blackboardParameter = new FloatBlackboardParameter()
+				{
+					Name = floatNode.Name,
+					Value = floatNode.Value,
+					UI = floatNode.UI,
+				};
+
+				floatNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+			}
+			else if ( parameterNode is Float2 float2Node )
+			{
+				blackboardParameter = new Float2BlackboardParameter()
+				{
+					Name = float2Node.Name,
+					Value = float2Node.Value,
+					UI = float2Node.UI,
+				};
+
+				float2Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+
+			}
+			else if ( parameterNode is Float3 float3Node )
+			{
+				blackboardParameter = new Float3BlackboardParameter()
+				{
+					Name = float3Node.Name,
+					Value = float3Node.Value,
+					UI = float3Node.UI,
+				};
+
+				float3Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+			}
+			else if ( parameterNode is Float4 float4Node )
+			{
+				blackboardParameter = new Float4BlackboardParameter()
+				{
+					Name = float4Node.Name,
+					Value = float4Node.Value,
+					UI = float4Node.UI,
+				};
+
+				float4Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+			}
+
+			AddBlackboardParameter( blackboardParameter );
+		}
 	}
 
 	/// <summary>
