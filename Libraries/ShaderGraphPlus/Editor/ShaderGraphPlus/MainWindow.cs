@@ -1770,7 +1770,7 @@ public class MainWindow : DockWindow
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
-			SGPLog.Info( $"Property `{serializedProperty.Name}` changed", ConCommands.OnPropertyUpdatedDebug );
+			//SGPLog.Info( $"Property `{serializedProperty.Name}` changed",true);
 
 			if ( node is ISyncableTextureNode syncableTexturePreview )
 			{
