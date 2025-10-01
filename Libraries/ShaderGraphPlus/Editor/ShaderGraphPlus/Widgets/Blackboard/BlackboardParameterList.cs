@@ -4,47 +4,13 @@ namespace ShaderGraphPlus;
 
 internal class BlackboardParameterList : ListView
 {
-	private ShaderGraphPlus _graph;
-	public ShaderGraphPlus Graph
-	{
-		get => _graph;
-		set
-		{
-			if ( value == null ) return;
-			if ( _graph == value ) return;
-
-			_graph = value;
-
-			BuildItems();
-		}
-	}
-
 	public BlackboardParameterList( Widget widget) : base( widget )
 	{
-		//ItemSelected = OnItemClicked;
 		Margin = 8;
 		ItemSpacing = 4;
 		ItemSize = new Vector2( 0, 24 );
 		AcceptDrops = false;
-
-		//BuildItems();
 	}
-
-	public void BuildItems()
-	{
-		if ( Graph == null )
-		{
-			SGPLog.Error( "Graph is null!!!" );
-			return;
-		}
-
-		SetItems( Graph.Parameters.Cast<object>() );
-	}
-
-	//private void OnItemClicked( object item )
-	//{
-	//
-	//}
 
 	protected override void PaintItem( VirtualWidget item )
 	{

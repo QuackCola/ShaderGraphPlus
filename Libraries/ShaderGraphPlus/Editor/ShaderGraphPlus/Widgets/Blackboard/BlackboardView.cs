@@ -1,4 +1,5 @@
 ﻿using Editor;
+using System.Collections.Immutable;
 
 namespace ShaderGraphPlus;
 
@@ -24,20 +25,9 @@ internal class BlackboardView : Widget
 			if ( _graph == value ) return;
 			
 			_graph = value;
-			_parameterListView.Graph = _graph;
+			//_parameterListView.Graph = _graph;
 
-			// If we have nothing selected then set an initital selection.
-			if ( _selectedItem == null )
-			{
-				var firstParameter = _parentBlackboard.Graph.Parameters.FirstOrDefault();
-
-				if ( firstParameter != null )
-				{
-					SetSelectedItem( firstParameter );
-
-					_deleteButton.Enabled = true;
-				}
-			}
+			RebuildBuildFromParameters();
 		}
 	}
 
@@ -144,16 +134,38 @@ internal class BlackboardView : Widget
 		//SetControlSheetTarget( variable );
 	}
 
-	public void BuildItems( bool preserveCurrentSelection = false )
+
+
+	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
 	{
-		_parameterListView?.BuildItems();
+		//_parameterListView.Clear();
+
+		BuildFromParameters( _graph.Parameters, preserveCurrentSelection );
+	}
+
+	public void BuildFromParameters( IEnumerable<BaseBlackboardParameter> parameters, bool preserveCurrentSelection = false )
+	{
+		_parameterListView.SetItems( parameters.Cast<object>() );
+
+		// If we have nothing selected then set an initital selection.
+		if ( _selectedItem == null )
+		{
+			var firstParameter = parameters.FirstOrDefault();
+		
+			if ( firstParameter != null )
+			{
+				SetSelectedItem( firstParameter );
+		
+				_deleteButton.Enabled = true;
+			}
+		}
 
 		if ( preserveCurrentSelection )
 		{
 			var selection = _graph.GetBlackboardParameterByGuid( _selectedItemGuid );
-
+		
 			//SGPLog.Info( $"Preserving selected item : {selection}" );
-
+		
 			_parameterListView.SelectItem( selection );
 		}
 	}
@@ -168,7 +180,7 @@ internal class BlackboardView : Widget
 
 		OnDirty?.Invoke();
 
-		_parameterListView?.BuildItems();
+		RebuildBuildFromParameters();
 
 		SetSelectedItem( parameterInstance );
 	}

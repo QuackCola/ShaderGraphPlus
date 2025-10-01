@@ -50,7 +50,7 @@ internal class Blackboard : Widget
 
 	public void UpdateBlackboard( bool preserveCurrentSelection = false )
 	{
-		_blackboardView?.BuildItems( preserveCurrentSelection );
+		_blackboardView?.RebuildBuildFromParameters( preserveCurrentSelection );
 	}
 }
 
