@@ -45,11 +45,11 @@ internal class Blackboard : Widget
 		canvas.Layout.Spacing = 8;
 		canvas.Layout.Spacing = 4;
 
-		var leftColumn = canvas.Layout.AddColumn( 2, false );
+		var leftColumn = canvas.Layout.AddColumn( 1, false );
 		leftColumn.Spacing = 8;
 		leftColumn.Spacing = 4;
 
-		var leftColumnTopLayout = leftColumn.AddRow( 2, false );
+		var leftColumnTopLayout = leftColumn.AddRow( 1, false );
 		leftColumnTopLayout.Spacing = 8;
 		leftColumnTopLayout.Spacing = 4;
 
@@ -111,14 +111,17 @@ internal class Blackboard : Widget
 
 			return true;
 		};
+		//leftColumn.AddStretchCell();
 
-		leftColumn.AddStretchCell();
-
-		var rightColumn = canvas.Layout.AddColumn( 2, false );
+		var rightColumn = canvas.Layout.AddColumn( 1, false );
 		rightColumn.Spacing = 8;
 		rightColumn.Spacing = 4;
+		rightColumn.SizeConstraint = SizeConstraint.SetMaximumSize;
 
 		_sheet = new ControlSheet();
+		_sheet.SizeConstraint = SizeConstraint.SetMaximumSize;
+		_sheet.SetColumnStretch( 2, 0 );
+		_sheet.SetMinimumColumnWidth( 0, 400 );
 		rightColumn.Add( _sheet );
 		rightColumn.AddStretchCell();
 
@@ -138,6 +141,7 @@ internal class Blackboard : Widget
 	{
 		var variable = item.Object as BaseBlackboardParameter;
 		var rect = item.Rect;
+		var rowRect = rect.Grow( 0,0,0,0 );
 
 		var textColor = Theme.TextControl;
 		var itemColor = Theme.ControlBackground;
@@ -152,8 +156,6 @@ internal class Blackboard : Widget
 			textColor = Theme.TextControl;
 			itemColor = Theme.Primary;
 		}
-
-		rect = rect = new Rect( rect.Position, new Vector2( rect.Width, item.Rect.Height ) ).Shrink( 3f );
 
 		Paint.ClearPen();
 		Paint.SetBrush( itemColor );
@@ -173,6 +175,9 @@ internal class Blackboard : Widget
 		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variableName}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
 		Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
 
+		//Paint.SetPen( Color.Gray.WithAlpha( 0.77f ) );
+		//Paint.SetBrush( Color.Gray.WithAlpha( 0.77f ) );
+		//Paint.DrawRect( rowRect  );
 	}
 
 	private void UpdateParameterList( BaseBlackboardParameter baseBlackboardParameter )
