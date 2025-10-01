@@ -25,7 +25,6 @@ internal class BlackboardView : Widget
 			if ( _graph == value ) return;
 			
 			_graph = value;
-			//_parameterListView.Graph = _graph;
 
 			RebuildBuildFromParameters();
 		}
@@ -131,15 +130,10 @@ internal class BlackboardView : Widget
 		//SGPLog.Info( $"Clicked item : {variable}" );
 
 		SetSelectedItem( variable );
-		//SetControlSheetTarget( variable );
 	}
-
-
 
 	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
 	{
-		//_parameterListView.Clear();
-
 		BuildFromParameters( _graph.Parameters, preserveCurrentSelection );
 	}
 
