@@ -847,54 +847,6 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void RegisterStaticCombos( ref List<GraphCompiler.Issue> registrationIssues )
-	{
-		ShaderFeatures.Clear();
-		//ComboRegistrationErrors.Clear();
-		//var errors = new List<string>();
-
-		/*
-		foreach ( var node in _graph.Nodes.OfType<StaticSwitchNode>() )
-		{
-			if ( node.Mode == StaticSwitchMode.Create )
-			{
-				//SGPLog.Info( $"Registering feature : `{node.Feature.FeatureName}`" );
-
-				var shaderFeatureInfo = new ShaderFeatureInfo();
-				var optionCount = 2;
-
-				if ( node.Feature.IsValid )
-				{
-					if ( ShaderFeatures.ContainsKey( node.Feature.FeatureName ) )
-					{
-						var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` was already registerd!", IsWarning = false };
-						registrationIssues.Add( error );
-					}
-
-					shaderFeatureInfo = new ShaderFeatureInfo
-					(
-						node.Feature.FeatureName,
-						node.Feature.Description,
-						node.Feature.HeaderName,
-						optionCount,
-						node.Feature.IsDynamicCombo
-					);
-
-					if ( !ShaderFeatures.ContainsKey( shaderFeatureInfo.UserDefinedName ) )
-					{
-						ShaderFeatures.Add( shaderFeatureInfo.UserDefinedName, shaderFeatureInfo );
-					}
-				}
-				else
-				{
-					var error = new GraphCompiler.Issue { Node = node, Message = $"Feature `{node.Feature.FeatureName}` is not valid!", IsWarning = false };
-					registrationIssues.Add( error );
-				}
-			}
-		}
-		*/
-	}
-
 	private string GenerateShaderCode()
 	{
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
