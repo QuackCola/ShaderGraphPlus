@@ -127,6 +127,13 @@ partial class ShaderGraphPlus
 				{
 					parameter = EditorTypeLibrary.Create<BaseBlackboardParameter>( typeName );
 					DeserializeObject( parameter, element, options );
+					
+					SGPLog.Info( $"parameter.Name == {parameter.Name}" );
+
+					if ( string.IsNullOrWhiteSpace( parameter.Name ) )
+					{
+						parameter.Name = $"parameter{parameters.Count}";
+					}
 
 					parameters.Add( parameter.Name, parameter );
 

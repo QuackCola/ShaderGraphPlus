@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 3,
   "IsSubgraph": false,
   "Path": "shaders/tests/empty/empty.sgrph",
   "Model": null,
@@ -321,7 +321,6 @@
         "Description": "A description",
         "HeaderName": "My Boolean Feature"
       },
-      "Name": "Parameter6",
       "Identifier": "03780e6b-0ec8-4446-9053-9f0d421704a5"
     },
     {
@@ -337,7 +336,6 @@
         "Description": "A description",
         "HeaderName": "My Radio Feature Options"
       },
-      "Name": "Parameter7",
       "Identifier": "cafb53eb-a70d-4ed9-835f-3629d1cb5756"
     }
   ]

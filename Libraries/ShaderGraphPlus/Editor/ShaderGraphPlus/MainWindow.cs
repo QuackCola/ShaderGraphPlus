@@ -1720,7 +1720,8 @@ public class MainWindow : DockWindow
 		_blackboard = new Blackboard( this );
 		_blackboard.Graph = _graph;
 		_blackboard.OnDirty += ( ) => { SetDirty(); };
-		_blackboard.OnParameterChanged += ( p ) => { BlackboardParameterChanged( p ); };
+		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterChanged( p ); };
+		_blackboard.OnParameterDeleated += ( p ) => { OnBlackboardParameterDeleated( p ); };
 
 		_undoHistory = new UndoHistory( this, _undoStack );
 		_undoHistory.OnUndo = Undo;
@@ -1759,12 +1760,34 @@ public class MainWindow : DockWindow
 			RestoreFromStateCookie();
 		}
 	}
-
-	public void BlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
+	
+	public void OnBlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
 	{
 		_graph.UpdateParameterNode( blackboardParameter );
 
 		SetDirty();
+	}
+
+	public void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
+	{
+		_graph.RemoveBlackboardParameter( blackboardParameter );
+
+		var identifier = blackboardParameter.Identifier;
+
+		foreach ( var node in _graph.Nodes )
+		{
+			if ( node is IBlackboardSyncable blackboardSyncable && blackboardSyncable.BlackboardParameterIdentifier == identifier && blackboardSyncable is BaseNodePlus baseNode )
+			{
+				_graph.RemoveNode( baseNode );
+				_graphView.RebuildFromGraph();
+
+				break;
+			}
+		}
+
+		SetDirty();
+
+		_blackboard.UpdateBlackboard( false );
 	}
 
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )

@@ -7,7 +7,9 @@ HEADER
 FEATURES
 {
 	#include "common/features.hlsl"
-
+	Feature( F_MYBOOLEANFEATURE, 0..1, "My Boolean Feature" );
+	Feature( F_MYRADIOFEATURE, 0..3, "My Radio Feature Options" );
+	
 }
 
 MODES
@@ -19,6 +21,13 @@ MODES
 
 COMMON
 {
+	#ifndef SWITCH_TRUE
+	#define SWITCH_TRUE 1
+	#endif
+	#ifndef SWITCH_FALSE
+	#define SWITCH_FALSE 0
+	#endif
+	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -57,7 +66,12 @@ struct PixelInput
 VS
 {
 	#include "common/vertex.hlsl"
-
+	
+	StaticCombo( S_MYBOOLEANFEATURE, F_MYBOOLEANFEATURE, Sys( ALL ) );
+	
+	StaticCombo( S_MYRADIOFEATURE, F_MYRADIOFEATURE, Sys( ALL ) );
+	
+	
 	PixelInput MainVs( VertexInput v )
 	{
 		
@@ -80,6 +94,11 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
+	StaticCombo( S_MYBOOLEANFEATURE, F_MYBOOLEANFEATURE, Sys( ALL ) );
+	
+	StaticCombo( S_MYRADIOFEATURE, F_MYRADIOFEATURE, Sys( ALL ) );
+	
+		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );

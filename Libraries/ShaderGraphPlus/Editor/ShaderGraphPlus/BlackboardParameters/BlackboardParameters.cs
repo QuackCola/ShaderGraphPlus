@@ -202,7 +202,11 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 
 }
 
+/// <summary>
+/// TODO : Unhide when Static Combo Enum Switch or similar is implemented.
+/// </summary>
 [Title( "Shader Feature Enum" ), Order( 7 )]
+[Hide]
 public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeature
 {
 	[JsonIgnore, Hide]

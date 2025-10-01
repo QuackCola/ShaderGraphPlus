@@ -162,6 +162,15 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		}
 	}
 
+	internal void RemoveBlackboardParameter( BaseBlackboardParameter parameter )
+	{
+		if ( _parameters.ContainsKey( parameter.Identifier ) )
+		{
+			_parameters.Remove( parameter.Identifier );
+			//SGPLog.Info( $"Removed blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
+		}
+	}
+
 	internal bool TryUpdateBlackboardParameter( BaseBlackboardParameter newBlackboardParameter )
 	{
 		var identifier = newBlackboardParameter.Identifier;
@@ -208,6 +217,8 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	{
 		if ( node.Graph != this )
 			return;
+
+		//SGPLog.Info( $"Removing node with id : {node.Identifier}");
 
 		_nodes.Remove( node.Identifier );
 	}

@@ -21,7 +21,16 @@ internal class Blackboard : Widget
 	}
 
 	public Action OnDirty { get; set; }
+
+	/// <summary>
+	/// Invoked when a blackboard parameter changes.
+	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
+
+	/// <summary>
+	/// Invoked when a blackboard parameter is deleated.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
 
 	private BlackboardView _blackboardView;
 
@@ -43,6 +52,10 @@ internal class Blackboard : Widget
 		_blackboardView.OnParameterChanged += ( p ) =>
 		{
 			OnParameterChanged?.Invoke( p );
+		};
+		_blackboardView.OnParameterDeleated += ( p ) =>
+		{
+			OnParameterDeleated?.Invoke( p );
 		};
 
 		Layout.Add( _blackboardView );

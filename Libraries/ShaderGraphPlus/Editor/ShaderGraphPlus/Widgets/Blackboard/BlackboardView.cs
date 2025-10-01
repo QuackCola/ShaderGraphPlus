@@ -1,5 +1,6 @@
 ﻿using Editor;
 using System.Collections.Immutable;
+using static Sandbox.Services.Inventory;
 
 namespace ShaderGraphPlus;
 
@@ -12,8 +13,6 @@ internal class BlackboardView : Widget
 	private Blackboard _parentBlackboard;
 	private object _selectedItem;
 	private Guid _selectedItemGuid;
-
-	public Action OnDirty { get; set; }
 
 	private ShaderGraphPlus _graph;
 	public ShaderGraphPlus Graph
@@ -30,10 +29,17 @@ internal class BlackboardView : Widget
 		}
 	}
 
+	public Action OnDirty { get; set; }
+
 	/// <summary>
 	/// Invoked when a blackboard parameter changes.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
+
+	/// <summary>
+	/// Invoked when a blackboard parameter is deleated.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
 
 	public BlackboardView( Blackboard parent ) : base( parent )
 	{
@@ -59,13 +65,10 @@ internal class BlackboardView : Widget
 
 		_deleteButton = new Button.Danger( "Delete", "delete" );
 		_deleteButton.Enabled = false;
-		_deleteButton.ToolTip = $"Delete selected item";
+		_deleteButton.ToolTip = $"Delete selected parameter";
 		_deleteButton.Clicked += () =>
 		{
-			if ( _selectedItem != null )
-			{
-				SGPLog.Info( $"Delete selected item {_selectedItem}" );
-			}
+			DeleteSelectedBlackboardParameter();
 		};
 
 		leftColumnTopLayout.Add( _deleteButton );
@@ -116,20 +119,20 @@ internal class BlackboardView : Widget
 
 	private void OnItemSelected( object item )
 	{
-		var variable = item as BaseBlackboardParameter;
+		var parameter = item as BaseBlackboardParameter;
 		
 		//SGPLog.Info( $"Selected item : {variable}" );
 		
-		SetControlSheetTarget( variable );
+		SetControlSheetTarget( parameter );
 	}
 
 	private void OnItemClicked( object item )
 	{
-		var variable = item as BaseBlackboardParameter;
+		var parameter = item as BaseBlackboardParameter;
 
 		//SGPLog.Info( $"Clicked item : {variable}" );
 
-		SetSelectedItem( variable );
+		SetSelectedItem( parameter );
 	}
 
 	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
@@ -177,6 +180,20 @@ internal class BlackboardView : Widget
 		RebuildBuildFromParameters();
 
 		SetSelectedItem( parameterInstance );
+	}
+
+	private void DeleteSelectedBlackboardParameter()
+	{
+		var parameter = _selectedItem as BaseBlackboardParameter;
+
+		if ( _selectedItem != null )
+		{
+			_selectedItem = null;
+
+			OnParameterDeleated?.Invoke( parameter );
+
+			SGPLog.Info( $"Deleted selected parameter : {parameter}" );
+		}
 	}
 
 	private void SetSelectedItem( BaseBlackboardParameter blackboardParameter )

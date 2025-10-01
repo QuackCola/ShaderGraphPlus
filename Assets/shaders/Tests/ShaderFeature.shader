@@ -93,6 +93,7 @@ PS
 	
 	StaticCombo( S_MYFEATURE, F_MYFEATURE, Sys( ALL ) );
 	
+	float3 g_vParameter2 < UiGroup( ",0/,0/0" ); Default3( 1.0444,0,0 ); Range3( 0,0,0, 1,1,1 ); >;
 		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
@@ -122,7 +123,7 @@ PS
 		}
 		#else
 		{
-			float3 l_0 = float3( 1, 0, 0 );
+			float3 l_0 = g_vParameter2;
 			MyFeatureSwitchResult_Ref0 = l_0; // result
 		
 		}
