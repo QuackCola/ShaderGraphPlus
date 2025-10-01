@@ -1880,9 +1880,4 @@ public class MainWindow : DockWindow
 
 		GeneratePreviewCode();
 	}
-
-	internal void SetPropertiesTarget( object target )
-	{
-		_properties.Target = target;
-	}
 }
