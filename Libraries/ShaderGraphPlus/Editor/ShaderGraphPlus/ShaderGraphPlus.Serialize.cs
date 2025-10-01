@@ -363,21 +363,6 @@ partial class ShaderGraphPlus
 					initializeableNode.InitializeNode();
 				}
 
-				// TODO : Remove FunctionResult node later once time has passed. Will mean that old project thats havent been converted
-				// will just have missing node in place.
-				if ( node is FunctionResult funcResult )
-				{
-					node.UpgradedToNewNode = true;
-
-					var subgraphOutputs = ProjectUpgrading.ReplaceFunctionResult( funcResult, element, subgraphPath, ref connections );
-
-					foreach ( var subgraphOutput in subgraphOutputs )
-					{
-						nodes.Add( subgraphOutput.Identifier, subgraphOutput );
-						AddNode( subgraphOutput );
-					}
-				}
-
 				if ( node is SubgraphNode subgraphNode )
 				{
 					if ( !Editor.FileSystem.Content.FileExists( subgraphNode.SubgraphPath ) )
@@ -392,31 +377,28 @@ partial class ShaderGraphPlus
 					}
 				}
 
-				if ( node is not FunctionResult )
+				foreach ( var input in node.Inputs )
 				{
-					foreach ( var input in node.Inputs )
+					if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
+						continue;
+
+					var connected = connectedElem
+						.Deserialize<NodeInput?>();
+
+					if ( connected is { IsValid: true } )
 					{
-						if ( !element.TryGetProperty( input.Identifier, out var connectedElem ) )
-							continue;
-
-						var connected = connectedElem
-							.Deserialize<NodeInput?>();
-
-						if ( connected is { IsValid: true } )
+						var connection = connected.Value;
+						if ( !string.IsNullOrEmpty( subgraphPath ) )
 						{
-							var connection = connected.Value;
-							if ( !string.IsNullOrEmpty( subgraphPath ) )
+							connection = new()
 							{
-								connection = new()
-								{
-									Identifier = connection.Identifier,
-									Output = connection.Output,
-									Subgraph = subgraphPath
-								};
-							}
-
-							connections.Add( (input, connection) );
+								Identifier = connection.Identifier,
+								Output = connection.Output,
+								Subgraph = subgraphPath
+							};
 						}
+
+						connections.Add( (input, connection) );
 					}
 				}
 	
@@ -488,9 +470,9 @@ partial class ShaderGraphPlus
 		var properties = type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
 			.Where( x => x.GetSetMethod() != null );
 
-		if ( obj is ShaderGraphPlus sgp && sgp is ISGPJsonUpgradeable upgradeable )
+		if ( obj is ShaderGraphPlus sgp && sgp is ISGPJsonUpgradeable iupgradeable )
 		{
-			doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
+			doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( iupgradeable.Version, options ) );
 		}
 
 		foreach ( var property in properties )

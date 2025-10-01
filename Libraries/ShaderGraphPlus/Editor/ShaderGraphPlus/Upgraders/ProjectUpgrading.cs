@@ -4,26 +4,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
-/*
-public enum ReplacementMode
-{
-	SubgraphOnly,
-	Both
-}
-
-[AttributeUsage( AttributeTargets.Class )]
-public class NodeReplaceAttribute : Attribute
-{
-
-	public ReplacementMode Mode;
-
-	public NodeReplaceAttribute( ReplacementMode mode )
-	{
-		Mode = mode;
-	}
-}
-*/
-
 public static class ProjectUpgrading
 {
 	/*
@@ -97,67 +77,4 @@ public static class ProjectUpgrading
 		return JsonSerializer.Deserialize<JsonElement>( jsonObject.ToJsonString(), serializerOptions );
 	}
 	*/
-
-	public static List<BaseNodePlus> ReplaceFunctionResult( FunctionResult functionResult, JsonElement element, string subgraphPath, ref List<(IPlugIn Plug, NodeInput Value)> connections )
-	{
-		var newNodes = new List<BaseNodePlus>();
-		Vector2 lastOffset = Vector2.Zero;
-
-		foreach ( var funcResultInput in functionResult.Inputs )
-		{
-			var subgraphOutputNode = new SubgraphOutput();
-
-			lastOffset.y += 64;
-			subgraphOutputNode.Position = functionResult.Position + new Vector2( 0, lastOffset.y );
-
-			subgraphOutputNode.Id = ((BasePlugIn)funcResultInput).Info.Id;
-			subgraphOutputNode.OutputName = funcResultInput.Identifier;
-			subgraphOutputNode.Preview = functionResult.FunctionOutputs.Where( x => x.Name == funcResultInput.Identifier ).FirstOrDefault().Preview;
-			subgraphOutputNode.SetSubgraphPortTypeFromType( funcResultInput.Type );
-
-			// Chnage some stuff with a new PlugInfo & BasePlugIn.
-			var oldPlug = (BasePlugIn)funcResultInput;
-			var plugInfoNew = new PlugInfo()
-			{
-				Id = oldPlug.Info.Id,
-				Name = oldPlug.Info.Name,
-				Type = funcResultInput.Type,
-				DisplayInfo = new()
-				{
-					Name = oldPlug.Info.Name,
-					Fullname = funcResultInput.Type.FullName,
-				}
-			};
-			var plugInNew = new BasePlugIn( subgraphOutputNode, plugInfoNew, plugInfoNew.Type );
-			subgraphOutputNode.InternalInput = plugInNew;
-
-			if ( !element.TryGetProperty( subgraphOutputNode.InternalInput.Identifier, out var connectedElem ) )
-				continue;
-
-			var connected = connectedElem
-				.Deserialize<NodeInput?>();
-
-			if ( connected is { IsValid: true } )
-			{
-				var connection = connected.Value;
-
-				if ( !string.IsNullOrEmpty( subgraphPath ) )
-				{
-					connection = new()
-					{
-						Identifier = connection.Identifier,
-						Output = connection.Output,
-						Subgraph = subgraphPath
-					};
-				}
-
-				connections.Add( (subgraphOutputNode.InternalInput, connection) );
-			}
-
-			newNodes.Add( subgraphOutputNode );
-		}
-
-		return newNodes;
-	}
-
 }
