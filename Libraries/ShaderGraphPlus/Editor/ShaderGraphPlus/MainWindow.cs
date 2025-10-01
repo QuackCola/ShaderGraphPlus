@@ -1227,6 +1227,7 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
+		_blackboard.Graph = _graph;
 
 		_output.ClearErrors();
 		_output.ClearWarnings();
