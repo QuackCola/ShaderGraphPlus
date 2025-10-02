@@ -1762,14 +1762,14 @@ public class MainWindow : DockWindow
 		}
 	}
 	
-	public void OnBlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
+	private void OnBlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
 	{
 		_graph.UpdateParameterNode( blackboardParameter );
 
 		SetDirty();
 	}
 
-	public void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
+	private void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
 	{
 		_graph.RemoveBlackboardParameter( blackboardParameter );
 
@@ -1795,7 +1795,7 @@ public class MainWindow : DockWindow
 		_blackboard.UpdateBlackboard( false );
 	}
 
-	public void OnConstantNodeConvertedToParamerter()
+	private void OnConstantNodeConvertedToParamerter()
 	{
 		_blackboard.UpdateBlackboard( true );
 	}
