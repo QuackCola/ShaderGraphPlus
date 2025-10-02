@@ -924,8 +924,13 @@ public class MainWindow : DockWindow
 			_redoOption.Enabled = _undoStack.CanUndo;
 
 			_graph.ClearNodes();
+			_graph.ClearParameters();
+
 			_graph.DeserializeNodes( op.undoBuffer );
+			_graph.DeserializeParameters( op.undoBuffer );
+
 			_graphView.RebuildFromGraph();
+			_blackboard.UpdateBlackboard();
 
 			SetDirty();
 		}
@@ -941,8 +946,13 @@ public class MainWindow : DockWindow
 			_redoOption.Enabled = _undoStack.CanRedo;
 
 			_graph.ClearNodes();
+			_graph.ClearParameters();
+
 			_graph.DeserializeNodes( op.redoBuffer );
+			_graph.DeserializeParameters( op.redoBuffer );
+
 			_graphView.RebuildFromGraph();
+			_blackboard.UpdateBlackboard();
 
 			SetDirty();
 		}
@@ -955,8 +965,13 @@ public class MainWindow : DockWindow
 			Log.Info( $"SetUndoLevel ({op.name})" );
 
 			_graph.ClearNodes();
+			_graph.ClearParameters();
+
 			_graph.DeserializeNodes( op.redoBuffer );
+			_graph.DeserializeParameters( op.redoBuffer );
+
 			_graphView.RebuildFromGraph();
+			_blackboard.UpdateBlackboard();
 
 			SetDirty();
 		}

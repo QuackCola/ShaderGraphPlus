@@ -144,6 +144,11 @@ internal class BlackboardView : Widget
 	{
 		_parameterListView.SetItems( parameters.Cast<object>() );
 
+		if ( !preserveCurrentSelection )
+		{
+			ClearSeletedItem();
+		}
+
 		// If we have nothing selected then set an initital selection.
 		if ( _selectedItem == null )
 		{
@@ -225,5 +230,13 @@ internal class BlackboardView : Widget
 		};
 
 		_controlSheet.AddObject( so );
+	}
+
+	private void ClearSeletedItem()
+	{
+		_selectedItem = null;
+		_controlSheet.Clear( true );
+		
+		_deleteButton.Enabled = false;
 	}
 }

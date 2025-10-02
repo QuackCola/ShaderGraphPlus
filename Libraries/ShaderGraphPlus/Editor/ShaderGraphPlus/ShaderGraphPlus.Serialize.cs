@@ -459,6 +459,16 @@ partial class ShaderGraphPlus
 		return SerializeNodes( Nodes );
 	}
 
+	public string UndoStackSerialize()
+	{
+		var doc = new JsonObject();
+		var options = SerializerOptions();
+
+		doc = SerializeNodes( Nodes, doc );
+
+		return SerializeParameters( Parameters, doc ).ToJsonString( options );
+	}
+
 	public string SerializeNodes( IEnumerable<BaseNodePlus> nodes )
 	{
 		var doc = new JsonObject();
@@ -467,6 +477,15 @@ partial class ShaderGraphPlus
 		SerializeNodes( nodes, doc, options );
 
 		return doc.ToJsonString( options );
+	}
+
+	public JsonObject SerializeNodes( IEnumerable<BaseNodePlus> nodes, JsonObject doc )
+	{
+		var options = SerializerOptions();
+
+		SerializeNodes( nodes, doc, options );
+
+		return doc;
 	}
 
 	private static void SerializeObject( object obj, JsonObject doc, JsonSerializerOptions options, Dictionary<string, string> identifiers = null )
@@ -575,6 +594,15 @@ partial class ShaderGraphPlus
 		SerializeParameters( parameters, doc, options );
 
 		return doc.ToJsonString( options );
+	}
+
+	private JsonObject SerializeParameters( IEnumerable<BaseBlackboardParameter> parameters, JsonObject doc )
+	{
+		var options = SerializerOptions();
+
+		SerializeParameters( parameters, doc, options );
+
+		return doc;
 	}
 
 	private static void SerializeParameters( IEnumerable<BaseBlackboardParameter> parameters, JsonObject doc, JsonSerializerOptions options )

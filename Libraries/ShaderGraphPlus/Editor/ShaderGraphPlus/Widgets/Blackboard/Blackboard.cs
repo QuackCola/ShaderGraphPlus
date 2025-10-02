@@ -44,6 +44,11 @@ internal class Blackboard : Widget
 		Layout.Spacing = 8;
 		Layout.Margin = 4;
 
+		BuildUI();
+	}
+
+	public void BuildUI()
+	{
 		_blackboardView = new BlackboardView( this );
 		_blackboardView.OnDirty += () =>
 		{

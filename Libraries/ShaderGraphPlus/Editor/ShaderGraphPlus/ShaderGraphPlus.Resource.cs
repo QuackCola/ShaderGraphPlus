@@ -258,6 +258,11 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		_nodes.Clear();
 	}
 
+	public void ClearParameters()
+	{
+		_parameters.Clear();
+	}
+
 	string INodeGraph.SerializeNodes( IEnumerable<INodePlus> nodes )
 	{
 		return SerializeNodes( nodes.Cast<BaseNodePlus>() );
