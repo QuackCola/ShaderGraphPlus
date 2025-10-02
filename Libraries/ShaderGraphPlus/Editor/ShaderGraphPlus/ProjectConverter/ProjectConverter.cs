@@ -257,6 +257,11 @@ internal class ProjectConverter
 		return connectionsData;
 	}
 
+	public void AddBlackboardParameter( BaseBlackboardParameter blackboardParameter )
+	{
+		ShaderGraphPlus.AddBlackboardParameter( blackboardParameter );
+	}
+
 	internal void AddNewSubgraphOutputID( string outputName )
 	{
 		if ( IsSubgraph )
