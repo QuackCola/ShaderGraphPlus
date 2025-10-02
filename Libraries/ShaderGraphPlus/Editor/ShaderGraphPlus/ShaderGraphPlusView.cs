@@ -144,6 +144,8 @@ public class ShaderGraphPlusView : GraphView
 		{
 			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes", "swap_horiz", () =>
 			{
+				using var undoScope = UndoScope( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes" );
+
 				foreach ( var node in selectedNodes )
 				{
 					var baseNode = node.Node as BaseNodePlus;
@@ -185,6 +187,8 @@ public class ShaderGraphPlusView : GraphView
 				{ 
 					Dialog.AskString( ( string parameterName ) =>
 					{
+						using var undoScope = UndoScope( "Convert Constant Node To Parameter Node" );
+
 						Graph.RemoveNode( baseNode );
 
 
@@ -200,7 +204,7 @@ public class ShaderGraphPlusView : GraphView
 
 	private void ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
 	{
-		using var undoScope = UndoScope( "Convert Constant Node To Parameter Node" );
+		
 
 		string nodeFullName = constantNode switch
 		{
