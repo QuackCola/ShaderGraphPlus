@@ -9,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// Pi math constant with multiplier.
 /// </summary>
-[Title( "Pi" ), Category( "Constants" )]
+[Title( "Pi" ), Category( "Constants" ), Order( 8 )]
 public class PiNode : ShaderNodePlus
 {
 	[Hide]

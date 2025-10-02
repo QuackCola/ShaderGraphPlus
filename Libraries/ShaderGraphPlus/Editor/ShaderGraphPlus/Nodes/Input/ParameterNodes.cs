@@ -10,7 +10,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// Bool value for use in the material editor.
 /// </summary>
-[Title( "Bool" ), Category( "Constants" ), Icon( "check_box" )]
+[Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
 public sealed class Bool : ParameterNode<bool>
 {
 	[Hide]
@@ -46,7 +46,7 @@ public sealed class Bool : ParameterNode<bool>
 ///<summary>
 /// Single int value.
 ///</summary>
-[Title( "Int" ), Category( "Constants" ), Icon( "looks_one" )]
+[Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
 public sealed class Int : ParameterNode<int>
 {
 	[Hide]
@@ -75,7 +75,6 @@ public sealed class Int : ParameterNode<int>
 	
 	public Int()
 	{
-
 		Min = 0;
 		Max = 1;
 	}
@@ -84,7 +83,7 @@ public sealed class Int : ParameterNode<int>
 /// <summary>
 /// Single float value
 /// </summary>
-[Title( "Float" ), Category( "Constants" ), Icon( "looks_one" )]
+[Title( "Float" ), Category( "Parameters" ), Icon( "looks_one" )]
 public sealed class Float : ParameterNode<float>
 {
 	[Hide]
@@ -123,7 +122,7 @@ public sealed class Float : ParameterNode<float>
 /// <summary>
 /// 2 float values
 /// </summary>
-[Title( "Float2" ), Category( "Constants" ), Icon( "looks_two" )]
+[Title( "Float2" ), Category( "Parameters" ), Icon( "looks_two" )]
 public sealed class Float2 : ParameterNode<Vector2>
 {
 	[Hide]
@@ -204,7 +203,7 @@ public sealed class Float2 : ParameterNode<Vector2>
 /// <summary>
 /// 3 float values
 /// </summary>
-[Title( "Float3" ), Category( "Constants" ), Icon( "looks_3" )]
+[Title( "Float3" ), Category( "Parameters" ), Icon( "looks_3" )]
 public sealed class Float3 : ParameterNode<Vector3>
 {
 	[Hide]
@@ -292,7 +291,7 @@ public sealed class Float3 : ParameterNode<Vector3>
 /// <summary>
 /// 4 float values, normally used as a color
 /// </summary>
-[Title( "Color" ), Category( "Constants" )]
+[Title( "Color" ), Category( "Parameters" )]
 public sealed class Float4 : ParameterNode<Color>
 {
 	[Hide]

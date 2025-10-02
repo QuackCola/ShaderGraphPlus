@@ -1623,6 +1623,7 @@ public class MainWindow : DockWindow
 		
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
+		_graphView.OnConstantNodeConvertedToParameter += () => OnConstantNodeConvertedToParamerter();
 		_graphCanvas.Layout.Add( _graphView, 1 );
 		
 		_output = new Output( this );
@@ -1792,6 +1793,11 @@ public class MainWindow : DockWindow
 		SetDirty();
 
 		_blackboard.UpdateBlackboard( false );
+	}
+
+	public void OnConstantNodeConvertedToParamerter()
+	{
+		_blackboard.UpdateBlackboard( true );
 	}
 
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )

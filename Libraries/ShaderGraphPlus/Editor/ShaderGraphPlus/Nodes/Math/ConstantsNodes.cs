@@ -9,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// A container for common math constants
 /// </summary>
-[Title( "Math Constants" ), Category( "Constants" )]
+[Title( "Math Constants" ), Category( "Constants" ), Order( 7 )]
 public sealed class MathConstantsNode : ShaderNodePlus
 {
 	[Hide]

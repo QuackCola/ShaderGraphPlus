@@ -40,6 +40,8 @@ public class ShaderGraphPlusView : GraphView
 		set => base.Graph = value;
 	}
 
+	public Action OnConstantNodeConvertedToParameter { get; set; }
+
 	private readonly Dictionary<string, INodeTypePlus> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
 	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
@@ -137,7 +139,32 @@ public class ShaderGraphPlusView : GraphView
 				CreateSubgraphFromSelection( fd.SelectedFile );
 			} );
 		}
-		
+
+		if ( selectedNodes.Length > 1 && selectedNodes.All( x => x.Node is IConstantNode ) )
+		{
+			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes", "swap_horiz", () =>
+			{
+				foreach ( var node in selectedNodes )
+				{
+					var baseNode = node.Node as BaseNodePlus;
+					var constantNode = baseNode as IConstantNode;
+
+					Graph.RemoveNode( baseNode );
+
+					var newName = "Parameter";
+					var id = 0;
+					while ( Graph.CheckIfBlackboardParameterWithNameExists( $"{newName}{id}" ) )
+					{
+						id++;
+					}
+
+					ConvertConstantNodeToParameter( constantNode, $"{newName}{id}", node.Position );
+				}
+
+				RebuildFromGraph();
+			} );
+		}
+
 		if ( selectedNodes.Length == 1 )
 		{
 			var item = selectedNodes.FirstOrDefault();
@@ -150,6 +177,54 @@ public class ShaderGraphPlusView : GraphView
 				menu.AddSeparator();
 
 				node.DebugInfo( menu );
+			}
+
+			if ( item.Node is BaseNodePlus baseNode && baseNode is IConstantNode constantNode )
+			{
+				var convertOption = menu.AddOption( $"Convert \"{baseNode.DisplayInfo.Name}\" to parameter.", "swap_horiz", () =>
+				{ 
+					Dialog.AskString( ( string parameterName ) =>
+					{
+						Graph.RemoveNode( baseNode );
+
+
+						ConvertConstantNodeToParameter( constantNode, parameterName, item.Node.Position );
+					
+						RebuildFromGraph();
+					},
+					"Specify a name for the new parameter node." );
+				} );
+			}
+		}
+	}
+
+	private void ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
+	{
+		using var undoScope = UndoScope( "Convert Constant Node To Parameter Node" );
+
+		string nodeFullName = constantNode switch
+		{
+			BoolConstantNode => DisplayInfo.ForType( typeof( Bool ) ).Fullname,
+			IntConstantNode => DisplayInfo.ForType( typeof( Int ) ).Fullname,
+			FloatConstantNode => DisplayInfo.ForType( typeof( Float ) ).Fullname,
+			Float2ConstantNode => DisplayInfo.ForType( typeof( Float2 ) ).Fullname,
+			Float3ConstantNode => DisplayInfo.ForType( typeof( Float3 ) ).Fullname,
+			Float4ConstantNode => DisplayInfo.ForType( typeof( Float4 ) ).Fullname,
+			_ => throw new NotImplementedException(),
+		};
+
+		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+		{
+		
+			var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
+
+			CreateNewNode( parameterNodeType, nodePosition );
+			
+			if ( parameterNodeType.BlackboardParameter != null )
+			{
+				Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
+
+				OnConstantNodeConvertedToParameter?.Invoke();
 			}
 		}
 	}

@@ -9,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// Constant gradient value.
 /// </summary>
-[Title( "Gradient" ), Category( "Constants/Gradient" ), Icon( "gradient" )]
+[Title( "Gradient" ), Category( "Constants/Gradient" ), Icon( "gradient" ), Order( 6 )]
 public sealed class GradientNode : ShaderNodePlus
 {
 	[Hide]

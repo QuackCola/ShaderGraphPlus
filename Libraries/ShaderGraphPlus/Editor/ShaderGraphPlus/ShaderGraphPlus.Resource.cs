@@ -154,6 +154,16 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
+	internal bool CheckIfBlackboardParameterWithNameExists( string nameToMatch )
+	{
+		foreach ( var parameter in _parameters )
+		{
+			if ( nameToMatch == parameter.Value.Name ) return true;
+		}
+
+		return false;
+	}
+
 	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
 	{
 		if ( _parameters.TryAdd( Parameter.Identifier, Parameter ) )

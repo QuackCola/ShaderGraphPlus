@@ -6,7 +6,7 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-[Title( "Float 4x4" ), Category( "Constants/Matrix" ), Icon( "dataset" )]
+[Title( "Float 4x4" ), Category( "Constants/Matrix" ), Icon( "dataset" ), Order( 11 )]
 public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 {
 	[Hide] public override int Version => 1;
