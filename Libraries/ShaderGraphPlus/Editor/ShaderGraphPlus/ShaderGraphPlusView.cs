@@ -183,11 +183,11 @@ public class ShaderGraphPlusView : GraphView
 
 			if ( item.Node is BaseNodePlus baseNode && baseNode is IConstantNode constantNode )
 			{
-				var convertOption = menu.AddOption( $"Convert \"{baseNode.DisplayInfo.Name}\" to parameter.", "swap_horiz", () =>
+				var convertOption = menu.AddOption( $"Convert {baseNode.DisplayInfo.Name} to parameter", "swap_horiz", () =>
 				{ 
 					Dialog.AskString( ( string parameterName ) =>
 					{
-						using var undoScope = UndoScope( "Convert Constant Node To Parameter Node" );
+						using var undoScope = UndoScope( $"Convert {baseNode.DisplayInfo.Name} to parameter" );
 
 						Graph.RemoveNode( baseNode );
 
