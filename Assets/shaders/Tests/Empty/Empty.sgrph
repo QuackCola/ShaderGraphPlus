@@ -296,7 +296,7 @@
       "Name": "HLX"
     },
     {
-      "_class": "Float4BlackboardParameter",
+      "_class": "ColorBlackboardParameter",
       "UI": {
         "Type": "Color",
         "Step": 0,
