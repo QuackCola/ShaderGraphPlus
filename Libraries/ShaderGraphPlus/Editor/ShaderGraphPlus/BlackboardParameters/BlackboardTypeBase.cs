@@ -7,8 +7,11 @@ public abstract class BaseBlackboardParameter
 
 	public virtual string Name { get; set; } = "";
 
-	[Hide, JsonIgnore]
+	[Hide, JsonIgnore, Browsable( false )]
 	public ShaderGraphPlus Graph { get; set; }
+
+	[Hide, JsonIgnore, Browsable( false )]
+	public bool IsSubgraph => Graph.IsSubgraph;
 
 	public BaseBlackboardParameter()
 	{
@@ -72,6 +75,7 @@ public abstract class BlackboardParameterGeneric<T> : BaseBlackboardParameter
 public abstract class BlackboardMaterialParameter<T> : BlackboardParameterGeneric<T>
 {
 	[InlineEditor( Label = false ), Group( "UI" )]
+	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
 	public BlackboardMaterialParameter() : base() 
