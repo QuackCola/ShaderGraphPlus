@@ -28,10 +28,10 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 	}
 
 	[Hide, JsonIgnore]
-	public virtual bool UseStep { get; } = true;
+	public virtual bool UseStep => true;
 
 	[Hide, JsonIgnore]
-	public virtual bool UseMinMax { get; } = true;
+	public virtual bool UseMinMax => true;
 
 	public object GetValue() 
 	{ 
