@@ -146,6 +146,8 @@ public struct NodeResult : IValid
 					return true;
 				case ResultType.Vector3:
 					return true;
+				case ResultType.Vector4:
+					return true;
 				case ResultType.Color:
 					return true;
 				case ResultType.Float2x2:
@@ -206,6 +208,8 @@ public struct NodeResult : IValid
 					return true;
 				case ResultType.Vector3:
 					return true;
+				case ResultType.Vector4:
+					return true;
 				case ResultType.Color:
 					return true;
 				default: 
@@ -236,6 +240,7 @@ public struct NodeResult : IValid
 			ResultType.Float => 1,
 			ResultType.Vector2 => 2,
 			ResultType.Vector3 => 3,
+			ResultType.Vector4 => 4,
 			ResultType.Color => 4,
 			ResultType.Void => 0,
 			_ => 0
@@ -394,6 +399,8 @@ public static class ResultTypeExtentions
 				return 2;
 			case ResultType.Vector3:
 				return 3;
+			case ResultType.Vector4:
+				return 4;
 			case ResultType.Color:
 				return 4;
 			case ResultType.Float2x2:
@@ -421,6 +428,8 @@ public static class ResultTypeExtentions
 				return "float2";
 			case ResultType.Vector3:
 				return "float3";
+			case ResultType.Vector4:
+				return "float4";
 			case ResultType.Color:
 				return "float4";
 			case ResultType.Float2x2:
@@ -456,6 +465,8 @@ public static class ResultTypeExtentions
 				return typeof ( Vector2 );
 			case ResultType.Vector3:
 				return typeof( Vector3 );
+			case ResultType.Vector4:
+				return typeof( Vector4 );
 			case ResultType.Color:
 				return typeof( Color );
 			case ResultType.Float2x2:

@@ -60,6 +60,8 @@ internal struct VoidData : IValid
 				return $"float2 {name} = float2( 0.0f, 0.0f );";
 			case ResultType.Vector3:
 				return $"float3 {name} = float3( 0.0f, 0.0f, 0.0f );";
+			case ResultType.Vector4:
+				return $"float4 {name} = float4( 0.0f, 0.0f, 0.0f, 0.0f );";
 			case ResultType.Color:
 				return $"float4 {name} = float4( 0.0f, 0.0f, 0.0f, 0.0f );";
 			case ResultType.Float2x2:
