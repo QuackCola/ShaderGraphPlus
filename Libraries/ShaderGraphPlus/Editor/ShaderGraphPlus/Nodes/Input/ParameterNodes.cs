@@ -8,7 +8,7 @@ namespace ShaderGraphPlus.Nodes;
 
 
 /// <summary>
-/// Bool value for use in the material editor.
+/// Bool value
 /// </summary>
 [Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
 public sealed class BoolParameterNode : ParameterNode<bool>
@@ -44,7 +44,7 @@ public sealed class BoolParameterNode : ParameterNode<bool>
 }
 
 ///<summary>
-/// Single int value.
+/// Single int value
 ///</summary>
 [Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
 public sealed class IntParameterNode : ParameterNode<int>
@@ -390,9 +390,9 @@ public sealed class Float4ParameterNode : ParameterNode<Vector4>
 }
 
 /// <summary>
-/// 4 float values, Just like <see cref="Float4ParameterNode"/> but with color controls.
+/// 4 float values, Just like <see cref="Float4ParameterNode"/> but with a color control ui
 /// </summary>
-[Title( "Color" ), Category( "Parameters" )]
+[Title( "Color" ), Category( "Parameters" ), Icon( "palette" )]
 public sealed class ColorParameterNode : ParameterNode<Color>
 {
 	[Hide]

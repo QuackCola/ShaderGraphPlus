@@ -6,7 +6,11 @@ using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
-[Title( "Bool Constant" ), Category( "Constants" ), Order( 0 )]
+
+/// <summary>
+/// Bool value
+/// </summary>
+[Title( "Bool Constant" ), Category( "Constants" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolConstantNode : ConstantNode<bool>
 {
 	[Hide]
@@ -34,7 +38,10 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 	};
 }
 
-[Title( "Int Constant" ), Category( "Constants" ), Order( 1 )]
+///<summary>
+/// Single int value
+///</summary>
+[Title( "Int Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 1 )]
 public sealed class IntConstantNode : ConstantNode<int>
 {
 	[Hide]
@@ -73,7 +80,10 @@ public sealed class IntConstantNode : ConstantNode<int>
 	}
 }
 
-[Title( "Float Constant" ), Category( "Constants" ), Order( 2 )]
+/// <summary>
+/// Single float value
+/// </summary>
+[Title( "Float Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 2 )]
 public sealed class FloatConstantNode : ConstantNode<float>
 {
 	[Hide]
@@ -118,7 +128,10 @@ public sealed class FloatConstantNode : ConstantNode<float>
 	}
 }
 
-[Title( "Float2 Constant" ), Category( "Constants" ), Order( 3 )]
+/// <summary>
+/// 2 float values
+/// </summary>
+[Title( "Float2 Constant" ), Category( "Constants" ), Icon( "looks_two" ), Order( 3 )]
 public sealed class Float2ConstantNode : ConstantNode<Vector2>
 {
 	[Hide]
@@ -196,7 +209,11 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>
 	}
 }
 
-[Title( "Float3 Constant" ), Category( "Constants" ), Order( 4 )]
+
+/// <summary>
+/// 3 float values
+/// </summary>
+[Title( "Float3 Constant" ), Category( "Constants" ), Icon( "looks_3" ), Order( 4 )]
 public sealed class Float3ConstantNode : ConstantNode<Vector3>
 {
 	[Hide]
@@ -290,7 +307,10 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>
 	}
 }
 
-[Title( "Float4 Constant" ), Category( "Constants" ), Order( 5 )]
+/// <summary>
+/// 4 float values.
+/// </summary>
+[Title( "Float4 Constant" ), Category( "Constants" ), Icon( "looks_4" ), Order( 5 )]
 public sealed class Float4ConstantNode : ConstantNode<Vector4>
 {
 	[Hide]
@@ -366,7 +386,10 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "w", ValueW, compiler );
 }
 
-[Title( "Color Constant" ), Category( "Constants" ), Order( 6 )]
+/// <summary>
+/// 4 float values, Just like <see cref="Float4ConstantNode"/> but with color control ui
+/// </summary>
+[Title( "Color Constant" ), Category( "Constants" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorConstantNode : ConstantNode<Color>
 {
 	[Hide]
