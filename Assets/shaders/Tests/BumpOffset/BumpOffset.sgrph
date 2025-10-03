@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 3,
   "IsSubgraph": false,
   "Path": "shaders/tests/bumpoffset/bumpoffset.sgrph",
   "Model": "models/dev/box.vmdl",
@@ -81,7 +81,7 @@
       "_class": "TextureSampler",
       "__version": 1,
       "SamplerState": {
-        "Version": 2,
+        "__version": 2,
         "Name": "",
         "IsAttribute": false,
         "Filter": "Bilinear",
@@ -142,7 +142,7 @@
       "_class": "TextureSampler",
       "__version": 1,
       "SamplerState": {
-        "Version": 2,
+        "__version": 2,
         "Name": "",
         "IsAttribute": false,
         "Filter": "Bilinear",
@@ -194,7 +194,7 @@
       "_class": "TextureSampler",
       "__version": 1,
       "SamplerState": {
-        "Version": 2,
+        "__version": 2,
         "Name": "",
         "IsAttribute": false,
         "Filter": "Bilinear",
@@ -243,10 +243,11 @@
       }
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
       "Max": 1,
+      "BlackboardParameterIdentifier": "8b1988c7-452d-4d80-bb4f-c44fef14b859",
       "Value": 0.125,
       "Name": "DepthScale",
       "IsAttribute": false,
@@ -268,10 +269,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
       "Max": 1,
+      "BlackboardParameterIdentifier": "e922e2c2-d152-40d1-a7e7-402b0b5235c7",
       "Value": 0.42,
       "Name": "ReferencePlane",
       "IsAttribute": false,
@@ -309,10 +311,11 @@
       }
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
       "Max": 1,
+      "BlackboardParameterIdentifier": "7cf69fcc-39bc-406b-9fa9-1c2dea3cf3d9",
       "Value": 0.124,
       "Name": "Roughness",
       "IsAttribute": false,
@@ -337,7 +340,7 @@
       "_class": "SamplerNode",
       "__version": 1,
       "SamplerState": {
-        "Version": 2,
+        "__version": 2,
         "Name": "TestSampler",
         "IsAttribute": false,
         "Filter": "Bilinear",
@@ -407,8 +410,9 @@
       }
     },
     {
-      "_class": "Bool",
-      "__version": 1,
+      "_class": "BoolParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "ec336e2b-2547-47db-9cd1-0e8626ba1759",
       "Value": true,
       "Name": "BumpOffset",
       "IsAttribute": false,
@@ -466,6 +470,90 @@
         "Output": "Result",
         "Subgraph": null
       }
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "FloatBlackboardParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 1,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": 0.125,
+      "Identifier": "8b1988c7-452d-4d80-bb4f-c44fef14b859",
+      "Name": "DepthScale"
+    },
+    {
+      "_class": "FloatBlackboardParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 2,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": 0.42,
+      "Identifier": "e922e2c2-d152-40d1-a7e7-402b0b5235c7",
+      "Name": "ReferencePlane"
+    },
+    {
+      "_class": "FloatBlackboardParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": 0.124,
+      "Identifier": "7cf69fcc-39bc-406b-9fa9-1c2dea3cf3d9",
+      "Name": "Roughness"
+    },
+    {
+      "_class": "BoolBlackboardParameter",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": true,
+      "Identifier": "ec336e2b-2547-47db-9cd1-0e8626ba1759",
+      "Name": "BumpOffset"
     }
   ]
 }
