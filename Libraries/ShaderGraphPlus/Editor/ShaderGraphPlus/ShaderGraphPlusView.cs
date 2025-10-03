@@ -145,7 +145,7 @@ public class ShaderGraphPlusView : GraphView
 			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes", "swap_horiz", () =>
 			{
 				using var undoScope = UndoScope( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes" );
-
+				var lastNode = selectedNodes.First().Node as BaseNodePlus;
 				foreach ( var node in selectedNodes )
 				{
 					var baseNode = node.Node as BaseNodePlus;
@@ -160,10 +160,14 @@ public class ShaderGraphPlusView : GraphView
 						id++;
 					}
 
-					ConvertConstantNodeToParameter( constantNode, $"{newName}{id}", node.Position );
-				}
+					lastNode = ConvertConstantNodeToParameter( constantNode, $"{newName}{id}", node.Position );
+				}	
 
 				RebuildFromGraph();
+
+				// Select the last node in the list.
+				_window.OnNodeSelected( lastNode );
+				SelectNode( lastNode );
 			} );
 		}
 
@@ -191,10 +195,12 @@ public class ShaderGraphPlusView : GraphView
 
 						Graph.RemoveNode( baseNode );
 
-
-						ConvertConstantNodeToParameter( constantNode, parameterName, item.Node.Position );
+						var newNode = ConvertConstantNodeToParameter( constantNode, parameterName, item.Node.Position );
 					
 						RebuildFromGraph();
+
+						_window.OnNodeSelected( newNode );
+						SelectNode( newNode );
 					},
 					"Specify a name for the new parameter node." );
 				} );
@@ -202,8 +208,10 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	private void ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
+	private BaseNodePlus ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
 	{
+		BaseNodePlus node = null;
+
 		string nodeFullName = constantNode switch
 		{
 			BoolConstantNode => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
@@ -220,7 +228,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
 
-			CreateNewNode( parameterNodeType, nodePosition );
+			node = CreateNewNode( parameterNodeType, nodePosition ).Node as BaseNodePlus;
 			
 			if ( parameterNodeType.BlackboardParameter != null )
 			{
@@ -229,6 +237,13 @@ public class ShaderGraphPlusView : GraphView
 				OnConstantNodeConvertedToParameter?.Invoke();
 			}
 		}
+
+		if ( node != null )
+		{
+			return node;
+		}
+
+		throw new Exception();
 	}
 
 	protected override INodeTypePlus NodeTypeFromDragEvent( DragEvent ev )
