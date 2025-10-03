@@ -234,6 +234,11 @@ public class ShaderGraphPlusView : GraphView
 			{
 				Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
 
+
+			
+
+
+
 				OnConstantNodeConvertedToParameter?.Invoke();
 			}
 		}

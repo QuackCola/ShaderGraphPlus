@@ -9,12 +9,16 @@ internal interface IShaderFeatureBlackboardParameter
 [Title( "Bool" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
+	public BoolBlackboardParameter() : base() 
+	{ 
+		Value = false;
+	}
+
 	public BoolBlackboardParameter( bool value ) : base( value )
 	{
 
 	}
 
-	public BoolBlackboardParameter() : base() { }
 }
 
 [Title( "Int" ), Order( 1 )]
@@ -24,15 +28,16 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	[Group( "Range" )] public int Max { get; set; }
 
 	public IntBlackboardParameter()
-	{
+	{	
+		Value = 1;
 		Min = 0;
-		Max = 0;
+		Max = 1;
 	}
 
 	public IntBlackboardParameter( int value ) : base( value )
 	{
 		Min = 0;
-		Max = 0;
+		Max = 1;
 	}
 }
 
@@ -44,6 +49,7 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 
 	public FloatBlackboardParameter()
 	{
+		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
 	}
@@ -63,6 +69,7 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 
 	public Float2BlackboardParameter()
 	{
+		Value = Vector2.One;
 		Min = Vector2.Zero;
 		Max = Vector2.One;
 	}
@@ -104,6 +111,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 
 	public Float3BlackboardParameter()
 	{
+		Value = Vector3.One;
 		Min = Vector3.Zero;
 		Max = Vector3.One;
 	}
@@ -284,25 +292,5 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGe
 
 internal static class BlackboardUtils
 {
-	internal static BaseBlackboardParameter CreateBlackboardParameter( IParameterNode parameterNode, string name = "", Guid guid = default )
-	{
-		return (BaseNodePlus)parameterNode switch
-		{
-			BoolParameterNode p => new BoolBlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			IntParameterNode p => new IntBlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			FloatParameterNode p => new FloatBlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			Float2ParameterNode p => new Float2BlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			Float3ParameterNode p => new Float3BlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			Float4ParameterNode p => new Float4BlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			ColorParameterNode p => new ColorBlackboardParameter( p.Value )
-			{ Name = name, Identifier = guid },
-			_ => throw new NotImplementedException(),
-		};
-	}
+
 }

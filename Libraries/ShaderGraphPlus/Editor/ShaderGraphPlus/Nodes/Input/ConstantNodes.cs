@@ -17,7 +17,7 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 
 	public BoolConstantNode() : base()
 	{
-
+		Value = false;
 	}
 
 	[Hide, JsonIgnore]
@@ -57,6 +57,7 @@ public sealed class IntConstantNode : ConstantNode<int>
 
 	public IntConstantNode() : base()
 	{
+		Value = 1;
 		Min = 0;
 		Max = 1;
 	}
@@ -96,8 +97,9 @@ public sealed class FloatConstantNode : ConstantNode<float>
 
 	public FloatConstantNode() : base()
 	{
-		Min = 0;
-		Max = 1;
+		Value = 1.0f;
+		Min = 0.0f;
+		Max = 1.0f;
 	}
 
 	[Group( "Range" )] public float Min { get; set; }
@@ -167,8 +169,9 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>
 
 	public Float2ConstantNode() : base()
 	{
-		Min = 0;
-		Max = 1;
+		Value = Vector2.One;
+		Min = Vector2.Zero;
+		Max = Vector2.One;
 	}
 
 	[Output( typeof( Vector2 ) ), Title( "XY" )]
@@ -258,8 +261,9 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>
 
 	public Float3ConstantNode() : base()
 	{
-		Min = 0;
-		Max = 1;
+		Value = Vector3.One;
+		Min = Vector3.Zero;
+		Max = Vector3.One;
 	}
 
 	[Output( typeof( Vector3 ) ), Title( "XYZ" )]
@@ -349,8 +353,24 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>
 		set => Value = Value.WithW( value );
 	}
 
+	[Group( "Range" )] public Vector4 Min { get; set; }
+	[Group( "Range" )] public Vector4 Max { get; set; }
+	public float Step { get; set; } = 0.0f;
+
+	[Hide] public float MinX => Min.x;
+	[Hide] public float MinY => Min.y;
+	[Hide] public float MinZ => Min.z;
+	[Hide] public float MinW => Min.z;
+	[Hide] public float MaxX => Max.x;
+	[Hide] public float MaxY => Max.y;
+	[Hide] public float MaxZ => Max.z;
+	[Hide] public float MaxW => Max.z;
+
 	public Float4ConstantNode() : base()
 	{
+		Value = Vector4.One;
+		Min = Vector4.Zero;
+		Max = Vector4.One;
 	}
 
 	[Output( typeof( Color ) ), Title( "XYZW" )]
@@ -364,25 +384,44 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>
 	/// X component of result
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueX ) ), Title( "X" )]
-	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "x", ValueX, compiler );
+	[Range( nameof( MinX ), nameof( MaxX ), nameof( Step ) )]
+	public NodeResult.Func X => ( GraphCompiler compiler ) => Component( "x", ValueX, compiler );
 
 	/// <summary>
 	/// Green component of result
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueY ) ), Title( "Y" )]
-	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
+	[Range( nameof( MinY ), nameof( MaxY ), nameof( Step ) )]
+	public NodeResult.Func Y => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
 
 	/// <summary>
 	/// Y component of result
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueZ ) ), Title( "Z" )]
-	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "z", ValueZ, compiler );
+	[Range( nameof( MinZ ), nameof( MaxZ ), nameof( Step ) )]
+	public NodeResult.Func Z => ( GraphCompiler compiler ) => Component( "z", ValueZ, compiler );
 
 	/// <summary>
 	/// W component of result
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueW ) ), Title( "W" )]
-	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "w", ValueW, compiler );
+	[Range( nameof( MinW ), nameof( MaxW ), nameof( Step ) )]
+	public NodeResult.Func W => ( GraphCompiler compiler ) => Component( "w", ValueW, compiler );
+
+	public override object GetMinValue()
+	{
+		return Min;
+	}
+
+	public override object GetMaxValue()
+	{
+		return Max;
+	}
+
+	public override object GetStepValue()
+	{
+		return Step;
+	}
 }
 
 /// <summary>
@@ -395,10 +434,10 @@ public sealed class ColorConstantNode : ConstantNode<Color>
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
+	public override bool UseMinMax => false;
 
 	[Hide, JsonIgnore]
-	public override bool UseStep => true;
+	public override bool UseStep => false;
 
 	[JsonIgnore, Hide]
 	public float ValueR
