@@ -144,7 +144,52 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 }
 
 [Title( "Color" ), Order( 5 )]
-public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Color>
+public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
+{
+	[JsonIgnore, Hide]
+	public float ValueX
+	{
+		get => Value.x;
+		set => Value = Value.WithX( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueY
+	{
+		get => Value.y;
+		set => Value = Value.WithY( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueZ
+	{
+		get => Value.z;
+		set => Value = Value.WithZ( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueW
+	{
+		get => Value.w;
+		set => Value = Value.WithW( value );
+	}
+
+	public Float4BlackboardParameter()
+	{
+		Value = Vector4.One;
+		UI = new ParameterUI { Type = UIType.Default };
+	}
+
+	public Float4BlackboardParameter( Vector4 value ) : base( value )
+	{
+		UI = new ParameterUI { Type = UIType.Default };
+	}
+
+
+}
+
+[Title( "Color" ), Order( 5 )]
+public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
 	[JsonIgnore, Hide]
 	public float ValueR
@@ -174,13 +219,13 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Colo
 		set => Value = Value.WithAlpha( value );
 	}
 
-	public Float4BlackboardParameter()
+	public ColorBlackboardParameter()
 	{
 		Value = Color.White;
 		UI = new ParameterUI { Type = UIType.Color };
 	}
 
-	public Float4BlackboardParameter( Color value ) : base( value )
+	public ColorBlackboardParameter( Color value ) : base( value )
 	{
 		UI = new ParameterUI { Type = UIType.Color };
 	}

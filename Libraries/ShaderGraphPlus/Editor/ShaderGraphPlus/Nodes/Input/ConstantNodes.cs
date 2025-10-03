@@ -20,7 +20,7 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
-	[Hide, JsonIgnore]
+	[Hide, JsonIgnore] 
 	public override bool UseMinMax => false;
 
 	[Hide, JsonIgnore]
@@ -290,8 +290,84 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>
 	}
 }
 
-[Title( "Color Constant" ), Category( "Constants" ), Order( 5 )]
-public sealed class Float4ConstantNode : ConstantNode<Color>
+[Title( "Float4 Constant" ), Category( "Constants" ), Order( 5 )]
+public sealed class Float4ConstantNode : ConstantNode<Vector4>
+{
+	[Hide]
+	public override int Version => 1;
+
+	[Hide, JsonIgnore]
+	public override bool UseMinMax => true;
+
+	[Hide, JsonIgnore]
+	public override bool UseStep => true;
+
+	[JsonIgnore, Hide]
+	public float ValueX
+	{
+		get => Value.x;
+		set => Value = Value.WithX( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueY
+	{
+		get => Value.y;
+		set => Value = Value.WithY( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueZ
+	{
+		get => Value.z;
+		set => Value = Value.WithZ( value );
+	}
+
+	[JsonIgnore, Hide]
+	public float ValueW
+	{
+		get => Value.w;
+		set => Value = Value.WithW( value );
+	}
+
+	public Float4ConstantNode() : base()
+	{
+	}
+
+	[Output( typeof( Color ) ), Title( "XYZW" )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		return compiler.ResultParameter( "", Value, default, default, false, false, default );
+	};
+
+	/// <summary>
+	/// X component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Editor( nameof( ValueX ) ), Title( "X" )]
+	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "x", ValueX, compiler );
+
+	/// <summary>
+	/// Green component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Editor( nameof( ValueY ) ), Title( "Y" )]
+	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
+
+	/// <summary>
+	/// Y component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Editor( nameof( ValueZ ) ), Title( "Z" )]
+	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "z", ValueZ, compiler );
+
+	/// <summary>
+	/// W component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Editor( nameof( ValueW ) ), Title( "W" )]
+	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "w", ValueW, compiler );
+}
+
+[Title( "Color Constant" ), Category( "Constants" ), Order( 6 )]
+public sealed class ColorConstantNode : ConstantNode<Color>
 {
 	[Hide]
 	public override int Version => 1;
@@ -330,7 +406,7 @@ public sealed class Float4ConstantNode : ConstantNode<Color>
 		set => Value = Value.WithAlpha( value );
 	}
 
-	public Float4ConstantNode() : base()
+	public ColorConstantNode() : base()
 	{
 	}
 

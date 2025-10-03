@@ -204,16 +204,15 @@ public class ShaderGraphPlusView : GraphView
 
 	private void ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
 	{
-		
-
 		string nodeFullName = constantNode switch
 		{
-			BoolConstantNode => DisplayInfo.ForType( typeof( Bool ) ).Fullname,
-			IntConstantNode => DisplayInfo.ForType( typeof( Int ) ).Fullname,
-			FloatConstantNode => DisplayInfo.ForType( typeof( Float ) ).Fullname,
-			Float2ConstantNode => DisplayInfo.ForType( typeof( Float2 ) ).Fullname,
-			Float3ConstantNode => DisplayInfo.ForType( typeof( Float3 ) ).Fullname,
-			Float4ConstantNode => DisplayInfo.ForType( typeof( Float4 ) ).Fullname,
+			BoolConstantNode => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+			IntConstantNode => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+			FloatConstantNode => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+			Float2ConstantNode => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+			Float3ConstantNode => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+			Float4ConstantNode => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+			ColorConstantNode => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
 			_ => throw new NotImplementedException(),
 		};
 
@@ -258,12 +257,12 @@ public class ShaderGraphPlusView : GraphView
 		{
 			string nodeFullName = blackboardParameter switch
 			{
-				BoolBlackboardParameter => DisplayInfo.ForType( typeof( Bool ) ).Fullname,
-				IntBlackboardParameter => DisplayInfo.ForType( typeof( Int ) ).Fullname,
-				FloatBlackboardParameter => DisplayInfo.ForType( typeof( Float ) ).Fullname,
-				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2 ) ).Fullname,
-				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3 ) ).Fullname,
-				Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4 ) ).Fullname,
+				BoolBlackboardParameter => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+				IntBlackboardParameter => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+				FloatBlackboardParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+				Float4BlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
 				ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
 				_ => throw new NotImplementedException(),
 			};
@@ -557,9 +556,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( bool ) )
 					{
-						var boolInput = FindNodeType( typeof( Bool ) ).CreateNode( subgraph );
+						var boolInput = FindNodeType( typeof( BoolParameterNode ) ).CreateNode( subgraph );
 						boolInput.Position = node.Position - new Vector2( 240, 0 );
-						if ( boolInput is Bool boolNode )
+						if ( boolInput is BoolParameterNode boolNode )
 						{
 							boolNode.Name = inputName;
 							input.ConnectedOutput = boolNode.Outputs.FirstOrDefault();
@@ -568,9 +567,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( float ) )
 					{
-						var floatInput = FindNodeType( typeof( Float ) ).CreateNode( subgraph );
+						var floatInput = FindNodeType( typeof( FloatParameterNode ) ).CreateNode( subgraph );
 						floatInput.Position = node.Position - new Vector2( 240, 0 );
-						if ( floatInput is Float floatNode )
+						if ( floatInput is FloatParameterNode floatNode )
 						{
 							floatNode.Name = inputName;
 							input.ConnectedOutput = floatNode.Outputs.FirstOrDefault();
@@ -579,9 +578,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( Vector2 ) )
 					{
-						var vector2Input = FindNodeType( typeof( Float2 ) ).CreateNode( subgraph );
+						var vector2Input = FindNodeType( typeof( Float2ParameterNode ) ).CreateNode( subgraph );
 						vector2Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( vector2Input is Float2 vector2Node )
+						if ( vector2Input is Float2ParameterNode vector2Node )
 						{
 							vector2Node.Name = inputName;
 							input.ConnectedOutput = vector2Node.Outputs.FirstOrDefault();
@@ -590,20 +589,20 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( Vector3 ) )
 					{
-						var vector3Input = FindNodeType( typeof( Float3 ) ).CreateNode( subgraph );
+						var vector3Input = FindNodeType( typeof( Float3ParameterNode ) ).CreateNode( subgraph );
 						vector3Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( vector3Input is Float3 vector3Node )
+						if ( vector3Input is Float3ParameterNode vector3Node )
 						{
 							vector3Node.Name = inputName;
 							input.ConnectedOutput = vector3Node.Outputs.FirstOrDefault();
 							nodesToAdd.Add( vector3Node );
 						}
 					}
-					else if ( input.Type == typeof( Float4 ) )
+					else if ( input.Type == typeof( ColorParameterNode ) )
 					{
-						var vector4Input = FindNodeType( typeof( Float4 ) ).CreateNode( subgraph );
+						var vector4Input = FindNodeType( typeof( ColorParameterNode ) ).CreateNode( subgraph );
 						vector4Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( vector4Input is Float4 vector4Node )
+						if ( vector4Input is ColorParameterNode vector4Node )
 						{
 							vector4Node.Name = inputName;
 							input.ConnectedOutput = vector4Node.Outputs.FirstOrDefault();

@@ -177,7 +177,7 @@ internal class BlackboardView : Widget
 		int id = _parentBlackboard.Graph._parameters.Count;
 		string name = $"Parameter{id}";
 
-		var parameterInstance = BlackboardUtils.CreateBaseBlackboardParameterInstance( typeDescription.TargetType, id, name );
+		var parameterInstance = BaseBlackboardParameter.CreateTypeInstance( typeDescription.TargetType, name );
 		_parentBlackboard.Graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();

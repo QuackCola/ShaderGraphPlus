@@ -22,12 +22,12 @@ internal class NodeVersions
 	{
 		NodeVersionRegistry = new()
 		{
-			{ new NodeVersionRegistryEntry( typeof( Bool ), 2 )},
-			{ new NodeVersionRegistryEntry( typeof( Int ), 2 )},
-			{ new NodeVersionRegistryEntry( typeof( Float ), 2 )},
-			{ new NodeVersionRegistryEntry( typeof( Float2 ), 2 )},
-			{ new NodeVersionRegistryEntry( typeof( Float3 ), 2 )},
-			{ new NodeVersionRegistryEntry( typeof( Float4 ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( BoolParameterNode ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( IntParameterNode ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( FloatParameterNode ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( Float2ParameterNode ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( Float3ParameterNode ), 2 )},
+			{ new NodeVersionRegistryEntry( typeof( ColorParameterNode ), 2 )},
 		};
 	}
 

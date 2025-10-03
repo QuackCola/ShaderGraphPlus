@@ -24,6 +24,12 @@ public static class ProjectUpgrading
 	{
 		{ "TextureObjectNode", "Texture2DObjectNode" },
 		{ "NormapMapTriplanar", "NormalMapTriplanar" },
+		{ "Bool", "BoolParameterNode" },
+		{ "Int", "IntParameterNode" },
+		{ "Float", "FloatParameterNode" },
+		{ "Float2", "Float2ParameterNode" },
+		{ "Float3", "Float3ParameterNode" },
+		{ "Float4", "ColorParameterNode" },
 	};
 
 	/*

@@ -49,7 +49,7 @@ internal class FloatNodeConvert : BaseNodeConvert
 		}
 		else
 		{
-			var newNode = new Float();
+			var newNode = new FloatParameterNode();
 			newNode.Identifier = oldNode.Identifier;
 			newNode.Position = oldNode.Position;
 			newNode.Value = oldFloatNode.Value;
@@ -67,8 +67,6 @@ internal class FloatNodeConvert : BaseNodeConvert
 				UI = newNode.UI,
 				Identifier = newNode.BlackboardParameterIdentifier,
 			};
-
-			newNode.ParameterNodeType = ParameterNodeModeType.Property;
 
 			converter.AddBlackboardParameter( blackboardParameter );
 
@@ -99,7 +97,7 @@ internal class Float2NodeConvert : BaseNodeConvert
 		}
 		else
 		{
-			var newNode = new Float2();
+			var newNode = new Float2ParameterNode();
 			newNode.Identifier = oldNode.Identifier;
 			newNode.Position = oldNode.Position;
 			newNode.Value = oldFloat2Node.Value;
@@ -117,8 +115,6 @@ internal class Float2NodeConvert : BaseNodeConvert
 				UI = newNode.UI,
 				Identifier = newNode.BlackboardParameterIdentifier,
 			};
-
-			newNode.ParameterNodeType = ParameterNodeModeType.Property;
 
 			converter.AddBlackboardParameter( blackboardParameter );
 
@@ -149,7 +145,7 @@ internal class Float3NodeConvert : BaseNodeConvert
 		}
 		else
 		{
-			var newNode = new Float3();
+			var newNode = new Float3ParameterNode();
 			newNode.Identifier = oldNode.Identifier;
 			newNode.Position = oldNode.Position;
 			newNode.Value = oldFloat3Node.Value;
@@ -167,8 +163,6 @@ internal class Float3NodeConvert : BaseNodeConvert
 				UI = newNode.UI,
 				Identifier = newNode.BlackboardParameterIdentifier,
 			};
-
-			newNode.ParameterNodeType = ParameterNodeModeType.Property;
 
 			converter.AddBlackboardParameter( blackboardParameter );
 
@@ -192,14 +186,14 @@ internal class Float4NodeConvert : BaseNodeConvert
 
 		if ( string.IsNullOrWhiteSpace( oldFloat4Node.Name ) )
 		{
-			var newConstantNode = new Float4ConstantNode();
+			var newConstantNode = new ColorConstantNode();
 			newConstantNode.Value = oldFloat4Node.Value;
 
 			newNodes.Add( newConstantNode );
 		}
 		else
 		{
-			var newNode = new Float4();
+			var newNode = new ColorParameterNode();
 			newNode.Identifier = oldNode.Identifier;
 			newNode.Position = oldNode.Position;
 			newNode.Value = oldFloat4Node.Value;
@@ -208,15 +202,13 @@ internal class Float4NodeConvert : BaseNodeConvert
 			newNode.UI = oldFloat4Node.UI.ConvertVanillaUI();
 			newNode.BlackboardParameterIdentifier = Guid.NewGuid();
 
-			BaseBlackboardParameter blackboardParameter = new Float4BlackboardParameter()
+			BaseBlackboardParameter blackboardParameter = new ColorBlackboardParameter()
 			{
 				Name = newNode.Name,
 				Value = newNode.Value,
 				UI = newNode.UI,
 				Identifier = newNode.BlackboardParameterIdentifier,
 			};
-
-			newNode.ParameterNodeType = ParameterNodeModeType.Property;
 
 			converter.AddBlackboardParameter( blackboardParameter );
 

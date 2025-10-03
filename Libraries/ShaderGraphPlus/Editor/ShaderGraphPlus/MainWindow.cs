@@ -1840,22 +1840,22 @@ public class MainWindow : DockWindow
 
 				switch ( parameterNode )
 				{
-					case Bool boolParam:
+					case BoolParameterNode boolParam:
 						newBlackboardParameter = new BoolBlackboardParameter( boolParam.Value ) { Name = boolParam.Name, Identifier = boolParam.BlackboardParameterIdentifier, UI = boolParam.UI };
 						break;
-					case Int intParam:
+					case IntParameterNode intParam:
 						newBlackboardParameter = new IntBlackboardParameter( intParam.Value ) { Name = intParam.Name, Identifier = intParam.BlackboardParameterIdentifier, UI = intParam.UI };
 						break;
-					case Float floatParam:
+					case FloatParameterNode floatParam:
 						newBlackboardParameter = new FloatBlackboardParameter( floatParam.Value ) { Name = floatParam.Name, Identifier = floatParam.BlackboardParameterIdentifier, UI = floatParam.UI };
 						break;
-					case Float2 float2Param:
+					case Float2ParameterNode float2Param:
 						newBlackboardParameter = new Float2BlackboardParameter( float2Param.Value ) { Name = float2Param.Name, Identifier = float2Param.BlackboardParameterIdentifier, UI = float2Param.UI };
 						break;
-					case Float3 float3Param:
+					case Float3ParameterNode float3Param:
 						newBlackboardParameter = new Float3BlackboardParameter( float3Param.Value ) { Name = float3Param.Name, Identifier = float3Param.BlackboardParameterIdentifier, UI = float3Param.UI };
 						break;
-					case Float4 float4Param:
+					case ColorParameterNode float4Param:
 						newBlackboardParameter = new Float4BlackboardParameter( float4Param.Value ) { Name = float4Param.Name, Identifier = float4Param.BlackboardParameterIdentifier, UI = float4Param.UI };
 						break;
 					default:

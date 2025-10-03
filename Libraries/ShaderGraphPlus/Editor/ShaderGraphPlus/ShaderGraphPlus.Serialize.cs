@@ -1,7 +1,8 @@
-﻿using Facepunch.ActionGraphs;
+﻿
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -351,6 +352,17 @@ partial class ShaderGraphPlus
 					node = UpdateSubgraphOutput( element, options );
 					fileVersion = 2;
 				}
+				else if ( fileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, element ) )
+				{
+					// Choose to selectivly replace node with a constant equivalent
+					// depending on if there is a valid name or not
+
+					SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node." );
+
+					node = ConvertToConstantNode( typeName, element, options );
+
+					//fileVersion = 3;
+				}
 				else // Nothing to upgrade.
 				{
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
@@ -530,7 +542,7 @@ partial class ShaderGraphPlus
 
 			if ( propertyValue is ISGPJsonUpgradeable upgradeable )
 			{
-				doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
+				//doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( upgradeable.Version, options ) );
 			}
 		}
 
@@ -631,7 +643,7 @@ partial class ShaderGraphPlus
 
 			BaseBlackboardParameter blackboardParameter = null;
 
-			if ( parameterNode is Int intNode )
+			if ( parameterNode is IntParameterNode intNode )
 			{
 				blackboardParameter = new IntBlackboardParameter()
 				{
@@ -642,7 +654,7 @@ partial class ShaderGraphPlus
 
 				intNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 			}
-			else if ( parameterNode is Bool boolNode )
+			else if ( parameterNode is BoolParameterNode boolNode )
 			{
 				blackboardParameter = new BoolBlackboardParameter()
 				{
@@ -653,7 +665,7 @@ partial class ShaderGraphPlus
 
 				boolNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 			}
-			else if ( parameterNode is Float floatNode )
+			else if ( parameterNode is FloatParameterNode floatNode )
 			{
 				blackboardParameter = new FloatBlackboardParameter()
 				{
@@ -664,7 +676,7 @@ partial class ShaderGraphPlus
 
 				floatNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 			}
-			else if ( parameterNode is Float2 float2Node )
+			else if ( parameterNode is Float2ParameterNode float2Node )
 			{
 				blackboardParameter = new Float2BlackboardParameter()
 				{
@@ -676,7 +688,7 @@ partial class ShaderGraphPlus
 				float2Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 
 			}
-			else if ( parameterNode is Float3 float3Node )
+			else if ( parameterNode is Float3ParameterNode float3Node )
 			{
 				blackboardParameter = new Float3BlackboardParameter()
 				{
@@ -687,7 +699,7 @@ partial class ShaderGraphPlus
 
 				float3Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 			}
-			else if ( parameterNode is Float4 float4Node )
+			else if ( parameterNode is ColorParameterNode float4Node )
 			{
 				blackboardParameter = new Float4BlackboardParameter()
 				{
@@ -722,6 +734,24 @@ partial class ShaderGraphPlus
 		return false;
 	}
 
+	private bool ShouldConvertParameterNodeToConstant( string typeName, JsonElement element )
+	{
+		// Only upgrade if it's a parameter node type
+		if ( !IsParameterNodeTypeToConvertToConstant( typeName ) )
+			return false;
+
+		// Only convert if it dosent have a name (indicating it's meant to be a constant value)
+		if ( element.TryGetProperty( "Name", out var nameProperty ) )
+		{
+			var name = nameProperty.GetString();
+
+			return string.IsNullOrWhiteSpace( name );
+		}
+
+		// No "Name" property? assume its ment to be a constant.
+		return true;
+	}
+
 	/// <summary>
 	/// Check if the type name represents a parameter node
 	/// </summary>
@@ -729,17 +759,104 @@ partial class ShaderGraphPlus
 	{
 		return typeName switch
 		{
-			"Bool" => true,
-			"Int" => true,
-			"Float" => true,
-			"Float2" => true,
-			"Float3" => true,
-			"Float4" => true,
+			"BoolParameterNode" => true,
+			"IntParameterNode" => true,
+			"FloatParameterNode" => true,
+			"Float2ParameterNode" => true,
+			"Float3ParameterNode" => true,
+			"ColorParameterNode" => true,
 			"TextureSampler" => true,
 			"Texture2DObjectNode" => true,
 			"SamplerNode" => true,
 			_ => false
 		};
+	}
+
+	private static bool IsParameterNodeTypeToConvertToConstant( string typeName )
+	{
+		return typeName switch
+		{
+			"BoolParameterNode" => true,
+			"IntParameterNode" => true,
+			"FloatParameterNode" => true,
+			"Float2ParameterNode" => true,
+			"Float3ParameterNode" => true,
+			"ColorParameterNode" => true,
+			_ => false
+		};
+	}
+
+	private BaseNodePlus ConvertToConstantNode( string typeName, JsonElement element, JsonSerializerOptions options )
+	{
+		if ( element.TryGetProperty( "Value", out var parameterValueElement ) )
+		{
+			// Map the parameter type to InputType and set default values
+			switch ( typeName )
+			{
+				case "BoolParameterNode":
+					var newNode1 = new BoolConstantNode() 
+					{ 
+						Value = parameterValueElement.GetBoolean()
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode1, element, options );
+					return newNode1;
+				case "IntParameterNode":
+					var newNode2 = new IntConstantNode()
+					{
+						Value = parameterValueElement.GetInt32()
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode2, element, options );
+					return newNode2;
+				case "FloatParameterNode":
+					var newNode3 = new FloatConstantNode()
+					{
+						Value = parameterValueElement.GetSingle()
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode3, element, options );
+					return newNode3;
+				case "Float2ParameterNode":
+					var vector2 = JsonSerializer.Deserialize<Vector2>( parameterValueElement.GetRawText(), options );
+					var newNode4 = new Float2ConstantNode() 
+					{ 
+						Value = vector2
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode4, element, options );
+					return newNode4;
+				case "Float3ParameterNode":
+					var vector3 = JsonSerializer.Deserialize<Vector3>( parameterValueElement.GetRawText(), options );
+					var newNode5 = new Float3ConstantNode()
+					{
+						Value = vector3
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode5, element, options );
+					return newNode5;
+				case "ColorParameterNode":
+					var color = JsonSerializer.Deserialize<Color>( parameterValueElement.GetRawText(), options );
+					var newNode6 = new ColorConstantNode()
+					{
+						Value = color
+					};
+
+					// Copy basic node properties
+					DeserializeObject( newNode6, element, options );
+
+					return newNode6;
+			}
+
+			throw new Exception( "Couldnt convert nameless Parameter node to Constant node" );
+		}
+
+		throw new Exception( "Couldnt convert nameless Parameter node to Constant node" );
 	}
 
 	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
@@ -799,28 +916,28 @@ partial class ShaderGraphPlus
 		// Map the parameter type to InputType and set default values
 		switch ( typeName )
 		{
-			case "Bool":
+			case "BoolParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Bool;
 				if ( element.TryGetProperty( "Value", out var boolValue ) )
 				{
 					subgraphInput.InputData = new VariantValueBool( boolValue.GetBoolean(), SubgraphPortType.Bool );
 				}
 				break;
-			case "Int":
+			case "IntParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Int;
 				if ( element.TryGetProperty( "Value", out var intValue ) )
 				{
 					subgraphInput.InputData = new VariantValueInt( intValue.GetInt32(), SubgraphPortType.Int );
 				}
 				break;
-			case "Float":
+			case "FloatParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Float;
 				if ( element.TryGetProperty( "Value", out var floatValue ) )
 				{
 					subgraphInput.InputData = new VariantValueFloat( floatValue.GetSingle(), SubgraphPortType.Float );
 				}
 				break;
-			case "Float2":
+			case "Float2ParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Vector2;
 				if ( element.TryGetProperty( "Value", out var float2Value ) )
 				{
@@ -828,7 +945,7 @@ partial class ShaderGraphPlus
 					subgraphInput.InputData = new VariantValueVector2( vector2, SubgraphPortType.Vector2 );
 				}
 				break;
-			case "Float3":
+			case "Float3ParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Vector3;
 				if ( element.TryGetProperty( "Value", out var float3Value ) )
 				{
@@ -836,12 +953,12 @@ partial class ShaderGraphPlus
 					subgraphInput.InputData = new VariantValueVector3( vector3, SubgraphPortType.Vector3 );
 				}
 				break;
-			case "Float4":
+			case "ColorParameterNode":
 				subgraphInput.InputData.InputType = SubgraphPortType.Color;
 				if ( element.TryGetProperty( "Value", out var ColorValue ) )
 				{
-					var vector4 = JsonSerializer.Deserialize<Vector4>( ColorValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Color );
+					var color = JsonSerializer.Deserialize<Color>( ColorValue.GetRawText(), options );
+					subgraphInput.InputData = new VariantValueColor( color, SubgraphPortType.Color );
 				}
 				break;
 			case "Texture2DObjectNode":
