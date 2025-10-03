@@ -115,7 +115,6 @@ internal class ShaderGraphPlusGroupControlWidget : ControlWidget
 		}
 		if ( originalProperty.Parent.Targets.First() is BaseBlackboardParameter bp )
 		{
-			
 			return bp;
 		}
 
