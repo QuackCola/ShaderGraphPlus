@@ -3,7 +3,7 @@ using Facepunch.ActionGraphs;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( string ), NamedEditor = "shadergraphplusgroup" )]
+[CustomEditor( typeof( string ), NamedEditor = ControlWidgetCustomEditors.UIGroupEditor )]
 internal class ShaderGraphPlusGroupControlWidget : ControlWidget
 {
 	public override bool SupportsMultiEdit => false;
