@@ -27,6 +27,10 @@ public enum ResultType
 	/// <summary>
 	/// 4 Component's
 	/// </summary>
+	Vector4,
+	/// <summary>
+	/// 4 Component's
+	/// </summary>
 	Color,
 	/// <summary>
 	/// 4 Component's
