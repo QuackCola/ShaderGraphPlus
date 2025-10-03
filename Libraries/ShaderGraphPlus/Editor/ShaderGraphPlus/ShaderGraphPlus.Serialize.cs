@@ -129,11 +129,16 @@ partial class ShaderGraphPlus
 					parameter = EditorTypeLibrary.Create<BaseBlackboardParameter>( typeName );
 					DeserializeObject( parameter, element, options );
 					
-					SGPLog.Info( $"parameter.Name == {parameter.Name}" );
+					//SGPLog.Info( $"parameter.Name == {parameter.Name}" );
 
 					if ( string.IsNullOrWhiteSpace( parameter.Name ) )
 					{
 						parameter.Name = $"parameter{parameters.Count}";
+					}
+
+					if ( parameter is ColorBlackboardParameter bp )
+					{
+						bp.UI = bp.UI with { ShowTypeProperty = false };
 					}
 
 					parameters.Add( parameter.Name, parameter );
