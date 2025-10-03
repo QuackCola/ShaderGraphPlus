@@ -184,8 +184,6 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 	{
 		UI = new ParameterUI { Type = UIType.Default };
 	}
-
-
 }
 
 [Title( "Color" ), Order( 5 )]

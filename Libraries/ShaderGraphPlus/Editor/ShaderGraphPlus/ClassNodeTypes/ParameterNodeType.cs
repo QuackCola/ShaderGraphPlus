@@ -94,8 +94,8 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 			FloatParameterNode => new FloatBlackboardParameter( (float)value ) { Name = name, Identifier = identifier },
 			Float2ParameterNode => new Float2BlackboardParameter( (Vector2)value ) { Name = name, Identifier = identifier },
 			Float3ParameterNode => new Float3BlackboardParameter( (Vector3)value ) { Name = name, Identifier = identifier },
-			Float4ParameterNode => new Float3BlackboardParameter( (Vector3)value ) { Name = name, Identifier = identifier },
-			ColorParameterNode => new Float4BlackboardParameter( (Color)value ) { Name = name, Identifier = identifier },
+			Float4ParameterNode => new Float3BlackboardParameter( (Vector4)value ) { Name = name, Identifier = identifier },
+			ColorParameterNode => new ColorBlackboardParameter( (Color)value ) { Name = name, Identifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
 
