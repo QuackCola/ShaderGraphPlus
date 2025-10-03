@@ -353,8 +353,6 @@ public sealed class Preview3DPanel : Widget
 	}
 }
 
-
-
 public sealed class Preview3D : SceneRenderingWidget
 {
 	private const int NoPreviewID = 0;

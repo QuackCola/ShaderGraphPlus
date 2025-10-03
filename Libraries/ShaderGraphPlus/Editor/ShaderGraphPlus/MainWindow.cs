@@ -541,7 +541,7 @@ public class MainWindow : DockWindow
 
 		ShaderFeatures.Clear();
 
-		var features = _graph.Parameters.OfType<IShaderFeature>();
+		var features = _graph.Parameters.OfType<IShaderFeatureBlackboardParameter>();
 
 		foreach ( var feature in features )
 		{
@@ -1855,8 +1855,11 @@ public class MainWindow : DockWindow
 					case Float3ParameterNode float3Param:
 						newBlackboardParameter = new Float3BlackboardParameter( float3Param.Value ) { Name = float3Param.Name, Identifier = float3Param.BlackboardParameterIdentifier, UI = float3Param.UI };
 						break;
-					case ColorParameterNode float4Param:
+					case Float4ParameterNode float4Param:
 						newBlackboardParameter = new Float4BlackboardParameter( float4Param.Value ) { Name = float4Param.Name, Identifier = float4Param.BlackboardParameterIdentifier, UI = float4Param.UI };
+						break;
+					case ColorParameterNode ColorParam:
+						newBlackboardParameter = new ColorBlackboardParameter( ColorParam.Value ) { Name = ColorParam.Name, Identifier = ColorParam.BlackboardParameterIdentifier, UI = ColorParam.UI };
 						break;
 					default:
 						throw new NotImplementedException();

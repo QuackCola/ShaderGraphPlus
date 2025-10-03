@@ -1,6 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
-internal interface IShaderFeature
+internal interface IShaderFeatureBlackboardParameter
 {
 }
 
@@ -143,7 +143,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Hide] public float Step => UI.Step;
 }
 
-[Title( "Color" ), Order( 5 )]
+[Title( "Float4" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
 {
 	[JsonIgnore, Hide]
@@ -186,7 +186,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 	}
 }
 
-[Title( "Color" ), Order( 5 )]
+[Title( "Color" ), Order( 6 )]
 public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
 	[JsonIgnore, Hide]
@@ -229,8 +229,8 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 	}
 }
 
-[Title( "Shader Feature Boolean" ), Order( 6 )]
-public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeature
+[Title( "Shader Feature Boolean" ), Order( 7 )]
+public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
 {
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
@@ -248,9 +248,9 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 /// <summary>
 /// TODO : Unhide when Static Combo Enum Switch or similar is implemented.
 /// </summary>
-[Title( "Shader Feature Enum" ), Order( 7 )]
+[Title( "Shader Feature Enum" ), Order( 8 )]
 [Hide]
-public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeature
+public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
 {
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }

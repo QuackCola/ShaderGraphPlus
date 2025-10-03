@@ -28,18 +28,7 @@ public sealed class ParameterNodeType : ClassNodeType
 		}
 
 		Guid identifier = BaseBlackboardValue.Identifier;
-		object value = BaseBlackboardValue.GetValue(); //switch
-		//{
-		//	BoolBlackboardParameter v => v.Value,
-		//	IntBlackboardParameter v => v.Value,
-		//	FloatBlackboardParameter v => v.Value,
-		//	Float2BlackboardParameter v => v.Value,
-		//	Float3BlackboardParameter v => v.Value,
-		//	Float4BlackboardParameter v => v.Value,
-		//	ShaderFeatureBooleanBlackboardParameter v => v.Value,
-		//	ShaderFeatureEnumBlackboardParameter v => v.Value,
-		//	_ => throw new NotImplementedException(),
-		//};
+		object value = BaseBlackboardValue.GetValue();
 
 		BaseNodePlus parameterNode = node switch
 		{
@@ -89,13 +78,20 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 		BlackboardParameter = node switch
 		{
-			BoolParameterNode => new BoolBlackboardParameter( (bool)value ) { Name = name, Identifier = identifier },
-			IntParameterNode => new IntBlackboardParameter( (int)value ) { Name = name, Identifier = identifier },
-			FloatParameterNode => new FloatBlackboardParameter( (float)value ) { Name = name, Identifier = identifier },
-			Float2ParameterNode => new Float2BlackboardParameter( (Vector2)value ) { Name = name, Identifier = identifier },
-			Float3ParameterNode => new Float3BlackboardParameter( (Vector3)value ) { Name = name, Identifier = identifier },
-			Float4ParameterNode => new Float3BlackboardParameter( (Vector4)value ) { Name = name, Identifier = identifier },
-			ColorParameterNode => new ColorBlackboardParameter( (Color)value ) { Name = name, Identifier = identifier },
+			BoolParameterNode => new BoolBlackboardParameter( (bool)value ) 
+			{ Name = name, Identifier = identifier },
+			IntParameterNode => new IntBlackboardParameter( (int)value ) 
+			{ Name = name, Identifier = identifier },
+			FloatParameterNode => new FloatBlackboardParameter( (float)value ) 
+			{ Name = name, Identifier = identifier },
+			Float2ParameterNode => new Float2BlackboardParameter( (Vector2)value ) 
+			{ Name = name, Identifier = identifier },
+			Float3ParameterNode => new Float3BlackboardParameter( (Vector3)value ) 
+			{ Name = name, Identifier = identifier },
+			Float4ParameterNode => new Float4BlackboardParameter( (Vector4)value ) 
+			{ Name = name, Identifier = identifier },
+			ColorParameterNode => new ColorBlackboardParameter( (Color)value ) 
+			{ Name = name, Identifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
 
