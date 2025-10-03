@@ -15,6 +15,9 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 {
 	public T Value { get; set; }
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ConstantNode;
+
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{
 		if ( compiler.IsPreview )
