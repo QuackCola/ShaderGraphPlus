@@ -412,7 +412,7 @@ public sealed class ColorParameterNode : ParameterNode<Color>
 	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
@@ -471,6 +471,6 @@ public sealed class ColorParameterNode : ParameterNode<Color>
 	public ColorParameterNode()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color };
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 }

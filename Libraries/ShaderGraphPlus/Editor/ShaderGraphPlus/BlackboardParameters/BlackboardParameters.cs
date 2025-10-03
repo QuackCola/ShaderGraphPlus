@@ -222,12 +222,12 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 	public ColorBlackboardParameter()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color };
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 
 	public ColorBlackboardParameter( Color value ) : base( value )
 	{
-		UI = new ParameterUI { Type = UIType.Color };
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 }
 
