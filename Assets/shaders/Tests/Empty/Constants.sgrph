@@ -95,6 +95,14 @@
       "Identifier": "6",
       "Position": "-516,-324",
       "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "1,1,1,1",
+      "Identifier": "7",
+      "Position": "-516,276",
+      "HandleOffsets": {}
     }
   ],
   "parameters": []
