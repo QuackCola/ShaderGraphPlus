@@ -33,10 +33,9 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
+      "_class": "ColorParameterNode",
       "__version": 2,
       "BlackboardParameterIdentifier": "cdffc8d9-8668-47fb-adba-339e62538592",
-      "ParameterNodeType": "Property",
       "Value": "1,0,0,1",
       "Name": "Parameter5",
       "IsAttribute": false,
@@ -58,10 +57,9 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Bool",
+      "_class": "BoolParameterNode",
       "__version": 2,
       "BlackboardParameterIdentifier": "86e10809-c454-4aeb-91a6-e458dd7f5c02",
-      "ParameterNodeType": "Property",
       "Value": false,
       "Name": "Parameter0",
       "IsAttribute": false,
@@ -83,12 +81,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Int",
+      "_class": "IntParameterNode",
       "__version": 2,
       "Min": 0,
       "Max": 1,
       "BlackboardParameterIdentifier": "28d677f8-119e-4bc3-9b84-5e0f14dea144",
-      "ParameterNodeType": "Property",
       "Value": 12,
       "Name": "Parameter1",
       "IsAttribute": false,
@@ -110,12 +107,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float",
+      "_class": "FloatParameterNode",
       "__version": 2,
       "Min": 0,
       "Max": 1,
       "BlackboardParameterIdentifier": "2c5aae3f-2876-4089-a6ed-52ad1ce8352c",
-      "ParameterNodeType": "Property",
       "Value": 1,
       "Name": "Parameter2",
       "IsAttribute": false,
@@ -137,12 +133,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float2",
+      "_class": "Float2ParameterNode",
       "__version": 2,
       "Min": "0,0",
       "Max": "1,1",
       "BlackboardParameterIdentifier": "4f9f707d-ba4c-49da-974f-10a3ed2c1bbc",
-      "ParameterNodeType": "Property",
       "Value": "1,0",
       "Name": "Parameter3",
       "IsAttribute": false,
@@ -164,12 +159,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float3",
+      "_class": "Float3ParameterNode",
       "__version": 2,
       "Min": "0,0,0",
       "Max": "1,1,1",
       "BlackboardParameterIdentifier": "ed04b86e-7158-4ec1-8d1b-cef6a384dbdb",
-      "ParameterNodeType": "Property",
       "Value": "1,0,1",
       "Name": "HLX",
       "IsAttribute": false,
