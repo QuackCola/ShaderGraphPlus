@@ -43,10 +43,13 @@ internal class ShaderGraphPlusGroupControlWidget : ControlWidget
 		{
 			var graph = GetBlackboardParameter( property ).Graph;
 			
-			foreach ( var parameter in graph.Parameters )
+			if ( graph is not null )
 			{
-				var serialized = parameter.GetSerialized();
-				LoopOverProperties( serialized, groupProperty, ref namesSoFar );
+				foreach ( var parameter in graph.Parameters )
+				{
+					var serialized = parameter.GetSerialized();
+					LoopOverProperties( serialized, groupProperty, ref namesSoFar );
+				}
 			}
 		}
 
