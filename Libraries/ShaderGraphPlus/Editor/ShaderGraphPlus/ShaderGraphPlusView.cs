@@ -213,12 +213,11 @@ public class ShaderGraphPlusView : GraphView
 			Float3ConstantNode => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
 			Float4ConstantNode => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
 			ColorConstantNode => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-			_ => throw new NotImplementedException(),
+			_ => throw new NotImplementedException( $"Constant node {constantNode.GetType()} can not find an accompyaning parameter node." ),
 		};
 
 		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
 		{
-		
 			var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
 
 			CreateNewNode( parameterNodeType, nodePosition );
@@ -262,7 +261,8 @@ public class ShaderGraphPlusView : GraphView
 				FloatBlackboardParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
 				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
 				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
-				Float4BlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+				Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+				ColorBlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
 				ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
 				_ => throw new NotImplementedException(),
 			};

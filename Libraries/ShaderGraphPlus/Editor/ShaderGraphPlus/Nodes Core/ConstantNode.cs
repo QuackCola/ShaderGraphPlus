@@ -7,6 +7,8 @@ public interface IConstantNode
 	public object GetMinValue();
 	public object GetMaxValue();
 
+	public string Identifier { get; set; }
+
 	public bool UseStep { get; }
 	public bool UseMinMax { get; }
 }

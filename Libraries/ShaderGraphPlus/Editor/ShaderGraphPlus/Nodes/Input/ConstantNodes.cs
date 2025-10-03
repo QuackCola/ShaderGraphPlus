@@ -6,7 +6,6 @@ using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
-
 /// <summary>
 /// Bool value
 /// </summary>

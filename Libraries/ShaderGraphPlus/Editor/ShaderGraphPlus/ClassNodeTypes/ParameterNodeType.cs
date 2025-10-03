@@ -30,6 +30,7 @@ public sealed class ParameterNodeType : ClassNodeType
 		Guid identifier = BaseBlackboardValue.Identifier;
 		object value = BaseBlackboardValue.GetValue();
 
+		// Initialize the new parameterNode
 		BaseNodePlus parameterNode = node switch
 		{
 			BoolParameterNode => new BoolParameterNode() 
@@ -75,26 +76,11 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 		var name = Name;
 		var value = IConstantNode.GetValue();
 		var identifier = Guid.NewGuid();
+		var iParameterNode = node as IParameterNode;
 
-		BlackboardParameter = node switch
-		{
-			BoolParameterNode => new BoolBlackboardParameter( (bool)value ) 
-			{ Name = name, Identifier = identifier },
-			IntParameterNode => new IntBlackboardParameter( (int)value ) 
-			{ Name = name, Identifier = identifier },
-			FloatParameterNode => new FloatBlackboardParameter( (float)value ) 
-			{ Name = name, Identifier = identifier },
-			Float2ParameterNode => new Float2BlackboardParameter( (Vector2)value ) 
-			{ Name = name, Identifier = identifier },
-			Float3ParameterNode => new Float3BlackboardParameter( (Vector3)value ) 
-			{ Name = name, Identifier = identifier },
-			Float4ParameterNode => new Float4BlackboardParameter( (Vector4)value ) 
-			{ Name = name, Identifier = identifier },
-			ColorParameterNode => new ColorBlackboardParameter( (Color)value ) 
-			{ Name = name, Identifier = identifier },
-			_ => throw new NotImplementedException(),
-		};
-
+		BlackboardParameter = BlackboardUtils.CreateBlackboardParameter( iParameterNode, name, identifier );
+		
+		// Initialize the new parameterNode
 		BaseNodePlus parameterNode = node switch
 		{
 			BoolParameterNode => new BoolParameterNode() 
@@ -113,6 +99,8 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 			{ Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
+
+		parameterNode.Identifier = IConstantNode.Identifier;
 
 		return parameterNode;
 	}

@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus;
+﻿using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 internal interface IShaderFeatureBlackboardParameter
 {
@@ -261,5 +263,30 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGe
 
 	public ShaderFeatureEnumBlackboardParameter() : base()
 	{
+	}
+}
+
+internal static class BlackboardUtils
+{
+	internal static BaseBlackboardParameter CreateBlackboardParameter( IParameterNode parameterNode, string name = "", Guid guid = default )
+	{
+		return (BaseNodePlus)parameterNode switch
+		{
+			BoolParameterNode p => new BoolBlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			IntParameterNode p => new IntBlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			FloatParameterNode p => new FloatBlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			Float2ParameterNode p => new Float2BlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			Float3ParameterNode p => new Float3BlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			Float4ParameterNode p => new Float4BlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			ColorParameterNode p => new ColorBlackboardParameter( p.Value )
+			{ Name = name, Identifier = guid },
+			_ => throw new NotImplementedException(),
+		};
 	}
 }
