@@ -35,7 +35,7 @@ public enum SubgraphPortType
 /// Input of a Subgraph.
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
-public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
+public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncable
 {
 	[Hide]
 	public override int Version => 1;
@@ -45,9 +45,44 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
-	
+
 	//[Hide, JsonIgnore]
 	//private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[Hide]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
+	public void UpdateFromBlackboard( BaseBlackboardParameter blackboardParameter )
+	{
+		if ( blackboardParameter is BoolBlackboardParameter bbp )
+		{
+			SetDefaultValue( bbp.Value );
+		}
+		else if ( blackboardParameter is IntBlackboardParameter ibp )
+		{
+			SetDefaultValue( ibp.Value );
+		}
+		else if ( blackboardParameter is FloatBlackboardParameter fbp )
+		{
+			SetDefaultValue( fbp.Value );
+		}
+		else if ( blackboardParameter is Float2BlackboardParameter f2bp )
+		{
+			SetDefaultValue( f2bp.Value );
+		}
+		else if ( blackboardParameter is Float3BlackboardParameter f3bp )
+		{
+			SetDefaultValue( f3bp.Value );
+		}
+		else if ( blackboardParameter is Float4BlackboardParameter f4bp )
+		{
+			throw new NotImplementedException();
+		}
+		else if ( blackboardParameter is ColorBlackboardParameter colorbp )
+		{
+			SetDefaultValue( colorbp.Value );
+		}
+	}
 
 	[Hide, JsonIgnore]
 	private string _textureGlobal;

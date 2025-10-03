@@ -211,39 +211,48 @@ public class ShaderGraphPlusView : GraphView
 	private BaseNodePlus ConvertConstantNodeToParameter( IConstantNode constantNode, string parameterName, Vector2 nodePosition )
 	{
 		BaseNodePlus node = null;
+		var isSubgraph = Graph.IsSubgraph;
 
-		string nodeFullName = constantNode switch
+		if ( !isSubgraph )
 		{
-			BoolConstantNode => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
-			IntConstantNode => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
-			FloatConstantNode => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
-			Float2ConstantNode => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
-			Float3ConstantNode => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
-			Float4ConstantNode => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
-			ColorConstantNode => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-			_ => throw new NotImplementedException( $"Constant node {constantNode.GetType()} can not find an accompyaning parameter node." ),
-		};
-
-		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
-		{
-			var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
-
-			node = CreateNewNode( parameterNodeType, nodePosition ).Node as BaseNodePlus;
-			
-			if ( parameterNodeType.BlackboardParameter != null )
+			string nodeFullName = constantNode switch
 			{
-				Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
+				BoolConstantNode => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+				IntConstantNode => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+				FloatConstantNode => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+				Float2ConstantNode => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+				Float3ConstantNode => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+				Float4ConstantNode => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+				ColorConstantNode => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+				_ => throw new NotImplementedException( $"Constant node {constantNode.GetType()} can not find an accompyaning parameter node." ),
+			};
 
-				OnConstantNodeConvertedToParameter?.Invoke();
+			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+			{
+				var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
+
+				node = CreateNewNode( parameterNodeType, nodePosition ).Node as BaseNodePlus;
+
+				if ( parameterNodeType.BlackboardParameter != null )
+				{
+					Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
+
+					OnConstantNodeConvertedToParameter?.Invoke();
+				}
 			}
-		}
 
-		if ( node != null )
+			if ( node != null )
+			{
+				return node;
+			}
+
+			throw new Exception();
+		}
+		else
 		{
-			return node;
+			// TODO
+			throw new NotImplementedException();
 		}
-
-		throw new Exception();
 	}
 
 	protected override INodeTypePlus NodeTypeFromDragEvent( DragEvent ev )
@@ -269,24 +278,39 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( ev.Data.Object is BaseBlackboardParameter blackboardParameter )
 		{
-			string nodeFullName = blackboardParameter switch
-			{
-				BoolBlackboardParameter => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
-				IntBlackboardParameter => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
-				FloatBlackboardParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
-				Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
-				Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
-				Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
-				ColorBlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-				ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
-				_ => throw new NotImplementedException(),
-			};
+			var isSubgraph = Graph.IsSubgraph;
 
-			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+			if ( !isSubgraph )
 			{
-				var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
+				string nodeFullName = blackboardParameter switch
+				{
+					BoolBlackboardParameter => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+					IntBlackboardParameter => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+					FloatBlackboardParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+					Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+					Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+					Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+					ColorBlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+					ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
+					_ => throw new NotImplementedException(),
+				};
 
-				return parameterNodeType;
+				if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+				{
+					var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
+
+					return parameterNodeType;
+				}
+			}
+			else
+			{
+				//SGPLog.Info( $"IsSubgraph!" );
+				if ( AvailableNodes.TryGetValue( DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname, out var nodeType ) )
+				{
+					var subgraphInputNodeType = new BlackboardPropertyToSubgraphInputNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
+
+					return subgraphInputNodeType;
+				}
 			}
 		}
 

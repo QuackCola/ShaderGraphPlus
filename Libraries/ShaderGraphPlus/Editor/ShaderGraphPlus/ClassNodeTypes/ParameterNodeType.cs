@@ -15,6 +15,7 @@ public sealed class ParameterNodeType : ClassNodeType
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
+		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
 
 		string name = BaseBlackboardValue.Name;//BaseBlackboardValue switch
 
@@ -33,21 +34,21 @@ public sealed class ParameterNodeType : ClassNodeType
 		// Initialize the new parameterNode
 		BaseNodePlus parameterNode = node switch
 		{
-			BoolParameterNode => new BoolParameterNode() 
+			BoolParameterNode => new BoolParameterNode()
 			{ Name = name, Value = (bool)value, BlackboardParameterIdentifier = identifier },
-			IntParameterNode  => new IntParameterNode() 
+			IntParameterNode => new IntParameterNode()
 			{ Name = name, Value = (int)value, BlackboardParameterIdentifier = identifier },
-			FloatParameterNode  => new FloatParameterNode() 
+			FloatParameterNode => new FloatParameterNode()
 			{ Name = name, Value = (float)value, BlackboardParameterIdentifier = identifier },
-			Float2ParameterNode  => new Float2ParameterNode() 
+			Float2ParameterNode => new Float2ParameterNode()
 			{ Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier },
-			Float3ParameterNode  => new Float3ParameterNode() 
+			Float3ParameterNode => new Float3ParameterNode()
 			{ Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier },
 			Float4ParameterNode => new Float4ParameterNode()
 			{ Name = name, Value = (Vector4)value, BlackboardParameterIdentifier = identifier },
-			ColorParameterNode  => new ColorParameterNode() 
+			ColorParameterNode => new ColorParameterNode()
 			{ Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier },
-			StaticSwitchNode => new StaticSwitchNode 
+			StaticSwitchNode => new StaticSwitchNode
 			{ Feature = (ShaderFeatureBoolean)value, BlackboardParameterIdentifier = identifier },
 			_ => throw new NotImplementedException(),
 		};
@@ -72,6 +73,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
+		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
 
 		var blackboardParameterIdentifier = Guid.NewGuid();
 		var iParameterNodeType = node.GetType();
@@ -81,22 +83,22 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 		// Initialize the new parameterNode
 		BaseNodePlus parameterNode = node switch
 		{
-			BoolParameterNode => new BoolParameterNode() 
-			{ 
-				Name = Name, 
-				Value = (bool)IConstantNode.GetValue(), 
-				BlackboardParameterIdentifier = blackboardParameterIdentifier 
+			BoolParameterNode => new BoolParameterNode()
+			{
+				Name = Name,
+				Value = (bool)IConstantNode.GetValue(),
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
 			},
-			IntParameterNode => new IntParameterNode() 
-			{ 
-				Name = Name, 
+			IntParameterNode => new IntParameterNode()
+			{
+				Name = Name,
 				Value = (int)IConstantNode.GetValue(),
 				Min = (int)IConstantNode.GetMinValue(),
 				Max = (int)IConstantNode.GetMaxValue(),
 				BlackboardParameterIdentifier = blackboardParameterIdentifier
 			},
 			FloatParameterNode => new FloatParameterNode()
-			{ 
+			{
 				Name = Name,
 				Value = (float)IConstantNode.GetValue(),
 				Min = (float)IConstantNode.GetMinValue(),
@@ -105,7 +107,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				BlackboardParameterIdentifier = blackboardParameterIdentifier
 			},
 			Float2ParameterNode => new Float2ParameterNode()
-			{ 
+			{
 				Name = Name,
 				Value = (Vector2)IConstantNode.GetValue(),
 				Min = (Vector2)IConstantNode.GetMinValue(),
