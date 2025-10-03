@@ -80,7 +80,7 @@ public sealed class ComponentMask : ShaderNodePlus
 		{
 
 			if ( result.ResultType != ResultType.Float && result.ResultType != ResultType.Vector2 &&
-				result.ResultType != ResultType.Vector3 && result.ResultType != ResultType.Color )
+				result.ResultType != ResultType.Vector3 && result.ResultType != ResultType.Vector4 && result.ResultType != ResultType.Color )
 			{
 				HasError = true;
 				return NodeResult.Error( $"Cannot mask ResultType \"{result.ResultType}\"" );
