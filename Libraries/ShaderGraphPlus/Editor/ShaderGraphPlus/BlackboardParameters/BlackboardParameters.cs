@@ -44,14 +44,14 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 
 	public FloatBlackboardParameter()
 	{
-		Min = 0;
-		Max = 1;
+		Min = 0.0f;
+		Max = 1.0f;
 	}
 
 	public FloatBlackboardParameter( float value ) : base( value )
 	{
-		Min = 0;
-		Max = 0;
+		Min = 0.0f;
+		Max = 1.0f;
 	}
 }
 
@@ -63,14 +63,14 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 
 	public Float2BlackboardParameter()
 	{
-		Min = 0;
-		Max = 1;
+		Min = Vector2.Zero;
+		Max = Vector2.One;
 	}
 
 	public Float2BlackboardParameter( Vector2 value ) : base( value )
 	{
-		Min = 0;
-		Max = 0;
+		Min = Vector2.Zero;
+		Max = Vector2.One;
 	}
 
 	[JsonIgnore, Hide]
@@ -104,14 +104,14 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 
 	public Float3BlackboardParameter()
 	{
-		Min = 0;
-		Max = 1;
+		Min = Vector3.Zero;
+		Max = Vector3.One;
 	}
 
 	public Float3BlackboardParameter( Vector3 value ) : base( value )
 	{
-		Min = 0;
-		Max = 0;
+		Min = Vector3.Zero;
+		Max = Vector3.One;
 	}
 
 	[JsonIgnore, Hide]
@@ -148,6 +148,9 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 [Title( "Float4" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
 {
+	[Group( "Range" )] public Vector4 Min { get; set; }
+	[Group( "Range" )] public Vector4 Max { get; set; }
+
 	[JsonIgnore, Hide]
 	public float ValueX
 	{
@@ -176,14 +179,27 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 		set => Value = Value.WithW( value );
 	}
 
+	[Hide] public float MinX => Min.x;
+	[Hide] public float MinY => Min.y;
+	[Hide] public float MinZ => Min.z;
+	[Hide] public float MaxX => Max.x;
+	[Hide] public float MaxY => Max.y;
+	[Hide] public float MaxZ => Max.z;
+
+	[Hide] public float Step => UI.Step;
+
 	public Float4BlackboardParameter()
 	{
 		Value = Vector4.One;
+		Min = Vector4.Zero;
+		Max = Vector4.One;
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public Float4BlackboardParameter( Vector4 value ) : base( value )
 	{
+		Min = Vector4.Zero;
+		Max = Vector4.One;
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 }

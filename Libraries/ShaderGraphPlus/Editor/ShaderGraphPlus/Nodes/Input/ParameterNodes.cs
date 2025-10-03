@@ -28,7 +28,7 @@ public sealed class BoolParameterNode : ParameterNode<bool>
 
 	public BoolParameterNode() : base()
 	{
-
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
 	}
 
 	[Hide, JsonIgnore]
@@ -58,6 +58,8 @@ public sealed class IntParameterNode : ParameterNode<int>
 		{
 			Name = intBlackboardParameter.Name;
 			Value = intBlackboardParameter.Value;
+			Min = intBlackboardParameter.Min;
+			Max = intBlackboardParameter.Max;
 			UI = intBlackboardParameter.UI;
 		}
 	}
@@ -66,7 +68,7 @@ public sealed class IntParameterNode : ParameterNode<int>
 	[Hide, Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 	
@@ -77,6 +79,7 @@ public sealed class IntParameterNode : ParameterNode<int>
 	{
 		Min = 0;
 		Max = 1;
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
 	}
 }
 
@@ -95,11 +98,11 @@ public sealed class FloatParameterNode : ParameterNode<float>
 		{
 			Name = floatBlackboardParameter.Name;
 			Value = floatBlackboardParameter.Value;
+			Min = floatBlackboardParameter.Min;
+			Max = floatBlackboardParameter.Max;
 			UI = floatBlackboardParameter.UI;
 		}
 	}
-
-	[Hide] public float Step => UI.Step;
 
 	[Output( typeof( float ) ), Title( "Value" )]
 	[Hide, Editor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
@@ -112,10 +115,13 @@ public sealed class FloatParameterNode : ParameterNode<float>
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
+	[Hide] public float Step => UI.Step;
+
 	public FloatParameterNode()
 	{
-		Min = 0;
-		Max = 1;
+		Min = 0.0f;
+		Max = 1.0f;
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 	}
 }
 
@@ -134,6 +140,8 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 		{
 			Name = float2BlackboardParameter.Name;
 			Value = float2BlackboardParameter.Value;
+			Min = float2BlackboardParameter.Min;
+			Max = float2BlackboardParameter.Max;
 			UI = float2BlackboardParameter.UI;
 		}
 	}
@@ -150,8 +158,9 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 
 	public Float2ParameterNode()
 	{
-		Min = 0;
-		Max = 1;
+		Min = Vector2.Zero;
+		Max = Vector2.One;
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 	}
 
 	[JsonIgnore, Hide]
@@ -172,7 +181,6 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 	[Hide] public float MinY => Min.y;
 	[Hide] public float MaxX => Max.x;
 	[Hide] public float MaxY => Max.y;
-
 	[Hide] public float Step => UI.Step;
 
 	/// <summary>
@@ -188,16 +196,6 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueY ) ), Title( "Y" )]
 	[Range( nameof( MinY ), nameof( MaxY ), nameof( Step ) )]
 	public NodeResult.Func Y => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
-
-	public Vector4 GetRangeMin()
-	{
-		return new( Min.x, Min.y, 0, 0 );
-	}
-
-	public Vector4 GetRangeMax()
-	{
-		return new( Max.x, Max.y, 0, 0 );
-	}
 }
 
 /// <summary>
@@ -215,6 +213,8 @@ public sealed class Float3ParameterNode : ParameterNode<Vector3>
 		{
 			Name = float3BlackboardParameter.Name;
 			Value = float3BlackboardParameter.Value;
+			Min = float3BlackboardParameter.Min;
+			Max = float3BlackboardParameter.Max;
 			UI = float3BlackboardParameter.UI;
 		}
 	}
@@ -231,8 +231,9 @@ public sealed class Float3ParameterNode : ParameterNode<Vector3>
 
 	public Float3ParameterNode()
 	{
-		Min = 0;
-		Max = 1;
+		Min = Vector3.Zero;
+		Max = Vector3.One;
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 	}
 
 	[JsonIgnore, Hide]
@@ -262,7 +263,6 @@ public sealed class Float3ParameterNode : ParameterNode<Vector3>
 	[Hide] public float MaxX => Max.x;
 	[Hide] public float MaxY => Max.y;
 	[Hide] public float MaxZ => Max.z;
-
 	[Hide] public float Step => UI.Step;
 
 	/// <summary>
@@ -302,6 +302,8 @@ public sealed class Float4ParameterNode : ParameterNode<Vector4>
 		{
 			Name = float4BlackboardParameter.Name;
 			Value = float4BlackboardParameter.Value;
+			Min = float4BlackboardParameter.Min;
+			Max = float4BlackboardParameter.Max;
 			UI = float4BlackboardParameter.UI;
 		}
 	}
@@ -318,8 +320,9 @@ public sealed class Float4ParameterNode : ParameterNode<Vector4>
 
 	public Float4ParameterNode()
 	{
-		Min = 0;
-		Max = 1;
+		Min = Vector4.Zero;
+		Max = Vector4.One;
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 	}
 
 	[JsonIgnore, Hide]
@@ -416,6 +419,12 @@ public sealed class ColorParameterNode : ParameterNode<Color>
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
+	public ColorParameterNode()
+	{
+		Value = Color.White;
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
+	}
+
 	[JsonIgnore, Hide]
 	public float ValueR
 	{
@@ -467,10 +476,4 @@ public sealed class ColorParameterNode : ParameterNode<Color>
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueA ) ), Title( "Alpha" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", ValueA, compiler );
-
-	public ColorParameterNode()
-	{
-		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
-	}
 }
