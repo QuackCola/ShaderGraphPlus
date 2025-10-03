@@ -164,11 +164,12 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
-	internal void AddBlackboardParameter( BaseBlackboardParameter Parameter )
+	internal void AddBlackboardParameter( BaseBlackboardParameter parameter )
 	{
-		if ( _parameters.TryAdd( Parameter.Identifier, Parameter ) )
+		parameter.Graph = this;
+		if ( _parameters.TryAdd( parameter.Identifier, parameter ) )
 		{
-			//SGPLog.Info( $"Added blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
+			//SGPLog.Info( $"Added blackboard Parameter : \"{parameter.Name}\" of type : \"{Parameter}\"" );
 		}
 	}
 

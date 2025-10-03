@@ -7,6 +7,9 @@ public abstract class BaseBlackboardParameter
 
 	public virtual string Name { get; set; } = "";
 
+	[Hide, JsonIgnore]
+	public ShaderGraphPlus Graph { get; set; }
+
 	public BaseBlackboardParameter()
 	{
 
