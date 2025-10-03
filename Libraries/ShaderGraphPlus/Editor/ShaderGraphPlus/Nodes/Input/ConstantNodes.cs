@@ -408,10 +408,11 @@ public sealed class ColorConstantNode : ConstantNode<Color>
 
 	public ColorConstantNode() : base()
 	{
+		Value = Color.White;
 	}
 
 	[Output( typeof( Color ) ), Title( "RGBA" )]
-	[Hide]
+	[Hide, Editor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( "", Value, default, default, false, false, default );
