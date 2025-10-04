@@ -641,82 +641,148 @@ partial class ShaderGraphPlus
 
 	private void GraphV3Upgrade()
 	{
-		foreach ( var parameterNode in Nodes.OfType<IParameterNode>() )
+		if ( IsSubgraph )
 		{
-			if ( string.IsNullOrWhiteSpace( parameterNode.Name ) )
-				continue;
-
-			BaseBlackboardParameter blackboardParameter = null;
-
-			if ( parameterNode is IntParameterNode intNode )
+			foreach ( var subgraphInput in Nodes.OfType<SubgraphInput>() )
 			{
-				blackboardParameter = new IntBlackboardParameter()
-				{
-					Name = intNode.Name,
-					Value = intNode.Value,
-					UI = intNode.UI,
-				};
+				if ( string.IsNullOrWhiteSpace( subgraphInput.InputName ) )
+					continue;
 
-				intNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				BaseBlackboardParameter blackboardParameter = null;
+
+				if ( subgraphInput.InputData.InputType == SubgraphPortType.Bool )
+				{
+					blackboardParameter = new BoolBlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<bool>(),
+					};
+				}
+				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Int )
+				{
+					blackboardParameter = new IntBlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<int>(),
+					};
+				}
+				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Float )
+				{
+					blackboardParameter = new FloatBlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<float>(),
+					};
+				}
+				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector2 )
+				{
+					blackboardParameter = new Float2BlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<Vector2>(),
+					};
+				}
+				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector3 )
+				{
+					blackboardParameter = new Float3BlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<Vector3>(),
+					};
+				}
+				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Color )
+				{
+					blackboardParameter = new Float4BlackboardParameter()
+					{
+						Name = subgraphInput.InputName,
+						Value = subgraphInput.InputData.GetValue<Color>(),
+					};
+				}
+
+				subgraphInput.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+
+				AddBlackboardParameter( blackboardParameter );
 			}
-			else if ( parameterNode is BoolParameterNode boolNode )
+		}
+		else
+		{
+			foreach ( var parameterNode in Nodes.OfType<IParameterNode>() )
 			{
-				blackboardParameter = new BoolBlackboardParameter()
+				if ( string.IsNullOrWhiteSpace( parameterNode.Name ) )
+					continue;
+
+				BaseBlackboardParameter blackboardParameter = null;
+
+				if ( parameterNode is IntParameterNode intNode )
 				{
-					Name = boolNode.Name,
-					Value = boolNode.Value,
-					UI = boolNode.UI,
-				};
+					blackboardParameter = new IntBlackboardParameter()
+					{
+						Name = intNode.Name,
+						Value = intNode.Value,
+						UI = intNode.UI,
+					};
 
-				boolNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
-			}
-			else if ( parameterNode is FloatParameterNode floatNode )
-			{
-				blackboardParameter = new FloatBlackboardParameter()
+					intNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				}
+				else if ( parameterNode is BoolParameterNode boolNode )
 				{
-					Name = floatNode.Name,
-					Value = floatNode.Value,
-					UI = floatNode.UI,
-				};
+					blackboardParameter = new BoolBlackboardParameter()
+					{
+						Name = boolNode.Name,
+						Value = boolNode.Value,
+						UI = boolNode.UI,
+					};
 
-				floatNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
-			}
-			else if ( parameterNode is Float2ParameterNode float2Node )
-			{
-				blackboardParameter = new Float2BlackboardParameter()
+					boolNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				}
+				else if ( parameterNode is FloatParameterNode floatNode )
 				{
-					Name = float2Node.Name,
-					Value = float2Node.Value,
-					UI = float2Node.UI,
-				};
+					blackboardParameter = new FloatBlackboardParameter()
+					{
+						Name = floatNode.Name,
+						Value = floatNode.Value,
+						UI = floatNode.UI,
+					};
 
-				float2Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
-
-			}
-			else if ( parameterNode is Float3ParameterNode float3Node )
-			{
-				blackboardParameter = new Float3BlackboardParameter()
+					floatNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				}
+				else if ( parameterNode is Float2ParameterNode float2Node )
 				{
-					Name = float3Node.Name,
-					Value = float3Node.Value,
-					UI = float3Node.UI,
-				};
+					blackboardParameter = new Float2BlackboardParameter()
+					{
+						Name = float2Node.Name,
+						Value = float2Node.Value,
+						UI = float2Node.UI,
+					};
 
-				float3Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
-			}
-			else if ( parameterNode is ColorParameterNode float4Node )
-			{
-				blackboardParameter = new Float4BlackboardParameter()
+					float2Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+
+				}
+				else if ( parameterNode is Float3ParameterNode float3Node )
 				{
-					Name = float4Node.Name,
-					Value = float4Node.Value,
-					UI = float4Node.UI,
-				};
+					blackboardParameter = new Float3BlackboardParameter()
+					{
+						Name = float3Node.Name,
+						Value = float3Node.Value,
+						UI = float3Node.UI,
+					};
 
-				float4Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+					float3Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				}
+				else if ( parameterNode is ColorParameterNode colorNode )
+				{
+					blackboardParameter = new ColorBlackboardParameter()
+					{
+						Name = colorNode.Name,
+						Value = colorNode.Value,
+						UI = colorNode.UI,
+					};
+
+					colorNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				}
+
+				AddBlackboardParameter( blackboardParameter );
 			}
-
-			AddBlackboardParameter( blackboardParameter );
 		}
 	}
 
