@@ -1,5 +1,6 @@
 ﻿using Editor;
 using NodeEditorPlus;
+using Sandbox;
 using ShaderGraphPlus.Nodes;
 using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
@@ -798,6 +799,7 @@ public class ShaderGraphPlusView : GraphView
 			.OrderByDescending( n => n is CommentUI )
 			.FirstOrDefault();
 
+
 		if ( !item.IsValid() )
 		{
 			_window.OnNodeSelected( null );
@@ -815,6 +817,23 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
+	protected override void OnMouseClick( MouseEvent e )
+	{
+		base.OnMouseClick( e );
+
+		var item = SelectedItems
+			.OfType<NodeUI>()
+			.OrderByDescending( n => n is CommentUI )
+			.FirstOrDefault();
+
+		if ( !item.IsValid() )
+		{
+			SGPLog.Info( "Mouse clicked on GraphView!" );
+
+			_window.OnGraphViewAreaClicked();
+		}
+	}
+
 	[EditorEvent.Frame]
 	public void Frame()
 	{
@@ -824,8 +843,6 @@ public class ShaderGraphPlusView : GraphView
 			{
 				baseNode.OnFrame();
 			}
-
-
 		}
 
 		if ( _oldConnectionStyle != ConnectionStyle )

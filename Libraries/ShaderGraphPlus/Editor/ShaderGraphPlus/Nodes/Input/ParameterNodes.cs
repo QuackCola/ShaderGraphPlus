@@ -403,6 +403,7 @@ public sealed class ColorParameterNode : ParameterNode<Color>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
+		SGPLog.Info("Updating ColorParameterNode from blackboard");
 		if ( parameter is ColorBlackboardParameter colorBlackboardParameter )
 		{
 			Name = colorBlackboardParameter.Name;

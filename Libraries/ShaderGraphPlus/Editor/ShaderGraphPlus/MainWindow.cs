@@ -182,8 +182,39 @@ public class MainWindow : DockWindow
 
 	public void OnNodeSelected( BaseNodePlus node )
 	{
+		var oldTarget = _properties.Target;
 		_properties.Target = node != null ? node : _graph;
-		
+
+		if ( _properties.Target is ShaderGraphPlus && oldTarget is BaseBlackboardParameter )
+		{
+			_blackboard.ClearSeletedItem();
+		}
+		else if ( _properties.Target is BaseNodePlus && oldTarget is BaseBlackboardParameter )
+		{
+			_blackboard.ClearSeletedItem();
+		}
+
+		// Select parameter in blackboard from parameter identifier stored in selected IParameterNode.
+		if ( _properties.Target is IParameterNode parameterNode && parameterNode is IBlackboardSyncable blackboardSyncable )
+		{
+			// For now only select a blackboard parameter when _graphView only has 1 selection.
+			if ( _graphView.SelectedItems.Count() == 1 )
+			{
+				SGPLog.Info( $"Selected parameter node {parameterNode.Name}" );
+
+				if ( blackboardSyncable.BlackboardParameterIdentifier != default )
+				{
+					var blackboardParameter = _graph.GetBlackboardParameterByGuid( blackboardSyncable.BlackboardParameterIdentifier );
+					_blackboard.SetSelectedItem( blackboardParameter );
+					_properties.Target = blackboardParameter;
+				}
+			}
+			else
+			{
+				_properties.Target = _graph;
+			}
+		}
+
 		if ( EnableNodePreview && ( node != null && node.CanPreview ) )
 		{
 			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`", EnableNodePreview );
@@ -1736,7 +1767,8 @@ public class MainWindow : DockWindow
 		_blackboard = new Blackboard( this );
 		_blackboard.Graph = _graph;
 		_blackboard.OnDirty += ( ) => { SetDirty(); };
-		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterChanged( p ); };
+		_blackboard.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
+		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
 		_blackboard.OnParameterDeleated += ( p ) => { OnBlackboardParameterDeleated( p ); };
 
 		_undoHistory = new UndoHistory( this, _undoStack );
@@ -1776,8 +1808,53 @@ public class MainWindow : DockWindow
 			RestoreFromStateCookie();
 		}
 	}
-	
-	private void OnBlackboardParameterChanged( BaseBlackboardParameter blackboardParameter )
+
+	/// <summary>
+	/// Called when a blackboard parameter is selected.
+	/// </summary>
+	private void OnBlackboardParameterSelected( BaseBlackboardParameter blackboardParameter )
+	{
+		var oldTarget = _properties.Target;
+		
+		//if ( oldTarget is BaseNodePlus )
+		//{
+		//	_graphView.ClearSelection();
+		//}
+
+		_graphView.ClearSelection();
+
+		_properties.Target = blackboardParameter;
+		_blackboard.SetSelectedItem( blackboardParameter );
+		/*
+		var node = _graph.Nodes.Where( x => x is IBlackboardSyncable syncable && syncable.BlackboardParameterIdentifier == blackboardParameter.Identifier ).FirstOrDefault();
+
+		if ( node != null )
+		{
+			//_graphView?.SelectNode( node );
+		}
+		else
+		{
+			
+		}
+		*/
+	}
+
+	/// <summary>
+	/// Called  no items are known to be selected by GraphView
+	/// and that a blank area of the graph has been clicked on.
+	/// </summary>
+	public void OnGraphViewAreaClicked()
+	{
+		var oldTarget = _properties.Target;
+
+		if ( _properties.Target is BaseBlackboardParameter )
+		{
+			OnNodeSelected( null );
+			_blackboard.ClearSeletedItem();
+		}
+	}
+
+	private void OnBlackboardParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
 	{
 		_graph.UpdateParameterNode( blackboardParameter );
 
@@ -1834,6 +1911,7 @@ public class MainWindow : DockWindow
 				}
 			}
 
+			/*
 			if ( node is IParameterNode parameterNode )
 			{
 				BaseBlackboardParameter newBlackboardParameter;
@@ -1870,8 +1948,14 @@ public class MainWindow : DockWindow
 					_blackboard.UpdateBlackboard( true );
 				}
 			}
+			*/
 
 			_graphView.UpdateNode( node );
+		}
+		
+		if ( _properties.Target is BaseBlackboardParameter blackboardParameter )
+		{
+			OnBlackboardParameterPropertyUpdated( blackboardParameter );
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;

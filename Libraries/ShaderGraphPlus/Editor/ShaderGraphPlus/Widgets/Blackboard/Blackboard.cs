@@ -23,6 +23,11 @@ internal class Blackboard : Widget
 	public Action OnDirty { get; set; }
 
 	/// <summary>
+	/// Invoked when a blackboard parameter is selected in the BlackboardView.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterSelected { get; set; }
+
+	/// <summary>
 	/// Invoked when a blackboard parameter changes.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
@@ -54,8 +59,14 @@ internal class Blackboard : Widget
 		{
 			OnDirty?.Invoke();
 		};
+		_blackboardView.OnParameterSelected += ( p ) =>
+		{
+			SGPLog.Info( $"Slected Parameter : {p.Name}" );
+			OnParameterSelected?.Invoke( p );
+		};
 		_blackboardView.OnParameterChanged += ( p ) =>
 		{
+			SGPLog.Info( $"Parameter : {p.Name} has changed" );
 			OnParameterChanged?.Invoke( p );
 		};
 		_blackboardView.OnParameterDeleated += ( p ) =>
@@ -69,5 +80,15 @@ internal class Blackboard : Widget
 	public void UpdateBlackboard( bool preserveCurrentSelection = false )
 	{
 		_blackboardView?.RebuildBuildFromParameters( preserveCurrentSelection );
+	}
+
+	public void ClearSeletedItem()
+	{
+		_blackboardView.ClearSeletedItem();
+	}
+
+	public void SetSelectedItem( BaseBlackboardParameter parameter )
+	{
+		_blackboardView.SetSelectedItem( parameter );
 	}
 }

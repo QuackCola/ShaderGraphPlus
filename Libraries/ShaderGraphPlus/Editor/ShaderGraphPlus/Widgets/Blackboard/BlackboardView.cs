@@ -1,4 +1,6 @@
 ﻿using Editor;
+using Editor.MapEditor;
+using Facepunch.ActionGraphs;
 using System.Collections.Immutable;
 using static Sandbox.Services.Inventory;
 
@@ -6,7 +8,7 @@ namespace ShaderGraphPlus;
 
 internal class BlackboardView : Widget
 {
-	private ControlSheet _controlSheet;
+	//private ControlSheet _controlSheet;
 	private Button.Primary _addButton;
 	private Button.Danger _deleteButton;
 	private BlackboardParameterList _parameterListView;
@@ -32,6 +34,11 @@ internal class BlackboardView : Widget
 	public Action OnDirty { get; set; }
 
 	/// <summary>
+	/// Invoked when a blackboard parameter is selected in the BlackboardView.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterSelected { get; set; }
+
+	/// <summary>
 	/// Invoked when a blackboard parameter changes.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
@@ -40,6 +47,8 @@ internal class BlackboardView : Widget
 	/// Invoked when a blackboard parameter is deleated.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
+
+
 
 	public BlackboardView( Blackboard parent ) : base( parent )
 	{
@@ -68,7 +77,7 @@ internal class BlackboardView : Widget
 		_deleteButton.ToolTip = $"Delete selected blackboard parameter";
 		_deleteButton.Clicked += () =>
 		{
-			DeleteSelectedBlackboardParameter();
+			OnDeleteSelectedBlackboardParameter();
 		};
 
 		leftColumnTopLayout.Add( _deleteButton );
@@ -81,7 +90,7 @@ internal class BlackboardView : Widget
 			var popup = new PopupTypeSelector( this );
 			popup.OnSelect += ( t ) =>
 			{
-				AddBlackboardParameter( t );
+				OnAddBlackboardParameter( t );
 			};
 			popup.OpenAtCursor();
 		};
@@ -89,8 +98,14 @@ internal class BlackboardView : Widget
 		leftColumnTopLayout.Add( _addButton );
 
 		_parameterListView = leftColumn.Add( new BlackboardParameterList( null ), 1 );//new ListView();
-		_parameterListView.ItemClicked = OnItemClicked;
-		_parameterListView.ItemSelected = OnItemSelected;
+		_parameterListView.ItemClicked = ( item ) =>
+		{
+			OnItemClicked( (BaseBlackboardParameter)item );
+		};
+		_parameterListView.ItemSelected = ( item ) =>
+		{
+			OnItemSelected( (BaseBlackboardParameter)item );
+		};
 		_parameterListView.ItemDrag = ( a ) =>
 		{
 			var parameter = a as BaseBlackboardParameter;
@@ -102,6 +117,7 @@ internal class BlackboardView : Widget
 			return true;
 		};
 
+		/*
 		var rightColumn = canvas.Layout.AddColumn( 1, false );
 		rightColumn.Spacing = 8;
 		rightColumn.Spacing = 4;
@@ -113,66 +129,26 @@ internal class BlackboardView : Widget
 		_controlSheet.SetMinimumColumnWidth( 0, 400 );
 		rightColumn.Add( _controlSheet );
 		rightColumn.AddStretchCell();
+		*/
 
 		Layout.Add( canvas );
 	}
 
-	private void OnItemSelected( object item )
+	private void OnItemSelected( BaseBlackboardParameter parameter )
 	{
-		var parameter = item as BaseBlackboardParameter;
-		
 		//SGPLog.Info( $"Selected item : {variable}" );
-		
-		SetControlSheetTarget( parameter );
 	}
 
-	private void OnItemClicked( object item )
+	private void OnItemClicked( BaseBlackboardParameter parameter )
 	{
-		var parameter = item as BaseBlackboardParameter;
-
 		//SGPLog.Info( $"Clicked item : {variable}" );
 
 		SetSelectedItem( parameter );
+
+		OnParameterSelected?.Invoke( parameter );
 	}
 
-	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
-	{
-		BuildFromParameters( _graph.Parameters, preserveCurrentSelection );
-	}
-
-	public void BuildFromParameters( IEnumerable<BaseBlackboardParameter> parameters, bool preserveCurrentSelection = false )
-	{
-		_parameterListView.SetItems( parameters.Cast<object>() );
-
-		if ( !preserveCurrentSelection )
-		{
-			ClearSeletedItem();
-		}
-
-		// If we have nothing selected then set an initital selection.
-		if ( _selectedItem == null )
-		{
-			var firstParameter = parameters.FirstOrDefault();
-		
-			if ( firstParameter != null )
-			{
-				SetSelectedItem( firstParameter );
-		
-				_deleteButton.Enabled = true;
-			}
-		}
-
-		if ( preserveCurrentSelection )
-		{
-			var selection = _graph.GetBlackboardParameterByGuid( _selectedItemGuid );
-		
-			//SGPLog.Info( $"Preserving selected item : {selection}" );
-		
-			_parameterListView.SelectItem( selection );
-		}
-	}
-
-	private void AddBlackboardParameter( TypeDescription typeDescription )
+	private void OnAddBlackboardParameter( TypeDescription typeDescription )
 	{
 		int id = _parentBlackboard.Graph._parameters.Count;
 		string name = $"Parameter{id}";
@@ -182,19 +158,17 @@ internal class BlackboardView : Widget
 
 		OnDirty?.Invoke();
 
-		RebuildBuildFromParameters();
-
 		SetSelectedItem( parameterInstance );
 	}
 
-	private void DeleteSelectedBlackboardParameter()
+	private void OnDeleteSelectedBlackboardParameter()
 	{
 		var parameter = _selectedItem as BaseBlackboardParameter;
 
 		if ( _selectedItem != null )
 		{
 			_selectedItem = null;
-
+			_selectedItemGuid = default( Guid );
 			OnParameterDeleated?.Invoke( parameter );
 
 			//SGPLog.Info( $"Deleted selected parameter : {parameter}" );
@@ -202,41 +176,43 @@ internal class BlackboardView : Widget
 
 		if ( !_graph.Parameters.Any() )
 		{
-			_controlSheet.Clear( true );
 			_deleteButton.Enabled = false;
 		}
-
 	}
 
-	private void SetSelectedItem( BaseBlackboardParameter blackboardParameter )
+	private void BuildFromParameters( IEnumerable<BaseBlackboardParameter> parameters, bool preserveCurrentSelection = false )
+	{
+		_parameterListView.SetItems( parameters.Cast<object>() );
+
+		if ( _selectedItem != null && _selectedItemGuid != default( Guid ) )
+		{
+			var selection = _graph.GetBlackboardParameterByGuid( _selectedItemGuid );
+
+			SetSelectedItem( selection );
+		}
+	}
+
+	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
+	{
+		BuildFromParameters( _graph.Parameters, preserveCurrentSelection );
+	}
+
+	public void SetSelectedItem( BaseBlackboardParameter blackboardParameter )
 	{
 		_selectedItem = blackboardParameter;
 		_selectedItemGuid = blackboardParameter.Identifier;
 
 		_parameterListView.SelectItem( blackboardParameter );
-		SetControlSheetTarget( blackboardParameter );
 
 		_deleteButton.Enabled = true;
 	}
 
-	private void SetControlSheetTarget( BaseBlackboardParameter newTarget )
-	{
-		_controlSheet.Clear( true );
-
-		var so = newTarget.GetSerialized();
-		so.OnPropertyChanged += ( prop ) =>
-		{
-			OnParameterChanged?.Invoke( newTarget );
-		};
-
-		_controlSheet.AddObject( so );
-	}
-
-	private void ClearSeletedItem()
+	public void ClearSeletedItem()
 	{
 		_selectedItem = null;
-		_controlSheet.Clear( true );
-		
+		_selectedItemGuid = default( Guid );
+		_parameterListView.Selection.Clear();
+
 		_deleteButton.Enabled = false;
 	}
 }
