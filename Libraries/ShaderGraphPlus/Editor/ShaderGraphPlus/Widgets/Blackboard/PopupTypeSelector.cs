@@ -12,20 +12,7 @@ internal class PopupTypeSelector : PopupWidget
 
 	public TypeSelectorWidget Widget { get; set; }
 
-	public PopupTypeSelector( Widget parent ) : base( parent )
-	{
-		Widget = new TypeSelectorWidget( this, false )
-		{
-			OnDestroy = Destroy
-		};
-
-		Layout = Layout.Column();
-		Layout.Add( Widget );
-
-		DeleteOnClose = true;
-	}
-
-	public PopupTypeSelector( Widget parent, bool isSubgraph ) : base( parent )
+	public PopupTypeSelector( Widget parent , bool isSubgraph = false) : base( parent )
 	{
 		Widget = new TypeSelectorWidget( this, isSubgraph )
 		{
