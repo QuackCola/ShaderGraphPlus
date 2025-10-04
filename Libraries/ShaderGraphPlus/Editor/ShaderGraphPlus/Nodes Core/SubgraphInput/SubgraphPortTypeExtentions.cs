@@ -9,9 +9,11 @@ public static class SubgraphPortTypeExtentions
 		{
 
 			SubgraphPortType.Bool => "bool",
+			SubgraphPortType.Int => "int",
 			SubgraphPortType.Float => "float",
 			SubgraphPortType.Vector2 => "float2",
 			SubgraphPortType.Vector3 => "float3",
+			//SubgraphPortType.Vector4 => "float4",
 			SubgraphPortType.Color => "float4",
 			SubgraphPortType.Sampler => "SamplerState",
 			SubgraphPortType.Texture2DObject => "Texture2D",
