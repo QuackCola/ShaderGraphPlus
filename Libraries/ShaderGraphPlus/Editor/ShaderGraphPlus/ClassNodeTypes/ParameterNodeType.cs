@@ -121,6 +121,54 @@ public sealed class ParameterNodeType : ClassNodeType
 		};
 	}
 
+	internal static BaseNodePlus InitSubgraphInputNode( BaseBlackboardParameter blackboardParameter )
+	{
+		return blackboardParameter switch
+		{
+			BoolBlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueBool( v.Value, SubgraphPortType.Bool )
+			},
+			IntBlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueInt( v.Value, SubgraphPortType.Int )
+			},
+			FloatBlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueFloat( v.Value, SubgraphPortType.Float )
+			},
+			Float2BlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueVector2( v.Value, SubgraphPortType.Vector2 )
+			},
+			Float3BlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueVector3( v.Value, SubgraphPortType.Vector3 )
+			},
+			//Float4BlackboardParameter v => new SubgraphInput()
+			//{
+			//	InputData = new VariantValueVector4( v.Value, SubgraphPortType.Vector4 )
+			//},
+			ColorBlackboardParameter v => new SubgraphInput()
+			{
+				InputName = v.Name,
+				BlackboardParameterIdentifier = blackboardParameter.Identifier,
+				InputData = new VariantValueColor( v.Value, SubgraphPortType.Color )
+			},
+			_ => throw new NotImplementedException(),
+		};
+	}
+
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
@@ -130,6 +178,14 @@ public sealed class ParameterNodeType : ClassNodeType
 
 		BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, blackboardParameterIdentifier );
 
-		return InitParameterNode( (BaseNodePlus)node, Name, blackboardParameterIdentifier );
+		if ( node is SubgraphInput )
+		{
+			node = InitSubgraphInputNode( BlackboardParameter );
+		}
+		else
+		{
+			node = InitParameterNode( (BaseNodePlus)node, Name, blackboardParameterIdentifier );
+		}
+		return node;
 	}
 }

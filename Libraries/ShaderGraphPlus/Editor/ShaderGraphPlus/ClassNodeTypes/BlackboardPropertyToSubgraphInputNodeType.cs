@@ -16,7 +16,7 @@ public sealed class BlackboardPropertyToSubgraphInputNodeType : ClassNodeType
 		var node = base.CreateNode( graph );
 		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
 
-		string name = BaseBlackboardValue.Name;//BaseBlackboardValue switch
+		string name = BaseBlackboardValue.Name;
 
 		if ( BaseBlackboardValue is ShaderFeatureBooleanBlackboardParameter sfBoolBlackboardParameter )
 		{
@@ -27,55 +27,6 @@ public sealed class BlackboardPropertyToSubgraphInputNodeType : ClassNodeType
 			name = sfEnumBlackboardParameter.Value.FeatureName;
 		}
 
-		Guid identifier = BaseBlackboardValue.Identifier;
-		object value = BaseBlackboardValue.GetValue();
-
-		// Initialize the new parameterNode
-		BaseNodePlus parameterNode = BaseBlackboardValue switch
-		{
-			BoolBlackboardParameter v => new SubgraphInput() 
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueBool( v.Value, SubgraphPortType.Bool )
-			},
-			IntBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueInt( v.Value, SubgraphPortType.Int )
-			},
-			FloatBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueFloat( v.Value, SubgraphPortType.Float )
-			},
-			Float2BlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueVector2( v.Value, SubgraphPortType.Vector2 )
-			},
-			Float3BlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueVector3( v.Value, SubgraphPortType.Vector3 )
-			},
-			//Float4BlackboardParameter v => new SubgraphInput()
-			//{
-			//	InputData = new VariantValueVector4( v.Value, SubgraphPortType.Vector4 )
-			//},
-			ColorBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = identifier,
-				InputData = new VariantValueColor( v.Value, SubgraphPortType.Color )
-			},
-			_ => throw new NotImplementedException(),
-		};
-
-		return parameterNode;
+		return ParameterNodeType.InitSubgraphInputNode( BaseBlackboardValue );
 	}
 }

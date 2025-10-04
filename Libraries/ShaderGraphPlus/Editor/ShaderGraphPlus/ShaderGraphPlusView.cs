@@ -314,9 +314,13 @@ public class ShaderGraphPlusView : GraphView
 			}
 		}
 
-		return AvailableNodes.TryGetValue( ev.Data.Text, out var type )
+		var iNodeType = AvailableNodes.TryGetValue( ev.Data.Text, out var type )
 			? type
 			: null;
+
+		//if ( ((ClassNodeType)iNodeType).Type.
+
+		return iNodeType;
 	}
 
 	protected override IEnumerable<INodeTypePlus> GetRelevantNodes( NodeQuery query )
@@ -356,56 +360,22 @@ public class ShaderGraphPlusView : GraphView
 		return base.OnGetHandleConfig( type );
 	}
 
-	private void CreateParameterNode( Type targetType, string name, Vector2 position )
-	{
-		string nodeFullName = targetType switch
-		{
-			Type t when t == typeof( BoolBlackboardParameter ) =>  DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
-			Type t when t == typeof( IntBlackboardParameter ) =>  DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
-			Type t when t == typeof( FloatBlackboardParameter ) =>  DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
-			Type t when t == typeof( Float2BlackboardParameter ) => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
-			Type t when t == typeof( Float3BlackboardParameter ) => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
-			Type t when t == typeof( Float4BlackboardParameter ) => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
-			Type t when t == typeof( ColorBlackboardParameter ) => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-			_ => throw new NotImplementedException(),
-		};
-	
-		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
-		{
-			var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, targetType, name );
-
-			CreateNewNode( parameterNodeType, position );
-
-			if ( parameterNodeType.BlackboardParameter != null )
-			{
-				Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
-
-				OnConstantNodeConvertedToParameter?.Invoke();
-			}
-		}
-	}
-
-	private BaseBlackboardParameter InitBlackboardParameter()
-	{
-
-		return default;
-	}
-
 	protected override void OnPopulateNodeMenuSpecialOptions( Menu menu, Vector2 clickPos, Plug targetPlug, string filter )
 	{
 		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
+		var isSubgraph = Graph.IsSubgraph;
 
-		var newGraphParameterMenu = menu.AddMenu( "Create Parameter", "add" );
+		var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
 
 		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>()) )
 		{
-			var test2 = newGraphParameterMenu.AddOption( $"Create {td.Title}", td.Icon, () =>
+			var test2 = newParameterMenu.AddOption( $"Create {td.Title}", td.Icon, () =>
 			{
 				Dialog.AskString( ( string parameterName ) =>
 				{
-					CreateParameterNode( td.TargetType, parameterName, clickPos );
+					CreateNewParameterNode( td.TargetType, parameterName, clickPos, isSubgraph );
 				},
-				$"Specify a parameter name for {td.Title} parameter" );
+				$"Specify a parameter name for {td.Title} {(isSubgraph ? "subgraph input" : "parameter")}" );
 			} );
 		}
 
@@ -480,6 +450,40 @@ public class ShaderGraphPlusView : GraphView
 				CenterOn( namedRerouteDeclaration.Position );
 				//SelectNode( namedRerouteDeclaration );
 				//_window.SetPropertiesTarget( namedRerouteDeclaration );
+			}
+		}
+	}
+
+	private void CreateNewParameterNode( Type targetType, string name, Vector2 position, bool isSubgraph )
+	{
+		var nodeFullName = targetType switch
+		{
+			Type t when t == typeof( BoolBlackboardParameter ) => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+			Type t when t == typeof( IntBlackboardParameter ) => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+			Type t when t == typeof( FloatBlackboardParameter ) => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+			Type t when t == typeof( Float2BlackboardParameter ) => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+			Type t when t == typeof( Float3BlackboardParameter ) => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+			Type t when t == typeof( Float4BlackboardParameter ) => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+			Type t when t == typeof( ColorBlackboardParameter ) => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+			_ => throw new NotImplementedException(),
+		};
+
+		if ( isSubgraph )
+		{
+			nodeFullName = DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname;
+		}
+		
+		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+		{
+			var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, targetType, name );
+
+			CreateNewNode( parameterNodeType, position );
+
+			if ( parameterNodeType.BlackboardParameter != null )
+			{
+				Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
+
+				OnConstantNodeConvertedToParameter?.Invoke();
 			}
 		}
 	}
