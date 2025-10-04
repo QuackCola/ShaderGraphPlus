@@ -18,7 +18,7 @@ public struct ParameterUI
 	/// <summary>
 	/// Step amount for sliders
 	/// </summary>
-	[HideIf( nameof( ShowStepProperty ), false )]
+	//[HideIf( nameof( ShowStepProperty ), false )]
 	public float Step { get; set; }
 
 	/// <summary>

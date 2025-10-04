@@ -71,7 +71,7 @@ public sealed class IntConstantNode : ConstantNode<int>
 
 	public override object GetMinValue()
 	{
-			return Min;
+		return Min;
 	}
 
 	public override object GetMaxValue()

@@ -23,31 +23,34 @@ public abstract class BaseBlackboardParameter
 		throw new NotImplementedException();
 	}
 
-	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "" )
+	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "", Guid guid = default )
 	{
 		var typeInstance = EditorTypeLibrary.Create( targetType.Name, targetType );
+
+		if ( guid == default )
+			guid = Guid.NewGuid();
 
 		return typeInstance switch
 		{
 			BoolBlackboardParameter => new BoolBlackboardParameter( false ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
-			IntBlackboardParameter => new IntBlackboardParameter( 0 ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
-			FloatBlackboardParameter => new FloatBlackboardParameter( 0.0f ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
-			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.Zero ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
-			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.Zero ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
-			Float4BlackboardParameter => new Float4BlackboardParameter( Vector4.Zero ) 
-			{ Name = name, Identifier = Guid.NewGuid() },
+			{ Name = name, Identifier = guid },
+			IntBlackboardParameter => new IntBlackboardParameter( 1 ) 
+			{ Name = name, Identifier = guid },
+			FloatBlackboardParameter => new FloatBlackboardParameter( 1.0f ) 
+			{ Name = name, Identifier = guid },
+			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.One ) 
+			{ Name = name, Identifier = guid },
+			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.One ) 
+			{ Name = name, Identifier = guid },
+			Float4BlackboardParameter => new Float4BlackboardParameter( Vector4.One ) 
+			{ Name = name, Identifier = guid },
 			ColorBlackboardParameter => new ColorBlackboardParameter( Color.White )
-			{ Name = name, Identifier = Guid.NewGuid() },
+			{ Name = name, Identifier = guid },
 			ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new() 
-			{ FeatureName = name } ) { Name = name, Identifier = Guid.NewGuid() },
+			{ FeatureName = name } ) { Name = name, Identifier = guid },
 			ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new() 
-			{ FeatureName = name } ) { Name = name, Identifier = Guid.NewGuid() },
-			_ => throw new NotImplementedException(),
+			{ FeatureName = name } ) { Name = name, Identifier = guid },
+			_ => throw new NotImplementedException( $"{typeInstance}" ),
 		};
 	}
 }

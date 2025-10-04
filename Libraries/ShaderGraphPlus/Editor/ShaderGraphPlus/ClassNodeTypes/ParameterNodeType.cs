@@ -1,202 +1,138 @@
-﻿using NodeEditorPlus;
+﻿using Facepunch.ActionGraphs;
+using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
+using static Sandbox.Material;
 
 namespace ShaderGraphPlus;
 
 public sealed class ParameterNodeType : ClassNodeType
 {
-	BaseBlackboardParameter BaseBlackboardValue;
+	public BaseBlackboardParameter BlackboardParameter { get; private set; }
 
-	public ParameterNodeType( TypeDescription type, BaseBlackboardParameter value ) : base( type )
+	string Name;
+	Type BlackboardParameterType;
+
+	public ParameterNodeType( TypeDescription type, Type targetBlackboardType,string name ) : base( type )
 	{
-		BaseBlackboardValue = value;
+		Name = name;
+		BlackboardParameterType = targetBlackboardType;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	internal static BaseNodePlus InitParameterNode( BaseNodePlus parameterNode, string name ,Guid blackboardParameterIdentifier,
+		object value = null,
+		object minValue = null,
+		object maxValue = null,
+		float stepValue = 0.0f
+	)
 	{
-		var node = base.CreateNode( graph );
-		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
-
-		string name = BaseBlackboardValue.Name;//BaseBlackboardValue switch
-
-		if ( BaseBlackboardValue is ShaderFeatureBooleanBlackboardParameter sfBoolBlackboardParameter )
+		value ??= parameterNode switch
 		{
-			 name = sfBoolBlackboardParameter.Value.FeatureName;
-		}
-		else if ( BaseBlackboardValue is ShaderFeatureEnumBlackboardParameter sfEnumBlackboardParameter )
-		{
-			name = sfEnumBlackboardParameter.Value.FeatureName;
-		}
-
-		Guid identifier = BaseBlackboardValue.Identifier;
-		object value = BaseBlackboardValue.GetValue();
-
-		// Initialize the new parameterNode
-		BaseNodePlus parameterNode = node switch
-		{
-			BoolParameterNode => new BoolParameterNode()
-			{ Name = name, Value = (bool)value, BlackboardParameterIdentifier = identifier },
-			IntParameterNode => new IntParameterNode()
-			{ Name = name, Value = (int)value, BlackboardParameterIdentifier = identifier },
-			FloatParameterNode => new FloatParameterNode()
-			{ Name = name, Value = (float)value, BlackboardParameterIdentifier = identifier },
-			Float2ParameterNode => new Float2ParameterNode()
-			{ Name = name, Value = (Vector2)value, BlackboardParameterIdentifier = identifier },
-			Float3ParameterNode => new Float3ParameterNode()
-			{ Name = name, Value = (Vector3)value, BlackboardParameterIdentifier = identifier },
-			Float4ParameterNode => new Float4ParameterNode()
-			{ Name = name, Value = (Vector4)value, BlackboardParameterIdentifier = identifier },
-			ColorParameterNode => new ColorParameterNode()
-			{ Name = name, Value = (Color)value, BlackboardParameterIdentifier = identifier },
-			StaticSwitchNode => new StaticSwitchNode
-			{ Feature = (ShaderFeatureBoolean)value, BlackboardParameterIdentifier = identifier },
+			BoolParameterNode => false,
+			IntParameterNode => 1,
+			FloatParameterNode => 1.0f,
+			Float2ParameterNode => Vector2.One,
+			Float3ParameterNode => Vector3.One,
+			Float4ParameterNode => Vector4.One,
+			ColorParameterNode => Color.White,
 			_ => throw new NotImplementedException(),
 		};
 
-		return parameterNode;
-	}
-}
+		if ( parameterNode is not BoolParameterNode || parameterNode is not ColorParameterNode )
+		{
+			minValue ??= parameterNode switch
+			{
+				IntParameterNode => 0,
+				FloatParameterNode => 0.0f,
+				Float2ParameterNode => Vector2.Zero,
+				Float3ParameterNode => Vector3.Zero,
+				Float4ParameterNode => Vector4.Zero,
+				_ => throw new NotImplementedException(),
+			};
 
-public sealed class ConstantToParameterNodeType : ClassNodeType
-{
-	IConstantNode IConstantNode;
-	string Name;
+			maxValue ??= parameterNode switch
+			{
+				IntParameterNode => 1,
+				FloatParameterNode => 1.0f,
+				Float2ParameterNode => Vector2.One,
+				Float3ParameterNode => Vector3.One,
+				Float4ParameterNode => Vector4.One,
+				_ => throw new NotImplementedException(),
+			};
+		}
 
-	public BaseBlackboardParameter BlackboardParameter { get; private set; }
+		SGPLog.Info($"Step Value is : {stepValue}");
 
-	public ConstantToParameterNodeType( TypeDescription type, IConstantNode value, string name ) : base( type )
-	{
-		IConstantNode = value;
-		Name = name;
+		return parameterNode switch
+		{
+			BoolParameterNode => new BoolParameterNode()
+			{
+				Value = (bool)value,
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			IntParameterNode => new IntParameterNode()
+			{
+				Value = (int)value,
+				Min = (int)minValue,
+				Max = (int)maxValue,
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			FloatParameterNode => new FloatParameterNode()
+			{
+				Value = (float)value,
+				Min = (float)minValue,
+				Max = (float)maxValue,
+				UI = new() { Step = stepValue, ShowStepProperty = true },
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			Float2ParameterNode => new Float2ParameterNode()
+			{
+				Value = (Vector2)value,
+				Min = (Vector2)minValue,
+				Max = (Vector2)maxValue,
+				UI = new() { Step = stepValue, ShowStepProperty = true },
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			Float3ParameterNode => new Float3ParameterNode()
+			{
+				Value = (Vector3)value,
+				Min = (Vector3)minValue,
+				Max = (Vector3)maxValue,
+				UI = new() { Step = stepValue, ShowStepProperty = true },
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			Float4ParameterNode => new Float4ParameterNode()
+			{
+				Value = (Vector4)value,
+				Min = (Vector4)minValue,
+				Max = (Vector4)maxValue,
+				UI = new() { Step = stepValue, ShowStepProperty = true },
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			ColorParameterNode => new ColorParameterNode()
+			{
+				Value = (Color)value,
+				Name = name,
+				BlackboardParameterIdentifier = blackboardParameterIdentifier
+			},
+			_ => throw new NotImplementedException(),
+		};
 	}
 
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
-		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
 
 		var blackboardParameterIdentifier = Guid.NewGuid();
 		var iParameterNodeType = node.GetType();
 
-		BlackboardParameter = CreateBlackboardParameterFromConstant( iParameterNodeType, Name, blackboardParameterIdentifier, IConstantNode );
+		BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, blackboardParameterIdentifier );
 
-		// Initialize the new parameterNode
-		BaseNodePlus parameterNode = node switch
-		{
-			BoolParameterNode => new BoolParameterNode()
-			{
-				Name = Name,
-				Value = (bool)IConstantNode.GetValue(),
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			IntParameterNode => new IntParameterNode()
-			{
-				Name = Name,
-				Value = (int)IConstantNode.GetValue(),
-				Min = (int)IConstantNode.GetMinValue(),
-				Max = (int)IConstantNode.GetMaxValue(),
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			FloatParameterNode => new FloatParameterNode()
-			{
-				Name = Name,
-				Value = (float)IConstantNode.GetValue(),
-				Min = (float)IConstantNode.GetMinValue(),
-				Max = (float)IConstantNode.GetMaxValue(),
-				UI = new() { Step = (float)IConstantNode.GetStepValue() },
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			Float2ParameterNode => new Float2ParameterNode()
-			{
-				Name = Name,
-				Value = (Vector2)IConstantNode.GetValue(),
-				Min = (Vector2)IConstantNode.GetMinValue(),
-				Max = (Vector2)IConstantNode.GetMaxValue(),
-				UI = new() { Step = (float)IConstantNode.GetStepValue() },
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			Float3ParameterNode => new Float3ParameterNode()
-			{
-				Name = Name,
-				Value = (Vector3)IConstantNode.GetValue(),
-				Min = (Vector3)IConstantNode.GetMinValue(),
-				Max = (Vector3)IConstantNode.GetMaxValue(),
-				UI = new() { Step = (float)IConstantNode.GetStepValue() },
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			Float4ParameterNode => new Float4ParameterNode()
-			{
-				Name = Name,
-				Value = (Vector4)IConstantNode.GetValue(),
-				Min = (Vector4)IConstantNode.GetMinValue(),
-				Max = (Vector4)IConstantNode.GetMaxValue(),
-				UI = new() { Step = (float)IConstantNode.GetStepValue() },
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			ColorParameterNode => new ColorParameterNode()
-			{
-				Name = Name,
-				Value = (Color)IConstantNode.GetValue(),
-				BlackboardParameterIdentifier = blackboardParameterIdentifier
-			},
-			_ => throw new NotImplementedException(),
-		};
-
-		parameterNode.Identifier = IConstantNode.Identifier;
-
-		return parameterNode;
-	}
-
-	internal static BaseBlackboardParameter CreateBlackboardParameterFromConstant( Type parameterNodeType, string name, Guid guid, IConstantNode iConstantNode )
-	{
-		return parameterNodeType switch
-		{
-			Type t when t == typeof( BoolParameterNode ) => new BoolBlackboardParameter( (bool)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid
-			},
-			Type t when t == typeof( IntParameterNode ) => new IntBlackboardParameter( (int)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (int)iConstantNode.GetMinValue(),
-				Max = (int)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( FloatParameterNode ) => new FloatBlackboardParameter( (float)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (float)iConstantNode.GetMinValue(),
-				Max = (float)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( Float2ParameterNode ) => new Float2BlackboardParameter( (Vector2)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector2)iConstantNode.GetMinValue(),
-				Max = (Vector2)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( Float3ParameterNode ) => new Float3BlackboardParameter( (Vector3)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector3)iConstantNode.GetMinValue(),
-				Max = (Vector3)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( Float4ParameterNode ) => new Float4BlackboardParameter( (Vector4)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector4)iConstantNode.GetMinValue(),
-				Max = (Vector4)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( ColorParameterNode ) => new ColorBlackboardParameter( (Color)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid
-			},
-			_ => throw new NotImplementedException(),
-		};
+		return InitParameterNode( (BaseNodePlus)node, Name, blackboardParameterIdentifier );
 	}
 }
