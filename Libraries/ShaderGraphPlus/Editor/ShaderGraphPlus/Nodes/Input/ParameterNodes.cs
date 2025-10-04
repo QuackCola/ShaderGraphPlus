@@ -11,6 +11,7 @@ namespace ShaderGraphPlus.Nodes;
 /// Bool value
 /// </summary>
 [Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
+[InternalNode]
 public sealed class BoolParameterNode : ParameterNode<bool>
 {
 	[Hide]
@@ -47,6 +48,7 @@ public sealed class BoolParameterNode : ParameterNode<bool>
 /// Single int value
 ///</summary>
 [Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
+[InternalNode]
 public sealed class IntParameterNode : ParameterNode<int>
 {
 	[Hide]
@@ -87,6 +89,7 @@ public sealed class IntParameterNode : ParameterNode<int>
 /// Single float value
 /// </summary>
 [Title( "Float" ), Category( "Parameters" ), Icon( "looks_one" )]
+[InternalNode]
 public sealed class FloatParameterNode : ParameterNode<float>
 {
 	[Hide]
@@ -129,6 +132,7 @@ public sealed class FloatParameterNode : ParameterNode<float>
 /// 2 float values
 /// </summary>
 [Title( "Float2" ), Category( "Parameters" ), Icon( "looks_two" )]
+[InternalNode]
 public sealed class Float2ParameterNode : ParameterNode<Vector2>
 {
 	[Hide]
@@ -202,6 +206,7 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 /// 3 float values
 /// </summary>
 [Title( "Float3" ), Category( "Parameters" ), Icon( "looks_3" )]
+[InternalNode]
 public sealed class Float3ParameterNode : ParameterNode<Vector3>
 {
 	[Hide]
@@ -291,6 +296,7 @@ public sealed class Float3ParameterNode : ParameterNode<Vector3>
 /// 4 float values
 /// </summary>
 [Title( "Float4" ), Category( "Parameters" ), Icon( "looks_4" )]
+[InternalNode]
 public sealed class Float4ParameterNode : ParameterNode<Vector4>
 {
 	[Hide]
@@ -396,6 +402,7 @@ public sealed class Float4ParameterNode : ParameterNode<Vector4>
 /// 4 float values, Just like <see cref="Float4ParameterNode"/> but with a color control ui
 /// </summary>
 [Title( "Color" ), Category( "Parameters" ), Icon( "palette" )]
+[InternalNode]
 public sealed class ColorParameterNode : ParameterNode<Color>
 {
 	[Hide]

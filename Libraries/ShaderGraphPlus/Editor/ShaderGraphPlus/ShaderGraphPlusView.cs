@@ -327,6 +327,7 @@ public class ShaderGraphPlusView : GraphView
 			if ( x is ClassNodeType classNodeType )
 			{
 				var targetType = classNodeType.Type.TargetType;
+				if ( classNodeType.Type.HasAttribute<InternalNodeAttribute>() ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( Result ) ) return false;
 				if ( targetType == typeof( SubgraphNode ) && classNodeType.DisplayInfo.Name == targetType.Name.ToTitleCase() ) return false;
 			}
