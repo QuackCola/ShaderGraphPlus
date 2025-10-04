@@ -1,8 +1,6 @@
 ﻿using Editor;
 using NodeEditorPlus;
-using Sandbox;
 using ShaderGraphPlus.Nodes;
-using static Sandbox.VertexLayout;
 using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
 using GraphView = NodeEditorPlus.GraphView;

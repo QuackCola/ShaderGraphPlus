@@ -1,7 +1,6 @@
-﻿using Facepunch.ActionGraphs;
+﻿
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
-using static Sandbox.Material;
 
 namespace ShaderGraphPlus;
 
@@ -59,8 +58,6 @@ public sealed class ParameterNodeType : ClassNodeType
 				_ => throw new NotImplementedException(),
 			};
 		}
-
-		SGPLog.Info($"Step Value is : {stepValue}");
 
 		return parameterNode switch
 		{
