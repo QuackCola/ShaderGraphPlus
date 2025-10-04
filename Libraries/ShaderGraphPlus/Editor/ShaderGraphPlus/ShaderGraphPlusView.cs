@@ -393,6 +393,10 @@ public class ShaderGraphPlusView : GraphView
 			{ 
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Bool );
 			});
+			newSubgraphOutputMenu.AddOption( "Int", "looks_one", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Int );
+			} );
 			newSubgraphOutputMenu.AddOption( "Float", "looks_one", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float );
