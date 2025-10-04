@@ -39,13 +39,6 @@ internal class PopupTypeSelector : PopupWidget
 	}
 }
 
-internal class PopupTypeSelectorSubgraph : PopupTypeSelector
-{
-	public PopupTypeSelectorSubgraph( Widget parent, bool isSubgraph ) : base( parent, isSubgraph )
-	{
-	}
-}
-
 internal partial class TypeSelectorWidget : Widget
 {
 	public Action<TypeDescription> OnSelect { get; set; }
