@@ -81,24 +81,12 @@ internal class BlackboardView : Widget
 		_addButton.ToolTip = $"Add new blackboard parameter";
 		_addButton.Clicked += () =>
 		{
-			if ( Graph.IsSubgraph )
+			var popup = new PopupTypeSelector( this, Graph.IsSubgraph );
+			popup.OnSelect += ( t ) =>
 			{
-				var popup = new PopupTypeSelectorSubgraph( this, true );
-				popup.OnSelect += ( t ) =>
-				{
-					OnAddBlackboardParameter( t );
-				};
-				popup.OpenAtCursor();
-			}
-			else
-			{
-				var popup = new PopupTypeSelector( this );
-				popup.OnSelect += ( t ) =>
-				{
-					OnAddBlackboardParameter( t );
-				};
-				popup.OpenAtCursor();
-			}
+				OnAddBlackboardParameter( t );
+			};
+			popup.OpenAtCursor();
 		};
 
 		leftColumnTopLayout.Add( _addButton );
