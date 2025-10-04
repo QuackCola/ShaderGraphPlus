@@ -367,7 +367,7 @@ public class ShaderGraphPlusView : GraphView
 
 		var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
 
-		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>()) )
+		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ) )
 		{
 			if ( td.TargetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ||
 					td.TargetType == typeof( ShaderFeatureEnumBlackboardParameter ) )
