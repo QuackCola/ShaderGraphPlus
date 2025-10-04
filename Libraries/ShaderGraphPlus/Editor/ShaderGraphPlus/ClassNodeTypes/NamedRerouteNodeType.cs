@@ -18,6 +18,8 @@ public sealed class NamedRerouteDeclarationNodeType : ClassNodeType
 		if ( node is NamedRerouteDeclarationNode namedRerouteDeclarationNode )
 		{
 			namedRerouteDeclarationNode.Name = Name;
+
+			return namedRerouteDeclarationNode;
 		}
 		return node;
 	}
@@ -38,6 +40,8 @@ public sealed class NamedRerouteNodeType : ClassNodeType
 		if ( node is NamedRerouteNode namedRerouteNode )
 		{
 			namedRerouteNode.Name = Name;
+
+			return namedRerouteNode;
 		}
 		return node;
 	}
