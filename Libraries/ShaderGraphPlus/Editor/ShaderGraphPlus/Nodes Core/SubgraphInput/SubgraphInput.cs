@@ -13,15 +13,17 @@ public enum SubgraphPortType
 {
 	[Icon( "check_box" )]
 	Bool,
-	[Icon( "filter_1" )]
+	[Icon( "looks_one" )]
 	Int,
-	[Icon( "filter_1" )]
+	[Icon( "looks_one" )]
 	Float,
-	[Icon( "filter_2" )]
+	[Title( "Float2" ), Icon( "looks_two" )]
 	Vector2,
-	[Icon( "filter_3" )]
+	[Title( "Float3" ), Icon( "looks_3" )]
 	Vector3,
-	[Icon( "palette" )]
+	//[Title( "Float4" ), Icon( "looks_4" )]
+	//Vector4,
+	[Title( "Color" ), Icon( "palette" )]
 	Color,
 	[Icon( "colorize" )]
 	Sampler,
