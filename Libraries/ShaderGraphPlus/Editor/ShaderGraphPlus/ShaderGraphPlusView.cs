@@ -369,13 +369,49 @@ public class ShaderGraphPlusView : GraphView
 
 		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>()) )
 		{
+			if ( td.TargetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ||
+					td.TargetType == typeof( ShaderFeatureEnumBlackboardParameter ) )
+			{
+				continue;
+			}
+				
 			newParameterMenu.AddOption( td.Title, td.Icon, () =>
 			{
 				Dialog.AskString( ( string parameterName ) =>
 				{
 					CreateNewParameterNode( td.TargetType, parameterName, clickPos, isSubgraph );
 				},
-				$"Specify a parameter name for {td.Title} {(isSubgraph ? "subgraph input" : "parameter")}" );
+				$"Specify a parameter name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
+			} );
+		}
+
+		if ( isSubgraph )
+		{
+			var newSubgraphOutputMenu = menu.AddMenu( $"Create Subgraph Output", "add" );
+
+			newSubgraphOutputMenu.AddOption( "Bool", "check_box", () =>
+			{ 
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Bool );
+			});
+			newSubgraphOutputMenu.AddOption( "Float", "looks_one", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float );
+			});
+			newSubgraphOutputMenu.AddOption( "Float2", "looks_two", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector2 );
+			} );
+			newSubgraphOutputMenu.AddOption( "Float3", "looks_3", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector3 );
+			} );
+			//newSubgraphOutputMenu.AddOption( "Float4", "looks_4", () =>
+			//{
+			//	CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector4 );
+			//});
+			newSubgraphOutputMenu.AddOption( "Color", "palette", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Color );
 			} );
 		}
 
@@ -435,6 +471,22 @@ public class ShaderGraphPlusView : GraphView
 		}
 
 		menu.AddSeparator();
+	}
+
+	private void CreateNewSubgraphOutputNode( Vector2 position, SubgraphPortType outputType )
+	{
+		Dialog.AskString( ( string outputName ) =>
+		{
+			var nodeFullName = DisplayInfo.ForType( typeof( SubgraphOutput ) ).Fullname;
+
+			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+			{
+				var parameterNodeType = new SubgraphOutputNodeType( ((ClassNodeType)nodeType).Type, outputType, outputName );
+
+				CreateNewNode( parameterNodeType, position );
+			}
+		},
+		$"Specify a name for the subgraph output" );
 	}
 
 	protected override void OnDoubleClickNodeSpecial( NodeUI node )
