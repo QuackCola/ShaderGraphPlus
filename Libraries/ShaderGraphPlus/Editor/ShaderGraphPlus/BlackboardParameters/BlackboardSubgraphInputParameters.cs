@@ -1,20 +1,16 @@
-﻿using ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus;
 
-namespace ShaderGraphPlus;
-
-internal interface IShaderFeatureBlackboardParameter
-{
-}
 
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
-public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
+[SubgraphOnly]
+public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<bool>
 {
-	public BoolBlackboardParameter() : base() 
-	{ 
+	public BoolSubgraphInputBlackboardParameter() : base()
+	{
 		Value = false;
 	}
 
-	public BoolBlackboardParameter( bool value ) : base( value )
+	public BoolSubgraphInputBlackboardParameter( bool value ) : base( value )
 	{
 
 	}
@@ -22,19 +18,20 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 }
 
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
-public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
+[SubgraphOnly]
+public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<int>
 {
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
-	public IntBlackboardParameter()
-	{	
+	public IntSubgraphInputBlackboardParameter()
+	{
 		Value = 1;
 		Min = 0;
 		Max = 1;
 	}
 
-	public IntBlackboardParameter( int value ) : base( value )
+	public IntSubgraphInputBlackboardParameter( int value ) : base( value )
 	{
 		Min = 0;
 		Max = 1;
@@ -42,19 +39,20 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 }
 
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
-public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
+[SubgraphOnly]
+public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<float>
 {
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
-	public FloatBlackboardParameter()
+	public FloatSubgraphInputBlackboardParameter()
 	{
 		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
 	}
 
-	public FloatBlackboardParameter( float value ) : base( value )
+	public FloatSubgraphInputBlackboardParameter( float value ) : base( value )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -62,19 +60,20 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 }
 
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
-public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
+[SubgraphOnly]
+public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector2>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
-	public Float2BlackboardParameter()
+	public Float2SubgraphInputBlackboardParameter()
 	{
 		Value = Vector2.One;
 		Min = Vector2.Zero;
 		Max = Vector2.One;
 	}
 
-	public Float2BlackboardParameter( Vector2 value ) : base( value )
+	public Float2SubgraphInputBlackboardParameter( Vector2 value ) : base( value )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -104,19 +103,20 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 }
 
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
-public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
+[SubgraphOnly]
+public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector3>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
-	public Float3BlackboardParameter()
+	public Float3SubgraphInputBlackboardParameter()
 	{
 		Value = Vector3.One;
 		Min = Vector3.Zero;
 		Max = Vector3.One;
 	}
 
-	public Float3BlackboardParameter( Vector3 value ) : base( value )
+	public Float3SubgraphInputBlackboardParameter( Vector3 value ) : base( value )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -154,7 +154,8 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 }
 
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
-public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
+[SubgraphOnly]
+public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector4>
 {
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
@@ -196,7 +197,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 
 	[Hide] public float Step => UI.Step;
 
-	public Float4BlackboardParameter()
+	public Float4SubgraphInputBlackboardParameter()
 	{
 		Value = Vector4.One;
 		Min = Vector4.Zero;
@@ -204,7 +205,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float4BlackboardParameter( Vector4 value ) : base( value )
+	public Float4SubgraphInputBlackboardParameter( Vector4 value ) : base( value )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -213,7 +214,8 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 }
 
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
-public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
+[SubgraphOnly]
+public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Color>
 {
 	[JsonIgnore, Hide]
 	public float ValueR
@@ -243,49 +245,14 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 		set => Value = Value.WithAlpha( value );
 	}
 
-	public ColorBlackboardParameter()
+	public ColorSubgraphInputBlackboardParameter()
 	{
 		Value = Color.White;
 		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 
-	public ColorBlackboardParameter( Color value ) : base( value )
+	public ColorSubgraphInputBlackboardParameter( Color value ) : base( value )
 	{
 		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
-	}
-}
-
-[Title( "Shader Feature Boolean" ), Order( 7 )]
-public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
-{
-	[JsonIgnore, Hide]
-	public override string Name { get; set; }
-
-	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
-	{
-	}
-
-	public ShaderFeatureBooleanBlackboardParameter() : base() 
-	{ 
-	}
-
-}
-
-/// <summary>
-/// TODO : Unhide when Static Combo Enum Switch or similar is implemented.
-/// </summary>
-[Title( "Shader Feature Enum" ), Order( 8 )]
-[Hide]
-public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
-{
-	[JsonIgnore, Hide]
-	public override string Name { get; set; }
-
-	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
-	{
-	}
-
-	public ShaderFeatureEnumBlackboardParameter() : base()
-	{
 	}
 }

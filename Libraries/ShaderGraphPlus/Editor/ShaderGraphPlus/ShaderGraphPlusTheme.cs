@@ -1,6 +1,7 @@
 ﻿using Editor;
-using ShaderGraphPlus.Nodes;
+using Facepunch.ActionGraphs;
 using NodeEditorPlus;
+using ShaderGraphPlus.Nodes;
 using HandleConfig = NodeEditorPlus.HandleConfig;
 
 namespace ShaderGraphPlus;
@@ -56,18 +57,35 @@ internal static class ShaderGraphPlusTheme
 
 	public static Color GetBlackboardParameterTypeColor( BaseBlackboardParameter parameter )
 	{
-		return parameter switch
+		if ( parameter.Graph.IsSubgraph )
 		{
-			BoolBlackboardParameter => HandleConfigs[typeof(bool)].Color,
-			IntBlackboardParameter => HandleConfigs[typeof( int )].Color,
-			FloatBlackboardParameter => HandleConfigs[typeof( float )].Color,
-			Float2BlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
-			Float3BlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
-			Float4BlackboardParameter => HandleConfigs[typeof( Vector4 )].Color,
-			ColorBlackboardParameter => HandleConfigs[typeof( Color )].Color,
-			ShaderFeatureBooleanBlackboardParameter => Color.White,
-			ShaderFeatureEnumBlackboardParameter => Color.White,
-			_ => throw new NotImplementedException(),
-		};
+			return parameter switch
+			{
+				BoolSubgraphInputBlackboardParameter => HandleConfigs[typeof( bool )].Color,
+				IntSubgraphInputBlackboardParameter => HandleConfigs[typeof( int )].Color,
+				FloatSubgraphInputBlackboardParameter => HandleConfigs[typeof( float )].Color,
+				Float2SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
+				Float3SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
+				Float4SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector4 )].Color,
+				ColorSubgraphInputBlackboardParameter => HandleConfigs[typeof( Color )].Color,
+				_ => throw new NotImplementedException( $"unknown {parameter}" ),
+			};
+		}
+		else
+		{
+			return parameter switch
+			{
+				BoolBlackboardParameter => HandleConfigs[typeof( bool )].Color,
+				IntBlackboardParameter => HandleConfigs[typeof( int )].Color,
+				FloatBlackboardParameter => HandleConfigs[typeof( float )].Color,
+				Float2BlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
+				Float3BlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
+				Float4BlackboardParameter => HandleConfigs[typeof( Vector4 )].Color,
+				ColorBlackboardParameter => HandleConfigs[typeof( Color )].Color,
+				ShaderFeatureBooleanBlackboardParameter => Color.White,
+				ShaderFeatureEnumBlackboardParameter => Color.White,
+				_ => throw new NotImplementedException(),
+			};
+		}
 	}
 }

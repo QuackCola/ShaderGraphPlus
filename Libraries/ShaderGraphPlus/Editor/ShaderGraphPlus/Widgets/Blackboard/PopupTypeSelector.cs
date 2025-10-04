@@ -10,11 +10,11 @@ internal class PopupTypeSelector : PopupWidget
 		set => Widget.OnSelect = value;
 	}
 
-	TypeSelectorWidget Widget { get; set; }
+	public TypeSelectorWidget Widget { get; set; }
 
 	public PopupTypeSelector( Widget parent ) : base( parent )
 	{
-		Widget = new TypeSelectorWidget( this )
+		Widget = new TypeSelectorWidget( this, false )
 		{
 			OnDestroy = Destroy
 		};
@@ -23,6 +23,26 @@ internal class PopupTypeSelector : PopupWidget
 		Layout.Add( Widget );
 
 		DeleteOnClose = true;
+	}
+
+	public PopupTypeSelector( Widget parent, bool isSubgraph ) : base( parent )
+	{
+		Widget = new TypeSelectorWidget( this, isSubgraph )
+		{
+			OnDestroy = Destroy
+		};
+
+		Layout = Layout.Column();
+		Layout.Add( Widget );
+
+		DeleteOnClose = true;
+	}
+}
+
+internal class PopupTypeSelectorSubgraph : PopupTypeSelector
+{
+	public PopupTypeSelectorSubgraph( Widget parent, bool isSubgraph ) : base( parent, isSubgraph )
+	{
 	}
 }
 
@@ -37,9 +57,13 @@ internal partial class TypeSelectorWidget : Widget
 	string searchString;
 	internal LineEdit Search { get; init; }
 
-	public TypeSelectorWidget( Widget parent ) : base( parent )
+	private bool IsSubgraph;
+
+	public TypeSelectorWidget( Widget parent, bool isSubgraph ) : base( parent )
 	{
 		Layout = Layout.Column();
+		IsSubgraph = isSubgraph;
+
 
 		var head = Layout.Row();
 		head.Margin = 6;
@@ -142,7 +166,7 @@ internal partial class TypeSelectorWidget : Widget
 		selection.Clear();
 
 		var types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract 
-		&& !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Order );
+		&& !x.HasAttribute<HideAttribute>() && ( IsSubgraph ? ( x.HasAttribute<SubgraphOnlyAttribute>() ) : ( !x.HasAttribute<SubgraphOnlyAttribute>() )  ) ).OrderBy( x => x.Order );
 
 		if ( !string.IsNullOrWhiteSpace( searchString ) )
 		{

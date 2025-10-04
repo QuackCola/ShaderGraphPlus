@@ -1,8 +1,4 @@
 ﻿using Editor;
-using Editor.MapEditor;
-using Facepunch.ActionGraphs;
-using System.Collections.Immutable;
-using static Sandbox.Services.Inventory;
 
 namespace ShaderGraphPlus;
 
@@ -48,8 +44,6 @@ internal class BlackboardView : Widget
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
 
-
-
 	public BlackboardView( Blackboard parent ) : base( parent )
 	{
 		Layout = Layout.Row();
@@ -87,12 +81,24 @@ internal class BlackboardView : Widget
 		_addButton.ToolTip = $"Add new blackboard parameter";
 		_addButton.Clicked += () =>
 		{
-			var popup = new PopupTypeSelector( this );
-			popup.OnSelect += ( t ) =>
+			if ( Graph.IsSubgraph )
 			{
-				OnAddBlackboardParameter( t );
-			};
-			popup.OpenAtCursor();
+				var popup = new PopupTypeSelectorSubgraph( this, true );
+				popup.OnSelect += ( t ) =>
+				{
+					OnAddBlackboardParameter( t );
+				};
+				popup.OpenAtCursor();
+			}
+			else
+			{
+				var popup = new PopupTypeSelector( this );
+				popup.OnSelect += ( t ) =>
+				{
+					OnAddBlackboardParameter( t );
+				};
+				popup.OpenAtCursor();
+			}
 		};
 
 		leftColumnTopLayout.Add( _addButton );
@@ -153,12 +159,16 @@ internal class BlackboardView : Widget
 		int id = _parentBlackboard.Graph._parameters.Count;
 		string name = $"Parameter{id}";
 
-		var parameterInstance = BaseBlackboardParameter.CreateTypeInstance( typeDescription.TargetType, name );
+		var parameterInstance = BaseBlackboardParameter.CreateTypeInstance( typeDescription.TargetType, name, Graph.IsSubgraph );
 		_parentBlackboard.Graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();
 
+		SGPLog.Info( $"Selecting : {parameterInstance}" );
+
 		SetSelectedItem( parameterInstance );
+
+		RebuildBuildFromParameters( true );
 	}
 
 	private void OnDeleteSelectedBlackboardParameter()

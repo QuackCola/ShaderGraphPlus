@@ -652,7 +652,7 @@ partial class ShaderGraphPlus
 
 				if ( subgraphInput.InputData.InputType == SubgraphPortType.Bool )
 				{
-					blackboardParameter = new BoolBlackboardParameter()
+					blackboardParameter = new BoolSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<bool>(),
@@ -660,7 +660,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Int )
 				{
-					blackboardParameter = new IntBlackboardParameter()
+					blackboardParameter = new IntSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<int>(),
@@ -668,7 +668,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Float )
 				{
-					blackboardParameter = new FloatBlackboardParameter()
+					blackboardParameter = new FloatSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<float>(),
@@ -676,7 +676,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector2 )
 				{
-					blackboardParameter = new Float2BlackboardParameter()
+					blackboardParameter = new Float2SubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<Vector2>(),
@@ -684,7 +684,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector3 )
 				{
-					blackboardParameter = new Float3BlackboardParameter()
+					blackboardParameter = new Float3SubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<Vector3>(),
@@ -692,7 +692,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Color )
 				{
-					blackboardParameter = new Float4BlackboardParameter()
+					blackboardParameter = new Float4SubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
 						Value = subgraphInput.InputData.GetValue<Color>(),

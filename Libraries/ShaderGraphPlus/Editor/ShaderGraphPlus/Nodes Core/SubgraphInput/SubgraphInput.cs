@@ -57,33 +57,33 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter blackboardParameter )
 	{
-		if ( blackboardParameter is BoolBlackboardParameter bbp )
+		if ( blackboardParameter is BoolSubgraphInputBlackboardParameter boolParameter )
 		{
-			SetDefaultValue( bbp.Value );
+			SetDefaultValue( boolParameter.Value );
 		}
-		else if ( blackboardParameter is IntBlackboardParameter ibp )
+		else if ( blackboardParameter is IntSubgraphInputBlackboardParameter intParameter )
 		{
-			SetDefaultValue( ibp.Value );
+			SetDefaultValue( intParameter.Value );
 		}
-		else if ( blackboardParameter is FloatBlackboardParameter fbp )
+		else if ( blackboardParameter is FloatSubgraphInputBlackboardParameter floatParameter )
 		{
-			SetDefaultValue( fbp.Value );
+			SetDefaultValue( floatParameter.Value );
 		}
-		else if ( blackboardParameter is Float2BlackboardParameter f2bp )
+		else if ( blackboardParameter is Float2SubgraphInputBlackboardParameter float2Parameter )
 		{
-			SetDefaultValue( f2bp.Value );
+			SetDefaultValue( float2Parameter.Value );
 		}
-		else if ( blackboardParameter is Float3BlackboardParameter f3bp )
+		else if ( blackboardParameter is Float3SubgraphInputBlackboardParameter float3Parameter )
 		{
-			SetDefaultValue( f3bp.Value );
+			SetDefaultValue( float3Parameter.Value );
 		}
-		else if ( blackboardParameter is Float4BlackboardParameter f4bp )
+		else if ( blackboardParameter is Float4SubgraphInputBlackboardParameter float4Parameter )
 		{
 			throw new NotImplementedException();
 		}
-		else if ( blackboardParameter is ColorBlackboardParameter colorbp )
+		else if ( blackboardParameter is ColorSubgraphInputBlackboardParameter colorParameter )
 		{
-			SetDefaultValue( colorbp.Value );
+			SetDefaultValue( colorParameter.Value );
 		}
 	}
 
