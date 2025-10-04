@@ -369,7 +369,7 @@ public class ShaderGraphPlusView : GraphView
 
 		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>()) )
 		{
-			var test2 = newParameterMenu.AddOption( td.Title, td.Icon, () =>
+			newParameterMenu.AddOption( td.Title, td.Icon, () =>
 			{
 				Dialog.AskString( ( string parameterName ) =>
 				{
