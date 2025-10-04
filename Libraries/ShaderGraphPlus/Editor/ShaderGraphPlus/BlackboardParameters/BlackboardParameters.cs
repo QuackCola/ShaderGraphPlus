@@ -6,7 +6,7 @@ internal interface IShaderFeatureBlackboardParameter
 {
 }
 
-[Title( "Bool" ), Order( 0 )]
+[Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
 	public BoolBlackboardParameter() : base() 
@@ -21,7 +21,7 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 
 }
 
-[Title( "Int" ), Order( 1 )]
+[Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 {
 	[Group( "Range" )] public int Min { get; set; }
@@ -41,7 +41,7 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	}
 }
 
-[Title( "Float" ), Order( 2 )]
+[Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
 {
 	[Group( "Range" )] public float Min { get; set; }
@@ -61,7 +61,7 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 	}
 }
 
-[Title( "Float2" ), Order( 3 )]
+[Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
@@ -103,7 +103,7 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 
 }
 
-[Title( "Float3" ), Order( 4 )]
+[Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
@@ -153,7 +153,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Hide] public float Step => UI.Step;
 }
 
-[Title( "Float4" ), Order( 5 )]
+[Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
 {
 	[Group( "Range" )] public Vector4 Min { get; set; }
@@ -212,7 +212,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 	}
 }
 
-[Title( "Color" ), Order( 6 )]
+[Title( "Color" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
 	[JsonIgnore, Hide]
