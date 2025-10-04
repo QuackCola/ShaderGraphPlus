@@ -37,6 +37,7 @@ public enum SubgraphPortType
 /// Input of a Subgraph.
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
+[InternalNode]
 public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncable
 {
 	[Hide]

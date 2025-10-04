@@ -150,6 +150,7 @@ public class ShaderFunctionOutput
 /// Output of a subgraph.
 /// </summary>
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
+[InternalNode]
 public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 {
 	[Hide]
