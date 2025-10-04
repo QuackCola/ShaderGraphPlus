@@ -828,8 +828,6 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( !item.IsValid() )
 		{
-			SGPLog.Info( "Mouse clicked on GraphView!" );
-
 			_window.OnGraphViewAreaClicked();
 		}
 	}
