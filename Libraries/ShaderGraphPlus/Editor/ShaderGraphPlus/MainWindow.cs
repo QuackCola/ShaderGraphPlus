@@ -1841,7 +1841,7 @@ public class MainWindow : DockWindow
 
 	/// <summary>
 	/// Called  no items are known to be selected by GraphView
-	/// and that a blank area of the graph has been clicked on.
+	/// and a blank area of the graph has been clicked on.
 	/// </summary>
 	public void OnGraphViewAreaClicked()
 	{
