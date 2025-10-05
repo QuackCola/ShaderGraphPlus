@@ -38,7 +38,7 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-public abstract class ParameterNode<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncable, IErroringNode//, IReplaceNode
+public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncable, IErroringNode//, IReplaceNode
 {
 	[Hide]
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );

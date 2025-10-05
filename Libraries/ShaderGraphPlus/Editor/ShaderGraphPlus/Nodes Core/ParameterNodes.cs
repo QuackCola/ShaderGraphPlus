@@ -12,7 +12,7 @@ namespace ShaderGraphPlus.Nodes;
 /// </summary>
 [Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
 [InternalNode]
-public sealed class BoolParameterNode : ParameterNode<bool>
+public sealed class BoolParameterNode : ParameterNodeBase<bool>
 {
 	[Hide]
 	public override int Version => 2;
@@ -49,7 +49,7 @@ public sealed class BoolParameterNode : ParameterNode<bool>
 ///</summary>
 [Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class IntParameterNode : ParameterNode<int>
+public sealed class IntParameterNode : ParameterNodeBase<int>
 {
 	[Hide]
 	public override int Version => 2;
@@ -90,7 +90,7 @@ public sealed class IntParameterNode : ParameterNode<int>
 /// </summary>
 [Title( "Float" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class FloatParameterNode : ParameterNode<float>
+public sealed class FloatParameterNode : ParameterNodeBase<float>
 {
 	[Hide]
 	public override int Version => 2;
@@ -133,7 +133,7 @@ public sealed class FloatParameterNode : ParameterNode<float>
 /// </summary>
 [Title( "Float2" ), Category( "Parameters" ), Icon( "looks_two" )]
 [InternalNode]
-public sealed class Float2ParameterNode : ParameterNode<Vector2>
+public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 {
 	[Hide]
 	public override int Version => 2;
@@ -207,7 +207,7 @@ public sealed class Float2ParameterNode : ParameterNode<Vector2>
 /// </summary>
 [Title( "Float3" ), Category( "Parameters" ), Icon( "looks_3" )]
 [InternalNode]
-public sealed class Float3ParameterNode : ParameterNode<Vector3>
+public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 {
 	[Hide]
 	public override int Version => 2;
@@ -297,7 +297,7 @@ public sealed class Float3ParameterNode : ParameterNode<Vector3>
 /// </summary>
 [Title( "Float4" ), Category( "Parameters" ), Icon( "looks_4" )]
 [InternalNode]
-public sealed class Float4ParameterNode : ParameterNode<Vector4>
+public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 {
 	[Hide]
 	public override int Version => 2;
@@ -403,7 +403,7 @@ public sealed class Float4ParameterNode : ParameterNode<Vector4>
 /// </summary>
 [Title( "Color" ), Category( "Parameters" ), Icon( "palette" )]
 [InternalNode]
-public sealed class ColorParameterNode : ParameterNode<Color>
+public sealed class ColorParameterNode : ParameterNodeBase<Color>
 {
 	[Hide]
 	public override int Version => 2;
