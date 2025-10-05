@@ -229,12 +229,13 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
 		{
 			SubgraphPortType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}" ),
+			SubgraphPortType.Int => ( ResultType.Int, $"{compiler.ResultValue( InputData.GetValue<int>() )}" ),
 			SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}" ),
 			SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )" ),
 			SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
-			SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
+			SubgraphPortType.Vector4 => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
 			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
-			SubgraphPortType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
+			SubgraphPortType.Sampler => ( ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
