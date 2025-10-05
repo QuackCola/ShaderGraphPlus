@@ -50,7 +50,7 @@ internal class ProjectTemplatesListView : ListView
     {
         var template_path = ShaderGraphPlusFileSystem.Root.GetFullPath("/templates");
 
-
+		SGPLog.Info(template_path);
         if (!Directory.Exists(template_path))
         {
             return;
