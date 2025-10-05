@@ -121,53 +121,77 @@ public sealed class ParameterNodeType : ClassNodeType
 		};
 	}
 
-	internal static BaseNodePlus InitSubgraphInputNode( BaseBlackboardParameter blackboardParameter )
-	{
-		return blackboardParameter switch
-		{
-			BoolBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueBool( v.Value, SubgraphPortType.Bool )
-			},
-			IntBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueInt( v.Value, SubgraphPortType.Int )
-			},
-			FloatBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueFloat( v.Value, SubgraphPortType.Float )
-			},
-			Float2BlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueVector2( v.Value, SubgraphPortType.Vector2 )
-			},
-			Float3BlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueVector3( v.Value, SubgraphPortType.Vector3 )
-			},
-			//Float4BlackboardParameter v => new SubgraphInput()
-			//{
-			//	InputData = new VariantValueVector4( v.Value, SubgraphPortType.Vector4 )
-			//},
-			ColorBlackboardParameter v => new SubgraphInput()
-			{
-				InputName = v.Name,
-				BlackboardParameterIdentifier = blackboardParameter.Identifier,
-				InputData = new VariantValueColor( v.Value, SubgraphPortType.Color )
-			},
-			_ => throw new NotImplementedException(),
-		};
-	}
+	//internal static BaseNodePlus InitSubgraphInputNode( BaseBlackboardParameter blackboardParameter )
+	//{
+	//	return blackboardParameter switch
+	//	{
+	//		BoolSubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueBool( v.Value, SubgraphPortType.Bool ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		IntSubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueInt( v.Value, SubgraphPortType.Int ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		FloatSubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueFloat( v.Value, SubgraphPortType.Float ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//
+	//		},
+	//		Float2SubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueVector2( v.Value, SubgraphPortType.Vector2 ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		Float3SubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueVector3( v.Value, SubgraphPortType.Vector3 ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		Float4SubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueVector4( v.Value, SubgraphPortType.Vector4 ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		ColorSubgraphInputBlackboardParameter v => new SubgraphInput()
+	//		{
+	//			BlackboardParameterIdentifier = blackboardParameter.Identifier,
+	//			InputName = v.Name,
+	//			InputDescription = v.InputDescription,
+	//			InputData = new VariantValueColor( v.Value, SubgraphPortType.Color ),
+	//			IsRequired = v.IsRequired,
+	//			PortOrder = v.PortOrder,
+	//		},
+	//		_ => throw new NotImplementedException(),
+	//	};
+	//}
 
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
@@ -178,11 +202,11 @@ public sealed class ParameterNodeType : ClassNodeType
 
 		BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, blackboardParameterIdentifier );
 
-		if ( node is SubgraphInput )
-		{
-			node = InitSubgraphInputNode( BlackboardParameter );
-		}
-		else
+		//if ( node is SubgraphInput )
+		//{
+		//	node = InitSubgraphInputNode( BlackboardParameter );
+		//}
+		//else
 		{
 			node = InitParameterNode( (BaseNodePlus)node, Name, blackboardParameterIdentifier );
 		}

@@ -21,8 +21,8 @@ public enum SubgraphPortType
 	Vector2,
 	[Title( "Float3" ), Icon( "looks_3" )]
 	Vector3,
-	//[Title( "Float4" ), Icon( "looks_4" )]
-	//Vector4,
+	[Title( "Float4" ), Icon( "looks_4" )]
+	Vector4,
 	[Title( "Color" ), Icon( "palette" )]
 	Color,
 	[Icon( "colorize" )]

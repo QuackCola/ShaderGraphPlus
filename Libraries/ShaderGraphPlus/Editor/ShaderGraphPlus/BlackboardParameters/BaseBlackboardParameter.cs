@@ -1,5 +1,15 @@
 ﻿namespace ShaderGraphPlus;
 
+internal interface ISubgraphBlackboardParameter
+{
+	public string Name { get; set; }
+	public string Description { get; set; }
+	public bool IsRequired { get; set; }
+	public int PortOrder { get; set; }
+
+	public object GetValue();
+}
+
 public abstract class BaseBlackboardParameter
 {
 	[Sandbox.ReadOnly, Browsable( false )]
@@ -35,54 +45,44 @@ public abstract class BaseBlackboardParameter
 		if ( guid == default )
 			guid = Guid.NewGuid();
 
-		if ( isSubgraph )
+		return typeInstance switch
 		{
-			return typeInstance switch
-			{
-				BoolSubgraphInputBlackboardParameter => new BoolSubgraphInputBlackboardParameter( false )
-				{ Name = name, Identifier = guid },
-				IntSubgraphInputBlackboardParameter => new IntSubgraphInputBlackboardParameter( 1 )
-				{ Name = name, Identifier = guid },
-				FloatSubgraphInputBlackboardParameter => new FloatSubgraphInputBlackboardParameter( 1.0f )
-				{ Name = name, Identifier = guid },
-				Float2SubgraphInputBlackboardParameter => new Float2SubgraphInputBlackboardParameter( Vector2.One )
-				{ Name = name, Identifier = guid },
-				Float3SubgraphInputBlackboardParameter => new Float3SubgraphInputBlackboardParameter( Vector3.One )
-				{ Name = name, Identifier = guid },
-				Float4SubgraphInputBlackboardParameter => new Float4SubgraphInputBlackboardParameter( Vector4.One )
-				{ Name = name, Identifier = guid },
-				ColorSubgraphInputBlackboardParameter => new ColorSubgraphInputBlackboardParameter( Color.White )
-				{ Name = name, Identifier = guid },
-				_ => throw new NotImplementedException( $"unknown `{typeInstance}`" ),
-			};
-		}
-		else
-		{
-			return typeInstance switch
-			{
-				BoolBlackboardParameter => new BoolBlackboardParameter( false )
-				{ Name = name, Identifier = guid },
-				IntBlackboardParameter => new IntBlackboardParameter( 1 )
-				{ Name = name, Identifier = guid },
-				FloatBlackboardParameter => new FloatBlackboardParameter( 1.0f )
-				{ Name = name, Identifier = guid },
-				Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.One )
-				{ Name = name, Identifier = guid },
-				Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.One )
-				{ Name = name, Identifier = guid },
-				Float4BlackboardParameter => new Float4BlackboardParameter( Vector4.One )
-				{ Name = name, Identifier = guid },
-				ColorBlackboardParameter => new ColorBlackboardParameter( Color.White )
-				{ Name = name, Identifier = guid },
-				ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new()
-				{ FeatureName = name } )
-				{ Name = name, Identifier = guid },
-				ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new()
-				{ FeatureName = name } )
-				{ Name = name, Identifier = guid },
-				_ => throw new NotImplementedException( $"{typeInstance}" ),
-			};
-		}
+			BoolBlackboardParameter => new BoolBlackboardParameter( false )
+			{ Name = name, Identifier = guid },
+			IntBlackboardParameter => new IntBlackboardParameter( 1 )
+			{ Name = name, Identifier = guid },
+			FloatBlackboardParameter => new FloatBlackboardParameter( 1.0f )
+			{ Name = name, Identifier = guid },
+			Float2BlackboardParameter => new Float2BlackboardParameter( Vector2.One )
+			{ Name = name, Identifier = guid },
+			Float3BlackboardParameter => new Float3BlackboardParameter( Vector3.One )
+			{ Name = name, Identifier = guid },
+			Float4BlackboardParameter => new Float4BlackboardParameter( Vector4.One )
+			{ Name = name, Identifier = guid },
+			ColorBlackboardParameter => new ColorBlackboardParameter( Color.White )
+			{ Name = name, Identifier = guid },
+			ShaderFeatureBooleanBlackboardParameter => new ShaderFeatureBooleanBlackboardParameter( new()
+			{ FeatureName = name } )
+			{ Name = name, Identifier = guid },
+			ShaderFeatureEnumBlackboardParameter => new ShaderFeatureEnumBlackboardParameter( new()
+			{ FeatureName = name } )
+			{ Name = name, Identifier = guid },
+			BoolSubgraphInputBlackboardParameter => new BoolSubgraphInputBlackboardParameter( false )
+			{ Name = name, Identifier = guid },
+			IntSubgraphInputBlackboardParameter => new IntSubgraphInputBlackboardParameter( 1 )
+			{ Name = name, Identifier = guid },
+			FloatSubgraphInputBlackboardParameter => new FloatSubgraphInputBlackboardParameter( 1.0f )
+			{ Name = name, Identifier = guid },
+			Float2SubgraphInputBlackboardParameter => new Float2SubgraphInputBlackboardParameter( Vector2.One )
+			{ Name = name, Identifier = guid },
+			Float3SubgraphInputBlackboardParameter => new Float3SubgraphInputBlackboardParameter( Vector3.One )
+			{ Name = name, Identifier = guid },
+			Float4SubgraphInputBlackboardParameter => new Float4SubgraphInputBlackboardParameter( Vector4.One )
+			{ Name = name, Identifier = guid },
+			ColorSubgraphInputBlackboardParameter => new ColorSubgraphInputBlackboardParameter( Color.White )
+			{ Name = name, Identifier = guid },
+			_ => throw new NotImplementedException( $"{typeInstance}" ),
+		};
 	}
 }
 
@@ -120,18 +120,14 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 	}
 }
 
-public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericParameter<T>
+public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericParameter<T>, ISubgraphBlackboardParameter
 {
 	[Title( "Input Name" )]
 	public override string Name { get; set; }
 
+	[Title( "Input Description" )]
 	[TextArea]
-	public string InputDescription { get; set; }
-
-	public override object GetValue()
-	{
-		return Value;
-	}
+	public string Description { get; set; }
 
 	/// <summary>
 	/// Is this input required to have a valid connection?
@@ -147,5 +143,10 @@ public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericPar
 	public BlackboardSubgraphInputParameter( T value ) : this()
 	{
 		Value = value;
+	}
+
+	public override object GetValue()
+	{
+		return Value;
 	}
 }

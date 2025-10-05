@@ -304,10 +304,9 @@ public class ShaderGraphPlusView : GraphView
 			}
 			else
 			{
-				//SGPLog.Info( $"IsSubgraph!" );
 				if ( AvailableNodes.TryGetValue( DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname, out var nodeType ) )
 				{
-					var subgraphInputNodeType = new BlackboardPropertyToSubgraphInputNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
+					var subgraphInputNodeType = new SubgraphInputNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
 
 					return subgraphInputNodeType;
 				}
@@ -369,19 +368,35 @@ public class ShaderGraphPlusView : GraphView
 
 		foreach ( var td in EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ) )
 		{
+			if ( !isSubgraph && td.HasAttribute<SubgraphOnlyAttribute>() )
+			{
+				continue;
+			}
+			else if ( isSubgraph && !td.HasAttribute<SubgraphOnlyAttribute>() )
+			{
+				continue;
+			}
+
 			if ( td.TargetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ||
 					td.TargetType == typeof( ShaderFeatureEnumBlackboardParameter ) )
 			{
 				continue;
 			}
-				
+
 			newParameterMenu.AddOption( td.Title, td.Icon, () =>
 			{
 				Dialog.AskString( ( string parameterName ) =>
 				{
-					CreateNewParameterNode( td.TargetType, parameterName, clickPos, isSubgraph );
+					if ( !isSubgraph )
+					{
+						CreateNewParameterNode( td.TargetType, parameterName, clickPos );
+					}
+					else
+					{
+						CreateNewSubgraphInputNode( td.TargetType, parameterName, clickPos );
+					}
 				},
-				$"Specify a parameter name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
+				$"Specify a name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
 			} );
 		}
 
@@ -409,10 +424,10 @@ public class ShaderGraphPlusView : GraphView
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector3 );
 			} );
-			//newSubgraphOutputMenu.AddOption( "Float4", "looks_4", () =>
-			//{
-			//	CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector4 );
-			//});
+			newSubgraphOutputMenu.AddOption( "Float4", "looks_4", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector4 );
+			});
 			newSubgraphOutputMenu.AddOption( "Color", "palette", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Color );
@@ -477,22 +492,6 @@ public class ShaderGraphPlusView : GraphView
 		menu.AddSeparator();
 	}
 
-	private void CreateNewSubgraphOutputNode( Vector2 position, SubgraphPortType outputType )
-	{
-		Dialog.AskString( ( string outputName ) =>
-		{
-			var nodeFullName = DisplayInfo.ForType( typeof( SubgraphOutput ) ).Fullname;
-
-			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
-			{
-				var parameterNodeType = new SubgraphOutputNodeType( ((ClassNodeType)nodeType).Type, outputType, outputName );
-
-				CreateNewNode( parameterNodeType, position );
-			}
-		},
-		$"Specify a name for the subgraph output" );
-	}
-
 	protected override void OnDoubleClickNodeSpecial( NodeUI node )
 	{
 		base.OnDoubleClickNodeSpecial( node );
@@ -510,7 +509,42 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	private void CreateNewParameterNode( Type targetType, string name, Vector2 position, bool isSubgraph )
+	private void CreateNewSubgraphInputNode( Type targetType, string name, Vector2 position )
+	{
+		var nodeFullName = DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname;
+
+		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+		{
+			var subgraphInputNodeType = new SubgraphInputNodeType( ((ClassNodeType)nodeType).Type, targetType, name );
+
+			CreateNewNode( subgraphInputNodeType, position );
+
+			if ( subgraphInputNodeType.BlackboardParameter != null )
+			{
+				Graph.AddBlackboardParameter( subgraphInputNodeType.BlackboardParameter );
+
+				OnConstantNodeConvertedToParameter?.Invoke();
+			}
+		}
+	}
+
+	private void CreateNewSubgraphOutputNode( Vector2 position, SubgraphPortType outputType )
+	{
+		Dialog.AskString( ( string outputName ) =>
+		{
+			var nodeFullName = DisplayInfo.ForType( typeof( SubgraphOutput ) ).Fullname;
+
+			if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
+			{
+				var parameterNodeType = new SubgraphOutputNodeType( ((ClassNodeType)nodeType).Type, outputType, outputName );
+
+				CreateNewNode( parameterNodeType, position );
+			}
+		},
+		$"Specify a name for the subgraph output" );
+	}
+
+	private void CreateNewParameterNode( Type targetType, string name, Vector2 position )
 	{
 		var nodeFullName = targetType switch
 		{
@@ -524,11 +558,6 @@ public class ShaderGraphPlusView : GraphView
 			_ => throw new NotImplementedException(),
 		};
 
-		if ( isSubgraph )
-		{
-			nodeFullName = DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname;
-		}
-		
 		if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
 		{
 			var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, targetType, name );

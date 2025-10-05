@@ -655,7 +655,10 @@ partial class ShaderGraphPlus
 					blackboardParameter = new BoolSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<bool>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Int )
@@ -663,7 +666,10 @@ partial class ShaderGraphPlus
 					blackboardParameter = new IntSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<int>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Float )
@@ -671,7 +677,10 @@ partial class ShaderGraphPlus
 					blackboardParameter = new FloatSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<float>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector2 )
@@ -679,7 +688,10 @@ partial class ShaderGraphPlus
 					blackboardParameter = new Float2SubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<Vector2>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector3 )
@@ -687,15 +699,21 @@ partial class ShaderGraphPlus
 					blackboardParameter = new Float3SubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<Vector3>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Color )
 				{
-					blackboardParameter = new Float4SubgraphInputBlackboardParameter()
+					blackboardParameter = new ColorSubgraphInputBlackboardParameter()
 					{
 						Name = subgraphInput.InputName,
+						Description = subgraphInput.InputDescription,
 						Value = subgraphInput.InputData.GetValue<Color>(),
+						IsRequired = subgraphInput.IsRequired,
+						PortOrder = subgraphInput.PortOrder,
 					};
 				}
 

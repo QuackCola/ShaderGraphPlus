@@ -180,21 +180,8 @@ public class MainWindow : DockWindow
 		_preview2D.Material = Material.Load( "materials/core/shader_editor.vmat" );
 	}
 
-	public void OnNodeSelected( BaseNodePlus node )
+	private void SelectBlackboardParameter()
 	{
-		var oldTarget = _properties.Target;
-		_properties.Target = node != null ? node : _graph;
-
-		if ( _properties.Target is ShaderGraphPlus && oldTarget is BaseBlackboardParameter )
-		{
-			_blackboard.ClearSeletedItem();
-		}
-		else if ( _properties.Target is BaseNodePlus && oldTarget is BaseBlackboardParameter )
-		{
-			_blackboard.ClearSeletedItem();
-		}
-
-		// Select parameter in blackboard from parameter identifier stored in selected IParameterNode.
 		if ( _properties.Target is IParameterNode parameterNode && parameterNode is IBlackboardSyncable blackboardSyncable )
 		{
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
@@ -214,8 +201,41 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
+		else if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncable syncable )
+		{	
+			// For now only select a blackboard parameter when _graphView only has 1 selection.
+			if ( _graphView.SelectedItems.Count() == 1 )
+			{
+				if ( syncable.BlackboardParameterIdentifier != default )
+				{
+					var blackboardParameter = _graph.GetBlackboardParameterByGuid( syncable.BlackboardParameterIdentifier );
+					_blackboard.SetSelectedItem( blackboardParameter );
+					_properties.Target = blackboardParameter;
+				}
+			}
+			else
+			{
+				_properties.Target = _graph;
+			}
+		}
+	}
 
-		if ( EnableNodePreview && ( node != null && node.CanPreview ) )
+	public void OnNodeSelected( BaseNodePlus node )
+	{
+		var oldTarget = _properties.Target;
+		_properties.Target = node != null ? node : _graph;
+
+		if ( _properties.Target is ShaderGraphPlus && oldTarget is BaseBlackboardParameter )
+		{
+			_blackboard.ClearSeletedItem();
+		}
+		else if ( _properties.Target is BaseNodePlus && oldTarget is BaseBlackboardParameter )
+		{
+			_blackboard.ClearSeletedItem();
+		}
+		SelectBlackboardParameter();
+
+		if ( EnableNodePreview && (node != null && node.CanPreview) )
 		{
 			SGPLog.Info( $"Node PreviewID is `{node.PreviewID}`", EnableNodePreview );
 
