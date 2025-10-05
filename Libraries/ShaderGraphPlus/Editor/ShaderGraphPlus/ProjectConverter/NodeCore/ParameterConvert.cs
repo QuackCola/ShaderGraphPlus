@@ -44,28 +44,35 @@ internal class FloatNodeConvert : BaseNodeConvert
 		{
 			var newConstantNode = new FloatConstantNode();
 			newConstantNode.Value = oldFloatNode.Value;
+			newConstantNode.Min = oldFloatNode.Min;
+			newConstantNode.Max = oldFloatNode.Max;
+			newConstantNode.Step = oldFloatNode.Step;
 
 			newNodes.Add( newConstantNode );
 		}
 		else
 		{
-			var newNode = new FloatParameterNode();
-			newNode.Identifier = oldNode.Identifier;
-			newNode.Position = oldNode.Position;
-			newNode.Value = oldFloatNode.Value;
-			newNode.Name = oldFloatNode.Name;
-			newNode.IsAttribute = oldFloatNode.IsAttribute;
-			newNode.UI = oldFloatNode.UI.ConvertVanillaUI();
-			newNode.Min = oldFloatNode.Min;
-			newNode.Max = oldFloatNode.Max;
-			newNode.BlackboardParameterIdentifier = Guid.NewGuid();
+			var newNode = new FloatParameterNode
+			{
+				BlackboardParameterIdentifier = Guid.NewGuid(),
+				Identifier = oldNode.Identifier,
+				Position = oldNode.Position,
+				Name = oldFloatNode.Name,
+				Value = oldFloatNode.Value,
+				Min = oldFloatNode.Min,
+				Max = oldFloatNode.Max,
+				IsAttribute = oldFloatNode.IsAttribute,
+				UI = oldFloatNode.UI.ConvertVanillaUI()
+			};
 
 			BaseBlackboardParameter blackboardParameter = new FloatBlackboardParameter()
 			{
+				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
 				Value = newNode.Value,
-				UI = newNode.UI,
-				Identifier = newNode.BlackboardParameterIdentifier,
+				Min = newNode.Min,
+				Max = newNode.Max,
+				UI = newNode.UI
 			};
 
 			converter.AddBlackboardParameter( blackboardParameter );
@@ -92,28 +99,35 @@ internal class Float2NodeConvert : BaseNodeConvert
 		{
 			var newConstantNode = new Float2ConstantNode();
 			newConstantNode.Value = oldFloat2Node.Value;
+			newConstantNode.Min = oldFloat2Node.Min;
+			newConstantNode.Max = oldFloat2Node.Max;
+			newConstantNode.Step = oldFloat2Node.Step;
 
 			newNodes.Add( newConstantNode );
 		}
 		else
 		{
-			var newNode = new Float2ParameterNode();
-			newNode.Identifier = oldNode.Identifier;
-			newNode.Position = oldNode.Position;
-			newNode.Value = oldFloat2Node.Value;
-			newNode.Name = oldFloat2Node.Name;
-			newNode.IsAttribute = oldFloat2Node.IsAttribute;
-			newNode.UI = oldFloat2Node.UI.ConvertVanillaUI();
-			newNode.Min = oldFloat2Node.Min;
-			newNode.Max = oldFloat2Node.Max;
-			newNode.BlackboardParameterIdentifier = Guid.NewGuid();
+			var newNode = new Float2ParameterNode
+			{
+				BlackboardParameterIdentifier = Guid.NewGuid(),
+				Identifier = oldNode.Identifier,
+				Position = oldNode.Position,
+				Name = oldFloat2Node.Name,
+				Value = oldFloat2Node.Value,
+				Min = oldFloat2Node.Min,
+				Max = oldFloat2Node.Max,
+				IsAttribute = oldFloat2Node.IsAttribute,
+				UI = oldFloat2Node.UI.ConvertVanillaUI()
+			};
 
 			BaseBlackboardParameter blackboardParameter = new Float2BlackboardParameter()
 			{
+				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
 				Value = newNode.Value,
-				UI = newNode.UI,
-				Identifier = newNode.BlackboardParameterIdentifier,
+				Min = newNode.Min,
+				Max = newNode.Max,
+				UI = newNode.UI
 			};
 
 			converter.AddBlackboardParameter( blackboardParameter );
@@ -140,28 +154,35 @@ internal class Float3NodeConvert : BaseNodeConvert
 		{
 			var newConstantNode = new Float3ConstantNode();
 			newConstantNode.Value = oldFloat3Node.Value;
+			newConstantNode.Min = oldFloat3Node.Min;
+			newConstantNode.Max = oldFloat3Node.Max;
+			newConstantNode.Step = oldFloat3Node.Step;
 
 			newNodes.Add( newConstantNode );
 		}
 		else
 		{
-			var newNode = new Float3ParameterNode();
-			newNode.Identifier = oldNode.Identifier;
-			newNode.Position = oldNode.Position;
-			newNode.Value = oldFloat3Node.Value;
-			newNode.Name = oldFloat3Node.Name;
-			newNode.IsAttribute = oldFloat3Node.IsAttribute;
-			newNode.UI = oldFloat3Node.UI.ConvertVanillaUI();
-			newNode.Min = oldFloat3Node.Min;
-			newNode.Max = oldFloat3Node.Max;
-			newNode.BlackboardParameterIdentifier = Guid.NewGuid();
+			var newNode = new Float3ParameterNode
+			{
+				BlackboardParameterIdentifier = Guid.NewGuid(),
+				Identifier = oldNode.Identifier,
+				Position = oldNode.Position,
+				Name = oldFloat3Node.Name,
+				Value = oldFloat3Node.Value,
+				Min = oldFloat3Node.Min,
+				Max = oldFloat3Node.Max,
+				IsAttribute = oldFloat3Node.IsAttribute,
+				UI = oldFloat3Node.UI.ConvertVanillaUI()
+			};
 
 			BaseBlackboardParameter blackboardParameter = new Float3BlackboardParameter()
 			{
+				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
 				Value = newNode.Value,
-				UI = newNode.UI,
-				Identifier = newNode.BlackboardParameterIdentifier,
+				Min = newNode.Min,
+				Max = newNode.Max,
+				UI = newNode.UI
 			};
 
 			converter.AddBlackboardParameter( blackboardParameter );
@@ -193,21 +214,23 @@ internal class Float4NodeConvert : BaseNodeConvert
 		}
 		else
 		{
-			var newNode = new ColorParameterNode();
-			newNode.Identifier = oldNode.Identifier;
-			newNode.Position = oldNode.Position;
-			newNode.Value = oldFloat4Node.Value;
-			newNode.Name = oldFloat4Node.Name;
-			newNode.IsAttribute = oldFloat4Node.IsAttribute;
-			newNode.UI = oldFloat4Node.UI.ConvertVanillaUI();
-			newNode.BlackboardParameterIdentifier = Guid.NewGuid();
+			var newNode = new ColorParameterNode
+			{
+				BlackboardParameterIdentifier = Guid.NewGuid(),
+				Identifier = oldNode.Identifier,
+				Position = oldNode.Position,
+				Value = oldFloat4Node.Value,
+				Name = oldFloat4Node.Name,
+				IsAttribute = oldFloat4Node.IsAttribute,
+				UI = oldFloat4Node.UI.ConvertVanillaUI()
+			};
 
 			BaseBlackboardParameter blackboardParameter = new ColorBlackboardParameter()
 			{
+				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
 				Value = newNode.Value,
 				UI = newNode.UI,
-				Identifier = newNode.BlackboardParameterIdentifier,
 			};
 
 			converter.AddBlackboardParameter( blackboardParameter );
