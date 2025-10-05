@@ -129,7 +129,7 @@ file class ProjectConverterDialog : Dialog
 		Window.FixedWidth = 700f;
 		Window.MaximumSize = Window.Size;
 		Window.MinimumSize = Window.Size;
-		Window.Title = "Convert ShaderGraph To ShaderGraphPlus";
+		Window.Title = "Convert ShaderGraph To ShaderGraphPlus ( Experimental )";
 		Window.SetWindowIcon( MaterialIcons.Gradient );
 		Window.SetModal( true, true );
 
