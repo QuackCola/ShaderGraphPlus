@@ -16,7 +16,7 @@ public sealed class InstanceIdNode : ShaderNodePlus, IPreRegisterNodeData
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	public void PreRegister( GraphCompiler compiler )
 	{

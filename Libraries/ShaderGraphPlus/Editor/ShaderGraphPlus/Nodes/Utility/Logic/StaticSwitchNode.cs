@@ -19,7 +19,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.LogicNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.LogicNode;
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }

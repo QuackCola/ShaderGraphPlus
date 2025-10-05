@@ -13,7 +13,7 @@ public sealed class OscillatorNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 public string Oscillator => @"

@@ -16,7 +16,7 @@ public sealed class Time : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.GlobalVariableNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[JsonIgnore]
 	public float Value => RealTime.Now;

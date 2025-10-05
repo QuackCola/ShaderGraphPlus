@@ -16,7 +16,7 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => Color.Parse( "#9d00ff" )!.Value;
+	public override Color NodeTitleTintColor => Color.Parse( "#9d00ff" )!.Value;
 
 	[Hide]
 	public override string Title => string.IsNullOrEmpty( _name ) ?
@@ -117,7 +117,7 @@ public sealed class NamedRerouteNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => Color.Parse( "#9d00ff" )!.Value;
+	public override Color NodeTitleTintColor => Color.Parse( "#9d00ff" )!.Value;
 
 	[Hide]
 	public override string Title => string.IsNullOrEmpty( Name ) ?

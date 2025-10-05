@@ -60,7 +60,7 @@ public class InvertColorsNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -81,7 +81,7 @@ public class MakeGreyscaleNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -105,7 +105,7 @@ public sealed class TransformNormal : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	/// <summary>
 	/// Normal input. No input specified will output vertex normal in world space
@@ -183,7 +183,7 @@ public sealed class ApplyTrs : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -257,7 +257,7 @@ public sealed class PolarCoordinates : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector2 ) )]
 	[Hide]
@@ -315,7 +315,7 @@ public sealed class Blend : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Color ) )]
 	[Hide]
@@ -445,7 +445,7 @@ public sealed class NormalBlend : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Hide]
 	public static string NormalBlendVector => @"
@@ -515,7 +515,7 @@ public sealed class Reflection : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Hide]
 	public static string ReflectVector => @"
@@ -564,7 +564,7 @@ public sealed class RGBtoHSV : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -585,7 +585,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -606,7 +606,7 @@ public sealed class RGBtoLinear : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -627,7 +627,7 @@ public sealed class LineartoRGB : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -648,7 +648,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -669,7 +669,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	[Input( typeof( Vector3 ) )]
 	[Hide]
@@ -690,7 +690,7 @@ public sealed class HeightToNormal : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.TransformNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.TransformNode;
 
 	public enum OutputNormalSpace
 	{

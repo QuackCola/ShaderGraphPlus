@@ -137,12 +137,12 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 
 	public Color GetPrimaryColor( GraphView view )
 	{
-		return PrimaryColor;
+		return NodeBodyTintColor;
 	}
 
 	public Color GetPrimaryHeaderColor( GraphView view )
 	{
-		return PrimaryHeaderColor;
+		return NodeTitleTintColor;
 	}
 
 	public virtual Menu CreateContextMenu( NodeUI node )
@@ -172,13 +172,10 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	public virtual Pixmap Thumbnail { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual Color PrimaryColor { get; } = Color.Parse( "#303030" )!.Value.Lighten( 2.0f );
+	public virtual Color NodeBodyTintColor { get; set; } = Color.Parse( "#303030" )!.Value.Lighten( 2.0f );
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual Color PrimaryHeaderColor { get; } = Color.Gray;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public NodeThemeConfig NodeThemeConfig { get; set; }
+	public virtual Color NodeTitleTintColor { get; set; } = Color.Gray;
 
 	public virtual void OnPaint( Rect rect )
 	{

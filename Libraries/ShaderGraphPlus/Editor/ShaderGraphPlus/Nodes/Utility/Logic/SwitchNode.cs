@@ -17,7 +17,7 @@ public sealed class SwitchNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.LogicNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.LogicNode;
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);

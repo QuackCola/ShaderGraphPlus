@@ -14,7 +14,7 @@ public sealed class BumpOffsetNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	private const float HeightScale = 0.1f; 

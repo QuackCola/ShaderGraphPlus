@@ -10,7 +10,7 @@ public sealed class ViewportNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.GlobalVariableNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	[Output( typeof( Vector2 ) ), Title( "Size" )]
 	[Hide]

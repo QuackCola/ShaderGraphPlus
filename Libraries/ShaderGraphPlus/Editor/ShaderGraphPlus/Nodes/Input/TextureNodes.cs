@@ -23,7 +23,7 @@ public interface ISyncableTextureNode
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode
 {
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
@@ -364,7 +364,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide]
 	public bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
@@ -917,7 +917,7 @@ public sealed class TextureCoord : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.StageInputNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	/// <summary>
 	/// Use the secondary vertex coordinate
@@ -965,7 +965,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	public override bool CanPreview => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -1092,7 +1092,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;
@@ -1333,7 +1333,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;

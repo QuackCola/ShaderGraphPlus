@@ -17,7 +17,7 @@ public sealed class BoxShapeNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
@@ -74,7 +74,7 @@ public sealed class ElipseShapeNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]
@@ -131,7 +131,7 @@ public sealed class PolygonShapeNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]

@@ -44,7 +44,7 @@ public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBl
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color PrimaryHeaderColor => PrimaryNodeHeaderColors.ParameterNode;
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }

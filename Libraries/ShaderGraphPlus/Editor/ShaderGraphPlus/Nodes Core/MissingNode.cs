@@ -36,7 +36,7 @@ public class MissingNode : BaseNodePlus
 	Vector2 ContentSize = new();
 
 	[Hide]
-	public override Color PrimaryColor => Theme.MultipleValues;
+	public override Color NodeBodyTintColor => Theme.MultipleValues;
 
 	public MissingNode()
 	{
