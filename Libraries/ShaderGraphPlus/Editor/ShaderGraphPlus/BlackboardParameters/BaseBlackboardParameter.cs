@@ -23,6 +23,9 @@ public abstract class BaseBlackboardParameter
 	[Hide, JsonIgnore, Browsable( false )]
 	public bool IsSubgraph => Graph.IsSubgraph;
 
+	[Hide, JsonIgnore, Browsable( false )]
+	public virtual int MenuOrder => 0;
+
 	public BaseBlackboardParameter()
 	{
 
