@@ -86,7 +86,7 @@ public abstract class BaseBlackboardParameter
 	}
 }
 
-public abstract class BlackboardParameterGeneric<T> : BaseBlackboardParameter
+public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 {
 	[InlineEditor( Label = false )]
 	public T Value { get; set; }
@@ -96,20 +96,19 @@ public abstract class BlackboardParameterGeneric<T> : BaseBlackboardParameter
 		return Value;
 	}
 
-	public BlackboardParameterGeneric() : base() 
+	public BlackboardGenericParameter() : base() 
 	{ 
 	}
 
-	public BlackboardParameterGeneric( T value ) : base() 
+	public BlackboardGenericParameter( T value ) : base() 
 	{ 
 		Value = value;
 	}
 }
 
-public abstract class BlackboardMaterialParameter<T> : BlackboardParameterGeneric<T>
+public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParameter<T>
 {
 	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( IsSubgraph ), true )]
 	public ParameterUI UI { get; set; }
 
 	public BlackboardMaterialParameter() : base() 
@@ -121,12 +120,8 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardParameterGeneri
 	}
 }
 
-public abstract class BlackboardSubgraphInputParameter<T> : BlackboardParameterGeneric<T>
+public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericParameter<T>
 {
-	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public ParameterUI UI { get; set; }
-
 	[Title( "Input Name" )]
 	public override string Name { get; set; }
 

@@ -108,9 +108,6 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Hide] public float MinY => Min.y;
 	[Hide] public float MaxX => Max.x;
 	[Hide] public float MaxY => Max.y;
-
-	[Hide] public float Step => UI.Step;
-
 }
 
 /// <summary>
@@ -163,8 +160,6 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Hide] public float MaxX => Max.x;
 	[Hide] public float MaxY => Max.y;
 	[Hide] public float MaxZ => Max.z;
-
-	[Hide] public float Step => UI.Step;
 }
 
 /// <summary>
@@ -212,21 +207,17 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Hide] public float MaxY => Max.y;
 	[Hide] public float MaxZ => Max.z;
 
-	[Hide] public float Step => UI.Step;
-
 	public Float4SubgraphInputBlackboardParameter()
 	{
 		Value = Vector4.One;
 		Min = Vector4.Zero;
 		Max = Vector4.One;
-		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public Float4SubgraphInputBlackboardParameter( Vector4 value ) : base( value )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
-		UI = new ParameterUI { Type = UIType.Default };
 	}
 }
 
@@ -268,11 +259,9 @@ public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 	public ColorSubgraphInputBlackboardParameter()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 
 	public ColorSubgraphInputBlackboardParameter( Color value ) : base( value )
 	{
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 }

@@ -280,7 +280,7 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 /// Bool material feature
 /// </summary>
 [Title( "Shader Feature Boolean" ), Order( 7 )]
-public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
+public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericParameter<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
 {
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
@@ -300,7 +300,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParamete
 /// </summary>
 [Title( "Shader Feature Enum" ), Order( 8 )]
 [Hide]
-public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
+public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericParameter<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
 {
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
