@@ -2,10 +2,6 @@
 
 namespace ShaderGraphPlus;
 
-internal interface IShaderFeatureBlackboardParameter
-{
-}
-
 /// <summary>
 /// Bool value material parameter
 /// </summary>

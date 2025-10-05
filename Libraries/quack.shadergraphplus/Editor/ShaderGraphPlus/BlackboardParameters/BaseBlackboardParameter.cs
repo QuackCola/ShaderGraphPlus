@@ -10,9 +10,12 @@ internal interface ISubgraphBlackboardParameter
 	public object GetValue();
 }
 
+internal interface IShaderFeatureBlackboardParameter
+{
+}
+
 public interface IBlackboardParameter
 {
-
 }
 
 public abstract class BaseBlackboardParameter : IBlackboardParameter
