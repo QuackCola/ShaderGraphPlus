@@ -27,7 +27,10 @@ public static class PrimaryNodeHeaderColors
 
 internal static class ShaderGraphPlusTheme
 {
+	public record struct BlackboardConfig( string Name, Color Color );
+
 	public static Dictionary<Type, HandleConfig> HandleConfigs { get; private set; }
+	public static Dictionary<Type, BlackboardConfig> BlackboardConfigs { get; private set; }
 
 	static ShaderGraphPlusTheme()
 	{
@@ -53,39 +56,23 @@ internal static class ShaderGraphPlusTheme
 		{ typeof( Sampler ), new HandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
 		{ typeof( Gradient ), new HandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
 		};
-	}
 
-	public static Color GetBlackboardParameterTypeColor( BaseBlackboardParameter parameter )
-	{
-		if ( parameter.Graph.IsSubgraph )
+		BlackboardConfigs = new()
 		{
-			return parameter switch
-			{
-				BoolSubgraphInputBlackboardParameter => HandleConfigs[typeof( bool )].Color,
-				IntSubgraphInputBlackboardParameter => HandleConfigs[typeof( int )].Color,
-				FloatSubgraphInputBlackboardParameter => HandleConfigs[typeof( float )].Color,
-				Float2SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
-				Float3SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
-				Float4SubgraphInputBlackboardParameter => HandleConfigs[typeof( Vector4 )].Color,
-				ColorSubgraphInputBlackboardParameter => HandleConfigs[typeof( Color )].Color,
-				_ => throw new NotImplementedException( $"unknown {parameter}" ),
-			};
-		}
-		else
-		{
-			return parameter switch
-			{
-				BoolBlackboardParameter => HandleConfigs[typeof( bool )].Color,
-				IntBlackboardParameter => HandleConfigs[typeof( int )].Color,
-				FloatBlackboardParameter => HandleConfigs[typeof( float )].Color,
-				Float2BlackboardParameter => HandleConfigs[typeof( Vector2 )].Color,
-				Float3BlackboardParameter => HandleConfigs[typeof( Vector3 )].Color,
-				Float4BlackboardParameter => HandleConfigs[typeof( Vector4 )].Color,
-				ColorBlackboardParameter => HandleConfigs[typeof( Color )].Color,
-				ShaderFeatureBooleanBlackboardParameter => Color.White,
-				ShaderFeatureEnumBlackboardParameter => Color.White,
-				_ => throw new NotImplementedException(),
-			};
-		}
+			{ typeof( BoolSubgraphInputBlackboardParameter ), new BlackboardConfig( "bool", HandleConfigs[typeof( bool )].Color ) },
+			{ typeof( IntSubgraphInputBlackboardParameter ), new BlackboardConfig( "int", HandleConfigs[typeof( int )].Color ) },
+			{ typeof( FloatSubgraphInputBlackboardParameter ), new BlackboardConfig( "float", HandleConfigs[typeof( float )].Color ) },
+			{ typeof( Float2SubgraphInputBlackboardParameter ), new BlackboardConfig( "float2", HandleConfigs[typeof( Vector2 )].Color ) },
+			{ typeof( Float3SubgraphInputBlackboardParameter ), new BlackboardConfig( "float3", HandleConfigs[typeof( Vector3 )].Color ) },
+			{ typeof( Float4SubgraphInputBlackboardParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Vector4 )].Color ) },
+			{ typeof( ColorSubgraphInputBlackboardParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Color )].Color ) },
+			{ typeof( BoolBlackboardParameter ), new BlackboardConfig( "bool", HandleConfigs[typeof( bool )].Color ) },
+			{ typeof( IntBlackboardParameter ), new BlackboardConfig( "int", HandleConfigs[typeof( int )].Color ) },
+			{ typeof( FloatBlackboardParameter ), new BlackboardConfig( "float", HandleConfigs[typeof( float )].Color ) },
+			{ typeof( Float2BlackboardParameter ), new BlackboardConfig( "float2", HandleConfigs[typeof( Vector2 )].Color ) },
+			{ typeof( Float3BlackboardParameter ), new BlackboardConfig( "float3", HandleConfigs[typeof( Vector3 )].Color ) },
+			{ typeof( Float4BlackboardParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Vector4 )].Color ) },
+			{ typeof( ColorBlackboardParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Color )].Color ) },
+		};
 	}
 }

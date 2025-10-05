@@ -36,9 +36,13 @@ internal class BlackboardParameterList : ListView
 		Paint.SetBrush( itemColor );
 		Paint.DrawRect( rect, 3f );
 
-		var typeColor = ShaderGraphPlusTheme.GetBlackboardParameterTypeColor( variable );
+		var typeColor = Color.White;
+		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( variable.GetType(), out var blackboardConfig ) )
+		{
+			typeColor = blackboardConfig.Color;
+		}
 
-		Paint.SetPen( typeColor.WithAlpha( 0.7f ) );
+		Paint.SetPen( typeColor );
 		Paint.DrawIcon( rect.Shrink( 4f ), "circle", 12f, TextFlag.LeftCenter );
 		rect.Left += 24f;
 

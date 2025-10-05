@@ -1,6 +1,8 @@
 ﻿namespace ShaderGraphPlus;
 
-
+/// <summary>
+/// Bool value subgraph input
+/// </summary>
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 [SubgraphOnly]
 public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<bool>
@@ -17,6 +19,9 @@ public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInp
 
 }
 
+/// <summary>
+/// Int value subgraph input
+/// </summary>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 [SubgraphOnly]
 public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<int>
@@ -38,6 +43,9 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 	}
 }
 
+/// <summary>
+/// Float value subgraph input
+/// </summary>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 [SubgraphOnly]
 public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<float>
@@ -59,6 +67,9 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 	}
 }
 
+/// <summary>
+/// Float2 value subgraph input
+/// </summary>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 [SubgraphOnly]
 public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector2>
@@ -102,6 +113,9 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 
 }
 
+/// <summary>
+/// Float3 value subgraph input
+/// </summary>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 [SubgraphOnly]
 public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector3>
@@ -153,6 +167,9 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Hide] public float Step => UI.Step;
 }
 
+/// <summary>
+/// Float4 value subgraph input
+/// </summary>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 [SubgraphOnly]
 public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector4>
@@ -213,6 +230,9 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	}
 }
 
+/// <summary>
+/// Color value subgraph input
+/// </summary>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 [SubgraphOnly]
 public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Color>

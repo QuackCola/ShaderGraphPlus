@@ -6,6 +6,9 @@ internal interface IShaderFeatureBlackboardParameter
 {
 }
 
+/// <summary>
+/// Bool value material parameter
+/// </summary>
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
@@ -21,6 +24,9 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 
 }
 
+/// <summary>
+/// Int value material parameter
+/// </summary>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 {
@@ -41,6 +47,9 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	}
 }
 
+/// <summary>
+/// Float value material parameter
+/// </summary>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
 {
@@ -61,6 +70,9 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 	}
 }
 
+/// <summary>
+/// Float2 value material parameter
+/// </summary>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
 {
@@ -103,6 +115,9 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 
 }
 
+/// <summary>
+/// Float3 value material parameter
+/// </summary>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
 {
@@ -153,6 +168,9 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Hide] public float Step => UI.Step;
 }
 
+/// <summary>
+/// Float4 value material parameter
+/// </summary>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
 {
@@ -212,6 +230,9 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 	}
 }
 
+/// <summary>
+/// Color value material parameter
+/// </summary>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
@@ -255,6 +276,9 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 	}
 }
 
+/// <summary>
+/// Bool material feature
+/// </summary>
 [Title( "Shader Feature Boolean" ), Order( 7 )]
 public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardParameterGeneric<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
 {

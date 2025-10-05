@@ -30,8 +30,8 @@ internal partial class TypeSelectorWidget : Widget
 {
 	public Action<TypeDescription> OnSelect { get; set; }
 	public Action OnDestroy { get; set; }
-	List<TypeSelection> Panels { get; set; } = new();
-	int CurrentPanelId { get; set; } = 0;
+	internal List<TypeSelection> Panels { get; set; } = new();
+	internal int CurrentPanelId { get; set; } = 0;
 	Widget Main { get; set; }
 
 	string searchString;
@@ -39,11 +39,13 @@ internal partial class TypeSelectorWidget : Widget
 
 	private bool IsSubgraph;
 
+	//string CategorySeparator => "/"; // This is used for sub-categories
+	public bool lineEditFocused = false;
+
 	public TypeSelectorWidget( Widget parent, bool isSubgraph ) : base( parent )
 	{
 		Layout = Layout.Column();
 		IsSubgraph = isSubgraph;
-
 
 		var head = Layout.Row();
 		head.Margin = 6;
@@ -69,7 +71,6 @@ internal partial class TypeSelectorWidget : Widget
 			ResetSelection();
 		};
 
-
 		var clearButton = Search.Layout.Add( new ToolButton( string.Empty, "clear", this ) );
 		clearButton.MouseLeftPress = () =>
 		{
@@ -85,8 +86,102 @@ internal partial class TypeSelectorWidget : Widget
 		ResetSelection();
 
 		Search.Focus();
+	}
 
+	/// <summary>
+	/// Pushes a new selection to the selector
+	/// </summary>
+	/// <param name="selection"></param>
+	void PushSelection( TypeSelection selection )
+	{
+		CurrentPanelId++;
 
+		// Do we have something at our new index, if so, kill it
+		if ( Panels.Count > CurrentPanelId && Panels.ElementAt( CurrentPanelId ) is var existingObj ) existingObj.Destroy();
+
+		Panels.Insert( CurrentPanelId, selection );
+		Main.Layout.Add( selection, 1 );
+
+		if ( !selection.IsManual )
+		{
+			UpdateSelection( selection );
+		}
+
+		AnimateSelection( true, Panels[CurrentPanelId - 1], selection );
+
+		selection.Focus();
+	}
+
+	/// <summary>
+	/// Pops the current selection off
+	/// </summary>
+	internal void PopSelection()
+	{
+		// Don't pop while empty
+		if ( CurrentPanelId == 0 ) return;
+
+		var currentIdx = Panels[CurrentPanelId];
+		CurrentPanelId--;
+
+		AnimateSelection( false, currentIdx, Panels[CurrentPanelId] );
+
+		Panels[CurrentPanelId].Focus();
+	}
+
+	/// <summary>
+	/// Runs an animation on the last selection, and the current selection.
+	/// I kinda hate this. A lot. But it's pretty.
+	/// </summary>
+	/// <param name="forward"></param>
+	/// <param name="prev"></param>
+	/// <param name="selection"></param>
+	void AnimateSelection( bool forward, TypeSelection prev, TypeSelection selection )
+	{
+		const string easing = "ease-out";
+		const float speed = 0.2f;
+
+		var distance = Width;
+
+		var prevFrom = prev.Position.x;
+		var prevTo = forward ? prev.Position.x - distance : prev.Position.x + distance;
+
+		var selectionFrom = forward ? selection.Position.x + distance : selection.Position.x;
+		var selectionTo = forward ? selection.Position.x : selection.Position.x + distance;
+
+		var func = ( TypeSelection a, float x ) =>
+		{
+			a.Position = a.Position.WithX( x );
+			OnMoved();
+		};
+
+		Animate.Add( prev, speed, prevFrom, prevTo, x => func( prev, x ), easing );
+		Animate.Add( selection, speed, selectionFrom, selectionTo, x => func( selection, x ), easing );
+	}
+
+	/// <summary>
+	/// Resets the current selection, useful when setting up / searching
+	/// </summary>
+	protected void ResetSelection()
+	{
+		Main.Layout.Clear( true );
+		Panels.Clear();
+
+		var selection = new TypeSelection( Main, this );
+
+		CurrentPanelId = 0;
+
+		UpdateSelection( selection );
+
+		Panels.Add( selection );
+		Main.Layout.Add( selection );
+	}
+
+	protected override void OnPaint()
+	{
+		Paint.Antialiasing = true;
+		Paint.SetPen( Theme.WidgetBackground.Darken( 0.4f ), 1 );
+		Paint.SetBrush( Theme.WidgetBackground );
+		Paint.DrawRect( LocalRect.Shrink( 1 ), 3 );
 	}
 
 	void OnTypeSelected( TypeDescription type )
@@ -109,22 +204,6 @@ internal partial class TypeSelectorWidget : Widget
 		}
 	}
 
-	/// <summary>
-	/// Resets the current selection, useful when setting up / searching
-	/// </summary>
-	protected void ResetSelection()
-	{
-		Main.Layout.Clear( true );
-		Panels.Clear();
-
-		var selection = new TypeSelection( Main, this );
-
-		UpdatedSelection( selection );
-
-		Panels.Add( selection );
-		Main.Layout.Add( selection );
-	}
-
 	int SearchScore( TypeDescription type, string[] parts )
 	{
 		var score = 0;
@@ -141,7 +220,11 @@ internal partial class TypeSelectorWidget : Widget
 		return score;
 	}
 
-	void UpdatedSelection( TypeSelection selection )
+	/// <summary>
+	/// Updates any selection
+	/// </summary>
+	/// <param name="selection"></param>
+	void UpdateSelection( TypeSelection selection )
 	{
 		selection.Clear();
 
@@ -173,23 +256,19 @@ internal partial class TypeSelectorWidget : Widget
 		selection.AddStretchCell();
 	}
 
-	protected override void OnPaint()
-	{
-		Paint.Antialiasing = true;
-		Paint.SetPen( Theme.WidgetBackground.Darken( 0.4f ), 1 );
-		Paint.SetBrush( Theme.WidgetBackground );
-		Paint.DrawRect( LocalRect.Shrink( 1 ), 3 );
-	}
 }
 
-internal partial class TypeSelection : Widget
+partial class TypeSelection : Widget
 {
 	internal string VariableTypeName { get; init; }
 	ScrollArea Scroller { get; init; }
+	TypeSelectorWidget Selector { get; set; }
 
 	internal List<Widget> ItemList { get; private set; } = new();
-
+	internal int CurrentItemId { get; private set; } = 0;
 	internal Widget CurrentItem { get; private set; }
+
+	internal bool IsManual { get; set; }
 
 	internal TypeSelection( Widget parent, TypeSelectorWidget selector, string variableTypeName = null ) : base( parent )
 	{
@@ -204,6 +283,93 @@ internal partial class TypeSelection : Widget
 
 		Scroller.Canvas = new Widget( Scroller );
 		Scroller.Canvas.Layout = Layout.Column();
+	}
+
+	protected bool SelectMoveRow( int delta )
+	{
+		var selection = Selector.Panels[Selector.CurrentPanelId];
+		if ( delta == 1 && selection.ItemList.Count - 1 > selection.CurrentItemId )
+		{
+			selection.CurrentItem = selection.ItemList[++selection.CurrentItemId];
+			selection.Update();
+
+			if ( selection.CurrentItem.IsValid() )
+			{
+				Scroller.MakeVisible( selection.CurrentItem );
+			}
+
+			return true;
+		}
+		else if ( delta == -1 )
+		{
+			if ( selection.CurrentItemId > 0 )
+			{
+				selection.CurrentItem = selection.ItemList[--selection.CurrentItemId];
+				selection.Update();
+
+				if ( selection.CurrentItem.IsValid() )
+				{
+					Scroller.MakeVisible( selection.CurrentItem );
+				}
+
+				return true;
+			}
+			else
+			{
+				selection.Selector.Search.Focus();
+				selection.CurrentItem = null;
+				selection.Update();
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected bool Enter()
+	{
+		var selection = Selector.Panels[Selector.CurrentPanelId];
+		if ( selection.ItemList[selection.CurrentItemId] is Widget entry )
+		{
+			entry.MouseClick?.Invoke();
+			return true;
+		}
+
+		return false;
+	}
+
+	protected override void OnKeyRelease( KeyEvent e )
+	{
+		// Move down
+		if ( e.Key == KeyCode.Down )
+		{
+			e.Accepted = true;
+			SelectMoveRow( 1 );
+			return;
+		}
+
+		// Move up 
+		if ( e.Key == KeyCode.Up )
+		{
+			e.Accepted = true;
+			SelectMoveRow( -1 );
+			return;
+		}
+
+		// Back button while in any selection, goes to previous selction.
+		if ( e.Key == KeyCode.Left && !Selector.lineEditFocused )
+		{
+			e.Accepted = true;
+			Selector.PopSelection();
+			return;
+		}
+
+		// Moving right, or hitting the enter key assumes you're trying to select something
+		if ( (e.Key == KeyCode.Return || e.Key == KeyCode.Right) && Enter() )
+		{
+			e.Accepted = true;
+			return;
+		}
 	}
 
 	/// <summary>
@@ -263,7 +429,6 @@ internal class TypeEntry : Widget
 	public string Icon { get; set; } = "note_add";
 
 	internal TypeSelection Selector { get; set; }
-
 	public TypeDescription Type { get; init; }
 
 	internal TypeEntry( Widget parent, TypeDescription type = null ) : base( parent )
@@ -275,29 +440,38 @@ internal class TypeEntry : Widget
 		{
 			Text = type.Title;
 			Icon = type.Icon;
-			//ToolTip = $"<b>{type.FullName}</b><br/>{type.Description}";
+			ToolTip = $"<b>{type.Title}</b><br/>{type.Description}";
 		}
-
 	}
 
 	protected override void OnPaint()
 	{
 		var r = LocalRect.Shrink( 12, 2 );
-		var selected = IsUnderMouse || Selector.CurrentItem == this;
-		var opacity = selected ? 1.0f : 0.7f;
+		var hovered = IsUnderMouse || Selector.CurrentItem == this;
+		var opacity = hovered ? 1.0f : 0.7f;
+		var typeColor = Color.White;
+		var textColor = Theme.TextControl.WithAlpha( hovered ? 1.0f : 0.5f );
 
-		if ( selected )
+		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( Type.TargetType, out var blackboardConfig ) )
+		{
+			typeColor = blackboardConfig.Color;
+		}
+
+		if ( hovered )
 		{
 			Paint.ClearPen();
-			Paint.SetBrush( Theme.ControlBackground );
+			Paint.SetBrush( Theme.Primary.Lighten( 0.1f ).Desaturate( 0.3f ).WithAlpha( 0.4f * 0.6f ) );
 			Paint.DrawRect( LocalRect );
 		}
+
+		Paint.SetPen( typeColor );
+		Paint.DrawIcon( r.Shrink( 4f ), "circle", 12f, TextFlag.LeftCenter );
 
 		r.Left += r.Height + 6;
 
 		Paint.SetDefaultFont( 8 );
-		Paint.SetPen( Theme.TextControl.WithAlpha( selected ? 1.0f : 0.5f ) );
-		Paint.DrawText( r, Text, TextFlag.LeftCenter ); ;
+		Paint.SetPen( textColor );
+		Paint.DrawText( r, Text, TextFlag.LeftCenter );
 	}
 }
 
