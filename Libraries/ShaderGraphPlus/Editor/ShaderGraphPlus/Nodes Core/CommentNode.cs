@@ -24,7 +24,7 @@ public class CommentNode : BaseNodePlus, ICommentNode
 	[TextArea]
 	public string Description { get; set; } = "";
 
-	[Sandbox.Range(0, 64)]
+	[Sandbox.Range(8, 64)]
 	public int DescriptionFontSize { get; set; } = 11;
 
 	[Hide, Browsable( false )]
