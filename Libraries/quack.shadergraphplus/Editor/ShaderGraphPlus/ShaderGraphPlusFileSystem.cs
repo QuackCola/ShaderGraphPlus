@@ -1,6 +1,4 @@
-﻿using Editor;
-
-namespace ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 internal static class ShaderGraphPlusFileSystem
 {
