@@ -1864,13 +1864,11 @@ public class MainWindow : DockWindow
 	}
 
 	/// <summary>
-	/// Called  no items are known to be selected by GraphView
+	/// Called no items are known to be selected by GraphView
 	/// and a blank area of the graph has been clicked on.
 	/// </summary>
 	public void OnGraphViewAreaClicked()
 	{
-		var oldTarget = _properties.Target;
-
 		if ( _properties.Target is BaseBlackboardParameter )
 		{
 			OnNodeSelected( null );
