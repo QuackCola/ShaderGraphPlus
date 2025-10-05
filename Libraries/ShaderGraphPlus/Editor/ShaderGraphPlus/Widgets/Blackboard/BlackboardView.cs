@@ -47,7 +47,7 @@ internal class BlackboardView : Widget
 	/// <summary>
 	/// Invoked when a blackboard parameter is deleated.
 	/// </summary>
-	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
+	public Action<BaseBlackboardParameter> OnParameterDeleted { get; set; }
 
 	public BlackboardView( Blackboard parent ) : base( parent )
 	{
@@ -174,7 +174,7 @@ internal class BlackboardView : Widget
 		{
 			_selectedItem = null;
 			_selectedItemGuid = default( Guid );
-			OnParameterDeleated?.Invoke( parameter );
+			OnParameterDeleted?.Invoke( parameter );
 
 			//SGPLog.Info( $"Deleted selected parameter : {parameter}" );
 		}
