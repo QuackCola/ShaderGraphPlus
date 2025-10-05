@@ -4,13 +4,13 @@ namespace ShaderGraphPlus;
 
 internal static class ShaderGraphPlusFileSystem
 {
-	public static BaseFileSystem Root => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryName() );
-	public static BaseFileSystem Content => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryName() );
+	public static BaseFileSystem Root => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryFolderName() );
+	public static BaseFileSystem Content => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryFolderName() );
 
 	/// <summary>
-	/// Get the name of the Shader Graph Plus library.
+	/// Get the name of the Shader Graph Plus library folder.
 	/// </summary>
-	private static string GetLibraryName()
+	private static string GetLibraryFolderName()
 	{
 		var stagingName = "quack.shadergraphplus_staging";
 		var releaseName = "quack.shadergraphplus";
