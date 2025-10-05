@@ -79,7 +79,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 		else if ( blackboardParameter is Float4SubgraphInputBlackboardParameter float4Parameter )
 		{
-			throw new NotImplementedException();
+			SetDefaultValue( float4Parameter.Value );
 		}
 		else if ( blackboardParameter is ColorSubgraphInputBlackboardParameter colorParameter )
 		{
@@ -232,6 +232,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}" ),
 			SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )" ),
 			SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
+			SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
 			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
 			SubgraphPortType.Sampler =>  (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
@@ -239,35 +240,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		};
 
 		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
-
-		/*
-		// In subgraphs, check if preview input is connected
-		if ( compiler.Graph.IsSubgraph && PreviewInput.IsValid )
-		{
-			return compiler.Result( PreviewInput );
-		}
-		
-		// Use the appropriate default value based on input type
-		var outputValue = GetOutputValue();
-		
-		// If we're in a subgraph context, just return the value directly
-		if ( compiler.Graph.IsSubgraph )
-		{
-			if ( InputData.InputType == SubgraphPortType.Sampler )
-			{
-				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
-			}
-			if ( InputData.InputType == SubgraphPortType.Texture2DObject )
-			{
-				return new NodeResult( ResultType.Sampler, $"{compiler.ResultSampler( (Sampler)outputValue )}", constant: true );
-			}
-		
-			return compiler.ResultValue( outputValue );
-		}
-		
-		// For normal graphs, use ResultParameter to create a material parameter
-		return compiler.ResultParameter( InputName, outputValue, default, default, false, IsRequired, new() );
-		*/
 	};
 
 	public List<string> GetWarnings()
@@ -291,20 +263,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		//{
 		//	errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
 		//}
-
-		if ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph )
-		{
-			foreach ( var node in Graph.Nodes )
-			{
-				if ( node == this ) continue;
-
-				if ( node is SubgraphInput otherInput && otherInput.InputName == InputName )
-				{
-					errors.Add( $"Duplicate input name \"{InputName}\"" );
-					break;
-				}
-			}
-		}
 
 		if ( InputData.InputType == SubgraphPortType.Invalid )
 		{

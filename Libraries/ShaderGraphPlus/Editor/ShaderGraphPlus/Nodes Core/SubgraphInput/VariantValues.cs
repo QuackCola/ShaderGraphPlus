@@ -5,6 +5,7 @@
 /// </summary>
 [JsonConverter( typeof( VariantValueConverter ) )]
 [JsonDerivedType( typeof( VariantValueBool ) ) ]
+[JsonDerivedType( typeof( VariantValueInt ) )]
 [JsonDerivedType( typeof( VariantValueFloat ) )]
 [JsonDerivedType( typeof( VariantValueVector2 ) )]
 [JsonDerivedType( typeof( VariantValueVector3 ) )]
@@ -30,10 +31,11 @@ public abstract class VariantValueBase
 		return typeInstance switch
 		{
 			bool => new VariantValueBool( (bool)typeInstance, SubgraphPortType.Bool),
+			int => new VariantValueInt( (int)typeInstance, SubgraphPortType.Int ),
 			float => new VariantValueFloat( (float)typeInstance, SubgraphPortType.Float ),
 			Vector2 => new VariantValueVector2( (Vector2)typeInstance, SubgraphPortType.Vector2 ),
 			Vector3 => new VariantValueVector3( (Vector3)typeInstance, SubgraphPortType.Vector3 ),
-			Vector4 => new VariantValueVector4( (Vector4)typeInstance, SubgraphPortType.Color ),
+			Vector4 => new VariantValueVector4( (Vector4)typeInstance, SubgraphPortType.Vector4 ),
 			Color => new VariantValueColor( (Color)typeInstance, SubgraphPortType.Color ),
 			Sampler => new VariantValueSampler( (Sampler)typeInstance, SubgraphPortType.Sampler ),
 			TextureInput => new VariantValueTexture2D( (TextureInput)typeInstance, SubgraphPortType.Texture2DObject ),
