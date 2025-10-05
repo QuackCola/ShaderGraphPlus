@@ -15,6 +15,6 @@ public sealed class ParameterNodeTypeDragDrop : ClassNodeType
 	public override INodePlus CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
-		return BaseBlackboardValue.InitNode();
+		return BaseBlackboardValue.InitializeNode();
 	}
 }

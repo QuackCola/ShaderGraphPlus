@@ -1,7 +1,4 @@
-﻿using ShaderGraphPlus.Nodes;
-using static Sandbox.Material;
-
-namespace ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 /// <summary>
 /// Bool value subgraph input
@@ -23,7 +20,7 @@ public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInp
 
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -61,7 +58,7 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 		Max = 1;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -99,7 +96,7 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 		Max = 1.0f;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -137,7 +134,7 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 		Max = Vector2.One;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -175,7 +172,7 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 		Max = Vector3.One;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -213,7 +210,7 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 		Max = Vector4.One;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{
@@ -244,7 +241,7 @@ public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 	{
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new SubgraphInput()
 		{

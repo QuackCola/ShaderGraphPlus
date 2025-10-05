@@ -23,7 +23,7 @@ public sealed class ParameterNodeType : ClassNodeType
 
 		BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, Guid.NewGuid() );
 
-		node = BlackboardParameter.InitNode();
+		node = BlackboardParameter.InitializeNode();
 
 		return node;
 	}

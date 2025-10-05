@@ -40,7 +40,7 @@ public abstract class BaseBlackboardParameter
 	/// Called when a blackboard parameter needs to 
 	/// get converted into an accompanying node.
 	/// </summary>
-	public virtual BaseNodePlus InitNode()
+	public virtual BaseNodePlus InitializeNode()
 	{
 		throw new NotImplementedException();
 	}

@@ -26,7 +26,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 		BlackboardParameter = CreateBlackboardParameterFromConstant( iParameterNodeType, Name, blackboardParameterIdentifier, IConstantNode );
 
-		var parameterNode = BlackboardParameter.InitNode();
+		var parameterNode = BlackboardParameter.InitializeNode();
 		parameterNode.Identifier = IConstantNode.Identifier;
 
 		return parameterNode;

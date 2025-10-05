@@ -1,6 +1,4 @@
 ﻿using ShaderGraphPlus.Nodes;
-using static Sandbox.Internal.IControlSheet;
-using static Sandbox.Material;
 
 namespace ShaderGraphPlus;
 
@@ -27,7 +25,7 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new BoolParameterNode()
 		{
@@ -65,7 +63,7 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 		Max = 1;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new IntParameterNode()
 		{
@@ -103,7 +101,7 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 		Max = 1.0f;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new FloatParameterNode()
 		{
@@ -141,7 +139,7 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 		Max = Vector2.One;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new Float2ParameterNode()
 		{
@@ -179,7 +177,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 		Max = Vector3.One;
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new Float3ParameterNode()
 		{
@@ -219,7 +217,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new Float4ParameterNode()
 		{
@@ -252,7 +250,7 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new ColorParameterNode()
 		{
@@ -285,7 +283,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericP
 	{ 
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		return new StaticSwitchNode()
 		{
@@ -316,7 +314,7 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericPara
 	{
 	}
 
-	public override BaseNodePlus InitNode()
+	public override BaseNodePlus InitializeNode()
 	{
 		throw new NotImplementedException();
 	}
