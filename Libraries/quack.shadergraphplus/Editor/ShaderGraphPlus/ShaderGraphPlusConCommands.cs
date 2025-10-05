@@ -12,6 +12,8 @@ internal static class ConCommands
 
 	public static bool TextureNodeDebug { get; internal set; } = false;
 
+	public static bool KleinerMode { get; internal set; } = false;
+
 	internal static IEnumerable<MainWindow> GetAllShaderGraphPlusWindows()
 	{
 		return Editor.Window.All.OfType<MainWindow>();
@@ -45,5 +47,11 @@ internal static class ConCommands
 	public static void CC_TexureNodeDebug( bool value )
 	{
 		TextureNodeDebug = value;
+	}
+
+	[ConCmd( "sgp_kleinermode" )]
+	public static void CC_KleinerMode( bool value )
+	{
+		KleinerMode = value;
 	}
 }
