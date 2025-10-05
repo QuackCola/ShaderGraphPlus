@@ -12,6 +12,9 @@ internal interface IShaderFeatureBlackboardParameter
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 0;
+
 	public BoolBlackboardParameter() : base() 
 	{ 
 		Value = false;
@@ -30,6 +33,9 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 1;
+
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
@@ -53,6 +59,9 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 2;
+
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
@@ -76,6 +85,9 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vector2>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 3;
+
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
@@ -99,6 +111,9 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vector3>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 4;
+
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
@@ -122,6 +137,9 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vector4>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 5;
+
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
 
@@ -147,6 +165,9 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 6;
+
 	public ColorBlackboardParameter()
 	{
 		Value = Color.White;
@@ -165,6 +186,9 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 [Title( "Shader Feature Boolean" ), Order( 7 )]
 public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericParameter<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 7;
+
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
 
@@ -185,6 +209,9 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericP
 [Hide]
 public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericParameter<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
 {
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 8;
+
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
 
