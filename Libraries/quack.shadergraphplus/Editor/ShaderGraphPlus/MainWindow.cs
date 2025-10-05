@@ -1837,29 +1837,10 @@ public class MainWindow : DockWindow
 	/// </summary>
 	private void OnBlackboardParameterSelected( BaseBlackboardParameter blackboardParameter )
 	{
-		var oldTarget = _properties.Target;
-		
-		//if ( oldTarget is BaseNodePlus )
-		//{
-		//	_graphView.ClearSelection();
-		//}
-
 		_graphView.ClearSelection();
 
 		_properties.Target = blackboardParameter;
 		_blackboard.SetSelectedItem( blackboardParameter );
-		/*
-		var node = _graph.Nodes.Where( x => x is IBlackboardSyncable syncable && syncable.BlackboardParameterIdentifier == blackboardParameter.Identifier ).FirstOrDefault();
-
-		if ( node != null )
-		{
-			//_graphView?.SelectNode( node );
-		}
-		else
-		{
-			
-		}
-		*/
 	}
 
 	/// <summary>
