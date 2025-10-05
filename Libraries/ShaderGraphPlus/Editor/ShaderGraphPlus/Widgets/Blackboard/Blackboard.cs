@@ -33,6 +33,11 @@ internal class Blackboard : Widget
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
 	/// <summary>
+	/// Invoked when a blackboard parameter is created.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterCreated { get; set; }
+
+	/// <summary>
 	/// Invoked when a blackboard parameter is deleated.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
@@ -68,6 +73,10 @@ internal class Blackboard : Widget
 		{
 			SGPLog.Info( $"Parameter : {p.Name} has changed" );
 			OnParameterChanged?.Invoke( p );
+		};
+		_blackboardView.OnParameterCreated += ( p ) =>
+		{
+			OnParameterCreated?.Invoke( p );
 		};
 		_blackboardView.OnParameterDeleated += ( p ) =>
 		{

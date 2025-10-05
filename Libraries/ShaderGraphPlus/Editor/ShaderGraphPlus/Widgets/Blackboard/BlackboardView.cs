@@ -40,6 +40,11 @@ internal class BlackboardView : Widget
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
 	/// <summary>
+	/// Invoked when a blackboard parameter is created.
+	/// </summary>
+	public Action<BaseBlackboardParameter> OnParameterCreated { get; set; }
+
+	/// <summary>
 	/// Invoked when a blackboard parameter is deleated.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
@@ -157,6 +162,8 @@ internal class BlackboardView : Widget
 		SetSelectedItem( parameterInstance );
 
 		RebuildBuildFromParameters( true );
+
+		OnParameterCreated?.Invoke( parameterInstance );
 	}
 
 	private void OnDeleteSelectedBlackboardParameter()

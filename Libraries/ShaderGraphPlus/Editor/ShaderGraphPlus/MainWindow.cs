@@ -233,6 +233,7 @@ public class MainWindow : DockWindow
 		{
 			_blackboard.ClearSeletedItem();
 		}
+
 		SelectBlackboardParameter();
 
 		if ( EnableNodePreview && (node != null && node.CanPreview) )
@@ -1790,6 +1791,7 @@ public class MainWindow : DockWindow
 		_blackboard.OnDirty += ( ) => { SetDirty(); };
 		_blackboard.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
 		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
+		_blackboard.OnParameterCreated += ( p ) => { OnBlackboardParameterPropertyCreated( p ); };
 		_blackboard.OnParameterDeleated += ( p ) => { OnBlackboardParameterDeleated( p ); };
 
 		_undoHistory = new UndoHistory( this, _undoStack );
@@ -1890,6 +1892,14 @@ public class MainWindow : DockWindow
 		_graph.UpdateParameterNode( blackboardParameter );
 
 		SetDirty();
+	}
+
+	private void OnBlackboardParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
+	{
+		if ( _properties.Target != blackboardParameter )
+		{
+			_properties.Target = blackboardParameter;
+		}
 	}
 
 	private void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
