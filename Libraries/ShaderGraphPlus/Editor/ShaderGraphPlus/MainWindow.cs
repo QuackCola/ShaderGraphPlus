@@ -1792,7 +1792,7 @@ public class MainWindow : DockWindow
 		_blackboard.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
 		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
 		_blackboard.OnParameterCreated += ( p ) => { OnBlackboardParameterPropertyCreated( p ); };
-		_blackboard.OnParameterDeleated += ( p ) => { OnBlackboardParameterDeleated( p ); };
+		_blackboard.OnParameterDeleted += ( p ) => { OnBlackboardParameterDeleted( p ); };
 
 		_undoHistory = new UndoHistory( this, _undoStack );
 		_undoHistory.OnUndo = Undo;
@@ -1885,13 +1885,6 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnBlackboardParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
-	{
-		_graph.UpdateParameterNode( blackboardParameter );
-
-		SetDirty();
-	}
-
 	private void OnBlackboardParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target != blackboardParameter )
@@ -1900,7 +1893,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
+	private void OnBlackboardParameterDeleted( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target == blackboardParameter )
 		{
@@ -1934,6 +1927,13 @@ public class MainWindow : DockWindow
 	private void OnConstantNodeConvertedToParamerter()
 	{
 		_blackboard.UpdateBlackboard( true );
+	}
+
+	private void OnBlackboardParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
+	{
+		_graph.UpdateParameterNode( blackboardParameter );
+
+		SetDirty();
 	}
 
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
