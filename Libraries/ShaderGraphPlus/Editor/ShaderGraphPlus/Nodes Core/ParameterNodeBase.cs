@@ -79,30 +79,16 @@ public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBl
 
 	public virtual void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-
-
 	}
 
 	public List<string> GetErrors()
 	{
 		var errors = new List<string>();
 
-		if ( Name.Contains( ' ' ) )
-		{
-			//errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
-		}
-
-		foreach ( var parameterNode in Graph.Nodes )
-		{
-			if ( parameterNode == this )
-				continue;
-
-			if ( !string.IsNullOrWhiteSpace( Name ) && parameterNode is IParameterNode pn && pn.Name == Name )
-			{
-				errors.Add( $"Duplicate name \"{Name}\" on {this.DisplayInfo.Name}" );
-				break;
-			}
-		}
+		//if ( Name.Contains( ' ' ) )
+		//{
+		//	errors.Add( $"Parameter name \"{Name}\" cannot contain spaces" );
+		//}
 
 		return errors;
 	}

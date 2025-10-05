@@ -36,6 +36,15 @@ public abstract class BaseBlackboardParameter
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// Called when a blackboard parameter needs to 
+	/// get converted into an accompanying node.
+	/// </summary>
+	public virtual BaseNodePlus InitNode()
+	{
+		throw new NotImplementedException();
+	}
+
 	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "", bool isSubgraph = false )
 	{
 		return CreateTypeInstance( targetType, name, Guid.NewGuid(), isSubgraph );
@@ -113,6 +122,8 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 {
 	[InlineEditor( Label = false ), Group( "UI" )]
 	public ParameterUI UI { get; set; }
+
+	public bool IsAttribute { get; set; }
 
 	public BlackboardMaterialParameter() : base() 
 	{ 

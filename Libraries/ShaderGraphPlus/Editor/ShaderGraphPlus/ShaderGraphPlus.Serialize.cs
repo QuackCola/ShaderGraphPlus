@@ -738,6 +738,7 @@ partial class ShaderGraphPlus
 						Name = intNode.Name,
 						Value = intNode.Value,
 						UI = intNode.UI,
+						IsAttribute = intNode.IsAttribute,
 					};
 
 					intNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
@@ -749,6 +750,7 @@ partial class ShaderGraphPlus
 						Name = boolNode.Name,
 						Value = boolNode.Value,
 						UI = boolNode.UI,
+						IsAttribute = boolNode.IsAttribute,
 					};
 
 					boolNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
@@ -760,6 +762,7 @@ partial class ShaderGraphPlus
 						Name = floatNode.Name,
 						Value = floatNode.Value,
 						UI = floatNode.UI,
+						IsAttribute = floatNode.IsAttribute,
 					};
 
 					floatNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
@@ -771,6 +774,7 @@ partial class ShaderGraphPlus
 						Name = float2Node.Name,
 						Value = float2Node.Value,
 						UI = float2Node.UI,
+						IsAttribute = float2Node.IsAttribute,
 					};
 
 					float2Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
@@ -783,6 +787,7 @@ partial class ShaderGraphPlus
 						Name = float3Node.Name,
 						Value = float3Node.Value,
 						UI = float3Node.UI,
+						IsAttribute = float3Node.IsAttribute,
 					};
 
 					float3Node.BlackboardParameterIdentifier = blackboardParameter.Identifier;
@@ -794,6 +799,7 @@ partial class ShaderGraphPlus
 						Name = colorNode.Name,
 						Value = colorNode.Value,
 						UI = colorNode.UI,
+						IsAttribute = colorNode.IsAttribute,
 					};
 
 					colorNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;

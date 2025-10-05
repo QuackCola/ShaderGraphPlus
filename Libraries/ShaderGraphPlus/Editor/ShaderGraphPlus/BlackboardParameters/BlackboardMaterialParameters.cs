@@ -1,4 +1,6 @@
 ﻿using ShaderGraphPlus.Nodes;
+using static Sandbox.Internal.IControlSheet;
+using static Sandbox.Material;
 
 namespace ShaderGraphPlus;
 
@@ -25,6 +27,17 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 
 	}
 
+	public override BaseNodePlus InitNode()
+	{
+		return new BoolParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
+	}
 }
 
 /// <summary>
@@ -50,6 +63,18 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	{
 		Min = 0;
 		Max = 1;
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new IntParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
 	}
 }
 
@@ -77,6 +102,18 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 		Min = 0.0f;
 		Max = 1.0f;
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new FloatParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
+	}
 }
 
 /// <summary>
@@ -103,6 +140,18 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 		Min = Vector2.Zero;
 		Max = Vector2.One;
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new Float2ParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
+	}
 }
 
 /// <summary>
@@ -128,6 +177,18 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new Float3ParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
 	}
 }
 
@@ -157,6 +218,18 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 		Max = Vector4.One;
 		UI = new ParameterUI { Type = UIType.Default };
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new Float4ParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
+	}
 }
 
 /// <summary>
@@ -177,6 +250,18 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 	public ColorBlackboardParameter( Color value ) : base( value )
 	{
 		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new ColorParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			Value = Value,
+			UI = UI,
+			IsAttribute = IsAttribute,
+		};
 	}
 }
 
@@ -200,6 +285,14 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericP
 	{ 
 	}
 
+	public override BaseNodePlus InitNode()
+	{
+		return new StaticSwitchNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Feature = Value
+		};
+	}
 }
 
 /// <summary>
@@ -221,5 +314,10 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericPara
 
 	public ShaderFeatureEnumBlackboardParameter() : base()
 	{
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		throw new NotImplementedException();
 	}
 }

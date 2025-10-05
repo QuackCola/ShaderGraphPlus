@@ -1,13 +1,12 @@
-﻿using Editor.ShaderGraph;
-using NodeEditorPlus;
+﻿using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
 public sealed class ConstantToParameterNodeType : ClassNodeType
 {
-	IConstantNode IConstantNode;
-	string Name;
+	private readonly IConstantNode IConstantNode;
+	private readonly string Name;
 
 	public BaseBlackboardParameter BlackboardParameter { get; private set; }
 
@@ -27,15 +26,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 		BlackboardParameter = CreateBlackboardParameterFromConstant( iParameterNodeType, Name, blackboardParameterIdentifier, IConstantNode );
 
-		var parameterNode = ParameterNodeType.InitParameterNode( 
-			(BaseNodePlus)node, 
-			Name, 
-			blackboardParameterIdentifier,
-			IConstantNode.GetValue(),
-			IConstantNode.GetMinValue(),
-			IConstantNode.GetMaxValue(),
-			(float)IConstantNode.GetStepValue()
-		);
+		var parameterNode = BlackboardParameter.InitNode();
 		parameterNode.Identifier = IConstantNode.Identifier;
 
 		return parameterNode;

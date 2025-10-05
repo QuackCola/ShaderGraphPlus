@@ -1,4 +1,7 @@
-﻿namespace ShaderGraphPlus;
+﻿using ShaderGraphPlus.Nodes;
+using static Sandbox.Material;
+
+namespace ShaderGraphPlus;
 
 /// <summary>
 /// Bool value subgraph input
@@ -20,6 +23,16 @@ public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInp
 
 	}
 
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueBool( Value, SubgraphPortType.Bool )
+		};
+	}
 }
 
 /// <summary>
@@ -46,6 +59,17 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 	{
 		Min = 0;
 		Max = 1;
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueInt( Value, SubgraphPortType.Int )
+		};
 	}
 }
 
@@ -74,6 +98,17 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 		Min = 0.0f;
 		Max = 1.0f;
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueFloat( Value, SubgraphPortType.Float )
+		};
+	}
 }
 
 /// <summary>
@@ -100,6 +135,17 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueVector2( Value, SubgraphPortType.Vector2 )
+		};
 	}
 }
 
@@ -128,6 +174,17 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 		Min = Vector3.Zero;
 		Max = Vector3.One;
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueVector3( Value, SubgraphPortType.Vector3 )
+		};
+	}
 }
 
 /// <summary>
@@ -155,6 +212,17 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 		Min = Vector4.Zero;
 		Max = Vector4.One;
 	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueVector4( Value, SubgraphPortType.Vector4 )
+		};
+	}
 }
 
 /// <summary>
@@ -174,5 +242,16 @@ public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 
 	public ColorSubgraphInputBlackboardParameter( Color value ) : base( value )
 	{
+	}
+
+	public override BaseNodePlus InitNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueColor( Value, SubgraphPortType.Color )
+		};
 	}
 }
