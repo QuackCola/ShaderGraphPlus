@@ -1690,6 +1690,7 @@ public class MainWindow : DockWindow
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
 		_graphView.OnConstantNodeConvertedToParameter += () => OnConstantNodeConvertedToParamerter();
+		_graphView.OnNodeRemoved += ( node ) => OnNodeRemoved( node );
 		_graphCanvas.Layout.Add( _graphView, 1 );
 		
 		_output = new Output( this );
@@ -1871,6 +1872,15 @@ public class MainWindow : DockWindow
 		{
 			OnNodeSelected( null );
 			_blackboard.ClearSeletedItem();
+		}
+	}
+
+	private void OnNodeRemoved( BaseNodePlus node )
+	{
+		if ( node is IBlackboardSyncable blackboardSyncable )
+		{
+			_graph.RemoveBlackboardParameter( blackboardSyncable.BlackboardParameterIdentifier );
+			_blackboard.UpdateBlackboard( false );
 		}
 	}
 

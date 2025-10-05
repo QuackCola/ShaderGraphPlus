@@ -42,6 +42,8 @@ public class ShaderGraphPlusView : GraphView
 
 	public Action OnConstantNodeConvertedToParameter { get; set; }
 
+	public Action<BaseNodePlus> OnNodeRemoved { get; set; }
+
 	private readonly Dictionary<string, INodeTypePlus> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 
 	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
@@ -953,6 +955,13 @@ public class ShaderGraphPlusView : GraphView
 		{
 			subgraphNode.OnNodeCreated();
 		}
+	}
+
+	protected override void RemoveNode( NodeUI node )
+	{
+		base.RemoveNode( node );
+
+		OnNodeRemoved?.Invoke( (BaseNodePlus)node.Node );
 	}
 
 	protected override void OnMouseClick( MouseEvent e )

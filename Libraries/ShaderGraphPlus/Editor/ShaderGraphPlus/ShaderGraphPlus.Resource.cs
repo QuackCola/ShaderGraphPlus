@@ -175,10 +175,14 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 
 	internal void RemoveBlackboardParameter( BaseBlackboardParameter parameter )
 	{
-		if ( _parameters.ContainsKey( parameter.Identifier ) )
+		RemoveBlackboardParameter( parameter.Identifier );
+	}
+
+	internal void RemoveBlackboardParameter( Guid identifier )
+	{
+		if ( _parameters.ContainsKey( identifier ) )
 		{
-			_parameters.Remove( parameter.Identifier );
-			//SGPLog.Info( $"Removed blackboard Parameter : \"{Parameter.Name}\" of type : \"{Parameter}\"" );
+			_parameters.Remove( identifier );
 		}
 	}
 
