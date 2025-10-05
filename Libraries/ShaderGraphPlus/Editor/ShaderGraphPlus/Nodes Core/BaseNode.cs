@@ -154,11 +154,14 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	{
 		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
 
-		var nodeIDLabel = menu.AddWidget( new Label( $"Node ID : {this.Identifier}" ) );
-		var previewIDLabel = menu.AddWidget( new Label( $"Preview ID : {this.PreviewID}" ) );
-		var isReachableLabel = menu.AddWidget( new Label( $"IsReachable? : {this.IsReachable}" ) );
-		var canPreviewLabel = menu.AddWidget( new Label( $"CanPreview? : {this.CanPreview}" ) );
-
+		menu.AddWidget( new Label( $"Node Identifier : {this.Identifier}" ) );
+		if ( this is IBlackboardSyncable blackboardSyncable )
+		{
+			menu.AddWidget( new Label( $"Blackboard Identifier : {blackboardSyncable.BlackboardParameterIdentifier}" ) );
+		}
+		menu.AddWidget( new Label( $"Preview Identifier : {this.PreviewID}" ) );
+		menu.AddWidget( new Label( $"IsReachable? : {this.IsReachable}" ) );
+		menu.AddWidget( new Label( $"CanPreview? : {this.CanPreview}" ) );
 		if ( this.ComboSwitchInfo.IsValid )
 		{
 			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
