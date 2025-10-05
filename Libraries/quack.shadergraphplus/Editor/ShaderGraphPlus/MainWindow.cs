@@ -1802,8 +1802,7 @@ public class MainWindow : DockWindow
 		_palette = new PaletteWidget( this, IsSubgraph );
 		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
 
-
-		DockManager.AddDock( null, _preview2D, DockArea.Left, DockManager.DockProperty.HideOnClose, split: 0.8f );
+		DockManager.AddDock( null, _preview2D, DockArea.Left, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _preview2D, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
@@ -1813,10 +1812,10 @@ public class MainWindow : DockWindow
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		DockManager.AddDock( _output, _blackboard, DockArea.Right, DockManager.DockProperty.HideOnClose );
+		DockManager.AddDock( _output, _blackboard, DockArea.Right, DockManager.DockProperty.HideOnClose, 0.5f );
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.25f );
+		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 
 		DockManager.RaiseDock( "Output" );
 		DockManager.Update();
