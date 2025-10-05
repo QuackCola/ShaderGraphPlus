@@ -1,5 +1,4 @@
-﻿
-using Editor;
+﻿using Editor;
 using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
@@ -61,6 +60,7 @@ public partial class PaletteWidget : Widget
 			{
 				if ( x.IsAbstract ) return false;
 				if ( x.HasAttribute<HideAttribute>() ) return false;
+				if ( x.HasAttribute<InternalNodeAttribute>() ) return false;
 				if ( IsSubgraph && x.TargetType == typeof( Result ) )
 				{
 					return false;
