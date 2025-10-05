@@ -1893,6 +1893,11 @@ public class MainWindow : DockWindow
 
 	private void OnBlackboardParameterDeleated( BaseBlackboardParameter blackboardParameter )
 	{
+		if ( _properties.Target == blackboardParameter )
+		{
+			_properties.Target = _graph;
+		}
+
 		_graph.RemoveBlackboardParameter( blackboardParameter );
 
 		var identifier = blackboardParameter.Identifier;
