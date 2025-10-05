@@ -7,14 +7,9 @@ internal static class ShaderGraphPlusFileSystem
 	public static BaseFileSystem Root => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryName() );
 	public static BaseFileSystem Content => Editor.FileSystem.Libraries.CreateSubSystem( GetLibraryName() );
 
-
-
-
-
 	/// <summary>
 	/// Get the name of the Shader Graph Plus library.
 	/// </summary>
-	/// <returns></returns>
 	private static string GetLibraryName()
 	{
 		var stagingName = "quack.shadergraphplus_staging";
