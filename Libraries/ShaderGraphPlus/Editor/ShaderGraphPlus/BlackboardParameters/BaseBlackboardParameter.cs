@@ -10,7 +10,12 @@ internal interface ISubgraphBlackboardParameter
 	public object GetValue();
 }
 
-public abstract class BaseBlackboardParameter
+public interface IBlackboardParameter
+{
+
+}
+
+public abstract class BaseBlackboardParameter : IBlackboardParameter
 {
 	[Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; } = Guid.NewGuid();
