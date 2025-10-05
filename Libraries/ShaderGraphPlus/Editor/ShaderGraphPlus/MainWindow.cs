@@ -1806,11 +1806,12 @@ public class MainWindow : DockWindow
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
 		DockManager.AddDock( _preview3D, _blackboard, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
-		DockManager.AddDock( _blackboard, _properties, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _preview3D, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
 
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
+		DockManager.AddDock( _output, _blackboard, DockArea.Right, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose, 0.25f );
