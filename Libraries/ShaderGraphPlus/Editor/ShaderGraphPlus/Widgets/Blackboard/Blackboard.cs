@@ -40,7 +40,7 @@ internal class Blackboard : Widget
 	/// <summary>
 	/// Invoked when a blackboard parameter is deleated.
 	/// </summary>
-	public Action<BaseBlackboardParameter> OnParameterDeleated { get; set; }
+	public Action<BaseBlackboardParameter> OnParameterDeleted { get; set; }
 
 	private BlackboardView _blackboardView;
 
@@ -64,23 +64,21 @@ internal class Blackboard : Widget
 		{
 			OnDirty?.Invoke();
 		};
-		_blackboardView.OnParameterSelected += ( p ) =>
+		_blackboardView.OnParameterSelected += ( parameter ) =>
 		{
-			SGPLog.Info( $"Slected Parameter : {p.Name}" );
-			OnParameterSelected?.Invoke( p );
+			OnParameterSelected?.Invoke( parameter );
 		};
-		_blackboardView.OnParameterChanged += ( p ) =>
+		_blackboardView.OnParameterChanged += ( parameter ) =>
 		{
-			SGPLog.Info( $"Parameter : {p.Name} has changed" );
-			OnParameterChanged?.Invoke( p );
+			OnParameterChanged?.Invoke( parameter );
 		};
-		_blackboardView.OnParameterCreated += ( p ) =>
+		_blackboardView.OnParameterCreated += ( parameter ) =>
 		{
-			OnParameterCreated?.Invoke( p );
+			OnParameterCreated?.Invoke( parameter );
 		};
-		_blackboardView.OnParameterDeleated += ( p ) =>
+		_blackboardView.OnParameterDeleted += ( parameter ) =>
 		{
-			OnParameterDeleated?.Invoke( p );
+			OnParameterDeleted?.Invoke( parameter );
 		};
 
 		Layout.Add( _blackboardView );
