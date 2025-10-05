@@ -24,6 +24,8 @@ public class CommentNode : BaseNodePlus, ICommentNode
 	[TextArea]
 	public string Description { get; set; } = "";
 
+	public int DescriptionFontSize { get; set; } = 11;
+
 	[Hide, Browsable( false )]
 	public int Layer { get; set; } = 5;
 
