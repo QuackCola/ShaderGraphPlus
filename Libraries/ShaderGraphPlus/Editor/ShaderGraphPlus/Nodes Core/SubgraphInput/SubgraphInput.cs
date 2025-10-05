@@ -141,28 +141,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		InputData.SetValue<T>( value );
 	}
 
-	/*
-	public object GetValue()
-	{
-		return GetOutputValue();
-	}
-
-	private object GetOutputValue()
-	{
-		return InputData.InputType switch
-		{
-			SubgraphPortType.Bool => InputData.GetValue<bool>(),
-			SubgraphPortType.Float => InputData.GetValue<float>(),
-			SubgraphPortType.Vector2 => InputData.GetValue<Vector2>(),
-			SubgraphPortType.Vector3 => InputData.GetValue<Vector3>(),
-			SubgraphPortType.Color => InputData.GetValue<Color>(),
-			SubgraphPortType.Texture2DObject => InputData.GetValue<TextureInput>(),
-			SubgraphPortType.Sampler => InputData.GetValue<Sampler>(),
-			_ => 1.0f,
-		};
-	}
-	*/
-
 	private string CompileTexture( TextureInput UI )
 	{
 		//if ( _asset == null )
