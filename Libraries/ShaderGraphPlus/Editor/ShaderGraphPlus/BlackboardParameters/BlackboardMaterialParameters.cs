@@ -91,28 +91,6 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 		Min = Vector2.Zero;
 		Max = Vector2.One;
 	}
-
-	[JsonIgnore, Hide]
-	public float ValueX
-	{
-		get => Value.x;
-		set => Value = Value.WithX( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueY
-	{
-		get => Value.y;
-		set => Value = Value.WithY( value );
-	}
-
-	[Hide] public float MinX => Min.x;
-	[Hide] public float MinY => Min.y;
-	[Hide] public float MaxX => Max.x;
-	[Hide] public float MaxY => Max.y;
-
-	[Hide] public float Step => UI.Step;
-
 }
 
 /// <summary>
@@ -136,36 +114,6 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 		Min = Vector3.Zero;
 		Max = Vector3.One;
 	}
-
-	[JsonIgnore, Hide]
-	public float ValueX
-	{
-		get => Value.x;
-		set => Value = Value.WithX( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueY
-	{
-		get => Value.y;
-		set => Value = Value.WithY( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueZ
-	{
-		get => Value.z;
-		set => Value = Value.WithZ( value );
-	}
-
-	[Hide] public float MinX => Min.x;
-	[Hide] public float MinY => Min.y;
-	[Hide] public float MinZ => Min.z;
-	[Hide] public float MaxX => Max.x;
-	[Hide] public float MaxY => Max.y;
-	[Hide] public float MaxZ => Max.z;
-
-	[Hide] public float Step => UI.Step;
 }
 
 /// <summary>
@@ -176,43 +124,6 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 {
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
-
-	[JsonIgnore, Hide]
-	public float ValueX
-	{
-		get => Value.x;
-		set => Value = Value.WithX( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueY
-	{
-		get => Value.y;
-		set => Value = Value.WithY( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueZ
-	{
-		get => Value.z;
-		set => Value = Value.WithZ( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueW
-	{
-		get => Value.w;
-		set => Value = Value.WithW( value );
-	}
-
-	[Hide] public float MinX => Min.x;
-	[Hide] public float MinY => Min.y;
-	[Hide] public float MinZ => Min.z;
-	[Hide] public float MaxX => Max.x;
-	[Hide] public float MaxY => Max.y;
-	[Hide] public float MaxZ => Max.z;
-
-	[Hide] public float Step => UI.Step;
 
 	public Float4BlackboardParameter()
 	{
@@ -236,34 +147,6 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color>
 {
-	[JsonIgnore, Hide]
-	public float ValueR
-	{
-		get => Value.r;
-		set => Value = Value.WithRed( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueG
-	{
-		get => Value.g;
-		set => Value = Value.WithGreen( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueB
-	{
-		get => Value.b;
-		set => Value = Value.WithBlue( value );
-	}
-
-	[JsonIgnore, Hide]
-	public float ValueA
-	{
-		get => Value.a;
-		set => Value = Value.WithAlpha( value );
-	}
-
 	public ColorBlackboardParameter()
 	{
 		Value = Color.White;
