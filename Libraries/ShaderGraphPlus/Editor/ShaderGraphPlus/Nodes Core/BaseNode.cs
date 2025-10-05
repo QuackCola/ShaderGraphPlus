@@ -135,12 +135,12 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		return new NodeUI( view, this, false );
 	}
 
-	public Color GetPrimaryColor( GraphView view )
+	public Color GetNodeBodyTintColor( GraphView view )
 	{
 		return NodeBodyTintColor;
 	}
 
-	public Color GetPrimaryHeaderColor( GraphView view )
+	public Color GetNodeTitleTintColor( GraphView view )
 	{
 		return NodeTitleTintColor;
 	}
