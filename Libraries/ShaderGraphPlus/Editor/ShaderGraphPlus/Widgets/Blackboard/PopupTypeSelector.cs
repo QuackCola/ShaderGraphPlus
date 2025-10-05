@@ -228,7 +228,7 @@ internal partial class TypeSelectorWidget : Widget
 	{
 		selection.Clear();
 
-		var types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>().Where( x => !x.IsAbstract 
+		var types = EditorTypeLibrary.GetTypes<IBlackboardParameter>().Where( x => !x.IsAbstract 
 		&& !x.HasAttribute<HideAttribute>() && ( IsSubgraph ? ( x.HasAttribute<SubgraphOnlyAttribute>() ) : ( !x.HasAttribute<SubgraphOnlyAttribute>() )  ) ).OrderBy( x => x.Order );
 
 		if ( !string.IsNullOrWhiteSpace( searchString ) )
