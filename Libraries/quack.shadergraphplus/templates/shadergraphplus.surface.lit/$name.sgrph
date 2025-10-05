@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 3,
   "IsSubgraph": false,
   "Path": "",
   "Model": "models/dev/box.vmdl",
@@ -36,5 +36,6 @@
       "Identifier": "0",
       "Position": "0,0"
     }
-  ]
+  ],
+  "parameters": []
 }
