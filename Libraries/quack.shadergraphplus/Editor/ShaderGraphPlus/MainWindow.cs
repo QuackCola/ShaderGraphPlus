@@ -41,17 +41,18 @@ public class MainWindow : DockWindow
 
 	private ShaderGraphPlus _graph;
 	private ShaderGraphPlusView _graphView;
+	private BlackboardView _blackboardView;
 	private Asset _asset;
 
 	public string AssetPath => _asset?.Path;
 
 	private Widget _graphCanvas;
+	private Widget _blackboardCanvas;
 	private Properties _properties;
-	private Blackboard _blackboard;
 	private Preview3DPanel _preview3D;
 	private Preview2DPanel _preview2D;
 	private Output _output;
-	private UndoHistory _undoHistory;
+	private UndoHistory _undoHistory;	
 	private PaletteWidget _palette;
 	private TextView _generatedCodeTextView;
 
@@ -192,7 +193,7 @@ public class MainWindow : DockWindow
 				if ( blackboardSyncable.BlackboardParameterIdentifier != default )
 				{
 					var blackboardParameter = _graph.GetBlackboardParameterByGuid( blackboardSyncable.BlackboardParameterIdentifier );
-					_blackboard.SetSelectedItem( blackboardParameter );
+					_blackboardView.SetSelectedItem( blackboardParameter );
 					_properties.Target = blackboardParameter;
 				}
 			}
@@ -209,7 +210,7 @@ public class MainWindow : DockWindow
 				if ( syncable.BlackboardParameterIdentifier != default )
 				{
 					var blackboardParameter = _graph.GetBlackboardParameterByGuid( syncable.BlackboardParameterIdentifier );
-					_blackboard.SetSelectedItem( blackboardParameter );
+					_blackboardView.SetSelectedItem( blackboardParameter );
 					_properties.Target = blackboardParameter;
 				}
 			}
@@ -227,11 +228,11 @@ public class MainWindow : DockWindow
 
 		if ( _properties.Target is ShaderGraphPlus && oldTarget is BaseBlackboardParameter )
 		{
-			_blackboard.ClearSeletedItem();
+			_blackboardView.ClearSeletedItem();
 		}
 		else if ( _properties.Target is BaseNodePlus && oldTarget is BaseBlackboardParameter )
 		{
-			_blackboard.ClearSeletedItem();
+			_blackboardView.ClearSeletedItem();
 		}
 
 		SelectBlackboardParameter();
@@ -982,7 +983,7 @@ public class MainWindow : DockWindow
 			_graph.DeserializeParameters( op.undoBuffer );
 
 			_graphView.RebuildFromGraph();
-			_blackboard.UpdateBlackboard();
+			_blackboardView.RebuildBuildFromGraph();
 
 			SetDirty();
 		}
@@ -1004,7 +1005,7 @@ public class MainWindow : DockWindow
 			_graph.DeserializeParameters( op.redoBuffer );
 
 			_graphView.RebuildFromGraph();
-			_blackboard.UpdateBlackboard();
+			_blackboardView.RebuildBuildFromGraph();
 
 			SetDirty();
 		}
@@ -1023,7 +1024,7 @@ public class MainWindow : DockWindow
 			_graph.DeserializeParameters( op.redoBuffer );
 
 			_graphView.RebuildFromGraph();
-			_blackboard.UpdateBlackboard();
+			_blackboardView.RebuildBuildFromGraph();
 
 			SetDirty();
 		}
@@ -1296,7 +1297,7 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
-		_blackboard.Graph = _graph;
+		_blackboardView.Graph = _graph;
 
 		_output.ClearErrors();
 		_output.ClearWarnings();
@@ -1398,7 +1399,7 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
-		_blackboard.Graph = _graph;
+		_blackboardView.Graph = _graph;
 
 		if ( addToPath )
 			AddFileHistory( path );
@@ -1632,7 +1633,7 @@ public class MainWindow : DockWindow
 		_graphCanvas.Name = "Graph";
 		_graphCanvas.SetWindowIcon( "account_tree" );
 		_graphCanvas.Layout = Layout.Column();
-		
+
 		var graphToolBar = new ToolBar( _graphCanvas, "GraphToolBar" );
 		graphToolBar.SetIconSize( 16 );
 		_fileHistoryBack = graphToolBar.AddOption( null, "arrow_back" );
@@ -1672,12 +1673,21 @@ public class MainWindow : DockWindow
 			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
 				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
 		}
-		
+
+		var blackboardTypes = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
+			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
+
+
 		foreach ( var type in types )
 		{
 			_graphView.AddNodeType( type );
 		}
-		
+
+		foreach ( var type in blackboardTypes )
+		{
+			_graphView.AddParameterType( type );
+		}
+
 		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".sgpfunc", StringComparison.OrdinalIgnoreCase ) );
 		foreach ( var subgraph in subgraphs )
 		{
@@ -1785,14 +1795,40 @@ public class MainWindow : DockWindow
 		_properties = new Properties( this );
 		_properties.Target = _graph;
 		_properties.PropertyUpdated += OnPropertyUpdated;
-		
-		_blackboard = new Blackboard( this );
-		_blackboard.Graph = _graph;
-		_blackboard.OnDirty += ( ) => { SetDirty(); };
-		_blackboard.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
-		_blackboard.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
-		_blackboard.OnParameterCreated += ( p ) => { OnBlackboardParameterPropertyCreated( p ); };
-		_blackboard.OnParameterDeleted += ( p ) => { OnBlackboardParameterDeleted( p ); };
+
+		_blackboardCanvas = new Widget( this ) { WindowTitle = $"Blackboard" };
+		_blackboardCanvas.Name = "Blackboard";
+		_blackboardCanvas.SetWindowIcon( "list" );
+		_blackboardCanvas.Layout = Layout.Row();
+		_blackboardCanvas.Layout.Spacing = 8;
+		_blackboardCanvas.Layout.Margin = 4;
+
+		_blackboardView = new BlackboardView( _blackboardCanvas, this );
+
+		//IOrderedEnumerable<TypeDescription> blackboardTypes = default;
+		//if ( !IsSubgraph )
+		//{
+		//	types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
+		//		.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && !x.HasAttribute<SubgraphOnlyAttribute>() ).OrderBy( x => x.Name );
+		//}
+		//else
+		//{
+		//	types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
+		//		.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
+		//}
+
+		foreach ( var type in blackboardTypes )
+		{
+			_blackboardView.AddParameterType( type );
+		}
+
+		_blackboardView.Graph = _graph;
+		_blackboardView.OnDirty += () => { SetDirty(); };
+		_blackboardView.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
+		_blackboardView.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
+		_blackboardView.OnParameterCreated += ( p ) => { OnBlackboardParameterPropertyCreated( p ); };
+		_blackboardView.OnParameterDeleted += ( p ) => { OnBlackboardParameterDeleted( p ); };
+		_blackboardCanvas.Layout.Add( _blackboardView, 1 );
 
 		_undoHistory = new UndoHistory( this, _undoStack );
 		_undoHistory.OnUndo = Undo;
@@ -1806,13 +1842,12 @@ public class MainWindow : DockWindow
 		DockManager.AddDock( _preview2D, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
-		DockManager.AddDock( _preview3D, _blackboard, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
 		DockManager.AddDock( _preview3D, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );
 
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		DockManager.AddDock( _output, _blackboard, DockArea.Right, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _output, _blackboardCanvas, DockArea.Right, DockManager.DockProperty.HideOnClose, 0.5f );
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose );
@@ -1840,7 +1875,7 @@ public class MainWindow : DockWindow
 		_graphView.ClearSelection();
 
 		_properties.Target = blackboardParameter;
-		_blackboard.SetSelectedItem( blackboardParameter );
+		_blackboardView.SetSelectedItem( blackboardParameter );
 	}
 
 	/// <summary>
@@ -1852,7 +1887,7 @@ public class MainWindow : DockWindow
 		if ( _properties.Target is BaseBlackboardParameter )
 		{
 			OnNodeSelected( null );
-			_blackboard.ClearSeletedItem();
+			_blackboardView.ClearSeletedItem();
 		}
 	}
 
@@ -1861,7 +1896,7 @@ public class MainWindow : DockWindow
 		if ( node is IBlackboardSyncable blackboardSyncable )
 		{
 			_graph.RemoveBlackboardParameter( blackboardSyncable.BlackboardParameterIdentifier );
-			_blackboard.UpdateBlackboard( false );
+			_blackboardView.RebuildBuildFromGraph( false );
 		}
 	}
 
@@ -1901,12 +1936,12 @@ public class MainWindow : DockWindow
 
 		SetDirty();
 
-		_blackboard.UpdateBlackboard( false );
+		_blackboardView.RebuildBuildFromGraph( false );
 	}
 
 	private void OnConstantNodeConvertedToParamerter()
 	{
-		_blackboard.UpdateBlackboard( true );
+		_blackboardView.RebuildBuildFromGraph( true );
 	}
 
 	private void OnBlackboardParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )

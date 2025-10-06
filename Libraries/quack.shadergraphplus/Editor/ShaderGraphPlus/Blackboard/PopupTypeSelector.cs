@@ -4,7 +4,7 @@ namespace ShaderGraphPlus;
 
 internal class PopupTypeSelector : PopupWidget
 {
-	public Action<TypeDescription> OnSelect
+	public Action<IBlackboardParameterType> OnSelect
 	{
 		get => Widget.OnSelect;
 		set => Widget.OnSelect = value;
@@ -12,9 +12,9 @@ internal class PopupTypeSelector : PopupWidget
 
 	public TypeSelectorWidget Widget { get; set; }
 
-	public PopupTypeSelector( Widget parent , bool isSubgraph = false ) : base( parent )
+	public PopupTypeSelector( Widget parent ,IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
 	{
-		Widget = new TypeSelectorWidget( this, isSubgraph )
+		Widget = new TypeSelectorWidget( this, availableTypes )
 		{
 			OnDestroy = Destroy
 		};
@@ -28,7 +28,7 @@ internal class PopupTypeSelector : PopupWidget
 
 internal partial class TypeSelectorWidget : Widget
 {
-	public Action<TypeDescription> OnSelect { get; set; }
+	public Action<IBlackboardParameterType> OnSelect { get; set; }
 	public Action OnDestroy { get; set; }
 	internal List<TypeSelection> Panels { get; set; } = new();
 	internal int CurrentPanelId { get; set; } = 0;
@@ -37,15 +37,14 @@ internal partial class TypeSelectorWidget : Widget
 	string searchString;
 	internal LineEdit Search { get; init; }
 
-	private bool IsSubgraph;
+	IEnumerable<IBlackboardParameterType> AvailableTypes;
 
-	//string CategorySeparator => "/"; // This is used for sub-categories
 	public bool lineEditFocused = false;
 
-	public TypeSelectorWidget( Widget parent, bool isSubgraph ) : base( parent )
+	public TypeSelectorWidget( Widget parent, IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
 	{
 		Layout = Layout.Column();
-		IsSubgraph = isSubgraph;
+		AvailableTypes = availableTypes;
 
 		var head = Layout.Row();
 		head.Margin = 6;
@@ -184,7 +183,7 @@ internal partial class TypeSelectorWidget : Widget
 		Paint.DrawRect( LocalRect.Shrink( 1 ), 3 );
 	}
 
-	void OnTypeSelected( TypeDescription type )
+	void OnTypeSelected( IBlackboardParameterType type )
 	{
 		OnSelect( type );
 		OnDestroy?.Invoke();
@@ -228,13 +227,13 @@ internal partial class TypeSelectorWidget : Widget
 	{
 		selection.Clear();
 
-		var types = EditorTypeLibrary.GetTypes<IBlackboardParameter>().Where( x => !x.IsAbstract 
-		&& !x.HasAttribute<HideAttribute>() && ( IsSubgraph ? ( x.HasAttribute<SubgraphOnlyAttribute>() ) : ( !x.HasAttribute<SubgraphOnlyAttribute>() )  ) ).OrderBy( x => x.Order );
+		var types = AvailableTypes.Where( x => !x.Type.IsAbstract 
+		&& !x.Type.HasAttribute<HideAttribute>() ).OrderBy( x => x.Type.Order );
 
 		if ( !string.IsNullOrWhiteSpace( searchString ) )
 		{
 			var searchWords = searchString.Split( ' ', StringSplitOptions.RemoveEmptyEntries );
-			var query = types.Select( x => new { x, score = SearchScore( x, searchWords ) } )
+			var query = types.Select( x => new { x, score = SearchScore( x.Type, searchWords ) } )
 								.ToArray()
 								.Where( x => x.score > 0 );
 
@@ -429,18 +428,18 @@ internal class TypeEntry : Widget
 	public string Icon { get; set; } = "note_add";
 
 	internal TypeSelection Selector { get; set; }
-	public TypeDescription Type { get; init; }
+	public IBlackboardParameterType Type { get; init; }
 
-	internal TypeEntry( Widget parent, TypeDescription type = null ) : base( parent )
+	internal TypeEntry( Widget parent, IBlackboardParameterType type = null ) : base( parent )
 	{
 		FixedHeight = 24;
 		Type = type;
 
 		if ( type is not null )
 		{
-			Text = type.Title;
-			Icon = type.Icon;
-			ToolTip = $"<b>{type.Title}</b><br/>{type.Description}";
+			Text = type.Type.Title;
+			Icon = type.Type.Icon;
+			ToolTip = $"<b>{type.Type.Title}</b><br/>{type.Type.Description}";
 		}
 	}
 
@@ -452,7 +451,7 @@ internal class TypeEntry : Widget
 		var typeColor = Color.White;
 		var textColor = Theme.TextControl.WithAlpha( hovered ? 1.0f : 0.5f );
 
-		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( Type.TargetType, out var blackboardConfig ) )
+		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( Type.Type.TargetType, out var blackboardConfig ) )
 		{
 			typeColor = blackboardConfig.Color;
 		}

@@ -14,10 +14,6 @@ internal interface IShaderFeatureBlackboardParameter
 {
 }
 
-public interface IBlackboardParameter
-{
-}
-
 public abstract class BaseBlackboardParameter : IBlackboardParameter
 {
 	[Sandbox.ReadOnly, Browsable( false )]
@@ -44,6 +40,11 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 		throw new NotImplementedException();
 	}
 
+	Color IBlackboardParameter.GetTypeColor( BlackboardView view )
+	{
+		throw new NotImplementedException();
+	}
+
 	/// <summary>
 	/// Called when a blackboard parameter needs to 
 	/// get converted into an accompanying node.
@@ -53,12 +54,12 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 		throw new NotImplementedException();
 	}
 
-	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "", bool isSubgraph = false )
+	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "" )
 	{
-		return CreateTypeInstance( targetType, name, Guid.NewGuid(), isSubgraph );
+		return CreateTypeInstance( targetType, name, Guid.NewGuid() );
 	}
 
-	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "", Guid guid = default, bool isSubgraph = false )
+	internal static BaseBlackboardParameter CreateTypeInstance( Type targetType, string name = "", Guid guid = default )
 	{
 		var typeInstance = EditorTypeLibrary.Create( targetType.Name, targetType );
 
@@ -104,6 +105,7 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 			_ => throw new NotImplementedException( $"{typeInstance}" ),
 		};
 	}
+
 }
 
 public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter

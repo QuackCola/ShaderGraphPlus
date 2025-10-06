@@ -21,7 +21,11 @@ public sealed class ParameterNodeType : ClassNodeType
 	{
 		var node = base.CreateNode( graph );
 
-		BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, Guid.NewGuid() );
+
+
+		//var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>(), name );
+
+		//BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( BlackboardParameterType, Name, Guid.NewGuid() );
 
 		node = BlackboardParameter.InitializeNode();
 

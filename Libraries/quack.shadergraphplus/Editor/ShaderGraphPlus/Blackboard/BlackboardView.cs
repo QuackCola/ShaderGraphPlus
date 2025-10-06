@@ -1,4 +1,4 @@
-﻿using Editor;
+using Editor;
 
 namespace ShaderGraphPlus;
 
@@ -8,9 +8,11 @@ internal class BlackboardView : Widget
 	private Button.Primary _addButton;
 	private Button.Danger _deleteButton;
 	private BlackboardParameterList _parameterListView;
-	private Blackboard _parentBlackboard;
-	private object _selectedItem;
-	private Guid _selectedItemGuid;
+	private BaseBlackboardParameter _selectedParameter;
+
+	private readonly MainWindow _window;
+	private readonly UndoStack _undoStack;
+	private readonly Dictionary<string, IBlackboardParameterType> AvailableParameters = new( StringComparer.OrdinalIgnoreCase );
 
 	private ShaderGraphPlus _graph;
 	public ShaderGraphPlus Graph
@@ -23,7 +25,7 @@ internal class BlackboardView : Widget
 			
 			_graph = value;
 
-			RebuildBuildFromParameters();
+			RebuildBuildFromGraph();
 		}
 	}
 
@@ -49,12 +51,14 @@ internal class BlackboardView : Widget
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleted { get; set; }
 
-	public BlackboardView( Blackboard parent ) : base( parent )
+
+	public BlackboardView( Widget parent, MainWindow window ) : base( parent )
 	{
 		Layout = Layout.Row();
 		FocusMode = FocusMode.TabOrClickOrWheel;
 
-		_parentBlackboard = parent;
+		_window = window;
+		_undoStack = window.UndoStack;
 
 		var canvas = new Widget( null );
 		canvas.Layout = Layout.Row();
@@ -86,7 +90,7 @@ internal class BlackboardView : Widget
 		_addButton.ToolTip = $"Add new blackboard parameter";
 		_addButton.Clicked += () =>
 		{
-			var popup = new PopupTypeSelector( this, Graph.IsSubgraph );
+			var popup = new PopupTypeSelector( this, GetRelevantParameters() );
 			popup.OnSelect += ( t ) =>
 			{
 				OnAddBlackboardParameter( t );
@@ -96,7 +100,7 @@ internal class BlackboardView : Widget
 
 		leftColumnTopLayout.Add( _addButton );
 
-		_parameterListView = leftColumn.Add( new BlackboardParameterList( null ), 1 );//new ListView();
+		_parameterListView = leftColumn.Add( new BlackboardParameterList( null ), 1 );
 		_parameterListView.ItemClicked = ( item ) =>
 		{
 			OnItemClicked( (BaseBlackboardParameter)item );
@@ -133,6 +137,73 @@ internal class BlackboardView : Widget
 		Layout.Add( canvas );
 	}
 
+	internal IDisposable UndoScope( string name )
+	{
+		PushUndo( name );
+		return new Sandbox.Utility.DisposeAction( () => PushRedo() );
+	}
+
+	public void PushUndo( string name )
+	{
+		SGPLog.Info( $"Push Undo ({name})" );
+		_undoStack.PushUndo( name, Graph.UndoStackSerialize() );
+		_window.OnUndoPushed();
+	}
+
+	public  void PushRedo()
+	{
+		SGPLog.Info( "Push Redo" );
+		_undoStack.PushRedo( Graph.UndoStackSerialize() );
+		_window.SetDirty();
+	}
+
+	public void AddParameterType<T>() where T : BaseBlackboardParameter
+	{
+		AddParameterType( EditorTypeLibrary.GetType<T>() );
+	}
+
+	public void AddParameterType( TypeDescription type )
+	{
+		var parameterType = new ClassParameterType( type );
+
+		AvailableParameters.TryAdd( parameterType.Identifier, parameterType );
+	}
+
+	public IBlackboardParameterType FindParameterType( Type type )
+	{
+		return AvailableParameters.TryGetValue( type.FullName!, out var parameterType ) ? parameterType : null;
+	}
+
+	public IEnumerable<IBlackboardParameterType> GetRelevantParameters()
+	{
+		return AvailableParameters.Values.Where( x =>
+		{
+			if ( x is ClassParameterType classParameterType )
+			{
+				var targetType = classParameterType.Type.TargetType;
+
+				// Only show material parameters when not in a subgraph
+				if ( Graph.IsSubgraph && targetType == typeof( BoolBlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( IntBlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( FloatBlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float2BlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float3BlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float4BlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( ColorBlackboardParameter ) ) return false;
+
+				// Only show subgraph input parameters when in a subgraph
+				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( IntSubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( FloatSubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float2SubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputBlackboardParameter ) ) return false;
+			}
+			return true;
+		} );
+	}
+
 	private void OnItemSelected( BaseBlackboardParameter parameter )
 	{
 		//SGPLog.Info( $"Selected item : {variable}" );
@@ -147,13 +218,14 @@ internal class BlackboardView : Widget
 		OnParameterSelected?.Invoke( parameter );
 	}
 
-	private void OnAddBlackboardParameter( TypeDescription typeDescription )
+	private void OnAddBlackboardParameter( IBlackboardParameterType type )
 	{
-		int id = _parentBlackboard.Graph._parameters.Count;
+		int id = Graph._parameters.Count;
 		string name = $"Parameter{id}";
 
-		var parameterInstance = BaseBlackboardParameter.CreateTypeInstance( typeDescription.TargetType, name, Graph.IsSubgraph );
-		_parentBlackboard.Graph.AddBlackboardParameter( parameterInstance );
+		var parameterInstance = (BaseBlackboardParameter)type.CreateParameter( Graph );
+		parameterInstance.Name = name;
+		Graph.AddBlackboardParameter( parameterInstance );
 
 		OnDirty?.Invoke();
 
@@ -161,22 +233,19 @@ internal class BlackboardView : Widget
 
 		SetSelectedItem( parameterInstance );
 
-		RebuildBuildFromParameters( true );
+		RebuildBuildFromGraph( true );
 
 		OnParameterCreated?.Invoke( parameterInstance );
 	}
 
 	private void OnDeleteSelectedBlackboardParameter()
 	{
-		var parameter = _selectedItem as BaseBlackboardParameter;
+		var parameter = _selectedParameter as BaseBlackboardParameter;
 
-		if ( _selectedItem != null )
+		if ( _selectedParameter != null )
 		{
-			_selectedItem = null;
-			_selectedItemGuid = default( Guid );
+			_selectedParameter = null;
 			OnParameterDeleted?.Invoke( parameter );
-
-			//SGPLog.Info( $"Deleted selected parameter : {parameter}" );
 		}
 
 		if ( !_graph.Parameters.Any() )
@@ -189,23 +258,22 @@ internal class BlackboardView : Widget
 	{
 		_parameterListView.SetItems( parameters.Cast<object>() );
 
-		if ( _selectedItem != null && _selectedItemGuid != default( Guid ) )
+		if ( _selectedParameter != null  )
 		{
-			var selection = _graph.GetBlackboardParameterByGuid( _selectedItemGuid );
+			var selection = Graph.GetBlackboardParameterByGuid( _selectedParameter.Identifier );
 
 			SetSelectedItem( selection );
 		}
 	}
 
-	public void RebuildBuildFromParameters( bool preserveCurrentSelection = false )
+	public void RebuildBuildFromGraph( bool preserveCurrentSelection = false )
 	{
-		BuildFromParameters( _graph.Parameters, preserveCurrentSelection );
+		BuildFromParameters( ((ShaderGraphPlus)_graph).Parameters, preserveCurrentSelection );
 	}
 
 	public void SetSelectedItem( BaseBlackboardParameter blackboardParameter )
 	{
-		_selectedItem = blackboardParameter;
-		_selectedItemGuid = blackboardParameter.Identifier;
+		_selectedParameter = blackboardParameter;
 
 		_parameterListView.SelectItem( blackboardParameter );
 
@@ -214,8 +282,7 @@ internal class BlackboardView : Widget
 
 	public void ClearSeletedItem()
 	{
-		_selectedItem = null;
-		_selectedItemGuid = default( Guid );
+		_selectedParameter = null;
 		_parameterListView.Selection.Clear();
 
 		_deleteButton.Enabled = false;
