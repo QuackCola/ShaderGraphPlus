@@ -200,7 +200,7 @@ internal class BlackboardView : Widget
 				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputBlackboardParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputBlackboardParameter ) ) return false;
 
-				// Ignore this for now.
+				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 				if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
