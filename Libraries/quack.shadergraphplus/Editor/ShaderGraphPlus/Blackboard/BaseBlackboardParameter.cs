@@ -102,7 +102,7 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 			{ Name = name, Identifier = guid },
 			ColorSubgraphInputBlackboardParameter => new ColorSubgraphInputBlackboardParameter( Color.White )
 			{ Name = name, Identifier = guid },
-			_ => throw new NotImplementedException( $"{typeInstance}" ),
+			_ => throw new NotImplementedException( $"Unknown \"{typeInstance}\"" ),
 		};
 	}
 
