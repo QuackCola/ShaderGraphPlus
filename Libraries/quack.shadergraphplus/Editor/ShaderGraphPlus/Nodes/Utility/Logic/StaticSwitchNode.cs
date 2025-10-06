@@ -13,6 +13,7 @@ internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 }
 
 [Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
+[InternalNode]
 public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 {
 	[Hide]
