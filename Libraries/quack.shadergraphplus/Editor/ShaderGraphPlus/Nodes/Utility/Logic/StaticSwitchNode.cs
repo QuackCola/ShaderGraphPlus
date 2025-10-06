@@ -1,5 +1,4 @@
 ﻿using NodeEditorPlus;
-using static Sandbox.Material;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
