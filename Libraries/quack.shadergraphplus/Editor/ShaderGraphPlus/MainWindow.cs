@@ -1659,31 +1659,20 @@ public class MainWindow : DockWindow
 		_graphCanvas.Layout.Add( graphToolBar );
 		
 		_graphView = new ShaderGraphPlusView( _graphCanvas, this );
-		//_graphView.SetBackgroundImage( "toolimages:/grapheditor/grapheditorbackgroundpattern_shader.png" );
 		_graphView.BilinearFiltering = false;
-		
-		IOrderedEnumerable<TypeDescription> types = default;
-		if ( !IsSubgraph )
-		{
-			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && !x.HasAttribute<SubgraphOnlyAttribute>() ).OrderBy( x => x.Name );
-		}
-		else
-		{
-			types = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
-				.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
-		}
 
-		var blackboardTypes = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
+		var nodeTypes = EditorTypeLibrary.GetTypes<ShaderNodePlus>()
+			.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
+
+		var blackboardParameterTypes = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
 			.Where( x => !x.IsAbstract ).OrderBy( x => x.Name );
 
-
-		foreach ( var type in types )
+		foreach ( var type in nodeTypes )
 		{
 			_graphView.AddNodeType( type );
 		}
 
-		foreach ( var type in blackboardTypes )
+		foreach ( var type in blackboardParameterTypes )
 		{
 			_graphView.AddParameterType( type );
 		}
@@ -1700,6 +1689,7 @@ public class MainWindow : DockWindow
 		
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
+		_graphView.OnNewParameterNodeCreated += () => OnNewParameterNodeCreated();
 		_graphView.OnConstantNodeConvertedToParameter += () => OnConstantNodeConvertedToParamerter();
 		_graphView.OnNodeRemoved += ( node ) => OnNodeRemoved( node );
 		_graphCanvas.Layout.Add( _graphView, 1 );
@@ -1805,19 +1795,7 @@ public class MainWindow : DockWindow
 
 		_blackboardView = new BlackboardView( _blackboardCanvas, this );
 
-		//IOrderedEnumerable<TypeDescription> blackboardTypes = default;
-		//if ( !IsSubgraph )
-		//{
-		//	types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
-		//		.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() && !x.HasAttribute<SubgraphOnlyAttribute>() ).OrderBy( x => x.Name );
-		//}
-		//else
-		//{
-		//	types = EditorTypeLibrary.GetTypes<BaseBlackboardParameter>()
-		//		.Where( x => !x.IsAbstract && !x.HasAttribute<HideAttribute>() ).OrderBy( x => x.Name );
-		//}
-
-		foreach ( var type in blackboardTypes )
+		foreach ( var type in blackboardParameterTypes )
 		{
 			_blackboardView.AddParameterType( type );
 		}
@@ -1937,6 +1915,11 @@ public class MainWindow : DockWindow
 		SetDirty();
 
 		_blackboardView.RebuildBuildFromGraph( false );
+	}
+
+	private void OnNewParameterNodeCreated()
+	{
+		_blackboardView.RebuildBuildFromGraph( true );
 	}
 
 	private void OnConstantNodeConvertedToParamerter()

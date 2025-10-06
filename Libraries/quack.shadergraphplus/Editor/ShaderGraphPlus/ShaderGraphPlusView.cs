@@ -40,6 +40,7 @@ public class ShaderGraphPlusView : GraphView
 		set => base.Graph = value;
 	}
 
+	public Action OnNewParameterNodeCreated { get; set; }
 	public Action OnConstantNodeConvertedToParameter { get; set; }
 
 	public Action<BaseNodePlus> OnNodeRemoved { get; set; }
@@ -565,7 +566,7 @@ public class ShaderGraphPlusView : GraphView
 
 		Graph.AddBlackboardParameter( blackboardParameter );
 
-		OnConstantNodeConvertedToParameter?.Invoke();
+		OnNewParameterNodeCreated?.Invoke();
 	}
 
 	private void CreateNewNamedReroute( string name, Vector2 position )
