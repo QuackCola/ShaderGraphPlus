@@ -64,8 +64,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool UpgradedToNewNode { get; set; } = false;
 
-	[Browsable( false )]
-	[JsonIgnore, Hide]
+	[JsonIgnore, Hide, Browsable( false )]
 	public INodeGraph Graph
 	{
 		get => _graph;
