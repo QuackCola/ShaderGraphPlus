@@ -32,6 +32,11 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 			IsAttribute = IsAttribute,
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -69,6 +74,11 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 			UI = UI,
 			IsAttribute = IsAttribute,
 		};
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
 	}
 }
 
@@ -108,6 +118,11 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 			IsAttribute = IsAttribute,
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -146,6 +161,11 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 			IsAttribute = IsAttribute,
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -183,6 +203,11 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 			UI = UI,
 			IsAttribute = IsAttribute,
 		};
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
 	}
 }
 
@@ -224,6 +249,11 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 			IsAttribute = IsAttribute,
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -257,6 +287,11 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 			IsAttribute = IsAttribute,
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -287,6 +322,15 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericP
 			Feature = Value
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return new ShaderFeatureBooleanBlackboardParameter()
+		{
+			Identifier = Identifier,
+			Value = new() { FeatureName = Name }
+		};
+	}
 }
 
 /// <summary>
@@ -313,5 +357,14 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericPara
 	public override BaseNodePlus InitializeNode()
 	{
 		throw new NotImplementedException();
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return new ShaderFeatureEnumBlackboardParameter()
+		{
+			Identifier = Identifier,
+			Value = new() { FeatureName = Name }
+		};
 	}
 }

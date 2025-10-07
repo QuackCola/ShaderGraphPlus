@@ -32,8 +32,11 @@ public sealed class SubgraphInputNodeType : ClassNodeType
 		{
 			if ( !InitFromBlackBoardParameter )
 			{
-				BlackboardParameter = BaseBlackboardParameter.CreateTypeInstance( TargetBlackboardParameterType, Name, Guid.NewGuid() );
-
+				BlackboardParameter = (BaseBlackboardParameter)EditorTypeLibrary.Create( TargetBlackboardParameterType.Name, TargetBlackboardParameterType );
+				BlackboardParameter.Name = Name;
+				BlackboardParameter.Identifier = Guid.NewGuid();
+				BlackboardParameter.InitilizeCreatedInstance();
+		
 				node = BlackboardParameter.InitializeNode();
 			}
 			else

@@ -16,7 +16,6 @@ internal class ClassParameterType : IBlackboardParameterType
 	public virtual IBlackboardParameter CreateParameter( ShaderGraphPlus graph )
 	{
 		var parameter = Type.Create<BaseBlackboardParameter>();
-
 		parameter.Graph = graph;
 
 		return parameter;

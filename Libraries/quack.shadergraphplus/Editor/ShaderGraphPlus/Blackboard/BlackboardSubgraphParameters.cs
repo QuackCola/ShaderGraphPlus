@@ -30,6 +30,11 @@ public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInp
 			InputData = new VariantValueBool( Value, SubgraphPortType.Bool )
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -67,6 +72,11 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 			InputDescription = Description,
 			InputData = new VariantValueInt( Value, SubgraphPortType.Int )
 		};
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
 	}
 }
 
@@ -106,6 +116,11 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 			InputData = new VariantValueFloat( Value, SubgraphPortType.Float )
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -143,6 +158,11 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 			InputDescription = Description,
 			InputData = new VariantValueVector2( Value, SubgraphPortType.Vector2 )
 		};
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
 	}
 }
 
@@ -182,6 +202,11 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 			InputData = new VariantValueVector3( Value, SubgraphPortType.Vector3 )
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -220,6 +245,11 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 			InputData = new VariantValueVector4( Value, SubgraphPortType.Vector4 )
 		};
 	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
+	}
 }
 
 /// <summary>
@@ -250,5 +280,10 @@ public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 			InputDescription = Description,
 			InputData = new VariantValueColor( Value, SubgraphPortType.Color )
 		};
+	}
+
+	public override BaseBlackboardParameter InitilizeCreatedInstance()
+	{
+		return this;
 	}
 }

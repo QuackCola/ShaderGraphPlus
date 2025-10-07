@@ -118,9 +118,8 @@ partial class ShaderGraphPlus
 			foreach ( var element in arrayProperty.EnumerateArray() )
 			{
 				var typeName = element.GetProperty( "_class" ).GetString();
-
 				var typeDesc = EditorTypeLibrary.GetType( typeName );
-				var type = typeDesc.TargetType;
+				var type = new ClassParameterType( typeDesc );
 
 				BaseBlackboardParameter parameter;
 
