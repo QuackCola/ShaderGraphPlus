@@ -118,7 +118,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	public MaterialDomain MaterialDomain { get; set; }
 
 	/// <summary>
-	///   Custom key-value storage for this project.
+	///	Custom key-value storage for this project.
 	/// </summary>
 	[Hide]
 	public Dictionary<string, object> Metadata { get; set; } = new Dictionary<string, object>();
