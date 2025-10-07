@@ -295,7 +295,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 			BlackboardParameterIdentifier = Identifier,
 			Feature = new ShaderFeatureBoolean() 
 			{ 
-				FeatureName = Name,
+				Name = Name,
 				Description = Description,
 				HeaderName = HeaderName,
 			}
@@ -318,7 +318,7 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericPara
 
 	public ShaderFeatureEnumBlackboardParameter() : base()
 	{
-		Value = new ShaderFeatureEnum() {};
+		Value = new ShaderFeatureEnum();
 	}
 
 	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )

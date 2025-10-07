@@ -614,7 +614,7 @@ public class MainWindow : DockWindow
 			}
 			else if ( feature is ShaderFeatureEnumBlackboardParameter featureEnum )
 			{
-				featureName = featureEnum.Value.FeatureName;
+				featureName = featureEnum.Value.Name;
 				featureDescription = featureEnum.Value.Description;
 				headerName = featureEnum.Value.HeaderName;
 				optionCount = featureEnum.Value.Options.Count;

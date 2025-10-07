@@ -5,7 +5,7 @@ public class ShaderFeatureBase
 	/// <summary>
 	/// Name of this feature.
 	/// </summary>
-	public string FeatureName { get; set; } = "";
+	public string Name { get; set; }
 
 	/// <summary>
 	/// What this feature does.
@@ -19,13 +19,17 @@ public class ShaderFeatureBase
 
 	public ShaderFeatureBase()
 	{
+		Name = "";
+		Description = "";
+		HeaderName = "";
 	}
 }
 
 public class ShaderFeatureBoolean : ShaderFeatureBase
 {
-	public ShaderFeatureBoolean() : base() 
+	public ShaderFeatureBoolean() : base()
 	{ 
+
 	}
 }
 
@@ -34,9 +38,10 @@ public class ShaderFeatureEnum : ShaderFeatureBase
 	/// <summary>
 	/// Options of your feature. Must have no special characters. Note : all lowercase letters will be converted to uppercase.
 	/// </summary>
-	public List<string> Options { get; set; } = new List<string>();
+	public List<string> Options { get; set; }
 
-	public ShaderFeatureEnum() : base() 
+	public ShaderFeatureEnum() : base()
 	{
+		Options = new List<string>();
 	}
 }

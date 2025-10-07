@@ -29,7 +29,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	{
 		get
 		{
-			return $"{DisplayInfo.For( this ).Name} ( F_{Feature.FeatureName.ToUpper().Replace( " ", "_" )} )";
+			return $"{DisplayInfo.For( this ).Name} ( F_{Feature.Name.ToUpper().Replace( " ", "_" )} )";
 		}
 	}
 
@@ -69,7 +69,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 		{
 			Feature = new ShaderFeatureBoolean 
 			{ 
-				FeatureName = sfboolParameter.Name,
+				Name = sfboolParameter.Name,
 				Description = sfboolParameter.Description,
 				HeaderName = sfboolParameter.HeaderName,
 			};
@@ -79,14 +79,14 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( string.IsNullOrWhiteSpace( Feature.FeatureName ) )
+		if ( string.IsNullOrWhiteSpace( Feature.Name ) )
 			return NodeResult.Error( "Feature name cannot be blank." );
 
-		if ( compiler.ShaderFeatures.ContainsKey( Feature.FeatureName ) )//&& FeatureReference != "None" )
+		if ( compiler.ShaderFeatures.ContainsKey( Feature.Name ) )//&& FeatureReference != "None" )
 		{
 			//SGPLog.Info( $"GraphFeatures contains feature {FeatureReference} ? : {compiler.Graph.Features.ContainsKey( FeatureReference )}", compiler.IsNotPreview );
 
-			if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[Feature.FeatureName], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+			if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[Feature.Name], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
 			{
 				var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
 
@@ -102,7 +102,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 		}
 		else
 		{
-			return NodeResult.Error( $"Shader Featue \"{Feature.FeatureName}\" is not a valid registerd feature." );
+			return NodeResult.Error( $"Shader Featue \"{Feature.Name}\" is not a valid registerd feature." );
 		}
 	};
 }
