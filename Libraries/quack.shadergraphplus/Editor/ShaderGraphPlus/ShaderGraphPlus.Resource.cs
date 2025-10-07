@@ -212,7 +212,6 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		RemoveParameter( parameter.Identifier );
 	}
 
-
 	internal void RemoveParameter( Guid identifier )
 	{
 		if ( _parameters.ContainsKey( identifier ) )
