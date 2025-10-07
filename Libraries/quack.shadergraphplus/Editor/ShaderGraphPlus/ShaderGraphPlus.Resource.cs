@@ -301,7 +301,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 			return true;
 		}
 	
-		if (value is JsonElement element)
+		if ( value is JsonElement element )
 		{
 			try
 			{
