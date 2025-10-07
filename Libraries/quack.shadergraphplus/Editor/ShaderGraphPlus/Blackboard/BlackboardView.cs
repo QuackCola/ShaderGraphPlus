@@ -93,7 +93,7 @@ internal class BlackboardView : Widget
 			var popup = new PopupTypeSelector( this, GetRelevantParameters() );
 			popup.OnSelect += ( t ) =>
 			{
-				OnAddBlackboardParameter( t );
+				OnAddParameter( t );
 			};
 			popup.OpenAtCursor();
 		};
@@ -223,14 +223,14 @@ internal class BlackboardView : Widget
 		OnParameterSelected?.Invoke( parameter );
 	}
 
-	private void OnAddBlackboardParameter( IBlackboardParameterType type )
+	private void OnAddParameter( IBlackboardParameterType type )
 	{
 		int id = Graph._parameters.Count;
 		string name = $"Parameter{id}";
 
 		var parameterInstance = (BaseBlackboardParameter)type.CreateParameter( Graph, name );
 
-		Graph.AddBlackboardParameter( parameterInstance );
+		Graph.AddParameter( parameterInstance );
 
 		OnDirty?.Invoke();
 
@@ -263,7 +263,7 @@ internal class BlackboardView : Widget
 
 		if ( _selectedParameter != null  )
 		{
-			var selection = Graph.GetBlackboardParameterByGuid( _selectedParameter.Identifier );
+			var selection = Graph.FindParameterByGuid( _selectedParameter.Identifier );
 
 			SetSelectedItem( selection );
 		}

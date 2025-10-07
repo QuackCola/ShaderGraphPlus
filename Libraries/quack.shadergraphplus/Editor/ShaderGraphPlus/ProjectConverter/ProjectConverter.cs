@@ -259,7 +259,7 @@ internal class ProjectConverter
 
 	public void AddBlackboardParameter( BaseBlackboardParameter blackboardParameter )
 	{
-		ShaderGraphPlus.AddBlackboardParameter( blackboardParameter );
+		ShaderGraphPlus.AddParameter( blackboardParameter );
 	}
 
 	internal void AddNewSubgraphOutputID( string outputName )

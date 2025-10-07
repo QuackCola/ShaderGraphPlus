@@ -192,7 +192,7 @@ public class MainWindow : DockWindow
 
 				if ( blackboardSyncable.BlackboardParameterIdentifier != default )
 				{
-					var blackboardParameter = _graph.GetBlackboardParameterByGuid( blackboardSyncable.BlackboardParameterIdentifier );
+					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncable.BlackboardParameterIdentifier );
 					_blackboardView.SetSelectedItem( blackboardParameter );
 					_properties.Target = blackboardParameter;
 				}
@@ -209,7 +209,7 @@ public class MainWindow : DockWindow
 			{
 				if ( syncable.BlackboardParameterIdentifier != default )
 				{
-					var blackboardParameter = _graph.GetBlackboardParameterByGuid( syncable.BlackboardParameterIdentifier );
+					var blackboardParameter = _graph.FindParameterByGuid( syncable.BlackboardParameterIdentifier );
 					_blackboardView.SetSelectedItem( blackboardParameter );
 					_properties.Target = blackboardParameter;
 				}
@@ -1873,7 +1873,7 @@ public class MainWindow : DockWindow
 	{
 		if ( node is IBlackboardSyncable blackboardSyncable )
 		{
-			_graph.RemoveBlackboardParameter( blackboardSyncable.BlackboardParameterIdentifier );
+			_graph.RemoveParameter( blackboardSyncable.BlackboardParameterIdentifier );
 			_blackboardView.RebuildBuildFromGraph( false );
 		}
 	}
@@ -1893,7 +1893,7 @@ public class MainWindow : DockWindow
 			_properties.Target = _graph;
 		}
 
-		_graph.RemoveBlackboardParameter( blackboardParameter );
+		_graph.RemoveParameter( blackboardParameter );
 
 		var identifier = blackboardParameter.Identifier;
 

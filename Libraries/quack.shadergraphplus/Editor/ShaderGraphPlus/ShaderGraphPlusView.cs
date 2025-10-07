@@ -207,7 +207,7 @@ public class ShaderGraphPlusView : GraphView
 
 					var newName = "Parameter";
 					var id = 0;
-					while ( Graph.CheckIfBlackboardParameterWithNameExists( $"{newName}{id}" ) )
+					while ( Graph.ContainsParameterWithName( $"{newName}{id}" ) )
 					{
 						id++;
 					}
@@ -287,7 +287,7 @@ public class ShaderGraphPlusView : GraphView
 
 				if ( parameterNodeType.BlackboardParameter != null )
 				{
-					Graph.AddBlackboardParameter( parameterNodeType.BlackboardParameter );
+					Graph.AddParameter( parameterNodeType.BlackboardParameter );
 
 					OnConstantNodeConvertedToParameter?.Invoke();
 				}
@@ -568,7 +568,7 @@ public class ShaderGraphPlusView : GraphView
 
 		Add( nodeUI );
 
-		Graph.AddBlackboardParameter( blackboardParameter );
+		Graph.AddParameter( blackboardParameter );
 
 		OnNewParameterNodeCreated?.Invoke();
 	}

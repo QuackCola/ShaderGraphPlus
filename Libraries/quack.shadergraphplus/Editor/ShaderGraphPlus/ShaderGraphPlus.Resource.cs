@@ -154,64 +154,21 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
-	internal bool CheckIfBlackboardParameterWithNameExists( string nameToMatch )
+	public bool ContainsParameter( Guid identifier )
+	{
+		if ( _parameters.ContainsKey( identifier ) ) return true;
+		return false;
+	}
+
+	internal bool ContainsParameterWithName( string nameToMatch )
 	{
 		foreach ( var parameter in _parameters )
 		{
-			if ( nameToMatch == parameter.Value.Name ) return true;
+			if ( nameToMatch == parameter.Value.Name )
+				return true;
 		}
 
 		return false;
-	}
-
-	internal void AddBlackboardParameter( BaseBlackboardParameter parameter )
-	{
-		parameter.Graph = this;
-		if ( _parameters.TryAdd( parameter.Identifier, parameter ) )
-		{
-			//SGPLog.Info( $"Added blackboard Parameter : \"{parameter.Name}\" of type : \"{Parameter}\"" );
-		}
-	}
-
-	internal void RemoveBlackboardParameter( BaseBlackboardParameter parameter )
-	{
-		RemoveBlackboardParameter( parameter.Identifier );
-	}
-
-	internal void RemoveBlackboardParameter( Guid identifier )
-	{
-		if ( _parameters.ContainsKey( identifier ) )
-		{
-			_parameters.Remove( identifier );
-		}
-	}
-
-	internal bool TryUpdateBlackboardParameter( BaseBlackboardParameter newBlackboardParameter )
-	{
-		var identifier = newBlackboardParameter.Identifier;
-
-		if ( _parameters.ContainsKey( identifier ) )
-		{
-			_parameters[identifier] = newBlackboardParameter;
-
-			return true;
-		}
-		else
-		{
-			SGPLog.Error( $"Graph does not contain parameter with guid : {identifier}" );
-		}
-
-		return false;
-	}
-
-	internal BaseBlackboardParameter GetBlackboardParameterByGuid( Guid guid )
-	{
-		if ( _parameters.TryGetValue( guid, out var parameter ) )
-		{
-			return parameter;
-		}
-
-		return null;
 	}
 
 	internal void UpdateParameterNode( BaseBlackboardParameter parameter )
@@ -242,6 +199,36 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	{
 		_nodes.TryGetValue( name, out var node );
 		return node;
+	}
+
+	internal void AddParameter( BaseBlackboardParameter parameter )
+	{
+		parameter.Graph = this;
+		_parameters.Add( parameter.Identifier, parameter );
+	}
+
+	internal void RemoveParameter( BaseBlackboardParameter parameter )
+	{
+		RemoveParameter( parameter.Identifier );
+	}
+
+
+	internal void RemoveParameter( Guid identifier )
+	{
+		if ( _parameters.ContainsKey( identifier ) )
+		{
+			_parameters.Remove( identifier );
+		}
+	}
+
+	internal BaseBlackboardParameter FindParameterByGuid( Guid guid )
+	{
+		if ( _parameters.TryGetValue( guid, out var parameter ) )
+		{
+			return parameter;
+		}
+
+		return null;
 	}
 
 	internal NamedRerouteDeclarationNode FindNamedRerouteDeclarationNode( string name )

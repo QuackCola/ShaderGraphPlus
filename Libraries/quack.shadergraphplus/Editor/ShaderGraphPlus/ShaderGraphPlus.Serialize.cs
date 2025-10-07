@@ -142,7 +142,7 @@ partial class ShaderGraphPlus
 
 					parameters.Add( parameter.Name, parameter );
 
-					AddBlackboardParameter( parameter );
+					AddParameter( parameter );
 				}
 			}
 		}
@@ -718,7 +718,7 @@ partial class ShaderGraphPlus
 
 				subgraphInput.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 
-				AddBlackboardParameter( blackboardParameter );
+				AddParameter( blackboardParameter );
 			}
 		}
 		else
@@ -804,7 +804,7 @@ partial class ShaderGraphPlus
 					colorNode.BlackboardParameterIdentifier = blackboardParameter.Identifier;
 				}
 
-				AddBlackboardParameter( blackboardParameter );
+				AddParameter( blackboardParameter );
 			}
 		}
 	}
