@@ -1,3 +1,4 @@
+using Editor;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using System.Linq;
@@ -131,7 +132,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		UpdateUpgraders();
 	}
 
-	[Event( "hotloaded" )]
+	[EditorEvent.Hotload]
 	static void UpdateUpgraders()
 	{
 		SGPJsonUpgrader.UpdateUpgraders( EditorTypeLibrary );
