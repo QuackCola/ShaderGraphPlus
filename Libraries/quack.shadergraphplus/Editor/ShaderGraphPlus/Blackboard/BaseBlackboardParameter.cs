@@ -71,7 +71,7 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	{ 
 	}
 
-	public BlackboardGenericParameter( T value ) : base() 
+	public BlackboardGenericParameter( T value ) : this() 
 	{ 
 		Value = value;
 	}
