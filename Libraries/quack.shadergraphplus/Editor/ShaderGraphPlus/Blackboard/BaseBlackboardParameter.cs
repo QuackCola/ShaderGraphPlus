@@ -32,7 +32,6 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 
 	public BaseBlackboardParameter()
 	{
-
 	}
 
 	public virtual object GetValue()
@@ -50,11 +49,6 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 	/// get converted into an accompanying node.
 	/// </summary>
 	public abstract BaseNodePlus InitializeNode();
-
-	/// <summary>
-	/// Called when a blackboard parameter instance needs to be initilized.
-	/// </summary>
-	public abstract BaseBlackboardParameter InitilizeCreatedInstance();
 }
 
 public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
@@ -69,7 +63,6 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 
 	public BlackboardGenericParameter() : base() 
 	{ 
-		Value = default;
 	}
 
 	public BlackboardGenericParameter( T value ) : this() 

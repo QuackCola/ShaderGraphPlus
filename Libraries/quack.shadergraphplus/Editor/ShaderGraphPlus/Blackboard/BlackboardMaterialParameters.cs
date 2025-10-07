@@ -32,11 +32,6 @@ public sealed class BoolBlackboardParameter : BlackboardMaterialParameter<bool>
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -51,7 +46,7 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
-	public IntBlackboardParameter()
+	public IntBlackboardParameter() : base()
 	{	
 		Value = 1;
 		Min = 0;
@@ -75,11 +70,6 @@ public sealed class IntBlackboardParameter : BlackboardMaterialParameter<int>
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -94,7 +84,7 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
-	public FloatBlackboardParameter()
+	public FloatBlackboardParameter() : base()
 	{
 		Value = 1.0f;
 		Min = 0.0f;
@@ -118,11 +108,6 @@ public sealed class FloatBlackboardParameter : BlackboardMaterialParameter<float
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -137,7 +122,7 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
-	public Float2BlackboardParameter()
+	public Float2BlackboardParameter() : base()
 	{
 		Value = Vector2.One;
 		Min = Vector2.Zero;
@@ -161,11 +146,6 @@ public sealed class Float2BlackboardParameter : BlackboardMaterialParameter<Vect
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -180,7 +160,7 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
-	public Float3BlackboardParameter()
+	public Float3BlackboardParameter() : base()
 	{
 		Value = Vector3.One;
 		Min = Vector3.Zero;
@@ -204,11 +184,6 @@ public sealed class Float3BlackboardParameter : BlackboardMaterialParameter<Vect
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -223,7 +198,7 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
 
-	public Float4BlackboardParameter()
+	public Float4BlackboardParameter() : base()
 	{
 		Value = Vector4.One;
 		Min = Vector4.Zero;
@@ -249,11 +224,6 @@ public sealed class Float4BlackboardParameter : BlackboardMaterialParameter<Vect
 			IsAttribute = IsAttribute,
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -265,7 +235,7 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 6;
 
-	public ColorBlackboardParameter()
+	public ColorBlackboardParameter() : base()
 	{
 		Value = Color.White;
 		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
@@ -286,11 +256,6 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 			UI = UI,
 			IsAttribute = IsAttribute,
 		};
-	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
 	}
 }
 
@@ -336,11 +301,6 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 			}
 		};
 	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return this;
-	}
 }
 
 /// <summary>
@@ -356,25 +316,17 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericPara
 	[JsonIgnore, Hide]
 	public override string Name { get; set; }
 
-	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
+	public ShaderFeatureEnumBlackboardParameter() : base()
 	{
+		Value = new ShaderFeatureEnum() {};
 	}
 
-	public ShaderFeatureEnumBlackboardParameter() : base()
+	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
 	{
 	}
 
 	public override BaseNodePlus InitializeNode()
 	{
 		throw new NotImplementedException();
-	}
-
-	public override BaseBlackboardParameter InitilizeCreatedInstance()
-	{
-		return new ShaderFeatureEnumBlackboardParameter()
-		{
-			Identifier = Identifier,
-			Value = new() { FeatureName = Name }
-		};
 	}
 }

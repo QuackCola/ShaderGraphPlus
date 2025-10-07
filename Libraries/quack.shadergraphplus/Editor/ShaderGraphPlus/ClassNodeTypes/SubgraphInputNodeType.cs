@@ -35,7 +35,6 @@ public sealed class SubgraphInputNodeType : ClassNodeType
 				BlackboardParameter = (BaseBlackboardParameter)EditorTypeLibrary.Create( TargetBlackboardParameterType.Name, TargetBlackboardParameterType );
 				BlackboardParameter.Name = Name;
 				BlackboardParameter.Identifier = Guid.NewGuid();
-				BlackboardParameter.InitilizeCreatedInstance();
 		
 				node = BlackboardParameter.InitializeNode();
 			}
