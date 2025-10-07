@@ -23,7 +23,6 @@ internal class ClassParameterType : IBlackboardParameterType
 		else
 		{
 			throw new Exception( "Failed to create a blackboard parameter instance!" );
-		
 		}
 	}
 }
