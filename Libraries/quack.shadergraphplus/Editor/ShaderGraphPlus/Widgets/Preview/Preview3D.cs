@@ -325,7 +325,8 @@ public sealed class Preview3DPanel : Widget
 		cs.AddProperty(_preview, x => x.ShowSkybox);
 		cs.AddProperty(_preview, x => x.BackgroundColor);
 		cs.AddProperty( _preview, x => x.Tint);
-		cs.AddProperty( _preview, x => x.SceneObjectHeightPosition );
+		cs.AddProperty( _preview, x => x.ModelHeightOffset );
+		cs.AddProperty( _preview, x => x.ModelYawRotation );
 
 		popup.Layout.Add(cs);
 		popup.MaximumWidth = 300;
@@ -363,7 +364,6 @@ public sealed class Preview3D : SceneRenderingWidget
 	private Vector2 _angles;
 	private Vector3 _origin;
 	private float _distance;
-	private float _modelRotation;
 	private bool _orbitControl;
 	private bool _orbitLights;
 	private bool _zoomControl;
@@ -579,18 +579,32 @@ public sealed class Preview3D : SceneRenderingWidget
 		}
 	}
 
-	private float _sceneObjectHeightPosition;
-	[Title("Object Height Position")]
-	public float SceneObjectHeightPosition
+	private float _modelHeightOffset;
+	public float ModelHeightOffset
 	{
-		get => _sceneObjectHeightPosition;
+		get => _modelHeightOffset;
 		set
 		{
-			_sceneObjectHeightPosition = value;
+			_modelHeightOffset = value;
 			
 			if ( _sceneObject.IsValid() )
 			{
-				_sceneObject.Position = new Vector3( 0, 0, _sceneObjectHeightPosition );
+				_sceneObject.Position = new Vector3( 0, 0, _modelHeightOffset );
+			}
+		}
+	}
+
+	private float _modelYawRotation;
+	public float ModelYawRotation
+	{
+		get => _modelYawRotation;
+		set
+		{
+			_modelYawRotation = value;
+
+			if ( _sceneObject.IsValid() )
+			{
+				_sceneObject.Rotation = Rotation.FromYaw( _modelYawRotation );
 			}
 		}
 	}
@@ -931,7 +945,7 @@ public sealed class Preview3D : SceneRenderingWidget
 
 				if ( _orbitLights )
 				{
-					_modelRotation -= _cursorDelta.x * 0.2f;
+					_modelYawRotation -= _cursorDelta.x * 0.2f;
 				}
 			}
 
@@ -954,7 +968,7 @@ public sealed class Preview3D : SceneRenderingWidget
 			{
 				var right = Scene.Camera.WorldRotation.Right * _cursorDelta.x * 0.2f;
 				var down = Scene.Camera.WorldRotation.Down * _cursorDelta.y * 0.2f;
-				var invRot = Rotation.FromYaw( _modelRotation ).Inverse;
+				var invRot = Rotation.FromYaw( _modelYawRotation ).Inverse;
 				_origin += right * invRot;
 				_origin += down * invRot;
 			}
@@ -969,7 +983,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		}
 
 		_sceneObject.ColorTint = Tint;
-		_sceneObject.Rotation = Rotation.FromYaw( _modelRotation );
+		_sceneObject.Rotation = Rotation.FromYaw( _modelYawRotation );
 		_sceneObject.Update( RealTime.Delta );
 		_sceneObject.Attributes.Set( "g_flPreviewTime", RealTime.Now );
 
@@ -1008,7 +1022,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		{
 			_orbitControl = true;
 			_lastCursorPos = CursorPosition;
-			_modelRotation = _sceneObject.Rotation.Yaw();
+			_modelYawRotation = _sceneObject.Rotation.Yaw();
 		}
 		else if ( e.RightMouseButton )
 		{
