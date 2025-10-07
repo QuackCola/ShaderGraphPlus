@@ -313,23 +313,27 @@ public sealed class Preview3DPanel : Widget
 
 	public void OpenSettings()
 	{
-		var popup = new PopupWidget(this);
+		var popup = new PopupWidget( this );
 		popup.IsPopup = true;
 		popup.Layout = Layout.Column();
 		popup.Layout.Margin = 16;
-	
+
 		var cs = new ControlSheet();
-		cs.AddProperty(_preview, x => x.RenderBackfaces);
-		cs.AddProperty(_preview, x => x.EnableShadows);
-		cs.AddProperty(_preview, x => x.ShowGround);
-		cs.AddProperty(_preview, x => x.ShowSkybox);
+	
+		// Scene Properies
+		cs.AddProperty(_preview, x => x.EnableShadows );
+		cs.AddProperty(_preview, x => x.ShowGround );
+		cs.AddProperty(_preview, x => x.ShowSkybox );
 		cs.AddProperty(_preview, x => x.BackgroundColor);
-		cs.AddProperty( _preview, x => x.Tint);
+
+		// Preview Model Properties	
+		cs.AddProperty( _preview, x => x.Tint );
+		cs.AddProperty( _preview, x => x.RenderBackfaces );
 		cs.AddProperty( _preview, x => x.ModelHeightOffset );
 		cs.AddProperty( _preview, x => x.ModelYawRotation );
 
-		popup.Layout.Add(cs);
-		popup.MaximumWidth = 300;
+		popup.Layout.Add( cs );
+		popup.MaximumWidth = 300f;
 		popup.OpenAtCursor();
 	}
 
