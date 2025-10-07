@@ -1802,10 +1802,10 @@ public class MainWindow : DockWindow
 
 		_blackboardView.Graph = _graph;
 		_blackboardView.OnDirty += () => { SetDirty(); };
-		_blackboardView.OnParameterSelected += ( p ) => { OnBlackboardParameterSelected( p ); };
-		_blackboardView.OnParameterChanged += ( p ) => { OnBlackboardParameterPropertyUpdated( p ); };
-		_blackboardView.OnParameterCreated += ( p ) => { OnBlackboardParameterPropertyCreated( p ); };
-		_blackboardView.OnParameterDeleted += ( p ) => { OnBlackboardParameterDeleted( p ); };
+		_blackboardView.OnParameterSelected += ( p ) => { OnParameterSelected( p ); };
+		_blackboardView.OnParameterChanged += ( p ) => { OnParameterPropertyUpdated( p ); };
+		_blackboardView.OnParameterCreated += ( p ) => { OnParameterPropertyCreated( p ); };
+		_blackboardView.OnParameterDeleted += ( p ) => { OnParameterDeleted( p ); };
 		_blackboardCanvas.Layout.Add( _blackboardView, 1 );
 
 		_undoHistory = new UndoHistory( this, _undoStack );
@@ -1848,7 +1848,7 @@ public class MainWindow : DockWindow
 	/// <summary>
 	/// Called when a blackboard parameter is selected.
 	/// </summary>
-	private void OnBlackboardParameterSelected( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterSelected( BaseBlackboardParameter blackboardParameter )
 	{
 		_graphView.ClearSelection();
 
@@ -1878,7 +1878,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnBlackboardParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target != blackboardParameter )
 		{
@@ -1886,7 +1886,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnBlackboardParameterDeleted( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterDeleted( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target == blackboardParameter )
 		{
@@ -1927,7 +1927,7 @@ public class MainWindow : DockWindow
 		_blackboardView.RebuildBuildFromGraph( true );
 	}
 
-	private void OnBlackboardParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
 	{
 		_graph.UpdateParameterNode( blackboardParameter );
 
@@ -1997,7 +1997,7 @@ public class MainWindow : DockWindow
 		
 		if ( _properties.Target is BaseBlackboardParameter blackboardParameter )
 		{
-			OnBlackboardParameterPropertyUpdated( blackboardParameter );
+			OnParameterPropertyUpdated( blackboardParameter );
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
