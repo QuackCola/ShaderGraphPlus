@@ -17,12 +17,22 @@ internal interface IShaderFeatureBlackboardParameter
 public abstract class BaseBlackboardParameter : IBlackboardParameter
 {
 	[Sandbox.ReadOnly, Browsable( false )]
-	public Guid Identifier { get; set; } = Guid.NewGuid();
+	public Guid Identifier { get; set; }
 
-	public virtual string Name { get; set; } = "";
+	[JsonIgnore, Hide, Browsable( false )]
+	public DisplayInfo DisplayInfo { get; }
 
 	[Hide, JsonIgnore, Browsable( false )]
-	public ShaderGraphPlus Graph { get; set; }
+	private ShaderGraphPlus _graph;
+	[Hide, JsonIgnore, Browsable( false )]
+	public ShaderGraphPlus Graph
+	{
+		get => _graph;
+		set
+		{
+			_graph = value;
+		}
+	}
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public bool IsSubgraph => Graph.IsSubgraph;
@@ -30,16 +40,15 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 	[Hide, JsonIgnore, Browsable( false )]
 	public virtual int MenuOrder => 0;
 
+	public virtual string Name { get; set; } = "";
+
 	public BaseBlackboardParameter()
 	{
+		DisplayInfo = DisplayInfo.For( this );
+		NewIdentifier();
 	}
 
 	public virtual object GetValue()
-	{
-		throw new NotImplementedException();
-	}
-
-	Color IBlackboardParameter.GetTypeColor( BlackboardView view )
 	{
 		throw new NotImplementedException();
 	}
@@ -49,17 +58,23 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 	/// get converted into an accompanying node.
 	/// </summary>
 	public abstract BaseNodePlus InitializeNode();
+
+	public Guid NewIdentifier()
+	{
+		Identifier = Guid.NewGuid();
+		return Identifier;
+	}
+
+	public override string ToString()
+	{
+		return $"{DisplayInfo.Fullname}.{Identifier}";
+	}
 }
 
 public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 {
 	[InlineEditor( Label = false )]
 	public T Value { get; set; }
-
-	public override object GetValue()
-	{
-		return Value;
-	}
 
 	public BlackboardGenericParameter() : base() 
 	{ 
@@ -68,6 +83,11 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	public BlackboardGenericParameter( T value ) : this() 
 	{ 
 		Value = value;
+	}
+
+	public override object GetValue()
+	{
+		return Value;
 	}
 }
 
