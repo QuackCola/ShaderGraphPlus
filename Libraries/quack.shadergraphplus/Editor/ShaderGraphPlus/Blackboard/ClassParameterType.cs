@@ -1,6 +1,3 @@
-
-using NodeEditorPlus;
-
 namespace ShaderGraphPlus;
 
 internal class ClassParameterType : IBlackboardParameterType
@@ -13,12 +10,22 @@ internal class ClassParameterType : IBlackboardParameterType
 		Type = type;
 	}
 
-	public virtual IBlackboardParameter CreateParameter( ShaderGraphPlus graph )
+	public virtual IBlackboardParameter CreateParameter( ShaderGraphPlus graph, string name = "" )
 	{
-		var parameter = Type.Create<BaseBlackboardParameter>();
-		parameter.Graph = graph;
+		var parameter = EditorTypeLibrary.Create( Type.Name, Type.TargetType ) as BaseBlackboardParameter;
+
+		if ( parameter is ShaderFeatureBooleanBlackboardParameter shaderFeatureParameter )
+		{
+			shaderFeatureParameter.Value = new() { FeatureName = name };
+		}
+		else
+		{
+			parameter.Name = name;
+		}
+
+		if ( parameter == null )
+			throw new Exception( "Failed to create a blackboard parameter instance!" );
 
 		return parameter;
 	}
-
 }
