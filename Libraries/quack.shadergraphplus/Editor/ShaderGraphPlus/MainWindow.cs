@@ -606,9 +606,9 @@ public class MainWindow : DockWindow
 
 			if ( feature is ShaderFeatureBooleanBlackboardParameter featureBoolean )
 			{
-				featureName = featureBoolean.Value.FeatureName;
-				featureDescription = featureBoolean.Value.Description;
-				headerName = featureBoolean.Value.HeaderName;
+				featureName = featureBoolean.Name;
+				featureDescription = featureBoolean.Description;
+				headerName = featureBoolean.HeaderName;
 				optionCount = 2;
 				
 			}
