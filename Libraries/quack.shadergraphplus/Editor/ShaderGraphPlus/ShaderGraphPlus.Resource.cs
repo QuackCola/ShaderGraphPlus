@@ -275,18 +275,6 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		RemoveNode( (BaseNodePlus)node );
 	}
 
-	//public void AddFeature( ShaderFeatureInfo feature )
-	//{
-	//	if ( !Features.ContainsKey( feature.FeatureName ) )
-	//	{
-	//		Features.Add( feature.FeatureName, feature.FeatureString );
-	//	}
-	//	else
-	//	{
-	//		//SGPLog.Error( "Feature is already known to the graph!" );
-	//	}
-	//}
-
 	/// <summary>
 	/// Try to get a value at given key in <see cref="ShaderGraphPlus.Metadata"/>.
 	/// </summary>
