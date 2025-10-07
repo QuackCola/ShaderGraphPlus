@@ -14,11 +14,11 @@ internal class ClassParameterType : IBlackboardParameterType
 	{
 		var parameter = EditorTypeLibrary.Create( Type.Name, Type.TargetType ) as BaseBlackboardParameter;
 
-		if ( parameter is ShaderFeatureBooleanBlackboardParameter shaderFeatureParameter )
-		{
-			shaderFeatureParameter.Value = new() { FeatureName = name };
-		}
-		else
+		//if ( parameter is ShaderFeatureBooleanBlackboardParameter shaderFeatureParameter )
+		//{
+		//	shaderFeatureParameter.FeatureName = name;
+		//}
+		//else
 		{
 			parameter.Name = name;
 		}

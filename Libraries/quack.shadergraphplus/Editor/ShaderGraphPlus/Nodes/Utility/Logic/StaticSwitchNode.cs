@@ -67,7 +67,12 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	{
 		if ( parameter is ShaderFeatureBooleanBlackboardParameter sfboolParameter )
 		{
-			Feature = sfboolParameter.Value;
+			Feature = new ShaderFeatureBoolean 
+			{ 
+				FeatureName = sfboolParameter.Name,
+				Description = sfboolParameter.Description,
+				HeaderName = sfboolParameter.HeaderName,
+			};
 		}
 	}
 

@@ -298,17 +298,26 @@ public sealed class ColorBlackboardParameter : BlackboardMaterialParameter<Color
 /// Bool material feature
 /// </summary>
 [Title( "Shader Feature Boolean" ), Order( 7 )]
-public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericParameter<ShaderFeatureBoolean>, IShaderFeatureBlackboardParameter
+public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardParameter, IShaderFeatureBlackboardParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 7;
 
-	[JsonIgnore, Hide]
+	/// <summary>
+	/// Name of this feature.
+	/// </summary>
+	[Title( "Feature Name" )]
 	public override string Name { get; set; }
 
-	public ShaderFeatureBooleanBlackboardParameter( ShaderFeatureBoolean value ) : base( value )
-	{
-	}
+	/// <summary>
+	/// What this feature does.
+	/// </summary>
+	public string Description { get; set; }
+
+	/// <summary>
+	/// Header Name of this Feature that shows up in the Material Editor.
+	/// </summary>
+	public string HeaderName { get; set; }
 
 	public ShaderFeatureBooleanBlackboardParameter() : base() 
 	{ 
@@ -319,17 +328,18 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BlackboardGenericP
 		return new StaticSwitchNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
-			Feature = Value
+			Feature = new ShaderFeatureBoolean() 
+			{ 
+				FeatureName = Name,
+				Description = Description,
+				HeaderName = HeaderName,
+			}
 		};
 	}
 
 	public override BaseBlackboardParameter InitilizeCreatedInstance()
 	{
-		return new ShaderFeatureBooleanBlackboardParameter()
-		{
-			Identifier = Identifier,
-			Value = new() { FeatureName = Name }
-		};
+		return this;
 	}
 }
 
