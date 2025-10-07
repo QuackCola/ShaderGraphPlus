@@ -324,7 +324,7 @@ public sealed class Preview3DPanel : Widget
 		cs.AddProperty(_preview, x => x.EnableShadows );
 		cs.AddProperty(_preview, x => x.ShowGround );
 		cs.AddProperty(_preview, x => x.ShowSkybox );
-		cs.AddProperty(_preview, x => x.BackgroundColor);
+		cs.AddProperty(_preview, x => x.BackgroundColor );
 
 		// Preview Model Properties	
 		cs.AddProperty( _preview, x => x.Tint );
