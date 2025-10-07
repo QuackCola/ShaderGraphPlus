@@ -234,8 +234,6 @@ internal class BlackboardView : Widget
 
 		OnDirty?.Invoke();
 
-		SGPLog.Info( $"Selecting : {parameterInstance}" );
-
 		SetSelectedItem( parameterInstance );
 
 		RebuildBuildFromGraph( true );
