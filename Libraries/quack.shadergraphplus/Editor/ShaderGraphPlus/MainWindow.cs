@@ -1825,7 +1825,7 @@ public class MainWindow : DockWindow
 		// Yuck, console is internal but i want it, what is the correct way?
 		var console = EditorTypeLibrary.Create( "ConsoleWidget", typeof( Widget ), new[] { this } ) as Widget;
 		DockManager.AddDock( _output, console, DockArea.Inside, DockManager.DockProperty.HideOnClose );
-		DockManager.AddDock( _output, _blackboardCanvas, DockArea.Right, DockManager.DockProperty.HideOnClose, 0.5f );
+		DockManager.AddDock( _output, _blackboardCanvas, DockArea.Right, DockManager.DockProperty.HideOnClose, -0.5f );
 		DockManager.AddDock( _output, _undoHistory, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _palette, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( _output, _generatedCodeTextView, DockArea.Inside, DockManager.DockProperty.HideOnClose );
