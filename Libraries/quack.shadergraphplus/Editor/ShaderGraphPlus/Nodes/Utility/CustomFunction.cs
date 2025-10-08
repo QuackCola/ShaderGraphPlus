@@ -1,11 +1,11 @@
 
 using NodeEditorPlus;
+using System;
+using System.Text;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-
-using System.Text;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -158,7 +158,19 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			foreach ( var input in ExpressionInputs.OrderBy( x => x.Priority ) )
 			{
 				if ( input.Type is null ) continue;
-				var info = CreatePlugInfo( input.Id, input.Name, input.Type );
+
+				var info = new PlugInfo()
+				{
+					Id = input.Id,
+					Name = input.Name,
+					Type = input.Type,
+					DisplayInfo = new()
+					{
+						Name = input.Name,
+						Fullname = input.Type.FullName
+					}
+				};
+
 				var plug = new BasePlugIn( this, info, info.Type );
 				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
 				if ( oldPlug is not null )
@@ -191,7 +203,19 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			foreach ( var output in ExpressionOutputs.OrderBy( x => x.Priority ) )
 			{
 				if ( output.Type is null ) continue;
-				var info = CreatePlugInfo( output.Id, output.Name, output.Type );
+
+				var info = new PlugInfo()
+				{
+					Id = output.Id,
+					Name = output.Name,
+					Type = output.Type,
+					DisplayInfo = new()
+					{
+						Name = output.Name,
+						Fullname = output.Type.FullName
+					}
+				};
+
 				var plug = new BasePlugOut( this, info, info.Type );
 				var oldPlug = InternalOutputs.FirstOrDefault( x => x is BasePlugOut plugOut && plugOut.Info.Id == info.Id ) as BasePlugOut;
 				if ( oldPlug is not null )
@@ -209,21 +233,6 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			;
 			InternalOutputs = outPlugs;
 		}
-	}
-
-	private PlugInfo CreatePlugInfo( Guid guid, string name, Type type )
-	{
-		return new PlugInfo()
-		{
-			Id = guid,
-			Name = name,
-			Type = type,
-			DisplayInfo = new()
-			{
-				Name = name,
-				Fullname = type.FullName
-			}
-		};
 	}
 
 	public NodeResult GetResult( GraphCompiler compiler, string metadataKey, object metadataValue )
