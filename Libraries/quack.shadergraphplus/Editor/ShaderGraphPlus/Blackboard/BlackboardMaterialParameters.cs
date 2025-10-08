@@ -269,6 +269,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 7;
 
+	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
 
 	/// <summary>
@@ -316,6 +317,7 @@ public sealed class ShaderFeatureEnumBlackboardParameter : BaseBlackboardParamet
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 8;
 
+	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );
 
 	/// <summary>
