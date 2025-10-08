@@ -1,4 +1,4 @@
-﻿using NodeEditorPlus;
+using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
@@ -9,6 +9,241 @@ namespace ShaderGraphPlus.Nodes;
 [System.AttributeUsage( AttributeTargets.Property )]
 internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
 { 
+}
+
+[Title( "Enum Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
+[InternalNode]
+public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncable, IErroringNode
+{
+	[Hide]
+	public override int Version => 1;
+
+	[Hide]
+	public override string Title
+	{
+		get
+		{
+			return $"F_{Feature.Name.ToUpper().Replace( " ", "_" )}";
+		}
+	}
+
+	[Hide, Browsable( false )]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Hide]
+	public ShaderFeatureEnum Feature { get; set; } = new();
+
+	[Hide]
+	private List<IPlugIn> InternalInputs = new();
+
+	[Hide]
+	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+
+	[Hide, JsonIgnore]
+	int _lastHashCodeInputs = 0;
+	
+	[Hide, JsonIgnore]
+	bool _hasFeatureError = false;
+
+	public override void OnFrame()
+	{
+		var hashCodeInput = Feature.GetHashCode();
+		if ( hashCodeInput != _lastHashCodeInputs )
+		{
+			//var oldHashCode = _lastHashCodeInputs;
+			_lastHashCodeInputs = hashCodeInput;
+
+			//SGPLog.Info( $"HashCode changed from : {oldHashCode} to {_lastHashCodeInputs}" );
+
+			if ( !_hasFeatureError )
+			{
+				CreateInputs();
+				Update();
+			}
+		}
+	}
+
+	public void InitializeNode()
+	{
+		OnNodeCreated();
+	}
+
+	private void OnNodeCreated()
+	{
+		CreateInputs();
+		Update();
+	}
+
+	public void CreateInputs()
+	{
+		var inPlugs = new List<IPlugIn>();
+
+		if ( Feature.Options == null )
+		{
+			InternalInputs = new();
+		}
+		else
+		{
+			foreach ( var input in Feature.Options )
+			{
+				var inputName = input;
+				// Default to float.
+				var inputType = typeof( float );//typeof( object );
+
+				if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
+
+				var info = new PlugInfo()
+				{
+					Name = inputName,
+					Type = inputType,
+					DisplayInfo = new DisplayInfo()
+					{
+						Name = inputName,
+						Fullname = inputType.FullName
+					}
+				};
+
+				var plug = new BasePlugIn( this, info, inputType );
+				var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Name == info.Name && plugIn.Info.Type == info.Type ) as BasePlugIn;
+				if ( oldPlug is not null )
+				{
+					oldPlug.Info.Name = info.Name;
+					oldPlug.Info.Type = info.Type;
+					oldPlug.Info.DisplayInfo = info.DisplayInfo;
+					plug = oldPlug;
+				}
+
+				inPlugs.Add( plug );
+			}
+
+			InternalInputs = inPlugs;
+		}
+	}
+
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is ShaderFeatureEnumBlackboardParameter sfep )
+		{
+			if ( sfep.IsValid )
+			{
+				Feature = new ShaderFeatureEnum
+				{
+					Name = sfep.Name,
+					Description = sfep.Description,
+					HeaderName = sfep.HeaderName,
+					Options = sfep.Options,
+				};
+
+				_hasFeatureError = false;
+			}
+			else
+			{
+				_hasFeatureError = true;
+			}
+
+		}
+	}
+
+	public void GetResult( GraphCompiler compiler )
+	{
+		var inputs = new List<NodeInput>();
+
+		foreach ( var input in Inputs )
+		{
+			if ( input.ConnectedOutput is null )
+			{
+				NodeInput nodeInput = default;
+
+				inputs.Add( nodeInput );
+			}
+			else
+			{
+				NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+
+				inputs.Add( nodeInput );
+			}
+		}
+
+		compiler.ResultComboSwitch( inputs, Feature, false );
+	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		//foreach ( var option in Feature.Options )
+		//{
+		//	if ( string.IsNullOrWhiteSpace( option ) )
+		//	{
+		//		errors.Add( $"element \"{Feature.Options.IndexOf( option )}\" of feature \"{Feature.Name}\" cannot have a blank name!" );
+		//	}
+		//}
+
+		return errors;
+	}
+}
+
+[Title( "Boolean Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
+[InternalNode]
+public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
+{
+	[Hide]
+	public override int Version => 1;
+
+	[Hide]
+	public override string Title
+	{
+		get
+		{
+			return $"F_{Feature.Name.ToUpper().Replace( " ", "_" )}";
+		}
+	}
+
+	[Hide, Browsable( false )]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Input]
+	[Title( "True" )]
+	[Hide]
+	public NodeInput InputTrue { get; set; }
+
+	[Input]
+	[Title( "False" )]
+	[Hide]
+	public NodeInput InputFalse { get; set; }
+
+	[Hide]
+	public ShaderFeatureBoolean Feature { get; set; } = new();
+
+	public bool PreviewToggle { get; set; } = false;
+
+	[Output, Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var inputs = new List<NodeInput>
+		{
+			InputTrue,
+			InputFalse
+		};
+
+		return compiler.ResultComboSwitch( inputs, Feature, PreviewToggle );
+	};
+
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is ShaderFeatureBooleanBlackboardParameter sfbp )
+		{
+			if ( sfbp.IsValid )
+			{
+				Feature = new ShaderFeatureBoolean
+				{
+					Name = sfbp.Name,
+					Description = sfbp.Description,
+					HeaderName = sfbp.HeaderName,
+				};
+			}
+		}
+	}
 }
 
 [Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
@@ -29,6 +264,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	{
 		get
 		{
+
 			return $"{DisplayInfo.For( this ).Name} ( F_{Feature.Name.ToUpper().Replace( " ", "_" )} )";
 		}
 	}
@@ -82,27 +318,29 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 		if ( string.IsNullOrWhiteSpace( Feature.Name ) )
 			return NodeResult.Error( "Feature name cannot be blank." );
 
-		if ( compiler.ShaderFeatures.ContainsKey( Feature.Name ) )//&& FeatureReference != "None" )
-		{
-			//SGPLog.Info( $"GraphFeatures contains feature {FeatureReference} ? : {compiler.Graph.Features.ContainsKey( FeatureReference )}", compiler.IsNotPreview );
+		return new NodeResult( ResultType.Float, $"{1.0f}" );
 
-			if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[Feature.Name], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
-			{
-				var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
-
-				result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
-
-				return result;
-			}
-			else
-			{
-				return new NodeResult( ResultType.Float, $"{1.0f}" );
-				//return NodeResult.Error( "Switch body could not be generated!" );
-			}
-		}
-		else
-		{
-			return NodeResult.Error( $"Shader Featue \"{Feature.Name}\" is not a valid registerd feature." );
-		}
+		//if ( compiler.ShaderFeatures.ContainsKey( Feature.Name ) )//&& FeatureReference != "None" )
+		//{
+		//	//SGPLog.Info( $"GraphFeatures contains feature {FeatureReference} ? : {compiler.Graph.Features.ContainsKey( FeatureReference )}", compiler.IsNotPreview );
+		//
+		//	if ( compiler.GenerateComboSwitch( compiler.ShaderFeatures[Feature.Name], InputTrue, InputFalse, PreviewToggle, true, out var switchResultVariableName, out var switchBody, out var switchResultType ) )
+		//	{
+		//		var result = new NodeResult( switchResultType, switchResultVariableName, constant: false );
+		//
+		//		result.SetMetadata( nameof( MetadataType.ComboSwitchBody ), switchBody );
+		//
+		//		return result;
+		//	}
+		//	else
+		//	{
+		//		return new NodeResult( ResultType.Float, $"{1.0f}" );
+		//		//return NodeResult.Error( "Switch body could not be generated!" );
+		//	}
+		//}
+		//else
+		//{
+		//	return NodeResult.Error( $"Shader Featue \"{Feature.Name}\" is not a valid registerd feature." );
+		//}
 	};
 }

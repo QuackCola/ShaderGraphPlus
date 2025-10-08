@@ -95,10 +95,6 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 
 	[Hide, Browsable( false )]
 	public Dictionary<string, float> HandleOffsets { get; set; } = new();
-	
-	// Here so I can debug Switch Info without having to sort through the console.
-	[JsonIgnore, Hide, Browsable( false )]
-	public GraphCompiler.ComboSwitchInfo ComboSwitchInfo { get; set; } = new();
 
 	public BaseNodePlus()
 	{
@@ -161,13 +157,6 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		menu.AddWidget( new Label( $"Preview ID : {this.PreviewID}" ) );
 		menu.AddWidget( new Label( $"IsReachable? : {this.IsReachable}" ) );
 		menu.AddWidget( new Label( $"CanPreview? : {this.CanPreview}" ) );
-		if ( this.ComboSwitchInfo.IsValid )
-		{
-			var comboSwitchDataHeading = menu.AddHeading( "Combo Switch Data" );
-
-			var boundSwitchLabel = menu.AddWidget( new Label( $" BoundSwitch : {this.ComboSwitchInfo.BoundSwitch}" ) );
-			var boundSwitchLabelBlock = menu.AddWidget( new Label( $" BoundSwitchBlock : {this.ComboSwitchInfo.BoundSwitchBlock}" ) );
-		}
 	}
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -192,8 +181,17 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool HasTitleBar => true;
 
+	private bool _hasError;
 	[JsonIgnore, Hide, Browsable( false )]
-	public bool HasError { get; set; } = false;
+	public bool HasError
+	{
+		get => _hasError;
+		set
+		{
+			_hasError = value;
+			Update();
+		}
+	}
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool HasWarning { get; set; } = false;

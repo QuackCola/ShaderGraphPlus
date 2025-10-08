@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus;
+﻿using static Sandbox.Resources.ResourceGenerator;
+
+namespace ShaderGraphPlus;
 
 internal interface ISubgraphBlackboardParameter
 {
@@ -14,7 +16,7 @@ internal interface IShaderFeatureBlackboardParameter
 {
 }
 
-public abstract class BaseBlackboardParameter : IBlackboardParameter
+public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
 	[Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; }
@@ -39,6 +41,9 @@ public abstract class BaseBlackboardParameter : IBlackboardParameter
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public virtual int MenuOrder => 0;
+
+	[Hide, JsonIgnore, Browsable( false )]
+	public virtual bool IsValid => true;
 
 	public virtual string Name { get; set; } = "";
 

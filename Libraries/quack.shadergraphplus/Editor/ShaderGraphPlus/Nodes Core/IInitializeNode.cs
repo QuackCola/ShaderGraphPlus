@@ -5,5 +5,8 @@
 /// </summary>
 public interface IInitializeNode
 {
+	/// <summary>
+	/// Called after the node has been deserialized.
+	/// </summary>
 	public void InitializeNode();
 }

@@ -1,4 +1,5 @@
 ﻿using ShaderGraphPlus.Nodes;
+using static Sandbox.Resources.ResourceGenerator;
 
 namespace ShaderGraphPlus;
 
@@ -268,6 +269,8 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 7;
 
+	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
+
 	/// <summary>
 	/// Name of this feature.
 	/// </summary>
@@ -277,6 +280,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 	/// <summary>
 	/// What this feature does.
 	/// </summary>
+	[Hide]
 	public string Description { get; set; }
 
 	/// <summary>
@@ -290,7 +294,7 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 
 	public override BaseNodePlus InitializeNode()
 	{
-		return new StaticSwitchNode()
+		return new BooleanComboSwitchNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
 			Feature = new ShaderFeatureBoolean() 
@@ -304,29 +308,55 @@ public sealed class ShaderFeatureBooleanBlackboardParameter : BaseBlackboardPara
 }
 
 /// <summary>
-/// TODO : Unhide when Static Combo Enum Switch or similar is implemented.
+/// TODO : 
 /// </summary>
 [Title( "Shader Feature Enum" ), Order( 8 )]
-[Hide]
-public sealed class ShaderFeatureEnumBlackboardParameter : BlackboardGenericParameter<ShaderFeatureEnum>, IShaderFeatureBlackboardParameter
+public sealed class ShaderFeatureEnumBlackboardParameter : BaseBlackboardParameter, IShaderFeatureBlackboardParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 8;
 
-	[JsonIgnore, Hide]
+	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );
+
+	/// <summary>
+	/// Name of this feature.
+	/// </summary>
+	[Title( "Feature Name" )]
 	public override string Name { get; set; }
+
+	/// <summary>
+	/// What this feature does.
+	/// </summary>
+	[Hide]
+	public string Description { get; set; }
+
+	/// <summary>
+	/// Header Name of this Feature that shows up in the Material Editor.
+	/// </summary>
+	public string HeaderName { get; set; }
+
+	/// <summary>
+	/// Options of your feature. Must have no special characters. Note : all lowercase letters will be converted to uppercase.
+	/// </summary>
+	public List<string> Options { get; set; }
 
 	public ShaderFeatureEnumBlackboardParameter() : base()
 	{
-		Value = new ShaderFeatureEnum();
-	}
-
-	public ShaderFeatureEnumBlackboardParameter( ShaderFeatureEnum value ) : base( value )
-	{
+		Options = new List<string>();
 	}
 
 	public override BaseNodePlus InitializeNode()
 	{
-		throw new NotImplementedException();
+		return new EnumComboSwitchNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Feature = new ShaderFeatureEnum()
+			{
+				Name = Name,
+				Description = Description,
+				HeaderName = HeaderName,
+				Options = Options
+			}
+		};
 	}
 }

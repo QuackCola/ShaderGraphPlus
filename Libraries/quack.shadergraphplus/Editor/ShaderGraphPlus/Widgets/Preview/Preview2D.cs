@@ -1,5 +1,4 @@
 ﻿using Editor;
-using Editor.ShaderGraph;
 using Sandbox.Rendering;
 using System.Runtime.InteropServices;
 

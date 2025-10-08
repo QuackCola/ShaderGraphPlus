@@ -161,7 +161,7 @@ public class ShaderGraphPlusView : GraphView
 				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
-				if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
+				//if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 			}
 			return true;
 		} );
@@ -343,7 +343,8 @@ public class ShaderGraphPlusView : GraphView
 					Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
 					Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
 					ColorBlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-					ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( StaticSwitchNode ) ).Fullname,
+					ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( BooleanComboSwitchNode ) ).Fullname,
+					ShaderFeatureEnumBlackboardParameter => DisplayInfo.ForType( typeof( EnumComboSwitchNode ) ).Fullname,
 					_ => throw new NotImplementedException(),
 				};
 

@@ -1,8 +1,8 @@
 ﻿using Editor;
+using NodeEditorPlus;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
 using System.Collections.Generic;
-using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 
@@ -588,6 +588,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
+	// TODO : Clean this function up from old crap i had before the refactor.
 	private void RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues )
 	{
 		registrationIssues = new();
@@ -603,22 +604,43 @@ public class MainWindow : DockWindow
 			var featureDescription = "";
 			var headerName = "";
 			var optionCount = 0;
+			var options = new List<string>();
+			var isEnumFeature = false;
 
-			if ( feature is ShaderFeatureBooleanBlackboardParameter featureBoolean )
+			if ( feature is ShaderFeatureBooleanBlackboardParameter sfbp )
 			{
-				featureName = featureBoolean.Name;
-				featureDescription = featureBoolean.Description;
-				headerName = featureBoolean.HeaderName;
+				featureName = sfbp.Name;
+				featureDescription = sfbp.Description;
+				headerName = sfbp.HeaderName;
 				optionCount = 2;
-				
+				isEnumFeature = false;
+
+				if ( string.IsNullOrWhiteSpace( sfbp.Name ) )
+				{
+					registrationIssues.Add( new() { Message = $"Shader Feature with id \"{sfbp.Identifier}\" cannot have a blank name!" } );
+				}
 			}
-			else if ( feature is ShaderFeatureEnumBlackboardParameter featureEnum )
+			else if ( feature is ShaderFeatureEnumBlackboardParameter sfep )
 			{
-				featureName = featureEnum.Value.Name;
-				featureDescription = featureEnum.Value.Description;
-				headerName = featureEnum.Value.HeaderName;
-				optionCount = featureEnum.Value.Options.Count;
-				
+				featureName = sfep.Name;
+				featureDescription = sfep.Description;
+				headerName = sfep.HeaderName;
+				optionCount = sfep.Options.Count;
+				options = sfep.Options;
+				isEnumFeature = true;
+
+				if ( string.IsNullOrWhiteSpace( sfep.Name ) )
+				{
+					registrationIssues.Add( new() { Message = $"Shader Feature with id \"{sfep.Identifier}\" cannot have a blank name!" } );
+				}
+
+				foreach ( var option in options )
+				{
+					if ( string.IsNullOrWhiteSpace( option ) )
+					{
+						registrationIssues.Add( new() { Message = $"element \"{options.IndexOf( option )}\" of feature \"{featureName}\" cannot have a blank option name!" } );
+					}
+				}
 			}
 
 			shaderFeatureInfo = new ShaderFeatureInfo
@@ -627,7 +649,9 @@ public class MainWindow : DockWindow
 				featureDescription,
 				headerName,
 				optionCount,
-				false // TODO
+				false, // TODO
+				isEnumFeature,
+				options
 			);
 
 			if ( !ShaderFeatures.ContainsKey( shaderFeatureInfo.UserDefinedName ) )
@@ -647,19 +671,19 @@ public class MainWindow : DockWindow
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
 		RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues );
 
-		//if ( registrationIssues.Any() )
-		//{
-		//	_output.GraphIssues = registrationIssues;
-		//
-		//	DockManager.RaiseDock( "Output" );
-		//
-		//	_generatedCode = null;
-		//	_generatedCodeTextView.SetTextContents( "" );
-		//
-		//	RestoreShader();
-		//
-		//	return null;
-		//}
+		if ( registrationIssues.Any() )
+		{
+			_output.GraphIssues = registrationIssues;
+		
+			DockManager.RaiseDock( "Output" );
+		
+			_generatedCode = null;
+			_generatedCodeTextView.SetTextContents( "" );
+		
+			RestoreShader();
+		
+			return null;
+		}
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
@@ -673,6 +697,19 @@ public class MainWindow : DockWindow
 
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
+			// TEMPFIX
+			if ( node is BooleanComboSwitchNode )
+				continue;
+
+			// TEMP!!!
+			if ( node is EnumComboSwitchNode enumComboSwitch )
+			{
+
+				enumComboSwitch.GetResult( compiler );
+
+				continue;
+			}
+
 			// Assign a PreviewID to any Previewable node.
 			if ( node.CanPreview )
 			{
@@ -1816,8 +1853,8 @@ public class MainWindow : DockWindow
 		_palette = new PaletteWidget( this, IsSubgraph );
 		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
 
-		DockManager.AddDock( null, _preview2D, DockArea.Left, DockManager.DockProperty.HideOnClose );
-		DockManager.AddDock( _preview2D, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
+		//DockManager.AddDock( null, _preview2D, DockArea.Left, DockManager.DockProperty.HideOnClose );
+		DockManager.AddDock( null, _preview3D, DockArea.Inside, DockManager.DockProperty.HideOnClose );
 		DockManager.AddDock( null, _graphCanvas, DockArea.Right, DockManager.DockProperty.HideCloseButton | DockManager.DockProperty.HideOnClose, 0.7f );
 		DockManager.AddDock( _graphCanvas, _output, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.25f );
 		DockManager.AddDock( _preview3D, _properties, DockArea.Bottom, DockManager.DockProperty.HideOnClose, 0.5f );

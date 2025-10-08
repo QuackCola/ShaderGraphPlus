@@ -203,7 +203,7 @@ internal class BlackboardView : Widget
 				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
-				if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
+				//if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 			}
 			return true;
 		} );

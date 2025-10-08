@@ -1,17 +1,17 @@
 using Editor;
 using Microsoft.CodeAnalysis;
+using NodeEditorPlus;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using IRerouteNode = NodeEditorPlus.IRerouteNode;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 
@@ -99,6 +99,11 @@ public sealed partial class GraphCompiler
 
 		public int VoidLocalCount { get; set; } = 0;
 		public string RepresentativeTexture { get; set; }
+
+		public void SetAttributes( Dictionary<string, object> attributes )
+		{
+			Attributes = attributes;
+		}
 	}
 
 	public enum ShaderStage
@@ -114,8 +119,8 @@ public sealed partial class GraphCompiler
 
 	private string CurrentResultInput;
 
-	private readonly CompileResult VertexResult = new();
-	private readonly CompileResult PixelResult = new();
+	private CompileResult VertexResult { get; set; } = new();
+	private  CompileResult PixelResult { get; set; } = new();
 	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
 
 	public Action<string, object, bool> OnAttribute { get; set; }
@@ -136,13 +141,12 @@ public sealed partial class GraphCompiler
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
 	{
 		Graph = graph;
-		ShaderFeatures = shaderFeatures;
 		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
 		Subgraphs = new();
 		AddSubgraphs( Graph );
-
+		ShaderFeatures = shaderFeatures;
 		// Set the Initial Vertex and Pixel stage inputs from ShaderTemplate.
 		VertexInputs = ShaderTemplate.VertexInputs;
 		PixelInputs = ShaderTemplate.PixelInputs;
@@ -627,50 +631,11 @@ public sealed partial class GraphCompiler
 		return default;
 	}
 
-	/// <summary>
-	/// Set or update combo switch info of a result. Used only by Result().
-	/// </summary>
-	private ComboSwitchInfo UpdateComboSwitchInfo( NodeInput input )
-	{
-		ComboSwitchInfo lastComboSwitchInfo = new();
-
-		if ( input.ComboSwitchInfo.IsValid )
-		{
-			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
-			SGPLog.Info( $"Setting {nameof( CurrentComboSwitchInfo )} To: {input.ComboSwitchInfo}", IsPreview && ConCommands.VerboseDebgging );
-			SGPLog.Info( $"", IsPreview && ConCommands.VerboseDebgging );
-
-			CurrentComboSwitchInfo = input.ComboSwitchInfo;
-			ComboSwitchInfoStack.Add( lastComboSwitchInfo );
-
-			//SGPLog.Info( $"Setting ComboSwitchInfo from nodeInput : {CurrentComboSwitchInfo}", IsNotPreview );
-
-			// Clear any existing Results & InputResults from a previous block.
-			{
-				ShaderResult.SwitchBlockInputResults.Clear();
-				ShaderResult.SwitchBlockResults.Clear();
-			}
-		}
-
-		if ( CurrentComboSwitchInfo.IsValid )
-		{
-			lastComboSwitchInfo = CurrentComboSwitchInfo;
-
-			if ( lastComboSwitchInfo.IsValid )
-			{
-				//SGPLog.Info( $"lastComboSwitchInfo : {lastComboSwitchInfo}", IsNotPreview );
-
-				ComboSwitchInfoStack.Add( lastComboSwitchInfo );
-			}
-		}
-
-		return lastComboSwitchInfo;
-	}
 
 	/// <summary>
 	/// Get result of an input
 	/// </summary>
-	public NodeResult Result( NodeInput input, bool subgraphResult = false )
+	public NodeResult Result( NodeInput input )
 	{
 		if ( !input.IsValid )
 			return default;
@@ -703,26 +668,9 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		var lastComboSwitchInfo = UpdateComboSwitchInfo( input );
-
-		if ( IsInComboSwitch )
+		if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
 		{
-			Graph.AssignSwitchInfo( input.Identifier, CurrentComboSwitchInfo );
-
-			if ( ShaderResult.SwitchBlockInputResults.TryGetValue( input, out var exisitingResultSB ) )
-			{
-				return exisitingResultSB;
-			}
-		}
-		else
-		{
-
-			Graph.ClearSwitchInfo( input.Identifier );
-
-			if ( ShaderResult.InputResults.TryGetValue( input, out var result ) )
-			{
-				return result;
-			}
+			return result;
 		}
 
 		if ( node == null )
@@ -889,7 +837,7 @@ public sealed partial class GraphCompiler
 					Subgraph = Subgraph.Path,
 					SubgraphNode = nodeId
 				};
-				var newResult = Result( newConnection, true );
+				var newResult = Result( newConnection );
 
 				if ( NodeIssues.Any() )
 				{
@@ -1013,25 +961,7 @@ public sealed partial class GraphCompiler
 
 			funcResult.SetVoidLocalTargetID( node.Identifier );
 
-			if ( lastComboSwitchInfo.IsValid )
-			{
-				funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), lastComboSwitchInfo );
-
-				if ( node is StaticSwitchNode staticSwitchnode && ComboSwitchInfoStack.Contains( lastComboSwitchInfo ) && input.ComboSwitchInfo.IsValid )
-				{
-					funcResult.SetMetadataValue( nameof( MetadataType.ComboSwitchInfo ), input.ComboSwitchInfo );
-					funcResult.SkipLocalGeneration = true;
-				}
-
-				var switchInfo = funcResult.GetMetadata<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), true );
-
-				if ( switchInfo.IsValid && switchInfo.BoundSwitchBlock != StaticSwitchBlock.None )
-				{
-					funcResult.SkipLocalGeneration = true;
-				}
-			}
-
-			if ( IsPreview && !IsInComboSwitch )
+			if ( IsPreview )
 			{
 				funcResult.SetPreviewID( node.PreviewID );
 				funcResult.ShouldPreview = node.CanPreview;
@@ -1052,16 +982,10 @@ public sealed partial class GraphCompiler
 				//SGPLog.Info( $"Result from node : `{node}` is constant! which is `{funcResult.Code}`", IsNotPreview );
 				InputStack.Remove( input );
 
-				if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info1 ) )
-				{
-					if ( ComboSwitchInfoStack.Any() )
-						ComboSwitchInfoStack.Remove( info1 );
-				}
-
 				return funcResult;
 			}
 
-			int id = IsInComboSwitch ? ShaderResult.SwitchBlockInputResults.Count : ShaderResult.InputResults.Count;
+			int id = ShaderResult.InputResults.Count;
 			var varName = $"l_{id}";
 			var localResult = new NodeResult( funcResult.ResultType, varName, false, funcResult.Metadata );
 			localResult.SetPreviewID( funcResult.PreviewID );
@@ -1069,24 +993,14 @@ public sealed partial class GraphCompiler
 			localResult.SkipLocalGeneration = funcResult.SkipLocalGeneration;
 			localResult.ShouldPreview = funcResult.ShouldPreview;
 
-			if ( IsInComboSwitch && !ShaderResult.SwitchBlockInputResults.ContainsKey( input ) )
-			{
-				ShaderResult.SwitchBlockInputResults.Add( input, localResult );
-			}
-			else if ( !ShaderResult.InputResults.ContainsKey( input ) )
+			if ( !ShaderResult.InputResults.ContainsKey( input ) )
 			{
 				ShaderResult.InputResults.Add( input, localResult );
 			}
-	
+
 			ShaderResult.Results.Add( (localResult, funcResult) );
 
 			InputStack.Remove( input );
-
-			if ( funcResult.TryGetMetaData<ComboSwitchInfo>( nameof( MetadataType.ComboSwitchInfo ), out var info2 ) )
-			{
-				if ( ComboSwitchInfoStack.Any() )
-					ComboSwitchInfoStack.Remove( info2 );
-			}
 
 			return localResult;
 		}
@@ -1252,8 +1166,18 @@ public sealed partial class GraphCompiler
 
 		if ( isConstant )
 		{
-			OnAttribute?.Invoke( name, value, false );
-			ShaderResult.Attributes[name] = value;
+			if ( !ShaderResult.Attributes.ContainsKey( name ) )
+			{
+				
+				OnAttribute?.Invoke( name, value, false );
+				
+				ShaderResult.Attributes[name] = value;
+		
+			}
+			else
+			{
+				SGPLog.Info( $"Already Contains Key : {name} with value : {value}" );
+			}
 		}
 
 		return value switch
@@ -1508,7 +1432,15 @@ public sealed partial class GraphCompiler
 		
 		foreach (var feature in ShaderFeatures )
 		{
-			sb.AppendLine( feature.Value.CreateFeatureDeclaration() );
+			if ( feature.Value.IsEnumFeature )
+			{
+				var optionsBody = BuildFeatureOptionsBody( feature.Value.Options );
+				sb.AppendLine( $"Feature( {feature.Value.CreateFeature}, 0..{feature.Value.OptionsCount - 1} ( {optionsBody} ), \"{feature.Value.FeatureHeader}\" );" );
+			}
+			else
+			{
+				sb.AppendLine( $"Feature( {feature.Value.CreateFeature}, 0..{feature.Value.OptionsCount - 1}, \"{feature.Value.FeatureHeader}\" );" );
+			}
 		}
 		
 		//if ( Graph.FeatureRules.Any() )
@@ -1938,7 +1870,7 @@ public sealed partial class GraphCompiler
 		return sb.ToString();
 	}
 
-	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult localResult, NodeResult funcResult)> shaderResults, out (NodeResult localResult, NodeResult funcResult) lastResult, bool preview, bool appendOverride = false, int indentLevel = 0 )
+	internal void GenerateLocalResults( ref StringBuilder sb, IEnumerable<(NodeResult localResult, NodeResult funcResult)> shaderResults, out (NodeResult localResult, NodeResult funcResult) lastResult, bool appendOverride = false, bool noPreviewOverride = false, int indentLevel = 0 )
 	{
 		lastResult = (new NodeResult(), new NodeResult());
 
@@ -1949,7 +1881,7 @@ public sealed partial class GraphCompiler
 
 			if ( !shouldSkip || appendOverride )
 			{
-				string comboBody = string.Empty;
+				string comboBody = "";
 
 				if ( result.funcResult.TryGetMetaData<string>( nameof( MetadataType.ComboSwitchBody ), out var comboSwitchBody ) )
 				{
@@ -2024,23 +1956,26 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				if ( preview && string.IsNullOrWhiteSpace( comboBody ) )
+
+				if ( !noPreviewOverride )
 				{
-					if ( result.localResult.ResultType == ResultType.Bool )
+					if ( IsPs && IsPreview && string.IsNullOrWhiteSpace( comboBody ) )
 					{
-						// TODO : There is no way to know what the actual value of the result is.
-					}
-					else if ( result.localResult.CanPreview && result.localResult.ShouldPreview && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
-					{
-						sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
+						if ( result.localResult.ResultType == ResultType.Bool )
+						{
+							// TODO : There is no way to know what the actual value of the result is.
+						}
+						else if ( result.localResult.CanPreview && result.localResult.ShouldPreview && result.localResult.PreviewID != ShaderGraphPlusGlobals.GraphCompiler.NoNodePreviewID )
+						{
+							sb.AppendLine( IndentString( $"if ( g_iStageId == {result.localResult.PreviewID} ) return {result.localResult.Cast( 4, 1.0f )};", indentLevel ) );
+						}
 					}
 				}
-
 			}
 		}
 	}
 
-	private string GenerateLocals()
+	private string GenerateLocals( bool noPreviewOverride = false )
 	{
 		var sb = new StringBuilder();
 		
@@ -2094,7 +2029,7 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		GenerateLocalResults( ref sb, ShaderResult.Results, out _, IsPreview, false, 0 );
+		GenerateLocalResults( ref sb, ShaderResult.Results, out _, false, noPreviewOverride, 0 );
 
 		return sb.ToString();
 	}
@@ -2257,7 +2192,7 @@ i.vPositionWs = float3( v.vTexCoord, 0.0f );
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
 
-				GenerateLocalResults( ref sb, ShaderResult.Results, out _, false, false, 0 );
+				GenerateLocalResults( ref sb, ShaderResult.Results, out _, false, true, 0 );
 
 				sb.AppendLine( $"i.vPositionWs.xyz += { result.Cast( componentCount ) };" );
 				sb.AppendLine( "i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );" );

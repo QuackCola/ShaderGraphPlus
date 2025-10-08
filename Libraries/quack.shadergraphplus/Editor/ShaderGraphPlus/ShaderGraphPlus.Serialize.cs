@@ -378,7 +378,6 @@ partial class ShaderGraphPlus
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
 				}
 
-				//if ( node is not IReplaceNode && node is IInitializeNode initializeableNode )
 				if ( node is IInitializeNode initializeableNode )
 				{
 					initializeableNode.InitializeNode();

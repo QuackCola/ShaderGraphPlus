@@ -138,17 +138,6 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		SGPJsonUpgrader.UpdateUpgraders( EditorTypeLibrary );
 	}
 
-	public void AssignSwitchInfo( string name, GraphCompiler.ComboSwitchInfo info )
-	{
-		_nodes[name].ComboSwitchInfo = info;
-	}
-
-	public void ClearSwitchInfo( string name )
-	{
-		if ( _nodes.ContainsKey( name ) )
-			_nodes[name].ComboSwitchInfo = default;
-	}
-
 	public bool ContainsNode( string id )
 	{
 		if ( _nodes.ContainsKey( id ) ) return true;

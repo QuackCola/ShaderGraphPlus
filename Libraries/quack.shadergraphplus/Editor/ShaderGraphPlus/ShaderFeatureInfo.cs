@@ -12,6 +12,8 @@ public struct ShaderFeatureInfo : IValid
 	public string FeatureHeader { get; private set; }
 	public int OptionsCount { get; private set; }
 	public bool IsDynamicCombo { get; private set; }
+	public bool IsEnumFeature { get; private set; }
+	public List <string> Options { get; private set; }
 
 	[Hide, JsonIgnore]
 	public bool IsValid => !string.IsNullOrWhiteSpace( PlaceHolder ) ? true : !string.IsNullOrWhiteSpace( UserDefinedName );
@@ -25,13 +27,15 @@ public struct ShaderFeatureInfo : IValid
 	[Hide, JsonIgnore]
 	internal int ReferenceCount { get; set; } = 0;
 
-	public ShaderFeatureInfo( string userDefinedName, string featureDescription, string featureHeader, int optionsCount, bool isDynamicCombo )
+	public ShaderFeatureInfo( string userDefinedName, string featureDescription, string featureHeader, int optionsCount, bool isDynamicCombo, bool isEnumFeature, List<string> options )
 	{
 		UserDefinedName = userDefinedName;
 		FeatureDescription = featureDescription;
 		FeatureHeader = featureHeader;
 		OptionsCount = optionsCount;
 		IsDynamicCombo = isDynamicCombo;
+		IsEnumFeature = isEnumFeature;
+		Options = options;
 	}
 
 	public ShaderFeatureInfo()
@@ -41,16 +45,14 @@ public struct ShaderFeatureInfo : IValid
 		FeatureHeader = "";
 		OptionsCount = 0;
 		IsDynamicCombo = false;
+		IsEnumFeature = false;
 		PlaceHolder = "";
+		Options = new List<string>();
 	}
 
 	[Hide, JsonIgnore]
 	public readonly string CreateFeature => $"F_{UserDefinedName.Replace( " ", "_" ).ToUpper()}";
 
-	public readonly string CreateFeatureDeclaration()
-	{
-		return $"Feature( {CreateFeature}, 0..{OptionsCount - 1}, \"{FeatureHeader}\" );";
-	}
 
 	public readonly string CreateCombo( string name,  bool previewOverride = false )
 	{

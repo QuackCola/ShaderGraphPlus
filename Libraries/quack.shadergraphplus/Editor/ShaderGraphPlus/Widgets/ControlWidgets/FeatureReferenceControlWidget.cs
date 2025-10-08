@@ -33,7 +33,7 @@ internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<Shad
 	protected override IEnumerable<object> GetDropdownValues()
 	{
 		List<object> list = new();
-		list.Add( new ShaderFeatureInfo( "", "", "", 0, false ) { PlaceHolder = "None" } );
+		list.Add( new ShaderFeatureInfo( "", "", "", 0, false, false, new() ) { PlaceHolder = "None" } );
 
 		foreach ( var feature in Graph.Features )
 		{
