@@ -19,6 +19,7 @@ public class ShaderFeatureBase : IValid
 	/// </summary>
 	public string HeaderName { get; set; }
 
+	[Hide, JsonIgnore, Browsable( false )]
 	public virtual bool IsValid => throw new NotImplementedException();
 
 	public ShaderFeatureBase()
@@ -31,6 +32,7 @@ public class ShaderFeatureBase : IValid
 
 public class ShaderFeatureBoolean : ShaderFeatureBase
 {
+	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
 
 	public ShaderFeatureBoolean() : base()
@@ -46,6 +48,7 @@ public class ShaderFeatureBoolean : ShaderFeatureBase
 
 public class ShaderFeatureEnum : ShaderFeatureBase
 {
+	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );
 
 	/// <summary>
