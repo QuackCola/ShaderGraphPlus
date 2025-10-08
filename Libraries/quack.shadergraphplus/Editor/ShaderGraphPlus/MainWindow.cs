@@ -820,7 +820,7 @@ public class MainWindow : DockWindow
 		var code = compiler.Generate();
 
 #region Errors & Warnings
-		iErroringNodeErrors.AddRange( compiler.Errors );
+		iErroringNodeErrors.AddRange( compiler.Issues );
 
 		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
 		{

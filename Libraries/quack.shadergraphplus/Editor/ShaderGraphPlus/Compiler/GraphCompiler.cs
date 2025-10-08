@@ -125,13 +125,12 @@ public sealed partial class GraphCompiler
 
 	private List<NodeInput> InputStack = new();
 
-	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
-	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
+	private readonly Dictionary<BaseNodePlus, List<string>> NodeIssues = new();
 
 	/// <summary>
 	/// Error list, doesn't give you much information currently
 	/// </summary>
-	public IEnumerable<Issue> Errors => NodeErrors
+	public IEnumerable<Issue> Issues => NodeIssues
 		.Select( x => new Issue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
@@ -230,7 +229,7 @@ public sealed partial class GraphCompiler
 
 				if ( !funcResult.IsValid )
 				{
-					NodeErrors.Add( node, [ $"Missing required input \"{title}\"." ] );
+					NodeIssues.Add( node, [ $"Missing required input \"{title}\"." ] );
 				}
 
 				functionCall = functionCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
@@ -242,7 +241,7 @@ public sealed partial class GraphCompiler
 
 	public void SetNodeError( BaseNodePlus node, string error )
 	{
-		NodeErrors.Add( node, [error] );
+		NodeIssues.Add( node, [error] );
 	}
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
@@ -759,7 +758,7 @@ public sealed partial class GraphCompiler
 
 		if ( node is not IRerouteNode && node is not CustomFunctionNode && InputStack.Contains( input ) )
 		{
-			NodeErrors[node] = new List<string> { "Circular reference detected" };
+			NodeIssues[node] = new List<string> { "Circular reference detected" };
 			return default;
 		}
 
@@ -799,10 +798,10 @@ public sealed partial class GraphCompiler
 
 			if ( !funcResult.IsValid )
 			{
-				if ( !NodeErrors.TryGetValue( node, out var errors ) )
+				if ( !NodeIssues.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
-					NodeErrors.Add( node, errors );
+					NodeIssues.Add( node, errors );
 				}
 
 				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
@@ -827,7 +826,7 @@ public sealed partial class GraphCompiler
 			{
 				SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
 
-				NodeErrors[node] = new List<string> { $"Failed to get result!", };
+				NodeIssues[node] = new List<string> { $"Failed to get result!", };
 
 				return default;
 			}
@@ -858,7 +857,7 @@ public sealed partial class GraphCompiler
 			else
 			{
 				SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
-				NodeErrors[node] = new List<string> { $"Failed to get result!", };
+				NodeIssues[node] = new List<string> { $"Failed to get result!", };
 
 				return default;
 			}
@@ -892,7 +891,7 @@ public sealed partial class GraphCompiler
 				};
 				var newResult = Result( newConnection, true );
 
-				if ( NodeErrors.Any() )
+				if ( NodeIssues.Any() )
 				{
 					InputStack.Remove( input );
 					return default;
@@ -923,7 +922,7 @@ public sealed partial class GraphCompiler
 
 					if ( !string.IsNullOrWhiteSpace( error.ErrorString ) )
 					{
-						NodeErrors.Add( error.Node, new List<string> { error.ErrorString } );
+						NodeIssues.Add( error.Node, new List<string> { error.ErrorString } );
 
 						InputStack.Remove( input );
 						return default;
@@ -992,10 +991,10 @@ public sealed partial class GraphCompiler
 
 			if ( !funcResult.IsValid )
 			{
-				if ( !NodeErrors.TryGetValue( node, out var errors ) )
+				if ( !NodeIssues.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
-					NodeErrors.Add( node, errors );
+					NodeIssues.Add( node, errors );
 				}
 		
 				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
@@ -1602,12 +1601,12 @@ public sealed partial class GraphCompiler
 		{
 			if ( !Graph.Nodes.OfType<SubgraphOutput>().Any() )
 			{
-				NodeErrors.Add( new DummyNode(), [ $"There must be atleast one Subgraph Output node!" ] );
+				NodeIssues.Add( new DummyNode(), [ $"There must be atleast one Subgraph Output node!" ] );
 			}
 		}
 
 		// May have already evaluated and there's errors
-		if ( Errors.Any() )
+		if ( Issues.Any() )
 			return null;
 
 		/*
@@ -1631,7 +1630,7 @@ public sealed partial class GraphCompiler
 		var pixelOutput = GeneratePixelOutput();
 
 		// If we have any errors after evaluating, no point going further
-		if ( Errors.Any() )
+		if ( Issues.Any() )
 			return null;
 
 		string template = ShaderTemplate.Code;
@@ -2144,7 +2143,7 @@ public sealed partial class GraphCompiler
 
 			}
 
-			if ( Errors.Any() )
+			if ( Issues.Any() )
 				return null;
 
 			if ( !result.IsValid() )
@@ -2168,7 +2167,7 @@ public sealed partial class GraphCompiler
 			{
 				if ( reservedPreview.ContainsKey( $"{subgraphOutput.Preview}" ) )
 				{
-					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
+					NodeIssues.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
 					continue;
 				}
 
@@ -2181,7 +2180,7 @@ public sealed partial class GraphCompiler
 
 				if ( errors.Any() )
 				{
-					NodeErrors.Add( new DummyNode(), errors );
+					NodeIssues.Add( new DummyNode(), errors );
 
 					return "";
 				}
@@ -2254,7 +2253,7 @@ i.vPositionWs = float3( v.vTexCoord, 0.0f );
 		{
 			result = Result( connection );
 
-			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
+			if ( !Issues.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
 
