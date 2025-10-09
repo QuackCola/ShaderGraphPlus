@@ -30,7 +30,12 @@
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "0,0",
-      "HandleOffsets": {}
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
     },
     {
       "_class": "EnumComboSwitchNode",
@@ -47,9 +52,9 @@
         "Description": null,
         "HeaderName": null
       },
-      "PreviewIndex": 0,
+      "PreviewIndex": 3,
       "Identifier": "1",
-      "Position": "-576,36",
+      "Position": "-504,108",
       "HandleOffsets": {},
       "A": {
         "Identifier": "2",

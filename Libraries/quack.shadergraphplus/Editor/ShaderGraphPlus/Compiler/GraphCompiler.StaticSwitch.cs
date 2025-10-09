@@ -87,6 +87,18 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	public void ResultComboPreview( string comboName, int preview )
+	{
+		if ( comboName.StartsWith( $"D_" ) )
+		{
+			OnAttribute?.Invoke( comboName, preview, true );
+		}
+		else
+		{
+			SGPLog.Error( $"Cannot set a static combo \"{comboName}\"" );
+		}
+	}
+
 	public NodeResult ResultComboSwitch( IEnumerable<NodeInput> inputs, ShaderFeatureBase shaderFeature, int previewInt )
 	{
 		var sb = new StringBuilder();
@@ -114,7 +126,7 @@ public sealed partial class GraphCompiler
 
 			if ( index == 0 )
 			{
-				sb.AppendLine( $"{resultDataType} {resultLocal};" );
+				sb.AppendLine( ResultInit( resultType, resultLocal ) ) ; //$"{resultDataType} {resultLocal};" );
 				
 				if ( shaderFeature is ShaderFeatureBoolean boolFeature )
 				{
@@ -143,7 +155,7 @@ public sealed partial class GraphCompiler
 				}
 				else if ( index == results.Count - 1 )
 				{
-					sb.AppendLine( $"#elseif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
+					sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
 					sb.AppendLine( $"{{" );
 					sb.AppendLine( $"{IndentString( result.BlockLocals, 1 )}" );
 					sb.AppendLine( $"{IndentString( $"{resultLocal} = {finaleResult}", 1 )};" );
@@ -153,16 +165,18 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-
-		ResultComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
-
-		var finalResult = new NodeResult( resultType, resultLocal );
-
 		if ( IsPreview )
 		{
 			SGPLog.Info( $"Generated Switch D_{shaderFeature.Name.ToUpper()}: \n {sb.ToString()}" );
+			var comboName = shaderFeature.GetDynamicComboString();
+
+			if ( comboName.StartsWith( "D_" ) )
+			{
+				OnAttribute?.Invoke( comboName, previewInt, true );
+			}
 		}
 
+		var finalResult = new NodeResult( resultType, resultLocal );
 		finalResult.SetMetadata( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
 
 		return finalResult;
@@ -183,16 +197,22 @@ public sealed partial class GraphCompiler
 		InputStack = new();
 
 		var result = Result( input );
-
 		var blockCode = GenerateLocals( true );
 
 		//SGPLog.Info( $"GeneratedBlock {block} : \n {{ {IndentString( locals, 1)} \n }}" );
 
 		foreach ( var attribute in ShaderResult.Attributes )
 		{
-			//SGPLog.Info( $"Attribute Name : {attribute.Key} with value : {attribute.Value}" );
 			outerPixelResult.Attributes[attribute.Key] = attribute.Value;
 			outerVertexResult.Attributes[attribute.Key] = attribute.Value;
+			//if ( IsPs )
+			//{
+			//	outerPixelResult.Attributes[attribute.Key] = attribute.Value;
+			//}
+			//else if ( IsVs )
+			//{
+			//	outerVertexResult.Attributes[attribute.Key] = attribute.Value;
+			//}
 		}
 
 		VertexResult = outerPixelResult;
@@ -214,7 +234,7 @@ public sealed partial class GraphCompiler
 
 	private StringBuilder ConstructSwitchMid( StringBuilder sb, string featureName, int index, string locals, string resultLocal, NodeResult nodeResult )
 	{
-		sb.AppendLine( $"#elseif ( {(IsPreview ? "D" : "S")}_{featureName.ToUpper()} == {index} )" );
+		sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{featureName.ToUpper()} == {index} )" );
 		sb.AppendLine( $"{{" );
 		sb.AppendLine( $"{IndentString( locals, 1 )}" );
 		sb.AppendLine( $"{IndentString( $"{resultLocal} = {nodeResult}", 1 )};" );
@@ -259,5 +279,34 @@ public sealed partial class GraphCompiler
 		}
 
 		return options_body;
+	}
+
+	internal string ResultInit( ResultType resultType, string name )
+	{
+		switch ( resultType )
+		{
+			case ResultType.Bool:
+				return $"bool {name} = false;";
+			case ResultType.Int:
+				return $"int {name} = 0;";
+			case ResultType.Float:
+				return $"float {name} = 0.0f;";
+			case ResultType.Vector2:
+				return $"float2 {name} = float2( 0.0f, 0.0f );";
+			case ResultType.Vector3:
+				return $"float3 {name} = float3( 0.0f, 0.0f, 0.0f );";
+			case ResultType.Vector4:
+				return $"float4 {name} = float4( 0.0f, 0.0f, 0.0f, 0.0f );";
+			case ResultType.Color:
+				return $"float4 {name} = float4( 0.0f, 0.0f, 0.0f, 0.0f );";
+			case ResultType.Float2x2:
+				return $"float2x2 {name} = float2x2( 0.0f, 0.0f, 0.0f, 0.0f );";
+			case ResultType.Float3x3:
+				return $"float3x3 {name} = float3x3( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );";
+			case ResultType.Float4x4:
+				return $"float4x4 {name} = float4x4( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );";
+			default:
+				throw new NotImplementedException( $"ResultType `{resultType}` not implemented!" );
+		}
 	}
 }

@@ -102,7 +102,7 @@ PS
 	{
 
 		
-		float4 Parameter0_result;
+		float4 Parameter0_result = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 		#if ( S_PARAMETER0 == SWITCH_TRUE )
 		{
 			

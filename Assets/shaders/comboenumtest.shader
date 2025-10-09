@@ -101,8 +101,41 @@ PS
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 
+		
+		float4 Parameter0_result = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+		#if ( S_PARAMETER0 == 0 )
+		{
+			
+			float4 l_0 = float4( 1, 0, 0, 1 );
+			
+			Parameter0_result = l_0;
+		}
+		#elif ( S_PARAMETER0 == 1 )
+		{
+			
+			float4 l_0 = float4( 0.61746, 0.9907, 0.61746, 1 );
+			
+			Parameter0_result = l_0;
+		}
+		#elif ( S_PARAMETER0 == 2 )
+		{
+			
+			float4 l_0 = float4( 0, 0, 1, 1 );
+			
+			Parameter0_result = l_0;
+		}
+		#elif ( S_PARAMETER0 == 3 )
+		{
+			
+			float4 l_0 = float4( 1, 1, 1, 1 );
+			
+			Parameter0_result = l_0;
+		}
+		#endif
+		
+		float4 l_0 = Parameter0_result;
+		
 
-
-		return float4( float4( 1, 1, 1, 1 ).xyz, 1 );
+		return float4( l_0.xyz, 1 );
 	}
 }
