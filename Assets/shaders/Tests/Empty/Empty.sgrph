@@ -187,7 +187,7 @@
   ],
   "parameters": [
     {
-      "_class": "BoolBlackboardParameter",
+      "_class": "BoolParameter",
       "UI": {
         "Type": "Default",
         "Step": 0,
@@ -206,7 +206,7 @@
       "Name": "Parameter0"
     },
     {
-      "_class": "IntBlackboardParameter",
+      "_class": "IntParameter",
       "Min": 0,
       "Max": 0,
       "UI": {
@@ -227,7 +227,7 @@
       "Name": "Parameter1"
     },
     {
-      "_class": "FloatBlackboardParameter",
+      "_class": "FloatParameter",
       "Min": 0,
       "Max": 0,
       "UI": {
@@ -248,7 +248,7 @@
       "Name": "Parameter2"
     },
     {
-      "_class": "Float2BlackboardParameter",
+      "_class": "Float2Parameter",
       "Min": "0,0",
       "Max": "0,0",
       "UI": {
@@ -269,7 +269,7 @@
       "Name": "Parameter3"
     },
     {
-      "_class": "Float3BlackboardParameter",
+      "_class": "Float3Parameter",
       "Min": "0,0,0",
       "Max": "0,0,0",
       "UI": {
@@ -290,7 +290,7 @@
       "Name": "HLX"
     },
     {
-      "_class": "ColorBlackboardParameter",
+      "_class": "ColorParameter",
       "UI": {
         "Type": "Color",
         "Step": 0,
@@ -307,30 +307,6 @@
       "Value": "1,0,0,1",
       "Identifier": "cdffc8d9-8668-47fb-adba-339e62538592",
       "Name": "Parameter5"
-    },
-    {
-      "_class": "ShaderFeatureBooleanBlackboardParameter",
-      "Value": {
-        "FeatureName": "MyBooleanFeature",
-        "Description": "A description",
-        "HeaderName": "My Boolean Feature"
-      },
-      "Identifier": "03780e6b-0ec8-4446-9053-9f0d421704a5"
-    },
-    {
-      "_class": "ShaderFeatureEnumBlackboardParameter",
-      "Value": {
-        "Options": [
-          "Option1",
-          "Option2",
-          "Option3",
-          "Option4"
-        ],
-        "FeatureName": "MyRadioFeature",
-        "Description": "A description",
-        "HeaderName": "My Radio Feature Options"
-      },
-      "Identifier": "cafb53eb-a70d-4ed9-835f-3629d1cb5756"
     }
   ]
 }

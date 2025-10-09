@@ -7,7 +7,7 @@ using NodeUI = NodeEditorPlus.NodeUI;
 namespace ShaderGraphPlus.Nodes;
 
 [System.AttributeUsage( AttributeTargets.Property )]
-internal sealed class ShaderFeatureInfoReferenceAttribute : Attribute
+internal sealed class ShaderFeatureReferenceAttribute : Attribute
 { 
 }
 
@@ -122,16 +122,16 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is ShaderFeatureEnumBlackboardParameter sfep )
+		if ( parameter is ShaderFeatureEnumParameter enumFeatureParam )
 		{
-			if ( sfep.IsValid )
+			if ( enumFeatureParam.IsValid )
 			{
 				Feature = new ShaderFeatureEnum
 				{
-					Name = sfep.Name,
-					Description = sfep.Description,
-					HeaderName = sfep.HeaderName,
-					Options = sfep.Options,
+					Name = enumFeatureParam.Name,
+					Description = enumFeatureParam.Description,
+					HeaderName = enumFeatureParam.HeaderName,
+					Options = enumFeatureParam.Options,
 				};
 
 				_hasFeatureError = false;
@@ -231,15 +231,15 @@ public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is ShaderFeatureBooleanBlackboardParameter sfbp )
+		if ( parameter is ShaderFeatureBooleanParameter boolFeatureParam )
 		{
-			if ( sfbp.IsValid )
+			if ( boolFeatureParam.IsValid )
 			{
 				Feature = new ShaderFeatureBoolean
 				{
-					Name = sfbp.Name,
-					Description = sfbp.Description,
-					HeaderName = sfbp.HeaderName,
+					Name = boolFeatureParam.Name,
+					Description = boolFeatureParam.Description,
+					HeaderName = boolFeatureParam.HeaderName,
 				};
 			}
 		}
@@ -301,7 +301,7 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is ShaderFeatureBooleanBlackboardParameter sfboolParameter )
+		if ( parameter is ShaderFeatureBooleanParameter sfboolParameter )
 		{
 			Feature = new ShaderFeatureBoolean 
 			{ 

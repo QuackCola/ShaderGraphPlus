@@ -106,7 +106,7 @@
   ],
   "parameters": [
     {
-      "_class": "ShaderFeatureEnumBlackboardParameter",
+      "_class": "ShaderFeatureEnumParameter",
       "Name": "Parameter0",
       "Description": null,
       "HeaderName": null,

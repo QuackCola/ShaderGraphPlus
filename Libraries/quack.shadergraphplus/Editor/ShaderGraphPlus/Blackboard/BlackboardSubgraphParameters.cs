@@ -5,17 +5,17 @@
 /// </summary>
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 [SubgraphOnly]
-public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<bool>
+public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParameter<bool>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 0;
 
-	public BoolSubgraphInputBlackboardParameter() : base()
+	public BoolSubgraphInputParameter() : base()
 	{
 		Value = false;
 	}
 
-	public BoolSubgraphInputBlackboardParameter( bool value ) : base( value )
+	public BoolSubgraphInputParameter( bool value ) : base( value )
 	{
 
 	}
@@ -37,7 +37,7 @@ public sealed class BoolSubgraphInputBlackboardParameter : BlackboardSubgraphInp
 /// </summary>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 [SubgraphOnly]
-public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<int>
+public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter<int>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 1;
@@ -45,14 +45,14 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
-	public IntSubgraphInputBlackboardParameter()
+	public IntSubgraphInputParameter()
 	{
 		Value = 1;
 		Min = 0;
 		Max = 1;
 	}
 
-	public IntSubgraphInputBlackboardParameter( int value ) : base( value )
+	public IntSubgraphInputParameter( int value ) : base( value )
 	{
 		Min = 0;
 		Max = 1;
@@ -75,7 +75,7 @@ public sealed class IntSubgraphInputBlackboardParameter : BlackboardSubgraphInpu
 /// </summary>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 [SubgraphOnly]
-public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<float>
+public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParameter<float>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 2;
@@ -83,14 +83,14 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
-	public FloatSubgraphInputBlackboardParameter()
+	public FloatSubgraphInputParameter()
 	{
 		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
 	}
 
-	public FloatSubgraphInputBlackboardParameter( float value ) : base( value )
+	public FloatSubgraphInputParameter( float value ) : base( value )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -113,7 +113,7 @@ public sealed class FloatSubgraphInputBlackboardParameter : BlackboardSubgraphIn
 /// </summary>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 [SubgraphOnly]
-public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector2>
+public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector2>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 3;
@@ -121,14 +121,14 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
-	public Float2SubgraphInputBlackboardParameter()
+	public Float2SubgraphInputParameter()
 	{
 		Value = Vector2.One;
 		Min = Vector2.Zero;
 		Max = Vector2.One;
 	}
 
-	public Float2SubgraphInputBlackboardParameter( Vector2 value ) : base( value )
+	public Float2SubgraphInputParameter( Vector2 value ) : base( value )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -151,7 +151,7 @@ public sealed class Float2SubgraphInputBlackboardParameter : BlackboardSubgraphI
 /// </summary>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 [SubgraphOnly]
-public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector3>
+public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector3>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 4;
@@ -159,14 +159,14 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
-	public Float3SubgraphInputBlackboardParameter()
+	public Float3SubgraphInputParameter()
 	{
 		Value = Vector3.One;
 		Min = Vector3.Zero;
 		Max = Vector3.One;
 	}
 
-	public Float3SubgraphInputBlackboardParameter( Vector3 value ) : base( value )
+	public Float3SubgraphInputParameter( Vector3 value ) : base( value )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -189,7 +189,7 @@ public sealed class Float3SubgraphInputBlackboardParameter : BlackboardSubgraphI
 /// </summary>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 [SubgraphOnly]
-public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Vector4>
+public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector4>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 5;
@@ -197,14 +197,14 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
 
-	public Float4SubgraphInputBlackboardParameter()
+	public Float4SubgraphInputParameter()
 	{
 		Value = Vector4.One;
 		Min = Vector4.Zero;
 		Max = Vector4.One;
 	}
 
-	public Float4SubgraphInputBlackboardParameter( Vector4 value ) : base( value )
+	public Float4SubgraphInputParameter( Vector4 value ) : base( value )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -227,17 +227,17 @@ public sealed class Float4SubgraphInputBlackboardParameter : BlackboardSubgraphI
 /// </summary>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 [SubgraphOnly]
-public sealed class ColorSubgraphInputBlackboardParameter : BlackboardSubgraphInputParameter<Color>
+public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParameter<Color>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 6;
 
-	public ColorSubgraphInputBlackboardParameter()
+	public ColorSubgraphInputParameter()
 	{
 		Value = Color.White;
 	}
 
-	public ColorSubgraphInputBlackboardParameter( Color value ) : base( value )
+	public ColorSubgraphInputParameter( Color value ) : base( value )
 	{
 	}
 

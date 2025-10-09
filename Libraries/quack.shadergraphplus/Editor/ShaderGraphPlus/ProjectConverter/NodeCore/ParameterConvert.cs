@@ -65,7 +65,7 @@ internal class FloatNodeConvert : BaseNodeConvert
 				UI = oldFloatNode.UI.ConvertVanillaUI()
 			};
 
-			BaseBlackboardParameter blackboardParameter = new FloatBlackboardParameter()
+			BaseBlackboardParameter blackboardParameter = new FloatParameter()
 			{
 				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
@@ -120,7 +120,7 @@ internal class Float2NodeConvert : BaseNodeConvert
 				UI = oldFloat2Node.UI.ConvertVanillaUI()
 			};
 
-			BaseBlackboardParameter blackboardParameter = new Float2BlackboardParameter()
+			BaseBlackboardParameter blackboardParameter = new Float2Parameter()
 			{
 				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
@@ -175,7 +175,7 @@ internal class Float3NodeConvert : BaseNodeConvert
 				UI = oldFloat3Node.UI.ConvertVanillaUI()
 			};
 
-			BaseBlackboardParameter blackboardParameter = new Float3BlackboardParameter()
+			BaseBlackboardParameter blackboardParameter = new Float3Parameter()
 			{
 				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,
@@ -225,7 +225,7 @@ internal class Float4NodeConvert : BaseNodeConvert
 				UI = oldFloat4Node.UI.ConvertVanillaUI()
 			};
 
-			BaseBlackboardParameter blackboardParameter = new ColorBlackboardParameter()
+			BaseBlackboardParameter blackboardParameter = new ColorParameter()
 			{
 				Identifier = newNode.BlackboardParameterIdentifier,
 				Name = newNode.Name,

@@ -12,7 +12,7 @@ internal interface ISubgraphBlackboardParameter
 	public object GetValue();
 }
 
-internal interface IShaderFeatureBlackboardParameter
+internal interface IShaderFeatureParameter
 {
 }
 

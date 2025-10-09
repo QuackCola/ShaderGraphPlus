@@ -140,27 +140,27 @@ public class ShaderGraphPlusView : GraphView
 				var targetType = classParameterType.Type.TargetType;
 
 				// Only show material parameters when not in a subgraph
-				if ( Graph.IsSubgraph && targetType == typeof( BoolBlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( IntBlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( FloatBlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( Float2BlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( Float3BlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( Float4BlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( ColorBlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( BoolParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( IntParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( FloatParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float2Parameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float3Parameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Float4Parameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( ColorParameter ) ) return false;
 
 				// Only show subgraph input parameters when in a subgraph
-				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( IntSubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( FloatSubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( Float2SubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputBlackboardParameter ) ) return false;
-				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputBlackboardParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( IntSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( FloatSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float2SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
 
 
 				// Ignore these for now
-				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanBlackboardParameter ) ) return false;
-				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumParameter ) ) return false;
 				//if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 			}
 			return true;
@@ -336,15 +336,15 @@ public class ShaderGraphPlusView : GraphView
 			{
 				string nodeFullName = blackboardParameter switch
 				{
-					BoolBlackboardParameter => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
-					IntBlackboardParameter => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
-					FloatBlackboardParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
-					Float2BlackboardParameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
-					Float3BlackboardParameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
-					Float4BlackboardParameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
-					ColorBlackboardParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-					ShaderFeatureBooleanBlackboardParameter => DisplayInfo.ForType( typeof( BooleanComboSwitchNode ) ).Fullname,
-					ShaderFeatureEnumBlackboardParameter => DisplayInfo.ForType( typeof( EnumComboSwitchNode ) ).Fullname,
+					BoolParameter => DisplayInfo.ForType( typeof( BoolParameterNode ) ).Fullname,
+					IntParameter => DisplayInfo.ForType( typeof( IntParameterNode ) ).Fullname,
+					FloatParameter => DisplayInfo.ForType( typeof( FloatParameterNode ) ).Fullname,
+					Float2Parameter => DisplayInfo.ForType( typeof( Float2ParameterNode ) ).Fullname,
+					Float3Parameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
+					Float4Parameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
+					ColorParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+					ShaderFeatureBooleanParameter => DisplayInfo.ForType( typeof( BooleanComboSwitchNode ) ).Fullname,
+					ShaderFeatureEnumParameter => DisplayInfo.ForType( typeof( EnumComboSwitchNode ) ).Fullname,
 					_ => throw new NotImplementedException(),
 				};
 

@@ -19,11 +19,11 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is BoolBlackboardParameter boolBlackboardParameter )
+		if ( parameter is BoolParameter boolParam )
 		{
-			Name = boolBlackboardParameter.Name;
-			Value = boolBlackboardParameter.Value;
-			UI = boolBlackboardParameter.UI;
+			Name = boolParam.Name;
+			Value = boolParam.Value;
+			UI = boolParam.UI;
 		}
 	}
 
@@ -56,13 +56,13 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is IntBlackboardParameter intBlackboardParameter )
+		if ( parameter is IntParameter intParam )
 		{
-			Name = intBlackboardParameter.Name;
-			Value = intBlackboardParameter.Value;
-			Min = intBlackboardParameter.Min;
-			Max = intBlackboardParameter.Max;
-			UI = intBlackboardParameter.UI;
+			Name = intParam.Name;
+			Value = intParam.Value;
+			Min = intParam.Min;
+			Max = intParam.Max;
+			UI = intParam.UI;
 		}
 	}
 
@@ -97,13 +97,13 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is FloatBlackboardParameter floatBlackboardParameter )
+		if ( parameter is FloatParameter floatParam )
 		{
-			Name = floatBlackboardParameter.Name;
-			Value = floatBlackboardParameter.Value;
-			Min = floatBlackboardParameter.Min;
-			Max = floatBlackboardParameter.Max;
-			UI = floatBlackboardParameter.UI;
+			Name = floatParam.Name;
+			Value = floatParam.Value;
+			Min = floatParam.Min;
+			Max = floatParam.Max;
+			UI = floatParam.UI;
 		}
 	}
 
@@ -140,13 +140,13 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is Float2BlackboardParameter float2BlackboardParameter )
+		if ( parameter is Float2Parameter float2Param )
 		{
-			Name = float2BlackboardParameter.Name;
-			Value = float2BlackboardParameter.Value;
-			Min = float2BlackboardParameter.Min;
-			Max = float2BlackboardParameter.Max;
-			UI = float2BlackboardParameter.UI;
+			Name = float2Param.Name;
+			Value = float2Param.Value;
+			Min = float2Param.Min;
+			Max = float2Param.Max;
+			UI = float2Param.UI;
 		}
 	}
 
@@ -214,13 +214,13 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is Float3BlackboardParameter float3BlackboardParameter )
+		if ( parameter is Float3Parameter float3Param )
 		{
-			Name = float3BlackboardParameter.Name;
-			Value = float3BlackboardParameter.Value;
-			Min = float3BlackboardParameter.Min;
-			Max = float3BlackboardParameter.Max;
-			UI = float3BlackboardParameter.UI;
+			Name = float3Param.Name;
+			Value = float3Param.Value;
+			Min = float3Param.Min;
+			Max = float3Param.Max;
+			UI = float3Param.UI;
 		}
 	}
 
@@ -304,13 +304,13 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		if ( parameter is Float4BlackboardParameter float4BlackboardParameter )
+		if ( parameter is Float4Parameter float4Param )
 		{
-			Name = float4BlackboardParameter.Name;
-			Value = float4BlackboardParameter.Value;
-			Min = float4BlackboardParameter.Min;
-			Max = float4BlackboardParameter.Max;
-			UI = float4BlackboardParameter.UI;
+			Name = float4Param.Name;
+			Value = float4Param.Value;
+			Min = float4Param.Min;
+			Max = float4Param.Max;
+			UI = float4Param.UI;
 		}
 	}
 
@@ -410,12 +410,11 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 
 	public override void UpdateFromBlackboard( BaseBlackboardParameter parameter )
 	{
-		SGPLog.Info("Updating ColorParameterNode from blackboard");
-		if ( parameter is ColorBlackboardParameter colorBlackboardParameter )
+		if ( parameter is ColorParameter colorParam )
 		{
-			Name = colorBlackboardParameter.Name;
-			Value = colorBlackboardParameter.Value;
-			UI = colorBlackboardParameter.UI;
+			Name = colorParam.Name;
+			Value = colorParam.Value;
+			UI = colorParam.UI;
 		}
 	}
 

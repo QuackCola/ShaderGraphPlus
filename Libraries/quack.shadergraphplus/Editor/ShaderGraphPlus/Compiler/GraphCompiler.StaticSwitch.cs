@@ -72,7 +72,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Registerd ShaderFeatures of the current project.
 	/// </summary>
-	public Dictionary<string, ShaderFeatureInfo> ShaderFeatures = new();
+	public Dictionary<string, ShaderFeatureBase> ShaderFeatures = new();
 
 	struct SwitchBlockResultHolder
 	{

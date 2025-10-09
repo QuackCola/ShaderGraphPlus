@@ -3,16 +3,18 @@ using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( string ) , WithAllAttributes = new[] { typeof( ShaderFeatureInfoReferenceAttribute ) } )]
-internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<ShaderFeatureInfo>
+[CustomEditor( typeof( string ) , WithAllAttributes = new[] { typeof( ShaderFeatureReferenceAttribute ) } )]
+internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<ShaderFeatureBase>
 { 
 	ShaderGraphPlus Graph;
-	StaticSwitchNode Node;
 
+	// TODO : Get this ControlWidget working again.
 	public FeatureReferenceControlWidget( SerializedProperty property ) : base( property )
 	{
-		Node = property.Parent.Targets.OfType<StaticSwitchNode>().FirstOrDefault();
-		Graph = (ShaderGraphPlus)Node.Graph;
+		//var target = property.Parent.Targets.OfType<ShaderGraphPlus>().FirstOrDefault();
+		var target = property.Parent.Targets.FirstOrDefault();
+			
+		SGPLog.Info( $"SerializedProperty parent target is \"{target}\"" );
 
 		if ( Graph is null ) return;
 
@@ -33,15 +35,28 @@ internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<Shad
 	protected override IEnumerable<object> GetDropdownValues()
 	{
 		List<object> list = new();
-		list.Add( new ShaderFeatureInfo( "", "", "", 0, false, false, new() ) { PlaceHolder = "None" } );
+		list.Add( "None" );
 
-		foreach ( var feature in Graph.Features )
+		foreach ( var feature in Graph.Parameters.Where( x => x is ShaderFeatureBooleanParameter || x is ShaderFeatureEnumParameter ) )
 		{
-			var entry = new Entry();
-			entry.Value = feature.Value;
-			entry.Label = $"{feature.Value}";
-			entry.Description = feature.Value.FeatureDescription;
-			list.Add( entry );
+			if ( feature is ShaderFeatureBooleanParameter boolFeatureParam )
+			{
+				var shaderFeatureBool = new ShaderFeatureBoolean()
+				{
+					Name = boolFeatureParam.Name,
+					HeaderName = boolFeatureParam.HeaderName,
+					Description = boolFeatureParam.Description,
+				};
+				var entry = new Entry();
+				entry.Value = shaderFeatureBool;
+				entry.Label = $"{shaderFeatureBool.GetFeatureString()}";
+				entry.Description = "";
+				list.Add( entry );
+			}
+			else if ( feature is ShaderFeatureEnumParameter boolEnumParam )
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		return list;

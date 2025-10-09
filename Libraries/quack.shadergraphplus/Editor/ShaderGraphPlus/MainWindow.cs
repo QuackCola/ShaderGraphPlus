@@ -114,7 +114,7 @@ public class MainWindow : DockWindow
 
 	private ProjectCreator ProjectCreator { get; set; }
 
-	private Dictionary<string, ShaderFeatureInfo> ShaderFeatures = new();
+	private Dictionary<string,ShaderFeatureBase> ShaderFeatures = new();
 	private List<GraphCompiler.Issue> ComboRegistrationErrors { get; set; } = new();
 
 	public MainWindow()
@@ -592,71 +592,36 @@ public class MainWindow : DockWindow
 	private void RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues )
 	{
 		registrationIssues = new();
-
 		ShaderFeatures.Clear();
-
-		var features = _graph.Parameters.OfType<IShaderFeatureBlackboardParameter>();
+		var features = _graph.Parameters.OfType<IShaderFeatureParameter>();
 
 		foreach ( var feature in features )
 		{
-			var shaderFeatureInfo = new ShaderFeatureInfo();
-			var featureName = "";
-			var featureDescription = "";
-			var headerName = "";
-			var optionCount = 0;
-			var options = new List<string>();
-			var isEnumFeature = false;
+			ShaderFeatureBase shaderFeature = default;
 
-			if ( feature is ShaderFeatureBooleanBlackboardParameter sfbp )
+			if ( feature is ShaderFeatureBooleanParameter boolFeatureParam )
 			{
-				featureName = sfbp.Name;
-				featureDescription = sfbp.Description;
-				headerName = sfbp.HeaderName;
-				optionCount = 2;
-				isEnumFeature = false;
-
-				if ( string.IsNullOrWhiteSpace( sfbp.Name ) )
+				shaderFeature = new ShaderFeatureBoolean()
 				{
-					registrationIssues.Add( new() { Message = $"Shader Feature with id \"{sfbp.Identifier}\" cannot have a blank name!" } );
-				}
+					Name = boolFeatureParam.Name,
+					HeaderName = boolFeatureParam.HeaderName,
+					Description = boolFeatureParam.Description,
+				};
 			}
-			else if ( feature is ShaderFeatureEnumBlackboardParameter sfep )
+			else if ( feature is ShaderFeatureEnumParameter enumFeatureParam )
 			{
-				featureName = sfep.Name;
-				featureDescription = sfep.Description;
-				headerName = sfep.HeaderName;
-				optionCount = sfep.Options.Count;
-				options = sfep.Options;
-				isEnumFeature = true;
-
-				if ( string.IsNullOrWhiteSpace( sfep.Name ) )
+				shaderFeature = new ShaderFeatureEnum()
 				{
-					registrationIssues.Add( new() { Message = $"Shader Feature with id \"{sfep.Identifier}\" cannot have a blank name!" } );
-				}
-
-				foreach ( var option in options )
-				{
-					if ( string.IsNullOrWhiteSpace( option ) )
-					{
-						registrationIssues.Add( new() { Message = $"element \"{options.IndexOf( option )}\" of feature \"{featureName}\" cannot have a blank option name!" } );
-					}
-				}
+					Name = enumFeatureParam.Name,
+					HeaderName = enumFeatureParam.HeaderName,
+					Description = enumFeatureParam.Description,
+					Options = enumFeatureParam.Options,
+				};
 			}
 
-			shaderFeatureInfo = new ShaderFeatureInfo
-			(
-				featureName,
-				featureDescription,
-				headerName,
-				optionCount,
-				false, // TODO
-				isEnumFeature,
-				options
-			);
-
-			if ( !ShaderFeatures.ContainsKey( shaderFeatureInfo.UserDefinedName ) )
+			if ( shaderFeature.IsValid && !ShaderFeatures.ContainsKey( shaderFeature.Name ) )
 			{
-				ShaderFeatures.Add( shaderFeatureInfo.UserDefinedName, shaderFeatureInfo );
+				ShaderFeatures.Add( shaderFeature.Name, shaderFeature );
 			}
 		}
 	}

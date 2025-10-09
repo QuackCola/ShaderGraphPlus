@@ -1,7 +1,6 @@
 using Editor;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
-using System.Linq;
 
 namespace ShaderGraphPlus;
 
@@ -65,16 +64,6 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 
 	[Hide, JsonIgnore]
 	public readonly Dictionary<Guid, BaseBlackboardParameter> _parameters = new();
-
-	// TODO : Remove this once i finish changing how you define shader features for a graph.
-	[Hide, JsonIgnore]
-	public Dictionary<string,ShaderFeatureInfo> Features { get; set; }
-
-	[Hide, JsonIgnore]
-	public IEnumerable<ShaderFeatureBase> FeaturesNew => _features;
-
-	[Hide, JsonIgnore]
-	private readonly List<ShaderFeatureBase> _features = new();
 
 	[Hide]
 	public bool IsSubgraph { get; set; }

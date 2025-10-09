@@ -32,7 +32,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 		switch ( newNode.InputData.InputType )
 		{
 			case SubgraphPortType.Float:
-				converter.AddBlackboardParameter( new FloatSubgraphInputBlackboardParameter()
+				converter.AddBlackboardParameter( new FloatSubgraphInputParameter()
 				{
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
@@ -43,7 +43,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 				} );
 				break;
 			case SubgraphPortType.Vector2:
-				converter.AddBlackboardParameter( new Float2SubgraphInputBlackboardParameter()
+				converter.AddBlackboardParameter( new Float2SubgraphInputParameter()
 				{
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
@@ -54,7 +54,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 				} );
 				break;
 			case SubgraphPortType.Vector3:
-				converter.AddBlackboardParameter( new Float3SubgraphInputBlackboardParameter()
+				converter.AddBlackboardParameter( new Float3SubgraphInputParameter()
 				{
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
@@ -65,7 +65,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 				} );
 				break;
 			case SubgraphPortType.Color:
-				converter.AddBlackboardParameter( new ColorSubgraphInputBlackboardParameter()
+				converter.AddBlackboardParameter( new ColorSubgraphInputParameter()
 				{
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,

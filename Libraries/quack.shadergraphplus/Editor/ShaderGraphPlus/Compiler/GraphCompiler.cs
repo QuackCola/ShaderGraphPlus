@@ -138,7 +138,7 @@ public sealed partial class GraphCompiler
 	public IEnumerable<Issue> Issues => NodeIssues
 		.Select( x => new Issue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureInfo> shaderFeatures, bool preview )
+	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
 	{
 		Graph = graph;
 		_Asset = asset;
@@ -1432,14 +1432,14 @@ public sealed partial class GraphCompiler
 		
 		foreach (var feature in ShaderFeatures )
 		{
-			if ( feature.Value.IsEnumFeature )
+			if ( feature.Value is ShaderFeatureBoolean boolFeature )
 			{
-				var optionsBody = BuildFeatureOptionsBody( feature.Value.Options );
-				sb.AppendLine( $"Feature( {feature.Value.CreateFeature}, 0..{feature.Value.OptionsCount - 1} ( {optionsBody} ), \"{feature.Value.FeatureHeader}\" );" );
+				sb.AppendLine( $"Feature( {boolFeature.GetFeatureString()}, 0..1, \"{boolFeature.HeaderName}\" );" );
 			}
-			else
+			else if ( feature.Value is ShaderFeatureEnum enumFeature )
 			{
-				sb.AppendLine( $"Feature( {feature.Value.CreateFeature}, 0..{feature.Value.OptionsCount - 1}, \"{feature.Value.FeatureHeader}\" );" );
+				var optionsBody = BuildFeatureOptionsBody( enumFeature.Options );
+				sb.AppendLine( $"Feature( {enumFeature.GetFeatureString()}, 0..{enumFeature.Options.Count - 1} ( {optionsBody} ), \"{enumFeature.HeaderName}\" );" );
 			}
 		}
 		
@@ -1743,17 +1743,38 @@ public sealed partial class GraphCompiler
 		foreach ( var feature in ShaderFeatures )
 		{
 			//SGPLog.Info( $"DynamicCombo( D_{feature.Value.FeatureName.ToUpper()}, 0..1, Sys( ALL ) );", IsPreview );
-			
-			var combo = feature.Value.CreateCombo( feature.Key, IsPreview );
 
-			if ( feature.Value.IsDynamicCombo || IsPreview )
+			if ( IsPreview )
 			{
-				sb.AppendLine( $"DynamicCombo( {combo}, 0..{feature.Value.OptionsCount - 1}, Sys( ALL ) );" );
+				sb.AppendLine( $"DynamicCombo( {feature.Value.GetDynamicComboString()}, {feature.Value.GetOptionRangeString()}, Sys( ALL ) );" );
 			}
 			else
 			{
-				sb.AppendLine( $"StaticCombo( {combo}, {feature.Value.CreateFeature}, Sys( ALL ) );" );
+				sb.AppendLine( $"StaticCombo( {feature.Value.GetStaticComboString()}, {feature.Value.GetFeatureString()}, Sys( ALL ) );" );
 			}
+
+			//if ( feature.Value is ShaderFeatureBoolean boolFeature )
+			//{
+			//	if ( IsPreview )
+			//	{
+			//		sb.AppendLine( $"DynamicCombo( {boolFeature.GetStaticComboString()}, {boolFeature.GetOptionRangeString()}, Sys( ALL ) );" );
+			//	}
+			//	else
+			//	{
+			//		sb.AppendLine( $"StaticCombo( {boolFeature.GetStaticComboString()}, {boolFeature.GetFeatureString()}, Sys( ALL ) );" );
+			//	}
+			//}
+			//else if ( feature.Value is ShaderFeatureEnum enumFeature )
+			//{
+			//	if ( IsPreview )
+			//	{
+			//		sb.AppendLine( $"DynamicCombo( {enumFeature.GetStaticComboString()}, {enumFeature.GetOptionRangeString()}, Sys( ALL ) );" );
+			//	}
+			//	else
+			//	{
+			//		sb.AppendLine( $"StaticCombo( {enumFeature.GetStaticComboString()}, {enumFeature.GetFeatureString()}, Sys( ALL ) );" );
+			//	}
+			//}
 
 			sb.AppendLine();
 		}

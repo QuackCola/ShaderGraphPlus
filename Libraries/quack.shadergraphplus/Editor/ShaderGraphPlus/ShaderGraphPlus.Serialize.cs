@@ -135,7 +135,7 @@ partial class ShaderGraphPlus
 						parameter.Name = $"parameter{parameters.Count}";
 					}
 
-					if ( parameter is ColorBlackboardParameter bp )
+					if ( parameter is ColorParameter bp )
 					{
 						bp.UI = bp.UI with { ShowTypeProperty = false };
 					}
@@ -650,7 +650,7 @@ partial class ShaderGraphPlus
 
 				if ( subgraphInput.InputData.InputType == SubgraphPortType.Bool )
 				{
-					blackboardParameter = new BoolSubgraphInputBlackboardParameter()
+					blackboardParameter = new BoolSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -661,7 +661,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Int )
 				{
-					blackboardParameter = new IntSubgraphInputBlackboardParameter()
+					blackboardParameter = new IntSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -672,7 +672,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Float )
 				{
-					blackboardParameter = new FloatSubgraphInputBlackboardParameter()
+					blackboardParameter = new FloatSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -683,7 +683,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector2 )
 				{
-					blackboardParameter = new Float2SubgraphInputBlackboardParameter()
+					blackboardParameter = new Float2SubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -694,7 +694,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector3 )
 				{
-					blackboardParameter = new Float3SubgraphInputBlackboardParameter()
+					blackboardParameter = new Float3SubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -705,7 +705,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Color )
 				{
-					blackboardParameter = new ColorSubgraphInputBlackboardParameter()
+					blackboardParameter = new ColorSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
@@ -731,7 +731,7 @@ partial class ShaderGraphPlus
 
 				if ( parameterNode is IntParameterNode intNode )
 				{
-					blackboardParameter = new IntBlackboardParameter()
+					blackboardParameter = new IntParameter()
 					{
 						Name = intNode.Name,
 						Value = intNode.Value,
@@ -743,7 +743,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( parameterNode is BoolParameterNode boolNode )
 				{
-					blackboardParameter = new BoolBlackboardParameter()
+					blackboardParameter = new BoolParameter()
 					{
 						Name = boolNode.Name,
 						Value = boolNode.Value,
@@ -755,7 +755,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( parameterNode is FloatParameterNode floatNode )
 				{
-					blackboardParameter = new FloatBlackboardParameter()
+					blackboardParameter = new FloatParameter()
 					{
 						Name = floatNode.Name,
 						Value = floatNode.Value,
@@ -767,7 +767,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( parameterNode is Float2ParameterNode float2Node )
 				{
-					blackboardParameter = new Float2BlackboardParameter()
+					blackboardParameter = new Float2Parameter()
 					{
 						Name = float2Node.Name,
 						Value = float2Node.Value,
@@ -780,7 +780,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( parameterNode is Float3ParameterNode float3Node )
 				{
-					blackboardParameter = new Float3BlackboardParameter()
+					blackboardParameter = new Float3Parameter()
 					{
 						Name = float3Node.Name,
 						Value = float3Node.Value,
@@ -792,7 +792,7 @@ partial class ShaderGraphPlus
 				}
 				else if ( parameterNode is ColorParameterNode colorNode )
 				{
-					blackboardParameter = new ColorBlackboardParameter()
+					blackboardParameter = new ColorParameter()
 					{
 						Name = colorNode.Name,
 						Value = colorNode.Value,

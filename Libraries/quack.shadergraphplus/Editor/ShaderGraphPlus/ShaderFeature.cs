@@ -28,6 +28,26 @@ public class ShaderFeatureBase : IValid
 		Description = "";
 		HeaderName = "";
 	}
+
+	public string GetFeatureString()
+	{
+		return $"F_{Name.ToUpper().Replace( " ", "_" )}";
+	}
+
+	public string GetDynamicComboString()
+	{
+		return $"D_{Name.ToUpper().Replace( " ", "_" )}";
+	}
+
+	public string GetStaticComboString()
+	{
+		return $"S_{Name.ToUpper().Replace( " ", "_" )}";
+	}
+
+	public virtual string GetOptionRangeString()
+	{
+		return $"";
+	}
 }
 
 public class ShaderFeatureBoolean : ShaderFeatureBase
@@ -43,6 +63,11 @@ public class ShaderFeatureBoolean : ShaderFeatureBase
 	public override int GetHashCode()
 	{
 		return System.HashCode.Combine( Name, Description, HeaderName );
+	}
+
+	public override string GetOptionRangeString()
+	{
+		return "0..1";
 	}
 }
 
@@ -71,5 +96,10 @@ public class ShaderFeatureEnum : ShaderFeatureBase
 		}
 
 		return hashcode;
+	}
+
+	public override string GetOptionRangeString()
+	{
+		return $"0..{Options.Count - 1}";
 	}
 }

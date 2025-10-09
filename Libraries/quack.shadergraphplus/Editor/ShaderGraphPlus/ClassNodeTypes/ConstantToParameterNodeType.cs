@@ -38,19 +38,19 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 		return parameterNodeType switch
 		{
-			Type t when t == typeof( BoolParameterNode ) => new BoolBlackboardParameter( (bool)iConstantNode.GetValue() )
+			Type t when t == typeof( BoolParameterNode ) => new BoolParameter( (bool)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid
 			},
-			Type t when t == typeof( IntParameterNode ) => new IntBlackboardParameter( (int)iConstantNode.GetValue() )
+			Type t when t == typeof( IntParameterNode ) => new IntParameter( (int)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid,
 				Min = (int)iConstantNode.GetMinValue(),
 				Max = (int)iConstantNode.GetMaxValue(),
 			},
-			Type t when t == typeof( FloatParameterNode ) => new FloatBlackboardParameter( (float)iConstantNode.GetValue() )
+			Type t when t == typeof( FloatParameterNode ) => new FloatParameter( (float)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid,
@@ -58,7 +58,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				Max = (float)iConstantNode.GetMaxValue(),
 				UI = new() { Step = stepValue, ShowStepProperty = true },
 			},
-			Type t when t == typeof( Float2ParameterNode ) => new Float2BlackboardParameter( (Vector2)iConstantNode.GetValue() )
+			Type t when t == typeof( Float2ParameterNode ) => new Float2Parameter( (Vector2)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid,
@@ -66,7 +66,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				Max = (Vector2)iConstantNode.GetMaxValue(),
 				UI = new() { Step = stepValue, ShowStepProperty = true },
 			},
-			Type t when t == typeof( Float3ParameterNode ) => new Float3BlackboardParameter( (Vector3)iConstantNode.GetValue() )
+			Type t when t == typeof( Float3ParameterNode ) => new Float3Parameter( (Vector3)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid,
@@ -74,7 +74,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				Max = (Vector3)iConstantNode.GetMaxValue(),
 				UI = new() { Step = stepValue, ShowStepProperty = true },
 			},
-			Type t when t == typeof( Float4ParameterNode ) => new Float4BlackboardParameter( (Vector4)iConstantNode.GetValue() )
+			Type t when t == typeof( Float4ParameterNode ) => new Float4Parameter( (Vector4)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid,
@@ -82,7 +82,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				Max = (Vector4)iConstantNode.GetMaxValue(),
 				UI = new() { Step = stepValue, ShowStepProperty = true },
 			},
-			Type t when t == typeof( ColorParameterNode ) => new ColorBlackboardParameter( (Color)iConstantNode.GetValue() )
+			Type t when t == typeof( ColorParameterNode ) => new ColorParameter( (Color)iConstantNode.GetValue() )
 			{
 				Name = name,
 				Identifier = guid

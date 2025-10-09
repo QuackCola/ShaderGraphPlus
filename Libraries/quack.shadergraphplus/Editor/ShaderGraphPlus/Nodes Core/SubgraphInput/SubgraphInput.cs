@@ -57,31 +57,31 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter blackboardParameter )
 	{
-		if ( blackboardParameter is BoolSubgraphInputBlackboardParameter boolParameter )
+		if ( blackboardParameter is BoolSubgraphInputParameter boolParameter )
 		{
 			SetDefaultValue( boolParameter.Value );
 		}
-		else if ( blackboardParameter is IntSubgraphInputBlackboardParameter intParameter )
+		else if ( blackboardParameter is IntSubgraphInputParameter intParameter )
 		{
 			SetDefaultValue( intParameter.Value );
 		}
-		else if ( blackboardParameter is FloatSubgraphInputBlackboardParameter floatParameter )
+		else if ( blackboardParameter is FloatSubgraphInputParameter floatParameter )
 		{
 			SetDefaultValue( floatParameter.Value );
 		}
-		else if ( blackboardParameter is Float2SubgraphInputBlackboardParameter float2Parameter )
+		else if ( blackboardParameter is Float2SubgraphInputParameter float2Parameter )
 		{
 			SetDefaultValue( float2Parameter.Value );
 		}
-		else if ( blackboardParameter is Float3SubgraphInputBlackboardParameter float3Parameter )
+		else if ( blackboardParameter is Float3SubgraphInputParameter float3Parameter )
 		{
 			SetDefaultValue( float3Parameter.Value );
 		}
-		else if ( blackboardParameter is Float4SubgraphInputBlackboardParameter float4Parameter )
+		else if ( blackboardParameter is Float4SubgraphInputParameter float4Parameter )
 		{
 			SetDefaultValue( float4Parameter.Value );
 		}
-		else if ( blackboardParameter is ColorSubgraphInputBlackboardParameter colorParameter )
+		else if ( blackboardParameter is ColorSubgraphInputParameter colorParameter )
 		{
 			SetDefaultValue( colorParameter.Value );
 		}

@@ -7,7 +7,7 @@ HEADER
 FEATURES
 {
 	#include "common/features.hlsl"
-	Feature( F_PARAMETER0, 0..1, "A Header",  "A Description");
+	Feature( F_PARAMETER0, 0..1, "A Header" );
 	
 }
 
