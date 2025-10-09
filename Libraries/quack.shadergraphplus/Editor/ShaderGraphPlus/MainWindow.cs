@@ -651,6 +651,8 @@ public class MainWindow : DockWindow
 
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
+			// Nodes used to fuck up attributes. Uncomment these two lines later
+			// if its discoverd that they still do. Then fix the issue for good.
 			/*
 			// TEMP!!! 
 			if ( node is BooleanFeatureSwitchNode || node is EnumFeatureSwitchNode  )
