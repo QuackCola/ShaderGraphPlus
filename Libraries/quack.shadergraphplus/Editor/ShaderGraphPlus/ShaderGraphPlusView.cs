@@ -417,6 +417,10 @@ public class ShaderGraphPlusView : GraphView
 
 		foreach ( var classType in GetRelevantParameters() )
 		{
+			var targetType = classType.Type.TargetType;
+			if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )
+				continue;
+
 			newParameterMenu.AddOption( classType.Type.Title, classType.Type.Icon, () =>
 			{
 				Dialog.AskString( ( string parameterName ) =>
