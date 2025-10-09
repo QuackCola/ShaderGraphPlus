@@ -224,7 +224,8 @@ public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public ShaderFeatureBoolean Feature { get; set; } = new();
 
-	public bool PreviewToggle { get; set; } = false;
+	[Title( "Preview" )]
+	public bool Preview { get; set; } = false;
 
 	[Output, Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -235,7 +236,7 @@ public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
 			InputFalse
 		};
 
-		return compiler.ResultComboSwitch( inputs, Feature, PreviewToggle ? 1 : 0 );
+		return compiler.ResultComboSwitch( inputs, Feature, Preview ? 1 : 0 );
 	};
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )

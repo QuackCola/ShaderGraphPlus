@@ -1,6 +1,7 @@
 ﻿// Static Switch related code
 //
 
+using Editor.ShaderGraph;
 using NodeEditorPlus;
 using System;
 using System.Text;
@@ -114,6 +115,16 @@ public sealed partial class GraphCompiler
 			if ( index == 0 )
 			{
 				sb.AppendLine( $"{resultDataType} {resultLocal};" );
+				
+				if ( shaderFeature is ShaderFeatureBoolean boolFeature )
+				{
+					sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == SWITCH_TRUE )" );
+				}
+				else
+				{
+					sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
+				}
+
 				ConstructSwitchStart( sb, shaderFeature.Name, index, result.BlockLocals, resultLocal, finaleResult );
 			}
 
@@ -126,13 +137,18 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				if ( index != 0 )
+				if ( index != 0 && index != results.Count - 1 )
 				{
 					ConstructSwitchMid( sb, shaderFeature.Name, index, result.BlockLocals, resultLocal, finaleResult );
 				}
 				else if ( index == results.Count - 1 )
 				{
-					ConstructSwitchEnd( sb, result.BlockLocals, resultLocal, finaleResult );
+					sb.AppendLine( $"#elseif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
+					sb.AppendLine( $"{{" );
+					sb.AppendLine( $"{IndentString( result.BlockLocals, 1 )}" );
+					sb.AppendLine( $"{IndentString( $"{resultLocal} = {finaleResult}", 1 )};" );
+					sb.AppendLine( $"}}" );
+					sb.AppendLine( $"#endif" );
 				}
 			}
 		}
@@ -141,6 +157,11 @@ public sealed partial class GraphCompiler
 		ResultComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
 
 		var finalResult = new NodeResult( resultType, resultLocal );
+
+		if ( IsPreview )
+		{
+			SGPLog.Info( $"Generated Switch D_{shaderFeature.Name.ToUpper()}: \n {sb.ToString()}" );
+		}
 
 		finalResult.SetMetadata( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
 
@@ -183,7 +204,6 @@ public sealed partial class GraphCompiler
 
 	private StringBuilder ConstructSwitchStart( StringBuilder sb, string featureName, int index, string locals, string resultLocal, NodeResult nodeResult )
 	{
-		sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{featureName.ToUpper()} == {index} )" );
 		sb.AppendLine( $"{{" );
 		sb.AppendLine( $"{IndentString( locals, 1 )}" );
 		sb.AppendLine( $"{IndentString( $"{resultLocal} = {nodeResult}", 1 )};" );

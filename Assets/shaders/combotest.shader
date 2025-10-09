@@ -103,7 +103,7 @@ PS
 
 		
 		float4 Parameter0_result;
-		#if ( S_PARAMETER0 == 0 )
+		#if ( S_PARAMETER0 == SWITCH_TRUE )
 		{
 			
 			float3 l_0 = float3( 0, 0, 1 );
