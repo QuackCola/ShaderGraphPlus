@@ -15,7 +15,8 @@ internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<Shad
 		var target = property.Parent.Targets.FirstOrDefault();
 			
 		SGPLog.Info( $"SerializedProperty parent target is \"{target}\"" );
-
+		
+		Graph = null; // Shut up the engine saying this valu is unused.
 		if ( Graph is null ) return;
 
 		//if ( SerializedProperty.GetValue<ShaderFeatureInfo>().IsValid )
