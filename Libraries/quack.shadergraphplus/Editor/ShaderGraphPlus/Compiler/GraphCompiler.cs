@@ -311,11 +311,6 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void ResultComboPreview( string comboName, object value )
-	{
-		OnAttribute?.Invoke( comboName, value, true );
-	}
-
 	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> args, out List<(string userAssigned, string compilerAssigned)> Outputs )
 	{
 		List<TargetResultData> targetResults = new();
