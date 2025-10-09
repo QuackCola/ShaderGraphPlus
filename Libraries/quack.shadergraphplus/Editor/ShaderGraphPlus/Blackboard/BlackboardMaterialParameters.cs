@@ -295,7 +295,7 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 
 	public override BaseNodePlus InitializeNode()
 	{
-		return new BooleanComboSwitchNode()
+		return new BooleanFeatureSwitchNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
 			Feature = new ShaderFeatureBoolean() 
@@ -349,7 +349,7 @@ public sealed class ShaderFeatureEnumParameter : BaseBlackboardParameter, IShade
 
 	public override BaseNodePlus InitializeNode()
 	{
-		return new EnumComboSwitchNode()
+		return new EnumFeatureSwitchNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
 			Feature = new ShaderFeatureEnum()

@@ -38,7 +38,7 @@
       }
     },
     {
-      "_class": "EnumComboSwitchNode",
+      "_class": "EnumFeatureSwitchNode",
       "__version": 1,
       "BlackboardParameterIdentifier": "adcf21ac-e713-4630-a995-3b9cc512a41e",
       "Feature": {

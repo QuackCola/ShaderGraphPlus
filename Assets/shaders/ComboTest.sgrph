@@ -57,7 +57,7 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "BooleanComboSwitchNode",
+      "_class": "BooleanFeatureSwitchNode",
       "__version": 1,
       "BlackboardParameterIdentifier": "0b410d22-cb75-466a-a044-5514ba9fe702",
       "Feature": {

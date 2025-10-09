@@ -165,11 +165,11 @@ public sealed partial class GraphCompiler
 			}
 		}
 
+		//SGPLog.Info( $"Generated Switch D_{shaderFeature.Name.ToUpper()}: \n {sb.ToString()}" );
+
 		if ( IsPreview )
 		{
-			SGPLog.Info( $"Generated Switch D_{shaderFeature.Name.ToUpper()}: \n {sb.ToString()}" );
 			var comboName = shaderFeature.GetDynamicComboString();
-
 			if ( comboName.StartsWith( "D_" ) )
 			{
 				OnAttribute?.Invoke( comboName, previewInt, true );

@@ -18,7 +18,7 @@ internal sealed class ShaderFeatureEnumPreviewIndexAttribute : Attribute
 
 [Title( "Enum Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
-public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncable, IErroringNode
+public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncable, IErroringNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -195,7 +195,7 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 
 [Title( "Boolean Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
-public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
+public sealed class BooleanFeatureSwitchNode : ShaderNodePlus, IBlackboardSyncable
 {
 	[Hide]
 	public override int Version => 1;

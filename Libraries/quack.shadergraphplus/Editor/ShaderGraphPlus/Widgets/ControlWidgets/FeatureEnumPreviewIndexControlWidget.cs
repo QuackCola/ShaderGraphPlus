@@ -6,14 +6,14 @@ namespace ShaderGraphPlus;
 [CustomEditor( typeof( int ), WithAllAttributes = new[] { typeof( ShaderFeatureEnumPreviewIndexAttribute ) } )]
 internal sealed class FeatureEnumPreviewIndexControlWidget : DropdownControlWidgetPlus<int>
 {
-	EnumComboSwitchNode Node;
+	EnumFeatureSwitchNode Node;
 	
 	Entry SelectedEntry;
 	int SelectedIndex;
 
 	public FeatureEnumPreviewIndexControlWidget( SerializedProperty property ) : base( property )
 	{
-		Node = property.Parent.Targets.OfType<EnumComboSwitchNode>().FirstOrDefault();
+		Node = property.Parent.Targets.OfType<EnumFeatureSwitchNode>().FirstOrDefault();
 
 		if ( Node is null ) return;
 

@@ -343,8 +343,8 @@ public class ShaderGraphPlusView : GraphView
 					Float3Parameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
 					Float4Parameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
 					ColorParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
-					ShaderFeatureBooleanParameter => DisplayInfo.ForType( typeof( BooleanComboSwitchNode ) ).Fullname,
-					ShaderFeatureEnumParameter => DisplayInfo.ForType( typeof( EnumComboSwitchNode ) ).Fullname,
+					ShaderFeatureBooleanParameter => DisplayInfo.ForType( typeof( BooleanFeatureSwitchNode ) ).Fullname,
+					ShaderFeatureEnumParameter => DisplayInfo.ForType( typeof( EnumFeatureSwitchNode ) ).Fullname,
 					_ => throw new NotImplementedException(),
 				};
 

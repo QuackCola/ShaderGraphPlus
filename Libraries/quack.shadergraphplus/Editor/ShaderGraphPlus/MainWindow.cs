@@ -651,13 +651,11 @@ public class MainWindow : DockWindow
 
 		foreach ( var node in _graph.Nodes.OfType<BaseNodePlus>() )
 		{
-			// TEMPFIX
-			if ( node is BooleanComboSwitchNode )
+			///*
+			// TEMP!!! 
+			if ( node is BooleanFeatureSwitchNode || node is EnumFeatureSwitchNode  )
 				continue;
-
-			// TEMP!!!
-			if ( node is EnumComboSwitchNode enumComboSwitch )
-				continue;
+			//*/
 
 			// Assign a PreviewID to any Previewable node.
 			if ( node.CanPreview )
