@@ -70,6 +70,17 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 		return Identifier;
 	}
 
+	public string GetCleanName()
+	{
+		if ( string.IsNullOrWhiteSpace( Name ) )
+			return "";
+
+		Name = Name.Trim();
+		Name = new string( Name.Where( x => char.IsLetter( x ) || char.IsNumber( x ) || x == '_' ).ToArray() );
+
+		return Name;
+	}
+
 	public override string ToString()
 	{
 		return $"{DisplayInfo.Fullname}.{Identifier}";
