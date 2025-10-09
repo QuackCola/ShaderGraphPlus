@@ -1,6 +1,9 @@
-﻿using static Sandbox.Resources.ResourceGenerator;
+﻿namespace ShaderGraphPlus;
 
-namespace ShaderGraphPlus;
+[System.AttributeUsage( AttributeTargets.Property )]
+internal sealed class ShaderFeatureReferenceAttribute : Attribute
+{
+}
 
 public class ShaderFeatureBase : IValid
 {
