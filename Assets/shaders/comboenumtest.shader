@@ -113,7 +113,7 @@ PS
 		#elif ( S_PARAMETER0 == 1 )
 		{
 			
-			float4 l_0 = float4( 0.61746, 0.9907, 0.61746, 1 );
+			float4 l_0 = float4( 0, 0.98969495, 0, 1 );
 			
 			Parameter0_result = l_0;
 		}

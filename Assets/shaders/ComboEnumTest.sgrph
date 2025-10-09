@@ -52,7 +52,7 @@
         "Description": null,
         "HeaderName": null
       },
-      "PreviewIndex": 3,
+      "PreviewIndex": 2,
       "Identifier": "1",
       "Position": "-504,108",
       "HandleOffsets": {},
@@ -88,7 +88,7 @@
     {
       "_class": "ColorConstantNode",
       "__version": 1,
-      "Value": "0.61746,0.9907,0.61746,1",
+      "Value": "0,0.9897,0,1",
       "Identifier": "3",
       "Position": "-1044,-24",
       "HandleOffsets": {}
