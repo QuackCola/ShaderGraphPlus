@@ -645,12 +645,7 @@ public class MainWindow : DockWindow
 
 			// TEMP!!!
 			if ( node is EnumComboSwitchNode enumComboSwitch )
-			{
-
-				enumComboSwitch.GetResult( compiler );
-
 				continue;
-			}
 
 			// Assign a PreviewID to any Previewable node.
 			if ( node.CanPreview )
