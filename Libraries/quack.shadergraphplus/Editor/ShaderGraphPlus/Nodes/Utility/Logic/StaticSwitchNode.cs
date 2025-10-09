@@ -6,6 +6,7 @@ using NodeUI = NodeEditorPlus.NodeUI;
 namespace ShaderGraphPlus.Nodes;
 
 // TOODO : Remove this.
+/*
 [Title( "Static Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
 public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
@@ -104,3 +105,4 @@ public sealed class StaticSwitchNode : ShaderNodePlus, IBlackboardSyncable
 		//}
 	};
 }
+*/
