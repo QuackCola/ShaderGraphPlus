@@ -11,6 +11,11 @@ internal sealed class ShaderFeatureReferenceAttribute : Attribute
 { 
 }
 
+[System.AttributeUsage( AttributeTargets.Property )]
+internal sealed class ShaderFeatureEnumPreviewIndexAttribute : Attribute
+{
+}
+
 [Title( "Enum Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
 public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncable, IErroringNode
@@ -32,6 +37,10 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 
 	[Hide]
 	public ShaderFeatureEnum Feature { get; set; } = new();
+
+	[ShaderFeatureEnumPreviewIndex]
+	[Title( "Preview" )]
+	public int PreviewIndex { get; set; } = 0;
 
 	[Hide]
 	private List<IPlugIn> InternalInputs = new();
@@ -164,7 +173,7 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 			}
 		}
 
-		compiler.ResultComboSwitch( inputs, Feature, false );
+		compiler.ResultComboSwitch( inputs, Feature, PreviewIndex );
 	}
 
 	public List<string> GetErrors()
@@ -226,7 +235,7 @@ public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
 			InputFalse
 		};
 
-		return compiler.ResultComboSwitch( inputs, Feature, PreviewToggle );
+		return compiler.ResultComboSwitch( inputs, Feature, PreviewToggle ? 1 : 0 );
 	};
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )

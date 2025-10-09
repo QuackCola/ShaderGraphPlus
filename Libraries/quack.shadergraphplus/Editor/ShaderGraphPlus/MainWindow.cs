@@ -480,15 +480,6 @@ public class MainWindow : DockWindow
 		_shaderCompileErrors.Clear();
 	}
 
-	//private void OnComboAttribute( string name, object value )
-	//{
-	//	if ( !_comboBoolAttributes.ContainsKey( name ) )
-	//	{
-	//		_comboBoolAttributes.Add( name, (bool)value );
-	//		_preview?.SetCombo( name, (bool)value );
-	//	}
-	//}
-
 	private void OnAttribute( string name, object value, bool isCombo = false )
 	{
 		if ( value == null )
@@ -496,27 +487,13 @@ public class MainWindow : DockWindow
 
 		if ( isCombo )
 		{
-			if ( value is bool )
+			if ( value is int intValue )
 			{
-				if ( !_comboBoolAttributes.ContainsKey( name ) )
+				if ( _comboIntAttributes.TryAdd( name, intValue ) )
 				{
-					_comboBoolAttributes.Add( name, (bool)value );
-					_preview3D?.SetCombo( name, (bool)value );
-					_preview2D?.SetCombo( name, (bool)value );
+					_preview3D?.SetCombo( name, intValue );
+					_preview2D?.SetCombo( name, intValue );
 				}
-			}
-			else if ( value is int )
-			{
-				if ( !_comboIntAttributes.ContainsKey( name ) )
-				{
-					_comboIntAttributes.Add( name, (int)value );
-					_preview3D?.SetCombo( name, (int)value );
-					_preview2D?.SetCombo( name, (int)value );
-				}
-			}
-			else if ( value.GetType().IsEnum )
-			{
-				// TODO : Support enum combos
 			}
 
 			return;

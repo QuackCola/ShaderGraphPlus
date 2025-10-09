@@ -86,7 +86,7 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public NodeResult ResultComboSwitch( IEnumerable<NodeInput> inputs, ShaderFeatureBase shaderFeature, bool previewToggle )
+	public NodeResult ResultComboSwitch( IEnumerable<NodeInput> inputs, ShaderFeatureBase shaderFeature, int previewInt )
 	{
 		var sb = new StringBuilder();
 		var results = new List<SwitchBlockResultHolder>();
@@ -136,6 +136,9 @@ public sealed partial class GraphCompiler
 				}
 			}
 		}
+
+
+		ResultComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
 
 		var finalResult = new NodeResult( resultType, resultLocal );
 

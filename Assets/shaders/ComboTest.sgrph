@@ -65,7 +65,7 @@
         "Description": "A Description",
         "HeaderName": "A Header"
       },
-      "PreviewToggle": true,
+      "PreviewToggle": false,
       "Identifier": "3",
       "Position": "-792,48",
       "HandleOffsets": {},
