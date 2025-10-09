@@ -93,7 +93,7 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 			}
 		}
 
-		return compiler.ResultComboSwitch( inputs, Feature, PreviewIndex );
+		return compiler.ResultFeatureSwitch( inputs, Feature, PreviewIndex );
 	};
 
 	public void InitializeNode()
@@ -237,7 +237,7 @@ public sealed class BooleanComboSwitchNode : ShaderNodePlus, IBlackboardSyncable
 			InputFalse
 		};
 
-		return compiler.ResultComboSwitch( inputs, Feature, Preview ? 1 : 0 );
+		return compiler.ResultFeatureSwitch( inputs, Feature, Preview ? 1 : 0 );
 	};
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
