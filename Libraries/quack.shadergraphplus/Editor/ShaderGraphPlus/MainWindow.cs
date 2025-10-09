@@ -115,7 +115,7 @@ public class MainWindow : DockWindow
 	private ProjectCreator ProjectCreator { get; set; }
 
 	private Dictionary<string,ShaderFeatureBase> ShaderFeatures = new();
-	private List<GraphCompiler.Issue> ComboRegistrationErrors { get; set; } = new();
+	private List<GraphCompiler.Issue> BlackboardIssues { get; set; } = new();
 
 	public MainWindow()
 	{
@@ -605,6 +605,18 @@ public class MainWindow : DockWindow
 
 	private string GeneratePreviewCode()
 	{
+		if ( BlackboardIssues.Any() )
+		{
+			_output.GraphIssues = BlackboardIssues;
+			DockManager.RaiseDock( "Output" );
+
+			_generatedCode = null;
+			_generatedCodeTextView.SetTextContents( "" );
+
+			RestoreShader();
+			return null;
+		}
+
 		if ( _autoCompile )
 		{
 			ClearAttributes();
@@ -1901,9 +1913,21 @@ public class MainWindow : DockWindow
 		_blackboardView.RebuildBuildFromGraph( true );
 	}
 
-	private void OnParameterPropertyUpdated( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterPropertyUpdated( BaseBlackboardParameter parameter )
 	{
-		_graph.UpdateParameterNode( blackboardParameter );
+		BlackboardIssues.Clear();
+
+		if ( !string.IsNullOrWhiteSpace( parameter.Name ) )
+		{
+			
+			_graph.UpdateParameterNode( parameter );
+		}
+		else
+		{
+			BlackboardIssues.Add( 
+				new() { Node = null, Message = $"Blackboard parameter with identifier {parameter.Identifier} cannot have a blank name!" } 
+			);
+		}
 
 		SetDirty();
 	}
