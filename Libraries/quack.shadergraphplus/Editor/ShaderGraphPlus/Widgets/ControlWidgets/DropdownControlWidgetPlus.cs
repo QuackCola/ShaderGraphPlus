@@ -2,6 +2,9 @@
 
 namespace ShaderGraphPlus;
 
+/// <summary>
+/// Abstract class to enable easily creating ControlWidgets with dropdowns.
+/// </summary>
 public abstract class DropdownControlWidgetPlus<T> : ControlWidget
 {
 	public override bool SupportsMultiEdit => true;
