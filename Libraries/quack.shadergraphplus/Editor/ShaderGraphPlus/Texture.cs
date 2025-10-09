@@ -231,9 +231,6 @@ public struct TextureInput
 
 #region Graph Editor Only
 	[JsonIgnore, Hide]
-	public StaticSwitchBlock SwitchBlock { get; set; }
-
-	[JsonIgnore, Hide]
 	public string BoundNode { get; set; }
 
 	[JsonIgnore, Hide]
