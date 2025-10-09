@@ -72,6 +72,30 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 		}
 	}
 
+	[Output, Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var inputs = new List<NodeInput>();
+
+		foreach ( var input in Inputs )
+		{
+			if ( input.ConnectedOutput is null )
+			{
+				NodeInput nodeInput = default;
+
+				inputs.Add( nodeInput );
+			}
+			else
+			{
+				NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
+
+				inputs.Add( nodeInput );
+			}
+		}
+
+		return compiler.ResultComboSwitch( inputs, Feature, PreviewIndex );
+	};
+
 	public void InitializeNode()
 	{
 		OnNodeCreated();
@@ -151,29 +175,6 @@ public sealed class EnumComboSwitchNode : ShaderNodePlus, IInitializeNode, IBlac
 			}
 
 		}
-	}
-
-	public void GetResult( GraphCompiler compiler )
-	{
-		var inputs = new List<NodeInput>();
-
-		foreach ( var input in Inputs )
-		{
-			if ( input.ConnectedOutput is null )
-			{
-				NodeInput nodeInput = default;
-
-				inputs.Add( nodeInput );
-			}
-			else
-			{
-				NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
-
-				inputs.Add( nodeInput );
-			}
-		}
-
-		compiler.ResultComboSwitch( inputs, Feature, PreviewIndex );
 	}
 
 	public List<string> GetErrors()
