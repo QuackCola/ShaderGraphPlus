@@ -1919,7 +1919,9 @@ public class MainWindow : DockWindow
 
 		if ( !string.IsNullOrWhiteSpace( parameter.Name ) )
 		{
-			
+			// Clean the parameter name.
+			//parameter.Name = parameter.GetCleanName();
+
 			_graph.UpdateParameterNode( parameter );
 		}
 		else
