@@ -59,12 +59,12 @@ public sealed partial class GraphCompiler
 
 	struct SwitchBlockResultHolder
 	{
-		public string BlockLocals { get; set; }
+		public string GeneratedLocals { get; set; }
 		public NodeResult Result { get; set; }
 
 		public SwitchBlockResultHolder( string locals, NodeResult nodeResult )
 		{
-			BlockLocals = locals;
+			GeneratedLocals = locals;
 			Result = nodeResult;
 		}
 	}
@@ -84,31 +84,31 @@ public sealed partial class GraphCompiler
 	public NodeResult ResultFeatureSwitch( IEnumerable<NodeInput> inputs, ShaderFeatureBase shaderFeature, int previewInt )
 	{
 		var sb = new StringBuilder();
-		var results = new List<SwitchBlockResultHolder>();
+		var blockResults = new List<SwitchBlockResultHolder>();
 
 		foreach ( var input in inputs )
 		{
 			if ( !input.IsValid )
 			{
-				results.Add( new SwitchBlockResultHolder( $"float l_0 = 1.0f;", new NodeResult( ResultType.Float, "l_0" ) ) );
+				blockResults.Add( new SwitchBlockResultHolder( $"float l_0 = 1.0f;", new NodeResult( ResultType.Float, "l_0" ) ) );
 			}
 			else
 			{
-				results.Add( SubEvaluate( input, input.Identifier, shaderFeature ) );
+				blockResults.Add( SubEvaluate( input, input.Identifier, shaderFeature ) );
 			}
 		}
 
-		var resultType = results.Select( x => x.Result.ResultType ).Where( x => !((int)x > 6) ).Max();
-		var resultLocal = $"{shaderFeature.Name}_result";
+		var resultType = blockResults.Select( x => x.Result.ResultType ).Where( x => !((int)x > 6) ).Max();
+		var resultAssignmentLocal = $"{shaderFeature.Name}_result";
 		var resultDataType = resultType.GetHLSLDataType();
 
-		foreach ( var (index, result) in results.Index() )
+		foreach ( var (index, result) in blockResults.Index() )
 		{
-			var finaleResult = new NodeResult( resultType, result.Result.Cast( resultType.GetComponentCount() ) );
+			var lastResult = new NodeResult( resultType, result.Result.Cast( resultType.GetComponentCount() ) );
 
 			if ( index == 0 )
 			{
-				sb.AppendLine( ResultInit( resultType, resultLocal ) ) ; //$"{resultDataType} {resultLocal};" );
+				sb.AppendLine( ResultInit( resultType, resultAssignmentLocal ) ) ; //$"{resultDataType} {resultLocal};" );
 				
 				if ( shaderFeature is ShaderFeatureBoolean boolFeature )
 				{
@@ -119,29 +119,29 @@ public sealed partial class GraphCompiler
 					sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
 				}
 
-				ConstructSwitchStart( sb, shaderFeature.Name, index, result.BlockLocals, resultLocal, finaleResult );
+				ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 			}
 
 			if ( shaderFeature is ShaderFeatureBoolean )
 			{
-				if ( index == results.Count - 1 )
+				if ( index == blockResults.Count - 1 )
 				{
-					ConstructSwitchEnd( sb, result.BlockLocals, resultLocal, finaleResult );
+					sb.AppendLine( $"#else" );
+					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+					sb.AppendLine( $"#endif" );
 				}
 			}
 			else
 			{
-				if ( index != 0 && index != results.Count - 1 )
-				{
-					ConstructSwitchMid( sb, shaderFeature.Name, index, result.BlockLocals, resultLocal, finaleResult );
-				}
-				else if ( index == results.Count - 1 )
+				if ( index != 0 && index != blockResults.Count - 1 )
 				{
 					sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
-					sb.AppendLine( $"{{" );
-					sb.AppendLine( $"{IndentString( result.BlockLocals, 1 )}" );
-					sb.AppendLine( $"{IndentString( $"{resultLocal} = {finaleResult}", 1 )};" );
-					sb.AppendLine( $"}}" );
+					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+				}
+				else if ( index == blockResults.Count - 1 )
+				{
+					sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
+					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 					sb.AppendLine( $"#endif" );
 				}
 			}
@@ -158,7 +158,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 
-		var finalResult = new NodeResult( resultType, resultLocal );
+		var finalResult = new NodeResult( resultType, resultAssignmentLocal );
 		finalResult.SetMetadata( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
 
 		return finalResult;
@@ -204,40 +204,17 @@ public sealed partial class GraphCompiler
 		return new( blockCode, result );
 	}
 
-	private StringBuilder ConstructSwitchStart( StringBuilder sb, string featureName, int index, string locals, string resultLocal, NodeResult nodeResult )
+	private StringBuilder ConstructSwitchBlock( StringBuilder sb, string generatedLocals, string resultAssignmentLocal, NodeResult lastResult )
 	{
 		sb.AppendLine( $"{{" );
-		sb.AppendLine( $"{IndentString( locals, 1 )}" );
-		sb.AppendLine( $"{IndentString( $"{resultLocal} = {nodeResult}", 1 )};" );
+		sb.AppendLine( $"{IndentString( generatedLocals, 1 )}" );
+		sb.AppendLine( $"{IndentString( $"{resultAssignmentLocal} = {lastResult}", 1 )};" );
 		sb.AppendLine( $"}}" );
 
 		return sb;
 	}
 
-	private StringBuilder ConstructSwitchMid( StringBuilder sb, string featureName, int index, string locals, string resultLocal, NodeResult nodeResult )
-	{
-		sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{featureName.ToUpper()} == {index} )" );
-		sb.AppendLine( $"{{" );
-		sb.AppendLine( $"{IndentString( locals, 1 )}" );
-		sb.AppendLine( $"{IndentString( $"{resultLocal} = {nodeResult}", 1 )};" );
-		sb.AppendLine( $"}}" );
-
-		return sb;
-	}
-
-	private static StringBuilder ConstructSwitchEnd( StringBuilder sb, string locals, string resultLocal, NodeResult nodeResult )
-	{
-		sb.AppendLine( $"#else" );
-		sb.AppendLine( $"{{" );
-		sb.AppendLine( $"{IndentString( locals, 1 )}" );
-		sb.AppendLine( $"{IndentString( $"{resultLocal} = {nodeResult}", 1 )};" );
-		sb.AppendLine( $"}}" );
-		sb.AppendLine( $"#endif" );
-
-		return sb;
-	}
-
-	internal string BuildFeatureOptionsBody( List<string> options )
+	private string BuildFeatureOptionsBody( List<string> options )
 	{
 		var options_body = "";
 		int count = 0;
@@ -263,7 +240,7 @@ public sealed partial class GraphCompiler
 		return options_body;
 	}
 
-	internal string ResultInit( ResultType resultType, string name )
+	private string ResultInit( ResultType resultType, string name )
 	{
 		switch ( resultType )
 		{
