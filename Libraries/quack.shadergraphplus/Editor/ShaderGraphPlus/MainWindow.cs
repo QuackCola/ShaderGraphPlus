@@ -1954,11 +1954,11 @@ public class MainWindow : DockWindow
 
 					if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
 					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature \"{featureEnumParameter.Name}\" is blank!" );
+						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature \"{featureEnumParameter.Name}\" is blank!" );
 					}
 					else
 					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature with identifier \"{parameter.Identifier}\" is blank!" );
+						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature with identifier \"{parameter.Identifier}\" is blank!" );
 					}
 				}
 			}
