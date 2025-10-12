@@ -1894,7 +1894,7 @@ public class MainWindow : DockWindow
 
 				_graphView.RebuildFromGraph();
 
-				break;
+				//break;
 			}
 		}
 
