@@ -119,7 +119,7 @@ public sealed partial class GraphCompiler
 					sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
 				}
 
-				ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+				BuildSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 			}
 
 			if ( shaderFeature is ShaderFeatureBoolean )
@@ -127,7 +127,7 @@ public sealed partial class GraphCompiler
 				if ( index == blockResults.Count - 1 )
 				{
 					sb.AppendLine( $"#else" );
-					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+					BuildSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 					sb.AppendLine( $"#endif" );
 				}
 			}
@@ -136,12 +136,12 @@ public sealed partial class GraphCompiler
 				if ( index != 0 && index != blockResults.Count - 1 )
 				{
 					sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
-					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+					BuildSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 				}
 				else if ( index == blockResults.Count - 1 )
 				{
 					sb.AppendLine( $"#elif ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == {index} )" );
-					ConstructSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
+					BuildSwitchBlock( sb, result.GeneratedLocals, resultAssignmentLocal, lastResult );
 					sb.AppendLine( $"#endif" );
 				}
 			}
@@ -204,7 +204,7 @@ public sealed partial class GraphCompiler
 		return new( blockCode, result );
 	}
 
-	private StringBuilder ConstructSwitchBlock( StringBuilder sb, string generatedLocals, string resultAssignmentLocal, NodeResult lastResult )
+	private StringBuilder BuildSwitchBlock( StringBuilder sb, string generatedLocals, string resultAssignmentLocal, NodeResult lastResult )
 	{
 		sb.AppendLine( $"{{" );
 		sb.AppendLine( $"{IndentString( generatedLocals, 1 )}" );
