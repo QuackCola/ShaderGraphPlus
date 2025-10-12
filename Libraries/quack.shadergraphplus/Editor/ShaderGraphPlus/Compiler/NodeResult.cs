@@ -410,7 +410,8 @@ public static class ResultTypeExtentions
 			case ResultType.Float4x4:
 				return 16;
 			default:
-				throw new Exception( $"ResultType `{resultType}` has no components" );
+				SGPLog.Warning( $"ResultType \"{resultType}\" has no components" );
+				return 0;
 		}
 	}
 
@@ -484,7 +485,7 @@ public static class ResultTypeExtentions
 			case ResultType.TextureCubeObject:
 				return typeof( TextureCubeObject );
 			default:
-				throw new Exception( $"Unsupported ResultType `{resultType}`" );
+				throw new Exception( $"Unsupported ResultType \"{resultType}\"" );
 		}
 	}
 }
