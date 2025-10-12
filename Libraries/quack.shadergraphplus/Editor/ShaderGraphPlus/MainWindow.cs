@@ -1789,7 +1789,7 @@ public class MainWindow : DockWindow
 		_blackboardView.Graph = _graph;
 		_blackboardView.OnDirty += () => { SetDirty(); };
 		_blackboardView.OnParameterSelected += ( p ) => { OnParameterSelected( p ); };
-		_blackboardView.OnParameterChanged += ( p ) => { OnParameterPropertyUpdated( p ); };
+		//_blackboardView.OnParameterChanged += ( p ) => { OnParameterPropertyUpdated( p ); };
 		_blackboardView.OnParameterCreated += ( p ) => { OnParameterPropertyCreated( p ); };
 		_blackboardView.OnParameterDeleted += ( p ) => { OnParameterDeleted( p ); };
 		_blackboardCanvas.Layout.Add( _blackboardView, 1 );
@@ -1834,12 +1834,12 @@ public class MainWindow : DockWindow
 	/// <summary>
 	/// Called when a blackboard parameter is selected.
 	/// </summary>
-	private void OnParameterSelected( BaseBlackboardParameter blackboardParameter )
+	private void OnParameterSelected( BaseBlackboardParameter parameter )
 	{
 		_graphView.ClearSelection();
 
-		_properties.Target = blackboardParameter;
-		_blackboardView.SetSelectedItem( blackboardParameter );
+		_properties.Target = parameter;
+		_blackboardView.SetSelectedItem( parameter );
 	}
 
 	/// <summary>
@@ -1913,35 +1913,12 @@ public class MainWindow : DockWindow
 		_blackboardView.RebuildBuildFromGraph( true );
 	}
 
-	private void OnParameterPropertyUpdated( BaseBlackboardParameter parameter )
-	{
-		BlackboardIssues.Clear();
-
-		if ( !string.IsNullOrWhiteSpace( parameter.Name ) )
-		{
-			// Clean the parameter name.
-			//parameter.Name = parameter.GetCleanName();
-
-			_graph.UpdateParameterNode( parameter );
-		}
-		else
-		{
-			BlackboardIssues.Add( 
-				new() { Node = null, Message = $"Blackboard parameter with identifier {parameter.Identifier} cannot have a blank name!" } 
-			);
-		}
-
-		SetDirty();
-	}
-
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
 		_preview3D.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
-			//SGPLog.Info( $"Property `{serializedProperty.Name}` changed",true);
-
 			if ( node is ISyncableTextureNode syncableTexturePreview )
 			{
 				// Avoid Syncing when the changed property was the Name property of the TextureInput UI property.
@@ -1953,55 +1930,22 @@ public class MainWindow : DockWindow
 				}
 			}
 
-			/*
-			if ( node is IParameterNode parameterNode )
-			{
-				BaseBlackboardParameter newBlackboardParameter;
-
-				switch ( parameterNode )
-				{
-					case BoolParameterNode boolParam:
-						newBlackboardParameter = new BoolBlackboardParameter( boolParam.Value ) { Name = boolParam.Name, Identifier = boolParam.BlackboardParameterIdentifier, UI = boolParam.UI };
-						break;
-					case IntParameterNode intParam:
-						newBlackboardParameter = new IntBlackboardParameter( intParam.Value ) { Name = intParam.Name, Identifier = intParam.BlackboardParameterIdentifier, UI = intParam.UI };
-						break;
-					case FloatParameterNode floatParam:
-						newBlackboardParameter = new FloatBlackboardParameter( floatParam.Value ) { Name = floatParam.Name, Identifier = floatParam.BlackboardParameterIdentifier, UI = floatParam.UI };
-						break;
-					case Float2ParameterNode float2Param:
-						newBlackboardParameter = new Float2BlackboardParameter( float2Param.Value ) { Name = float2Param.Name, Identifier = float2Param.BlackboardParameterIdentifier, UI = float2Param.UI };
-						break;
-					case Float3ParameterNode float3Param:
-						newBlackboardParameter = new Float3BlackboardParameter( float3Param.Value ) { Name = float3Param.Name, Identifier = float3Param.BlackboardParameterIdentifier, UI = float3Param.UI };
-						break;
-					case Float4ParameterNode float4Param:
-						newBlackboardParameter = new Float4BlackboardParameter( float4Param.Value ) { Name = float4Param.Name, Identifier = float4Param.BlackboardParameterIdentifier, UI = float4Param.UI };
-						break;
-					case ColorParameterNode ColorParam:
-						newBlackboardParameter = new ColorBlackboardParameter( ColorParam.Value ) { Name = ColorParam.Name, Identifier = ColorParam.BlackboardParameterIdentifier, UI = ColorParam.UI };
-						break;
-					default:
-						throw new NotImplementedException();
-				}
-
-				if ( _graph.TryUpdateBlackboardParameter( newBlackboardParameter ) )
-				{
-					_blackboard.UpdateBlackboard( true );
-				}
-			}
-			*/
-
 			_graphView.UpdateNode( node );
 		}
 		
-		if ( _properties.Target is BaseBlackboardParameter blackboardParameter )
+		if ( _properties.Target is BaseBlackboardParameter parameter )
 		{
-			OnParameterPropertyUpdated( blackboardParameter );
+			// Dont update a node on the graph if the updated parameter is bad.
+			ValidateParameter( parameter );
+
+			if ( !BlackboardIssues.Any() )
+			{
+				_graph.UpdateParameterNode( parameter );
+			}
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
-
+		
 		SetDirty( shouldEvaluate );
 	}
 
@@ -2058,5 +2002,42 @@ public class MainWindow : DockWindow
 		}
 
 		GeneratePreviewCode();
+	}
+
+	private void ValidateParameter( BaseBlackboardParameter parameter )
+	{
+		BlackboardIssues.Clear();
+
+		if ( string.IsNullOrWhiteSpace( parameter.Name ) )
+		{
+			AddBlackboardIssue( $"Parameter with identifier \"{parameter.Identifier}\" cannot have a blank name!" );
+		}
+
+		if ( parameter is ShaderFeatureEnumParameter featureEnumParameter )
+		{
+			foreach ( var option in featureEnumParameter.Options.Index() )
+			{
+				if ( !string.IsNullOrWhiteSpace( option.Item ) )
+				{
+					continue;
+				}
+
+				if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
+				{
+					AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature \"{featureEnumParameter.Name}\" is blank!" );
+				}
+				else
+				{
+					AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature with identifier \"{parameter.Identifier}\" is blank!" );
+				}
+			}
+		}
+	}
+
+	private void AddBlackboardIssue( string issueMessage )
+	{
+		BlackboardIssues.Add(
+			new() { Node = null, Message = issueMessage }
+		);
 	}
 }

@@ -56,7 +56,8 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 
 			//SGPLog.Info( $"HashCode changed from : {oldHashCode} to {_lastHashCodeInputs}" );
 
-			if ( !_hasFeatureError )
+			// Dont update or change if feature is not valid!
+			if ( Feature.IsValid )
 			{
 				CreateInputs();
 				Update();
