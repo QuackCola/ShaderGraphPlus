@@ -1971,7 +1971,6 @@ public class MainWindow : DockWindow
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
-		
 		SetDirty( shouldEvaluate );
 	}
 
