@@ -173,11 +173,10 @@ public sealed partial class GraphCompiler
 
 		VertexResult = new();
 		PixelResult = new();
-
+		InputStack = new();
 		VertexResult.SetAttributes( outerVertexResult.Attributes );
 		PixelResult.SetAttributes( outerPixelResult.Attributes );
-		InputStack = new();
-
+		
 		var result = Result( input );
 		var blockCode = GenerateLocals( true );
 
