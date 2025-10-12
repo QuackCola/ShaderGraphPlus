@@ -69,11 +69,11 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void ResultComboPreview( string comboName, int preview )
+	public void SetComboPreview( string comboName, int preview )
 	{
 		if ( IsNotPreview )
 		{
-			SGPLog.Warning( $"{nameof( ResultComboPreview )} was called when IsPreview is false!" );
+			SGPLog.Warning( $"{nameof( SetComboPreview )} was called when IsPreview is false!" );
 			return;
 		}
 			
@@ -157,7 +157,7 @@ public sealed partial class GraphCompiler
 
 		if ( IsPreview )
 		{
-			ResultComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
+			SetComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
 		}
 
 		var finalResult = new NodeResult( resultType, resultAssignmentLocal );
