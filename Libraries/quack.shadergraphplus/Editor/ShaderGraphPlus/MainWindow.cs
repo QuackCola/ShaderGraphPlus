@@ -565,11 +565,11 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	// TODO : Clean this function up from old crap i had before the refactor.
 	private void RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues )
 	{
-		registrationIssues = new();
 		ShaderFeatures.Clear();
+		registrationIssues = new();
+
 		var features = _graph.Parameters.OfType<IShaderFeatureParameter>();
 
 		foreach ( var feature in features )
@@ -605,6 +605,7 @@ public class MainWindow : DockWindow
 
 	private string GeneratePreviewCode()
 	{
+
 		if ( BlackboardIssues.Any() )
 		{
 			_output.GraphIssues = BlackboardIssues;
