@@ -605,7 +605,6 @@ public class MainWindow : DockWindow
 
 	private string GeneratePreviewCode()
 	{
-
 		if ( BlackboardIssues.Any() )
 		{
 			_output.GraphIssues = BlackboardIssues;
