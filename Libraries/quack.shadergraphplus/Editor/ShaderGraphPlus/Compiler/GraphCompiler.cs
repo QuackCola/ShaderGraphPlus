@@ -1711,11 +1711,21 @@ public sealed partial class GraphCompiler
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 			if ( resultNode == null )
 				return null;
+
 			var albedoResult = resultNode.GetAlbedoResult( this );
-			string albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3( 1.0f, 1.0f, 1.0f )";
+			string albedo = "float3( 1.0f, 1.0f, 1.0f )";
+			if ( albedoResult.IsValid )
+			{
+				albedo = albedoResult.Cast( GetComponentCount( typeof( Vector3 ) ) ) ?? "float3( 1.0f, 1.0f, 1.0f )";
+			}
+
 			var opacityResult = resultNode.GetOpacityResult( this );
-			string opacity = opacityResult.Cast( 1 ) ?? "1.0f";
-		
+			string opacity = "1.0f";
+			if ( opacityResult.IsValid )
+			{
+				opacity = opacityResult.Cast( 1 ) ?? "1.0f";
+			}
+
 			return $"return float4( {albedo}, {opacity} );";
 		}
 		else if ( Graph.ShadingModel == ShadingModel.Lit )
