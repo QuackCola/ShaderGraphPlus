@@ -151,11 +151,7 @@ public sealed partial class GraphCompiler
 
 		if ( IsPreview )
 		{
-			var comboName = shaderFeature.GetDynamicComboString();
-			if ( comboName.StartsWith( "D_" ) )
-			{
-				OnAttribute?.Invoke( comboName, previewInt, true );
-			}
+			ResultComboPreview( shaderFeature.GetDynamicComboString(), previewInt );
 		}
 
 		var finalResult = new NodeResult( resultType, resultAssignmentLocal );
