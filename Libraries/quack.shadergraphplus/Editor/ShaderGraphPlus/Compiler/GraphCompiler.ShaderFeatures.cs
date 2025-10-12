@@ -71,6 +71,12 @@ public sealed partial class GraphCompiler
 
 	public void ResultComboPreview( string comboName, int preview )
 	{
+		if ( IsNotPreview )
+		{
+			SGPLog.Warning( $"{nameof( ResultComboPreview )} was called when IsPreview is false!" );
+			return;
+		}
+			
 		if ( comboName.StartsWith( $"D_" ) )
 		{
 			OnAttribute?.Invoke( comboName, preview, true );
