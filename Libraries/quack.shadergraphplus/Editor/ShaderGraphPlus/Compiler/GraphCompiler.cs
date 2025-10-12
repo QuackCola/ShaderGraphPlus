@@ -100,6 +100,8 @@ public sealed partial class GraphCompiler
 		public int VoidLocalCount { get; set; } = 0;
 		public string RepresentativeTexture { get; set; }
 
+
+
 		public void SetAttributes( Dictionary<string, object> attributes )
 		{
 			Attributes = attributes;

@@ -86,7 +86,9 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 			}
 		}
 
-		return compiler.ResultFeatureSwitch( inputs, Feature, PreviewIndex );
+		var result = compiler.ResultFeatureSwitch( inputs, Feature, PreviewIndex );
+
+		return result.IsValid ? result : new NodeResult( ResultType.Float, $"1.0f" );
 	};
 
 	public void InitializeNode()

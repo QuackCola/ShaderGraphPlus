@@ -52,6 +52,11 @@ public struct FeatureRule : IValid
 
 public sealed partial class GraphCompiler
 {
+	private partial class CompileResult
+	{
+		public List<string> ShaderFeatureResultStrings { get; set; } = new();
+	}
+
 	/// <summary>
 	/// Registerd ShaderFeatures of the current project.
 	/// </summary>
@@ -104,8 +109,18 @@ public sealed partial class GraphCompiler
 			}
 		}
 
+		if ( !blockResults.Any() )
+			return default;
+
 		var resultType = blockResults.Select( x => x.Result.ResultType ).Where( x => !((int)x > 6) ).Max();
-		var resultAssignmentLocal = $"{shaderFeature.Name}_result";
+		var id = 0;
+		
+		while ( ShaderResult.ShaderFeatureResultStrings.Contains( $"{shaderFeature.Name}_result{id}" ) )
+		{
+			id++;
+		}
+
+		var resultAssignmentLocal = $"{shaderFeature.Name}_result{id}";
 		var resultDataType = resultType.GetHLSLDataType();
 
 		foreach ( var (index, result) in blockResults.Index() )
@@ -162,6 +177,11 @@ public sealed partial class GraphCompiler
 
 		var finalResult = new NodeResult( resultType, resultAssignmentLocal );
 		finalResult.SetMetadata( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
+
+		if ( !ShaderResult.ShaderFeatureResultStrings.Contains( resultAssignmentLocal ) )
+		{
+			ShaderResult.ShaderFeatureResultStrings.Add( resultAssignmentLocal );
+		}
 
 		return finalResult;
 	}

@@ -46,7 +46,9 @@ public sealed class BooleanFeatureSwitchNode : ShaderNodePlus, IBlackboardSyncab
 			InputFalse
 		};
 
-		return compiler.ResultFeatureSwitch( inputs, Feature, Preview ? 1 : 0 );
+		var result = compiler.ResultFeatureSwitch( inputs, Feature, Preview ? 1 : 0 );
+
+		return result.IsValid ? result : new NodeResult( ResultType.Float, $"1.0f" );
 	};
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
