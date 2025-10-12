@@ -389,8 +389,8 @@ public static class ResultTypeExtentions
 	{
 		switch ( resultType )
 		{
-			case ResultType.Bool:
-				return 1;
+			//case ResultType.Bool:
+			//	return 1;
 			case ResultType.Int:
 				return 1;
 			case ResultType.Float:
