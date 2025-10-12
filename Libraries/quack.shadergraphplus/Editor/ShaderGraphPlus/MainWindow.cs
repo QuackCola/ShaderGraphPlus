@@ -1915,6 +1915,8 @@ public class MainWindow : DockWindow
 
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
+		BlackboardIssues.Clear();
+
 		_preview3D.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
@@ -1935,9 +1937,33 @@ public class MainWindow : DockWindow
 		
 		if ( _properties.Target is BaseBlackboardParameter parameter )
 		{
-			// Dont update a node on the graph if the updated parameter is bad.
-			ValidateParameter( parameter );
 
+			if ( string.IsNullOrWhiteSpace( parameter.Name ) )
+			{
+				AddBlackboardIssue( $"Parameter with identifier \"{parameter.Identifier}\" cannot have a blank name!" );
+			}
+
+			if ( parameter is ShaderFeatureEnumParameter featureEnumParameter )
+			{
+				foreach ( var option in featureEnumParameter.Options.Index() )
+				{
+					if ( !string.IsNullOrWhiteSpace( option.Item ) )
+					{
+						continue;
+					}
+
+					if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
+					{
+						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature \"{featureEnumParameter.Name}\" is blank!" );
+					}
+					else
+					{
+						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature with identifier \"{parameter.Identifier}\" is blank!" );
+					}
+				}
+			}
+
+			// Dont update a node on the graph if we have any blackboard issues.
 			if ( !BlackboardIssues.Any() )
 			{
 				_graph.UpdateParameterNode( parameter );
@@ -2002,36 +2028,6 @@ public class MainWindow : DockWindow
 		}
 
 		GeneratePreviewCode();
-	}
-
-	private void ValidateParameter( BaseBlackboardParameter parameter )
-	{
-		BlackboardIssues.Clear();
-
-		if ( string.IsNullOrWhiteSpace( parameter.Name ) )
-		{
-			AddBlackboardIssue( $"Parameter with identifier \"{parameter.Identifier}\" cannot have a blank name!" );
-		}
-
-		if ( parameter is ShaderFeatureEnumParameter featureEnumParameter )
-		{
-			foreach ( var option in featureEnumParameter.Options.Index() )
-			{
-				if ( !string.IsNullOrWhiteSpace( option.Item ) )
-				{
-					continue;
-				}
-
-				if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
-				{
-					AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature \"{featureEnumParameter.Name}\" is blank!" );
-				}
-				else
-				{
-					AddBlackboardIssue( $"Option at element index \"{option.Index}\" of shader feature with identifier \"{parameter.Identifier}\" is blank!" );
-				}
-			}
-		}
 	}
 
 	private void AddBlackboardIssue( string issueMessage )
