@@ -29,7 +29,7 @@ public sealed class GuidControlWidget : ControlObjectWidget
 
 	bool PaintReadonly()
 	{
-		Editor.Paint.DrawText( LocalRect, Guid.ToString(), TextFlag.LeftCenter );
+		Editor.Paint.DrawText( LocalRect.Shrink( 8, 0, 0, 0 ), Guid.ToString(), TextFlag.LeftCenter );
 		return true;
 	}
 }
