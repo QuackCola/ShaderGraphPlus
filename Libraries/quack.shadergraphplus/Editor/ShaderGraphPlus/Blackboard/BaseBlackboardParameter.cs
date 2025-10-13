@@ -1,6 +1,4 @@
-﻿using static Sandbox.Resources.ResourceGenerator;
-
-namespace ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 internal interface ISubgraphBlackboardParameter
 {
@@ -18,7 +16,7 @@ internal interface IShaderFeatureParameter
 
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
-	[Sandbox.ReadOnly, Browsable( false )]
+	[Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
