@@ -79,7 +79,7 @@ public class ShaderFunctionOutput
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
 				SubgraphPortType.Vector4 => typeof( Color ),
 				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.SamplerState => typeof( Sampler ),
 				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 				SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
 				_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
@@ -125,7 +125,7 @@ public class ShaderFunctionOutput
 			//
 			//	break;
 			case Type t when t == typeof( Sampler ):
-				OutputType = SubgraphPortType.Sampler;
+				OutputType = SubgraphPortType.SamplerState;
 				break;
 			case Type t when t == typeof( Texture2DObject ):
 				OutputType = SubgraphPortType.Texture2DObject;
@@ -238,7 +238,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			//
 			//	break;
 			case Type t when t == typeof( Sampler ):
-				OutputType = SubgraphPortType.Sampler;
+				OutputType = SubgraphPortType.SamplerState;
 				break;
 			case Type t when t == typeof( Texture2DObject ):
 				OutputType = SubgraphPortType.Texture2DObject;
@@ -304,7 +304,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			SubgraphPortType.Vector3 => typeof( Vector3 ),
 			SubgraphPortType.Vector4 => typeof( Color ),
 			SubgraphPortType.Color => typeof( Color ),
-			SubgraphPortType.Sampler => typeof( Sampler ),
+			SubgraphPortType.SamplerState => typeof( Sampler ),
 			SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 			SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
 			_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
@@ -343,7 +343,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	{
 		errors = new List<string>();
 
-		if ( OutputType == SubgraphPortType.Sampler ||
+		if ( OutputType == SubgraphPortType.SamplerState ||
 			 OutputType == SubgraphPortType.Texture2DObject ||
 			 OutputType == SubgraphPortType.TextureCubeObject
 		)

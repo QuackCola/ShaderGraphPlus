@@ -1309,11 +1309,11 @@ partial class ShaderGraphPlus
 				}
 				break;
 			case "SamplerNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Sampler;
+				subgraphInput.InputData.InputType = SubgraphPortType.SamplerState;
 				if ( element.TryGetProperty( "SamplerState", out var SamplerStateValue ) )
 				{
 					var samplerState = JsonSerializer.Deserialize<Sampler>( SamplerStateValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueSampler( samplerState, SubgraphPortType.Sampler );
+					subgraphInput.InputData = new VariantValueSamplerState( samplerState, SubgraphPortType.SamplerState );
 				}
 				break;
 		}

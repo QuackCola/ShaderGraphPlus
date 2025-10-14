@@ -17,7 +17,7 @@ internal abstract class ParamProperty : SerializedProperty
 			VariantValueVector3 => new VariantValueVector3.ParamPropertyVector3( parent, "Default Vector3" ),
 			VariantValueVector4 => new VariantValueVector4.ParamPropertyVector4( parent, "Default Vector4" ),
 			VariantValueColor => new VariantValueColor.ParamPropertyColor( parent, "Default Color" ),
-			VariantValueSampler => new VariantValueSampler.ParamPropertySampler( parent, "Default Sampler" ),
+			VariantValueSamplerState => new VariantValueSamplerState.ParamPropertySampler( parent, "Default Sampler" ),
 			VariantValueTexture2D => new VariantValueTexture2D.ParamPropertyTexture2D( parent, "Default Texture2D" ),
 			_ => null,
 		};

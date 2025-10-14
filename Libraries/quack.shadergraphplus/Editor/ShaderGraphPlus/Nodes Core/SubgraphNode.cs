@@ -115,7 +115,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
 				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.SamplerState => typeof( Sampler ),
 				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 				_ => throw new Exception( $"Unknown PortType \"{subgraphInput.InputData.InputType}\"" )
 			};
@@ -175,7 +175,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
 				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.Sampler => typeof( Sampler ),
+				SubgraphPortType.SamplerState => typeof( Sampler ),
 				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 				_ => throw new Exception( $"Unknown PortType \"{subgraphOutput.OutputType}\"" )
 			};

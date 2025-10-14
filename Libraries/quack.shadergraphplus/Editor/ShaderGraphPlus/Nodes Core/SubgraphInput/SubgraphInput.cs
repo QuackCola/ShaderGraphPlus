@@ -24,7 +24,7 @@ public enum SubgraphPortType
 	[Title( "Color" ), Icon( "palette" )]
 	Color,
 	[Title( "Sampler State" ), Icon( "colorize" )]
-	Sampler,
+	SamplerState,
 	[Title( "Texture2D" ), Icon( "texture" )]
 	Texture2DObject,
 	[Title( "TextureCube" ), Icon( "texture" )]
@@ -92,6 +92,10 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		else if ( blackboardParameter is TextureCubeSubgraphInputParameter textureCubeParameter )
 		{
 			SetDefaultValue( textureCubeParameter.Value );
+		}
+		else if ( blackboardParameter is SamplerStateSubgraphInputParameter samplerStateParameter )
+		{
+			SetDefaultValue( samplerStateParameter.Value );
 		}
 	}
 
@@ -218,7 +222,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
 			SubgraphPortType.Vector4 => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
 			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
-			SubgraphPortType.Sampler => ( ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
+			SubgraphPortType.SamplerState => ( ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
 			SubgraphPortType.TextureCubeObject => (ResultType.TextureCubeObject, ResultTexture( compiler )),
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )

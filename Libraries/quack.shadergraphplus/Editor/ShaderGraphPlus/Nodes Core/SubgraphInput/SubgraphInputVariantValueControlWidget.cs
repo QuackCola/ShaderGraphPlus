@@ -73,8 +73,8 @@ internal class SubgraphInputVariantValueControlWidget : ControlWidget
 			case SubgraphPortType.Color:
 				Node.InputData = new VariantValueColor( Color.White, SubgraphPortType.Color );
 				break;
-			case SubgraphPortType.Sampler:
-				Node.InputData = new VariantValueSampler( new Sampler(), SubgraphPortType.Sampler ) ;
+			case SubgraphPortType.SamplerState:
+				Node.InputData = new VariantValueSamplerState( new Sampler(), SubgraphPortType.SamplerState ) ;
 				break;
 			case SubgraphPortType.Texture2DObject:
 				Node.InputData = new VariantValueTexture2D( new TextureInput(), SubgraphPortType.Texture2DObject );

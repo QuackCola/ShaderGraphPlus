@@ -344,3 +344,34 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 		};
 	}
 }
+
+/// <summary>
+/// Sampler State subgraph input
+/// </summary>
+[Title( "Sampler State" ), Icon( "colorize" ), Order( 8 )]
+[SubgraphOnly]
+public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInputParameter<Sampler>
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 8;
+
+	public SamplerStateSubgraphInputParameter() : base()
+	{
+		Value = new Sampler();
+	}
+
+	public SamplerStateSubgraphInputParameter( Sampler value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueSamplerState( Value, SubgraphPortType.SamplerState )
+		};
+	}
+}

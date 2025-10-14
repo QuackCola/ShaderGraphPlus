@@ -44,9 +44,11 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 							SubgraphPortType.Float => JsonSerializer.Deserialize<float>( ref reader, options ),
 							SubgraphPortType.Vector2 => JsonSerializer.Deserialize<Vector2>( ref reader, options ),
 							SubgraphPortType.Vector3 => JsonSerializer.Deserialize<Vector3>( ref reader, options ),
+							SubgraphPortType.Vector4 => JsonSerializer.Deserialize<Vector4>( ref reader, options ),
 							SubgraphPortType.Color => JsonSerializer.Deserialize<Color>( ref reader, options ),
-							SubgraphPortType.Sampler => JsonSerializer.Deserialize<Sampler>( ref reader, options ),
 							SubgraphPortType.Texture2DObject => JsonSerializer.Deserialize<TextureInput>( ref reader, options ),
+							SubgraphPortType.TextureCubeObject => JsonSerializer.Deserialize<TextureInput>( ref reader, options ),
+							SubgraphPortType.SamplerState => JsonSerializer.Deserialize<Sampler>( ref reader, options ),
 							_ => throw new JsonException( $"Unknown InputType \"{inputType}\"" )
 						};
 
@@ -59,7 +61,7 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 
 		if ( typeInstance != null )
 		{
-			var variant = VariantValueBase.CreateNew( typeInstance, inputType, istextureCubeType );
+			var variant = VariantValueBase.InitilizeInstance( typeInstance, inputType, istextureCubeType );
 			return variant;
 		}
 
@@ -98,14 +100,14 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 			case SubgraphPortType.Color:
 				JsonSerializer.Serialize( writer, ((VariantValueColor)value).Value, options );
 				break;
-			case SubgraphPortType.Sampler:
-				JsonSerializer.Serialize( writer, ((VariantValueSampler)value).Value, options );
-				break;
 			case SubgraphPortType.Texture2DObject:
 				JsonSerializer.Serialize( writer, ((VariantValueTexture2D)value).Value, options );
 				break;
 			case SubgraphPortType.TextureCubeObject:
 				JsonSerializer.Serialize( writer, ((VariantValueTextureCube)value).Value, options );
+				break;
+			case SubgraphPortType.SamplerState:
+				JsonSerializer.Serialize( writer, ((VariantValueSamplerState)value).Value, options );
 				break;
 			default:
 				writer.WriteNullValue();

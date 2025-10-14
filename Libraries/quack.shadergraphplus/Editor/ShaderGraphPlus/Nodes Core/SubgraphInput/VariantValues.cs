@@ -11,9 +11,9 @@
 [JsonDerivedType( typeof( VariantValueVector3 ) )]
 [JsonDerivedType( typeof( VariantValueVector4 ) )]
 [JsonDerivedType( typeof( VariantValueColor ) )]
-[JsonDerivedType( typeof( VariantValueSampler ) )]
 [JsonDerivedType( typeof( VariantValueTexture2D ) )]
 [JsonDerivedType( typeof( VariantValueTextureCube ) )]
+[JsonDerivedType( typeof( VariantValueSamplerState ) )]
 public abstract class VariantValueBase
 {
 	public virtual SubgraphPortType InputType { get; set; }
@@ -27,7 +27,7 @@ public abstract class VariantValueBase
 		InputType = inputType;
 	}
 
-	public static VariantValueBase CreateNew( object typeInstance, SubgraphPortType inputType, bool istextureCubeType = false )
+	public static VariantValueBase InitilizeInstance( object typeInstance, SubgraphPortType inputType, bool istextureCubeType = false )
 	{
 		return typeInstance switch
 		{
@@ -38,8 +38,8 @@ public abstract class VariantValueBase
 			Vector3 => new VariantValueVector3( (Vector3)typeInstance, SubgraphPortType.Vector3 ),
 			Vector4 => new VariantValueVector4( (Vector4)typeInstance, SubgraphPortType.Vector4 ),
 			Color => new VariantValueColor( (Color)typeInstance, SubgraphPortType.Color ),
-			Sampler => new VariantValueSampler( (Sampler)typeInstance, SubgraphPortType.Sampler ),
 			TextureInput => !istextureCubeType ? new VariantValueTexture2D( ((TextureInput)typeInstance) with { Type = TextureType.Tex2D }, SubgraphPortType.Texture2DObject ) : new VariantValueTextureCube( ((TextureInput)typeInstance) with { Type = TextureType.TexCube }, SubgraphPortType.TextureCubeObject ),
+			Sampler => new VariantValueSamplerState( (Sampler)typeInstance, SubgraphPortType.SamplerState ),
 			_ => throw new NotImplementedException( $"Unknown object of type \"{typeInstance}\"" ),
 		};
 	}
@@ -105,7 +105,7 @@ public static class VariantValueBaseExtentions
 			VariantValueColor v => v.Value,
 			VariantValueTexture2D v => v.Value,
 			VariantValueTextureCube v => v.Value,
-			VariantValueSampler v => v.Value,
+			VariantValueSamplerState v => v.Value,
 			_ => throw new NotImplementedException(),
 		};
 	}
@@ -372,17 +372,17 @@ public class VariantValueColor : VariantValue<Color>
 	}
 }
 
-public class VariantValueSampler : VariantValue<Sampler>
+public class VariantValueSamplerState : VariantValue<Sampler>
 {
-	public VariantValueSampler( Sampler value, SubgraphPortType inputType ) : base( value, inputType )
+	public VariantValueSamplerState( Sampler value, SubgraphPortType inputType ) : base( value, inputType )
 	{
 	}
 
-	public VariantValueSampler() : base()
+	public VariantValueSamplerState() : base()
 	{
 
 	}
-	public VariantValueSampler( SubgraphPortType inputType ) : base( inputType )
+	public VariantValueSamplerState( SubgraphPortType inputType ) : base( inputType )
 	{
 	}
 
