@@ -338,7 +338,7 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 /// <summary>
 /// SamplerState material parameter
 /// </summary>
-[Title( "SamplerState" ), Icon( "colorize" ), Order( 8 )]
+[Title( "Sampler State" ), Icon( "colorize" ), Order( 8 )]
 public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 {
 	[Hide, JsonIgnore, Browsable( false )]
