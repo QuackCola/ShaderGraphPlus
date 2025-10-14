@@ -135,17 +135,13 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 		var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
 		if ( oldPlug is not null )
 		{
-			//oldPlug.Info.Id = Guid.NewGuid();
-			//oldPlug.Info.Name = info.Name;
-			//oldPlug.Info.Type = info.Type;
-			//oldPlug.Info.DisplayInfo = info.DisplayInfo;
 			oldPlug.Info.Name = info.Name;
 			oldPlug.Info.Type = type;
 			oldPlug.Info.DisplayInfo = info.DisplayInfo;
 
+			// Change the old plug type to the new type.
 			var oldplugType = oldPlug as IPlugIn;
 			oldplugType.Type = type;	
-			SGPLog.Info( $"Plug type is : {oldplugType.Type}" );
 
 			Plugs.Add( oldplugType );
 		}
