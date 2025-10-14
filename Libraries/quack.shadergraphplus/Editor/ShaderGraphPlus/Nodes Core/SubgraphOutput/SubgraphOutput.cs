@@ -1,13 +1,9 @@
-﻿using Editor.ShaderGraph;
-using Sandbox.Resources;
-
+﻿using Sandbox.Resources;
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-
-
 using System.Text;
 using ShaderGraphPlus.Nodes;
 
@@ -81,9 +77,11 @@ public class ShaderFunctionOutput
 				SubgraphPortType.Float => typeof( float ),
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Vector4 => typeof( Color ),
 				SubgraphPortType.Color => typeof( Color ),
 				SubgraphPortType.Sampler => typeof( Sampler ),
 				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+				SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
 				_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
 			};
 		}
@@ -132,9 +130,9 @@ public class ShaderFunctionOutput
 			case Type t when t == typeof( Texture2DObject ):
 				OutputType = SubgraphPortType.Texture2DObject;
 				break;
-			//case Type t when t == typeof( TextureCubeObject ):
-			//
-			//	break;
+			case Type t when t == typeof( TextureCubeObject ):
+				OutputType = SubgraphPortType.TextureCubeObject;
+				break;
 			default:
 				throw new Exception( $"Unknown type \"{type}\"" );
 		}
@@ -245,9 +243,9 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			case Type t when t == typeof( Texture2DObject ):
 				OutputType = SubgraphPortType.Texture2DObject;
 				break;
-			//case Type t when t == typeof( TextureCubeObject ):
-			//
-			//	break;
+			case Type t when t == typeof( TextureCubeObject ):
+				OutputType = SubgraphPortType.TextureCubeObject;
+				break;
 			default:
 				throw new Exception( $"Unknown type \"{type}\"" );
 		}
@@ -304,9 +302,11 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			SubgraphPortType.Float => typeof( float ),
 			SubgraphPortType.Vector2 => typeof( Vector2 ),
 			SubgraphPortType.Vector3 => typeof( Vector3 ),
+			SubgraphPortType.Vector4 => typeof( Color ),
 			SubgraphPortType.Color => typeof( Color ),
 			SubgraphPortType.Sampler => typeof( Sampler ),
 			SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
+			SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
 			_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
 		};
 
@@ -342,6 +342,17 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public void AddMaterialOutputs( GraphCompiler compiler, StringBuilder sb, SubgraphOutputPreviewType previewType, out List<string> errors )
 	{
 		errors = new List<string>();
+
+		if ( OutputType == SubgraphPortType.Sampler ||
+			 OutputType == SubgraphPortType.Sampler ||
+			 OutputType == SubgraphPortType.Texture2DObject ||
+			 OutputType == SubgraphPortType.TextureCubeObject )
+		{
+			SGPLog.Warning( $"Cannot preveiw Output type \"{OutputType}\"" );
+			Preview = SubgraphOutputPreviewType.None;
+			return;
+		}
+
 		if ( previewType == SubgraphOutputPreviewType.Albedo )
 		{
 			var albedoResult = GetAlbedoResult( compiler );
