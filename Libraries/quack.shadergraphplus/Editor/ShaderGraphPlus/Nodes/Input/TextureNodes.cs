@@ -1,5 +1,4 @@
 ﻿using Editor;
-using Editor.ShaderGraph;
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
