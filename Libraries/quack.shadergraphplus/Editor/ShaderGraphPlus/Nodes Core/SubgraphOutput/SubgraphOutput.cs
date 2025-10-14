@@ -37,7 +37,7 @@ public enum SubgraphOutputPreviewType
 /// </summary>
 [Title( "Subgraph Output" ), Icon( "output" ), SubgraphOnly]
 [InternalNode]
-public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
+public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 {
 	[Hide, Browsable( false )]
 	public override int Version => 1;
@@ -47,9 +47,9 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanRemove => true;
-
-	[Hide]
-	public Guid Id { get; internal set; } = Guid.NewGuid();
+	
+	[Hide, Browsable( false )]
+	public Guid OutputIdentifier { get; set; }
 
 	public string OutputName { get; set; } = "Ouat0";
 
@@ -63,35 +63,33 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public int PortOrder { get; set; } = 0;
 
 	[Hide]
-	public BasePlugIn InternalInput = null;
+	private List<IPlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs
-	{
-		get
-		{
-			if ( InternalInput == null )
-				return new List<BasePlugIn>();
+	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
-			return new List<BasePlugIn> { InternalInput };
-		}
-	}
 
 	[Hide, JsonIgnore]
 	int _lastHashCode = 0;
 
+	public SubgraphOutput() : base()
+	{
+		OutputIdentifier = Guid.NewGuid();
+	}
+
 	public override void OnFrame()
 	{
-		var combinedHashCode = System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType, PortOrder );
-		if ( combinedHashCode != _lastHashCode )
+		var hashCodeInput = 0;
+		hashCodeInput = System.HashCode.Combine( OutputIdentifier, OutputName, OutputDescription, OutputType, PortOrder );
+		
+		if ( hashCodeInput != _lastHashCode )
 		{
-			//var oldhashCode = _lastHashCode;
-			_lastHashCode = combinedHashCode;
+			var oldhashCode = _lastHashCode;
+			_lastHashCode = hashCodeInput;
 			
-			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
-			
-			CreateInput();
-			Update();
+			SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
+
+			InitializeNode();
 		}
 	}
 
@@ -103,7 +101,9 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	private void CreateInput()
 	{
-		var outputType = OutputType switch
+		var Plugs = new List<IPlugIn>();
+
+		var type = OutputType switch
 		{
 			SubgraphPortType.Bool => typeof( bool ),
 			SubgraphPortType.Int => typeof( int ),
@@ -118,33 +118,43 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 			_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
 		};
 
-		var plugInfo = new PlugInfo()
+		var info = new PlugInfo()
 		{
-			Id = Id,
+			Id = OutputIdentifier,
 			Name = OutputName,
-			Type = outputType,
+			Type = type,
 			DisplayInfo = new()
 			{
 				Name = OutputName,
-				Fullname = outputType.FullName,
+				Fullname = type.FullName,
 				Description = OutputDescription,
 			}
 		};
 
-		var oldPlugIn = InternalInput;
-		if ( oldPlugIn is not null )
+		var plug = new BasePlugIn( this, info, info.Type );
+		var oldPlug = InternalInputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == info.Id ) as BasePlugIn;
+		if ( oldPlug is not null )
 		{
-			oldPlugIn.Info.Name = plugInfo.Name;
-			oldPlugIn.Info.Type = plugInfo.Type;
-			oldPlugIn.Info.DisplayInfo = plugInfo.DisplayInfo;
+			//oldPlug.Info.Id = Guid.NewGuid();
+			//oldPlug.Info.Name = info.Name;
+			//oldPlug.Info.Type = info.Type;
+			//oldPlug.Info.DisplayInfo = info.DisplayInfo;
+			oldPlug.Info.Name = info.Name;
+			oldPlug.Info.Type = type;
+			oldPlug.Info.DisplayInfo = info.DisplayInfo;
 
-			InternalInput = oldPlugIn;
+			var oldplugType = oldPlug as IPlugIn;
+			oldplugType.Type = type;	
+			SGPLog.Info( $"Plug type is : {oldplugType.Type}" );
+
+			Plugs.Add( oldplugType );
 		}
 		else
 		{
-			var plugIn = new BasePlugIn( this, plugInfo, plugInfo.Type );
-			InternalInput = plugIn;
+			Plugs.Add( plug );
 		}
+
+		InternalInputs = Plugs;
 	}
 
 	public void SetSubgraphPortTypeFromType( Type type )
@@ -281,7 +291,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	{
 		if ( Preview == previewType )
 		{
-			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == Id );
+			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == OutputIdentifier );
 			if ( input is BasePlugIn plugIn )
 			{
 				
