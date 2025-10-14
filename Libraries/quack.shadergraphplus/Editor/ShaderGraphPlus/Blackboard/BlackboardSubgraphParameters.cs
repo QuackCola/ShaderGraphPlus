@@ -346,14 +346,14 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 }
 
 /// <summary>
-/// Sampler State subgraph input
+/// SamplerState subgraph input
 /// </summary>
-[Title( "Sampler State" ), Icon( "colorize" ), Order( 8 )]
+[Title( "Sampler State" ), Icon( "colorize" ), Order( 9 )]
 [SubgraphOnly]
 public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInputParameter<Sampler>
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
+	public override int MenuOrder => 9;
 
 	public SamplerStateSubgraphInputParameter() : base()
 	{

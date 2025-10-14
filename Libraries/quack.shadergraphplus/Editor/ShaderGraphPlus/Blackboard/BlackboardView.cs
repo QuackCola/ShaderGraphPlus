@@ -203,6 +203,7 @@ internal class BlackboardView : Widget
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Texture2DSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( TextureCubeSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( SamplerStateSubgraphInputParameter ) ) return false;
 
 				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanParameter ) ) return false;

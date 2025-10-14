@@ -386,9 +386,9 @@ public class VariantValueSamplerState : VariantValue<Sampler>
 	{
 	}
 
-	internal class ParamPropertySampler : ParamProperty<Sampler>
+	internal class ParamPropertySamplerState : ParamProperty<Sampler>
 	{
-		public ParamPropertySampler( VariantValueSerializedObject parent, string name ) : base( parent, name )
+		public ParamPropertySamplerState( VariantValueSerializedObject parent, string name ) : base( parent, name )
 		{
 			SetAttributes(
 				new TitleAttribute( "" ),
@@ -423,7 +423,7 @@ public class VariantValueTexture2D : VariantValue<TextureInput>
 			SetAttributes(
 				new TitleAttribute( "" ),
 				new InlineEditorAttribute() { Label = false },
-				new DefaultValueAttribute( Parameter.DefaultValue )
+				new DefaultValueAttribute( Parameter.DefaultValue with { Type = TextureType.Tex2D } )
 			);
 		}
 
@@ -446,14 +446,14 @@ public class VariantValueTextureCube : VariantValue<TextureInput>
 		Value = Value with { Type = TextureType.TexCube };
 	}
 
-	internal class ParamPropertyTexture2D : ParamProperty<TextureInput>
+	internal class ParamPropertyTextureCube : ParamProperty<TextureInput>
 	{
-		public ParamPropertyTexture2D( VariantValueSerializedObject parent, string name ) : base( parent, name )
+		public ParamPropertyTextureCube( VariantValueSerializedObject parent, string name ) : base( parent, name )
 		{
 			SetAttributes(
 				new TitleAttribute( "" ),
 				new InlineEditorAttribute() { Label = false },
-				new DefaultValueAttribute( Parameter.DefaultValue )
+				new DefaultValueAttribute( Parameter.DefaultValue with { Type = TextureType.TexCube } )
 			);
 		}
 

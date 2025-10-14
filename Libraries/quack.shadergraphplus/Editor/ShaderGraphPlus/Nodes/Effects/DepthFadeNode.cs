@@ -9,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// 
 /// </summary>
-[Title( "Depth Fade" ), Category( "Utility" ), Icon( "join_inner" )]
+[Title( "Depth Fade" ), Category( "Effects" ), Icon( "join_inner" )]
 public sealed class DepthFadeNode : ShaderNodePlus
 {
 	[Hide]
