@@ -1332,7 +1332,7 @@ partial class ShaderGraphPlus
 		{
 			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
 			{
-				subgraphOutput.Id = id.GetGuid();
+				subgraphOutput.OutputIdentifier = id.GetGuid();
 			}
 			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
 			{
