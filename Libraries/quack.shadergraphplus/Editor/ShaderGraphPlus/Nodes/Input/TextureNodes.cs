@@ -186,7 +186,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 	}
 }
 
-[Title( "Sample Texture 2D" ), Category( "Textures" ), Icon( "image" )]
+[Title( "Sample Texture 2D" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DNode : Texture2DSamplerBase
 {
 	[Hide]
@@ -293,7 +293,7 @@ public sealed class SampleTexture2DNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
-[Title( "Sample Texture 2D Triplanar" ), Category( "Textures" ), Icon( "image" )]
+[Title( "Sample Texture 2D Triplanar" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 {
 	[Hide]
@@ -437,7 +437,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
-[Title( "Sample Texture 2D Normal Map Triplanar" ), Category( "Textures" ), Icon( "image" )]
+[Title( "Sample Texture 2D Normal Map Triplanar" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 {
 	[Hide]
@@ -590,7 +590,7 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
-[Title( "Sample Texture Cube" ), Category( "Textures" ), Icon( "image" )]
+[Title( "Sample Texture Cube" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTextureCubeNode : ShaderNodePlus
 {
 	[Hide]
