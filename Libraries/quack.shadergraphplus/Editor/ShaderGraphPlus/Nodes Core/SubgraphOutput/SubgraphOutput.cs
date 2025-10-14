@@ -32,118 +32,6 @@ public enum SubgraphOutputPreviewType
 	PositionOffset
 }
 
-public class ShaderFunctionOutput
-{
-	[Hide]
-	public Guid Id { get; } = Guid.NewGuid();
-
-	public ShaderFunctionOutput()
-	{
-
-	}
-
-	public ShaderFunctionOutput( Guid guid )
-	{
-		Id = guid;
-	}
-
-	/// <summary>
-	/// Name of this output.
-	/// </summary>
-
-	public string OutputName { get; set; } = "Ouat0";
-
-	/// <summary>
-	/// Description of this output.
-	/// </summary>
-	[TextArea]
-	public string OutputDescription { get; set; } = "";
-
-	public SubgraphPortType OutputType { get; set; } = SubgraphPortType.Vector3;
-
-	public SubgraphOutputPreviewType Preview { get; set; } = SubgraphOutputPreviewType.None;
-
-	public int PortOrder { get; set; } = 0;
-
-	[Hide, JsonIgnore]
-	public Type Type
-	{
-		get
-		{
-			return OutputType switch
-			{
-				SubgraphPortType.Bool => typeof( bool ),
-				SubgraphPortType.Int => typeof( int ),
-				SubgraphPortType.Float => typeof( float ),
-				SubgraphPortType.Vector2 => typeof( Vector2 ),
-				SubgraphPortType.Vector3 => typeof( Vector3 ),
-				SubgraphPortType.Vector4 => typeof( Color ),
-				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.SamplerState => typeof( Sampler ),
-				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
-				SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
-				_ => throw new Exception( $"Unknown PortType \"{OutputType}\"" )
-			};
-		}
-	}
-
-	public void SetSubgraphPortTypeFromType( Type type )
-	{
-		switch ( type )
-		{
-			case Type t when t == typeof( bool ):
-				OutputType = SubgraphPortType.Bool;
-				break;
-			case Type t when t == typeof( int ):
-				OutputType = SubgraphPortType.Int;
-				break;
-			case Type t when t == typeof( float ):
-				OutputType = SubgraphPortType.Float;
-				break;
-			case Type t when t == typeof( Vector2 ):
-				OutputType = SubgraphPortType.Vector2;
-				break;
-			case Type t when t == typeof( Vector3 ):
-				OutputType = SubgraphPortType.Vector3;
-				break;
-			case Type t when t == typeof( Vector4 ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			case Type t when t == typeof( Color ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			case Type t when t == typeof( ColorTextureGenerator ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			//case Type t when t == typeof( Float2x2 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float3x3 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float4x4 ):
-			//
-			//	break;
-			case Type t when t == typeof( Sampler ):
-				OutputType = SubgraphPortType.SamplerState;
-				break;
-			case Type t when t == typeof( Texture2DObject ):
-				OutputType = SubgraphPortType.Texture2DObject;
-				break;
-			case Type t when t == typeof( TextureCubeObject ):
-				OutputType = SubgraphPortType.TextureCubeObject;
-				break;
-			default:
-				throw new Exception( $"Unknown type \"{type}\"" );
-		}
-	}
-
-	//public override int GetHashCode()
-	//{
-	//	return System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType.GetHlslType(), PortOrder );
-	//}
-}
-
 /// <summary>
 /// Output of a subgraph.
 /// </summary>
@@ -151,17 +39,14 @@ public class ShaderFunctionOutput
 [InternalNode]
 public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 {
-	[Hide]
+	[Hide, Browsable( false )]
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.SubgraphNode;
 
-	[Hide, JsonIgnore]
+	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanRemove => true;
-
-	[Hide, JsonIgnore]
-	int _lastHashCode = 0;
 
 	[Hide]
 	public Guid Id { get; internal set; } = Guid.NewGuid();
@@ -177,21 +62,38 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	public int PortOrder { get; set; } = 0;
 
+	[Hide]
+	public BasePlugIn InternalInput = null;
+
+	[Hide]
+	public override IEnumerable<IPlugIn> Inputs
+	{
+		get
+		{
+			if ( InternalInput == null )
+				return new List<BasePlugIn>();
+
+			return new List<BasePlugIn> { InternalInput };
+		}
+	}
+
+	[Hide, JsonIgnore]
+	int _lastHashCode = 0;
+
 	public override void OnFrame()
 	{
-		var hashCode = new HashCode();
-		hashCode.Add( Id );
-		hashCode.Add( OutputName );
-		hashCode.Add( OutputDescription );
-		hashCode.Add( OutputType.GetHlslType() );
-		hashCode.Add( PortOrder );
+		var combinedHashCode = new HashCode();
+		combinedHashCode.Add( Id );
+		combinedHashCode.Add( OutputName );
+		combinedHashCode.Add( OutputDescription );
+		combinedHashCode.Add( OutputType.GetHlslType() );
+		combinedHashCode.Add( PortOrder );
 
-		var hc = hashCode.ToHashCode();
-
-		if ( hc != _lastHashCode )
+		var hashCode = combinedHashCode.ToHashCode();
+		if ( hashCode != _lastHashCode )
 		{
 			//var oldhashCode = _lastHashCode;
-			_lastHashCode = hc;
+			_lastHashCode = hashCode;
 			
 			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 			
@@ -200,97 +102,10 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 		}
 	}
 
-	public void SetSubgraphPortTypeFromType( Type type )
-	{
-		switch ( type )
-		{
-			case Type t when t == typeof( bool ):
-				OutputType = SubgraphPortType.Bool;
-				break;
-			case Type t when t == typeof( int ):
-				OutputType = SubgraphPortType.Int;
-				break;
-			case Type t when t == typeof( float ):
-				OutputType = SubgraphPortType.Float;
-				break;
-			case Type t when t == typeof( Vector2 ):
-				OutputType = SubgraphPortType.Vector2;
-				break;
-			case Type t when t == typeof( Vector3 ):
-				OutputType = SubgraphPortType.Vector3;
-				break;
-			case Type t when t == typeof( Vector4 ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			case Type t when t == typeof( Color ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			case Type t when t == typeof( ColorTextureGenerator ):
-				OutputType = SubgraphPortType.Color;
-				break;
-			//case Type t when t == typeof( Float2x2 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float3x3 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float4x4 ):
-			//
-			//	break;
-			case Type t when t == typeof( Sampler ):
-				OutputType = SubgraphPortType.SamplerState;
-				break;
-			case Type t when t == typeof( Texture2DObject ):
-				OutputType = SubgraphPortType.Texture2DObject;
-				break;
-			case Type t when t == typeof( TextureCubeObject ):
-				OutputType = SubgraphPortType.TextureCubeObject;
-				break;
-			default:
-				throw new Exception( $"Unknown type \"{type}\"" );
-		}
-	}
-
 	public void InitializeNode()
 	{
 		CreateInput();
 		Update();
-	}
-
-	public List<string> GetErrors()
-	{
-		var errors = new List<string>();
-
-		if ( Graph is ShaderGraphPlus shaderGraphPlus && shaderGraphPlus.IsSubgraph )
-		{
-			foreach ( var node in Graph.Nodes )
-			{
-				if ( node == this ) continue;
-
-				if ( node is SubgraphOutput otherOutput && otherOutput.OutputName == OutputName )
-				{
-					errors.Add( $"Duplicate output name \"{OutputName}\"" );
-					break;
-				}
-			}
-		}
-
-		return errors;
-	}
-
-	[Hide]
-	public BasePlugIn InternalInput = null;
-
-	[Hide]
-	public override IEnumerable<IPlugIn> Inputs
-	{ 
-		get
-		{
-			if ( InternalInput == null )
-				return new List<BasePlugIn>();
-
-			return new List<BasePlugIn> { InternalInput };
-		}
 	}
 
 	private void CreateInput()
@@ -322,7 +137,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 				Description = OutputDescription,
 			}
 		};
-		
+
 		var oldPlugIn = InternalInput;
 		if ( oldPlugIn is not null )
 		{
@@ -332,10 +147,61 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 			InternalInput = oldPlugIn;
 		}
-		else 
+		else
 		{
 			var plugIn = new BasePlugIn( this, plugInfo, plugInfo.Type );
 			InternalInput = plugIn;
+		}
+	}
+
+	public void SetSubgraphPortTypeFromType( Type type )
+	{
+		switch ( type )
+		{
+			case Type t when t == typeof( bool ):
+				OutputType = SubgraphPortType.Bool;
+				break;
+			case Type t when t == typeof( int ):
+				OutputType = SubgraphPortType.Int;
+				break;
+			case Type t when t == typeof( float ):
+				OutputType = SubgraphPortType.Float;
+				break;
+			case Type t when t == typeof( Vector2 ):
+				OutputType = SubgraphPortType.Vector2;
+				break;
+			case Type t when t == typeof( Vector3 ):
+				OutputType = SubgraphPortType.Vector3;
+				break;
+			case Type t when t == typeof( Vector4 ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			case Type t when t == typeof( Color ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			case Type t when t == typeof( ColorTextureGenerator ):
+				OutputType = SubgraphPortType.Color;
+				break;
+			//case Type t when t == typeof( Float2x2 ):
+			//
+			//	break;
+			//case Type t when t == typeof( Float3x3 ):
+			//
+			//	break;
+			//case Type t when t == typeof( Float4x4 ):
+			//
+			//	break;
+			case Type t when t == typeof( Sampler ):
+				OutputType = SubgraphPortType.SamplerState;
+				break;
+			case Type t when t == typeof( Texture2DObject ):
+				OutputType = SubgraphPortType.Texture2DObject;
+				break;
+			case Type t when t == typeof( TextureCubeObject ):
+				OutputType = SubgraphPortType.TextureCubeObject;
+				break;
+			default:
+				throw new Exception( $"Unknown type \"{type}\"" );
 		}
 	}
 
@@ -525,5 +391,26 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 	public override Color GetDefaultAlbedo()
 	{
 		return base.GetDefaultAlbedo();
+	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		if ( Graph is ShaderGraphPlus shaderGraphPlus && shaderGraphPlus.IsSubgraph )
+		{
+			foreach ( var node in Graph.Nodes )
+			{
+				if ( node == this ) continue;
+
+				if ( node is SubgraphOutput otherOutput && otherOutput.OutputName == OutputName )
+				{
+					errors.Add( $"Duplicate output name \"{OutputName}\"" );
+					break;
+				}
+			}
+		}
+
+		return errors;
 	}
 }
