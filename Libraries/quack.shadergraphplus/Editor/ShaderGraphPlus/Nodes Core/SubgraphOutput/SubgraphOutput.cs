@@ -344,7 +344,6 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 		errors = new List<string>();
 
 		if ( OutputType == SubgraphPortType.Sampler ||
-			 OutputType == SubgraphPortType.Sampler ||
 			 OutputType == SubgraphPortType.Texture2DObject ||
 			 OutputType == SubgraphPortType.TextureCubeObject )
 		{
