@@ -299,11 +299,11 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 /// <summary>
 /// TextureCube material parameter
 /// </summary>
-[Title( "TextureCube" ), Icon( "texture" ), Order( 7 )]
+[Title( "TextureCube" ), Icon( "view_in_ar" ), Order( 8 )]
 public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInput>
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 7;
+	public override int MenuOrder => 8;
 
 	public TextureCubeParameter() : base()
 	{
@@ -363,11 +363,11 @@ public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 /// <summary>
 /// Bool material feature
 /// </summary>
-[Title( "Shader Feature Boolean" ), Order( 8 )]
+[Title( "Shader Feature Boolean" ), Order( 9 )]
 public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, IShaderFeatureParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
+	public override int MenuOrder => 9;
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
@@ -411,11 +411,11 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 /// <summary>
 /// TODO : 
 /// </summary>
-[Title( "Shader Feature Enum" ), Order( 9 )]
+[Title( "Shader Feature Enum" ), Order( 10 )]
 public sealed class ShaderFeatureEnumParameter : BaseBlackboardParameter, IShaderFeatureParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 9;
+	public override int MenuOrder => 10;
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );
