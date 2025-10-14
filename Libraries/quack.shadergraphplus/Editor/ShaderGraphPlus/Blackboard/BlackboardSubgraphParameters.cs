@@ -1,6 +1,4 @@
-﻿using ShaderGraphPlus.Nodes;
-
-namespace ShaderGraphPlus;
+﻿namespace ShaderGraphPlus;
 
 /// <summary>
 /// Bool value subgraph input
