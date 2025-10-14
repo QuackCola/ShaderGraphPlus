@@ -67,6 +67,7 @@ internal static class ShaderGraphPlusTheme
 			{ typeof( Float4SubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Vector4 )].Color ) },
 			{ typeof( ColorSubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Color )].Color ) },
 			{ typeof( Texture2DSubgraphInputParameter ), new BlackboardConfig( "Texture2D", NodeHandleConfigs[typeof( Texture2DObject )].Color ) },
+			{ typeof( TextureCubeSubgraphInputParameter ), new BlackboardConfig( "TextureCube", NodeHandleConfigs[typeof( TextureCubeObject )].Color ) },
 			{ typeof( BoolParameter ), new BlackboardConfig( "bool", NodeHandleConfigs[typeof( bool )].Color ) },
 			{ typeof( IntParameter ), new BlackboardConfig( "int", NodeHandleConfigs[typeof( int )].Color ) },
 			{ typeof( FloatParameter ), new BlackboardConfig( "float", NodeHandleConfigs[typeof( float )].Color ) },
