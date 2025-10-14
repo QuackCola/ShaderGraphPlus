@@ -53,7 +53,14 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 						};
 
 						if ( inputType == SubgraphPortType.TextureCubeObject )
+						{
 							istextureCubeType = true;
+						}
+						else
+						{
+							istextureCubeType = false;
+						}
+
 					break;
 				}
 			}
