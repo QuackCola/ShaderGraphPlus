@@ -919,11 +919,18 @@ partial class ShaderGraphPlus
 
 		if ( !string.IsNullOrWhiteSpace( textureUI.Name ) )
 		{
-			var newNode01 = new Texture2DParameterNode()
+			BaseNodePlus newNode01 = default;
+			if ( IsSubgraph )
 			{
-				Position = new Vector2( newSamplerNode.Position.x - 192, newSamplerNode.Position.y )
-				
-			};
+	
+			}
+			else
+			{
+				newNode01 = new Texture2DParameterNode()
+				{
+					Position = new Vector2( newSamplerNode.Position.x - 192, newSamplerNode.Position.y )
+				};
+			}
 
 			BaseBlackboardParameter parameter = default;
 			foreach ( var param in Parameters )
@@ -937,26 +944,49 @@ partial class ShaderGraphPlus
 		
 			if ( parameter == null )
 			{
-				parameter = new Texture2DParameter()
+				if ( IsSubgraph )
 				{
-					Name = textureUI.Name,
-					Value = textureUI with { DefaultTexture = imageProperty.GetString() }
-				};
-			
-				AddParameter( parameter );
+					parameter = new Texture2DSubgraphInputParameter()
+					{
+						Name = textureUI.Name,
+						Value = textureUI with { DefaultTexture = imageProperty.GetString() }
+					};
+
+					AddParameter( parameter );
+				}
+				else
+				{
+					parameter = new Texture2DParameter()
+					{
+						Name = textureUI.Name,
+						Value = textureUI with { DefaultTexture = imageProperty.GetString() }
+					};
+
+					AddParameter( parameter );
+				}
+
 			}
 
-			newNode01.BlackboardParameterIdentifier = parameter.Identifier;
-			newNode01.Name = textureUI.Name;
-			newNode01.UI = textureUI;
+			if ( IsSubgraph )
+			{
 
-			AddNode( newNode01 );
+			}
+			else
+			{
+				var parameterNode = newNode01 as Texture2DParameterNode;
 
-			newSamplerNode.ConnectNode(
-				nameof( SampleTexture2DNode.Texture2DInput ),
-				nameof( Texture2DParameterNode.Result ),
-				newNode01.Identifier
-			);
+				parameterNode.BlackboardParameterIdentifier = parameter.Identifier;
+				parameterNode.Name = textureUI.Name;
+				parameterNode.UI = textureUI;
+
+				AddNode( parameterNode );
+
+				newSamplerNode.ConnectNode(
+					nameof( SampleTexture2DNode.Texture2DInput ),
+					nameof( Texture2DParameterNode.Result ),
+					parameterNode.Identifier
+				);
+			}
 		}
 
 		if ( newSamplerNode is Texture2DSamplerBase )
@@ -980,31 +1010,60 @@ partial class ShaderGraphPlus
 	private BaseNodePlus ConvertToNewTextureSampleNode( string typeName, JsonElement element, JsonSerializerOptions options, out NodeConnectionFixupData connectionFixupData )
 	{
 		connectionFixupData = new();
+
 		switch ( typeName )
 		{
 			case "Texture2DObjectNode":
-				var newNode0 = new Texture2DParameterNode();
+				BaseNodePlus newNode0 = default;
+				var uiProp = element.GetProperty( "UI" );
+				var textureInput = JsonSerializer.Deserialize<TextureInput>( uiProp, SerializerOptions() );
+				var newUI1 = textureInput with { Name = textureInput.Name, Type = TextureType.Tex2D };
+				BaseBlackboardParameter blackboardParameter1 = default;
+
+				if ( IsSubgraph )
+				{
+					blackboardParameter1 = new Texture2DSubgraphInputParameter()
+					{
+						Name = textureInput.Name,
+						Value = newUI1
+					};
+				}
+				else
+				{
+					blackboardParameter1 = new Texture2DParameter()
+					{
+						Name = textureInput.Name,
+						Value = newUI1
+					};
+				}
+
+				if ( IsSubgraph )
+				{
+					newNode0 = new SubgraphInput()
+					{
+						BlackboardParameterIdentifier = blackboardParameter1.Identifier,
+						InputName = textureInput.Name,
+						InputData = new VariantValueTexture2D( textureInput, SubgraphPortType.Texture2DObject )
+					};
+				}
+				else
+				{
+					var tex2DParamNode = new Texture2DParameterNode();
+
+					tex2DParamNode.BlackboardParameterIdentifier = blackboardParameter1.Identifier;
+					tex2DParamNode.Name = textureInput.Name;
+					AddParameter( blackboardParameter1 );
+
+					newNode0 = tex2DParamNode;
+				}
 
 				// Copy basic node properties
 				DeserializeObject( newNode0, element, options );
 
-				var newUI1 = newNode0.UI with { Name = newNode0.UI.Name, Type = TextureType.Tex2D };
-
-				var blackboardParameter1 = new Texture2DParameter()
-				{
-					Name = newNode0.UI.Name,
-					Value = newUI1
-				};
-
-				newNode0.BlackboardParameterIdentifier = blackboardParameter1.Identifier;
-				newNode0.Name = newNode0.UI.Name;
-
-				AddParameter( blackboardParameter1 );
-
 				return newNode0;
 			case "TextureCubeObjectNode":
 				var newNode1 = new TextureCubeParameterNode();
-				
+
 				// Copy basic node properties
 				DeserializeObject( newNode1, element, options );
 
@@ -1015,7 +1074,7 @@ partial class ShaderGraphPlus
 					Name = newNode1.UI.Name,
 					Value = newUI2
 				};
-				
+
 				newNode1.BlackboardParameterIdentifier = blackboardParameter2.Identifier;
 				newNode1.Name = newNode1.UI.Name;
 
@@ -1024,7 +1083,7 @@ partial class ShaderGraphPlus
 				return newNode1;
 			case "TextureSampler":
 				var newNode2 = new SampleTexture2DNode();
-	
+
 				// Copy basic node properties
 				DeserializeObject( newNode2, element, options );
 
@@ -1057,7 +1116,7 @@ partial class ShaderGraphPlus
 				var textureProperty = element.GetProperty( "Texture" );
 				var textureUI = newNode5.UI with { DefaultTexture = textureProperty.GetString(), Type = TextureType.TexCube };
 				newNode5.Texture = textureProperty.GetString();
-	
+
 				return newNode5;
 		}
 
