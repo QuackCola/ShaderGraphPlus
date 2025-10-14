@@ -558,6 +558,8 @@ public sealed partial class GraphCompiler
 	}
 
 
+
+
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
@@ -585,7 +587,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( texture != null )
+			if ( texture != null && !result.TextureInputs.ContainsKey( name ) )
 			{
 				OnAttribute?.Invoke( name, texture, false );
 			}
