@@ -2189,7 +2189,7 @@ public sealed partial class GraphCompiler
 
 				reservedPreview.Add( $"{subgraphOutput.Preview}", subgraphOutput );
 
-				subgraphOutput.AddMaterialOutputs( this, sb, subgraphOutput.Preview, out var errors );
+				subgraphOutput.AddMaterialOutput( this, sb, subgraphOutput.Preview, out var errors );
 
 				if ( errors.Any() )
 				{
