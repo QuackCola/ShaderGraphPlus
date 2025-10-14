@@ -345,7 +345,8 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 		if ( OutputType == SubgraphPortType.Sampler ||
 			 OutputType == SubgraphPortType.Texture2DObject ||
-			 OutputType == SubgraphPortType.TextureCubeObject )
+			 OutputType == SubgraphPortType.TextureCubeObject
+		)
 		{
 			SGPLog.Warning( $"Cannot preveiw Output type \"{OutputType}\"" );
 			Preview = SubgraphOutputPreviewType.None;
