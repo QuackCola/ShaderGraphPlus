@@ -13,6 +13,7 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 		string className = "";
 		SubgraphPortType inputType = SubgraphPortType.Invalid;
 		object typeInstance = null;
+		bool istextureCubeType = false;
 
 		while ( reader.Read() )
 		{
@@ -48,6 +49,9 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 							SubgraphPortType.Texture2DObject => JsonSerializer.Deserialize<TextureInput>( ref reader, options ),
 							_ => throw new JsonException( $"Unknown InputType \"{inputType}\"" )
 						};
+
+						if ( inputType == SubgraphPortType.TextureCubeObject )
+							istextureCubeType = true;
 					break;
 				}
 			}
@@ -55,7 +59,7 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 
 		if ( typeInstance != null )
 		{
-			var variant = VariantValueBase.CreateNew( typeInstance, inputType );
+			var variant = VariantValueBase.CreateNew( typeInstance, inputType, istextureCubeType );
 			return variant;
 		}
 
@@ -88,6 +92,9 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 			case SubgraphPortType.Vector3:
 				JsonSerializer.Serialize( writer, ((VariantValueVector3)value).Value, options );
 				break;
+			case SubgraphPortType.Vector4:
+				JsonSerializer.Serialize( writer, ((VariantValueVector4)value).Value, options );
+				break;
 			case SubgraphPortType.Color:
 				JsonSerializer.Serialize( writer, ((VariantValueColor)value).Value, options );
 				break;
@@ -96,6 +103,9 @@ internal class VariantValueConverter : JsonConverter<VariantValueBase>
 				break;
 			case SubgraphPortType.Texture2DObject:
 				JsonSerializer.Serialize( writer, ((VariantValueTexture2D)value).Value, options );
+				break;
+			case SubgraphPortType.TextureCubeObject:
+				JsonSerializer.Serialize( writer, ((VariantValueTextureCube)value).Value, options );
 				break;
 			default:
 				writer.WriteNullValue();

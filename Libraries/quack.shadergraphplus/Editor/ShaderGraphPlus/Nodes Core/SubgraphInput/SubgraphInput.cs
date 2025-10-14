@@ -1,5 +1,4 @@
 ﻿using Editor;
-
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
@@ -24,10 +23,12 @@ public enum SubgraphPortType
 	Vector4,
 	[Title( "Color" ), Icon( "palette" )]
 	Color,
-	[Icon( "colorize" )]
+	[Title( "Sampler State" ), Icon( "colorize" )]
 	Sampler,
-	[Title( "Texture2D Object" ), Icon( "texture" )]
+	[Title( "Texture2D" ), Icon( "texture" )]
 	Texture2DObject,
+	[Title( "TextureCube" ), Icon( "texture" )]
+	TextureCubeObject,
 	[Hide]
 	Invalid
 }
@@ -215,6 +216,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
 			SubgraphPortType.Sampler => ( ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}" ),
 			SubgraphPortType.Texture2DObject => (ResultType.Texture2DObject, ResultTexture( compiler )),
+			SubgraphPortType.TextureCubeObject => (ResultType.TextureCubeObject, ResultTexture( compiler )),
 			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
 		};
 

@@ -1,4 +1,6 @@
 ﻿
+using NodeEditorPlus;
+
 namespace ShaderGraphPlus.Nodes;
 
 [System.AttributeUsage( AttributeTargets.Property )]
@@ -10,6 +12,7 @@ internal sealed class NamedRerouteReferenceAttribute : Attribute
 /// Declare a named reroute.
 /// </summary>
 [Title( "Named Reroute Declaration" ), Category( "Utility" ), Icon( "route" )]
+[InternalNode]
 public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 {
 	[Hide]
@@ -111,6 +114,7 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 /// Reference a declared named reroute.
 /// </summary>
 [Title( "Named Reroute" ), Category( "Utility" ), Icon( "route" )]
+[InternalNode]
 public sealed class NamedRerouteNode : ShaderNodePlus
 {
 	[Hide]

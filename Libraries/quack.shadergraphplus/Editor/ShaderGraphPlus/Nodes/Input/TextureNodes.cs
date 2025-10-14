@@ -179,6 +179,18 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 					break;
 				}
 			}
+
+			if ( !string.IsNullOrWhiteSpace( Name ) )
+			{
+				foreach ( var node in graph.Nodes )
+				{
+					if ( node is Texture2DSamplerBase samplerBase && samplerBase.Name == Name )
+					{
+						errors.Add( $"Other texture sampler node \"{samplerBase}\" has already registerd a texture the name \"{Name}\"" );
+						break;
+					}
+				}
+			}
 		}
 
 		return errors;
@@ -241,7 +253,7 @@ public sealed class SampleTexture2DNode : Texture2DSamplerBase
 		}
 		else
 		{
-			UI = UI with { Name = Name };
+			UI = new() { DefaultTexture = "materials/default/default.tga" };
 			Image = UI.DefaultTexture;
 			IsTextureInputConnected = false;
 		}
@@ -824,7 +836,7 @@ public sealed class TextureCoord : ShaderNodePlus
 /// <summary>
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
-[Title( "Sampler" ), Category( "Textures" ), Icon( "colorize" )]
+[Title( "Sampler State" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 {
 	[Hide]

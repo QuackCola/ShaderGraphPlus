@@ -11,6 +11,11 @@ internal interface ITextureParameterNodeNew
 	string Name { get; set; }
 }
 
+internal interface IMetaDataNode
+{
+	NodeResult GetResult( GraphCompiler compiler );
+}
+
 /// <summary>
 /// Bool value
 /// </summary>
@@ -489,11 +494,6 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", ValueA, compiler );
 }
 
-internal interface IMetaDataNode
-{
-	NodeResult GetResult( GraphCompiler compiler );
-}
-
 /// <summary>
 /// Texture 2D Input parameter.
 /// </summary>
@@ -503,6 +503,9 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 {
 	[Hide]
 	public override int Version => 2;
+
+	[Hide]
+	public override bool CanPreview => false;
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
@@ -558,6 +561,9 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 {
 	[Hide]
 	public override int Version => 2;
+
+	[Hide]
+	public override bool CanPreview => false;
 
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( Name ) ?

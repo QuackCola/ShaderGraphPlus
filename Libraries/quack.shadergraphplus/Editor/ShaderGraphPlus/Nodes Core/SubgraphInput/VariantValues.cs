@@ -13,6 +13,7 @@
 [JsonDerivedType( typeof( VariantValueColor ) )]
 [JsonDerivedType( typeof( VariantValueSampler ) )]
 [JsonDerivedType( typeof( VariantValueTexture2D ) )]
+[JsonDerivedType( typeof( VariantValueTextureCube ) )]
 public abstract class VariantValueBase
 {
 	public virtual SubgraphPortType InputType { get; set; }
@@ -26,7 +27,7 @@ public abstract class VariantValueBase
 		InputType = inputType;
 	}
 
-	public static VariantValueBase CreateNew( object typeInstance, SubgraphPortType inputType )
+	public static VariantValueBase CreateNew( object typeInstance, SubgraphPortType inputType, bool istextureCubeType = false )
 	{
 		return typeInstance switch
 		{
@@ -38,7 +39,7 @@ public abstract class VariantValueBase
 			Vector4 => new VariantValueVector4( (Vector4)typeInstance, SubgraphPortType.Vector4 ),
 			Color => new VariantValueColor( (Color)typeInstance, SubgraphPortType.Color ),
 			Sampler => new VariantValueSampler( (Sampler)typeInstance, SubgraphPortType.Sampler ),
-			TextureInput => new VariantValueTexture2D( (TextureInput)typeInstance, SubgraphPortType.Texture2DObject ),
+			TextureInput => !istextureCubeType ? new VariantValueTexture2D( ((TextureInput)typeInstance) with { Type = TextureType.Tex2D }, SubgraphPortType.Texture2DObject ) : new VariantValueTextureCube( ((TextureInput)typeInstance) with { Type = TextureType.TexCube }, SubgraphPortType.TextureCubeObject ),
 			_ => throw new NotImplementedException( $"Unknown object of type \"{typeInstance}\"" ),
 		};
 	}
@@ -103,6 +104,7 @@ public static class VariantValueBaseExtentions
 			VariantValueVector4 v => v.Value,
 			VariantValueColor v => v.Value,
 			VariantValueTexture2D v => v.Value,
+			VariantValueTextureCube v => v.Value,
 			VariantValueSampler v => v.Value,
 			_ => throw new NotImplementedException(),
 		};
@@ -411,6 +413,37 @@ public class VariantValueTexture2D : VariantValue<TextureInput>
 
 	public VariantValueTexture2D() : base()
 	{
+		Value = Value with { Type = TextureType.Tex2D };
+	}
+
+	internal class ParamPropertyTexture2D : ParamProperty<TextureInput>
+	{
+		public ParamPropertyTexture2D( VariantValueSerializedObject parent, string name ) : base( parent, name )
+		{
+			SetAttributes(
+				new TitleAttribute( "" ),
+				new InlineEditorAttribute() { Label = false },
+				new DefaultValueAttribute( Parameter.DefaultValue )
+			);
+		}
+
+		public override TextureInput Value
+		{
+			get => Accessor.GetValue<TextureInput>();
+			set => Accessor.SetValue( value );
+		}
+	}
+}
+
+public class VariantValueTextureCube : VariantValue<TextureInput>
+{
+	public VariantValueTextureCube( TextureInput value, SubgraphPortType inputType ) : base( value, inputType )
+	{
+	}
+
+	public VariantValueTextureCube() : base()
+	{
+		Value = Value with { Type = TextureType.TexCube };
 	}
 
 	internal class ParamPropertyTexture2D : ParamProperty<TextureInput>

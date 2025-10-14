@@ -544,9 +544,10 @@ public sealed partial class GraphCompiler
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
 		var result = ShaderResult;
 
-		if ( texture != null )
+		if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) )
 		{
 			OnAttribute?.Invoke( name, texture, false );
+			ShaderResult.Attributes[name] = texture;
 		}
 
 		if ( CurrentResultInput == "Albedo" )
@@ -575,9 +576,10 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				if ( texture != null )
+				if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) )
 				{
 					OnAttribute?.Invoke( name, texture, false );
+					ShaderResult.Attributes[name] = texture;
 				}
 
 				result.TextureInputs.Add( name, input );
@@ -585,9 +587,10 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( texture != null  ) //&& !result.TextureInputs.ContainsKey( name ) )
+			if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) ) 
 			{
 				OnAttribute?.Invoke( name, texture, false );
+				ShaderResult.Attributes[name] = texture;
 			}
 		}
 
@@ -1848,7 +1851,7 @@ public sealed partial class GraphCompiler
 
 			foreach ( var result in ShaderResult.Attributes )
 			{
-				if ( result.Value is Float2x2 || result.Value is Float3x3 || result.Value is Float4x4 )
+				if ( result.Value is Float2x2 || result.Value is Float3x3 || result.Value is Float4x4 || result.Value is Texture )
 					continue;
 
 				var typeName = result.Value switch
