@@ -87,7 +87,7 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 
 public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 {
-	[InlineEditor( Label = false )]
+	[InlineEditor( Label = false ), Group( "Value" )]
 	public T Value { get; set; }
 
 	public BlackboardGenericParameter() : base() 
