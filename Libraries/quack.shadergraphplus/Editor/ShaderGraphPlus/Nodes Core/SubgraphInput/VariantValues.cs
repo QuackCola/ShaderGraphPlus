@@ -311,7 +311,6 @@ public class VariantValueVector3 : VariantValue<Vector3>
 	}
 }
 
-
 //[Title( "Vector 4" )]
 public class VariantValueVector4 : VariantValue<Vector4>
 {
