@@ -349,6 +349,8 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
 	INodePlus IPlug.Node => Node;
 
+	Type IPlug.Type { get; set; } = Type;
+
 	public string Identifier => Info.Name;
 	public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
