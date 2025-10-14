@@ -141,7 +141,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 			// Change the old plug type to the new type.
 			var oldplugType = oldPlug as IPlugIn;
-			oldplugType.Type = type;	
+			oldplugType.Type = type;
 
 			Plugs.Add( oldplugType );
 		}
