@@ -82,18 +82,11 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 
 	public override void OnFrame()
 	{
-		var combinedHashCode = new HashCode();
-		combinedHashCode.Add( Id );
-		combinedHashCode.Add( OutputName );
-		combinedHashCode.Add( OutputDescription );
-		combinedHashCode.Add( OutputType.GetHlslType() );
-		combinedHashCode.Add( PortOrder );
-
-		var hashCode = combinedHashCode.ToHashCode();
-		if ( hashCode != _lastHashCode )
+		var combinedHashCode = System.HashCode.Combine( Id, OutputName, OutputDescription, OutputType, PortOrder );
+		if ( combinedHashCode != _lastHashCode )
 		{
 			//var oldhashCode = _lastHashCode;
-			_lastHashCode = hashCode;
+			_lastHashCode = combinedHashCode;
 			
 			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 			
