@@ -689,11 +689,11 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 	};
 }
 
-
 /// <summary>
 /// Sample a Cube Texture
 /// </summary>
 [Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
+[InternalNode]
 public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 {
 	[Hide]
@@ -893,7 +893,6 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	[Output( typeof( float ) ), Hide, Title( "A" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
-
 
 /// <summary>
 /// TextureCube Object.
