@@ -1,5 +1,4 @@
 ﻿using ShaderGraphPlus.Nodes;
-using static Sandbox.Resources.ResourceGenerator;
 
 namespace ShaderGraphPlus;
 
