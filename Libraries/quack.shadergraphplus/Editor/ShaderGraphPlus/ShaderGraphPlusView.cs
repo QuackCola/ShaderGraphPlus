@@ -467,6 +467,18 @@ public class ShaderGraphPlusView : GraphView
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Color );
 			} );
+			newSubgraphOutputMenu.AddOption( "Texture2D", "texture", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Texture2DObject );
+			} );
+			newSubgraphOutputMenu.AddOption( "TextureCube", "view_in_ar", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.TextureCubeObject );
+			} );
+			newSubgraphOutputMenu.AddOption( "Sampler State", "colorize", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Sampler );
+			} );
 		}
 
 		if ( !targetPlug.IsValid() )
