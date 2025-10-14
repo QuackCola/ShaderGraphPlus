@@ -1,5 +1,4 @@
-﻿using Editor.ShaderGraph;
-using NodeEditorPlus;
+﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
@@ -10,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 /// <summary>
 /// Get the dimensions of a Texture2D Object in the width and height.
 /// </summary>
-[Title( "Get Dimensions" ), Category( "Textures" ), Icon( "straighten" )]
+[Title( "Get Texture Dimensions" ), Category( "Textures" ), Icon( "straighten" )]
 public sealed class GetDimensionsNode : VoidFunctionBase
 {
 	[Hide]
