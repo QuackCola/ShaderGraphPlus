@@ -147,7 +147,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 	public void CreateInputs()
 	{
-		var inPlugs = new List<IPlugIn>();
+		var plugs = new List<IPlugIn>();
 
 		if ( ExpressionInputs == null )
 		{
@@ -178,15 +178,16 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 					oldPlug.Info.Name = info.Name;
 					oldPlug.Info.Type = info.Type;
 					oldPlug.Info.DisplayInfo = info.DisplayInfo;
-					inPlugs.Add( oldPlug );
+
+					plugs.Add( oldPlug );
 				}
 				else
 				{
-					inPlugs.Add( plug );
+					plugs.Add( plug );
 				}
 			}
-			;
-			InternalInputs = inPlugs;
+
+			InternalInputs = plugs;
 		}
 	}
 
