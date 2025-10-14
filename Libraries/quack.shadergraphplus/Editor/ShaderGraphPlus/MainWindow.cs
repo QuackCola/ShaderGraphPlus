@@ -1877,11 +1877,11 @@ public class MainWindow : DockWindow
 
 	private void OnNodeRemoved( BaseNodePlus node )
 	{
-		if ( node is IBlackboardSyncable blackboardSyncable )
-		{
-			_graph.RemoveParameter( blackboardSyncable.BlackboardParameterIdentifier );
-			_blackboardView.RebuildBuildFromGraph( false );
-		}
+		//if ( node is IBlackboardSyncable blackboardSyncable )
+		//{
+		//	_graph.RemoveParameter( blackboardSyncable.BlackboardParameterIdentifier );
+		//	_blackboardView.RebuildBuildFromGraph( false );
+		//}
 	}
 
 	private void OnParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
