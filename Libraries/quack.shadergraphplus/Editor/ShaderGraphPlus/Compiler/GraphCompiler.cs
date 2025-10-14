@@ -1441,7 +1441,7 @@ public sealed partial class GraphCompiler
 						var texurePath = CompileTexture( textureInput.DefaultTexture, textureInput );
 						var resultTextureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
 
-						return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true );
+						return new NodeResult( textureInput.Type == TextureType.Tex2D ? ResultType.Texture2DObject : ResultType.TextureCubeObject, resultTextureGlobal, constant: true );
 					}
 				}
 			}
