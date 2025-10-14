@@ -559,7 +559,7 @@ public sealed partial class GraphCompiler
 
 	/// <summary>
 	/// Register a texture and return the name of it
-	/// FIXME!!! : Preview will be black in multiple nodes refernece the same Texture2DParameterNode
+	/// FIXME!!! : Preview will break when multiple nodes reference the same Texture2DParameterNode
 	/// </summary>
 	public string ResultTextureAlt( TextureInput input, Texture texture, bool texture2DConnected )
 	{
@@ -585,7 +585,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			if ( texture != null && !result.TextureInputs.ContainsKey( name ) )
+			if ( texture != null  ) //&& !result.TextureInputs.ContainsKey( name ) )
 			{
 				OnAttribute?.Invoke( name, texture, false );
 			}
