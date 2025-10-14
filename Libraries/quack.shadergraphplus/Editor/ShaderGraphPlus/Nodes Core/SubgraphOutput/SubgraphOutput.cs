@@ -339,7 +339,7 @@ public sealed class SubgraphOutput : BaseResult, IErroringNode, IInitializeNode
 		}
 	}
 
-	public void AddMaterialOutputs( GraphCompiler compiler, StringBuilder sb, SubgraphOutputPreviewType previewType, out List<string> errors )
+	public void AddMaterialOutput( GraphCompiler compiler, StringBuilder sb, SubgraphOutputPreviewType previewType, out List<string> errors )
 	{
 		errors = new List<string>();
 
