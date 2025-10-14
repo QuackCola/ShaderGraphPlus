@@ -67,8 +67,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	[Hide]
 	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
-
-	[Hide, JsonIgnore]
+	[JsonIgnore, Hide, Browsable( false )]
 	int _lastHashCode = 0;
 
 	public SubgraphOutput() : base()
