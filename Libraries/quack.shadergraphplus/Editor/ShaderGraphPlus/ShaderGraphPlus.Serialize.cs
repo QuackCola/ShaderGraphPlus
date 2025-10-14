@@ -1,5 +1,4 @@
-﻿
-using NodeEditorPlus;
+﻿using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -15,6 +14,22 @@ public interface ISGPJsonUpgradeable
 {
 	[Hide]
 	public int Version { get; }
+}
+
+/// <summary>
+/// Data that helps us fixup and reconnect broken node connections when updating nodes.
+/// </summary>
+struct NodeConnectionFixupData
+{
+	public Dictionary<NodeInput, string> NodeInputs;
+	public BaseNodePlus NodeToConnectTo;
+
+	public NodeConnectionFixupData( Dictionary<NodeInput, string> mapping0, BaseNodePlus nodeToConnectTo )
+	{
+		NodeInputs = mapping0;
+		NodeToConnectTo = nodeToConnectTo;
+	}
+
 }
 
 partial class ShaderGraphPlus
@@ -316,6 +331,7 @@ partial class ShaderGraphPlus
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
+		var connectionFixupData = new List<NodeConnectionFixupData>();
 		//var replacedNodes = new Dictionary<string, BaseNodePlus>();
 
 		var arrayProperty = doc.GetProperty("nodes");
@@ -341,8 +357,6 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				//var replaceAttribute = node.GetType().GetCustomAttribute<NodeReplaceAttribute>();
-
 				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
 				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
 				// TODO : Get a similar system setup to how SGPJsonUpgrader works or just make it work with SGPJsonUpgrader somehow? - Quack.
@@ -358,14 +372,15 @@ partial class ShaderGraphPlus
 				}
 				else if ( fileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, element ) )
 				{
-					// Choose to selectivly replace node with a constant equivalent
-					// depending on if there is a valid name or not
-
 					SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node." );
 
 					node = ConvertToConstantNode( typeName, element, options );
+				}
+				else if ( fileVersion < 3 && ShouldConvertTextureNodes( typeName, element ) )
+				{
+					node = ConvertToNewTextureSampleNode( typeName, element, options, out var connectionFixupDataNew );
 
-					//fileVersion = 3;
+					connectionFixupData.AddRange( connectionFixupDataNew );
 				}
 				else // Nothing to upgrade.
 				{
@@ -463,6 +478,32 @@ partial class ShaderGraphPlus
 					}
 				}
 				input.ConnectedOutput = output;
+			}
+		}
+		
+		// Fixup any broken connections for any node that was "upgraded".
+		// Though in some cases it may not work when the node we are
+		// connecting from has itself been "upgraded".
+		foreach ( var data in connectionFixupData )
+		{
+			if ( data.NodeInputs == null )
+				continue;
+
+			foreach ( var mapping in data.NodeInputs )
+			{
+				var nodeFrom = FindNode( mapping.Key.Identifier );
+
+				if ( nodeFrom != null )
+				{
+					SGPLog.Warning( $"Trying to connect \"{mapping.Key.Output}\" from node \"{nodeFrom}\" to \"{mapping.Value}\"" );
+
+					data.NodeToConnectTo.Graph = this;
+					data.NodeToConnectTo.ConnectNode( mapping.Value, mapping.Key.Output, mapping.Key.Identifier );
+				}
+				else
+				{
+					SGPLog.Error( $"Could not find node with identifier \"{mapping.Key.Identifier}\"" );
+				}
 			}
 		}
 
@@ -808,25 +849,6 @@ partial class ShaderGraphPlus
 		}
 	}
 
-	/// <summary>
-	/// Check if a legacy parameter node should be upgraded to SubgraphInput.
-	/// </summary>
-	private static bool ShouldUpgradeToSubgraphInput( string typeName, JsonElement element )
-	{
-		// Only upgrade if it's a parameter node type
-		if ( !IsParameterNodeType( typeName ) )
-			return false;
-
-		// Only upgrade if it has a name (indicating it's meant to be an input)
-		if ( element.TryGetProperty( "Name", out var nameProperty ) )
-		{
-			var name = nameProperty.GetString();
-			return !string.IsNullOrWhiteSpace( name );
-		}
-
-		return false;
-	}
-
 	private bool ShouldConvertParameterNodeToConstant( string typeName, JsonElement element )
 	{
 		// Only upgrade if it's a parameter node type
@@ -845,22 +867,22 @@ partial class ShaderGraphPlus
 		return true;
 	}
 
-	/// <summary>
-	/// Check if the type name represents a parameter node
-	/// </summary>
-	private static bool IsParameterNodeType( string typeName )
+	private bool ShouldConvertTextureNodes( string typeName, JsonElement element )
+	{
+		if ( !IsOldTextureSamplerNodeType( typeName ) )
+			return false;
+
+		return true;
+	}
+
+	private static bool IsOldTextureSamplerNodeType( string typeName )
 	{
 		return typeName switch
 		{
-			"BoolParameterNode" => true,
-			"IntParameterNode" => true,
-			"FloatParameterNode" => true,
-			"Float2ParameterNode" => true,
-			"Float3ParameterNode" => true,
-			"ColorParameterNode" => true,
-			"TextureSampler" => true,
 			"Texture2DObjectNode" => true,
-			"SamplerNode" => true,
+			"TextureSampler" => true,
+			"TextureTriplanar" => true,
+			"NormalMapTriplanar" => true,
 			_ => false
 		};
 	}
@@ -877,6 +899,132 @@ partial class ShaderGraphPlus
 			"ColorParameterNode" => true,
 			_ => false
 		};
+	}
+
+	private BaseNodePlus InitNewTextureSamplerNode( BaseNodePlus newSamplerNode, JsonElement element,
+		out NodeConnectionFixupData connectionFixupData 
+	)
+	{
+		connectionFixupData = new();
+		if ( newSamplerNode.Graph == null )
+		{
+			newSamplerNode.Graph = this;
+		}
+
+		var imageProperty = element.GetProperty( "Image" );
+		var textureUI = new TextureInput();
+		if ( newSamplerNode is Texture2DSamplerBase samplerBase )
+		{
+			textureUI = samplerBase.UI with { DefaultTexture = imageProperty.GetString() };
+			samplerBase.Image = imageProperty.GetString();
+		}
+
+		if ( !string.IsNullOrWhiteSpace( textureUI.Name ) )
+		{
+			var newNode01 = new Texture2DParameterNode()
+			{
+				Position = new Vector2( newSamplerNode.Position.x - 192, newSamplerNode.Position.y )
+				
+			};
+
+			BaseBlackboardParameter parameter = default;
+			foreach ( var param in Parameters )
+			{
+				if ( param.Name == textureUI.Name )
+				{
+					parameter = param;
+					break;
+				}
+			}
+		
+			if ( parameter == null )
+			{
+				parameter = new Texture2DParameter()
+				{
+					Name = textureUI.Name,
+					Value = textureUI with { DefaultTexture = imageProperty.GetString() }
+				};
+			
+				AddParameter( parameter );
+			}
+
+			newNode01.BlackboardParameterIdentifier = parameter.Identifier;
+			newNode01.Name = textureUI.Name;
+			newNode01.UI = textureUI;
+
+			AddNode( newNode01 );
+
+			newSamplerNode.ConnectNode(
+				nameof( SampleTexture2DNode.Texture2DInput ),
+				nameof( Texture2DParameterNode.Result ),
+				newNode01.Identifier
+			);
+		}
+
+		if ( newSamplerNode is Texture2DSamplerBase )
+		{
+			var connectionsToFix = new Dictionary<NodeInput, string>();
+			if ( element.TryGetProperty( "Coords", out var coordsProp ) ) //&& element.TryGetProperty( "Sampler", out var samplerProp ) )
+			{
+				connectionsToFix.Add( JsonSerializer.Deserialize<NodeInput>( coordsProp, SerializerOptions() ), "CoordsInput" );
+			}
+			if ( element.TryGetProperty( "Sampler", out var samplerProp ) )
+			{
+				connectionsToFix.Add( JsonSerializer.Deserialize<NodeInput>( samplerProp, SerializerOptions() ), "SamplerInput" );
+			}
+
+			connectionFixupData = new NodeConnectionFixupData( connectionsToFix, newSamplerNode );
+		}
+
+		return newSamplerNode;
+	}
+
+	private BaseNodePlus ConvertToNewTextureSampleNode( string typeName, JsonElement element, JsonSerializerOptions options, out NodeConnectionFixupData connectionFixupData )
+	{
+		connectionFixupData = new();
+		switch ( typeName )
+		{
+			case "Texture2DObjectNode":
+				var newNode0 = new Texture2DParameterNode();
+
+				// Copy basic node properties
+				DeserializeObject( newNode0, element, options );
+
+				var blackboardParameter = new Texture2DParameter()
+				{
+					Name = newNode0.UI.Name,
+				};
+
+				newNode0.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				newNode0.Name = newNode0.UI.Name;
+
+				AddParameter( blackboardParameter );
+
+				return newNode0;
+			case "TextureSampler":
+				var newNode1 = new SampleTexture2DNode();
+	
+				// Copy basic node properties
+				DeserializeObject( newNode1, element, options );
+
+				return InitNewTextureSamplerNode( newNode1, element, out connectionFixupData );
+			case "TextureTriplanar":
+				var newNode2 = new SampleTexture2DTriplanarNode();
+
+				// Copy basic node properties
+				DeserializeObject( newNode2, element, options );
+
+				return InitNewTextureSamplerNode( newNode2, element, out connectionFixupData );
+			case "NormalMapTriplanar":
+				var newNode3 = new SampleTexture2DNormalMapTriplanarNode();
+
+				// Copy basic node properties
+				DeserializeObject( newNode3, element, options );
+
+				return InitNewTextureSamplerNode( newNode3, element, out connectionFixupData );
+		}
+
+		throw new Exception( $"Could not convert \"{typeName}\" to new TextureSampler node!" );
 	}
 
 	private BaseNodePlus ConvertToConstantNode( string typeName, JsonElement element, JsonSerializerOptions options )
@@ -952,42 +1100,44 @@ partial class ShaderGraphPlus
 		throw new Exception( "Couldnt convert nameless Parameter node to Constant node" );
 	}
 
-	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
-	{ 
-		var subgraphOutput = new SubgraphOutput();
+#region OldStuffToRemove
+	/// <summary>
+	/// Check if a legacy parameter node should be upgraded to SubgraphInput.
+	/// </summary>
+	private static bool ShouldUpgradeToSubgraphInput( string typeName, JsonElement element )
+	{
+		// Only upgrade if it's a parameter node type
+		if ( !IsParameterNodeType( typeName ) )
+			return false;
 
-		// Copy basic node properties
-		DeserializeObject( subgraphOutput, element, options );
-
-		if ( element.TryGetProperty( "SubgraphFunctionOutput", out var subgraphFunctionOutputProperty ) )
+		// Only upgrade if it has a name (indicating it's meant to be an input)
+		if ( element.TryGetProperty( "Name", out var nameProperty ) )
 		{
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
-			{
-				subgraphOutput.Id = id.GetGuid();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
-			{
-				subgraphOutput.OutputName = outputName.GetString();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputDescription", out var outputDescription ) )
-			{
-				subgraphOutput.OutputDescription = outputDescription.GetString();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputType", out var outputType ) )
-			{
-				subgraphOutput.OutputType = JsonSerializer.Deserialize<SubgraphPortType>( outputType, options );
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "Preview", out var preview ) )
-			{
-				subgraphOutput.Preview = JsonSerializer.Deserialize<SubgraphOutputPreviewType>( preview, options );
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "PortOrder", out var portOrder ) )
-			{
-				subgraphOutput.PortOrder = portOrder.GetInt32();
-			}
+			var name = nameProperty.GetString();
+			return !string.IsNullOrWhiteSpace( name );
 		}
 
-		return subgraphOutput;
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the type name represents a parameter node
+	/// </summary>
+	private static bool IsParameterNodeType( string typeName )
+	{
+		return typeName switch
+		{
+			"BoolParameterNode" => true,
+			"IntParameterNode" => true,
+			"FloatParameterNode" => true,
+			"Float2ParameterNode" => true,
+			"Float3ParameterNode" => true,
+			"ColorParameterNode" => true,
+			"TextureSampler" => true,
+			"Texture2DObjectNode" => true,
+			"SamplerNode" => true,
+			_ => false
+		};
 	}
 
 	/// <summary>
@@ -1074,4 +1224,43 @@ partial class ShaderGraphPlus
 
 		return subgraphInput;
 	}
+
+	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
+	{
+		var subgraphOutput = new SubgraphOutput();
+
+		// Copy basic node properties
+		DeserializeObject( subgraphOutput, element, options );
+
+		if ( element.TryGetProperty( "SubgraphFunctionOutput", out var subgraphFunctionOutputProperty ) )
+		{
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
+			{
+				subgraphOutput.Id = id.GetGuid();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
+			{
+				subgraphOutput.OutputName = outputName.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputDescription", out var outputDescription ) )
+			{
+				subgraphOutput.OutputDescription = outputDescription.GetString();
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputType", out var outputType ) )
+			{
+				subgraphOutput.OutputType = JsonSerializer.Deserialize<SubgraphPortType>( outputType, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "Preview", out var preview ) )
+			{
+				subgraphOutput.Preview = JsonSerializer.Deserialize<SubgraphOutputPreviewType>( preview, options );
+			}
+			if ( subgraphFunctionOutputProperty.TryGetProperty( "PortOrder", out var portOrder ) )
+			{
+				subgraphOutput.PortOrder = portOrder.GetInt32();
+			}
+		}
+
+		return subgraphOutput;
+	}
+#endregion OldStuffToRemove
 }

@@ -235,7 +235,19 @@ public sealed partial class GraphCompiler
 
 				if ( !funcResult.IsValid )
 				{
+					if ( node is BaseNodePlus baseNode )
+					{
+						baseNode.HasError = true;
+					}
+
 					NodeIssues.Add( node, [ $"Missing required input \"{title}\"." ] );
+				}
+				else
+				{
+					if ( node is BaseNodePlus baseNode )
+					{
+						baseNode.HasError = false;
+					}
 				}
 
 				functionCall = functionCall.Replace( targetProperty.Key.placeholderName, funcResult.Code );
@@ -530,44 +542,88 @@ public sealed partial class GraphCompiler
 	{
 		var name = cleanName ? CleanName( input.Name ) : input.Name;
 		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-		var id = name;
-		//int count = 0;
-
 		var result = ShaderResult;
 
-		// Dont append _count++ to the end until the key dosent exists.
-		// This can cause problems resulting in unnecessary Texture2D declarations with Combo Switches and inside subgraphs when the subgraphs are instanced.
-		/*
-		while ( result.TextureInputs.ContainsKey( id ) )
+		if ( texture != null )
 		{
-			id = $"{name}_{count++}";	
+			OnAttribute?.Invoke( name, texture, false );
 		}
-		
-		OnAttribute?.Invoke( id, texture, false );
-		
-		result.TextureInputs.Add( id, input );
-		*/
 
-		if ( result.TextureInputs.TryGetValue( id, out var existingValue ) )
+		if ( CurrentResultInput == "Albedo" )
 		{
-			// Do not Invoke OnAttribute or add to the TextureInputs Dictionary...
+			result.RepresentativeTexture = $"g_t{name}";
+		}
+
+		return $"g_t{name}";
+	}
+
+
+	/// <summary>
+	/// Register a texture and return the name of it
+	/// </summary>
+	public string ResultTextureAlt( TextureInput input, Texture texture, bool texture2DConnected )
+	{
+		var name = CleanName( input.Name );
+		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		var result = ShaderResult;
+
+		if ( !texture2DConnected )
+		{
+			if ( result.TextureInputs.TryGetValue( name, out var existingValue ) )
+			{
+				// Do not Invoke OnAttribute or add to the TextureInputs Dictionary...
+			}
+			else
+			{
+				if ( texture != null )
+				{
+					OnAttribute?.Invoke( name, texture, false );
+				}
+
+				result.TextureInputs.Add( name, input );
+			}
 		}
 		else
 		{
 			if ( texture != null )
 			{
-				OnAttribute?.Invoke( id, texture, false );
+				OnAttribute?.Invoke( name, texture, false );
 			}
-
-			result.TextureInputs.Add( id, input );
 		}
 
 		if ( CurrentResultInput == "Albedo" )
 		{
-			result.RepresentativeTexture = $"g_t{id}";
+			result.RepresentativeTexture = $"g_t{name}";
 		}
 
-		return $"g_t{id}";
+		return $"g_t{name}";
+	}
+
+
+	/// <summary>
+	/// Register a texture and return the name of it
+	/// </summary>
+	public string ResultTexture( TextureInput input )
+	{
+		var name = CleanName( input.Name );
+		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		var result = ShaderResult;
+
+		if ( result.TextureInputs.TryGetValue( name, out var existingValue ) )
+		{
+			// Do not add to the TextureInputs Dictionary...
+		}
+		else
+		{
+			result.TextureInputs.Add( name, input );
+		}
+
+		if ( CurrentResultInput == "Albedo" )
+		{
+			result.RepresentativeTexture = $"g_t{name}";
+		}
+
+		return $"g_t{name}";
 	}
 
 	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
@@ -735,6 +791,19 @@ public sealed partial class GraphCompiler
 			}
 
 			PostProcessVoidFunctionResult( VoidFunctionBase );
+		}
+
+		// Nodes that just make use of Metadata in NodeResult.Metadata
+		if ( node is IMetaDataNode imetaDataNode )
+		{
+			var metaDataResult = imetaDataNode.GetResult( this );
+
+			if ( metaDataResult.IsValid )
+			{
+				InputStack.Remove( input );
+
+				return metaDataResult;
+			}
 		}
 
 		if ( node is CustomFunctionNode customFunctionNode )
@@ -1358,7 +1427,7 @@ public sealed partial class GraphCompiler
 					}
 					if ( value is TextureInput textureInput )
 					{
-						var texurePath = CompileTexture( textureInput.PreviewImage, textureInput );
+						var texurePath = CompileTexture( textureInput.DefaultTexture, textureInput );
 						var resultTextureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
 
 						return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true );
@@ -1827,11 +1896,14 @@ public sealed partial class GraphCompiler
 				if ( result.Value.IsAttribute )
 					continue;
 
+				var defaultTex = result.Value.DefaultTexture;
 				sb.Append( $"{result.Value.CreateInput}( {result.Key}, {result.Value.ColorSpace}, 8," )
 				  .Append( $" \"{result.Value.Processor.ToString()}\"," )
 				  .Append( $" \"_{result.Value.ExtensionString.ToLower()}\"," )
 				  .Append( $" \"{result.Value.UIGroup}\"," )
-				  .Append( $" Default4( {result.Value.Default} ) );" )
+				  .Append( string.IsNullOrEmpty( defaultTex )
+							? $" Default4( {result.Value.DefaultColor} ) );"
+							: $" DefaultFile( \"{defaultTex}\" ) );" )
 				  .AppendLine();
 			}
 

@@ -274,6 +274,11 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	/// <param name="targetOutputNodeIdentifier">The Identifier of another <see cref="BaseNodePlus"/> from the graph that we are connecting from.</param>
 	internal void ConnectNode( string inputName, string targetOutputName, string targetOutputNodeIdentifier )
 	{
+		if ( Graph == null )
+		{
+			throw new Exception( $"Graph property on node \"{this}\" is null!!!" );
+		}
+
 		var graph = Graph as ShaderGraphPlus;
 		var targetOutputNode = graph.Nodes.Where( x => x.Identifier == targetOutputNodeIdentifier ).FirstOrDefault();
 

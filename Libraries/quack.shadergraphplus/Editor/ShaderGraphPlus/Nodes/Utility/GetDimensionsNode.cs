@@ -1,8 +1,9 @@
-﻿using NodeEditorPlus;
+﻿using Editor.ShaderGraph;
+using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -18,10 +19,10 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
-	[Title( "Tex 2D" )]
+	[Title( "Texture" )]
 	[Input( typeof( Texture2DObject ) )]
 	[Hide]
-	public NodeInput TextureObject { get; set; }
+	public NodeInput TextureInput { get; set; }
 
 	[JsonIgnore, Hide]
 	public override bool CanPreview => false;
@@ -29,17 +30,26 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	[JsonIgnore, Hide]
 	public string TextureObjectSize { get; set; } = "";
 
-	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	public override void BuildFunctionCall( GraphCompiler compiler, ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
 	{
-		args.Add( new VoidFunctionArgument( nameof( TextureObject ), "$in0", VoidFunctionArgumentType.Input, ResultType.TextureCubeObject ) );
+		args.Add( new VoidFunctionArgument( nameof( TextureInput ), "$in0", VoidFunctionArgumentType.Input, ResultType.TextureCubeObject ) );
 		args.Add( new VoidFunctionArgument( nameof( TextureObjectSize ), "$out0", VoidFunctionArgumentType.Output, ResultType.Vector2 ) );
-		
-		functionName = $"{args[0].VarName}.GetDimensions";
+
+		var textureInput = compiler.Result( TextureInput );
+		var textureGlobal = "";
+
+		if ( textureInput.IsValid )
+		{
+			var textureInputData = textureInput.GetMetadata<TextureInput>( "TextureInput" );
+			textureGlobal = $"g_t{GraphCompiler.CleanName( textureInputData.Name )}";
+		}
+
+		functionName = $"{textureGlobal}.GetDimensions";
 		functionCall = $"{functionName}( {args[1].VarName}.x, {args[1].VarName}.y )";
 	}
 
 	[Output( typeof( Vector2 ) )]
-	[Title( "Tex Size" )]
+	[Title( "Size" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) => new NodeResult( ResultType.Vector2, TextureObjectSize, constant: false );
 }

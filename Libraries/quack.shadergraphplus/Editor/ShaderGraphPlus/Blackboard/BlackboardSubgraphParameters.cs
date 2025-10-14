@@ -27,7 +27,9 @@ public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParamete
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueBool( Value, SubgraphPortType.Bool )
+			InputData = new VariantValueBool( Value, SubgraphPortType.Bool ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -65,7 +67,9 @@ public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueInt( Value, SubgraphPortType.Int )
+			InputData = new VariantValueInt( Value, SubgraphPortType.Int ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -103,7 +107,9 @@ public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParamet
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueFloat( Value, SubgraphPortType.Float )
+			InputData = new VariantValueFloat( Value, SubgraphPortType.Float ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -141,7 +147,9 @@ public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector2( Value, SubgraphPortType.Vector2 )
+			InputData = new VariantValueVector2( Value, SubgraphPortType.Vector2 ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -179,7 +187,9 @@ public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector3( Value, SubgraphPortType.Vector3 )
+			InputData = new VariantValueVector3( Value, SubgraphPortType.Vector3 ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -217,7 +227,9 @@ public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector4( Value, SubgraphPortType.Vector4 )
+			InputData = new VariantValueVector4( Value, SubgraphPortType.Vector4 ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
 		};
 	}
 }
@@ -248,7 +260,47 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueColor( Value, SubgraphPortType.Color )
+			InputData = new VariantValueColor( Value, SubgraphPortType.Color ),
+			IsRequired = IsRequired,
+			PortOrder = PortOrder,
+		};
+	}
+}
+
+/// <summary>
+/// Texture2D subgraph input
+/// </summary>
+[Title( "Texture2D" ), Icon( "texture" ), Order( 7 )]
+[SubgraphOnly]
+public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 7;
+
+	public Texture2DSubgraphInputParameter() : base()
+	{
+		Value = new TextureInput
+		{
+			Name = Name,
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = true,
+			DefaultColor = Color.White,
+			Type = TextureType.Tex2D,
+		};
+	}
+
+	public Texture2DSubgraphInputParameter( TextureInput value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueTexture2D( Value with { Name = Name, Type = TextureType.Tex2D }, SubgraphPortType.Texture2DObject )
 		};
 	}
 }

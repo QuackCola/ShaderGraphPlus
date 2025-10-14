@@ -60,7 +60,7 @@ void VoidOscillator( float flTime, float flFrequency, float flPhase, float flStr
 		var funcCall = compiler.ResultHLSLFunction( func, $"" );
 	}
 
-	public override void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	public override void BuildFunctionCall( GraphCompiler compiler, ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
 	{
 		args.Add( new VoidFunctionArgument( nameof( InputA ), nameof( DefaultInputA ), "$in0", VoidFunctionArgumentType.Input, ResultType.Float ) );
 		args.Add( new VoidFunctionArgument( nameof( OutA ), "$out0", VoidFunctionArgumentType.Output, ResultType.Vector2 ) );

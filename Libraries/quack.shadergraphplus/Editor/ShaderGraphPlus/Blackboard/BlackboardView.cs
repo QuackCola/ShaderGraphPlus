@@ -190,6 +190,7 @@ internal class BlackboardView : Widget
 				if ( Graph.IsSubgraph && targetType == typeof( Float3Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( Float4Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ColorParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Texture2DParameter ) ) return false;
 
 				// Only show subgraph input parameters when in a subgraph
 				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputParameter ) ) return false;
@@ -199,11 +200,11 @@ internal class BlackboardView : Widget
 				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Texture2DSubgraphInputParameter ) ) return false;
 
 				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumParameter ) ) return false;
-				//if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 			}
 			return true;
 		} );

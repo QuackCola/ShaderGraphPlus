@@ -1,5 +1,4 @@
-﻿
-using Editor;
+﻿using Editor;
 
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
@@ -85,6 +84,10 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		{
 			SetDefaultValue( colorParameter.Value );
 		}
+		else if ( blackboardParameter is Texture2DSubgraphInputParameter texture2DParameter )
+		{
+			SetDefaultValue( texture2DParameter.Value );
+		}
 	}
 
 	[Hide, JsonIgnore]
@@ -119,9 +122,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 	[Input, Title( "Preview" ), Hide]
 	public NodeInput PreviewInput { get; set; }
 
-	//[JsonIgnore, Hide]
-	//public override Color PrimaryColor => Color.Lerp( Theme.Green, Theme.Blue, 0.5f );
-
 	public SubgraphInput()
 	{
 	}
@@ -146,7 +146,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		//if ( _asset == null )
 		//	return;
 
-		var imagePath = UI.PreviewImage;
+		var imagePath = UI.DefaultTexture;
 
 		if ( string.IsNullOrWhiteSpace( imagePath ) )
 			return "";
@@ -237,7 +237,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
 		}
 
-		// TODO : Un-Comment if issues arise.
 		//if ( InputName.Contains( ' ' ) )
 		//{
 		//	errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );

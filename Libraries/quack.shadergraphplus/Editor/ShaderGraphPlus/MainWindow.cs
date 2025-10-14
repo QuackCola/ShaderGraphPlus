@@ -202,6 +202,25 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
+		if ( _properties.Target is Texture2DParameterNode texture2DparameterNode && texture2DparameterNode is IBlackboardSyncable blackboardSyncable2 )
+		{
+			// For now only select a blackboard parameter when _graphView only has 1 selection.
+			if ( _graphView.SelectedItems.Count() == 1 )
+			{
+				SGPLog.Info( $"Selected parameter node {texture2DparameterNode.Name}" );
+
+				if ( blackboardSyncable2.BlackboardParameterIdentifier != default )
+				{
+					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncable2.BlackboardParameterIdentifier );
+					_blackboardView.SetSelectedItem( blackboardParameter );
+					_properties.Target = blackboardParameter;
+				}
+			}
+			else
+			{
+				_properties.Target = _graph;
+			}
+		}
 		else if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncable syncable )
 		{	
 			// For now only select a blackboard parameter when _graphView only has 1 selection.

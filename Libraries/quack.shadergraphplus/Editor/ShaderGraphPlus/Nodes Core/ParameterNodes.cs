@@ -484,3 +484,63 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 	[Output( typeof( float ) ), Hide, Editor( nameof( ValueA ) ), Title( "Alpha" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", ValueA, compiler );
 }
+
+internal interface IMetaDataNode
+{
+	NodeResult GetResult( GraphCompiler compiler );
+}
+
+/// <summary>
+/// Texture 2D Input parameter.
+/// </summary>
+[Title( "Texture 2D" ), Category( "Parameters" ), Icon( "texture" )]
+[InternalNode]
+public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable, IErroringNode, IMetaDataNode
+{
+	[Hide]
+	public override int Version => 2;
+
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
+		$"{DisplayInfo.For( this ).Name}" :
+		$"{DisplayInfo.For( this ).Name} ( {Name} )";
+
+	[Hide, Browsable( false )]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Hide, Browsable( false )]
+	public string Name { get; set; } = "";
+
+	[Hide, Browsable( false )]
+	public TextureInput UI { get; set; } = new TextureInput();
+
+	[Output( typeof( Texture2DObject ) ), Title( "Texture" )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { Name = Name };
+		compiler.ResultTexture( UI );
+		return new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
+	};
+
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is Texture2DParameter texture2dParam )
+		{
+			Name = texture2dParam.Name;
+			UI = texture2dParam.Value;
+		}
+	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		return errors;
+	}
+
+	public NodeResult GetResult( GraphCompiler compiler )
+	{
+		return Result.Invoke( compiler );
+	}
+}

@@ -5,7 +5,7 @@ using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
 using GraphView = NodeEditorPlus.GraphView;
 using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
-using HandleConfig = NodeEditorPlus.HandleConfig;
+using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeQuery = NodeEditorPlus.NodeQuery;
@@ -147,6 +147,7 @@ public class ShaderGraphPlusView : GraphView
 				if ( Graph.IsSubgraph && targetType == typeof( Float3Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( Float4Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ColorParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( Texture2DParameter ) ) return false;
 
 				// Only show subgraph input parameters when in a subgraph
 				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputParameter ) ) return false;
@@ -156,12 +157,11 @@ public class ShaderGraphPlusView : GraphView
 				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
-
+				if ( !Graph.IsSubgraph && targetType == typeof( Texture2DSubgraphInputParameter ) ) return false;
 
 				// Ignore these for now
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureBooleanParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ShaderFeatureEnumParameter ) ) return false;
-				//if ( targetType == typeof( ShaderFeatureEnumBlackboardParameter ) ) return false;
 			}
 			return true;
 		} );
@@ -343,6 +343,7 @@ public class ShaderGraphPlusView : GraphView
 					Float3Parameter => DisplayInfo.ForType( typeof( Float3ParameterNode ) ).Fullname,
 					Float4Parameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
 					ColorParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
+					Texture2DParameter => DisplayInfo.ForType( typeof( Texture2DParameterNode ) ).Fullname,
 					ShaderFeatureBooleanParameter => DisplayInfo.ForType( typeof( BooleanFeatureSwitchNode ) ).Fullname,
 					ShaderFeatureEnumParameter => DisplayInfo.ForType( typeof( EnumFeatureSwitchNode ) ).Fullname,
 					_ => throw new NotImplementedException(),
@@ -386,9 +387,9 @@ public class ShaderGraphPlusView : GraphView
 		} );
 	}
 
-	private static bool TryGetHandleConfig( Type type, out Type matchingType, out HandleConfig config )
+	private static bool TryGetHandleConfig( Type type, out Type matchingType, out NodeHandleConfig config )
 	{
-		if ( ShaderGraphPlusTheme.HandleConfigs.TryGetValue( type, out config ) )
+		if ( ShaderGraphPlusTheme.NodeHandleConfigs.TryGetValue( type, out config ) )
 		{
 			matchingType = type;
 			return true;
@@ -398,7 +399,7 @@ public class ShaderGraphPlusView : GraphView
 		return false;
 	}
 
-	protected override HandleConfig OnGetHandleConfig( Type type )
+	protected override NodeHandleConfig OnGetHandleConfig( Type type )
 	{
 		if ( TryGetHandleConfig( type, out var matchingType, out var config ) )
 		{

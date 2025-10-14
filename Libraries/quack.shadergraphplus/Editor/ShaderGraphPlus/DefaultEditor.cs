@@ -8,7 +8,7 @@ using ValueEditor = NodeEditorPlus.ValueEditor;
 using Plug = NodeEditorPlus.Plug;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using IPlugIn = NodeEditorPlus.IPlugIn;
-using HandleConfig = NodeEditorPlus.HandleConfig;
+using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 
 namespace ShaderGraphPlus;
 
@@ -260,7 +260,7 @@ internal static class PaintHelper
 		throw new Exception( $"Cannot Deserialize `{type}`" );
 	}
 
-	public static void DrawValue( HandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null )
+	public static void DrawValue( NodeHandleConfig handleConfig, Rect valueRect, string text, float pulseScale = 1f, string icon = null, object rawValue = null )
 	{
 		var bg = Theme.ControlBackground;
 		var fg = Theme.TextControl;

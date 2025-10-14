@@ -63,7 +63,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 	{
 	}
 
-	public virtual void BuildFunctionCall( ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
+	public virtual void BuildFunctionCall( GraphCompiler compiler, ref List<VoidFunctionArgument> args, ref string functionName, ref string functionCall )
 	{
 	}
 
@@ -74,7 +74,7 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 		var functionName = "";
 		var functionCall = "";
 
-		BuildFunctionCall( ref args, ref functionName, ref functionCall );
+		BuildFunctionCall( compiler, ref args, ref functionName, ref functionCall );
 
 		Assert.CheckAreNotEqual( args.Count, 0, $"args.Count == \"{args.Count}\"" );
 

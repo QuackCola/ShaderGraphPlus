@@ -1,7 +1,7 @@
 ﻿using Editor;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
-using HandleConfig = NodeEditorPlus.HandleConfig;
+using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 
 namespace ShaderGraphPlus;
 
@@ -28,7 +28,7 @@ internal static class ShaderGraphPlusTheme
 {
 	public record struct BlackboardConfig( string Name, Color Color );
 
-	public static Dictionary<Type, HandleConfig> HandleConfigs { get; private set; }
+	public static Dictionary<Type, NodeHandleConfig> NodeHandleConfigs { get; private set; }
 	public static Dictionary<Type, BlackboardConfig> BlackboardConfigs { get; private set; }
 
 	static ShaderGraphPlusTheme()
@@ -39,39 +39,41 @@ internal static class ShaderGraphPlusTheme
 	[Event( "hotloaded" )]
 	static void Update()
 	{
-		HandleConfigs = new()
+		NodeHandleConfigs = new()
 		{
-		{ typeof( bool ), new HandleConfig( "bool", Theme.Blue.AdjustHue( -80 ) ) },
-		{ typeof( int ), new HandleConfig( "int", Color.Parse( "#ce67e0" )!.Value.AdjustHue( -80 ) ) },
-		{ typeof( float ), new HandleConfig( "Float", Color.Parse( "#8ec07c" )!.Value ) },
-		{ typeof( Vector2 ), new HandleConfig( "Vector2", Color.Parse( "#ce67e0" )!.Value ) },
-		{ typeof( Vector3 ), new HandleConfig( "Vector3", Color.Parse( "#7177e1" )!.Value ) },
-		{ typeof( Vector4 ), new HandleConfig( "Vector4", Color.Parse( "#c7ae32" )!.Value ) },
-		{ typeof( Color ), new HandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
-		{ typeof( Float2x2 ), new HandleConfig( "Float2x2", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Float3x3 ), new HandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Float4x4 ), new HandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Texture2DObject ), new HandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
-		{ typeof( Sampler ), new HandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
-		{ typeof( Gradient ), new HandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
+		{ typeof( bool ), new NodeHandleConfig( "bool", Theme.Blue.AdjustHue( -80 ) ) },
+		{ typeof( int ), new NodeHandleConfig( "int", Color.Parse( "#ce67e0" )!.Value.AdjustHue( -80 ) ) },
+		{ typeof( float ), new NodeHandleConfig( "Float", Color.Parse( "#8ec07c" )!.Value ) },
+		{ typeof( Vector2 ), new NodeHandleConfig( "Vector2", Color.Parse( "#ce67e0" )!.Value ) },
+		{ typeof( Vector3 ), new NodeHandleConfig( "Vector3", Color.Parse( "#7177e1" )!.Value ) },
+		{ typeof( Vector4 ), new NodeHandleConfig( "Vector4", Color.Parse( "#c7ae32" )!.Value ) },
+		{ typeof( Color ), new NodeHandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
+		{ typeof( Float2x2 ), new NodeHandleConfig( "Float2x2", Color.Parse( "#a3b3c9" )!.Value ) },
+		{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
+		{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
+		{ typeof( Texture2DObject ), new NodeHandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
+		{ typeof( Sampler ), new NodeHandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
+		{ typeof( Gradient ), new NodeHandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
 		};
 
 		BlackboardConfigs = new()
 		{
-			{ typeof( BoolSubgraphInputParameter ), new BlackboardConfig( "bool", HandleConfigs[typeof( bool )].Color ) },
-			{ typeof( IntSubgraphInputParameter ), new BlackboardConfig( "int", HandleConfigs[typeof( int )].Color ) },
-			{ typeof( FloatSubgraphInputParameter ), new BlackboardConfig( "float", HandleConfigs[typeof( float )].Color ) },
-			{ typeof( Float2SubgraphInputParameter ), new BlackboardConfig( "float2", HandleConfigs[typeof( Vector2 )].Color ) },
-			{ typeof( Float3SubgraphInputParameter ), new BlackboardConfig( "float3", HandleConfigs[typeof( Vector3 )].Color ) },
-			{ typeof( Float4SubgraphInputParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Vector4 )].Color ) },
-			{ typeof( ColorSubgraphInputParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Color )].Color ) },
-			{ typeof( BoolParameter ), new BlackboardConfig( "bool", HandleConfigs[typeof( bool )].Color ) },
-			{ typeof( IntParameter ), new BlackboardConfig( "int", HandleConfigs[typeof( int )].Color ) },
-			{ typeof( FloatParameter ), new BlackboardConfig( "float", HandleConfigs[typeof( float )].Color ) },
-			{ typeof( Float2Parameter ), new BlackboardConfig( "float2", HandleConfigs[typeof( Vector2 )].Color ) },
-			{ typeof( Float3Parameter ), new BlackboardConfig( "float3", HandleConfigs[typeof( Vector3 )].Color ) },
-			{ typeof( Float4Parameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Vector4 )].Color ) },
-			{ typeof( ColorParameter ), new BlackboardConfig( "float4", HandleConfigs[typeof( Color )].Color ) },
+			{ typeof( BoolSubgraphInputParameter ), new BlackboardConfig( "bool", NodeHandleConfigs[typeof( bool )].Color ) },
+			{ typeof( IntSubgraphInputParameter ), new BlackboardConfig( "int", NodeHandleConfigs[typeof( int )].Color ) },
+			{ typeof( FloatSubgraphInputParameter ), new BlackboardConfig( "float", NodeHandleConfigs[typeof( float )].Color ) },
+			{ typeof( Float2SubgraphInputParameter ), new BlackboardConfig( "float2", NodeHandleConfigs[typeof( Vector2 )].Color ) },
+			{ typeof( Float3SubgraphInputParameter ), new BlackboardConfig( "float3", NodeHandleConfigs[typeof( Vector3 )].Color ) },
+			{ typeof( Float4SubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Vector4 )].Color ) },
+			{ typeof( ColorSubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Color )].Color ) },
+			{ typeof( Texture2DSubgraphInputParameter ), new BlackboardConfig( "Texture2D", NodeHandleConfigs[typeof( Texture2DObject )].Color ) },
+			{ typeof( BoolParameter ), new BlackboardConfig( "bool", NodeHandleConfigs[typeof( bool )].Color ) },
+			{ typeof( IntParameter ), new BlackboardConfig( "int", NodeHandleConfigs[typeof( int )].Color ) },
+			{ typeof( FloatParameter ), new BlackboardConfig( "float", NodeHandleConfigs[typeof( float )].Color ) },
+			{ typeof( Float2Parameter ), new BlackboardConfig( "float2", NodeHandleConfigs[typeof( Vector2 )].Color ) },
+			{ typeof( Float3Parameter ), new BlackboardConfig( "float3", NodeHandleConfigs[typeof( Vector3 )].Color ) },
+			{ typeof( Float4Parameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Vector4 )].Color ) },
+			{ typeof( ColorParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Color )].Color ) },
+			{ typeof( Texture2DParameter ), new BlackboardConfig( "Texture2D", NodeHandleConfigs[typeof( Texture2DObject )].Color ) },
 		};
 	}
 }

@@ -261,13 +261,77 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 }
 
 /// <summary>
-/// Bool material feature
+/// Texture2D material parameter
 /// </summary>
-[Title( "Shader Feature Boolean" ), Order( 7 )]
-public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, IShaderFeatureParameter
+[Title( "Texture2D" ), Icon( "texture" ), Order( 7 )]
+public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput>
 {
 	[Hide, JsonIgnore, Browsable( false )]
 	public override int MenuOrder => 7;
+
+	public Texture2DParameter() : base()
+	{
+		Value = new TextureInput
+		{
+			Name = Name,
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = true,
+			DefaultColor = Color.White,
+			Type = TextureType.Tex2D,
+		};
+	}
+
+	public Texture2DParameter( TextureInput value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new Texture2DParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			UI = Value with { Name = Name, Type = TextureType.Tex2D },
+		};
+	}
+}
+
+// TODO : Implament the rest of SamplerStateParameter once SamplerState
+// is exposed to the MaterialEditor.
+/*
+/// <summary>
+/// SamplerState material parameter
+/// </summary>
+[Title( "SamplerState" ), Icon( "colorize" ), Order( 8 )]
+public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 8;
+
+	public SamplerStateParameter() : base()
+	{
+		Value = new Sampler();
+	}
+
+	public SamplerStateParameter( Sampler value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		throw new NotImplementedException();
+	}
+}
+*/
+
+/// <summary>
+/// Bool material feature
+/// </summary>
+[Title( "Shader Feature Boolean" ), Order( 8 )]
+public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, IShaderFeatureParameter
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 8;
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
@@ -311,11 +375,11 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 /// <summary>
 /// TODO : 
 /// </summary>
-[Title( "Shader Feature Enum" ), Order( 8 )]
+[Title( "Shader Feature Enum" ), Order( 9 )]
 public sealed class ShaderFeatureEnumParameter : BaseBlackboardParameter, IShaderFeatureParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
+	public override int MenuOrder => 9;
 
 	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );

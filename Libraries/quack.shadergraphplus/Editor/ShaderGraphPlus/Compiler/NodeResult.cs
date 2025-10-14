@@ -92,7 +92,20 @@ public struct NodeResult : IValid
 	public int PreviewID { get; private set; }
 	public string VoidLocalTargetID { get; private set; }
 
-	public readonly bool IsValid => ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
+	public readonly bool IsValid
+	{
+		get 
+		{ 
+			if ( IsMetaDataResult )
+			{
+				return ResultType != ResultType.Invalid && Metadata.Any();
+			}
+			else
+			{
+				return ResultType != ResultType.Invalid && !string.IsNullOrWhiteSpace( Code );
+			}
+		}
+	}
 
 	public readonly string TypeName => ResultType.GetHLSLDataType();
 	
@@ -124,6 +137,7 @@ public struct NodeResult : IValid
 	public string ImagePath { get; set; }
 	public bool Constant { get; set; }
 	public bool ShouldPreview { get; set; }
+	public bool IsMetaDataResult { get; set; } = false;
 
 	/// <summary>
 	/// Generic-Ish metadata related to this NodeResult.
@@ -223,7 +237,8 @@ public struct NodeResult : IValid
 		ResultType = resultType;
 		Code = code;
 		Constant = constant;
-		
+		IsMetaDataResult = false;
+
 		if ( metadata == null )
 		{
 			Metadata = new();
@@ -232,6 +247,30 @@ public struct NodeResult : IValid
 		{
 			Metadata = metadata;
 		}
+
+		Components = ResultType switch
+		{
+			ResultType.Bool => 1,
+			ResultType.Int => 1,
+			ResultType.Float => 1,
+			ResultType.Vector2 => 2,
+			ResultType.Vector3 => 3,
+			ResultType.Vector4 => 4,
+			ResultType.Color => 4,
+			ResultType.Void => 0,
+			_ => 0
+		};
+	}
+
+	public NodeResult( ResultType resultType, string metaDataName, object actualMetaData )
+	{
+		ResultType = resultType;
+		Code = "";
+		Constant = true;
+		IsMetaDataResult = true;
+
+		Metadata = new();
+		SetMetadata( metaDataName, actualMetaData );
 
 		Components = ResultType switch
 		{

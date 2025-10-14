@@ -59,7 +59,7 @@ file static class TextureSamplerExentions
 
 		newTextureInput.Name = textureInput.Name;
 		newTextureInput.IsAttribute = textureInput.IsAttribute;
-		newTextureInput.Default = textureInput.Default;
+		newTextureInput.DefaultColor = textureInput.Default;
 		newTextureInput.Extension = textureInput.Extension switch
 		{
 			VanillaGraph.TextureExtension.Color => TextureExtension.Color,

@@ -106,15 +106,12 @@ public struct TextureInput
 {
 	/// <summary>
 	/// Name that shows up in material editor
+	/// TODO : Remove this and just take in the name from the
+	/// Blackboard parameter.
 	/// </summary>
-	[HideIf( nameof( IsSubgraph ), true )]
+	//[HideIf( nameof( IsSubgraph ), true )]
+	[Hide]
 	public string Name { get; set; }
-
-	/// <summary>
-	/// Image that is used for preview.
-	/// </summary>
-	[ImageAssetPath]
-	public string PreviewImage { get; set; }
 
 	/// <summary>
 	/// If true, this parameter can be modified with <see cref="RenderAttributes"/>.
@@ -126,7 +123,13 @@ public struct TextureInput
 	/// Default color that shows up in material editor when using color control
 	/// </summary>
 	[HideIf( nameof( IsSubgraph ), true )]
-	public Color Default { get; set; }
+	public Color DefaultColor { get; set; }
+
+	/// <summary>
+	/// Default texture that shows up in material editor
+	/// </summary>
+	[ImageAssetPath]
+	public string DefaultTexture { get; set; }
 
 	/// <summary>
 	/// Default texture that shows up in material editor (_color, _normal, _rough, etc..)
@@ -141,9 +144,9 @@ public struct TextureInput
 	[HideIf( nameof( IsSubgraph ), true )]
 	public string CustomExtension { get; set; }
 
-    public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
+	public readonly bool ShowExtension => string.IsNullOrWhiteSpace( CustomExtension );
 
-    [JsonIgnore, Hide]
+	[JsonIgnore, Hide]
 	public string ExtensionString
 	{
 		get

@@ -1,9 +1,9 @@
 ﻿using Editor;
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -20,46 +20,9 @@ public interface ISyncableTextureNode
 	void Sync( ISyncableTextureNode targetNode );
 }
 
-public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode
+public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 {
-	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
-
-	[Hide]
-	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
-
-	[Hide]
-	protected bool ShowUIProperty 
-	{
-		get
-		{
-			if ( IsSubgraph )
-				return false;
-	
-			if ( IsTextureObjectConnected )
-				return false;
-	
-			return true;
-		}
-	}
-
-
-#region ITextureInputNode
-	[JsonIgnore, Hide, Browsable( false )]
-	public string TextureInputName => UI.Name;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool AlreadyRegisterd { get; set; } = false;
-#endregion
-
-	[JsonIgnore, Hide]
-	protected bool IsTextureObjectConnected { get; set; } = false;
-
-	/// <summary>
-	/// Texture to sample in preview
-	/// </summary>
-	[ImageAssetPath]
-	[ShowIf( nameof( ShowUIProperty ), true )]
+	[Hide, JsonIgnore]
 	public string Image
 	{
 		get => _image;
@@ -67,6 +30,7 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 		{
 			_image = value;
 			_asset = AssetSystem.FindByPath( _image );
+
 			if ( _asset == null )
 				return;
 
@@ -74,19 +38,32 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 		}
 	}
 
-	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ? null : $"{DisplayInfo.For( this ).Name} {UI.Name}";
+	[JsonIgnore, Hide] private Asset _asset;
+	[JsonIgnore, Hide] private string _texture;
+	[JsonIgnore, Hide] private string _image;
+	[JsonIgnore, Hide] private string _resourceText;
 
-	private Asset _asset;
-	private string _texture;
-	private string _image;
-	private string _resourceText;
+	[JsonIgnore, Hide] private Asset Asset => _asset;
+	[JsonIgnore, Hide] protected string TexturePath => _texture;
+	[JsonIgnore, Hide] protected bool ShowTextureInputUI { get; set; } = false;
+	[JsonIgnore, Hide] protected bool AlreadyRegisterd { get; set; } = false;
+	[JsonIgnore, Hide] protected bool TextureInputConnected { get; set; } = false;
 
-	[JsonIgnore, Hide]
-	protected Asset Asset => _asset;
+	/// <summary>
+	/// Name that shows up in material editor
+	/// </summary>
+	[Title( "Name" ), Order( 0 )]
+	[ShowIf( nameof( ShowTextureInputUI ), true )]
+	public string Name { get; set; }
 
-	[JsonIgnore, Hide]
-	protected string TexturePath => _texture;
+	[InlineEditor( Label = false ), Group( "UI" ), Order( 1 )]
+	[ShowIf( nameof( ShowTextureInputUI ), true)]
+	public TextureInput UI { get; set; } = new TextureInput
+	{
+		ImageFormat = TextureFormat.DXT5,
+		SrgbRead = true,
+		DefaultColor = Color.White,
+	};
 
 	protected void CompileTexture()
 	{
@@ -95,6 +72,10 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 
 		if ( string.IsNullOrWhiteSpace( _image ) )
 			return;
+
+		var ui = UI;
+		ui.DefaultTexture = _image;
+		UI = ui;
 
 		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
 			_image,
@@ -121,24 +102,6 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 		}
 	}
 
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor( Label = false ), Group( "UI" )]
-	[ShowIf( nameof( ShowUIProperty ), true )]
-	public TextureInput UI { get; set; } = new TextureInput
-	{
-		ImageFormat = TextureFormat.DXT5,
-		SrgbRead = true,
-		Default = Color.White,
-	};
-
-	protected TextureSamplerBase() : base()
-	{
-		Image = "materials/default/default.tga";
-		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
-	}
-
 	public override void OnPaint( Rect rect )
 	{
 		rect = rect.Align( 130, TextFlag.LeftBottom ).Shrink( 3 );
@@ -155,30 +118,10 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 		}
 	}
 
-	public List<string> GetErrors()
+	protected Texture2DSamplerBase() : base()
 	{
-		var errors = new List<string>();
-
-		//if ( !IsTextureObjectConnected )
-		//{
-		//	if ( Graph is ShaderGraphPlus sgp && sgp.IsSubgraph )
-		//	{
-		//		if ( string.IsNullOrWhiteSpace( UI.Name ) )
-		//		{
-		//			errors.Add( $"Texture parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
-		//		}
-		//
-		//		foreach ( var node in sgp.Nodes )
-		//		{
-		//			if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
-		//			{
-		//				errors.Add( $"Duplicate texture parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
-		//			}
-		//		}
-		//	}
-		//}
-
-		return errors;
+		Image = "materials/default/default.tga";
+		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
 	}
 
 	protected bool CheckIfRegisterd( GraphCompiler compiler, TextureInput input, out KeyValuePair<string, TextureInput> existingEntry )
@@ -199,16 +142,41 @@ public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, IT
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
 		return result.IsValid ? new( ResultType.Float, $"{result}.{component}", true ) : new( ResultType.Float, "0.0f", true );
 	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+		var graph = Graph as ShaderGraphPlus;
+
+		if ( !TextureInputConnected )
+		{
+			foreach ( var parameter in graph.Parameters )
+			{
+				if ( parameter.Name == Name )
+				{
+					errors.Add( $"Blackboard parameter with identifier\"{parameter.Identifier}\" has already registerd the name \"{Name}\"" );
+					break;
+				}
+			}
+		}
+
+		return errors;
+	}
 }
 
-/// <summary>
-/// Sample a 2D Texture
-/// </summary>
-[Title( "Texture 2D" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureSampler : TextureSamplerBase
+[Title( "Sample Texture 2D" ), Category( "Textures" ), Icon( "image" )]
+public sealed class SampleTexture2DNode : Texture2DSamplerBase
 {
 	[Hide]
 	public override int Version => 1;
+
+	/// <summary>
+	/// Optional Texture2D Object input when outside of subgraphs.
+	/// </summary>
+	[Title( "Texture" )]
+	[Input( typeof( Texture2DObject ) )]
+	[Hide]
+	public NodeInput Texture2DInput { get; set; }
 
 	/// <summary>
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
@@ -216,7 +184,7 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Title( "Coordinates" )]
 	[Input( typeof( Vector2 ) )]
 	[Hide]
-	public NodeInput Coords { get; set; }
+	public NodeInput CoordsInput { get; set; }
 
 	/// <summary>
 	/// How the texture is filtered and wrapped when sampled
@@ -224,19 +192,15 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Title( "Sampler" )]
 	[Input( typeof( Sampler ) )]
 	[Hide]
-	public NodeInput Sampler { get; set; }
+	public NodeInput SamplerInput { get; set; }
 
-	/// <summary>
-	/// Optional Texture2D Object input when outside of subgraphs.
-	/// </summary>
-	[Title( "Tex 2D" )]
-	[Input( typeof( Texture2DObject ) )]
-	[Hide]
-	public NodeInput TextureObject { get; set; }
-
-	[InlineEditor( Label = false ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
+	[InlineEditor( Label = false ), Group( "Sampler" ), Order( 2 )]
 	public Sampler SamplerState { get; set; } = new Sampler();
+
+	public SampleTexture2DNode() : base()
+	{
+		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+	}
 
 	/// <summary>
 	/// RGBA color result
@@ -245,87 +209,43 @@ public sealed class TextureSampler : TextureSamplerBase
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var input = UI;
-		input.Type = TextureType.Tex2D;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";
+		var texture2DInput = compiler.Result( Texture2DInput );
+		var coords = compiler.Result( CoordsInput );
 
-		var textureObject = compiler.Result( TextureObject );
-		
-		var coords = compiler.Result( Coords );
-
-		//SGPLog.Info( $"IsSubgraph? : {IsSubgraph}" , compiler.IsPreview);
-
-		if ( textureObject.IsValid )
+		if ( texture2DInput.IsValid && texture2DInput.IsMetaDataResult )
 		{
-			Image = textureObject.ImagePath;
-			IsTextureObjectConnected = true;
+			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = false;
+			TextureInputConnected = true;
 		}
 		else
 		{
-			//Image = "";
-			IsTextureObjectConnected = false;
+			UI = UI with { Name = Name };
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = true;
+			TextureInputConnected = false;
 		}
 
-		if ( !IsSubgraph )
-			CompileTexture();
+		CompileTexture();
 
-		// If TextureObject input is not valid and we are not in a SubGraph then register a texture here and use that instead.
-		if ( !textureObject.IsValid && !IsSubgraph )
+		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
+		texture ??= Texture.White;
+
+		var samplerGlobal = compiler.ResultSamplerOrDefault( SamplerInput, SamplerState );
+		var resultTextureGlobal = compiler.ResultTextureAlt( UI, texture, texture2DInput.IsValid );
+
+		if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 		{
-			SGPLog.Info( $"Registering Texture 2D Object on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
-			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-			texture ??= Texture.White;
-
-			// TODO :
-			//if ( AlreadyRegisterd && compiler.IsPreview )
-			//{
-			//	var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
-			//}
-			var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
-
-			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-			{
-				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.SampleLevel(" +
-					$" {samplerGlobal}," +
-					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
-			}
-			else
-			{
-				return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.Sample( {samplerGlobal}," +
-					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
-			}
+			return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.SampleLevel(" +
+				$" {samplerGlobal}," +
+				$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
 		}
-
-		// Make sure to let the user know that the requied input is missing if we are in in a SubGraph.
-		if ( !textureObject.IsValid && IsSubgraph )
+		else
 		{
-			return NodeResult.MissingInput( $"Tex 2D" );
+			return new NodeResult( ResultType.Color, $"{resultTextureGlobal}.Sample( {samplerGlobal}," +
+				$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
 		}
-
-		// If TextureObject input is valid then use the registerd Texture2D from the connected Texture Object node.
-		// Either if the textureObject input is valid or we are in a Subgraph.
-		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
-		{
-			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-			var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.SampleLevel(" +
-					$" {sampler}," +
-					$" {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, 0 )" );
-			}
-			else
-			{
-				return new NodeResult( ResultType.Color, $"{textureObject.Code}.Sample( {sampler}," +
-					$"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")} )" );
-			}
-		}
-
-		return NodeResult.Error( "Failed to evaluate!" );
 	};
 
 	/// <summary>
@@ -351,7 +271,307 @@ public sealed class TextureSampler : TextureSamplerBase
 	/// </summary>
 	[Output( typeof( float ) ), Hide, Title( "A" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
+}
 
+[Title( "Sample Texture 2D Triplanar" ), Category( "Textures" ), Icon( "image" )]
+public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
+{
+	[Hide]
+	public override int Version => 1;
+
+	/// <summary>
+	/// Optional Texture2D Object input when outside of subgraphs.
+	/// </summary>
+	[Title( "Texture" )]
+	[Input( typeof( Texture2DObject ) )]
+	[Hide]
+	public NodeInput Texture2DInput { get; set; }
+
+	/// <summary>
+	/// Coordinates to sample this texture (Defaults to vertex coordinates)
+	/// </summary>
+	[Title( "Coordinates" )]
+	[Input( typeof( Vector2 ) )]
+	[Hide]
+	public NodeInput CoordsInput { get; set; }
+
+	/// <summary>
+	/// How the texture is filtered and wrapped when sampled
+	/// </summary>
+	[Title( "Sampler" )]
+	[Input( typeof( Sampler ) )]
+	[Hide]
+	public NodeInput SamplerInput { get; set; }
+
+	/// <summary>
+	/// Normal to use when blending between each sampled direction (Defaults to vertex normal)
+	/// </summary>
+	[Title( "Normal" )]
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput NormalInput { get; set; }
+
+	/// <summary>
+	/// How many times to file the coordinates.
+	/// </summary>
+	[Title( "Tile" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput TileInput { get; set; }
+
+	/// <summary>
+	/// Blend factor between different samples.
+	/// </summary>
+	[Title( "Blend Factor" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput BlendFactorInput { get; set; }
+
+	[InlineEditor( Label = false ), Group( "Sampler" ), Order( 2 )]
+	public Sampler SamplerState { get; set; } = new Sampler();
+
+	public float DefaultTile { get; set; } = 1.0f;
+	public float DefaultBlendFactor { get; set; } = 4.0f;
+
+	public SampleTexture2DTriplanarNode() : base()
+	{
+		Image = "materials/default/default.tga";
+		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+	}
+
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
+	[Output( typeof( Color ) ), Title( "RGBA" )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var texture2DInput = compiler.Result( Texture2DInput );
+		var coords = compiler.Result( CoordsInput );
+		var samplerGlobal = compiler.ResultSamplerOrDefault( SamplerInput, SamplerState );
+		var tile = compiler.ResultOrDefault( TileInput, DefaultTile );
+		var normal = compiler.Result( NormalInput );
+		var blendfactor = compiler.ResultOrDefault( BlendFactorInput, DefaultBlendFactor );
+
+		if ( texture2DInput.IsValid && texture2DInput.IsMetaDataResult )
+		{
+			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = false;
+			TextureInputConnected = true;
+		}
+		else
+		{
+			UI = UI with { Name = Name };
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = true;
+			TextureInputConnected = false;
+		}
+
+		var input = UI;
+		input.Type = TextureType.Tex2D;
+
+		CompileTexture();
+
+		if ( CheckIfRegisterd( compiler, input, out var existingEntry ) )
+		{
+			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+		}
+
+		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
+		texture ??= Texture.White;
+
+		var resultTextureGlobal = compiler.ResultTextureAlt( input, texture, texture2DInput.IsValid );
+
+		var result = compiler.ResultHLSLFunction( "TexTriplanar_Color",
+		resultTextureGlobal,
+		samplerGlobal,
+		coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+		normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
+		$"{blendfactor}"
+		);
+
+		return new NodeResult( ResultType.Color, result );
+	};
+
+	/// <summary>
+	/// Red component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "R" )]
+	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "r", compiler );
+
+	/// <summary>
+	/// Green component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "G" )]
+	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "g", compiler );
+
+	/// <summary>
+	/// Blue component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "B" )]
+	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "b", compiler );
+
+	/// <summary>
+	/// Alpha (Opacity) component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "A" )]
+	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
+}
+
+[Title( "Sample Texture 2D Normal Map Triplanar" ), Category( "Textures" ), Icon( "image" )]
+public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
+{
+	[Hide]
+	public override int Version => 1;
+
+	/// <summary>
+	/// Optional Texture2D Object input when outside of subgraphs.
+	/// </summary>
+	[Title( "Texture" )]
+	[Input( typeof( Texture2DObject ) )]
+	[Hide]
+	public NodeInput Texture2DInput { get; set; }
+
+	/// <summary>
+	/// Coordinates to sample this texture (Defaults to vertex coordinates)
+	/// </summary>
+	[Title( "Coordinates" )]
+	[Input( typeof( Vector2 ) )]
+	[Hide]
+	public NodeInput CoordsInput { get; set; }
+
+	/// <summary>
+	/// How the texture is filtered and wrapped when sampled
+	/// </summary>
+	[Title( "Sampler" )]
+	[Input( typeof( Sampler ) )]
+	[Hide]
+	public NodeInput SamplerInput { get; set; }
+
+	/// <summary>
+	/// Normal to use when blending between each sampled direction (Defaults to vertex normal)
+	/// </summary>
+	[Title( "Normal" )]
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput NormalInput { get; set; }
+
+	/// <summary>
+	/// How many times to file the coordinates.
+	/// </summary>
+	[Title( "Tile" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput TileInput { get; set; }
+
+	/// <summary>
+	/// Blend factor between different samples.
+	/// </summary>
+	[Title( "Blend Factor" )]
+	[Input( typeof( float ) )]
+	[Hide]
+	public NodeInput BlendFactorInput { get; set; }
+
+	[InlineEditor( Label = false ), Group( "Sampler" ), Order( 2 )]
+	public Sampler SamplerState { get; set; } = new Sampler();
+
+	public float DefaultTile { get; set; } = 1.0f;
+	public float DefaultBlendFactor { get; set; } = 4.0f;
+
+	public SampleTexture2DNormalMapTriplanarNode() : base()
+	{
+		Image = "materials/default/default.tga";
+		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+		UI = new TextureInput
+		{
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = false,
+			ColorSpace = TextureColorSpace.Linear,
+			Extension = TextureExtension.Normal,
+			Processor = TextureProcessor.NormalizeNormals,
+			DefaultColor = new Color( 0.5f, 0.5f, 1f, 1f )
+		};
+	}
+
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
+	[Output( typeof( Color ) ), Title( "RGBA" )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var texture2DInput = compiler.Result( Texture2DInput );
+		var coords = compiler.Result( CoordsInput );
+		var samplerGlobal = compiler.ResultSamplerOrDefault( SamplerInput, SamplerState );
+		var tile = compiler.ResultOrDefault( TileInput, DefaultTile );
+		var normal = compiler.Result( NormalInput );
+		var blendfactor = compiler.ResultOrDefault( BlendFactorInput, DefaultBlendFactor );
+
+		if ( texture2DInput.IsValid && texture2DInput.IsMetaDataResult )
+		{
+			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = false;
+			TextureInputConnected = true;
+		}
+		else
+		{
+			UI = UI with { Name = Name };
+			Image = UI.DefaultTexture;
+			ShowTextureInputUI = true;
+			TextureInputConnected = false;
+		}
+
+		var input = UI;
+		input.Type = TextureType.Tex2D;
+
+		CompileTexture();
+
+		if ( CheckIfRegisterd( compiler, input, out var existingEntry ) )
+		{
+			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+		}
+
+		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
+		texture ??= Texture.White;
+
+		var resultTextureGlobal = compiler.ResultTextureAlt( input, texture, texture2DInput.IsValid );
+
+		var result = compiler.ResultHLSLFunction( "TexTriplanar_Normal",
+		resultTextureGlobal,
+		samplerGlobal,
+		coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
+		normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
+		$"{blendfactor}"
+		);
+
+		return new NodeResult( ResultType.Vector3, result );
+	};
+
+	/// <summary>
+	/// Red component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "R" )]
+	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "r", compiler );
+
+	/// <summary>
+	/// Green component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "G" )]
+	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "g", compiler );
+
+	/// <summary>
+	/// Blue component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "B" )]
+	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "b", compiler );
+
+	/// <summary>
+	/// Alpha (Opacity) component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "A" )]
+	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
 /// <summary>
@@ -439,7 +659,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	{
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
-		Default = Color.White,
+		DefaultColor = Color.White,
 	};
 
 	public TextureCube() : base()
@@ -560,354 +780,6 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 }
 
 /// <summary>
-/// Sample a 2D texture from 3 directions, then blend based on a normal vector.
-/// </summary>
-[Title( "Texture Triplanar" ), Category( "Textures" ), Icon( "photo_library" )]
-public sealed class TextureTriplanar : TextureSamplerBase
-{
-	[Hide]
-	public override int Version => 1;
-
-	/// <summary>
-	/// Coordinates to sample this texture (Defaults to vertex position)
-	/// </summary>
-	[Title( "Coordinates" )]
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput Coords { get; set; }
-
-	/// <summary>
-	/// How the texture is filtered and wrapped when sampled
-	/// </summary>
-	[Title( "Sampler" )]
-	[Input( typeof( Sampler ) )]
-	[Hide]
-	public NodeInput Sampler { get; set; }
-
-	/// <summary>
-	/// Optional Texture2D Object input when outside of subgraphs.
-	/// </summary>
-	[Title( "Tex 2D" )]
-	[Input( typeof( Texture2DObject ) )]
-	[Hide]
-	public NodeInput TextureObject { get; set; }
-
-	/// <summary>
-	/// Normal to use when blending between each sampled direction (Defaults to vertex normal)
-	/// </summary>
-	[Title( "Normal" )]
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput Normal { get; set; }
-
-	/// <summary>
-	/// How many times to file the coordinates.
-	/// </summary>
-	[Title( "Tile" )]
-	[Input( typeof( float ) )]
-	[Hide]
-	public NodeInput Tile { get; set; }
-
-	/// <summary>
-	/// Blend factor between different samples.
-	/// </summary>
-	[Title( "Blend Factor" )]
-	[Input( typeof( float ) )]
-	[Hide]
-	public NodeInput BlendFactor { get; set; }
-
-	[InlineEditor( Label = false ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public Sampler SamplerState { get; set; } = new Sampler();
-
-	public float DefaultTile { get; set; } = 1.0f;
-
-	public float DefaultBlendFactor { get; set; } = 4.0f;
-	public TextureTriplanar()
-	{
-		Image = "materials/default/default.tga";
-		ExpandSize = new Vector2( 0f, 128f );
-	}
-
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
-	[Output( typeof( Color ) ), Title( "RGBA" )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		var input = UI;
-		input.Type = TextureType.Tex2D;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";
-
-		var textureObject = compiler.Result( TextureObject );
-		var coords = compiler.Result( Coords );
-		var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
-		var normal = compiler.Result( Normal );
-		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
-
-		if ( textureObject.IsValid )
-		{
-			Image = textureObject.ImagePath;
-			IsTextureObjectConnected = true;
-		}
-		else
-		{
-			//Image = "";
-			IsTextureObjectConnected = false;
-		}
-
-		CompileTexture();
-
-		if ( CheckIfRegisterd( compiler, input, out var existingEntry ) )
-		{
-			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
-		}
-
-		// If TextureObject input is not valid and we are not in a SubGraph then register the texture here instead.
-		if ( !textureObject.IsValid && !IsSubgraph )
-		{
-			SGPLog.Info( $"Registering Texture 2D Object on the `{nameof( TextureTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
-			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-			texture ??= Texture.White;
-
-			var resultTextureGlobal = compiler.ResultTexture( input, texture );
-
-			var result = compiler.ResultHLSLFunction( "TexTriplanar_Color",
-			resultTextureGlobal,
-			samplerGlobal,
-			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
-			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
-			$"{blendfactor}"
-			);
-
-			return new NodeResult( ResultType.Color, result );
-		}
-
-		// Make sure to let the user know that the requied input is missing if we are in in a SubGraph.
-		if ( !textureObject.IsValid && IsSubgraph )
-		{
-			return NodeResult.MissingInput( $"Tex2D Object" );
-		}
-
-		// If TextureObject input is valid then use the registerd Texture2D from the connected Texture Object node.
-		// Either if the textureObject input is valid or we are in a Subgraph.
-		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
-		{
-			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
-			var result = compiler.ResultHLSLFunction( "TexTriplanar_Color",
-					$"{textureObject.Code}",
-					$"{samplerGlobal}",
-					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
-					normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
-					$"{blendfactor}"
-				);
-
-			return new NodeResult( ResultType.Color, result );
-		}
-
-		return NodeResult.Error( "Failed to evaluate!" );
-	};
-
-	/// <summary>
-	/// Red component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "R" )]
-	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "r", compiler );
-
-	/// <summary>
-	/// Green component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "G" )]
-	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "g", compiler );
-
-	/// <summary>
-	/// Blue component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "B" )]
-	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "b", compiler );
-
-	/// <summary>
-	/// Alpha (Opacity) component of result
-	/// </summary>
-	[Output( typeof( float ) ), Hide, Title( "A" )]
-	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
-
-}
-
-/// <summary>
-/// Sample a 2D texture from 3 directions, then blend based on a normal vector.
-/// </summary>
-[Title( "Normal Map Triplanar" ), Category( "Textures" ), Icon( "texture" )]
-public sealed class NormalMapTriplanar : TextureSamplerBase
-{
-	[Hide]
-	public override int Version => 1;
-
-	/// <summary>
-	/// Coordinates to sample this texture (Defaults to vertex position)
-	/// </summary>
-	[Title( "Coordinates" )]
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput Coords { get; set; }
-
-	/// <summary>
-	/// How the texture is filtered and wrapped when sampled
-	/// </summary>
-	[Title( "Sampler" )]
-	[Input( typeof( Sampler ) )]
-	[Hide]
-	public NodeInput Sampler { get; set; }
-
-	/// <summary>
-	/// Optional Texture2D Object input when outside of subgraphs.
-	/// </summary>
-	[Title( "Tex 2D" )]
-	[Input( typeof( Texture2DObject ) )]
-	[Hide]
-	public NodeInput TextureObject { get; set; }
-
-	/// <summary>
-	/// Normal to use when blending between each sampled direction (Defaults to vertex normal)
-	/// </summary>
-	[Title( "Normal" )]
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput Normal { get; set; }
-
-	public NormalMapTriplanar()
-	{
-		ExpandSize = new Vector2( 0f, 128f );
-		Image = "materials/default/default.tga";
-		UI = new TextureInput
-		{
-			ImageFormat = TextureFormat.DXT5,
-			SrgbRead = false,
-			ColorSpace = TextureColorSpace.Linear,
-			Extension = TextureExtension.Normal,
-			Processor = TextureProcessor.NormalizeNormals,
-			Default = new Color( 0.5f, 0.5f, 1f, 1f )
-		};
-	}
-
-	/// <summary>
-	/// How many times to file the coordinates.
-	/// </summary>
-	[Title( "Tile" )]
-	[Input( typeof( float ) )]
-	[Hide]
-	public NodeInput Tile { get; set; }
-
-	/// <summary>
-	/// Blend factor between different samples.
-	/// </summary>
-	[Title( "Blend Factor" )]
-	[Input( typeof( float ) )]
-	[Hide]
-	public NodeInput BlendFactor { get; set; }
-
-	//[InlineEditor( Label = false ), Group( "Sampler" )]
-	//public Sampler DefaultSampler { get; set; } = new Sampler();
-
-	[InlineEditor( Label = false ), Group( "Sampler" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public Sampler SamplerState { get; set; } = new Sampler();
-
-	public float DefaultTile { get; set; } = 1.0f;
-
-	public float DefaultBlendFactor { get; set; } = 4.0f;
-
-	/// <summary>
-	/// RGBA color result
-	/// </summary>
-	[Hide]
-	[Output( typeof( Vector3 ) ), Title( "XYZ" )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		var input = UI;
-		input.Type = TextureType.Tex2D;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";
-
-		var textureObject = compiler.Result( TextureObject );
-		var coords = compiler.Result( Coords );
-		var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-		var tile = compiler.ResultOrDefault( Tile, DefaultTile );
-		var normal = compiler.Result( Normal );
-		var blendfactor = compiler.ResultOrDefault( BlendFactor, DefaultBlendFactor );
-
-		if ( textureObject.IsValid )
-		{
-			Image = textureObject.ImagePath;
-			IsTextureObjectConnected = true;
-		}
-		else
-		{
-			//Image = "";
-			IsTextureObjectConnected = false;
-		}
-
-		CompileTexture();
-
-		if ( CheckIfRegisterd( compiler, input, out var existingEntry ) )
-		{
-			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
-		}
-
-		// If TextureObject input is not valid and we are not in a SubGraph then register the texture here instead.
-		if ( !textureObject.IsValid && !IsSubgraph )
-		{
-			SGPLog.Info( $"Registering Texture 2D Object on the `{nameof( NormalMapTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
-			var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-			texture ??= Texture.White;
-
-			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
-
-			var result = compiler.ResultHLSLFunction( "TexTriplanar_Normal",
-			resultTextureGlobal,
-			samplerGlobal,
-			coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
-			normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
-			$"{blendfactor}"
-			);
-
-			return new NodeResult( ResultType.Vector3, result );
-		}
-
-		// Make sure to let the user know that the requied input is missing if we are in in a SubGraph.
-		if ( !textureObject.IsValid && IsSubgraph )
-		{
-			return NodeResult.MissingInput( $"Tex Object" );
-		}
-
-		// If TextureObject input is valid then use the registerd Texture2D from the connected Texture Object node.
-		// Either if the textureObject input is valid or we are in a Subgraph.
-		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
-		{
-			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( NormalMapTriplanar )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
-
-			var result = compiler.ResultHLSLFunction( "TexTriplanar_Normal",
-					$"{textureObject.Code}",
-					$"{samplerGlobal}",
-					coords.IsValid ? coords.Cast( 3 ) : "(i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz) / 39.3701",
-					normal.IsValid ? normal.Cast( 3 ) : "normalize( i.vNormalWs.xyz )",
-					$"{blendfactor}"
-				);
-
-			return new NodeResult( ResultType.Vector3, result );
-		}
-
-		return NodeResult.Error( "Failed to evaluate!" );
-	};
-}
-
-/// <summary>
 /// Texture Coordinate from vertex data.
 /// </summary>
 [Title( "Texture Coordinate" ), Category( "Variables" ), Icon( "texture" )]
@@ -950,377 +822,6 @@ public sealed class TextureCoord : ShaderNodePlus
 			return Tiling.IsNearZeroLength ? new( ResultType.Vector2, result ) : new( ResultType.Vector2, $"{result} * {compiler.ResultValue( Tiling )}" );
 		}
 	};
-}
-
-/// <summary>
-/// TextureCube Object.
-/// </summary>
-[Title( "Texture Cube Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITextureInputNode
-{
-	[Hide]
-	public override int Version => 1;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override bool CanPreview => false;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
-
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public ParameterNodeModeType ParameterNodeType { get; set; }
-
-	[Hide]
-	public override string Title
-	{
-		get
-		{
-			string name = $"{DisplayInfo.For( this ).Name}";
-
-			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( UI.Name ) )
-			{
-				return $"{name} ( {UI.Name} )";
-			}
-
-			return name;
-		}
-	}
-
-#region ITextureInputNode
-	[JsonIgnore, Hide, Browsable( false )]
-	public string TextureInputName => UI.Name;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool AlreadyRegisterd { get; set; } = false;
-#endregion
-
-	/// <summary>
-	/// Texture to sample in previewW
-	/// </summary>
-	[ResourceType( "vtex" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string Texture { get; set; }
-
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public TextureInput UI { get; set; } = new TextureInput
-	{
-		ImageFormat = TextureFormat.DXT5,
-		SrgbRead = true,
-		Default = Color.White,
-	};
-
-	public TextureCubeObjectNode() : base()
-	{
-		Texture = "materials/default/default.vtex";//"materials/skybox/skybox_workshop.vtex";
-		ExpandSize = new Vector2( 32, 128 );
-	}
-
-	public override void OnPaint( Rect rect )
-	{
-		rect = rect.Align( 130, TextFlag.LeftBottom ).Shrink( 3 );
-
-		Paint.SetBrush( "/image/transparent-small.png" );
-		Paint.DrawRect( rect.Shrink( 2 ), 2 );
-
-		Paint.SetBrush( Theme.ControlBackground.WithAlpha( 0.7f ) );
-		Paint.DrawRect( rect, 2 );
-
-		if ( !string.IsNullOrEmpty( Texture ) )
-		{
-			var tex = Sandbox.Texture.Find( Texture );
-			if ( tex is null ) return;
-			var pixmap = Pixmap.FromTexture( tex );
-			Paint.Draw( rect.Shrink( 2 ), pixmap );
-		}
-	}
-
-	[Hide, JsonIgnore]
-	public string Name { get; set; }
-
-	[Hide, JsonIgnore]
-	public bool IsAttribute { get; set; }
-
-	[Hide, JsonIgnore]
-	ParameterUI IParameterNode.UI { get; set; }
-
-	/// <summary>
-	/// TextureCube object result.
-	/// </summary>
-	[Hide]
-	[Output( typeof( TextureCubeObject ) ), Title( "Tex Cube" )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		var input = UI;
-		input.Type = TextureType.TexCube;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";
-
-		if ( IsSubgraph )
-		{
-			if ( string.IsNullOrWhiteSpace( Name ) )
-			{
-				return NodeResult.Error( $"Missing required Input Name" );
-			}
-		}
-		
-		if ( AlreadyRegisterd && compiler.IsPreview )
-		{
-			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
-		}
-
-		var resultTextureGlobal = compiler.ResultTexture( input, Sandbox.Texture.Load( Texture ) );
-
-		return new NodeResult( ResultType.TextureCubeObject, resultTextureGlobal, constant: true ) { ImagePath = Sandbox.Texture.Load( Texture ).ResourcePath };
-	};
-}
-
-/// <summary>
-/// Texture2D Object.
-/// </summary>
-[Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode
-{
-	[Hide]
-	public override int Version => 1;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override bool CanPreview => false;
-
-	[Hide]
-	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public ParameterNodeModeType ParameterNodeType { get; set; }
-
-	#region ITextureInputNode
-	[JsonIgnore, Hide, Browsable( false )]
-	public string TextureInputName => UI.Name;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool AlreadyRegisterd { get; set; } = false;
-#endregion
-
-	/// <summary>
-	/// Texture to sample in preview
-	/// </summary>
-	[ImageAssetPath]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public string Image
-	{
-		get => _image;
-		set
-		{
-			_image = value;
-			_asset = AssetSystem.FindByPath( _image );
-			if ( _asset == null )
-				return;
-
-			CompileTexture();
-		}
-	}
-
-	[Hide]
-	public override string Title
-	{
-		get
-		{
-			string name = $"{DisplayInfo.For( this ).Name}";
-
-			UI.SetIsSubgraph( IsSubgraph );
-
-			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( UI.Name ) )
-			{
-				return $"{name} ( {UI.Name} )";
-			}
-			else if ( !IsSubgraph )
-			{
-				return name;
-			}
-			else if ( IsSubgraph && !string.IsNullOrWhiteSpace( Name ) )
-			{
-				return $"{name} ( {Name} )";
-			}
-			else
-			{
-				return name;
-			}
-		}
-	}
-
-	[Hide]
-	private Asset _asset;
-	[Hide]
-	private string _texture;
-	[Hide]
-	private string _image;
-	[Hide]
-	private string _resourceText;
-
-	[JsonIgnore, Hide]
-	private Asset Asset => _asset;
-
-	[JsonIgnore, Hide]
-	private string TexturePath => _texture;
-
-	private void CompileTexture()
-	{
-		if ( _asset == null )
-			return;
-
-		if ( string.IsNullOrWhiteSpace( _image ) )
-			return;
-
-		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
-			_image,
-			UI.ColorSpace,
-			UI.ImageFormat,
-			UI.Processor );
-
-		if ( _resourceText == resourceText )
-			return;
-
-		_resourceText = resourceText;
-
-		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
-		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
-
-		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
-		{
-			_texture = assetPath;
-		}
-		else
-		{
-			Log.Warning( $"Failed to compile {_image}" );
-		}
-	}
-
-	/// <summary>
-	/// Settings for how this texture shows up in material editor
-	/// </summary>
-	[InlineEditor( Label = false ), Group( "UI" )]
-	[HideIf( nameof( IsSubgraph ), true )]
-	public TextureInput UI { get; set; } = new TextureInput
-	{
-		ImageFormat = TextureFormat.DXT5,
-		SrgbRead = true,
-		Default = Color.White,
-	};
-
-	public Texture2DObjectNode() : base()
-	{
-		Image = "materials/dev/white_color.tga";
-		ExpandSize = new Vector2( 32, 128 );
-	}
-
-	public override void OnPaint( Rect rect )
-	{
-		rect = rect.Align( 130, TextFlag.LeftBottom ).Shrink( 3 );
-
-		Paint.SetBrush( "/image/transparent-small.png" );
-		Paint.DrawRect( rect.Shrink( 2 ), 2 );
-
-		Paint.SetBrush( Theme.ControlBackground.WithAlpha( 0.7f ) );
-		Paint.DrawRect( rect, 2 );
-
-		if ( Asset != null )
-		{
-			Paint.Draw( rect.Shrink( 2 ), Asset.GetAssetThumb( true ) );
-		}
-	}
-
-	[Hide]
-	[Title( "Input Name" )]
-	public string Name { get; set; }
-
-	[Hide, JsonIgnore]
-	public bool IsAttribute { get; set; }
-
-	[Hide, JsonIgnore]
-	ParameterUI IParameterNode.UI { get; set; }
-
-#region ISyncableTextureNode Region
-	[Hide,JsonIgnore]
-	public string SyncID => Identifier;
-
-	[Hide, JsonIgnore]
-	public string SourceParameterName => UI.Name;
-
-	public void Sync( ISyncableTextureNode targetNode )
-	{
-		targetNode.Image = Image; // Copy the preview image path
-		targetNode.UI = UI;// Copy the Material Editor UI Info
-		targetNode.Update(); // Tell the node to update
-	}
-#endregion ISyncableTextureNode Region
-
-	/// <summary>
-	/// Texture2D object result.
-	/// </summary>
-	[Hide]
-	[Output( typeof( Texture2DObject ) ), Title( "Tex 2D" )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		var input = UI;
-		input.Type = TextureType.Tex2D;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";;
-
-		CompileTexture();
-
-		var texture = string.IsNullOrWhiteSpace( TexturePath ) ? null : Texture.Load( TexturePath );
-		texture ??= Texture.White;
-
-		if ( AlreadyRegisterd && compiler.IsPreview )
-		{
-			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			
-			if ( !string.IsNullOrWhiteSpace( existingEntry.Value.BoundNodeId ) )
-			{
-				return new NodeResult( ResultType.Texture2DObject, $"g_t{existingEntry.Key}", constant: true ) { ImagePath = Image };
-			}
-		
-			//return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`:" );
-		}
-		
-		var resultTextureGlobal = compiler.ResultTexture(  input, texture );
-
-		return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true ) { ImagePath = Image };
-	};
-
-	public List<string> GetErrors()
-	{
-		var errors = new List<string>();
-
-		if ( Graph is ShaderGraphPlus sg && sg.IsSubgraph )
-		{
-			//if ( string.IsNullOrWhiteSpace( UI.Name ) )
-			//{
-			//	errors.Add( $"Texture Object parameter \"{DisplayInfo.For( this ).Name}\" is missing a name" );
-			//}
-
-			//foreach ( var node in sg.Nodes )
-			//{
-			//	if ( node is ITextureParameterNode tpn && tpn != this && tpn.UI.Name == UI.Name )
-			//	{
-			//		errors.Add( $"Duplicate texture object parameter name \"{UI.Name}\" on {DisplayInfo.For( this ).Name}" );
-			//	}
-			//}
-		}
-
-		return errors;
-	}
 }
 
 /// <summary>
