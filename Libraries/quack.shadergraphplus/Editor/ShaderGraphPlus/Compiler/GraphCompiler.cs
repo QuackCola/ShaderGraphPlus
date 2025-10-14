@@ -1298,21 +1298,23 @@ public sealed partial class GraphCompiler
 				case Type t when t == typeof( bool ):
 					return false;
 				case Type t when t == typeof( int ):
-					return 0;
+					return 1;
 				case Type t when t == typeof( float ):
-					return 0.0f;
+					return 1.0f;
 				case Type t when t == typeof( Vector2 ):
-					return Vector2.Zero;
+					return Vector2.One;
 				case Type t when t == typeof( Vector3 ):
-					return Vector3.Zero;
+					return Vector3.One;
 				case Type t when t == typeof( Vector4 ):
-					return Vector4.Zero;
+					return Vector4.One;
 				case Type t when t == typeof( Color ):
 					return Color.White;
 				case Type t when t == typeof( Sampler ):
 					return new Sampler();
 				case Type t when t == typeof( Texture2DObject ):
-					return new TextureInput();
+					return new TextureInput() { Type = TextureType.Tex2D };
+				case Type t when t == typeof( TextureCubeObject ):
+					return new TextureInput() { Type = TextureType.TexCube };
 				default:
 					throw new Exception( $"Type `{type}` has no default!" );
 			}
@@ -1355,7 +1357,13 @@ public sealed partial class GraphCompiler
 			}
 			else if ( type == typeof( Texture2DObject ) )
 			{
-				value = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
+				var textureinput = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
+				value = textureinput with { Type = TextureType.Tex2D };
+			}
+			else if ( type == typeof( TextureCubeObject ) )
+			{
+				var textureinput = JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() );
+				value = textureinput with { Type = TextureType.TexCube };
 			}
 		}
 		
