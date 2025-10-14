@@ -89,6 +89,10 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		{
 			SetDefaultValue( texture2DParameter.Value );
 		}
+		else if ( blackboardParameter is TextureCubeSubgraphInputParameter textureCubeParameter )
+		{
+			SetDefaultValue( textureCubeParameter.Value );
+		}
 	}
 
 	[Hide, JsonIgnore]

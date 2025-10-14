@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus;
+﻿using ShaderGraphPlus.Nodes;
+
+namespace ShaderGraphPlus;
 
 /// <summary>
 /// Bool value subgraph input
@@ -301,6 +303,44 @@ public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputPar
 			InputName = Name,
 			InputDescription = Description,
 			InputData = new VariantValueTexture2D( Value with { Name = Name, Type = TextureType.Tex2D }, SubgraphPortType.Texture2DObject )
+		};
+	}
+}
+
+/// <summary>
+/// TextureCube subgraph input
+/// </summary>
+[Title( "TextureCube" ), Icon( "view_in_ar" ), Order( 8 )]
+[SubgraphOnly]
+public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 8;
+
+	public TextureCubeSubgraphInputParameter() : base()
+	{
+		Value = new TextureInput
+		{
+			Name = Name,
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = true,
+			DefaultColor = Color.White,
+			Type = TextureType.TexCube,
+		};
+	}
+
+	public TextureCubeSubgraphInputParameter( TextureInput value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputData = new VariantValueTextureCube( Value with { Name = Name, Type = TextureType.TexCube }, SubgraphPortType.TextureCubeObject )
 		};
 	}
 }
