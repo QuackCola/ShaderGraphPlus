@@ -7,7 +7,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 using System.Text;
 using ShaderGraphPlus.Nodes;
 
-
 namespace ShaderGraphPlus;
 
 public enum SubgraphOutputPreviewType
