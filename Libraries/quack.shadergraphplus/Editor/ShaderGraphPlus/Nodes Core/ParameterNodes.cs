@@ -6,6 +6,10 @@ using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 
+internal interface ITextureParameterNodeNew
+{
+	string Name { get; set; }
+}
 
 /// <summary>
 /// Bool value
@@ -495,7 +499,7 @@ internal interface IMetaDataNode
 /// </summary>
 [Title( "Texture 2D" ), Category( "Parameters" ), Icon( "texture" )]
 [InternalNode]
-public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable, IErroringNode, IMetaDataNode
+public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 2;
@@ -518,7 +522,7 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { Name = Name };
+		UI = UI with { Name = Name, Type = TextureType.Tex2D };
 		compiler.ResultTexture( UI );
 		return new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
 	};
@@ -532,15 +536,70 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 		}
 	}
 
+	public NodeResult GetResult( GraphCompiler compiler )
+	{
+		return Result.Invoke( compiler );
+	}
+
 	public List<string> GetErrors()
 	{
 		var errors = new List<string>();
 
 		return errors;
 	}
+}
+
+/// <summary>
+/// Texture Cube Input parameter.
+/// </summary>
+[Title( "Texture Cube" ), Category( "Parameters" ), Icon( "view_in_ar" )]
+[InternalNode]
+public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncable, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
+{
+	[Hide]
+	public override int Version => 2;
+
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
+		$"{DisplayInfo.For( this ).Name}" :
+		$"{DisplayInfo.For( this ).Name} ( {Name} )";
+
+	[Hide, Browsable( false )]
+	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Hide, Browsable( false )]
+	public string Name { get; set; } = "";
+
+	[Hide, Browsable( false )]
+	public TextureInput UI { get; set; } = new TextureInput();
+
+	[Output( typeof( Texture2DObject ) ), Title( "Texture" )]
+	[Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { Name = Name, Type = TextureType.TexCube };
+		compiler.ResultTexture( UI );
+		return new NodeResult( ResultType.TextureCubeObject, "TextureInput", UI );
+	};
+
+	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )
+	{
+		if ( parameter is TextureCubeParameter textureCubeParam )
+		{
+			Name = textureCubeParam.Name;
+			UI = textureCubeParam.Value;
+		}
+	}
 
 	public NodeResult GetResult( GraphCompiler compiler )
 	{
 		return Result.Invoke( compiler );
+	}
+
+	public List<string> GetErrors()
+	{
+		var errors = new List<string>();
+
+		return errors;
 	}
 }

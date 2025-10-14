@@ -52,6 +52,7 @@ internal static class ShaderGraphPlusTheme
 		{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
 		{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
 		{ typeof( Texture2DObject ), new NodeHandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
+		{ typeof( TextureCubeObject ), new NodeHandleConfig( "TextureCube", Color.Parse( "#ffb3a7" )!.Value ) },
 		{ typeof( Sampler ), new NodeHandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
 		{ typeof( Gradient ), new NodeHandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
 		};
@@ -74,6 +75,7 @@ internal static class ShaderGraphPlusTheme
 			{ typeof( Float4Parameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Vector4 )].Color ) },
 			{ typeof( ColorParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Color )].Color ) },
 			{ typeof( Texture2DParameter ), new BlackboardConfig( "Texture2D", NodeHandleConfigs[typeof( Texture2DObject )].Color ) },
+			{ typeof( TextureCubeParameter ), new BlackboardConfig( "TextureCube", NodeHandleConfigs[typeof( TextureCubeObject )].Color ) },
 		};
 	}
 }

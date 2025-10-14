@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Editor.ShaderGraph;
 using NodeEditorPlus;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Nodes;
@@ -202,12 +203,12 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
-		if ( _properties.Target is Texture2DParameterNode texture2DparameterNode && texture2DparameterNode is IBlackboardSyncable blackboardSyncable2 )
+		if ( _properties.Target is ITextureParameterNodeNew iTextureParameterNode && _properties.Target is IBlackboardSyncable blackboardSyncable2 )
 		{
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
 			{
-				SGPLog.Info( $"Selected parameter node {texture2DparameterNode.Name}" );
+				SGPLog.Info( $"Selected parameter node {iTextureParameterNode.Name}" );
 
 				if ( blackboardSyncable2.BlackboardParameterIdentifier != default )
 				{

@@ -134,7 +134,6 @@ public struct NodeResult : IValid
 	}
 
 	public bool SkipLocalGeneration { get; set; } = false;
-	public string ImagePath { get; set; }
 	public bool Constant { get; set; }
 	public bool ShouldPreview { get; set; }
 	public bool IsMetaDataResult { get; set; } = false;

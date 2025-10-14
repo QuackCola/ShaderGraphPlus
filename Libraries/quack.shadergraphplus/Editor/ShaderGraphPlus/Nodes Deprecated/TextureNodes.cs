@@ -246,7 +246,6 @@ public sealed class TextureSampler : TextureSamplerBase
 
 		if ( textureObject.IsValid )
 		{
-			Image = textureObject.ImagePath;
 			IsTextureObjectConnected = true;
 		}
 		else
@@ -434,7 +433,6 @@ public sealed class TextureTriplanar : TextureSamplerBase
 
 		if ( textureObject.IsValid )
 		{
-			Image = textureObject.ImagePath;
 			IsTextureObjectConnected = true;
 		}
 		else
@@ -628,7 +626,6 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 
 		if ( textureObject.IsValid )
 		{
-			Image = textureObject.ImagePath;
 			IsTextureObjectConnected = true;
 		}
 		else
@@ -691,6 +688,212 @@ public sealed class NormalMapTriplanar : TextureSamplerBase
 		return NodeResult.Error( "Failed to evaluate!" );
 	};
 }
+
+
+/// <summary>
+/// Sample a Cube Texture
+/// </summary>
+[Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
+public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
+{
+	[Hide]
+	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+
+	[JsonIgnore, Hide]
+	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[JsonIgnore, Hide]
+	public bool ShowUIProperty
+	{
+		get
+		{
+			if ( IsSubgraph )
+				return false;
+
+			if ( IsTextureObjectConnected )
+				return false;
+
+			return true;
+		}
+	}
+
+	[JsonIgnore, Hide]
+	public bool IsTextureObjectConnected { get; set; } = false;
+
+	#region ITextureInputNode
+	[JsonIgnore, Hide, Browsable( false )]
+	public string TextureInputName => UI.Name;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool AlreadyRegisterd { get; set; } = false;
+	#endregion
+
+	/// <summary>
+	/// Coordinates to sample this cubemap
+	/// </summary>
+	[Title( "Coordinates" )]
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput Coords { get; set; }
+
+	/// <summary>
+	/// How the texture is filtered and wrapped when sampled
+	/// </summary>
+	[Title( "Sampler" )]
+	[Input( typeof( Sampler ) )]
+	[Hide]
+	public NodeInput Sampler { get; set; }
+
+	/// <summary>
+	/// Optional TextureCube Object input when outside of subgraphs.
+	/// </summary>
+	[Title( "Tex Cube" )]
+	[Input( typeof( TextureCubeObject ) )]
+	[Hide]
+	public NodeInput TextureCubeObject { get; set; }
+
+	/// <summary>
+	/// Texture to sample in previewW
+	/// </summary>
+	[ResourceType( "vtex" )]
+	[ShowIf( nameof( ShowUIProperty ), true )]
+	public string Texture { get; set; }
+
+	[InlineEditor( Label = false ), Group( "Sampler" )]
+	[HideIf( nameof( IsSubgraph ), true )]
+	public Sampler SamplerState { get; set; } = new Sampler();
+
+	/// <summary>
+	/// Settings for how this texture shows up in material editor
+	/// </summary>
+	[InlineEditor( Label = false ), Group( "UI" )]
+	[ShowIf( nameof( ShowUIProperty ), true )]
+	public TextureInput UI { get; set; } = new TextureInput
+	{
+		ImageFormat = TextureFormat.DXT5,
+		SrgbRead = true,
+		DefaultColor = Color.White,
+	};
+
+	public TextureCube() : base()
+	{
+		Texture = "materials/skybox/skybox_workshop.vtex";
+		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+	}
+
+	public override void OnPaint( Rect rect )
+	{
+		rect = rect.Align( 130, TextFlag.LeftBottom ).Shrink( 3 );
+
+		Paint.SetBrush( "/image/transparent-small.png" );
+		Paint.DrawRect( rect.Shrink( 2 ), 2 );
+
+		Paint.SetBrush( Theme.ControlBackground.WithAlpha( 0.7f ) );
+		Paint.DrawRect( rect, 2 );
+
+		if ( !string.IsNullOrEmpty( Texture ) )
+		{
+			var tex = Sandbox.Texture.Find( Texture );
+			if ( tex is null ) return;
+			var pixmap = Pixmap.FromTexture( tex );
+			Paint.Draw( rect.Shrink( 2 ), pixmap );
+		}
+	}
+
+	/// <summary>
+	/// RGBA color result
+	/// </summary>
+	[Hide]
+	[Output( typeof( Color ) ), Title( "RGBA" )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		var input = UI;
+		input.Type = TextureType.TexCube;
+		input.BoundNode = $"{Title}, ID:{Identifier}";
+		input.BoundNodeId = $"{Identifier}";
+
+		var textureCubeObject = compiler.Result( TextureCubeObject );
+		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
+		var coords = compiler.Result( Coords );
+
+		if ( textureCubeObject.IsValid )
+		{
+			IsTextureObjectConnected = true;
+		}
+		else
+		{
+			//Texture = "";
+			IsTextureObjectConnected = false;
+		}
+
+		if ( AlreadyRegisterd && compiler.IsPreview )
+		{
+			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
+			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+		}
+
+		// If TextureCubeObject input is not valid and we are not in a SubGraph then register the texture here instead.
+		if ( !textureCubeObject.IsValid && !IsSubgraph )
+		{
+			var resultTextureGlobal = compiler.ResultTexture( input, Sandbox.Texture.Load( Texture ) );
+
+			return new NodeResult( ResultType.Color, $"TexCubeS( {resultTextureGlobal}," +
+				$" {sampler}," +
+				$" {(coords.IsValid ? $"{coords.Cast( 3 )}" : ViewDirection.Result.Invoke( compiler ))} )" );
+		}
+
+		// Make sure to let the user know that the requied input is missing if we are in in a SubGraph.
+		if ( !textureCubeObject.IsValid && IsSubgraph )
+		{
+			return NodeResult.MissingInput( $"Tex Object" );
+		}
+
+		// If TextureCubeObject input is valid then use the registerd Texture Object from the connected Texture Cube Object node.
+		// Either if the textureObject input is valid or we are in a Subgraph.
+		if ( textureCubeObject.IsValid || (IsSubgraph && textureCubeObject.IsValid) )
+		{
+			return new NodeResult( ResultType.Color, $"TexCubeS( {textureCubeObject.Code}," +
+				$" {sampler}," +
+				$" {(coords.IsValid ? $"{coords.Cast( 3 )}" : ViewDirection.Result.Invoke( compiler ))} )" );
+		}
+
+		return NodeResult.Error( "Failed to evaluate!" );
+	};
+
+	private NodeResult Component( string component, GraphCompiler compiler )
+	{
+		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
+		return result.IsValid ? new( ResultType.Float, $"{result}.{component}", true ) : new( ResultType.Float, "0.0f", true );
+	}
+
+	/// <summary>
+	/// Red component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "R" )]
+	public NodeResult.Func R => ( GraphCompiler compiler ) => Component( "r", compiler );
+
+	/// <summary>
+	/// Green component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "G" )]
+	public NodeResult.Func G => ( GraphCompiler compiler ) => Component( "g", compiler );
+
+	/// <summary>
+	/// Blue component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "B" )]
+	public NodeResult.Func B => ( GraphCompiler compiler ) => Component( "b", compiler );
+
+	/// <summary>
+	/// Alpha (Opacity) component of result
+	/// </summary>
+	[Output( typeof( float ) ), Hide, Title( "A" )]
+	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
+}
+
 
 /// <summary>
 /// TextureCube Object.
@@ -819,7 +1022,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 
 		var resultTextureGlobal = compiler.ResultTexture( input, Sandbox.Texture.Load( Texture ) );
 
-		return new NodeResult( ResultType.TextureCubeObject, resultTextureGlobal, constant: true ) { ImagePath = Sandbox.Texture.Load( Texture ).ResourcePath };
+		return new NodeResult( ResultType.TextureCubeObject, resultTextureGlobal, constant: true ) { };
 	};
 }
 
@@ -1030,7 +1233,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 
 			if ( !string.IsNullOrWhiteSpace( existingEntry.Value.BoundNodeId ) )
 			{
-				return new NodeResult( ResultType.Texture2DObject, $"g_t{existingEntry.Key}", constant: true ) { ImagePath = Image };
+				return new NodeResult( ResultType.Texture2DObject, $"g_t{existingEntry.Key}", constant: true );
 			}
 
 			//return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`:" );
@@ -1038,7 +1241,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 
 		var resultTextureGlobal = compiler.ResultTexture( input, texture );
 
-		return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true ) { ImagePath = Image };
+		return new NodeResult( ResultType.Texture2DObject, resultTextureGlobal, constant: true );
 	};
 
 	public List<string> GetErrors()

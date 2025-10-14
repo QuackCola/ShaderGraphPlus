@@ -148,6 +148,7 @@ public class ShaderGraphPlusView : GraphView
 				if ( Graph.IsSubgraph && targetType == typeof( Float4Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ColorParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( Texture2DParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( TextureCubeParameter ) ) return false;
 
 				// Only show subgraph input parameters when in a subgraph
 				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputParameter ) ) return false;
@@ -344,6 +345,7 @@ public class ShaderGraphPlusView : GraphView
 					Float4Parameter => DisplayInfo.ForType( typeof( Float4ParameterNode ) ).Fullname,
 					ColorParameter => DisplayInfo.ForType( typeof( ColorParameterNode ) ).Fullname,
 					Texture2DParameter => DisplayInfo.ForType( typeof( Texture2DParameterNode ) ).Fullname,
+					TextureCubeParameter => DisplayInfo.ForType( typeof( TextureCubeParameterNode ) ).Fullname,
 					ShaderFeatureBooleanParameter => DisplayInfo.ForType( typeof( BooleanFeatureSwitchNode ) ).Fullname,
 					ShaderFeatureEnumParameter => DisplayInfo.ForType( typeof( EnumFeatureSwitchNode ) ).Fullname,
 					_ => throw new NotImplementedException(),
@@ -416,7 +418,7 @@ public class ShaderGraphPlusView : GraphView
 
 		var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
 
-		foreach ( var classType in GetRelevantParameters() )
+		foreach ( var classType in GetRelevantParameters().OrderBy( x => x.Type.GetAttribute<OrderAttribute>().Value ) )
 		{
 			var targetType = classType.Type.TargetType;
 			if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )

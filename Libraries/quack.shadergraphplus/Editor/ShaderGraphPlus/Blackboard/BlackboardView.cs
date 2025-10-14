@@ -191,6 +191,7 @@ internal class BlackboardView : Widget
 				if ( Graph.IsSubgraph && targetType == typeof( Float4Parameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( ColorParameter ) ) return false;
 				if ( Graph.IsSubgraph && targetType == typeof( Texture2DParameter ) ) return false;
+				if ( Graph.IsSubgraph && targetType == typeof( TextureCubeParameter ) ) return false;
 
 				// Only show subgraph input parameters when in a subgraph
 				if ( !Graph.IsSubgraph && targetType == typeof( BoolSubgraphInputParameter ) ) return false;

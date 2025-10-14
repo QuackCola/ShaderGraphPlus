@@ -296,6 +296,42 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 	}
 }
 
+/// <summary>
+/// TextureCube material parameter
+/// </summary>
+[Title( "TextureCube" ), Icon( "texture" ), Order( 7 )]
+public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInput>
+{
+	[Hide, JsonIgnore, Browsable( false )]
+	public override int MenuOrder => 7;
+
+	public TextureCubeParameter() : base()
+	{
+		Value = new TextureInput
+		{
+			Name = Name,
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = true,
+			DefaultColor = Color.White,
+			Type = TextureType.TexCube,
+		};
+	}
+
+	public TextureCubeParameter( TextureInput value ) : base( value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new TextureCubeParameterNode()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			Name = Name,
+			UI = Value with { Name = Name, Type = TextureType.TexCube },
+		};
+	}
+}
+
 // TODO : Implament the rest of SamplerStateParameter once SamplerState
 // is exposed to the MaterialEditor.
 /*

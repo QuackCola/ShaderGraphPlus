@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Editor.ShaderGraph;
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
@@ -22,7 +23,29 @@ public interface ISyncableTextureNode
 
 public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 {
-	[Hide, JsonIgnore]
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool ShowUIProperty
+	{
+		get
+		{
+			if ( IsSubgraph )
+				return false;
+
+			if ( IsTextureInputConnected )
+				return false;
+
+			return true;
+		}
+	}
+
+	[JsonIgnore, Hide, Browsable( false )]
 	public string Image
 	{
 		get => _image;
@@ -45,19 +68,18 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 
 	[JsonIgnore, Hide] private Asset Asset => _asset;
 	[JsonIgnore, Hide] protected string TexturePath => _texture;
-	[JsonIgnore, Hide] protected bool ShowTextureInputUI { get; set; } = false;
 	[JsonIgnore, Hide] protected bool AlreadyRegisterd { get; set; } = false;
-	[JsonIgnore, Hide] protected bool TextureInputConnected { get; set; } = false;
+	[JsonIgnore, Hide] protected bool IsTextureInputConnected { get; set; } = false;
 
 	/// <summary>
 	/// Name that shows up in material editor
 	/// </summary>
 	[Title( "Name" ), Order( 0 )]
-	[ShowIf( nameof( ShowTextureInputUI ), true )]
+	[ShowIf( nameof( ShowUIProperty ), true )]
 	public string Name { get; set; }
 
 	[InlineEditor( Label = false ), Group( "UI" ), Order( 1 )]
-	[ShowIf( nameof( ShowTextureInputUI ), true)]
+	[ShowIf( nameof( ShowUIProperty ), true)]
 	public TextureInput UI { get; set; } = new TextureInput
 	{
 		ImageFormat = TextureFormat.DXT5,
@@ -148,7 +170,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
 		var errors = new List<string>();
 		var graph = Graph as ShaderGraphPlus;
 
-		if ( !TextureInputConnected )
+		if ( !IsTextureInputConnected )
 		{
 			foreach ( var parameter in graph.Parameters )
 			{
@@ -216,15 +238,13 @@ public sealed class SampleTexture2DNode : Texture2DSamplerBase
 		{
 			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = false;
-			TextureInputConnected = true;
+			IsTextureInputConnected = true;
 		}
 		else
 		{
 			UI = UI with { Name = Name };
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = true;
-			TextureInputConnected = false;
+			IsTextureInputConnected = false;
 		}
 
 		CompileTexture();
@@ -357,15 +377,13 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 		{
 			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = false;
-			TextureInputConnected = true;
+			IsTextureInputConnected = true;
 		}
 		else
 		{
 			UI = UI with { Name = Name };
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = true;
-			TextureInputConnected = false;
+			IsTextureInputConnected = false;
 		}
 
 		var input = UI;
@@ -512,15 +530,13 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 		{
 			UI = texture2DInput.GetMetadata<TextureInput>( "TextureInput" );
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = false;
-			TextureInputConnected = true;
+			IsTextureInputConnected = true;
 		}
 		else
 		{
 			UI = UI with { Name = Name };
 			Image = UI.DefaultTexture;
-			ShowTextureInputUI = true;
-			TextureInputConnected = false;
+			IsTextureInputConnected = false;
 		}
 
 		var input = UI;
@@ -574,11 +590,8 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
-/// <summary>
-/// Sample a Cube Texture
-/// </summary>
-[Title( "Texture Cube" ), Category( "Textures" ), Icon( "view_in_ar" )]
-public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
+[Title( "Sample Texture Cube" ), Category( "Textures" ), Icon( "image" )]
+public sealed class SampleTextureCubeNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
@@ -586,10 +599,13 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
 
-	[JsonIgnore, Hide]
-	public bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
-	[JsonIgnore, Hide]
+	[JsonIgnore, Hide, Browsable( false )]
+	private bool IsTextureInputConnected { get; set; } = false;
+
+	[JsonIgnore, Hide, Browsable( false )]
 	public bool ShowUIProperty
 	{
 		get
@@ -597,31 +613,27 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 			if ( IsSubgraph )
 				return false;
 
-			if ( IsTextureObjectConnected )
+			if ( IsTextureInputConnected )
 				return false;
 
 			return true;
 		}
 	}
 
-	[JsonIgnore, Hide]
-	public bool IsTextureObjectConnected { get; set; } = false;
-
-#region ITextureInputNode
-	[JsonIgnore, Hide, Browsable( false )]
-	public string TextureInputName => UI.Name;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool AlreadyRegisterd { get; set; } = false;
-#endregion
-
+	/// <summary>
+	/// Optional TextureCube Object input when outside of subgraphs.
+	/// </summary>
+	[Title( "Texture Cube" )]
+	[Input( typeof( TextureCubeObject ) )]
+	[Hide]
+	public NodeInput TextureInput { get; set; }
 	/// <summary>
 	/// Coordinates to sample this cubemap
 	/// </summary>
 	[Title( "Coordinates" )]
 	[Input( typeof( Vector3 ) )]
 	[Hide]
-	public NodeInput Coords { get; set; }
+	public NodeInput CoordsInput { get; set; }
 
 	/// <summary>
 	/// How the texture is filtered and wrapped when sampled
@@ -629,18 +641,10 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	[Title( "Sampler" )]
 	[Input( typeof( Sampler ) )]
 	[Hide]
-	public NodeInput Sampler { get; set; }
+	public NodeInput SamplerInput { get; set; }
 
 	/// <summary>
-	/// Optional TextureCube Object input when outside of subgraphs.
-	/// </summary>
-	[Title( "Tex Cube" )]
-	[Input( typeof( TextureCubeObject ) )]
-	[Hide]
-	public NodeInput TextureCubeObject { get; set; }
-
-	/// <summary>
-	/// Texture to sample in previewW
+	/// Texture to sample in preview
 	/// </summary>
 	[ResourceType( "vtex" )]
 	[ShowIf( nameof( ShowUIProperty ), true )]
@@ -660,12 +664,14 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 		ImageFormat = TextureFormat.DXT5,
 		SrgbRead = true,
 		DefaultColor = Color.White,
+		Type = TextureType.TexCube,
 	};
 
-	public TextureCube() : base()
+	public SampleTextureCubeNode() : base()
 	{
 		Texture = "materials/skybox/skybox_workshop.vtex";
 		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+		UI = UI with { Type = TextureType.TexCube };
 	}
 
 	public override void OnPaint( Rect rect )
@@ -694,30 +700,22 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	[Output( typeof( Color ) ), Title( "RGBA" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var input = UI;
-		input.Type = TextureType.TexCube;
-		input.BoundNode = $"{Title}, ID:{Identifier}";
-		input.BoundNodeId = $"{Identifier}";
+		var input = UI = UI with { Type = TextureType.TexCube };
 
-		var textureCubeObject = compiler.Result( TextureCubeObject );
-		var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-		var coords = compiler.Result( Coords );
+		var textureCubeObject = compiler.Result( TextureInput );
+		var sampler = compiler.ResultSamplerOrDefault( SamplerInput, SamplerState );
+		var coords = compiler.Result( CoordsInput );
 
 		if ( textureCubeObject.IsValid )
 		{
-			Texture = textureCubeObject.ImagePath;
-			IsTextureObjectConnected = true;
+			UI = textureCubeObject.GetMetadata<TextureInput>( "TextureInput" );
+			Texture = UI.DefaultTexture;
+			IsTextureInputConnected = true;
 		}
 		else
 		{
 			//Texture = "";
-			IsTextureObjectConnected = false;
-		}
-
-		if ( AlreadyRegisterd && compiler.IsPreview )
-		{
-			var existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
+			IsTextureInputConnected = false;
 		}
 
 		// If TextureCubeObject input is not valid and we are not in a SubGraph then register the texture here instead.
@@ -738,7 +736,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 
 		// If TextureCubeObject input is valid then use the registerd Texture Object from the connected Texture Cube Object node.
 		// Either if the textureObject input is valid or we are in a Subgraph.
-		if ( textureCubeObject.IsValid || ( IsSubgraph && textureCubeObject.IsValid ) )
+		if ( textureCubeObject.IsValid || (IsSubgraph && textureCubeObject.IsValid) )
 		{
 			return new NodeResult( ResultType.Color, $"TexCubeS( {textureCubeObject.Code}," +
 				$" {sampler}," +
