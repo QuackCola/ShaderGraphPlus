@@ -1,12 +1,8 @@
 ﻿using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -879,10 +875,12 @@ partial class ShaderGraphPlus
 	{
 		return typeName switch
 		{
+			"TextureCubeObjectNode" => true,
 			"Texture2DObjectNode" => true,
 			"TextureSampler" => true,
 			"TextureTriplanar" => true,
 			"NormalMapTriplanar" => true,
+			"TextureCube" => true,
 			_ => false
 		};
 	}
@@ -990,38 +988,77 @@ partial class ShaderGraphPlus
 				// Copy basic node properties
 				DeserializeObject( newNode0, element, options );
 
-				var blackboardParameter = new Texture2DParameter()
+				var newUI1 = newNode0.UI with { Name = newNode0.UI.Name, Type = TextureType.Tex2D };
+
+				var blackboardParameter1 = new Texture2DParameter()
 				{
 					Name = newNode0.UI.Name,
+					Value = newUI1
 				};
 
-				newNode0.BlackboardParameterIdentifier = blackboardParameter.Identifier;
+				newNode0.BlackboardParameterIdentifier = blackboardParameter1.Identifier;
 				newNode0.Name = newNode0.UI.Name;
 
-				AddParameter( blackboardParameter );
+				AddParameter( blackboardParameter1 );
 
 				return newNode0;
-			case "TextureSampler":
-				var newNode1 = new SampleTexture2DNode();
-	
+			case "TextureCubeObjectNode":
+				var newNode1 = new TextureCubeParameterNode();
+				
 				// Copy basic node properties
 				DeserializeObject( newNode1, element, options );
 
-				return InitNewTextureSamplerNode( newNode1, element, out connectionFixupData );
-			case "TextureTriplanar":
-				var newNode2 = new SampleTexture2DTriplanarNode();
+				var newUI2 = newNode1.UI with { Name = newNode1.UI.Name, Type = TextureType.TexCube };
 
+				var blackboardParameter2 = new TextureCubeParameter()
+				{
+					Name = newNode1.UI.Name,
+					Value = newUI2
+				};
+				
+				newNode1.BlackboardParameterIdentifier = blackboardParameter2.Identifier;
+				newNode1.Name = newNode1.UI.Name;
+
+				AddParameter( blackboardParameter2 );
+
+				return newNode1;
+			case "TextureSampler":
+				var newNode2 = new SampleTexture2DNode();
+	
 				// Copy basic node properties
 				DeserializeObject( newNode2, element, options );
 
 				return InitNewTextureSamplerNode( newNode2, element, out connectionFixupData );
-			case "NormalMapTriplanar":
-				var newNode3 = new SampleTexture2DNormalMapTriplanarNode();
+			case "TextureTriplanar":
+				var newNode3 = new SampleTexture2DTriplanarNode();
 
 				// Copy basic node properties
 				DeserializeObject( newNode3, element, options );
 
 				return InitNewTextureSamplerNode( newNode3, element, out connectionFixupData );
+			case "NormalMapTriplanar":
+				var newNode4 = new SampleTexture2DNormalMapTriplanarNode();
+
+				// Copy basic node properties
+				DeserializeObject( newNode4, element, options );
+
+				return InitNewTextureSamplerNode( newNode4, element, out connectionFixupData );
+			case "TextureCube":
+				var newNode5 = new SampleTextureCubeNode();
+
+				// Copy basic node properties
+				DeserializeObject( newNode5, element, options );
+
+				if ( newNode5.Graph == null )
+				{
+					newNode5.Graph = this;
+				}
+
+				var textureProperty = element.GetProperty( "Texture" );
+				var textureUI = newNode5.UI with { DefaultTexture = textureProperty.GetString(), Type = TextureType.TexCube };
+				newNode5.Texture = textureProperty.GetString();
+	
+				return newNode5;
 		}
 
 		throw new Exception( $"Could not convert \"{typeName}\" to new TextureSampler node!" );
