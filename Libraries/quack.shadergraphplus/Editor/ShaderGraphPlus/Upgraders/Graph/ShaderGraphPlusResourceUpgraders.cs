@@ -1,6 +1,4 @@
-﻿using ShaderGraphPlus.Nodes;
-using System.Text.Json.Nodes;
-using static Sandbox.Resources.ResourceGenerator;
+﻿using System.Text.Json.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -11,7 +9,7 @@ internal static class ShaderGraphPlusResourceUpgraders
 	{
 		try
 		{
-			SGPLog.Info( "Running ShaderGraphPlus v3 upgrader" );
+			SGPLog.Info( "Running ShaderGraphPlus v3 JsonUpgrader" );
 
 			if ( json.ContainsKey( "MaterialDomain" ) )
 			{
