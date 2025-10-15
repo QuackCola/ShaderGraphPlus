@@ -13,7 +13,7 @@ Libraries/ShaderGraphPlus/Editor/Properties/*
 **/Editor/Properties/*
 *.sln
 *.slnx
-
+ 
 # Auto-generated code editor files
 .vs/*
 .vscode/*
