@@ -983,9 +983,6 @@ public sealed class Preview3D : SceneRenderingWidget
 	private readonly SceneObject _ground;
 	private readonly SkyBox2D _sky;
 
-	private readonly float _defaultDistance = 150f;
-	private readonly Vector3 _defaultCameraPosition = Vector3.Zero;
-
 	private void SetViewmode( ViewMode viewmode )
 	{
 		_mode = viewmode;
@@ -1015,6 +1012,7 @@ public sealed class Preview3D : SceneRenderingWidget
 			}
 
 			_origin = Vector3.Zero;
+			_distance = 180.0f;
 		}
 	}
 
@@ -1061,12 +1059,11 @@ public sealed class Preview3D : SceneRenderingWidget
 			}
 		}
 
-		_distance = 150.0f;
+		_distance = 180.0f;
 		_angles = new Vector2( 45 * 3, 30 );
 
 		Scene.Camera.WorldRotation = new Angles( _angles.y, -_angles.x, 0 );
 		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
-		_defaultCameraPosition = Scene.Camera.WorldPosition;
 		Scene.Camera.FieldOfView = 45;
 
 		// FIXME
