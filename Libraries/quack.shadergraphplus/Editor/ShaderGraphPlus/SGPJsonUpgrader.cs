@@ -1,5 +1,4 @@
-﻿using Editor;
-using Sandbox.Internal;
+﻿using Sandbox.Internal;
 using ShaderGraphPlus;
 using System.Text.Json.Nodes;
 using static ShaderGraphPlus.ShaderGraphPlus;
