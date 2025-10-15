@@ -1,6 +1,7 @@
 using Editor;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
+using static Editor.SceneViewportWidget;
 
 namespace ShaderGraphPlus;
 
@@ -36,6 +37,7 @@ public enum MaterialDomain
 
 public class PreviewSettings
 {
+	public ViewMode ViewMode { get; set; } = ViewMode.Perspective;
 	public bool RenderBackfaces { get; set; } = false;
 	public bool EnableShadows { get; set; } = true;
 	public bool ShowGround { get; set; } = false;

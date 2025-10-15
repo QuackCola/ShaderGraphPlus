@@ -1,5 +1,6 @@
 ﻿using Editor;
 using Sandbox.Rendering;
+using static Editor.SceneViewportWidget;
 
 namespace ShaderGraphPlus;
 
@@ -61,11 +62,124 @@ public class Throbber : SceneCustomObject
 	}
 }
 
+public class PerspectiveModeButton : Button
+{
+
+	private List<ViewMode> _viewModeOptions;
+
+	private ViewMode _currentViewMode;
+	public ViewMode CurrentViewMode
+	{
+		get => _currentViewMode;
+		set
+		{
+			_currentViewMode = value;
+			OnViewmodeSelected?.Invoke( _currentViewMode );
+		}
+	}
+
+	public Action<ViewMode> OnViewmodeSelected { get; set; }
+
+	public PerspectiveModeButton( ViewMode viewMode ) : base( null )
+	{
+		SetStyles( $"padding-left: 32px; padding-right: 32px; font-family: '{Theme.DefaultFont}'; padding-top: 6px; padding-bottom: 6px;" );
+
+		FixedWidth = 128;
+		FixedHeight = Theme.RowHeight + 6;
+
+		_viewModeOptions = new List<ViewMode>()
+		{
+			ViewMode.Perspective,
+			ViewMode.Top2d,
+			ViewMode.Front2d,
+			ViewMode.Side2d,
+		};
+
+		_currentViewMode = viewMode;
+
+		UpdateButtonText();
+
+		Clicked = Click;
+	}
+
+	private string GetEnumOptionIcon( ViewMode viewMode )
+	{
+		var iconAttribute = (IconAttribute)typeof( ViewMode )
+			.GetMember( viewMode.ToString() )
+			.FirstOrDefault( m => m.DeclaringType == typeof( ViewMode ) )
+			.GetCustomAttributes( typeof( IconAttribute ), false )[0];
+
+		return iconAttribute.Value;
+	}
+
+	private string GetEnumOptionTitle( ViewMode viewMode )
+	{
+		var iconAttribute = (TitleAttribute)typeof( ViewMode )
+			.GetMember( viewMode.ToString() )
+			.FirstOrDefault( m => m.DeclaringType == typeof( ViewMode ) )
+			.GetCustomAttributes( typeof( TitleAttribute ), false )[0];
+
+		return iconAttribute.Value;
+	}
+
+	private void UpdateButtonText()
+	{
+		Text = GetEnumOptionTitle( _currentViewMode );
+		Icon = GetEnumOptionIcon( _currentViewMode );
+	}
+
+	private void Click()
+	{
+		var menu = new ContextMenu();
+
+		foreach ( var viewMode in _viewModeOptions )
+		{
+			var option = new Option();
+			option.Text = GetEnumOptionTitle( viewMode );
+			option.Icon = GetEnumOptionIcon( viewMode );
+			option.Triggered = () =>
+			{
+				_currentViewMode = viewMode;
+				UpdateButtonText();
+				OnViewmodeSelected?.Invoke( viewMode );
+			};
+
+			menu.AddOption( option );
+		}
+
+		menu.OpenAt( ScreenRect.BottomLeft, false );
+	}
+
+	[EditorEvent.Frame]
+	public void Frame()
+	{
+		UpdateButtonText();
+	}
+
+	protected override void OnPaint()
+	{
+		Paint.Antialiasing = true;
+		Paint.ClearPen();
+		Paint.SetBrush( Theme.ControlBackground );
+		Paint.DrawRect( LocalRect, Theme.ControlRadius );
+
+		var fg = Theme.Text;
+
+		Paint.SetDefaultFont();
+		Paint.SetPen( fg.WithAlphaMultiplied( Paint.HasMouseOver ? 1.0f : 0.9f ) );
+		Paint.DrawIcon( LocalRect.Shrink( 8, 0, 0, 0 ), Icon, 14, TextFlag.LeftCenter );
+		Paint.DrawText( LocalRect.Shrink( 32, 0, 0, 0 ), Text, TextFlag.LeftCenter );
+
+		Paint.DrawIcon( LocalRect.Shrink( 4, 0 ), "arrow_drop_down", 18, TextFlag.RightCenter );
+	}
+}
+
 public sealed class Preview3DPanel : Widget
 {
 	private readonly Preview3D _preview;
 	public Preview3D Preview => _preview;
 	private readonly ComboBox _animationCombo;
+	private readonly PerspectiveModeButton _perspectiveModeButton;
 
 	public Model Model
 	{
@@ -107,7 +221,7 @@ public sealed class Preview3DPanel : Widget
 		}
 	}
 
-    private void UpdateAnimationCombo()
+	private void UpdateAnimationCombo()
 	{
 		_animationCombo.Clear();
 
@@ -265,6 +379,16 @@ public sealed class Preview3DPanel : Widget
 		stretcher.Layout.AddStretchCell( 1 );
 		toolBar.AddWidget( stretcher );
 
+		_perspectiveModeButton = toolBar.AddWidget( new PerspectiveModeButton( ViewMode.Perspective ) );
+		_perspectiveModeButton.OnViewmodeSelected += ( v ) =>
+		{
+			_preview.View = v;
+		};
+		//_perspectiveModeButton.Hidden = true;
+		//_perspectiveModeButton.Visible = false;
+
+		toolBar.AddSeparator();
+
 		var option = toolBar.AddOption( null, "preview" );
 		option.Checkable = true;
 		option.Toggled = ( e ) => _preview.EnableNodePreview = e;
@@ -279,11 +403,11 @@ public sealed class Preview3DPanel : Widget
 
 		toolBar.AddSeparator();
 
-        option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
-        option.ToolTip = "Light Settings";
-        option.StatusTip = "Light Settings";
+		option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
+		option.ToolTip = "Light Settings";
+		option.StatusTip = "Light Settings";
 
-        toolBar.AddSeparator();
+		toolBar.AddSeparator();
 
 		option = toolBar.AddOption( null, "settings", OpenSettings );
 		option.ToolTip = "Preview Settings";
@@ -319,7 +443,7 @@ public sealed class Preview3DPanel : Widget
 		popup.Layout.Margin = 16;
 
 		var cs = new ControlSheet();
-	
+
 		// Scene Properies
 		cs.AddProperty(_preview, x => x.EnableShadows );
 		cs.AddProperty(_preview, x => x.ShowGround );
@@ -339,16 +463,21 @@ public sealed class Preview3DPanel : Widget
 
 	public void LoadSettings( PreviewSettings settings )
 	{
+		_perspectiveModeButton.CurrentViewMode = settings.ViewMode;
 		_preview.RenderBackfaces = settings.RenderBackfaces;
 		_preview.EnableShadows = settings.EnableShadows;
 		_preview.ShowGround = settings.ShowGround;
 		_preview.ShowSkybox = settings.ShowSkybox;
 		_preview.BackgroundColor = settings.BackgroundColor;
 		_preview.Tint = settings.Tint;
+
+		//_perspectiveModeButton.Hidden = false;
+		//_perspectiveModeButton.Visible = true;
 	}
 
 	public void SaveSettings( PreviewSettings settings )
 	{
+		settings.ViewMode = _perspectiveModeButton.CurrentViewMode;
 		settings.RenderBackfaces = _preview.RenderBackfaces;
 		settings.EnableShadows = _preview.EnableShadows;
 		settings.ShowGround = _preview.ShowGround;
@@ -391,7 +520,17 @@ public sealed class Preview3D : SceneRenderingWidget
 	private Dictionary<string, int> _comboIntAttributes = new();
 	private int _stageId;
 
-    private bool _enablePostProcessing;
+	/// <summary>
+	/// View mode of this viewport
+	/// </summary>
+	public ViewMode View
+	{
+		get => _mode;
+		set => SetViewmode( value );
+	}
+	private ViewMode _mode;
+
+	private bool _enablePostProcessing;
     public bool EnablePostProcessing
     {
         get { return _enablePostProcessing; }
@@ -843,6 +982,41 @@ public sealed class Preview3D : SceneRenderingWidget
 	private readonly SceneObject _ground;
 	private readonly SkyBox2D _sky;
 
+	private readonly float _defaultDistance = 150f;
+	private readonly Vector3 _defaultCameraPosition = Vector3.Zero;
+
+	private void SetViewmode( ViewMode viewmode )
+	{
+		_mode = viewmode;
+
+		//SGPLog.Info( $"Current Angle : {_angles}" );
+
+		using ( Scene.Push() )
+		{
+			switch ( viewmode )
+			{
+				case ViewMode.Top2d:
+					_angles = new Vector2( 180, 90 );
+
+					break;
+
+				case ViewMode.Front2d:
+					_angles = new Vector2( 180, 0 );
+					break;
+
+				case ViewMode.Side2d:
+					_angles = new Vector2( 90, 0 );
+					break;
+
+				default:
+					_angles = new Vector2( 45 * 3, 30 );
+					break;
+			}
+
+			_origin = Vector3.Zero;
+		}
+	}
+
 	public Preview3D( Widget parent, string model ) : base( parent )
 	{
 		MouseTracking = true;
@@ -891,6 +1065,7 @@ public sealed class Preview3D : SceneRenderingWidget
 
 		Scene.Camera.WorldRotation = new Angles( _angles.y, -_angles.x, 0 );
 		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
+		_defaultCameraPosition = Scene.Camera.WorldPosition;
 		Scene.Camera.FieldOfView = 45;
 
 		// FIXME
@@ -1024,7 +1199,15 @@ public sealed class Preview3D : SceneRenderingWidget
 
 		if ( e.LeftMouseButton )
 		{
-			_orbitControl = true;
+			if ( _mode == ViewMode.Perspective )
+			{
+				_orbitControl = true;
+			}
+			else
+			{
+				_panControl = true;
+			}
+
 			_lastCursorPos = CursorPosition;
 			_modelYawRotation = _sceneObject.Rotation.Yaw();
 		}
@@ -1033,7 +1216,7 @@ public sealed class Preview3D : SceneRenderingWidget
 			_zoomControl = true;
 			_lastCursorPos = CursorPosition;
 		}
-		else if ( e.MiddleMouseButton )
+		else if ( e.MiddleMouseButton)
 		{
 			_panControl = true;
 			_lastCursorPos = CursorPosition;
@@ -1046,7 +1229,15 @@ public sealed class Preview3D : SceneRenderingWidget
 
 		if ( e.LeftMouseButton )
 		{
-			_orbitControl = false;
+			if ( _mode == ViewMode.Perspective )
+			{
+				_orbitControl = false;
+			}
+			else
+			{
+				_panControl = false;
+			}
+
 			_orbitLights = false;
 		}
 		else if ( e.RightMouseButton )
