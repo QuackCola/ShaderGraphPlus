@@ -1014,7 +1014,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			_oldConnectionStyle = ConnectionStyle;
 
-			foreach ( var connection in Items.OfType<Editor.NodeEditor.Connection>() )
+			foreach ( var connection in Items.OfType<NodeEditorPlus.Connection>() )
 			{
 				connection.Layout();
 			}
