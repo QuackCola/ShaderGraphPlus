@@ -1,4 +1,6 @@
-﻿namespace ShaderGraphPlus;
+﻿using static ShaderGraphPlus.ShaderGraphPlusGlobals;
+
+namespace ShaderGraphPlus;
 
 public enum TextureExtension
 {

@@ -1,15 +1,16 @@
 ﻿using Editor;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 
 namespace ShaderGraphPlus;
 
 [CustomEditor( typeof( string ), NamedEditor = ControlWidgetCustomEditors.UIGroupEditor )]
-internal class ShaderGraphPlusGroupControlWidget : ControlWidget
+internal class SGPGroupControlWidget : ControlWidget
 {
 	public override bool SupportsMultiEdit => false;
 
 	ComboBox _comboBox;
 
-	public ShaderGraphPlusGroupControlWidget( SerializedProperty property ) : base( property )
+	public SGPGroupControlWidget( SerializedProperty property ) : base( property )
 	{
 		Layout = Layout.Row();
 

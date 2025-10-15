@@ -1,12 +1,8 @@
 ﻿
 using NodeEditorPlus;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 
 namespace ShaderGraphPlus.Nodes;
-
-[System.AttributeUsage( AttributeTargets.Property )]
-internal sealed class NamedRerouteReferenceAttribute : Attribute
-{
-}
 
 /// <summary>
 /// Declare a named reroute.
@@ -158,7 +154,7 @@ public sealed class NamedRerouteNode : ShaderNodePlus
 
 	[JsonIgnore, Hide, Browsable( false )]
 	private string _name;
-	[NamedRerouteReference]
+	[global::Editor( ControlWidgetCustomEditors.NamedRerouteReferenceEditor )]
 	public string Name
 	{
 		get => _name;

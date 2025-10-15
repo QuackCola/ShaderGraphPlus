@@ -1,9 +1,10 @@
 ﻿using Editor;
 using ShaderGraphPlus.Nodes;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( string ), WithAllAttributes = new[] { typeof( NamedRerouteReferenceAttribute ) } )]
+[CustomEditor( typeof( string ), NamedEditor = ControlWidgetCustomEditors.NamedRerouteReferenceEditor )]
 internal sealed class NamedRerouteReferenceControlWidget : DropdownControlWidget<string>
 {
 	ShaderGraphPlus Graph;

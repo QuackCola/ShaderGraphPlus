@@ -1,12 +1,13 @@
 ﻿using Editor;
 using ShaderGraphPlus.Nodes;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 
 namespace ShaderGraphPlus;
 
 /// <summary>
 /// 
 /// </summary>
-[CustomEditor(typeof(string), NamedEditor = "portType")]
+[CustomEditor(typeof(string), NamedEditor = ControlWidgetCustomEditors.PortTypeChoiceEditor )]
 sealed class PortTypeControlWidget : DropdownControlWidget<string>
 {
 	public PortTypeControlWidget( SerializedProperty property ) : base( property )

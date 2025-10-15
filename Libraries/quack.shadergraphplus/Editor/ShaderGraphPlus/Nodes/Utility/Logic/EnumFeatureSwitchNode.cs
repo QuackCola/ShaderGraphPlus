@@ -1,12 +1,8 @@
 using NodeEditorPlus;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 
 namespace ShaderGraphPlus.Nodes;
-
-[System.AttributeUsage( AttributeTargets.Property )]
-internal sealed class ShaderFeatureEnumPreviewIndexAttribute : Attribute
-{
-}
 
 [Title( "Enum Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
@@ -30,7 +26,7 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 	[Hide]
 	public ShaderFeatureEnum Feature { get; set; } = new();
 
-	[ShaderFeatureEnumPreviewIndex]
+	[global::Editor( ControlWidgetCustomEditors.ShaderFeatureEnumPreviewIndexEditor )]
 	[Title( "Preview" )]
 	public int PreviewIndex { get; set; } = 0;
 

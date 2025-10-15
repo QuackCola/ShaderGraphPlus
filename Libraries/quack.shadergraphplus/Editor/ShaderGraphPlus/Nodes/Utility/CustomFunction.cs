@@ -2,6 +2,7 @@
 using NodeEditorPlus;
 using System;
 using System.Text;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
@@ -609,7 +610,7 @@ public class CustomCodeNodePorts
 		}
 	}
 	
-	[KeyProperty, Editor( "portType" ), JsonPropertyName( "Type" )]
+	[KeyProperty, Editor( ControlWidgetCustomEditors.PortTypeChoiceEditor ), JsonPropertyName( "Type" )]
 	public string TypeName { get; set; }
 
 	public int Priority { get; set; }

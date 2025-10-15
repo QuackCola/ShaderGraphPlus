@@ -1,17 +1,18 @@
 ﻿using Editor;
 using ShaderGraphPlus.Nodes;
+using static ShaderGraphPlus.ShaderGraphPlusGlobals;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( int ), WithAllAttributes = new[] { typeof( ShaderFeatureEnumPreviewIndexAttribute ) } )]
-internal sealed class FeatureEnumPreviewIndexControlWidget : DropdownControlWidgetPlus<int>
+[CustomEditor( typeof( int ), NamedEditor = ControlWidgetCustomEditors.ShaderFeatureEnumPreviewIndexEditor )]
+internal sealed class SGPFeatureEnumPreviewIndexControlWidget : DropdownControlWidgetPlus<int>
 {
 	EnumFeatureSwitchNode Node;
 	
 	Entry SelectedEntry;
 	int SelectedIndex;
 
-	public FeatureEnumPreviewIndexControlWidget( SerializedProperty property ) : base( property )
+	public SGPFeatureEnumPreviewIndexControlWidget( SerializedProperty property ) : base( property )
 	{
 		Node = property.Parent.Targets.OfType<EnumFeatureSwitchNode>().FirstOrDefault();
 

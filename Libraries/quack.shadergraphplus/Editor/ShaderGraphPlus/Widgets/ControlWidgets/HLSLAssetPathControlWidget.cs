@@ -4,13 +4,6 @@ using System.Text;
 
 namespace ShaderGraphPlus;
 
-internal sealed class HLSLAssetPathAttribute : Attribute
-{
-	internal HLSLAssetPathAttribute()
-	{
-	}
-}
-
 [CustomEditor( typeof( string ), WithAllAttributes = new[] { typeof( HLSLAssetPathAttribute ) } )]
 internal sealed class HLSLAssetPathControlWidget : ControlWidget
 {
