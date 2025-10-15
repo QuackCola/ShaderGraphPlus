@@ -254,11 +254,6 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void SetNodeError( BaseNodePlus node, string error )
-	{
-		NodeIssues.Add( node, [error] );
-	}
-
 	private void AddSubgraphs( ShaderGraphPlus graph )
 	{
 		if ( graph != Graph )
@@ -599,7 +594,6 @@ public sealed partial class GraphCompiler
 		return $"g_t{name}";
 	}
 
-
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
@@ -683,7 +677,6 @@ public sealed partial class GraphCompiler
 
 		return default;
 	}
-
 
 	/// <summary>
 	/// Get result of an input
@@ -1268,19 +1261,20 @@ public sealed partial class GraphCompiler
 	{
 		var prefix = value switch
 		{
-			Color _ => "g_v",
-			Vector4 _ => "g_v",
-			Vector3 _ => "g_v",
-			Vector2 _ => "g_v",
-			float _ => "g_fl",
-			int _ => "g_n",
 			bool _ => "g_b",
+			int _ => "g_n",
+			float _ => "g_fl",
+			Vector2 _ => "g_v",
+			Vector3 _ => "g_v",
+			Vector4 _ => "g_v",
+			Color _ => "g_v",
 			Float2x2 _ => "g_m",
 			Float3x3 _ => "g_m",
 			Float4x4 _ => "g_m",
-			Sampler _ => "g_s",
 			Texture2DObject _ => "g_t",
-			_ => throw new Exception( $"Unsupported value type \"{value.GetType()}\"" )
+			TextureCubeObject _ => "g_t",
+			Sampler _ => "g_s",
+			_ => throw new Exception( $"Unknown value type \"{value.GetType()}\"" )
 		};
 
 		return prefix;
@@ -1451,14 +1445,14 @@ public sealed partial class GraphCompiler
 	{
 		return inputType switch
 		{
+			Type t when t == typeof( int ) => 1,
+			Type t when t == typeof( float ) => 1,
+			Type t when t == typeof( Vector2 ) => 2,
+			Type t when t == typeof( Vector3 ) => 3,
+			Type t when t == typeof( Vector4 ) || t == typeof( Color ) => 4,
 			Type t when t == typeof( Float4x4 ) => 16,
 			Type t when t == typeof( Float3x3 ) => 6,
 			Type t when t == typeof( Float2x2 ) => 4,
-			Type t when t == typeof( Vector4 ) || t == typeof(Color) => 4,
-			Type t when t == typeof( Vector3 ) => 3,
-			Type t when t == typeof( Vector2 ) => 2,
-			Type t when t == typeof( float ) => 1,
-			Type t when t == typeof( int ) => 1,
 			_ => 0
 		};
 	}
@@ -1476,9 +1470,9 @@ public sealed partial class GraphCompiler
 			"float2x2" => ResultType.Float2x2,
 			"float3x3" => ResultType.Float3x3,
 			"float4x4" => ResultType.Float4x4,
-			"SamplerState" => ResultType.Sampler,
 			"Texture2D" => ResultType.Texture2DObject,
 			"TextureCube" => ResultType.TextureCubeObject,
+			"SamplerState" => ResultType.Sampler,
 			_ => throw new ArgumentException( $"Unknown DataType `{DataType}`" )
 		};
 	}
