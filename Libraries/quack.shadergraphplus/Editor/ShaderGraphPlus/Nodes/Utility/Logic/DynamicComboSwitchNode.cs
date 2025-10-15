@@ -1,5 +1,5 @@
 ﻿using NodeEditorPlus;
-using IPlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 
 namespace ShaderGraphPlus.Nodes;
 

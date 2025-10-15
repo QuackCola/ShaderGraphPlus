@@ -7,7 +7,7 @@ using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
 using GraphView = NodeEditorPlus.GraphView;
 using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 using NodePlug = NodeEditorPlus.NodePlug;
@@ -708,7 +708,7 @@ public class ShaderGraphPlusView : GraphView
 		// Grab all selected nodes
 		Vector2 rightmostPos = new Vector2( -9999, 0 );
 		var selectedNodes = SelectedItems.OfType<NodeUI>();
-		Dictionary<INodePlugIn, IPlugOut> oldConnections = new();
+		Dictionary<IPlugIn, IPlugOut> oldConnections = new();
 		foreach ( var node in selectedNodes )
 		{
 			if ( node.Node is not BaseNodePlus baseNode ) continue;

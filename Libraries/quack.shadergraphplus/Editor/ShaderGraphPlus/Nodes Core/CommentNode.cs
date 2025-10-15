@@ -2,7 +2,7 @@
 using CommentUI = NodeEditorPlus.CommentUI;
 using GraphView = NodeEditorPlus.GraphView;
 using ICommentNode = NodeEditorPlus.ICommentNode;
-using IPlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 

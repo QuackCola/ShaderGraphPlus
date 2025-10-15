@@ -5,7 +5,7 @@ using ColorEditor = NodeEditorPlus.ColorValueEditor;
 using FloatEditor = NodeEditorPlus.FloatValueEditor;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlug = NodeEditorPlus.IPlug;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 using NodePlug = NodeEditorPlus.NodePlug;
@@ -82,7 +82,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual IEnumerable<INodePlugIn> Inputs { get; protected set; }
+	public virtual IEnumerable<IPlugIn> Inputs { get; protected set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual IEnumerable<IPlugOut> Outputs { get; protected set; }
@@ -309,7 +309,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		}
 	}
 
-	public static (IEnumerable<INodePlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
+	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
@@ -338,7 +338,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		{
 			if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
 			{
-				Inputs = new List<INodePlugIn>();
+				Inputs = new List<IPlugIn>();
 			}
 		}
 	}
@@ -405,9 +405,9 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 
 }
 
-public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), INodePlugIn
+public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugIn
 {
-	IPlugOut INodePlugIn.ConnectedOutput
+	IPlugOut IPlugIn.ConnectedOutput
 	{
 		get
 		{

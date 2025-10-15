@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using System.Text;
 using ShaderGraphPlus.Nodes;
@@ -62,10 +62,10 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	public int PortOrder { get; set; } = 0;
 
 	[Hide]
-	private List<INodePlugIn> InternalInputs = new();
+	private List<IPlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
+	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	int _lastHashCode = 0;
@@ -99,7 +99,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	private void CreateInput()
 	{
-		var Plugs = new List<INodePlugIn>();
+		var Plugs = new List<IPlugIn>();
 
 		var type = OutputType switch
 		{
@@ -138,7 +138,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 			oldPlug.Info.DisplayInfo = info.DisplayInfo;
 
 			// Change the old plug type to the new type.
-			var oldplugType = oldPlug as INodePlugIn;
+			var oldplugType = oldPlug as IPlugIn;
 			oldplugType.Type = type;
 
 			Plugs.Add( oldplugType );

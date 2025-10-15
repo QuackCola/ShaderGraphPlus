@@ -1,14 +1,11 @@
 using Editor;
 using Microsoft.CodeAnalysis;
-using NodeEditorPlus;
-using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
 using System.Runtime.CompilerServices;
 using System.Text;
-
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using IRerouteNode = NodeEditorPlus.IRerouteNode;
 using NodeUI = NodeEditorPlus.NodeUI;
@@ -17,29 +14,31 @@ namespace ShaderGraphPlus;
 
 public sealed partial class GraphCompiler
 {
-	public struct Issue
+	public struct GraphIssue
 	{
 		public BaseNodePlus Node;
 		public string Message;
 		public bool IsWarning;
 	}
 
-	public static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
+	internal static Dictionary<Type,(string type, bool isEditorType)> ValueTypes => new()
 	{
-		{ typeof( Color ), ( "float4", false ) },
-		{ typeof( Vector4 ),( "float4", false ) },
-		{ typeof( Vector3 ),( "float3", false ) },
-		{ typeof( Vector2 ),( "float2", false ) },
-		{ typeof( float ), ( "float", false ) },
+		{ typeof( int ), ( "int", false ) },
 		{ typeof( bool ), ( "bool", false ) },
-		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
-		{ typeof( Sampler ), ( "SamplerState", true ) },
+		{ typeof( float ), ( "float", false ) },
+		{ typeof( Vector2 ),( "float2", false ) },
+		{ typeof( Vector3 ),( "float3", false ) },
+		{ typeof( Vector4 ),( "float4", false ) },
+		{ typeof( Color ), ( "float4", false ) },
 		{ typeof( Float2x2 ), ( "float2x2", true ) },
 		{ typeof( Float3x3 ), ( "float3x3", true ) },
 		{ typeof( Float4x4 ), ( "float4x4", true ) },
+		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
+		{ typeof( TextureCubeObject ), ( "TextureCube", true ) },
+		{ typeof( Sampler ), ( "SamplerState", true ) },
 	};
 
-	internal static HashSet<Type> VoidFuncNoDefaultValues => new()
+	internal static HashSet<Type> ValueTypesNoDefault => new()
 	{
 		{ typeof( Sampler ) },
 		{ typeof( Texture2DObject ) },
@@ -100,8 +99,6 @@ public sealed partial class GraphCompiler
 		public int VoidLocalCount { get; set; } = 0;
 		public string RepresentativeTexture { get; set; }
 
-
-
 		public void SetAttributes( Dictionary<string, object> attributes )
 		{
 			Attributes = attributes;
@@ -118,7 +115,6 @@ public sealed partial class GraphCompiler
 	public bool IsVs => Stage == ShaderStage.Vertex;
 	public bool IsPs => Stage == ShaderStage.Pixel;
 	private string StageName => Stage == ShaderStage.Vertex ? "vs" : "ps";
-
 	private string CurrentResultInput;
 
 	private CompileResult VertexResult { get; set; } = new();
@@ -137,8 +133,8 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Error list, doesn't give you much information currently
 	/// </summary>
-	public IEnumerable<Issue> Issues => NodeIssues
-		.Select( x => new Issue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
+	public IEnumerable<GraphIssue> Issues => NodeIssues
+		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
 	{
@@ -149,6 +145,7 @@ public sealed partial class GraphCompiler
 		Subgraphs = new();
 		AddSubgraphs( Graph );
 		ShaderFeatures = shaderFeatures;
+
 		// Set the Initial Vertex and Pixel stage inputs from ShaderTemplate.
 		VertexInputs = ShaderTemplate.VertexInputs;
 		PixelInputs = ShaderTemplate.PixelInputs;
@@ -224,7 +221,7 @@ public sealed partial class GraphCompiler
 					}
 				}
 
-				if ( !VoidFuncNoDefaultValues.Contains( inputAttribute.Type ) )
+				if ( !ValueTypesNoDefault.Contains( inputAttribute.Type ) )
 				{
 					funcResult = ResultOrDefault( nodeInput, defaultValue );
 				}

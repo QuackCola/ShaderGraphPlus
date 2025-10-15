@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
@@ -25,10 +25,10 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	public ShaderGraphPlus Subgraph { get; set; }
 
 	[Hide]
-	private List<INodePlugIn> InternalInputs = new();
+	private List<IPlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
+	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
 	[Hide]
 	private List<IPlugOut> InternalOutputs = new();
@@ -87,11 +87,11 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<INodePlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
+	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
 
 	public void CreateInputs()
 	{
-		var plugs = new List<INodePlugIn>();
+		var plugs = new List<IPlugIn>();
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
 
@@ -160,7 +160,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<IPlugOut, INodePlugIn> OutputReferences = new();
+	internal Dictionary<IPlugOut, IPlugIn> OutputReferences = new();
 	public void CreateOutputs()
 	{
 		var plugs = new List<IPlugOut>();

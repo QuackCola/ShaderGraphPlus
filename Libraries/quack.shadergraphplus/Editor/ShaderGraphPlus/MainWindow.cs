@@ -115,7 +115,7 @@ public class MainWindow : DockWindow
 	private ProjectCreator ProjectCreator { get; set; }
 
 	private Dictionary<string,ShaderFeatureBase> ShaderFeatures = new();
-	private List<GraphCompiler.Issue> BlackboardIssues { get; set; } = new();
+	private List<GraphCompiler.GraphIssue> BlackboardIssues { get; set; } = new();
 
 	public MainWindow()
 	{
@@ -574,7 +574,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues )
+	private void RegisterShaderFeatures( out List<GraphCompiler.GraphIssue> registrationIssues )
 	{
 		ShaderFeatures.Clear();
 		registrationIssues = new();
@@ -632,7 +632,7 @@ public class MainWindow : DockWindow
 		}
 
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
-		RegisterShaderFeatures( out List<GraphCompiler.Issue> registrationIssues );
+		RegisterShaderFeatures( out List<GraphCompiler.GraphIssue> registrationIssues );
 
 		if ( registrationIssues.Any() )
 		{
@@ -650,8 +650,8 @@ public class MainWindow : DockWindow
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
-		var iErroringNodeErrors = new List<GraphCompiler.Issue>();
-		var iWarningNodeWarnings = new List<GraphCompiler.Issue>();
+		var iErroringNodeErrors = new List<GraphCompiler.GraphIssue>();
+		var iWarningNodeWarnings = new List<GraphCompiler.GraphIssue>();
 
 		if ( _autoCompile )
 		{

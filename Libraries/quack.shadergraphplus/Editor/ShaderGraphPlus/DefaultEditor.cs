@@ -7,7 +7,7 @@ using NodeEditorPlus;
 using ValueEditor = NodeEditorPlus.ValueEditor;
 using NodePlug = NodeEditorPlus.NodePlug;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 
 namespace ShaderGraphPlus;
@@ -56,7 +56,7 @@ public class DefaultEditor : ValueEditor
 		if ( Plug is null ) return;
 		if ( Plug?.Node?.Node is not ShaderNodePlus node ) return;
 		if ( Plug.Inner is IPlugOut plugOut ) return;
-		if ( Plug.Inner is INodePlugIn plugIn )
+		if ( Plug.Inner is IPlugIn plugIn )
 		{
 			if ( plugIn.ConnectedOutput is not null ) return;
 		}

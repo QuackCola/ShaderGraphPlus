@@ -3,7 +3,7 @@ using NodeEditorPlus;
 using System;
 using System.Text;
 using GraphView = NodeEditorPlus.GraphView;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -71,10 +71,10 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	};
 
 	[Hide]
-	private List<INodePlugIn> InternalInputs = new();
+	private List<IPlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
+	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
 
 	[Title( "Outputs" )]
 	public List<CustomCodeNodePorts> ExpressionOutputs { get; set; } = new List<CustomCodeNodePorts>()
@@ -147,7 +147,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 	public void CreateInputs()
 	{
-		var plugs = new List<INodePlugIn>();
+		var plugs = new List<IPlugIn>();
 
 		if ( ExpressionInputs == null )
 		{
@@ -349,7 +349,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		int index = 0;
 		error = "";
 
-		foreach ( INodePlugIn input in Inputs )
+		foreach ( IPlugIn input in Inputs )
 		{	
 			NodeResult result = new NodeResult();
 			
@@ -394,7 +394,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		error = "";
 		List<(string, string)> inputResults = new List<(string,string)>();
 		
-		foreach ( INodePlugIn input in Inputs )
+		foreach ( IPlugIn input in Inputs )
 		{
 			NodeResult result = new NodeResult();
 			
@@ -588,6 +588,7 @@ public class CustomCodeNodePorts
 			if ( GraphCompiler.ValueTypes.ContainsValue( new ( typeName, true ) ) )
 			{
 				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
+				if ( typeName == "TextureCube" ) typeName = typeof( TextureCubeObject ).FullName;
 				if ( typeName == "Sampler" ) typeName = typeof( Sampler ).FullName;
 				if ( typeName == "float2x2" ) typeName = typeof( Float2x2 ).FullName;
 				if ( typeName == "float3x3" ) typeName = typeof( Float3x3 ).FullName;
@@ -623,7 +624,7 @@ public class CustomCodeNodePorts
 				case "bool":
 					return "bool";
 				case "int":
-					return $"float"; // Just identify as a float.
+					return $"int";
 				case "float":
 					return $"float";
 				case "Vector2":
@@ -642,6 +643,8 @@ public class CustomCodeNodePorts
 					return "float4x4";
 				case "Texture2D":
 					return "Texture2D";
+				case "TextureCube":
+					return "TextureCube";
 				case "Sampler":
 					return "Sampler";
 			}

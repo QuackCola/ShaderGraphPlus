@@ -9,10 +9,10 @@ public class Output : Widget
 {
 	private IssueListView _issueListView;
 
-	public IEnumerable<GraphCompiler.Issue> Errors { set { _issueListView.SetItems( value.Cast<object>() ); } }
+	public IEnumerable<GraphCompiler.GraphIssue> Errors { set { _issueListView.SetItems( value.Cast<object>() ); } }
 
-	private List<GraphCompiler.Issue> _graphIssues;
-	public List<GraphCompiler.Issue> GraphIssues
+	private List<GraphCompiler.GraphIssue> _graphIssues;
+	public List<GraphCompiler.GraphIssue> GraphIssues
 	{
 		get => _graphIssues;
 		set
@@ -27,7 +27,7 @@ public class Output : Widget
 
 	public void ClearErrors()
 	{
-		foreach ( var error in _issueListView.Items.Where ( x=> x is Issue issue && issue.IsWarning == false ) )
+		foreach ( var error in _issueListView.Items.Where ( x=> x is GraphIssue issue && issue.IsWarning == false ) )
 		{
 			_issueListView.RemoveItem( error );
 		}
@@ -35,7 +35,7 @@ public class Output : Widget
 
 	internal void ClearWarnings()
 	{
-		foreach ( var warning in _issueListView.Items.Where( x => x is Issue issue && issue.IsWarning == true ) )
+		foreach ( var warning in _issueListView.Items.Where( x => x is GraphIssue issue && issue.IsWarning == true ) )
 		{
 			_issueListView.RemoveItem( warning );
 		}
@@ -63,7 +63,7 @@ public class IssueListView : ListView
 		_output = parent;
 		ItemActivated = ( a ) =>
 		{
-			if ( a is not GraphCompiler.Issue issueInfo )
+			if ( a is not GraphCompiler.GraphIssue issueInfo )
 				return;
 			
 			if ( issueInfo.Node != null && issueInfo.Node is not DummyNode )
@@ -80,17 +80,17 @@ public class IssueListView : ListView
 
 	private void OpenItemContextMenu( object item )
 	{
-		if ( item is not GraphCompiler.Issue )
+		if ( item is not GraphCompiler.GraphIssue )
 			return;
 
-		if ( item is GraphCompiler.Issue issue )
+		if ( item is GraphCompiler.GraphIssue issue )
 		{
 			OnOpenItemContextMenuError( item, issue );
 		}
 
 	}
 
-	private void OnOpenItemContextMenuError( object item , Issue error )
+	private void OnOpenItemContextMenuError( object item , GraphIssue error )
 	{
 		var m = new Menu();
 
@@ -118,7 +118,7 @@ public class IssueListView : ListView
 		base.OnPaint();
 	}
 
-	public void OnPaintError( VirtualWidget item, GraphCompiler.Issue error )
+	public void OnPaintError( VirtualWidget item, GraphCompiler.GraphIssue error )
 	{
 
 		var color = Theme.Red;
@@ -149,7 +149,7 @@ public class IssueListView : ListView
 		}
 	}
 
-	public void OnPaintWarning( VirtualWidget item, GraphCompiler.Issue warning )
+	public void OnPaintWarning( VirtualWidget item, GraphCompiler.GraphIssue warning )
 	{
 		var color = Theme.Yellow;
 
@@ -181,10 +181,10 @@ public class IssueListView : ListView
 
 	protected override void PaintItem( VirtualWidget item )
 	{
-		if ( item.Object is not GraphCompiler.Issue )
+		if ( item.Object is not GraphCompiler.GraphIssue )
 			return;
 
-		if ( item.Object is GraphCompiler.Issue issue )
+		if ( item.Object is GraphCompiler.GraphIssue issue )
 		{
 			if ( issue.IsWarning )
 			{

@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using GraphView = NodeEditorPlus.GraphView;
-using INodePlugIn = NodeEditorPlus.INodePlugIn;
+using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -132,7 +132,7 @@ public sealed class Result : BaseResult
 
 	private void CreateInputs()
 	{
-		var plugs = new List<INodePlugIn>();
+		var plugs = new List<IPlugIn>();
 		var serialized = this.GetSerialized();
 		foreach ( var property in serialized )
 		{
@@ -159,7 +159,7 @@ public sealed class Result : BaseResult
 					oldPlug.Info.Type = info.Type;
 					oldPlug.Info.DisplayInfo = info.DisplayInfo;
 					var nodeInput = property.GetValue<NodeInput>();
-					if ( nodeInput.IsValid && plug is INodePlugIn plugIn )
+					if ( nodeInput.IsValid && plug is IPlugIn plugIn )
 					{
 						var connectedNode = Graph.Nodes.FirstOrDefault( x => x is BaseNodePlus node && node.Identifier == nodeInput.Identifier ) as BaseNodePlus;
 						plugIn.ConnectedOutput = connectedNode.Outputs.FirstOrDefault( x => x.Identifier == nodeInput.Output );
@@ -169,7 +169,7 @@ public sealed class Result : BaseResult
 				else
 				{
 					var nodeInput = property.GetValue<NodeInput>();
-					if ( nodeInput.IsValid && plug is INodePlugIn plugIn )
+					if ( nodeInput.IsValid && plug is IPlugIn plugIn )
 					{
 						var connectedNode = Graph.Nodes.FirstOrDefault( x => x is BaseNodePlus node && node.Identifier == nodeInput.Identifier ) as BaseNodePlus;
 						plugIn.ConnectedOutput = connectedNode.Outputs.FirstOrDefault( x => x.Identifier == nodeInput.Output );
