@@ -65,6 +65,10 @@ public enum ResultType
 	/// </summary>
 	Void,
 	/// <summary>
+	/// Group of noderesults all bundled up.
+	/// </summary>
+	Bundle,
+	/// <summary>
 	/// 
 	/// </summary>
 	Invalid,

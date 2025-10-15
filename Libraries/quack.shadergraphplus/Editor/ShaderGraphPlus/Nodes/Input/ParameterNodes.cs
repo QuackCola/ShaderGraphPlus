@@ -12,6 +12,9 @@ internal interface ITextureParameterNodeNew
 	TextureInput UI { get; set; }
 }
 
+/// <summary>
+/// Node that can return any generic data.
+/// </summary>
 internal interface IMetaDataNode
 {
 	NodeResult GetResult( GraphCompiler compiler );

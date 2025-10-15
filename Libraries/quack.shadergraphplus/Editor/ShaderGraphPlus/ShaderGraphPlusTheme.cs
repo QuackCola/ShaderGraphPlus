@@ -41,20 +41,21 @@ internal static class ShaderGraphPlusTheme
 	{
 		NodeHandleConfigs = new()
 		{
-		{ typeof( bool ), new NodeHandleConfig( "bool", Theme.Blue.AdjustHue( -80 ) ) },
-		{ typeof( int ), new NodeHandleConfig( "int", Color.Parse( "#ce67e0" )!.Value.AdjustHue( -80 ) ) },
-		{ typeof( float ), new NodeHandleConfig( "Float", Color.Parse( "#8ec07c" )!.Value ) },
-		{ typeof( Vector2 ), new NodeHandleConfig( "Vector2", Color.Parse( "#ce67e0" )!.Value ) },
-		{ typeof( Vector3 ), new NodeHandleConfig( "Vector3", Color.Parse( "#7177e1" )!.Value ) },
-		{ typeof( Vector4 ), new NodeHandleConfig( "Vector4", Color.Parse( "#c7ae32" )!.Value ) },
-		{ typeof( Color ), new NodeHandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
-		{ typeof( Float2x2 ), new NodeHandleConfig( "Float2x2", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
-		{ typeof( Texture2DObject ), new NodeHandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
-		{ typeof( TextureCubeObject ), new NodeHandleConfig( "TextureCube", Color.Parse( "#ffb3a7" )!.Value ) },
-		{ typeof( Sampler ), new NodeHandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
-		{ typeof( Gradient ), new NodeHandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
+			{ typeof( bool ), new NodeHandleConfig( "bool", Theme.Blue.AdjustHue( -80 ) ) },
+			{ typeof( int ), new NodeHandleConfig( "int", Color.Parse( "#ce67e0" )!.Value.AdjustHue( -80 ) ) },
+			{ typeof( float ), new NodeHandleConfig( "Float", Color.Parse( "#8ec07c" )!.Value ) },
+			{ typeof( Vector2 ), new NodeHandleConfig( "Vector2", Color.Parse( "#ce67e0" )!.Value ) },
+			{ typeof( Vector3 ), new NodeHandleConfig( "Vector3", Color.Parse( "#7177e1" )!.Value ) },
+			{ typeof( Vector4 ), new NodeHandleConfig( "Vector4", Color.Parse( "#c7ae32" )!.Value ) },
+			{ typeof( Color ), new NodeHandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
+			{ typeof( Float2x2 ), new NodeHandleConfig( "Float2x2", Color.Parse( "#a3b3c9" )!.Value ) },
+			{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
+			{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
+			{ typeof( Texture2DObject ), new NodeHandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
+			{ typeof( TextureCubeObject ), new NodeHandleConfig( "TextureCube", Color.Parse( "#ffb3a7" )!.Value ) },
+			{ typeof( Sampler ), new NodeHandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
+			{ typeof( Gradient ), new NodeHandleConfig( "Gradient", Color.Parse( "#dddddd" )!.Value ) },
+			{ typeof( Bundle ), new NodeHandleConfig( "Bundle", Color.Parse( "#dddddd" )!.Value ) },
 		};
 
 		BlackboardConfigs = new()
