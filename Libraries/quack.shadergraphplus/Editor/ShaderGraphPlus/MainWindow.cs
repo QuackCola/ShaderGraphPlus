@@ -51,7 +51,6 @@ public class MainWindow : DockWindow
 	private Widget _blackboardCanvas;
 	private Properties _properties;
 	private Preview3DPanel _preview3D;
-	private Preview2DPanel _preview2D;
 	private Output _output;
 	private UndoHistory _undoHistory;	
 	private PaletteWidget _palette;
@@ -175,11 +174,10 @@ public class MainWindow : DockWindow
 
 	private void RestoreShader()
 	{
-		if ( !_preview3D.IsValid() && !_preview2D.IsValid() )
+		if ( !_preview3D.IsValid() )
 			return;
 
 		_preview3D.Material = Material.Load( "materials/core/shader_editor.vmat" );
-		_preview2D.Material = Material.Load( "materials/core/shader_editor.vmat" );
 	}
 
 	private void SelectBlackboardParameter()
@@ -377,7 +375,6 @@ public class MainWindow : DockWindow
 
 		_isCompiling = true;
 		_preview3D.IsCompiling = _isCompiling;
-		_preview2D.IsCompiling = _isCompiling;
 
 		RestoreShader();
 
@@ -480,7 +477,6 @@ public class MainWindow : DockWindow
 			var material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
 
 			_preview3D.Material = material;
-			_preview2D.Material = material;
 		}
 		else
 		{
@@ -495,7 +491,6 @@ public class MainWindow : DockWindow
 		
 		_preview3D.IsCompiling = _isCompiling;
 		_preview3D.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
-		_preview2D.IsCompiling = _isCompiling;
 
 		_shaderCompileErrors.Clear();
 	}
@@ -512,7 +507,6 @@ public class MainWindow : DockWindow
 				if ( _comboIntAttributes.TryAdd( name, intValue ) )
 				{
 					_preview3D?.SetCombo( name, intValue );
-					_preview2D?.SetCombo( name, intValue );
 				}
 			}
 
@@ -524,12 +518,10 @@ public class MainWindow : DockWindow
 			case Color v:
 				_float4Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case Vector4 v:
 				_float4Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, (Color)v );
-				_preview2D?.SetAttribute( name, (Color)v );
 				break;
 			case Vector3 v:
 				_float3Attributes.Add( name, v );
@@ -538,47 +530,38 @@ public class MainWindow : DockWindow
 			case Vector2 v:
 				_float2Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case float v:
 				_floatAttributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case int v:
 				_intAttributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case bool v:
 				_boolAttributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case Texture v:
 				_textureAttributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case Sampler v:
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview3D?.SetAttribute( name, (SamplerState)v );
-				_preview2D?.SetAttribute( name, (SamplerState)v );
 				break;
 			case Float2x2 v: // Stub - Quack
 				_float2x2Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case Float3x3 v: // Stub - Quack
 				_float3x3Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			case Float4x4 v: // Stub - Quack
 				_float4x4Attributes.Add( name, v );
 				_preview3D?.SetAttribute( name, v );
-				_preview2D?.SetAttribute( name, v );
 				break;
 			default:
 				throw new InvalidOperationException( $"Unsupported attribute type: {value.GetType()}" );
@@ -1350,7 +1333,6 @@ public class MainWindow : DockWindow
 		//_compiledNodes.Clear();
 
 		_preview3D?.ClearAttributes();
-		_preview2D?.ClearAttributes();
 	}
 
 	public void Open()
@@ -1714,78 +1696,64 @@ public class MainWindow : DockWindow
 			OnModelChanged = ( model ) => _graph.Model = model?.Name
 		};
 
-		_preview2D = new Preview2DPanel( this );
-
 		foreach ( var value in _samplerStateAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _textureAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float4x4Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float3x3Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float2x2Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float4Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float3Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _float2Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _floatAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 		
 		foreach ( var value in _boolAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _comboBoolAttributes )
 		{
 			_preview3D.SetCombo( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		foreach ( var value in _comboIntAttributes )
 		{
 			_preview3D.SetCombo( value.Key, value.Value );
-			_preview2D.SetAttribute( value.Key, value.Value );
 		}
 
 		_properties = new Properties( this );
