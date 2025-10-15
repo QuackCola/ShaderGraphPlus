@@ -83,6 +83,7 @@ public class PerspectiveModeButton : Button
 	public PerspectiveModeButton( ViewMode viewMode ) : base( null )
 	{
 		SetStyles( $"padding-left: 32px; padding-right: 32px; font-family: '{Theme.DefaultFont}'; padding-top: 6px; padding-bottom: 6px;" );
+		ToolTip = "View mode of this viewport";
 
 		FixedWidth = 128;
 		FixedHeight = Theme.RowHeight + 6;
