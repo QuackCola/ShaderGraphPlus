@@ -50,7 +50,7 @@ public sealed class BoxShapeNode : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -107,7 +107,7 @@ public sealed class ElipseShapeNode : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -173,7 +173,7 @@ public sealed class PolygonShapeNode : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}

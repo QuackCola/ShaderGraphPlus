@@ -27,7 +27,7 @@ public abstract class NoiseNode : ShaderNodePlus
 		var result = compiler.Result( Coords );
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = result.IsValid ? $"{result.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -122,7 +122,7 @@ public sealed class VoronoiNoise : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = result.IsValid ? $"{result.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}

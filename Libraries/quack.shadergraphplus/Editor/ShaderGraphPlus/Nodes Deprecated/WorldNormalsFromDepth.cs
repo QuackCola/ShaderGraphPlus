@@ -25,7 +25,7 @@ public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus, IWarningNode
         var coords = "";
         var defaultpos = $"{(compiler.IsVs ? $"i.vPositionPs.xy" : $"i.vPositionSs.xy")}";
 
-        if (compiler.Graph.MaterialDomain is MaterialDomain.PostProcess)
+        if (compiler.Graph.Domain is ShaderDomain.PostProcess)
         {
 
             coords = incoords.IsValid ? $"{incoords.Cast(2)}" : defaultpos;

@@ -68,7 +68,7 @@ float2 UVRotation( float2 vUv, float2 vRotationCenter, float flRotation )
 		
 		var coords = "";
 		
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -127,7 +127,7 @@ public sealed class UVScaleNode : ShaderNodePlus
 		
 		var coords = "";
 		
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -201,7 +201,7 @@ float2 UVScaleByPoint( float2 vUv, float flCenter, float2 flScale )
 		
 		var coords = "";
 		
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -281,7 +281,7 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 		
 		var coords = "";
 		
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -341,7 +341,7 @@ public sealed class TileAndOffset : ShaderNodePlus
 
 		var coords = "";
 
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "CalculateViewportUv( i.vPositionSs.xy )";
 		}
@@ -434,7 +434,7 @@ float2 FlipBook( float2 vUV, float flWidth, float flHeight, int nTileIndex, bool
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( compiler.Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}

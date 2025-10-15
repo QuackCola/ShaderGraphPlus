@@ -490,7 +490,7 @@ public class MainWindow : DockWindow
 		}
 		
 		_preview3D.IsCompiling = _isCompiling;
-		_preview3D.PostProcessing = _graph.MaterialDomain == MaterialDomain.PostProcess;
+		_preview3D.PostProcessing = _graph.Domain == ShaderDomain.PostProcess;
 
 		_shaderCompileErrors.Clear();
 	}
@@ -1905,7 +1905,7 @@ public class MainWindow : DockWindow
 	{
 		BlackboardIssues.Clear();
 
-		_preview3D.PostProcessing = _graphView.Graph.MaterialDomain == MaterialDomain.PostProcess;
+		_preview3D.PostProcessing = _graphView.Graph.Domain == ShaderDomain.PostProcess;
 
 		if ( _properties.Target is BaseNodePlus node )
 		{

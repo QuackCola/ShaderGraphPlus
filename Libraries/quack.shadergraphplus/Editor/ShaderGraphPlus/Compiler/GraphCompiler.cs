@@ -1502,7 +1502,7 @@ public sealed partial class GraphCompiler
 		// Register any Graph level Shader Features...
 		//RegisterShaderFeatures( Graph.shaderFeatureNodeResults );
 		
-		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+		if ( Graph.Domain is ShaderDomain.BlendingSurface )
 		{
 			sb.AppendLine("Feature( F_MULTIBLEND, 0..3 ( 0=\"1 Layers\", 1=\"2 Layers\", 2=\"3 Layers\", 3=\"4 Layers\", 4=\"5 Layers\" ), \"Number Of Blendable Layers\" );");
 		}
@@ -1644,7 +1644,7 @@ public sealed partial class GraphCompiler
 
 		string template = ShaderTemplate.Code;
 
-		if ( Graph.MaterialDomain is MaterialDomain.BlendingSurface )
+		if ( Graph.Domain is ShaderDomain.BlendingSurface )
 		{
 			template = ShaderTemplateBlending.Code;
 		}
@@ -1753,7 +1753,7 @@ public sealed partial class GraphCompiler
 		var sb = new StringBuilder();
 		var pixelIncludes = new HashSet<string>(PixelIncludes);
 		
-		if ( Graph.MaterialDomain == MaterialDomain.PostProcess )
+		if ( Graph.Domain == ShaderDomain.PostProcess )
 		{
 			pixelIncludes.Add( "postprocess/functions.hlsl" );
 			pixelIncludes.Add( "postprocess/common.hlsl" );
@@ -1776,7 +1776,7 @@ public sealed partial class GraphCompiler
 	private string GeneratePixelInit()
 	{
 		Stage = ShaderStage.Pixel;
-		if ( Graph.ShadingModel == ShadingModel.Lit && Graph.MaterialDomain != MaterialDomain.PostProcess )
+		if ( Graph.ShadingModel == ShadingModel.Lit && Graph.Domain != ShaderDomain.PostProcess )
 			return ShaderTemplate.Material_init;
 		return "";
 	}
@@ -1788,7 +1788,7 @@ public sealed partial class GraphCompiler
 		Subgraph = null;
 		SubgraphStack.Clear();
 		
-		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.MaterialDomain == MaterialDomain.PostProcess )
+		if ( Graph.ShadingModel == ShadingModel.Unlit || Graph.Domain == ShaderDomain.PostProcess )
 		{
 			var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 			if ( resultNode == null )
@@ -1842,7 +1842,7 @@ public sealed partial class GraphCompiler
 		}
 
 		// Support for color buffer in post-process shaders
-		if ( IsPs && Graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( IsPs && Graph.Domain is ShaderDomain.PostProcess )
 		{
 			sb.AppendLine( "Texture2D g_tColorBuffer < Attribute( \"ColorBuffer\" ); SrgbRead ( true ); >;" );
 		}
@@ -2126,7 +2126,7 @@ public sealed partial class GraphCompiler
 		Subgraph = null;
 		SubgraphStack.Clear();
 
-		if ( Graph.ShadingModel != ShadingModel.Lit || Graph.MaterialDomain == MaterialDomain.PostProcess ) return "";
+		if ( Graph.ShadingModel != ShadingModel.Lit || Graph.Domain == ShaderDomain.PostProcess ) return "";
 
 		var resultNode = Graph.Nodes.OfType<BaseResult>().FirstOrDefault();
 
@@ -2234,9 +2234,9 @@ public sealed partial class GraphCompiler
 			sb2.AppendLine( $"i.{vertexInput.Key} = v.{vertexInput.Key};" );
 		}
 
-		switch ( Graph.MaterialDomain )
+		switch ( Graph.Domain )
 		{
-		case MaterialDomain.Surface:
+		case ShaderDomain.Surface:
 				sb.AppendLine( $@"
 PixelInput i = ProcessVertex( v );
 i.vPositionOs = v.vPositionOs.xyz;
@@ -2248,7 +2248,7 @@ i.vTintColor = extraShaderData.vTint;
 VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 		" );
 				break;
-			case MaterialDomain.BlendingSurface:
+			case ShaderDomain.BlendingSurface:
 				sb.AppendLine( $@"
 PixelInput i = ProcessVertex( v );
 
@@ -2257,7 +2257,7 @@ i.vBlendValues = v.vColorBlendValues;
 i.vPaintValues = v.vColorPaintValues;
 " );
 				break;
-case MaterialDomain.PostProcess:
+case ShaderDomain.PostProcess:
 				sb.AppendLine( $@"
 PixelInput i;
 
@@ -2285,15 +2285,15 @@ i.vPositionWs = float3( v.vTexCoord, 0.0f );
 			}
 		}
 
-		switch ( Graph.MaterialDomain )
+		switch ( Graph.Domain )
 		{
-			case MaterialDomain.Surface:
+			case ShaderDomain.Surface:
 				sb.AppendLine( "return FinalizeVertex( i );" );
 				break;
-			case MaterialDomain.BlendingSurface:
+			case ShaderDomain.BlendingSurface:
 				sb.AppendLine( "return FinalizeVertex( i );" );
 				break;
-			case MaterialDomain.PostProcess:
+			case ShaderDomain.PostProcess:
 				sb.AppendLine( "return i;" );
 				break;
 		}

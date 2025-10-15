@@ -116,7 +116,7 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 		var coords = compiler.Result( Coords );
 		var graph = compiler.Graph;
 
-		if ( graph.MaterialDomain != MaterialDomain.PostProcess && graph.BlendMode != BlendMode.Translucent )
+		if ( graph.Domain != ShaderDomain.PostProcess && graph.BlendMode != BlendMode.Translucent )
 		{
 			return NodeResult.Error($"Graph `{nameof( BlendMode )}` must be set to `{nameof( BlendMode.Translucent )}` in order to use `{DisplayInfo.Name}`");
 		}
@@ -124,7 +124,7 @@ float2 MapSceneColorCoords( float2 vInput, float2 modes )
 		var uvModes = $"float2({(int)AddressU},{(int)AddressV})";
 		var func = compiler.RegisterHLSLFunction( MapSceneColorCoords, "MapSceneColorCoords" );
 
-		if ( graph.MaterialDomain is MaterialDomain.PostProcess )
+		if ( graph.Domain is ShaderDomain.PostProcess )
 		{
 			return new NodeResult( ResultType.Vector3, $"g_tColorBuffer.Sample( g_sAniso, {(
 				coords.IsValid

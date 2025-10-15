@@ -31,10 +31,10 @@ public sealed class Result : BaseResult
 	}
 
 	[Hide]
-	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.MaterialDomain != MaterialDomain.PostProcess);
+	private bool IsLit => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.ShadingModel == ShadingModel.Lit && shaderGraph.Domain != ShaderDomain.PostProcess);
 
 	[Hide]
-	private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.MaterialDomain == MaterialDomain.PostProcess);
+	private bool IsPostProcess => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.Domain == ShaderDomain.PostProcess);
 
 	// TODO :
 	//[Hide]
@@ -95,7 +95,7 @@ public sealed class Result : BaseResult
 		if ( Graph is ShaderGraphPlus shaderGraph )
 		{
 			hashCode.Add( shaderGraph.ShadingModel );
-			hashCode.Add( shaderGraph.MaterialDomain );
+			hashCode.Add( shaderGraph.Domain );
 		}
 		var hc = hashCode.ToHashCode();
 		if ( hc != _lastHashCode )

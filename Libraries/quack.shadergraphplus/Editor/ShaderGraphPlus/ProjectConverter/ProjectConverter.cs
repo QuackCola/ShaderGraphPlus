@@ -119,10 +119,10 @@ internal class ProjectConverter
 		switch ( ShaderGraph.Domain )
 		{
 			case Editor.ShaderGraph.ShaderDomain.Surface:
-				ShaderGraphPlus.MaterialDomain = MaterialDomain.Surface;
+				ShaderGraphPlus.Domain = ShaderDomain.Surface;
 				break;
 			case Editor.ShaderGraph.ShaderDomain.PostProcess:
-				ShaderGraphPlus.MaterialDomain = MaterialDomain.PostProcess;
+				ShaderGraphPlus.Domain = ShaderDomain.PostProcess;
 				break;
 		}
 

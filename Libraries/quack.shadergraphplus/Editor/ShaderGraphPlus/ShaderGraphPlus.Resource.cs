@@ -25,7 +25,7 @@ public enum ShadingModel
 	//Custom,
 }
 
-public enum MaterialDomain
+public enum ShaderDomain
 {
 	[Icon("view_in_ar")]
 	Surface,
@@ -105,9 +105,9 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	[ShowIf( nameof( ShowShadingModel ), true )]
 	public ShadingModel ShadingModel { get; set; }
 
-	[Hide] private bool ShowShadingModel => MaterialDomain != MaterialDomain.PostProcess;
+	[Hide] private bool ShowShadingModel => Domain != ShaderDomain.PostProcess;
 
-	public MaterialDomain MaterialDomain { get; set; }
+	public ShaderDomain Domain { get; set; }
 
 	/// <summary>
 	///	Custom key-value storage for this project.
