@@ -6,6 +6,7 @@ using NodeUI = NodeEditorPlus.NodeUI;
 namespace ShaderGraphPlus.Nodes;
 
 [Title("World Normals from Depth"), Category("Utility")]
+[InternalNode]
 public sealed class WorldSpaceNormalFromDepth : ShaderNodePlus, IWarningNode
 {
 	[Hide]

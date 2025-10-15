@@ -15,6 +15,7 @@ namespace ShaderGraphPlus.Nodes;
 /// Use no name to use condition from A and B inputs.
 /// </summary>
 [Title( "Branch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
+[InternalNode]
 public sealed class Branch : ShaderNodePlus, IWarningNode
 {
 	[Hide]
