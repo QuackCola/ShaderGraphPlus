@@ -1,6 +1,6 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 

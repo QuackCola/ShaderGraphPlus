@@ -3,7 +3,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
@@ -18,7 +18,7 @@ public sealed class SceneColorNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	public string MapSceneColorCoords => @"
@@ -152,7 +152,7 @@ public sealed class FrameBufferCopyInvSizeAndUvScaleNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => Color.Parse( "#803334" )!.Value;
+	public override Color NodeTitleColor => Color.Parse( "#803334" )!.Value;
 
 	[Output( typeof( Vector2 ) )]
 	[Hide]

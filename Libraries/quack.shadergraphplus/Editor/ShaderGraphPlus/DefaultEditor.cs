@@ -5,16 +5,16 @@ using System.Text.Json;
 using NodeEditorPlus;
 
 using ValueEditor = NodeEditorPlus.ValueEditor;
-using Plug = NodeEditorPlus.Plug;
+using NodePlug = NodeEditorPlus.NodePlug;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
 
 namespace ShaderGraphPlus;
 
 public class DefaultEditor : ValueEditor
 {
-	Plug Plug;
+	NodePlug Plug;
 	int _textHash;
 	float _labelWidth;
 	Rect _boundingRect;
@@ -27,7 +27,7 @@ public class DefaultEditor : ValueEditor
 		HoverEvents = true;
 		Cursor = CursorShape.Finger;
 
-		if ( parent is Plug plug )
+		if ( parent is NodePlug plug )
 		{
 			Plug = plug;
 		}
@@ -56,7 +56,7 @@ public class DefaultEditor : ValueEditor
 		if ( Plug is null ) return;
 		if ( Plug?.Node?.Node is not ShaderNodePlus node ) return;
 		if ( Plug.Inner is IPlugOut plugOut ) return;
-		if ( Plug.Inner is IPlugIn plugIn )
+		if ( Plug.Inner is INodePlugIn plugIn )
 		{
 			if ( plugIn.ConnectedOutput is not null ) return;
 		}

@@ -1,14 +1,14 @@
 ﻿using Editor;
 using NodeEditorPlus;
 using Sandbox;
-using ColorEditor = NodeEditorPlus.ColorEditor;
-using FloatEditor = NodeEditorPlus.FloatEditor;
+using ColorEditor = NodeEditorPlus.ColorValueEditor;
+using FloatEditor = NodeEditorPlus.FloatValueEditor;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlug = NodeEditorPlus.IPlug;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
-using Plug = NodeEditorPlus.Plug;
+using NodePlug = NodeEditorPlus.NodePlug;
 using ValueEditor = NodeEditorPlus.ValueEditor;
 
 namespace ShaderGraphPlus;
@@ -21,7 +21,7 @@ internal class SubgraphOnlyAttribute : Attribute
 	}
 }
 
-public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
+public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 {
 	public event Action Changed;
 
@@ -82,7 +82,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	public bool AutoSize => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual IEnumerable<IPlugIn> Inputs { get; protected set; }
+	public virtual IEnumerable<INodePlugIn> Inputs { get; protected set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual IEnumerable<IPlugOut> Outputs { get; protected set; }
@@ -135,9 +135,9 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		return NodeBodyTintColor;
 	}
 
-	public Color GetNodeTitleTintColor( GraphView view )
+	public Color GetNodeTitleColor( GraphView view )
 	{
-		return NodeTitleTintColor;
+		return NodeTitleColor;
 	}
 
 	public virtual Menu CreateContextMenu( NodeUI node )
@@ -166,7 +166,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 	public virtual Color NodeBodyTintColor { get; set; } = Color.Parse( "#303030" )!.Value.Lighten( 2.0f );
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual Color NodeTitleTintColor { get; set; } = Color.Gray;
+	public virtual Color NodeTitleColor { get; set; } = Color.Gray;
 
 	public virtual void OnPaint( Rect rect )
 	{
@@ -309,7 +309,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		}
 	}
 
-	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
+	public static (IEnumerable<INodePlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
 
@@ -338,7 +338,7 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 		{
 			if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
 			{
-				Inputs = new List<IPlugIn>();
+				Inputs = new List<INodePlugIn>();
 			}
 		}
 	}
@@ -347,14 +347,14 @@ public abstract class BaseNodePlus : INodePlus, ISGPJsonUpgradeable
 
 public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 {
-	INodePlus IPlug.Node => Node;
+	IGraphNode IPlug.Node => Node;
 
 	Type IPlug.Type { get; set; } = Type;
 
 	public string Identifier => Info.Name;
 	public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
-	public ValueEditor CreateEditor(NodeUI node, Plug plug)
+	public ValueEditor CreateEditor(NodeUI node, NodePlug plug)
 	{
 		var editor = Info.CreateEditor( node, plug, Type );
 		if ( editor is not null ) return editor;
@@ -367,12 +367,12 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 		return null;
 	}
 
-	public Menu CreateContextMenu( NodeUI node, Plug plug )
+	public Menu CreateContextMenu( NodeUI node, NodePlug plug )
 	{
 		return null;
 	}
 
-	public void OnDoubleClick( NodeUI node, Plug plug, MouseEvent e )
+	public void OnDoubleClick( NodeUI node, NodePlug plug, MouseEvent e )
 	{
 
 	}
@@ -405,9 +405,9 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 
 }
 
-public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), IPlugIn
+public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePlug( Node, Info, Type ), INodePlugIn
 {
-	IPlugOut IPlugIn.ConnectedOutput
+	IPlugOut INodePlugIn.ConnectedOutput
 	{
 		get
 		{
@@ -524,7 +524,7 @@ public class PlugInfo
 		return default;
 	}
 
-	public ValueEditor CreateEditor( NodeUI node, Plug plug, Type type )
+	public ValueEditor CreateEditor( NodeUI node, NodePlug plug, Type type )
 	{
 		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
 

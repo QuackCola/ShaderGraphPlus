@@ -10,7 +10,7 @@ public sealed class Depth : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.GlobalVariableNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.GlobalVariableNode;
 
 	public enum DepthSamplingMode
 	{

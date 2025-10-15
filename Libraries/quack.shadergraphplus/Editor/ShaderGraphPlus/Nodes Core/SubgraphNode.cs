@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
@@ -13,7 +13,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.SubgraphNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.SubgraphNode;
 
 	[Hide]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -25,10 +25,10 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	public ShaderGraphPlus Subgraph { get; set; }
 
 	[Hide]
-	private List<IPlugIn> InternalInputs = new();
+	private List<INodePlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
 
 	[Hide]
 	private List<IPlugOut> InternalOutputs = new();
@@ -87,11 +87,11 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
+	internal Dictionary<INodePlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
 
 	public void CreateInputs()
 	{
-		var plugs = new List<IPlugIn>();
+		var plugs = new List<INodePlugIn>();
 		var defaults = new Dictionary<Type, int>();
 		InputReferences.Clear();
 
@@ -160,7 +160,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<IPlugOut, IPlugIn> OutputReferences = new();
+	internal Dictionary<IPlugOut, INodePlugIn> OutputReferences = new();
 	public void CreateOutputs()
 	{
 		var plugs = new List<IPlugOut>();

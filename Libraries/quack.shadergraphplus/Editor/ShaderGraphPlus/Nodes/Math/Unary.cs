@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 
@@ -34,7 +34,7 @@ public abstract class Unary : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input]
 	[Hide]
@@ -120,7 +120,7 @@ public sealed class Clamp : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input]
 	[Hide]
@@ -271,7 +271,7 @@ public sealed class DotProduct : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input]
 	[Hide]
@@ -429,7 +429,7 @@ public sealed class Min : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -471,7 +471,7 @@ public sealed class Max : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -541,7 +541,7 @@ public sealed class Step : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -586,7 +586,7 @@ public sealed class SmoothStep : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input]
 	[Hide]
@@ -697,7 +697,7 @@ public sealed class OneMinus : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input( typeof( float ) ), Hide, Title( "" )]
 	public NodeInput In { get; set; }
@@ -751,7 +751,7 @@ public sealed class Distance : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide, JsonIgnore]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.UnaryNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.UnaryNode;
 
 	[Input]
 	[Hide]

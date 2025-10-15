@@ -1,6 +1,6 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -16,7 +16,7 @@ public sealed class GetDimensionsNode : VoidFunctionBase
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "Texture" )]
 	[Input( typeof( Texture2DObject ) )]

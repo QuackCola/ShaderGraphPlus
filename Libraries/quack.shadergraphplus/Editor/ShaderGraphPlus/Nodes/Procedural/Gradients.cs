@@ -1,7 +1,7 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
@@ -16,7 +16,7 @@ public sealed class RoundGradientNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Title( "UV" )]
 	[Input( typeof( Vector2 ) )]

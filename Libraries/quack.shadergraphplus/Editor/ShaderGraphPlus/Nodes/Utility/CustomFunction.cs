@@ -3,7 +3,7 @@ using NodeEditorPlus;
 using System;
 using System.Text;
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -19,7 +19,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	public enum CustomCodeNodeMode
 	{
@@ -71,10 +71,10 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	};
 
 	[Hide]
-	private List<IPlugIn> InternalInputs = new();
+	private List<INodePlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
 
 	[Title( "Outputs" )]
 	public List<CustomCodeNodePorts> ExpressionOutputs { get; set; } = new List<CustomCodeNodePorts>()
@@ -147,7 +147,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 	public void CreateInputs()
 	{
-		var plugs = new List<IPlugIn>();
+		var plugs = new List<INodePlugIn>();
 
 		if ( ExpressionInputs == null )
 		{
@@ -349,7 +349,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		int index = 0;
 		error = "";
 
-		foreach ( IPlugIn input in Inputs )
+		foreach ( INodePlugIn input in Inputs )
 		{	
 			NodeResult result = new NodeResult();
 			
@@ -394,7 +394,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		error = "";
 		List<(string, string)> inputResults = new List<(string,string)>();
 		
-		foreach ( IPlugIn input in Inputs )
+		foreach ( INodePlugIn input in Inputs )
 		{
 			NodeResult result = new NodeResult();
 			

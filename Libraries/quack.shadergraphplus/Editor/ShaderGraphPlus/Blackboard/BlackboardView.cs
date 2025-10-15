@@ -4,7 +4,6 @@ namespace ShaderGraphPlus;
 
 internal class BlackboardView : Widget
 {
-	//private ControlSheet _controlSheet;
 	private Button.Primary _addButton;
 	private Button.Danger _deleteButton;
 	private BlackboardParameterList _parameterListView;
@@ -90,7 +89,7 @@ internal class BlackboardView : Widget
 		_addButton.ToolTip = $"Add new blackboard parameter";
 		_addButton.Clicked += () =>
 		{
-			var popup = new PopupTypeSelector( this, GetRelevantParameters() );
+			var popup = new BlackboardPopupParameterTypeSelector( this, GetRelevantParameters() );
 			popup.OnSelect += ( t ) =>
 			{
 				OnAddParameter( t );

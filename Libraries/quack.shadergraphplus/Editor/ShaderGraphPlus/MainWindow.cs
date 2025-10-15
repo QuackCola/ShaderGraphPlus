@@ -206,13 +206,19 @@ public class MainWindow : DockWindow
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
 			{
-				SGPLog.Info( $"Selected parameter node {iTextureParameterNode.Name}" );
-
 				if ( blackboardSyncable2.BlackboardParameterIdentifier != default )
 				{
 					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncable2.BlackboardParameterIdentifier );
-					_blackboardView.SetSelectedItem( blackboardParameter );
-					_properties.Target = blackboardParameter;
+					
+					if ( blackboardParameter != null )
+					{
+						_blackboardView.SetSelectedItem( blackboardParameter );
+						_properties.Target = blackboardParameter;
+					}
+					else
+					{
+						_properties.Target = _graph;
+					}
 				}
 			}
 			else

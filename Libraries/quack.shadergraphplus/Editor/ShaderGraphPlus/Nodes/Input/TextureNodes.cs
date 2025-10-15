@@ -1,7 +1,7 @@
 ﻿using Editor;
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -20,11 +20,12 @@ public interface ISyncableTextureNode
 	void Sync( ISyncableTextureNode targetNode );
 }
 
-public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode
+
+public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITextureParameterNodeNew
 {
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -608,7 +609,7 @@ public sealed class SampleTextureCubeNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -798,7 +799,7 @@ public sealed class TextureCoord : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.StageInputNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.StageInputNode;
 
 	/// <summary>
 	/// Use the secondary vertex coordinate
@@ -843,7 +844,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ParameterNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;

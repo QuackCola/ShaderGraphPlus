@@ -1,7 +1,7 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
@@ -21,7 +21,7 @@ public sealed class ComponentMask : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ChannelNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ChannelNode;
 
 	[Hide]
 	public override string Title
@@ -154,7 +154,7 @@ public sealed class SplitVector : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ChannelNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ChannelNode;
 
 	[Input, Hide]
 	public NodeInput Input { get; set; }
@@ -202,7 +202,7 @@ public sealed class CombineVector : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ChannelNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ChannelNode;
 
 	[Input( typeof( float ) )]
 	[Hide]
@@ -269,7 +269,7 @@ public sealed class SwizzleVector : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ChannelNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ChannelNode;
 
 	[Input, Hide]
 	public NodeInput Input { get; set; }
@@ -317,7 +317,7 @@ public sealed class AppendVector : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ChannelNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ChannelNode;
 
 	[Input, Hide]
 	public NodeInput A { get; set; }

@@ -12,7 +12,7 @@ public sealed class NamedRerouteDeclarationNodeType : ClassNodeType
 		Name = name;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 		if ( node is NamedRerouteDeclarationNode namedRerouteDeclarationNode )
@@ -34,7 +34,7 @@ public sealed class NamedRerouteNodeType : ClassNodeType
 		Name = name;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 		if ( node is NamedRerouteNode namedRerouteNode )

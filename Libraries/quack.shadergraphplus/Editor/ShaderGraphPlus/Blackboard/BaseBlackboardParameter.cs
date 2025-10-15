@@ -51,6 +51,12 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 		NewIdentifier();
 	}
 
+	public BaseBlackboardParameter( Guid identifier )
+	{
+		DisplayInfo = DisplayInfo.For( this );
+		Identifier = identifier;
+	}
+
 	public virtual object GetValue()
 	{
 		throw new NotImplementedException();
@@ -92,6 +98,10 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 
 	public BlackboardGenericParameter() : base() 
 	{ 
+	}
+
+	public BlackboardGenericParameter( Guid identifier ) : base( identifier )
+	{
 	}
 
 	public BlackboardGenericParameter( T value ) : this() 

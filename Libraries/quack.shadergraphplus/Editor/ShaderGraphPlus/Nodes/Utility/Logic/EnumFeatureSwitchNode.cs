@@ -1,5 +1,5 @@
 using NodeEditorPlus;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 
 namespace ShaderGraphPlus.Nodes;
 
@@ -35,10 +35,10 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 	public int PreviewIndex { get; set; } = 0;
 
 	[Hide]
-	private List<IPlugIn> InternalInputs = new();
+	private List<INodePlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
 
 	[Hide, JsonIgnore]
 	int _lastHashCodeInputs = 0;
@@ -104,7 +104,7 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 
 	public void CreateInputs()
 	{
-		var inPlugs = new List<IPlugIn>();
+		var inPlugs = new List<INodePlugIn>();
 
 		if ( Feature.Options == null )
 		{

@@ -280,6 +280,18 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 		};
 	}
 
+	public Texture2DParameter( Guid identifier ) : base( identifier )
+	{
+		Value = new TextureInput
+		{
+			Name = Name,
+			ImageFormat = TextureFormat.DXT5,
+			SrgbRead = true,
+			DefaultColor = Color.White,
+			Type = TextureType.Tex2D,
+		};
+	}
+
 	public Texture2DParameter( TextureInput value ) : base( value )
 	{
 	}

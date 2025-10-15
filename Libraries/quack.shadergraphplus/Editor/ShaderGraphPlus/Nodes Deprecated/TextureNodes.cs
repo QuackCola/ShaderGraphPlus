@@ -6,7 +6,7 @@ namespace ShaderGraphPlus.Nodes;
 public abstract class TextureSamplerBase : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode
 {
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -700,7 +700,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -908,7 +908,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	public override bool CanPreview => false;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -1036,7 +1036,7 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.FunctionNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;

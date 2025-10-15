@@ -16,7 +16,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 		Name = name;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 		var isSubgraph = ((ShaderGraphPlus)graph).IsSubgraph;
@@ -87,7 +87,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 				Name = name,
 				Identifier = guid
 			},
-			_ => throw new NotImplementedException(),
+			_ => throw new NotImplementedException( $"Unknown type \"{parameterNodeType}\"" ),
 		};
 	}
 }

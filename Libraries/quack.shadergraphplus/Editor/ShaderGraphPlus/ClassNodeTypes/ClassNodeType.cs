@@ -1,10 +1,9 @@
 ﻿using Editor;
 using NodeEditorPlus;
-using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
-public class ClassNodeType : INodeTypePlus
+public class ClassNodeType : NodeEditorPlus.INodeType
 {
 	public virtual string Identifier => Type.FullName;
 
@@ -12,7 +11,7 @@ public class ClassNodeType : INodeTypePlus
 	public DisplayInfo DisplayInfo { get; protected set; }
 
 	public Menu.PathElement[] Path => Menu.GetSplitPath( DisplayInfo );
-	public bool LowPriority => false;
+	//public bool LowPriority => false;
 
 	public ClassNodeType( TypeDescription type )
 	{
@@ -46,7 +45,7 @@ public class ClassNodeType : INodeTypePlus
 		return name is not null;
 	}
 
-	public virtual INodePlus CreateNode(INodeGraph graph)
+	public virtual IGraphNode CreateNode(INodeGraph graph)
 	{
 		var node = Type.Create<BaseNodePlus>();
 

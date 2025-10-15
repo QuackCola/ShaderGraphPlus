@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using System.Text;
 using ShaderGraphPlus.Nodes;
@@ -42,7 +42,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.SubgraphNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.SubgraphNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanRemove => true;
@@ -62,10 +62,10 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	public int PortOrder { get; set; } = 0;
 
 	[Hide]
-	private List<IPlugIn> InternalInputs = new();
+	private List<INodePlugIn> InternalInputs = new();
 
 	[Hide]
-	public override IEnumerable<IPlugIn> Inputs => InternalInputs;
+	public override IEnumerable<INodePlugIn> Inputs => InternalInputs;
 
 	[JsonIgnore, Hide, Browsable( false )]
 	int _lastHashCode = 0;
@@ -99,7 +99,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	private void CreateInput()
 	{
-		var Plugs = new List<IPlugIn>();
+		var Plugs = new List<INodePlugIn>();
 
 		var type = OutputType switch
 		{
@@ -138,7 +138,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 			oldPlug.Info.DisplayInfo = info.DisplayInfo;
 
 			// Change the old plug type to the new type.
-			var oldplugType = oldPlug as IPlugIn;
+			var oldplugType = oldPlug as INodePlugIn;
 			oldplugType.Type = type;
 
 			Plugs.Add( oldplugType );

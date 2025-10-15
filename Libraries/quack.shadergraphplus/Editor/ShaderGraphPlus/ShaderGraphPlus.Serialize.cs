@@ -2,7 +2,7 @@
 using ShaderGraphPlus.Nodes;
 using System.Text.Json.Nodes;
 
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 
 namespace ShaderGraphPlus;
 
@@ -326,7 +326,7 @@ partial class ShaderGraphPlus
 	{
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
-		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
+		var connections = new List<(INodePlugIn Plug, NodeInput Value)>();
 		var connectionFixupData = new List<NodeConnectionFixupData>();
 		//var replacedNodes = new Dictionary<string, BaseNodePlus>();
 
@@ -586,7 +586,7 @@ partial class ShaderGraphPlus
 			}
 		}
 
-		if ( obj is INodePlus node )
+		if ( obj is IGraphNode node )
 		{
 			foreach ( var input in node.Inputs )
 			{

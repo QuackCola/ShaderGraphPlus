@@ -1,6 +1,3 @@
-
-using NodeEditorPlus;
-
 namespace ShaderGraphPlus;
 
 internal interface IBlackboardParameterType

@@ -14,7 +14,7 @@ public sealed class SubgraphOutputNodeType : ClassNodeType
 		OutputType = outputType;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = base.CreateNode( graph );
 		if ( node is SubgraphOutput subgraphOutput )

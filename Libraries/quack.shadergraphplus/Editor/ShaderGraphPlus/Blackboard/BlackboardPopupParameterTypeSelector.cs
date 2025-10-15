@@ -2,7 +2,7 @@ using Editor;
 
 namespace ShaderGraphPlus;
 
-internal class PopupTypeSelector : PopupWidget
+internal class BlackboardPopupParameterTypeSelector : PopupWidget
 {
 	public Action<IBlackboardParameterType> OnSelect
 	{
@@ -12,7 +12,7 @@ internal class PopupTypeSelector : PopupWidget
 
 	public TypeSelectorWidget Widget { get; set; }
 
-	public PopupTypeSelector( Widget parent ,IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
+	public BlackboardPopupParameterTypeSelector( Widget parent ,IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
 	{
 		Widget = new TypeSelectorWidget( this, availableTypes )
 		{

@@ -12,7 +12,7 @@ public sealed class ParameterNodeTypeDragDrop : ClassNodeType
 		BaseBlackboardValue = value;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		base.CreateNode( graph );
 		return BaseBlackboardValue.InitializeNode();

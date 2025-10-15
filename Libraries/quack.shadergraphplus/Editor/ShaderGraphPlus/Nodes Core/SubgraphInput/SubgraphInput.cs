@@ -2,7 +2,7 @@
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
@@ -44,7 +44,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.SubgraphNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.SubgraphNode;
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;

@@ -1,16 +1,18 @@
 ﻿using Editor;
+using Editor.ShaderGraph;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
+using static Sandbox.VertexLayout;
 using CommentUI = NodeEditorPlus.CommentUI;
 using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
 using GraphView = NodeEditorPlus.GraphView;
 using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
-using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using INodePlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
+using NodePlug = NodeEditorPlus.NodePlug;
 using NodeQuery = NodeEditorPlus.NodeQuery;
 using NodeUI = NodeEditorPlus.NodeUI;
-using Plug = NodeEditorPlus.Plug;
 using PlugIn = NodeEditorPlus.PlugIn;
 
 namespace ShaderGraphPlus;
@@ -45,7 +47,7 @@ public class ShaderGraphPlusView : GraphView
 
 	public Action<BaseNodePlus> OnNodeRemoved { get; set; }
 
-	private readonly Dictionary<string, INodeTypePlus> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
+	private readonly Dictionary<string, NodeEditorPlus.INodeType> AvailableNodes = new( StringComparer.OrdinalIgnoreCase );
 	private readonly Dictionary<string, IBlackboardParameterType> AvailableParameters = new( StringComparer.OrdinalIgnoreCase );
 
 	public override ConnectionStyle ConnectionStyle => EnableGridAlignedWires
@@ -87,8 +89,8 @@ public class ShaderGraphPlusView : GraphView
 	}
 	*/
 
-	protected override INodeTypePlus RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
-	protected override INodeTypePlus CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
+	protected override NodeEditorPlus.INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
+	protected override NodeEditorPlus.INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
 
 	public void AddNodeType<T>()
 		where T : BaseNodePlus
@@ -114,7 +116,7 @@ public class ShaderGraphPlusView : GraphView
 		AvailableNodes.TryAdd( nodeType.Identifier, nodeType );
 	}
 
-	public INodeTypePlus FindNodeType( Type type )
+	public NodeEditorPlus.INodeType FindNodeType( Type type )
 	{
 		return AvailableNodes.TryGetValue( type.FullName!, out var nodeType ) ? nodeType : null;
 	}
@@ -170,7 +172,7 @@ public class ShaderGraphPlusView : GraphView
 		} );
 	}
 
-	protected override void OnOpenContextMenu( Menu menu, Plug targetPlug )
+	protected override void OnOpenContextMenu( Menu menu, NodePlug targetPlug )
 	{
 		base.OnOpenContextMenu( menu, targetPlug );
 
@@ -310,7 +312,60 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	protected override INodeTypePlus NodeTypeFromDragEvent( DragEvent ev )
+	public override void OnDragLeave()
+	{
+		if ( HasDropped )
+		{
+			return;
+		}
+
+		if ( NodePreview.IsValid() )
+		{
+			if ( NodePreview.Node is Texture2DParameterNode texture2DParameterNode )
+			{
+				Graph.RemoveParameter( texture2DParameterNode.BlackboardParameterIdentifier );
+				OnNewParameterNodeCreated?.Invoke();
+			}
+		}
+
+		base.OnDragLeave();
+	}
+
+	public override void OnDragDrop( DragEvent ev )
+	{
+		if ( HasDropped )
+		{
+			return;
+		}
+
+		if ( NodePreview.Node is Texture2DParameterNode )
+		{
+			var node = NodePreview.Node as Texture2DParameterNode;
+
+			base.OnDragDrop( ev );
+
+			var texture2DParameter = new Texture2DParameter()
+			{
+				Identifier = Guid.NewGuid(),
+				Name = node.Name,
+				Value = node.UI
+			};
+
+			// Hack
+			{
+				Graph.SetParameterNodeLinkedBlackboardId( node.Name, texture2DParameter.Identifier );
+			}
+
+			Graph.AddParameter( texture2DParameter );
+			OnNewParameterNodeCreated?.Invoke();
+		}
+		else
+		{
+			base.OnDragDrop( ev );
+		}
+	}
+
+	protected override NodeEditorPlus.INodeType NodeTypeFromDragEvent( DragEvent ev )
 	{
 		if ( ev.Data.Assets.FirstOrDefault() is { } asset )
 		{
@@ -325,7 +380,14 @@ public class ShaderGraphPlusView : GraphView
 					var realAsset = asset.GetAssetAsync().Result;
 					if ( realAsset.AssetType == AssetType.ImageFile )
 					{
-						return new TextureNodeType( EditorTypeLibrary.GetType<TextureSampler>(), asset.AssetPath );
+						int id = 0;
+						while ( Graph.ContainsParameterWithName( $"texture{id}" ) )
+						{
+							id++;
+						}
+						var parameterName = $"texture{id}";
+
+						return new Texture2DParameterNodeType( EditorTypeLibrary.GetType<Texture2DParameterNode>(), parameterName, asset.AssetPath );
 					}
 				}
 			}
@@ -376,7 +438,7 @@ public class ShaderGraphPlusView : GraphView
 			: null;
 	}
 
-	protected override IEnumerable<INodeTypePlus> GetRelevantNodes( NodeQuery query )
+	protected override IEnumerable<NodeEditorPlus.INodeType> GetRelevantNodes( NodeQuery query )
 	{
 		return AvailableNodes.Values.Filter( query ).Where( x =>
 		{
@@ -413,7 +475,7 @@ public class ShaderGraphPlusView : GraphView
 		return base.OnGetHandleConfig( type );
 	}
 
-	protected override void OnPopulateNodeMenuSpecialOptions( Menu menu, Vector2 clickPos, Plug targetPlug, string filter )
+	protected override void OnPopulateNodeMenuSpecialOptions( Menu menu, Vector2 clickPos, NodePlug targetPlug, string filter )
 	{
 		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
 		var isSubgraph = Graph.IsSubgraph;
@@ -604,7 +666,7 @@ public class ShaderGraphPlusView : GraphView
 		CreateNewNode( nodeType, position );
 	}
 
-	private void CreateNewNamedRerouteDeclaration( string name, Vector2 position, Plug targetPlug )
+	private void CreateNewNamedRerouteDeclaration( string name, Vector2 position, NodePlug targetPlug )
 	{
 		var nodeType = new NamedRerouteDeclarationNodeType( EditorTypeLibrary.GetType<NamedRerouteDeclarationNode>(), name );
 
@@ -646,7 +708,7 @@ public class ShaderGraphPlusView : GraphView
 		// Grab all selected nodes
 		Vector2 rightmostPos = new Vector2( -9999, 0 );
 		var selectedNodes = SelectedItems.OfType<NodeUI>();
-		Dictionary<IPlugIn, IPlugOut> oldConnections = new();
+		Dictionary<INodePlugIn, IPlugOut> oldConnections = new();
 		foreach ( var node in selectedNodes )
 		{
 			if ( node.Node is not BaseNodePlus baseNode ) continue;
@@ -969,7 +1031,7 @@ public class ShaderGraphPlusView : GraphView
 		_window.OnNodeSelected( (BaseNodePlus)item.Node );
 	}
 
-	protected override void OnNodeCreated( INodePlus node )
+	protected override void OnNodeCreated( IGraphNode node )
 	{
 		if ( node is SubgraphNode subgraphNode )
 		{

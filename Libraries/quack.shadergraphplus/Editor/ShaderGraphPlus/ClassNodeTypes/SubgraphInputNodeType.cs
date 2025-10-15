@@ -24,7 +24,7 @@ public sealed class SubgraphInputNodeType : ClassNodeType
 		BlackboardParameter = blackboardParameter;
 	}
 
-	public override INodePlus CreateNode( INodeGraph graph )
+	public override IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = (BaseNodePlus)base.CreateNode( graph );
 

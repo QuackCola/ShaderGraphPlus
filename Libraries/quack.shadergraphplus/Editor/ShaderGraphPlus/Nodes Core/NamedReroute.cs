@@ -19,17 +19,17 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => Color.Parse( "#9d00ff" )!.Value;
+	public override Color NodeTitleColor => _namedRerouteTitleColor;
 
 	[Hide]
 	public override string Title => string.IsNullOrEmpty( _name ) ?
 	$"{DisplayInfo.For( this ).Name}" :
 	$"{_name}"; // $"{DisplayInfo.For( this ).Name} ({Name})";
 
-	[Hide, JsonIgnore]
-	private bool HasNameConflict;
+	[JsonIgnore, Hide, Browsable( false )]
+	private bool _hasNameConflict;
 
-	[Hide,JsonIgnore]
+	[JsonIgnore, Hide, Browsable( false )]
 	private string _name;
 	public string Name 
 	{
@@ -38,12 +38,26 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 		{
 			var lastName = _name;
 
-			if ( !HasNameConflict )
+			if ( !_hasNameConflict )
 			{
 				UpdateNameReferences( lastName, value );
 			}
 
 			_name = value;
+		}
+	}
+
+	[JsonIgnore, Hide, Browsable( false )]
+	private Color _namedRerouteTitleColor = Color.Parse( "#9d00ff" )!.Value;
+	[Title( "Title Color" )]
+	public Color NamedRerouteTitleColor
+	{
+		get => _namedRerouteTitleColor;
+		set
+		{
+			_namedRerouteTitleColor = value;
+
+			UpdateTitleColors( _namedRerouteTitleColor );
 		}
 	}
 
@@ -59,6 +73,20 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 				{
 					//SGPLog.Info( $"Changing named reroute name reference from \"{namedReroute.Name}\" to \"{newName}\"" );
 					namedReroute.Name = newName;
+				}
+			}
+		}
+	}
+
+	private void UpdateTitleColors( Color newColor )
+	{
+		if ( !string.IsNullOrWhiteSpace( Name ) && Graph is ShaderGraphPlus graph )
+		{
+			foreach ( var namedReroute in graph.Nodes.OfType<NamedRerouteNode>() )
+			{
+				if ( namedReroute.Name == Name )
+				{
+					namedReroute.NamedReouteTitleColor = newColor;
 				}
 			}
 		}
@@ -96,12 +124,12 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 				if ( node._name == _name )
 				{
 					errors.Add( $"Duplicate name \"{_name}\" on {this.DisplayInfo.Name}" );
-					HasNameConflict = true;
+					_hasNameConflict = true;
 					break;
 				}
 				else
 				{
-					HasNameConflict = false;
+					_hasNameConflict = false;
 				}
 			}
 		}
@@ -121,15 +149,43 @@ public sealed class NamedRerouteNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => Color.Parse( "#9d00ff" )!.Value;
+	public override Color NodeTitleColor => NamedReouteTitleColor;
 
 	[Hide]
 	public override string Title => string.IsNullOrEmpty( Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
 		$"{Name}"; // $"{DisplayInfo.For( this ).Name} ({Name})";
 
+	[JsonIgnore, Hide, Browsable( false )]
+	private string _name;
 	[NamedRerouteReference]
-	public string Name { get; set; } = "";
+	public string Name
+	{
+		get => _name;
+		set
+		{
+			_name = value;
+			UpdateTitleColor();
+		}
+	}
+
+	[Hide, Browsable( false )]
+	public Color NamedReouteTitleColor { get; set; } = Color.Parse( "#9d00ff" )!.Value;
+
+	private void UpdateTitleColor()
+	{
+		if ( !string.IsNullOrWhiteSpace( Name ) && Graph is ShaderGraphPlus graph )
+		{
+			foreach ( var namedRerouteDeclaration in graph.Nodes.OfType<NamedRerouteDeclarationNode>() )
+			{
+				if ( namedRerouteDeclaration.Name == Name )
+				{
+					NamedReouteTitleColor = namedRerouteDeclaration.NamedRerouteTitleColor;
+					break;
+				}
+			}
+		}
+	}
 
 	[Output, Hide, Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>

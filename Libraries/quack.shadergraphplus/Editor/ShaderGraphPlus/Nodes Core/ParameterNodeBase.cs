@@ -1,7 +1,7 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
@@ -21,10 +21,12 @@ public interface IParameterNode
 	ParameterUI UI { get; set; }
 }
 
+
 internal interface IBlackboardSyncable
 {
-	public Guid BlackboardParameterIdentifier { get; set; }
-	public void UpdateFromBlackboard( BaseBlackboardParameter parameter );
+	
+	Guid BlackboardParameterIdentifier { get; set; }
+	void UpdateFromBlackboard( BaseBlackboardParameter parameter );
 }
 
 public interface ITextureParameterNode
@@ -44,7 +46,7 @@ public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBl
 	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.ParameterNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }

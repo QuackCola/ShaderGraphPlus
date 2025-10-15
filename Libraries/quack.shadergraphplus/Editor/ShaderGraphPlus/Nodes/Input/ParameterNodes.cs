@@ -1,6 +1,6 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 using NodeUI = NodeEditorPlus.NodeUI;
 
@@ -9,6 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 internal interface ITextureParameterNodeNew
 {
 	string Name { get; set; }
+	TextureInput UI { get; set; }
 }
 
 internal interface IMetaDataNode

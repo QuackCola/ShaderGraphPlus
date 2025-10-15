@@ -1,7 +1,7 @@
 ﻿using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
+using IPlugIn = NodeEditorPlus.INodePlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
@@ -18,7 +18,7 @@ public sealed class ComparisonNode : ShaderNodePlus, IWarningNode
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleTintColor => PrimaryNodeHeaderColors.LogicNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.LogicNode;
 	
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} (A {Op} B)";

@@ -59,7 +59,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	private readonly Dictionary<string, BaseNodePlus> _nodes = new();
 
 	[Hide, JsonIgnore]
-	IEnumerable<INodePlus> INodeGraph.Nodes => Nodes;
+	IEnumerable<IGraphNode> INodeGraph.Nodes => Nodes;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseBlackboardParameter> Parameters => _parameters.Values;
@@ -159,6 +159,26 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 			iBlackboardSyncable.UpdateFromBlackboard( parameter );
 		}
 	}
+	
+	/// <summary>
+	/// Bit of a hack that is only used when dragging in a image asset onto the GraphView.
+	/// </summary>
+	internal void SetParameterNodeLinkedBlackboardId( string parameterName, Guid newParameterGuid )
+	{
+		foreach ( var node in Nodes )
+		{
+			if ( node is Texture2DParameterNode texture2DParam )
+			{
+				if ( texture2DParam.Name == parameterName )
+				{
+					texture2DParam.BlackboardParameterIdentifier = newParameterGuid;
+					return;
+				}
+			}
+		}
+
+		SGPLog.Error( "Hack Failed!" );
+	}
 
 	public void AddNode( BaseNodePlus node )
 	{
@@ -235,22 +255,22 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		_parameters.Clear();
 	}
 
-	string INodeGraph.SerializeNodes( IEnumerable<INodePlus> nodes )
+	string INodeGraph.SerializeNodes( IEnumerable<IGraphNode> nodes )
 	{
 		return SerializeNodes( nodes.Cast<BaseNodePlus>() );
 	}
 
-	IEnumerable<INodePlus> INodeGraph.DeserializeNodes( string serialized )
+	IEnumerable<IGraphNode> INodeGraph.DeserializeNodes( string serialized )
 	{
 		return DeserializeNodes( serialized );
 	}
 
-	void INodeGraph.AddNode( INodePlus node )
+	void INodeGraph.AddNode( IGraphNode node )
 	{
 		AddNode( (BaseNodePlus)node );
 	}
 
-	void INodeGraph.RemoveNode( INodePlus node )
+	void INodeGraph.RemoveNode( IGraphNode node )
 	{
 		RemoveNode( (BaseNodePlus)node );
 	}
