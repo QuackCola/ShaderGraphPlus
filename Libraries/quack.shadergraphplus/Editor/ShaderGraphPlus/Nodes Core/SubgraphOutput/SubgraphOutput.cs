@@ -82,10 +82,10 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 		
 		if ( hashCodeInput != _lastHashCode )
 		{
-			var oldhashCode = _lastHashCode;
+			//var oldhashCode = _lastHashCode;
 			_lastHashCode = hashCodeInput;
 			
-			SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
+			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 
 			InitializeNode();
 		}
