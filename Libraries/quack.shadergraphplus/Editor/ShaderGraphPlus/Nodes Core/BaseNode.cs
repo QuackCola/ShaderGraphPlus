@@ -530,6 +530,26 @@ public class PlugInfo
 
 		if ( editor is not null )
 		{
+			if ( type == typeof( int ) )
+			{
+				var slider = new IntValueEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+
+				var range = Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
+				if ( range != null )
+				{
+					slider.Bind( "Min" ).From( node.Node, range.Min );
+					slider.Bind( "Max" ).From( node.Node, range.Max );
+				}
+				else if ( Property.GetCustomAttribute<MinMaxAttribute>() is MinMaxAttribute minMax )
+				{
+					slider.Min = (int)minMax.MinValue;
+					slider.Max = (int)minMax.MaxValue;
+				}
+
+				return slider;
+			}
+
 			if ( type == typeof( float ) )
 			{
 				var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
