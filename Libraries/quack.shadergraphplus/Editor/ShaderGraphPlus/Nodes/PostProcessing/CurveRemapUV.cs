@@ -14,7 +14,7 @@ public class curveRemapUVNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide]
-public static string curveRemapUV => @"
+public static string CurveRemapUV => @"
 float2 curveRemapUV(float2 vScreenUV, float2 vCurvature)
 {
 	// as we near the edge of our screen apply greater distortion using a cubic function
