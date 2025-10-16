@@ -54,6 +54,7 @@ public sealed class IntConstantNode : ConstantNode<int>
 
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
+	[Hide, JsonIgnore] public float Step => 1;
 
 	public IntConstantNode() : base()
 	{
@@ -63,7 +64,7 @@ public sealed class IntConstantNode : ConstantNode<int>
 	}
 
 	[Output( typeof( int ) ), Title( "Value" )]
-	[Hide]
+	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( "", Value, default, default, false, false, default );
@@ -95,16 +96,16 @@ public sealed class FloatConstantNode : ConstantNode<float>
 	[Hide, JsonIgnore]
 	public override bool UseStep => true;
 
+	[Group( "Range" )] public float Min { get; set; }
+	[Group( "Range" )] public float Max { get; set; }
+	public float Step { get; set; } = 0.0f;
+
 	public FloatConstantNode() : base()
 	{
 		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
 	}
-
-	[Group( "Range" )] public float Min { get; set; }
-	[Group( "Range" )] public float Max { get; set; }
-	public float Step { get; set; } = 0.0f;
 
 	[Output( typeof( float ) ), Title( "Value" )]
 	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
