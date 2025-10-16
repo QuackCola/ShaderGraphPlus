@@ -1148,7 +1148,7 @@ public sealed partial class GraphCompiler
 
 			options.Write($"UiGroup( \"{ui.UIGroup}\" ); ");
 
-			if (value is bool boolValue)
+			if ( value is bool boolValue )
 			{
 				options.Write($"Default( {(boolValue ? 1 : 0)} ); ");
 			}
@@ -1246,7 +1246,7 @@ public sealed partial class GraphCompiler
 			float v => isNamed ? new NodeResult( ResultType.Float, $"{name}" ) : new NodeResult( ResultType.Float, $"{v}", true ),
 			Vector2 v => isNamed ? new NodeResult( ResultType.Vector2, $"{name}" ) : new NodeResult( ResultType.Vector2, $"float2( {v.x}, {v.y} )" ),
 			Vector3 v => isNamed ? new NodeResult( ResultType.Vector3, $"{name}" ) : new NodeResult( ResultType.Vector3, $"float3( {v.x}, {v.y}, {v.z} )" ),
-			Vector4 v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )" ),
+			Vector4 v => isNamed ? new NodeResult( ResultType.Vector4, $"{name}" ) : new NodeResult( ResultType.Vector4, $"float4( {v.x}, {v.y}, {v.z}, {v.w} )" ),
 			Color v => isNamed ? new NodeResult( ResultType.Color, $"{name}" ) : new NodeResult( ResultType.Color, $"float4( {v.r}, {v.g}, {v.b}, {v.a} )" ),
 			Float2x2 v => isNamed ? new NodeResult( ResultType.Float2x2, $"{value}" ) : new NodeResult( ResultType.Float2x2, $"float2x2( {v.M11}, {v.M12}, {v.M21}, {v.M22} )"),
 			Float3x3 v => isNamed ? new NodeResult( ResultType.Float3x3, $"{value}" ) : new NodeResult( ResultType.Float3x3, $"float3x3( {v.M11}, {v.M12}, {v.M13}, {v.M21}, {v.M22}, {v.M23}, {v.M31}, {v.M32}, {v.M33} )" ),
@@ -1581,6 +1581,10 @@ public sealed partial class GraphCompiler
 			if ( type is "Vector3" )
 			{
 				ppcb.AddVector3Property( type, parameter.Key, parameter.Value.Options );
+			}
+			if ( type is "Vector4" )
+			{
+				ppcb.AddVector4Property( type, parameter.Key, parameter.Value.Options );
 			}
 			if ( type is "Color" )
 			{
