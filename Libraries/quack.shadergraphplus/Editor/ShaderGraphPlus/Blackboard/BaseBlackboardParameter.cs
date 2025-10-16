@@ -16,7 +16,7 @@ internal interface IShaderFeatureParameter
 
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
-	[Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
+	[Hide,Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
