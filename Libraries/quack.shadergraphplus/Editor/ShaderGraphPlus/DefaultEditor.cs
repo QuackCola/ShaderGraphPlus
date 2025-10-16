@@ -82,32 +82,25 @@ public class DefaultEditor : ValueEditor
 			}
 		}
 		// TODO
-		//if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
-		//{
-		//	if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
-		//	{
-		//		var parameterNode = entry.Item1;
-		//		if ( parameterNode.IsAttribute ) return;
-		//		type = entry.Item2;
-		//		if ( innerPlugIn.ConnectedOutput is not null )
-		//		{
-		//			rawVal = parameterNode.GetValue();
-		//			val = rawVal.ToString();
-		//		}
-		//		else
-		//		{
-		//			if ( rawVal != null )
-		//			{
-		//				rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
-		//				val = rawVal?.ToString() ?? "";
-		//			}
-		//			else
-		//			{
-		//				val = "";
-		//			}
-		//		}
-		//	}
-		//}
+		if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
+		{
+			if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
+			{
+				var subgraphInput = entry.Item1;
+				if ( subgraphInput.IsRequired ) return;
+
+				if ( innerPlugIn.ConnectedOutput is not null )
+				{
+					rawVal = subgraphInput.InputData.GetValueAsObject();
+					val = rawVal.ToString();
+				}
+				else
+				{
+					rawVal = subgraphNode.DefaultValues.GetValueOrDefault( innerPlugIn.Identifier );
+					val = rawVal?.ToString() ?? "";
+				}
+			}
+		}
 		if ( string.IsNullOrEmpty( val ) ) return;
 
 		Paint.Antialiasing = true;
@@ -175,12 +168,8 @@ internal static class PaintHelper
 					? color32.Hex
 					: $"{( color32 with { a = 255 } ).Hex}, {color32.a * 100f / 255f:F0}%";
 
-			case Color color:
-				extraWidth = 20f;
-			
-				return color.a >= 0.995f
-					? color.WithAlpha(1f).Hex
-					: $"{color.WithAlpha(1f).Hex}, {color.a * 100:F0}%";
+			case bool boolVal:
+				return $"{boolVal}";
 
 			case int int32Val:
 				return $"{int32Val}";
@@ -199,6 +188,13 @@ internal static class PaintHelper
 
 			case Vector4 vec4:
 				return $"x: {vec4.x:F3}, y: {vec4.y:F3}, z: {vec4.z:F3}, w: {vec4.w:F3}";
+
+			case Color color:
+				extraWidth = 20f;
+
+				return color.a >= 0.995f
+					? color.WithAlpha( 1f ).Hex
+					: $"{color.WithAlpha( 1f ).Hex}, {color.a * 100:F0}%";
 
 			case Rotation rot:
 				rawValue = (Angles)rot;
