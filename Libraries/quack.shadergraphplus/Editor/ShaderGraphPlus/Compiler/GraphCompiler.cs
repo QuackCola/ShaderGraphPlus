@@ -540,7 +540,6 @@ public sealed partial class GraphCompiler
 		{
 			return string.IsNullOrWhiteSpace( cleanedName ) || IsPreview ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : cleanedName;
 		}
-		
 	}
 
 	/// <summary>
