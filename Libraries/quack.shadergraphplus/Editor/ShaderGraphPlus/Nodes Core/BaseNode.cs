@@ -4,8 +4,8 @@ using GraphView = NodeEditorPlus.GraphView;
 using IPlug = NodeEditorPlus.IPlug;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeUI = NodeEditorPlus.NodeUI;
 using NodePlug = NodeEditorPlus.NodePlug;
+using NodeUI = NodeEditorPlus.NodeUI;
 using ValueEditor = NodeEditorPlus.ValueEditor;
 
 namespace ShaderGraphPlus;
@@ -197,10 +197,12 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public class InputAttribute : Attribute
 	{
 		public System.Type Type;
+		public int Order;
 
-		public InputAttribute( Type type = null )
+		public InputAttribute( Type type = null, int order = 0 )
 		{
 			Type = type;
+			Order = order;
 		}
 	}
 
@@ -219,10 +221,12 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public class OutputAttribute : Attribute
 	{
 		public System.Type Type;
+		public int Order;
 
-		public OutputAttribute( Type type = null )
+		public OutputAttribute( Type type = null, int order = 0 )
 		{
 			Type = type;
+			Order = order;
 		}
 	}
 
@@ -309,17 +313,25 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public static (IEnumerable<IPlugIn> Inputs, IEnumerable<IPlugOut> Outputs) GetPlugs( BaseNodePlus node )
 	{
 		var type = node.GetType();
-
 		var inputs = new List<BasePlugIn>();
 		var outputs = new List<BasePlugOut>();
 
-		foreach ( var propertyInfo in type.GetProperties() )
+		var inputProperties = type.GetProperties().OrderBy( x =>
+			( x.GetCustomAttribute<InputAttribute>() is InputAttribute input ) ? input.Order : 0 );
+
+		foreach ( var propertyInfo in inputProperties )
 		{
 			if ( propertyInfo.GetCustomAttribute<InputAttribute>() is { } inputAttrib )
 			{
 				inputs.Add( new BasePlugIn( node, new( propertyInfo ), inputAttrib.Type ?? typeof( object ) ) );
 			}
+		}
 
+		var outputProperties = type.GetProperties().OrderBy( x =>
+			( x.GetCustomAttribute<OutputAttribute>() is OutputAttribute output ) ? output.Order : 0 );
+
+		foreach ( var propertyInfo in outputProperties )
+		{
 			if ( propertyInfo.GetCustomAttribute<OutputAttribute>() is { } outputAttrib )
 			{
 				outputs.Add( new BasePlugOut( node, new( propertyInfo ), outputAttrib.Type ?? typeof( object ) ) );
