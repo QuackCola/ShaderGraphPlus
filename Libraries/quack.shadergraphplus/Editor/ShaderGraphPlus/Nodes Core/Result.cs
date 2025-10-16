@@ -12,6 +12,7 @@ namespace ShaderGraphPlus;
 /// Final result
 /// </summary>
 [Title( "Material" ), Icon( "tonality" )]
+[InternalNode]
 public sealed class Result : BaseResult
 {
 	[Hide]

@@ -7,6 +7,7 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 namespace ShaderGraphPlus.Nodes;
 
 [Title( "Int Cast Test" ), Category( "Dev" ), Icon( "arrow" ), Hide]
+[InternalNode]
 public sealed class IntCastTest : ShaderNodePlus
 {
 	[Hide]

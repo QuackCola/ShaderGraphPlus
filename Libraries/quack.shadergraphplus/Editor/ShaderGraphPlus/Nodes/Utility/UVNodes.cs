@@ -297,7 +297,6 @@ float2 UVScroll( float flTime, float2 vUv, float2 vScrollSpeed )
 	};
 }
 
-
 /// <summary>
 /// Tile or shift your texture coordinates. Tile works by scaling the texture up
 /// and down. Offset works by adding or subtracting from the texture coordinates

@@ -7,6 +7,7 @@ using NodeUI = NodeEditorPlus.NodeUI;
 namespace ShaderGraphPlus.Nodes;
 
 [Title( "Custom Function UI Test" ), Category( "Dev" ), Icon( "code" )]
+[InternalNode]
 public class CustonFunctionNodeUITest : ShaderNodePlus
 {
 	[Hide]

@@ -10,7 +10,7 @@ namespace ShaderGraphPlus.Nodes;
 /// Example node demonstrating how to setup a node that uses a void function.
 /// </summary>
 [Title( "Test Void Func" ), Category( "Dev" ), Icon( "straighten" )]
-[Hide]
+[InternalNode]
 public sealed class TestVoidFuncNode : VoidFunctionBase
 {
 	[Hide]
