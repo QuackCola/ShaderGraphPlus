@@ -196,7 +196,14 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputAttribute : Attribute
 	{
+		/// <summary>
+		/// Type of the port.
+		/// </summary>
 		public System.Type Type;
+
+		/// <summary>
+		/// Order of the port.
+		/// </summary>
 		public int Order;
 
 		public InputAttribute( Type type = null, int order = 0 )
@@ -220,7 +227,14 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	[System.AttributeUsage( AttributeTargets.Property )]
 	public class OutputAttribute : Attribute
 	{
+		/// <summary>
+		/// Type of the port.
+		/// </summary>
 		public System.Type Type;
+
+		/// <summary>
+		/// Order of the port.
+		/// </summary>
 		public int Order;
 
 		public OutputAttribute( Type type = null, int order = 0 )
