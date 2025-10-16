@@ -212,7 +212,6 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>
 	}
 }
 
-
 /// <summary>
 /// 3 float values
 /// </summary>
