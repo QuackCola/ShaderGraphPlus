@@ -16,7 +16,7 @@ public sealed class Float4x4Node : MatrixParameterNode<Float4x4>
 
 	[Output( typeof( Float4x4 ) ), Title( "Value" )]
 	[Hide]
-	[Editor( nameof( Value ) )]
+	[NodeValueEditor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, default );

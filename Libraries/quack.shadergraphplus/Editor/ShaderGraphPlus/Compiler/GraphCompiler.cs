@@ -2143,7 +2143,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+				var editorAttribute = property.GetCustomAttribute<BaseNodePlus.NodeValueEditorAttribute>();
 				if ( editorAttribute == null )
 					continue;
 

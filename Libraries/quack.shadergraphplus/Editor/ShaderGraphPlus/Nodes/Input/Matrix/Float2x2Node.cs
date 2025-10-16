@@ -16,7 +16,7 @@ public sealed class Float2x2Node : MatrixParameterNode<Float2x2>
 
 	[Output( typeof( Float2x2 ) ), Title( "Value" )]
 	[Hide]
-	[Editor( nameof( Value ) )]
+	[NodeValueEditor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, default );

@@ -16,7 +16,7 @@ public sealed class Float3x3Node : MatrixParameterNode<Float3x3>
 
 	[Output( typeof( Float3x3 ) ), Title( "Value" )]
 	[Hide]
-	[Editor( nameof( Value ) )]
+	[NodeValueEditor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, default );

@@ -39,12 +39,12 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 
 	[Input( typeof( float ) )]
 	[Title( "Depth Scale" )]
-	[Hide, Editor( nameof( DefaultDepthScale ) )]
+	[Hide, NodeValueEditor( nameof( DefaultDepthScale ) )]
 	public NodeInput InputDepthScale { get; set; }
 
 	[Input( typeof( float ) )]
 	[Title( "Reference Plane" )]
-	[Hide, Editor( nameof( DefaultReferencePlane ) )]
+	[Hide, NodeValueEditor( nameof( DefaultReferencePlane ) )]
 	public NodeInput InputReferencePlane { get; set; }
 
 	[Input( typeof( Vector2 ) )]

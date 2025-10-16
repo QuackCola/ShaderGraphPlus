@@ -1,8 +1,5 @@
 ﻿using Editor;
 using NodeEditorPlus;
-using Sandbox;
-using ColorEditor = NodeEditorPlus.ColorValueEditor;
-using FloatEditor = NodeEditorPlus.FloatValueEditor;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlug = NodeEditorPlus.IPlug;
 using IPlugIn = NodeEditorPlus.IPlugIn;
@@ -241,11 +238,11 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	}
 
 	[System.AttributeUsage( AttributeTargets.Property )]
-	public class EditorAttribute : Attribute
+	public class NodeValueEditorAttribute : Attribute
 	{
 		public string ValueName;
 
-		public EditorAttribute( string valueName )
+		public NodeValueEditorAttribute( string valueName )
 		{
 			ValueName = valueName;
 		}
@@ -526,7 +523,7 @@ public class PlugInfo
 
 	public ValueEditor CreateEditor( NodeUI node, NodePlug plug, Type type )
 	{
-		var editor = Property?.GetCustomAttribute<BaseNodePlus.EditorAttribute>();
+		var editor = Property?.GetCustomAttribute<BaseNodePlus.NodeValueEditorAttribute>();
 
 		if ( editor is not null )
 		{
@@ -552,7 +549,7 @@ public class PlugInfo
 
 			if ( type == typeof( float ) )
 			{
-				var slider = new FloatEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				var slider = new FloatValueEditor( plug ) { Title = DisplayInfo.Name, Node = node };
 				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
 
 				var range = Property.GetCustomAttribute<BaseNodePlus.RangeAttribute>();
@@ -573,7 +570,7 @@ public class PlugInfo
 
 			if ( type == typeof( Color ) )
 			{
-				var slider = new ColorEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				var slider = new ColorValueEditor( plug ) { Title = DisplayInfo.Name, Node = node };
 				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
 			
 				return slider;
