@@ -2,6 +2,7 @@
 using Editor.ShaderGraph;
 using NodeEditorPlus;
 using Sandbox.Rendering;
+using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
 using System.Collections.Generic;
 
@@ -226,16 +227,25 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
-		else if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncable syncable )
+		if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncable syncable )
 		{	
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
 			{
+				//SGPLog.Info( $"Selected Parameter : {syncable.BlackboardParameterIdentifier}" );
+
 				if ( syncable.BlackboardParameterIdentifier != default )
 				{
+					
 					var blackboardParameter = _graph.FindParameterByGuid( syncable.BlackboardParameterIdentifier );
+
 					_blackboardView.SetSelectedItem( blackboardParameter );
 					_properties.Target = blackboardParameter;
+				}
+				else
+				{
+					Utilities.EdtiorSound.OhFiddleSticks();
+					throw new Exception( $"Parameter Identifier is at its class default : {syncable.BlackboardParameterIdentifier}" );
 				}
 			}
 			else
