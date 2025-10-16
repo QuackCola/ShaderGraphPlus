@@ -532,9 +532,6 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	{
 		UI = UI with { Name = Name, Type = TextureType.Tex2D };
 		var textureGlobal = compiler.ResultTexture( UI );
-
-		//SGPLog.Info( $"TextureGlobal is : {textureGlobal}" );
-
 		var result = new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
 
 		result.AddMetadataEntry( "TextureGlobal", textureGlobal );
