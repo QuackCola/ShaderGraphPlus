@@ -85,7 +85,7 @@ public class DefaultEditor : ValueEditor
 		{
 			if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
 			{
-				var subgraphInput = entry.Item1;
+				var subgraphInput = entry.inputNode;
 				if ( subgraphInput.IsRequired ) return;
 				type = entry.inputNodeValueType;
 				if ( innerPlugIn.ConnectedOutput is not null )
