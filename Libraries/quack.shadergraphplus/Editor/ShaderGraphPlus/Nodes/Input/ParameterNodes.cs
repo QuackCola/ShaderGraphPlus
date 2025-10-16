@@ -328,7 +328,7 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 		}
 	}
 
-	[Output( typeof( Vector4 ) ), Title( "XYZ" ), Hide]
+	[Output( typeof( Vector4 ) ), Title( "XYZW" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
