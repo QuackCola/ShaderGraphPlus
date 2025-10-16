@@ -373,7 +373,7 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>
 		Max = Vector4.One;
 	}
 
-	[Output( typeof( Color ) ), Title( "XYZW" )]
+	[Output( typeof( Vector4 ) ), Title( "XYZW" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
