@@ -1406,23 +1406,29 @@ public sealed partial class GraphCompiler
 				}
 				else
 				{
+					// These inputs are always required when within a subgraph.
 					if ( Graph.IsSubgraph )
 					{
-						if ( parentInput.Value.inputNodeValueType == typeof( Sampler ) )
-						{
-							
-							error = new( lastNode, $"Sampler Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
-							value = null;
-							return new();
-						}
 						if ( parentInput.Value.inputNodeValueType == typeof( Texture2DObject ) )
 						{
-							
-							error = new( lastNode, $"Texture2DObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
+							error = new( lastNode, $"Texture2DObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
 							value = null;
 							return new();
 						}
+						else if ( parentInput.Value.inputNodeValueType == typeof( TextureCubeObject ) )
+						{
 
+							error = new( lastNode, $"TextureCubeObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
+							value = null;
+							return new();
+						}
+						else if ( parentInput.Value.inputNodeValueType == typeof( Sampler ) )
+						{
+
+							error = new( lastNode, $"SamplerState Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
+							value = null;
+							return new();
+						}
 					}
 
 					value = GetDefaultValue( lastNodeEntered, inputNode.InputName, parentInput.Value.inputNodeValueType );
@@ -1431,24 +1437,21 @@ public sealed partial class GraphCompiler
 					Subgraph = lastSubgraph;
 					SubgraphNode = lastNode;
 
-					if ( value is Sampler sampler )
-					{
-						var samplerResult = ResultSampler( sampler );
-						return new NodeResult( ResultType.Sampler, samplerResult, constant: true );
-					}
 					if ( value is TextureInput textureInput )
 					{
 						var texurePath = CompileTexture( textureInput.DefaultTexture, textureInput );
 						var textureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
 						var resultType = textureInput.Type == TextureType.Tex2D ? ResultType.Texture2DObject : ResultType.TextureCubeObject;
-						//resultTextureGlobal = resultTextureGlobal.TrimLastCharacter() + $"{ShaderResult.TextureInputs.Count - 1}";
-						SGPLog.Info( $"DefaultValue // resultTextureGlobal is : {textureGlobal}" );
-
 						var result = new NodeResult( resultType, "TextureInput", textureInput );
 
 						result.AddMetadataEntry( "TextureGlobal", textureGlobal );
 
 						return result;
+					}
+					else if ( value is Sampler sampler )
+					{
+						var samplerResult = ResultSampler( sampler );
+						return new NodeResult( ResultType.Sampler, samplerResult, constant: true );
 					}
 				}
 			}
