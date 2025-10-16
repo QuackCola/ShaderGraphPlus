@@ -30,7 +30,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "1476,132",
+      "Position": "1464,156",
       "HandleOffsets": {}
     },
     {
@@ -615,7 +615,7 @@
       "__version": 1,
       "Precision": "Standard",
       "Identifier": "35",
-      "Position": "-0,732",
+      "Position": "0,732",
       "HandleOffsets": {}
     },
     {
@@ -781,6 +781,26 @@
       "__version": 1,
       "Identifier": "50",
       "Position": "936,12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleGradientNode",
+      "__version": 1,
+      "Identifier": "51",
+      "Position": "840,516",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "GradientNode",
+      "__version": 1,
+      "Name": null,
+      "Gradient": {
+        "blend": "Linear",
+        "color": [],
+        "alpha": []
+      },
+      "Identifier": "52",
+      "Position": "792,432",
       "HandleOffsets": {}
     }
   ],
