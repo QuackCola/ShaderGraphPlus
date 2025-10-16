@@ -79,16 +79,8 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 		}
 	}
 
-	[Output( typeof( int ) ), Title( "Value" )]
-	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
-	};
-	
-	[Group("Range")] public int Min { get; set; }
-	[Group("Range")] public int Max { get; set; }
+	[Group( "Range" )] public int Min { get; set; }
+	[Group( "Range" )] public int Max { get; set; }
 	[Hide, JsonIgnore] public float Step => 1;
 
 	public IntParameterNode()
@@ -97,6 +89,14 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 		Max = 1;
 		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
 	}
+
+	[Output( typeof( int ) ), Title( "Value" )]
+	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+	};
 }
 
 /// <summary>
@@ -121,14 +121,6 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 		}
 	}
 
-	[Output( typeof( float ) ), Title( "Value" )]
-	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
-	};
-
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
@@ -140,6 +132,14 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 		Max = 1.0f;
 		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 	}
+
+	[Output( typeof( float ) ), Title( "Value" )]
+	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+	};
 }
 
 /// <summary>
@@ -163,13 +163,6 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 			UI = float2Param.UI;
 		}
 	}
-
-	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
-	};
 
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
@@ -200,6 +193,13 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 	[Hide] public float MaxX => Max.x;
 	[Hide] public float MaxY => Max.y;
 	[Hide] public float Step => UI.Step;
+
+	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+	};
 
 	/// <summary>
 	/// X component of result
@@ -237,13 +237,6 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 			UI = float3Param.UI;
 		}
 	}
-
-	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
-	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
-	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
-		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
-	};
 
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
@@ -283,6 +276,13 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 	[Hide] public float MaxY => Max.y;
 	[Hide] public float MaxZ => Max.z;
 	[Hide] public float Step => UI.Step;
+
+	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
+	{
+		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
+	};
 
 	/// <summary>
 	/// X component of result
