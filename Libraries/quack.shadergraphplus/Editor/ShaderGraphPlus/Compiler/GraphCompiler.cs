@@ -1417,7 +1417,6 @@ public sealed partial class GraphCompiler
 						}
 						else if ( parentInput.Value.inputNodeValueType == typeof( TextureCubeObject ) )
 						{
-
 							error = new( lastNode, $"TextureCubeObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
 							value = null;
 							return new();
