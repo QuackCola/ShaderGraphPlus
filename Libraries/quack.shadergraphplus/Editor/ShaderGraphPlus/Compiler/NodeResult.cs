@@ -273,7 +273,7 @@ public struct NodeResult : IValid
 		IsMetaDataResult = true;
 
 		Metadata = new();
-		SetMetadata( metaDataName, actualMetaData );
+		AddMetadataEntry( metaDataName, actualMetaData );
 
 		Components = ResultType switch
 		{
@@ -341,7 +341,7 @@ public struct NodeResult : IValid
 		return false;
 	}
 
-	internal void SetMetadata( string metaName, object actualData )
+	internal void AddMetadataEntry( string metaName, object actualData )
 	{
 		if ( !Metadata.ContainsKey( metaName ) )
 		{
@@ -367,7 +367,7 @@ public struct NodeResult : IValid
 		else
 		{
 			//SGPLog.Warning( $"Metadata entry `{metaName}` dosent exist! Creating new Metadata entry instead." );
-			SetMetadata( metaName, actualData );
+			AddMetadataEntry( metaName, actualData );
 		}
 	}
 #endregion Metdata

@@ -176,7 +176,7 @@ public sealed partial class GraphCompiler
 		}
 
 		var finalResult = new NodeResult( resultType, resultAssignmentLocal );
-		finalResult.SetMetadata( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
+		finalResult.AddMetadataEntry( nameof( MetadataType.ComboSwitchBody ), sb.ToString() );
 
 		if ( !ShaderResult.ShaderFeatureResultStrings.Contains( resultAssignmentLocal ) )
 		{
