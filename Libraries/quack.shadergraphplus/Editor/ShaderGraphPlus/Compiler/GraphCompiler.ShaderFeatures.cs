@@ -105,7 +105,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				blockResults.Add( SubEvaluate( input, input.Identifier, shaderFeature ) );
+				blockResults.Add( SubGenerate( input, input.Identifier, shaderFeature ) );
 			}
 		}
 
@@ -129,7 +129,7 @@ public sealed partial class GraphCompiler
 
 			if ( index == 0 )
 			{
-				sb.AppendLine( ResultInit( resultType, resultAssignmentLocal ) ) ; //$"{resultDataType} {resultLocal};" );
+				sb.AppendLine( LocalResultInitialize( resultType, resultAssignmentLocal ) ) ; //$"{resultDataType} {resultLocal};" );
 				
 				if ( shaderFeature is ShaderFeatureBoolean boolFeature )
 				{
@@ -186,46 +186,47 @@ public sealed partial class GraphCompiler
 		return finalResult;
 	}
 
-	private SwitchBlockResultHolder SubEvaluate( NodeInput input, string block, ShaderFeatureBase shaderFeature )
+	private SwitchBlockResultHolder SubGenerate( NodeInput input, string blockName, ShaderFeatureBase shaderFeature )
 	{
-		var outerPixelResult = PixelResult;
-		var outerVertexResult = VertexResult;
+		var outerResult = ShaderResult;
 		var outerInputStack = InputStack;
-		var sb = new StringBuilder();
 
-		VertexResult = new();
-		PixelResult = new();
+		if ( IsVs )
+		{
+			VertexResult = new();
+			VertexResult.SetAttributes( outerResult.Attributes );
+		}
+		else
+		{
+			PixelResult = new();
+			PixelResult.SetAttributes( outerResult.Attributes );
+		}
 		InputStack = new();
-		VertexResult.SetAttributes( outerVertexResult.Attributes );
-		PixelResult.SetAttributes( outerPixelResult.Attributes );
-		
+
 		var result = Result( input );
 		var blockCode = GenerateLocals( true );
 
-		//SGPLog.Info( $"GeneratedBlock {block} : \n {{ {IndentString( locals, 1)} \n }}" );
-
 		foreach ( var attribute in ShaderResult.Attributes )
 		{
-			outerPixelResult.Attributes[attribute.Key] = attribute.Value;
-			outerVertexResult.Attributes[attribute.Key] = attribute.Value;
-			//if ( IsPs )
-			//{
-			//	outerPixelResult.Attributes[attribute.Key] = attribute.Value;
-			//}
-			//else if ( IsVs )
-			//{
-			//	outerVertexResult.Attributes[attribute.Key] = attribute.Value;
-			//}
+			outerResult.Attributes[attribute.Key] = attribute.Value;
 		}
 
-		VertexResult = outerPixelResult;
-		PixelResult = outerVertexResult;
+		if ( IsVs )
+		{
+			VertexResult = outerResult;
+		}
+		else
+		{
+			PixelResult = outerResult;
+		}
 		InputStack = outerInputStack;
+
+		//SGPLog.Info( $"GeneratedBlock {block} : \n {{ {IndentString( blockCode, 1)} \n }}" );
 
 		return new( blockCode, result );
 	}
 
-	private StringBuilder BuildSwitchBlock( StringBuilder sb, string generatedLocals, string resultAssignmentLocal, NodeResult lastResult )
+	private static StringBuilder BuildSwitchBlock( StringBuilder sb, string generatedLocals, string resultAssignmentLocal, NodeResult lastResult )
 	{
 		sb.AppendLine( $"{{" );
 		sb.AppendLine( $"{IndentString( generatedLocals, 1 )}" );
@@ -235,7 +236,7 @@ public sealed partial class GraphCompiler
 		return sb;
 	}
 
-	private string BuildFeatureOptionsBody( List<string> options )
+	private static string BuildFeatureOptionsBody( List<string> options )
 	{
 		var options_body = "";
 		int count = 0;
@@ -261,7 +262,7 @@ public sealed partial class GraphCompiler
 		return options_body;
 	}
 
-	private string ResultInit( ResultType resultType, string name )
+	private static string LocalResultInitialize( ResultType resultType, string name )
 	{
 		switch ( resultType )
 		{
@@ -286,7 +287,7 @@ public sealed partial class GraphCompiler
 			case ResultType.Float4x4:
 				return $"float4x4 {name} = float4x4( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );";
 			default:
-				throw new NotImplementedException( $"ResultType `{resultType}` not implemented!" );
+				throw new NotImplementedException( $"Unknown resulttype \"{resultType}\"" );
 		}
 	}
 }
