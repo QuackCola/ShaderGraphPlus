@@ -8,7 +8,7 @@ namespace ShaderGraphPlus.Nodes;
 
 internal interface ITextureParameterNodeNew
 {
-	string Name { get; set; }
+	string Name { get; }
 	TextureInput UI { get; set; }
 }
 
@@ -531,8 +531,15 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		UI = UI with { Name = Name, Type = TextureType.Tex2D };
-		compiler.ResultTexture( UI );
-		return new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
+		var textureGlobal = compiler.ResultTexture( UI );
+
+		//SGPLog.Info( $"TextureGlobal is : {textureGlobal}" );
+
+		var result = new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
+
+		result.AddMetadataEntry( "TextureGlobal", textureGlobal );
+
+		return result;
 	};
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter parameter )

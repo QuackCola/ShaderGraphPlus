@@ -2,6 +2,7 @@ using Editor;
 using Microsoft.CodeAnalysis;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using GraphView = NodeEditorPlus.GraphView;
@@ -527,97 +528,95 @@ public sealed partial class GraphCompiler
 		return ShaderResult.TextureInputs.ContainsKey( name );
 	}
 
-	/// <summary>
-	/// Register a texture and return the name of it
-	/// </summary>
-	public string ResultTexture( TextureInput input, Texture texture, bool cleanName = true )
+	private string SetResultTextureName( string name, bool useProvidedName )
 	{
-		var name = cleanName ? CleanName( input.Name ) : input.Name;
-		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-		var result = ShaderResult;
+		var cleanedName = CleanName( name );
 
-		if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) )
+		if ( useProvidedName )
 		{
-			OnAttribute?.Invoke( name, texture, false );
-			ShaderResult.Attributes[name] = texture;
-		}
-
-		if ( CurrentResultInput == "Albedo" )
-		{
-			result.RepresentativeTexture = $"g_t{name}";
-		}
-
-		return $"g_t{name}";
-	}
-
-	/// <summary>
-	/// Register a texture and return the name of it
-	/// FIXME!!! : Preview will break when multiple nodes reference the same Texture2DParameterNode
-	/// </summary>
-	public string ResultTextureAlt( TextureInput input, Texture texture, bool texture2DConnected )
-	{
-		var name = CleanName( input.Name );
-		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
-		var result = ShaderResult;
-
-		if ( !texture2DConnected )
-		{
-			if ( result.TextureInputs.TryGetValue( name, out var existingValue ) )
-			{
-				// Do not Invoke OnAttribute or add to the TextureInputs Dictionary...
-			}
-			else
-			{
-				if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) )
-				{
-					OnAttribute?.Invoke( name, texture, false );
-					ShaderResult.Attributes[name] = texture;
-				}
-
-				result.TextureInputs.Add( name, input );
-			}
+			return string.IsNullOrWhiteSpace( cleanedName ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : cleanedName;
 		}
 		else
 		{
-			if ( texture != null && !ShaderResult.Attributes.ContainsKey( name ) ) 
-			{
-				OnAttribute?.Invoke( name, texture, false );
-				ShaderResult.Attributes[name] = texture;
-			}
+			return string.IsNullOrWhiteSpace( cleanedName ) || IsPreview ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : cleanedName;
 		}
-
-		if ( CurrentResultInput == "Albedo" )
-		{
-			result.RepresentativeTexture = $"g_t{name}";
-		}
-
-		return $"g_t{name}";
+		
 	}
 
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
-	public string ResultTexture( TextureInput input )
+	public string ResultTexture( TextureInput input, bool useProvidedName = false )
 	{
-		var name = CleanName( input.Name );
-		name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		var name = SetResultTextureName( input.Name, useProvidedName );
 		var result = ShaderResult;
 
-		if ( result.TextureInputs.TryGetValue( name, out var existingValue ) )
-		{
-			// Do not add to the TextureInputs Dictionary...
-		}
-		else
+		if ( !result.TextureInputs.TryGetValue( name, out var existingValue ) )
 		{
 			result.TextureInputs.Add( name, input );
 		}
 
+		var globalName = $"g_t{name}";
+
 		if ( CurrentResultInput == "Albedo" )
 		{
-			result.RepresentativeTexture = $"g_t{name}";
+			result.RepresentativeTexture = globalName;
 		}
 
-		return $"g_t{name}";
+		return globalName;
+	}
+
+	/// <summary>
+	/// Register a texture and return the name of it
+	/// </summary>
+	public string ResultTexture( TextureInput input, Texture texture, bool isTex2DParameterConnected = false )
+	{
+		var name = SetResultTextureName( input.Name, false );
+		var result = ShaderResult;
+
+		if ( !isTex2DParameterConnected )
+		{
+			SGPLog.Info( $"ResultTextureNew Path 1 // g_t{name}" );
+
+			if ( !result.TextureInputs.TryGetValue( name, out var existingValue ) )
+			{
+				result.TextureInputs.Add( name, input );
+
+				if ( texture != null )
+				{
+					SetShaderAttribute( name, texture );
+				}
+			}
+		}
+		else
+		{
+			if ( texture != null )
+			{
+				SetShaderAttribute( name, texture );
+			}
+		}
+
+		var globalName = $"g_t{name}";
+
+		if ( CurrentResultInput == "Albedo" )
+		{
+			result.RepresentativeTexture = globalName;
+		}
+
+		return globalName;
+	}
+
+	public void SetShaderAttribute<T>( string name, T value )
+	{
+		if ( !ShaderResult.Attributes.ContainsKey( name ) )
+		{
+			OnAttribute?.Invoke( name, value, false );
+			ShaderResult.Attributes[name] = value;
+		}
+		else
+		{
+			SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
+		}
 	}
 
 	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
@@ -625,9 +624,11 @@ public sealed partial class GraphCompiler
 		var name = CleanName( sampler.Name );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
 		var id = name;
-		
-		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+
+		if ( IsPreview )//|| string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+		{
 			return ResultValue( sampler ).Code;
+		}
 
 		if ( IsNotPreview )
 		{
@@ -642,7 +643,7 @@ public sealed partial class GraphCompiler
 
 			return $"g_s{id}";
 		}
-
+		
 		return $"g_s{id}";
 	}
 
@@ -787,7 +788,7 @@ public sealed partial class GraphCompiler
 		}
 
 		// Nodes that just make use of Metadata in NodeResult.Metadata
-		if ( node is IMetaDataNode imetaDataNode )
+		if ( node is not SubgraphInput && node is IMetaDataNode imetaDataNode )
 		{
 			var metaDataResult = imetaDataNode.GetResult( this );
 
@@ -798,6 +799,22 @@ public sealed partial class GraphCompiler
 				return metaDataResult;
 			}
 		}
+		else if ( node is SubgraphInput subin )
+		{
+			//SGPLog.Error( $"Getting result of subgraph input! {subin.InputName} " );
+		}
+		//if ( node is SubgraphInput subInput )
+		//{
+		//	if ( subInput.InputData.InputType == SubgraphPortType.Texture2DObject || subInput.InputData.InputType == SubgraphPortType.TextureCubeObject )
+		//	{
+		//		var metaDataResult = subInput.GetResult( this );
+		//
+		//		if ( metaDataResult.IsValid )
+		//		{
+		//			return metaDataResult;
+		//		}
+		//	}
+		//}
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
@@ -923,6 +940,7 @@ public sealed partial class GraphCompiler
 		{
 			if ( Subgraph is not null )
 			{
+			
 				if ( node is SubgraphInput subgraphInput && !string.IsNullOrWhiteSpace( subgraphInput.InputName ) )
 				{
 					var newResult = ResolveSubgraphInput( subgraphInput, ref value, out var error );
@@ -946,6 +964,8 @@ public sealed partial class GraphCompiler
 			{
 				if ( node is SubgraphInput subgraphInput )
 				{
+					//SGPLog.Info( $"Resolving subgraph input : {subgraphInput.InputName} " );
+
 					if ( subgraphInput.PreviewInput.IsValid )
 					{
 						var subgraphInputResult = Result( subgraphInput.PreviewInput );
@@ -1225,18 +1245,7 @@ public sealed partial class GraphCompiler
 
 		if ( isConstant )
 		{
-			if ( !ShaderResult.Attributes.ContainsKey( name ) )
-			{
-				
-				OnAttribute?.Invoke( name, value, false );
-				
-				ShaderResult.Attributes[name] = value;
-		
-			}
-			else
-			{
-				SGPLog.Info( $"Already Contains Key : {name} with value : {value}" );
-			}
+			SetShaderAttribute( name, value );
 		}
 
 		return value switch
@@ -1430,9 +1439,16 @@ public sealed partial class GraphCompiler
 					if ( value is TextureInput textureInput )
 					{
 						var texurePath = CompileTexture( textureInput.DefaultTexture, textureInput );
-						var resultTextureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
+						var textureGlobal = ResultTexture( textureInput, Texture.Load( texurePath ) );
+						var resultType = textureInput.Type == TextureType.Tex2D ? ResultType.Texture2DObject : ResultType.TextureCubeObject;
+						//resultTextureGlobal = resultTextureGlobal.TrimLastCharacter() + $"{ShaderResult.TextureInputs.Count - 1}";
+						SGPLog.Info( $"DefaultValue // resultTextureGlobal is : {textureGlobal}" );
 
-						return new NodeResult( textureInput.Type == TextureType.Tex2D ? ResultType.Texture2DObject : ResultType.TextureCubeObject, resultTextureGlobal, constant: true );
+						var result = new NodeResult( resultType, "TextureInput", textureInput );
+
+						result.AddMetadataEntry( "TextureGlobal", textureGlobal );
+
+						return result;
 					}
 				}
 			}
@@ -1440,6 +1456,8 @@ public sealed partial class GraphCompiler
 
 		return new();
 	}
+
+
 
 	private static int GetComponentCount( Type inputType )
 	{

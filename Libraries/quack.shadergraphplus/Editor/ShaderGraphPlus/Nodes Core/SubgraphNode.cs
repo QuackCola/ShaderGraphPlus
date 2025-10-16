@@ -458,10 +458,10 @@ internal class SubgraphNodeControlWidget : ControlWidget
 
 						if ( val is JsonElement el )
 						{
-							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )!;
+							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )! with { ShowNameProperty = true };
 						}
 
-						return (TextureInput)val;
+						return ((TextureInput)val) with { ShowNameProperty = true };
 					}, x =>
 					{
 						SetDefaultValue( name, x );

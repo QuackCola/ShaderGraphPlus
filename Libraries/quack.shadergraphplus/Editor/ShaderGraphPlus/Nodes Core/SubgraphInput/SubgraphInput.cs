@@ -1,9 +1,11 @@
 ﻿using Editor;
 using NodeEditorPlus;
+using ShaderGraphPlus.Nodes;
+using static Sandbox.Material;
 using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
+using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 
@@ -38,7 +40,7 @@ public enum SubgraphPortType
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
 [InternalNode]
-public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncable
+public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncable, IMetaDataNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -118,7 +120,8 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 	[TextArea]
 	public string InputDescription { get; set; } = "";
 
-	[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
+	//[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
+	[Hide]
 	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
 
 	/// <summary>
@@ -150,86 +153,60 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		InputData.SetValue<T>( value );
 	}
 
-	private string CompileTexture( TextureInput UI )
-	{
-		//if ( _asset == null )
-		//	return;
-
-		var imagePath = UI.DefaultTexture;
-
-		if ( string.IsNullOrWhiteSpace( imagePath ) )
-			return "";
-
-		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
-			imagePath,
-			UI.ColorSpace,
-			UI.ImageFormat,
-			UI.Processor );
-
-		//if ( _resourceText == resourceText )
-		//	return;
-		//
-		//_resourceText = resourceText;
-
-		var assetPath = $"shadergraphplus/{imagePath.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
-		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
-		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
-
-		if ( AssetSystem.CompileResource( resourcePath, resourceText ) )
-		{
-			return assetPath;
-		}
-		else
-		{
-			SGPLog.Warning( $"Failed to compile \"{imagePath}\"" );
-			return "";
-		}
-	}
-
-	private string ResultTexture( GraphCompiler compiler )
-	{
-		var textureInput = InputData.GetValue<TextureInput>();
-		var texturePath = CompileTexture( textureInput );
-		bool cleanName = true;
-		
-		//// TODO : Stop it from registering duplicates.
-		if ( string.IsNullOrWhiteSpace( textureInput.Name ) && string.IsNullOrWhiteSpace( _textureGlobal ) )
-		{
-			var result = compiler.ResultTexture( textureInput, Texture.Load( texturePath ), false );
-			_textureGlobal = result;
-			
-			return result;
-		}
-		else if ( string.IsNullOrWhiteSpace( textureInput.Name ) && !string.IsNullOrWhiteSpace( _textureGlobal ) )
-		{
-			// Trim off g_t from _textureId and then make that the name of the preview Texture2D.
-			textureInput = textureInput with { Name = _textureGlobal.TrimStart( ['g', '_', 't'] ) };
-			cleanName = false;
-		}
-
-		return compiler.ResultTexture( textureInput, Texture.Load( texturePath ), cleanName );
-	}
-
 	[Output, Title( "Value" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
+		if ( InputData.InputType == SubgraphPortType.Texture2DObject || InputData.InputType == SubgraphPortType.TextureCubeObject )
 		{
-			SubgraphPortType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}" ),
-			SubgraphPortType.Int => ( ResultType.Int, $"{compiler.ResultValue( InputData.GetValue<int>() )}" ),
-			SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}" ),
-			SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )" ),
-			SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )" ),
-			SubgraphPortType.Vector4 => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
-			SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )" ),
-			SubgraphPortType.Texture2DObject => ( ResultType.Texture2DObject, ResultTexture( compiler )),
-			SubgraphPortType.TextureCubeObject => ( ResultType.TextureCubeObject, ResultTexture( compiler )),
-			SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}"),
-			_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
-		};
+			var resultType = ResultType.Invalid;
+			var textureInput = InputData.GetValue<TextureInput>();
+			var textureGlobal = "";
+			if ( InputData.InputType == SubgraphPortType.Texture2DObject )
+			{
+				textureInput = textureInput with { Name = InputName, Type = TextureType.Tex2D };
+				textureGlobal = compiler.ResultTexture( textureInput, true );
+				resultType =  ResultType.Texture2DObject;
+			}
+			else
+			{
+				textureInput = textureInput with { Name = InputName, Type = TextureType.TexCube };
+				textureGlobal = compiler.ResultTexture( textureInput, true );
+				resultType = ResultType.TextureCubeObject;
+			}
 
-		return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
+			var result = new NodeResult( resultType, "TextureInput", textureInput );
+
+			SGPLog.Info( $"SubgraphInput.Result // textureGlobal is : {textureGlobal}" );
+
+			result.AddMetadataEntry( "TextureGlobal", textureGlobal );
+
+			return result;
+		}
+		else
+		{
+			(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
+			{
+				SubgraphPortType.Bool => (ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}"),
+				SubgraphPortType.Int => (ResultType.Int, $"{compiler.ResultValue( InputData.GetValue<int>() )}"),
+				SubgraphPortType.Float => (ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}"),
+				SubgraphPortType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )"),
+				SubgraphPortType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )"),
+				SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
+				SubgraphPortType.Color => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )"),
+				SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}"),
+				_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
+			};
+
+			//SGPLog.Info( $"defaultResult is : {defaultResult.defaultCode}" );
+
+			return new NodeResult( defaultResult.resultType, defaultResult.defaultCode, constant: true );
+		}
 	};
+
+	public NodeResult GetResult( GraphCompiler compiler )
+	{
+		return Result.Invoke( compiler );
+	}
 
 	public List<string> GetWarnings()
 	{
@@ -259,4 +236,5 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 		return errors;
 	}
+
 }

@@ -106,13 +106,13 @@ public struct UIGroup
 
 public struct TextureInput
 {
+	[Hide,JsonIgnore]
+	public bool ShowNameProperty { get; set; }
+
 	/// <summary>
-	/// Name that shows up in material editor
-	/// TODO : Remove this and just take in the name from the
-	/// Blackboard parameter.
+	/// Name that shows up in material editor.
 	/// </summary>
-	//[HideIf( nameof( IsSubgraph ), true )]
-	[Hide]
+	[ShowIf( nameof( ShowNameProperty ), true )]
 	public string Name { get; set; }
 
 	/// <summary>
@@ -255,6 +255,12 @@ public struct TextureInput
 	[JsonIgnore, Hide]
 	public bool IsSubgraph { get; set; }
 
+
+	public TextureInput()
+	{
+		ShowNameProperty = false;
+		IsSubgraph = false;
+	}
 }
 
 public struct Texture2DObject
