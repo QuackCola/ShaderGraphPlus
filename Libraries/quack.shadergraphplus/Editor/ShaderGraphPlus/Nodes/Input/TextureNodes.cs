@@ -228,14 +228,17 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 
 			if ( !string.IsNullOrWhiteSpace( Name ) )
 			{
-				foreach ( var node in graph.Nodes )
+				foreach ( var node in graph.Nodes.OfType<Texture2DSamplerBase>() )
 				{
 					if ( node == this )
 						continue;
 
-					if ( node is Texture2DSamplerBase samplerBase && samplerBase.Name == Name )
+					if ( node.IsTextureInputConnected )
+						continue;
+
+					if ( node.UI.Name == UI.Name )
 					{
-						errors.Add( $"Other texture sampler node \"{samplerBase}\" has already registerd a texture the name \"{Name}\"" );
+						errors.Add( $"Other TextureSampler2D node \"{node}\" has already registerd a texture the name \"{UI.Name}\"" );
 						break;
 					}
 				}
