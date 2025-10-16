@@ -81,7 +81,6 @@ public class DefaultEditor : ValueEditor
 				}
 			}
 		}
-		// TODO
 		if ( val is null && node is SubgraphNode subgraphNode && Plug.Inner is IPlugIn innerPlugIn )
 		{
 			if ( subgraphNode.InputReferences.TryGetValue( innerPlugIn, out var entry ) )
