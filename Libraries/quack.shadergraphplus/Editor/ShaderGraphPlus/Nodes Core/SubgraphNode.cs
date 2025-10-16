@@ -87,7 +87,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 	}
 
 	[Hide, JsonIgnore]
-	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type paramNodeValueType)> InputReferences = new();
+	internal Dictionary<IPlugIn, (SubgraphInput inputNode, Type inputNodeValueType)> InputReferences = new();
 
 	public void CreateInputs()
 	{
@@ -306,7 +306,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 		{
 			//if ( inputRef.Value.paramNode.IsAttribute ) continue;
 			var name = inputRef.Key.Identifier;
-			var type = inputRef.Value.paramNodeValueType;
+			var type = inputRef.Value.inputNodeValueType;
 			var getter = () =>
 			{
 				if ( Node.DefaultValues.ContainsKey( name ) )

@@ -1399,14 +1399,14 @@ public sealed partial class GraphCompiler
 				{
 					if ( Graph.IsSubgraph )
 					{
-						if ( parentInput.Value.paramNodeValueType == typeof( Sampler ) )
+						if ( parentInput.Value.inputNodeValueType == typeof( Sampler ) )
 						{
 							
 							error = new( lastNode, $"Sampler Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
 							value = null;
 							return new();
 						}
-						if ( parentInput.Value.paramNodeValueType == typeof( Texture2DObject ) )
+						if ( parentInput.Value.inputNodeValueType == typeof( Texture2DObject ) )
 						{
 							
 							error = new( lastNode, $"Texture2DObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph." );
@@ -1416,7 +1416,7 @@ public sealed partial class GraphCompiler
 
 					}
 
-					value = GetDefaultValue( lastNodeEntered, inputNode.InputName, parentInput.Value.paramNodeValueType );
+					value = GetDefaultValue( lastNodeEntered, inputNode.InputName, parentInput.Value.inputNodeValueType );
 
 					SubgraphStack.Add( lastStack );
 					Subgraph = lastSubgraph;
