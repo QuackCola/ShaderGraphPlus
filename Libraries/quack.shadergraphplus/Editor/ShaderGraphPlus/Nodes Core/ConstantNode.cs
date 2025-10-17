@@ -3,14 +3,15 @@
 public interface IConstantNode
 {
 	public object GetValue();
+	public string Identifier { get; set; }
+}
+
+
+public interface IRangedConstant
+{
 	public object GetStepValue();
 	public object GetMinValue();
 	public object GetMaxValue();
-
-	public string Identifier { get; set; }
-
-	public bool UseStep { get; }
-	public bool UseMinMax { get; }
 }
 
 public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
@@ -32,27 +33,9 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 	[Hide, JsonIgnore]
 	public virtual bool UseStep => true;
 
-	[Hide, JsonIgnore]
-	public virtual bool UseMinMax => true;
-
 	public object GetValue() 
 	{ 
 		return Value; 
-	}
-
-	public virtual object GetStepValue()
-	{
-		return 0.0f;
-	}
-
-	public virtual object GetMinValue()
-	{
-		return 0.0f;
-	}
-
-	public virtual object GetMaxValue()
-	{
-		return 1.0f;
 	}
 }
 

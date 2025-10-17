@@ -23,12 +23,6 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
-	[Hide, JsonIgnore] 
-	public override bool UseMinMax => false;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => false;
-
 	[Output( typeof( bool ) ), Title( "Value" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -41,16 +35,10 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 /// Single int value
 ///</summary>
 [Title( "Int Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 1 )]
-public sealed class IntConstantNode : ConstantNode<int>
+public sealed class IntConstantNode : ConstantNode<int>, IRangedConstant
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => false;
 
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
@@ -70,14 +58,19 @@ public sealed class IntConstantNode : ConstantNode<int>
 		return compiler.ResultParameter( "", Value, default, default, false, false, default );
 	};
 
-	public override object GetMinValue()
+	public object GetMinValue()
 	{
 		return Min;
 	}
 
-	public override object GetMaxValue()
+	public object GetMaxValue()
 	{
 		return Max;
+	}
+
+	public object GetStepValue()
+	{
+		return 0.0f;
 	}
 }
 
@@ -85,16 +78,10 @@ public sealed class IntConstantNode : ConstantNode<int>
 /// Single float value
 /// </summary>
 [Title( "Float Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 2 )]
-public sealed class FloatConstantNode : ConstantNode<float>
+public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstant
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => true;
 
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
@@ -114,17 +101,17 @@ public sealed class FloatConstantNode : ConstantNode<float>
 		return compiler.ResultParameter( "", Value, default, default, false, false, default );
 	};
 
-	public override object GetMinValue()
+	public object GetMinValue()
 	{
 		return Min;
 	}
 
-	public override object GetMaxValue()
+	public object GetMaxValue()
 	{
 		return Max;
 	}
 
-	public override object GetStepValue()
+	public object GetStepValue()
 	{
 		return Step;
 	}
@@ -134,16 +121,10 @@ public sealed class FloatConstantNode : ConstantNode<float>
 /// 2 float values
 /// </summary>
 [Title( "Float2 Constant" ), Category( "Constants" ), Icon( "looks_two" ), Order( 3 )]
-public sealed class Float2ConstantNode : ConstantNode<Vector2>
+public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstant
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => true;
 
 	[JsonIgnore, Hide]
 	public float ValueX
@@ -196,17 +177,17 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>
 	[Range( nameof( MinY ), nameof( MaxY ), nameof( Step ) )]
 	public NodeResult.Func Y => ( GraphCompiler compiler ) => Component( "y", ValueY, compiler );
 
-	public override object GetMinValue()
+	public object GetMinValue()
 	{
 		return Min;
 	}
 
-	public override object GetMaxValue()
+	public object GetMaxValue()
 	{
 		return Max;
 	}
 
-	public override object GetStepValue()
+	public object GetStepValue()
 	{
 		return Step;
 	}
@@ -216,16 +197,10 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>
 /// 3 float values
 /// </summary>
 [Title( "Float3 Constant" ), Category( "Constants" ), Icon( "looks_3" ), Order( 4 )]
-public sealed class Float3ConstantNode : ConstantNode<Vector3>
+public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstant
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => true;
 
 	[JsonIgnore, Hide]
 	public float ValueX
@@ -294,17 +269,17 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>
 	[Range( nameof( MinZ ), nameof( MaxZ ), nameof( Step ) )]
 	public NodeResult.Func Z => ( GraphCompiler compiler ) => Component( "z", ValueZ, compiler );
 
-	public override object GetMinValue()
+	public object GetMinValue()
 	{
 		return Min;
 	}
 
-	public override object GetMaxValue()
+	public object GetMaxValue()
 	{
 		return Max;
 	}
 
-	public override object GetStepValue()
+	public object GetStepValue()
 	{
 		return Step;
 	}
@@ -314,16 +289,10 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>
 /// 4 float values.
 /// </summary>
 [Title( "Float4 Constant" ), Category( "Constants" ), Icon( "looks_4" ), Order( 5 )]
-public sealed class Float4ConstantNode : ConstantNode<Vector4>
+public sealed class Float4ConstantNode : ConstantNode<Vector4>, IRangedConstant
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => true;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => true;
 
 	[JsonIgnore, Hide]
 	public float ValueX
@@ -408,17 +377,17 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>
 	[Range( nameof( MinW ), nameof( MaxW ), nameof( Step ) )]
 	public NodeResult.Func W => ( GraphCompiler compiler ) => Component( "w", ValueW, compiler );
 
-	public override object GetMinValue()
+	public object GetMinValue()
 	{
 		return Min;
 	}
 
-	public override object GetMaxValue()
+	public object GetMaxValue()
 	{
 		return Max;
 	}
 
-	public override object GetStepValue()
+	public object GetStepValue()
 	{
 		return Step;
 	}
@@ -432,12 +401,6 @@ public sealed class ColorConstantNode : ConstantNode<Color>
 {
 	[Hide]
 	public override int Version => 1;
-
-	[Hide, JsonIgnore]
-	public override bool UseMinMax => false;
-
-	[Hide, JsonIgnore]
-	public override bool UseStep => false;
 
 	[JsonIgnore, Hide]
 	public float ValueR

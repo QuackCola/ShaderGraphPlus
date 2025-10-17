@@ -34,60 +34,75 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 	internal static BaseBlackboardParameter CreateBlackboardParameterFromConstant( Type parameterNodeType, string name, Guid guid, IConstantNode iConstantNode )
 	{
-		var stepValue = (float)iConstantNode.GetStepValue();
-
-		return parameterNodeType switch
+		if ( iConstantNode is IRangedConstant iRangedConstant )
 		{
-			Type t when t == typeof( BoolParameterNode ) => new BoolParameter( (bool)iConstantNode.GetValue() )
+			var stepValue = (float)iRangedConstant.GetStepValue();
+
+			SGPLog.Info( "iConstantNode is iRangeConstant" );
+
+			return parameterNodeType switch
 			{
-				Name = name,
-				Identifier = guid
-			},
-			Type t when t == typeof( IntParameterNode ) => new IntParameter( (int)iConstantNode.GetValue() )
+				Type t when t == typeof( IntParameterNode ) => new IntParameter( (int)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid,
+					Min = (int)iRangedConstant.GetMinValue(),
+					Max = (int)iRangedConstant.GetMaxValue(),
+				},
+				Type t when t == typeof( FloatParameterNode ) => new FloatParameter( (float)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid,
+					Min = (float)iRangedConstant.GetMinValue(),
+					Max = (float)iRangedConstant.GetMaxValue(),
+					UI = new() { Step = stepValue, ShowStepProperty = true },
+				},
+				Type t when t == typeof( Float2ParameterNode ) => new Float2Parameter( (Vector2)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid,
+					Min = (Vector2)iRangedConstant.GetMinValue(),
+					Max = (Vector2)iRangedConstant.GetMaxValue(),
+					UI = new() { Step = stepValue, ShowStepProperty = true },
+				},
+				Type t when t == typeof( Float3ParameterNode ) => new Float3Parameter( (Vector3)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid,
+					Min = (Vector3)iRangedConstant.GetMinValue(),
+					Max = (Vector3)iRangedConstant.GetMaxValue(),
+					UI = new() { Step = stepValue, ShowStepProperty = true },
+				},
+				Type t when t == typeof( Float4ParameterNode ) => new Float4Parameter( (Vector4)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid,
+					Min = (Vector4)iRangedConstant.GetMinValue(),
+					Max = (Vector4)iRangedConstant.GetMaxValue(),
+					UI = new() { Step = stepValue, ShowStepProperty = true },
+				},
+				_ => throw new NotImplementedException( $"Unknown type \"{parameterNodeType}\"" ),
+			};
+		}
+		else
+		{
+			SGPLog.Info( "iConstantNode is not iRangeConstant" );
+
+			return parameterNodeType switch
 			{
-				Name = name,
-				Identifier = guid,
-				Min = (int)iConstantNode.GetMinValue(),
-				Max = (int)iConstantNode.GetMaxValue(),
-			},
-			Type t when t == typeof( FloatParameterNode ) => new FloatParameter( (float)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (float)iConstantNode.GetMinValue(),
-				Max = (float)iConstantNode.GetMaxValue(),
-				UI = new() { Step = stepValue, ShowStepProperty = true },
-			},
-			Type t when t == typeof( Float2ParameterNode ) => new Float2Parameter( (Vector2)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector2)iConstantNode.GetMinValue(),
-				Max = (Vector2)iConstantNode.GetMaxValue(),
-				UI = new() { Step = stepValue, ShowStepProperty = true },
-			},
-			Type t when t == typeof( Float3ParameterNode ) => new Float3Parameter( (Vector3)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector3)iConstantNode.GetMinValue(),
-				Max = (Vector3)iConstantNode.GetMaxValue(),
-				UI = new() { Step = stepValue, ShowStepProperty = true },
-			},
-			Type t when t == typeof( Float4ParameterNode ) => new Float4Parameter( (Vector4)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid,
-				Min = (Vector4)iConstantNode.GetMinValue(),
-				Max = (Vector4)iConstantNode.GetMaxValue(),
-				UI = new() { Step = stepValue, ShowStepProperty = true },
-			},
-			Type t when t == typeof( ColorParameterNode ) => new ColorParameter( (Color)iConstantNode.GetValue() )
-			{
-				Name = name,
-				Identifier = guid
-			},
-			_ => throw new NotImplementedException( $"Unknown type \"{parameterNodeType}\"" ),
-		};
+				Type t when t == typeof( BoolParameterNode ) => new BoolParameter( (bool)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid
+				},
+				Type t when t == typeof( ColorParameterNode ) => new ColorParameter( (Color)iConstantNode.GetValue() )
+				{
+					Name = name,
+					Identifier = guid
+				},
+				_ => throw new NotImplementedException( $"Unknown type \"{parameterNodeType}\"" ),
+			};
+		}
+
 	}
 }
