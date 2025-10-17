@@ -50,7 +50,6 @@ internal class BlackboardView : Widget
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleted { get; set; }
 
-
 	public BlackboardView( Widget parent, MainWindow window ) : base( parent )
 	{
 		Layout = Layout.Row();
