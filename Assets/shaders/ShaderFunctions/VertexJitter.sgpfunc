@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 3,
   "IsSubgraph": true,
   "Path": "shaders/shaderfunctions/vertexjitter.sgpfunc",
   "Model": "models/fauna/hare/hare.vmdl",
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": true,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": false,
@@ -97,6 +98,7 @@
     {
       "_class": "SubgraphOutput",
       "__version": 1,
+      "OutputIdentifier": "990fabf1-c8e2-48cd-bcc4-f9eacf3c5236",
       "OutputName": "VertexOffset",
       "OutputDescription": null,
       "OutputType": "Vector3",
@@ -126,6 +128,7 @@
     {
       "_class": "SubgraphInput",
       "__version": 1,
+      "BlackboardParameterIdentifier": "4654dcb4-e42b-47f9-8538-63c87af642db",
       "InputName": "ToggleSnapping",
       "InputDescription": "",
       "InputData": {
@@ -204,26 +207,12 @@
       }
     },
     {
-      "_class": "Float",
+      "_class": "FloatConstantNode",
       "__version": 1,
       "Min": 0,
       "Max": 1,
+      "Step": 0,
       "Value": 0,
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
       "Identifier": "11",
       "Position": "756,192",
       "HandleOffsets": {}
@@ -231,18 +220,41 @@
     {
       "_class": "SubgraphInput",
       "__version": 1,
+      "BlackboardParameterIdentifier": "abb2ae9d-d39b-4282-a1ec-419113dd22f9",
       "InputName": "GridSize",
       "InputDescription": "",
       "InputData": {
         "__class": "VariantValueFloat",
         "InputType": "Float",
-        "Value": 0.4
+        "Value": 0.5
       },
       "IsRequired": false,
       "PortOrder": 0,
       "Identifier": "12",
       "Position": "192,276",
       "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "BoolSubgraphInputParameter",
+      "Name": "ToggleSnapping",
+      "Description": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Value": true,
+      "Identifier": "4654dcb4-e42b-47f9-8538-63c87af642db"
+    },
+    {
+      "_class": "FloatSubgraphInputParameter",
+      "Min": 0,
+      "Max": 1,
+      "Name": "GridSize",
+      "Description": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Value": 0.5,
+      "Identifier": "abb2ae9d-d39b-4282-a1ec-419113dd22f9"
     }
   ]
 }
