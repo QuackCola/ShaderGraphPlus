@@ -8,6 +8,7 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
+[InternalNode]
 public class MissingNode : BaseNodePlus
 {
 	[Hide]
