@@ -286,30 +286,6 @@ public class MainWindow : DockWindow
 	protected virtual void Compile()
 	{
 		_shaderCompileErrors.Clear();
-		
-		/*
-		var compileErrors = new List<GraphCompiler.Error>();
-		foreach ( var node in _graph.Nodes )
-		{
-			if ( node is IErroringNode erroring )
-			{
-				var errors = erroring.GetErrors();
-				if ( errors.Count > 0 )
-				{
-					_shaderCompileErrors.AddRange( errors );
-		
-					if ( IsSubgraph )
-					{
-						foreach ( var error in errors )
-						{
-							compileErrors.Add( new() { Message = error, Node = node } );
-						}
-					}
-				}
-			}
-		}
-		_output.Errors = compileErrors;
-		*/
 
 		if ( string.IsNullOrWhiteSpace( _generatedCode ) )
 		{
