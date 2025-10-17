@@ -32,9 +32,6 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 		return new( ResultType.Float, $"{result}.{component}", true );
 	}
 
-	[Hide, JsonIgnore]
-	public virtual bool UseStep => true;
-
 	public object GetValue() 
 	{ 
 		return Value; 
