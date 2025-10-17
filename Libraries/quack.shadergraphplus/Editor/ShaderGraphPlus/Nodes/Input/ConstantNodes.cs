@@ -35,7 +35,7 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 /// Single int value
 ///</summary>
 [Title( "Int Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 1 )]
-public sealed class IntConstantNode : ConstantNode<int>, IRangedConstant
+public sealed class IntConstantNode : ConstantNode<int>, IRangedConstantNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -78,7 +78,7 @@ public sealed class IntConstantNode : ConstantNode<int>, IRangedConstant
 /// Single float value
 /// </summary>
 [Title( "Float Constant" ), Category( "Constants" ), Icon( "looks_one" ), Order( 2 )]
-public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstant
+public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstantNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -121,7 +121,7 @@ public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstant
 /// 2 float values
 /// </summary>
 [Title( "Float2 Constant" ), Category( "Constants" ), Icon( "looks_two" ), Order( 3 )]
-public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstant
+public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstantNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -197,7 +197,7 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstant
 /// 3 float values
 /// </summary>
 [Title( "Float3 Constant" ), Category( "Constants" ), Icon( "looks_3" ), Order( 4 )]
-public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstant
+public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstantNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -289,7 +289,7 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstant
 /// 4 float values.
 /// </summary>
 [Title( "Float4 Constant" ), Category( "Constants" ), Icon( "looks_4" ), Order( 5 )]
-public sealed class Float4ConstantNode : ConstantNode<Vector4>, IRangedConstant
+public sealed class Float4ConstantNode : ConstantNode<Vector4>, IRangedConstantNode
 {
 	[Hide]
 	public override int Version => 1;

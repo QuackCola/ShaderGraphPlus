@@ -34,7 +34,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 	internal static BaseBlackboardParameter CreateBlackboardParameterFromConstant( Type parameterNodeType, string name, Guid guid, IConstantNode iConstantNode )
 	{
-		if ( iConstantNode is IRangedConstant iRangedConstant )
+		if ( iConstantNode is IRangedConstantNode iRangedConstant )
 		{
 			var stepValue = (float)iRangedConstant.GetStepValue();
 

@@ -6,7 +6,7 @@ public interface IConstantNode
 	public object GetValue();
 }
 
-public interface IRangedConstant
+public interface IRangedConstantNode
 {
 	public object GetStepValue();
 	public object GetMinValue();
