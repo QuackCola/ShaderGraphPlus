@@ -7,9 +7,6 @@
 [SubgraphOnly]
 public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParameter<bool>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 0;
-
 	public BoolSubgraphInputParameter() : base()
 	{
 		Value = false;
@@ -41,9 +38,6 @@ public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParamete
 [SubgraphOnly]
 public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter<int>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 1;
-
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
@@ -81,9 +75,6 @@ public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter
 [SubgraphOnly]
 public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParameter<float>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 2;
-
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
@@ -121,9 +112,6 @@ public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParamet
 [SubgraphOnly]
 public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector2>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 3;
-
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
@@ -161,9 +149,6 @@ public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParame
 [SubgraphOnly]
 public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector3>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 4;
-
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
@@ -201,9 +186,6 @@ public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParame
 [SubgraphOnly]
 public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParameter<Vector4>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 5;
-
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
 
@@ -241,9 +223,6 @@ public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParame
 [SubgraphOnly]
 public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParameter<Color>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 6;
-
 	public ColorSubgraphInputParameter()
 	{
 		Value = Color.White;
@@ -274,9 +253,6 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 [SubgraphOnly]
 public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 7;
-
 	public Texture2DSubgraphInputParameter() : base()
 	{
 		Value = new TextureInput
@@ -312,9 +288,6 @@ public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputPar
 [SubgraphOnly]
 public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
-
 	public TextureCubeSubgraphInputParameter() : base()
 	{
 		Value = new TextureInput
@@ -350,9 +323,6 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 [SubgraphOnly]
 public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInputParameter<Sampler>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 9;
-
 	public SamplerStateSubgraphInputParameter() : base()
 	{
 		Value = new Sampler();

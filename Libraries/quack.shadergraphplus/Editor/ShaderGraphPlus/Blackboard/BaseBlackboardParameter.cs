@@ -38,9 +38,6 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 	public bool IsSubgraph => Graph.IsSubgraph;
 
 	[Hide, JsonIgnore, Browsable( false )]
-	public virtual int MenuOrder => 0;
-
-	[Hide, JsonIgnore, Browsable( false )]
 	public virtual bool IsValid => true;
 
 	public virtual string Name { get; set; } = "";

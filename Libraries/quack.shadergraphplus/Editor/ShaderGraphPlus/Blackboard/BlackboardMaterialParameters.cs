@@ -8,9 +8,6 @@ namespace ShaderGraphPlus;
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 0;
-
 	public BoolParameter() : base() 
 	{ 
 		Value = false;
@@ -40,9 +37,6 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
 public sealed class IntParameter : BlackboardMaterialParameter<int>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 1;
-
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
 
@@ -78,9 +72,6 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
 public sealed class FloatParameter : BlackboardMaterialParameter<float>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 2;
-
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
 
@@ -116,9 +107,6 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
 public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 3;
-
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
 
@@ -154,9 +142,6 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
 public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 4;
-
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
 
@@ -192,9 +177,6 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
 public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 5;
-
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
 
@@ -232,9 +214,6 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
 public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 6;
-
 	public ColorParameter() : base()
 	{
 		Value = Color.White;
@@ -265,9 +244,6 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 [Title( "Texture2D" ), Icon( "texture" ), Order( 7 )]
 public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 7;
-
 	public Texture2DParameter() : base()
 	{
 		Value = new TextureInput
@@ -313,9 +289,6 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 [Title( "TextureCube" ), Icon( "view_in_ar" ), Order( 8 )]
 public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInput>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
-
 	public TextureCubeParameter() : base()
 	{
 		Value = new TextureInput
@@ -378,9 +351,6 @@ public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, IShaderFeatureParameter
 {
 	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 9;
-
-	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
 
 	/// <summary>
@@ -425,9 +395,6 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 [Title( "Shader Feature Enum" ), Order( 10 )]
 public sealed class ShaderFeatureEnumParameter : BaseBlackboardParameter, IShaderFeatureParameter
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 10;
-
 	[Hide, JsonIgnore, Browsable( false )]
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name ) && Options.All( x => !string.IsNullOrWhiteSpace( x ) );
 
