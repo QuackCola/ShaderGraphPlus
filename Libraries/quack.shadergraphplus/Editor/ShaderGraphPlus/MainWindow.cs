@@ -439,9 +439,10 @@ public class MainWindow : DockWindow
 		else
 		{
 			SGPLog.Error( $"Compile failed in {_timeSinceCompile}" );
-		
-			//_output.GraphIssues = _shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
-			//DockManager.RaiseDock( "Output" );
+
+			_output.GraphIssues = _shaderCompileErrors.Select( x => new GraphCompiler.GraphIssue { Message = x } ).ToList();
+
+			DockManager.RaiseDock( "Output" );
 		
 			RestoreShader();
 			ClearAttributes();
