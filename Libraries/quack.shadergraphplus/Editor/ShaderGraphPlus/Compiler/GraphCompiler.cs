@@ -614,7 +614,7 @@ public sealed partial class GraphCompiler
 		}
 		else
 		{
-			SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
+			//SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
 		}
 	}
 
