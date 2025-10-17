@@ -1,42 +1,22 @@
 ﻿namespace ShaderGraphPlus;
 
-public struct PostProcessingComponentInfo
+public struct PostProcessingComponentInfo : IValid
 {
-    public bool GenerateClass { get; set; }
+	public string ComponentTitle { get; set; }
 
-    [HideIf(nameof(GenerateClass), false)]
-    public string ComponentTitle { get; set; }
+	public string ComponentCategory { get; set; }
 
-    [HideIf(nameof(GenerateClass), false)]
-    public string ComponentCategory { get; set; }
+	public string Icon { get; set; }
 
-    [HideIf(nameof(GenerateClass), false)]
-    public string Icon { get; set; }
+	public int Order { get; set; }
 
-    [HideIf(nameof(GenerateClass), false)]
-    public int Order { get; set; }
+	public bool IsValid => !string.IsNullOrWhiteSpace( ComponentTitle );
 
-    public PostProcessingComponentInfo(int order)
-    { 
-        //ClassTitle = title;
-        //ClassCategory = category;
-        //Icon = icon; 
-        Order = order;
-    }
-
-
-    public bool IsValid()
-    {
-        if (!string.IsNullOrWhiteSpace(ComponentTitle))
-        {
-            return true;
-        }
-        else
-        { 
-            return false;
-        }
-    
-    
-    }
-
+	public PostProcessingComponentInfo( int order )
+	{
+		ComponentTitle = "";
+		ComponentCategory = "";
+		Icon = "";
+		Order = order;
+	}
 }
