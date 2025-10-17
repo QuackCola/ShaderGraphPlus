@@ -77,9 +77,6 @@ public class MainWindow : DockWindow
 	private string _generatedCode;
 	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
 	private readonly Dictionary<string, Texture> _textureAttributes = new();
-	private readonly Dictionary<string, Float2x2> _float2x2Attributes = new();
-	private readonly Dictionary<string, Float3x3> _float3x3Attributes = new();
-	private readonly Dictionary<string, Float4x4> _float4x4Attributes = new();
 	private readonly Dictionary<string, Color> _float4Attributes = new();
 	private readonly Dictionary<string, Vector3> _float3Attributes = new();
 	private readonly Dictionary<string, Vector2> _float2Attributes = new();
@@ -487,18 +484,6 @@ public class MainWindow : DockWindow
 			case Sampler v:
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview3D?.SetAttribute( name, (SamplerState)v );
-				break;
-			case Float2x2 v: // Stub - Quack
-				_float2x2Attributes.Add( name, v );
-				_preview3D?.SetAttribute( name, v );
-				break;
-			case Float3x3 v: // Stub - Quack
-				_float3x3Attributes.Add( name, v );
-				_preview3D?.SetAttribute( name, v );
-				break;
-			case Float4x4 v: // Stub - Quack
-				_float4x4Attributes.Add( name, v );
-				_preview3D?.SetAttribute( name, v );
 				break;
 			default:
 				throw new InvalidOperationException( $"Unsupported attribute type: {value.GetType()}" );
@@ -1256,9 +1241,6 @@ public class MainWindow : DockWindow
 	{
 		_samplerStateAttributes.Clear();
 		_textureAttributes.Clear();
-		_float2x2Attributes.Clear();
-		_float3x3Attributes.Clear();
-		_float4x4Attributes.Clear();
 		_float4Attributes.Clear();
 		_float3Attributes.Clear();
 		_float2Attributes.Clear();
@@ -1642,21 +1624,7 @@ public class MainWindow : DockWindow
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-		
-		foreach ( var value in _float4x4Attributes )
-		{
-			_preview3D.SetAttribute( value.Key, value.Value );
-		}
-		
-		foreach ( var value in _float3x3Attributes )
-		{
-			_preview3D.SetAttribute( value.Key, value.Value );
-		}
-		
-		foreach ( var value in _float2x2Attributes )
-		{
-			_preview3D.SetAttribute( value.Key, value.Value );
-		}
+	
 		
 		foreach ( var value in _float4Attributes )
 		{

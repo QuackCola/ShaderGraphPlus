@@ -154,6 +154,9 @@ public sealed partial class GraphCompiler
 
 	public void SetShaderAttribute<T>( string name, T value )
 	{
+		if ( value is Float2x2 || value is Float3x3 || value is Float4x4 )
+			return;
+
 		if ( !ShaderResult.Attributes.ContainsKey( name ) )
 		{
 			OnAttribute?.Invoke( name, value, false );

@@ -255,20 +255,6 @@ public sealed class Preview3DPanel : Widget
 
 	public Action<Model> OnModelChanged { get; set; }
 
-	public void SetAttribute( string id, in Float2x2 value ) // Stub - Quack
-	{
-		_preview.SetAttribute( id, value );
-	}
-
-	public void SetAttribute( string id, in Float3x3 value ) // Stub - Quack
-	{
-		_preview.SetAttribute( id, value );
-	}
-	public void SetAttribute( string id, in Float4x4 value ) // Stub - Quack
-	{
-		_preview.SetAttribute( id, value );
-	}
-
 	public void SetAttribute( string id, in SamplerState value )
 	{
 		_preview.SetAttribute( id, value );
@@ -844,24 +830,6 @@ public sealed class Preview3D : SceneRenderingWidget
 	public bool UseAnimGraph
 	{
 		set => _sceneObject.UseAnimGraph = value;
-	}
-
-	public void SetAttribute( string id, Float2x2 value ) // Stub - Quack
-	{
-		_float2x2Attributes.Add( id, value );
-		_sceneObject.Attributes.SetData( id, value );
-	}
-
-	public void SetAttribute( string id, Float3x3 value ) // Stub - Quack
-	{
-		_float3x3Attributes.Add( id, value );
-		_sceneObject.Attributes.SetData( id, value );
-	}
-
-	public void SetAttribute( string id, Float4x4 value ) // Stub - Quack
-	{
-		_float4x4Attributes.Add( id, value );
-		_sceneObject.Attributes.SetData( id, value );
 	}
 
 	public void SetAttribute( string id, SamplerState value )
