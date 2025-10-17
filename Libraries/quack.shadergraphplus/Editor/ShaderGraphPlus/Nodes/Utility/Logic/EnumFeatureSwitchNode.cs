@@ -39,8 +39,8 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 	[Hide, JsonIgnore]
 	int _lastHashCodeInputs = 0;
 	
-	[Hide, JsonIgnore]
-	bool _hasFeatureError = false;
+	//[Hide, JsonIgnore]
+	//bool _hasFeatureError = false;
 
 	public override void OnFrame()
 	{
@@ -158,11 +158,11 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 					Options = enumFeatureParam.Options,
 				};
 
-				_hasFeatureError = false;
+				//_hasFeatureError = false;
 			}
 			else
 			{
-				_hasFeatureError = true;
+				//_hasFeatureError = true;
 			}
 
 		}

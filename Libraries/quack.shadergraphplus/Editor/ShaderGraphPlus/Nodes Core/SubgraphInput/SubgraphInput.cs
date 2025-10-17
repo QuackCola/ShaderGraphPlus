@@ -101,9 +101,6 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 	}
 
-	[Hide, JsonIgnore]
-	private string _textureGlobal;
-
 	[Hide]
 	public override string Title => string.IsNullOrWhiteSpace( InputName ) ?
 	$"Subgraph Input" :
