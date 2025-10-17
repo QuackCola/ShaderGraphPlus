@@ -806,9 +806,6 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanPreview => false;
 
-	[JsonIgnore, Hide, Browsable( false )]
-	public ParameterNodeModeType ParameterNodeType { get; set; }
-
 	public SamplerNode() : base()
 	{
 		ExpandSize = new Vector2( 0, 8 );

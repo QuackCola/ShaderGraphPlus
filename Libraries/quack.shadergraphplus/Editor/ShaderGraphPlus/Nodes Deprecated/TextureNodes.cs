@@ -913,9 +913,6 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
-	[JsonIgnore, Hide, Browsable( false )]
-	public ParameterNodeModeType ParameterNodeType { get; set; }
-
 	[Hide]
 	public override string Title
 	{
@@ -1043,9 +1040,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 
 	[Hide]
 	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public ParameterNodeModeType ParameterNodeType { get; set; }
 
 	#region ITextureInputNode
 	[JsonIgnore, Hide, Browsable( false )]

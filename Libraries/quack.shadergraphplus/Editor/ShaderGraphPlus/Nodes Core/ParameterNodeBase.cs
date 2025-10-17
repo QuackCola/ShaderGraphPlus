@@ -6,12 +6,6 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus;
 
-public enum ParameterNodeModeType
-{
-	Constant,
-	Property,
-}
-
 public interface IParameterNode
 {
 	string Name { get; set; }
