@@ -249,6 +249,9 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 	}
 }
 
+/// <summary>
+/// Sample a 2D Texture
+/// </summary>
 [Title( "Sample Texture 2D" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DNode : Texture2DSamplerBase
 {
@@ -330,6 +333,9 @@ public sealed class SampleTexture2DNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
+/// <summary>
+/// Sample a 2D texture from 3 directions, then blend based on a normal vector.
+/// </summary>
 [Title( "Sample Texture 2D Triplanar" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 {
@@ -440,6 +446,9 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
+/// <summary>
+/// Sample a 2D texture from 3 directions, then blend based on a normal vector.
+/// </summary>
 [Title( "Sample Texture 2D Normal Map Triplanar" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 {
@@ -559,6 +568,9 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", compiler );
 }
 
+/// <summary>
+/// Sample a Cube Texture
+/// </summary>
 [Title( "Sample Texture Cube" ), Category( "Textures" ), Icon( "colorize" )]
 public sealed class SampleTextureCubeNode : ShaderNodePlus
 {
