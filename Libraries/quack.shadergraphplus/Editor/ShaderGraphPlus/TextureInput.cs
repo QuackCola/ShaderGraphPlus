@@ -262,13 +262,3 @@ public struct TextureInput
 		IsSubgraph = false;
 	}
 }
-
-public struct Texture2DObject
-{
-
-}
-
-public struct TextureCubeObject
-{
-
-}
