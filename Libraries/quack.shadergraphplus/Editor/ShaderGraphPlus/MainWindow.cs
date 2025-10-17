@@ -181,84 +181,28 @@ public class MainWindow : DockWindow
 		_preview3D.Material = Material.Load( "materials/core/shader_editor.vmat" );
 	}
 
-	private void SelectBlackboardParameter()
-	{
-		if ( _properties.Target is IParameterNode parameterNode && parameterNode is IBlackboardSyncableNode blackboardSyncable )
-		{
-			// For now only select a blackboard parameter when _graphView only has 1 selection.
-			if ( _graphView.SelectedItems.Count() == 1 )
-			{
-				SGPLog.Info( $"Selected parameter node {parameterNode.Name}" );
-
-				if ( blackboardSyncable.BlackboardParameterIdentifier != default )
-				{
-					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncable.BlackboardParameterIdentifier );
-					_blackboardView.SetSelectedItem( blackboardParameter );
-					_properties.Target = blackboardParameter;
-				}
-			}
-			else
-			{
-				_properties.Target = _graph;
-			}
-		}
-		if ( _properties.Target is ITextureParameterNodeNew iTextureParameterNode && _properties.Target is IBlackboardSyncableNode blackboardSyncable2 )
-		{
-			// For now only select a blackboard parameter when _graphView only has 1 selection.
-			if ( _graphView.SelectedItems.Count() == 1 )
-			{
-				if ( blackboardSyncable2.BlackboardParameterIdentifier != default )
-				{
-					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncable2.BlackboardParameterIdentifier );
-					
-					if ( blackboardParameter != null )
-					{
-						_blackboardView.SetSelectedItem( blackboardParameter );
-						_properties.Target = blackboardParameter;
-					}
-					else
-					{
-						_properties.Target = _graph;
-					}
-				}
-			}
-			else
-			{
-				_properties.Target = _graph;
-			}
-		}
-		if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncableNode syncable )
-		{	
-			// For now only select a blackboard parameter when _graphView only has 1 selection.
-			if ( _graphView.SelectedItems.Count() == 1 )
-			{
-				//SGPLog.Info( $"Selected Parameter : {syncable.BlackboardParameterIdentifier}" );
-
-				if ( syncable.BlackboardParameterIdentifier != default )
-				{
-					
-					var blackboardParameter = _graph.FindParameterByGuid( syncable.BlackboardParameterIdentifier );
-
-					_blackboardView.SetSelectedItem( blackboardParameter );
-					_properties.Target = blackboardParameter;
-				}
-				else
-				{
-					Utilities.EdtiorSound.OhFiddleSticks();
-					throw new Exception( $"Parameter Identifier is at its class default : {syncable.BlackboardParameterIdentifier}" );
-				}
-			}
-			else
-			{
-				_properties.Target = _graph;
-			}
-		}
-	}
-
 	public void OnNodeSelected( BaseNodePlus node )
 	{
 		var oldTarget = _properties.Target;
 		_properties.Target = node != null ? node : _graph;
+
+		if ( _properties.Target is IBlackboardSyncableNode blackboardSyncableTest )
+		{
+			// For now only select a blackboard parameter when _graphView only has 1 selection.
+			if ( _graphView.SelectedItems.Count() == 1 )
+			{
+				if ( blackboardSyncableTest.BlackboardParameterIdentifier != default )
+				{
+					var blackboardParameter = _graph.FindParameterByGuid( blackboardSyncableTest.BlackboardParameterIdentifier );
+					_blackboardView.SetSelectedItem( blackboardParameter );
+					_properties.Target = blackboardParameter;
+				}
+			}
+			else
+			{
+				_properties.Target = _graph;
+			}
+		}
 
 		if ( _properties.Target is ShaderGraphPlus && oldTarget is BaseBlackboardParameter )
 		{
@@ -268,8 +212,6 @@ public class MainWindow : DockWindow
 		{
 			_blackboardView.ClearSeletedItem();
 		}
-
-		SelectBlackboardParameter();
 
 		if ( EnableNodePreview && (node != null && node.CanPreview) )
 		{
