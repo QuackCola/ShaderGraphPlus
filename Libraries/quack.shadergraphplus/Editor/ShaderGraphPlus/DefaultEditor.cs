@@ -249,9 +249,12 @@ internal static class PaintHelper
 		}
 		else if ( type == typeof( Texture2DObject ) )
 		{
-			return JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() )!;
+			return (JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() )!) with { Type = TextureType.Tex2D };
 		}
-
+		else if ( type == typeof( TextureCubeObject ) )
+		{
+			return (JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() )!) with { Type = TextureType.TexCube };
+		}
 		throw new Exception( $"Cannot Deserialize `{type}`" );
 	}
 
