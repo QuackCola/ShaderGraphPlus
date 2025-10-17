@@ -23,9 +23,12 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{
 		if ( compiler.IsPreview )
+		{
 			return compiler.ResultValue( value );
+		}
 
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
+
 		return new( ResultType.Float, $"{result}.{component}", true );
 	}
 
