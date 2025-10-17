@@ -15,14 +15,6 @@ public interface IParameterNode
 	ParameterUI UI { get; set; }
 }
 
-
-internal interface IBlackboardSyncable
-{
-	
-	Guid BlackboardParameterIdentifier { get; set; }
-	void UpdateFromBlackboard( BaseBlackboardParameter parameter );
-}
-
 public interface ITextureParameterNode
 {
 	string Image { get; set; }

@@ -14,6 +14,12 @@ internal interface IShaderFeatureParameter
 {
 }
 
+internal interface IBlackboardSyncable
+{
+	Guid BlackboardParameterIdentifier { get; set; }
+	void UpdateFromBlackboard( BaseBlackboardParameter parameter );
+}
+
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
 	[Hide,Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
