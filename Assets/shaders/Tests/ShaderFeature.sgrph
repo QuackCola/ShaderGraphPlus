@@ -1,0 +1,199 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/shaderfeature.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "StaticSwitchNode",
+      "__version": 1,
+      "BlackboardParameterIdentifier": "66b261c4-81f0-4233-87b4-46671b2cf3b0",
+      "PreviewToggle": false,
+      "Feature": {
+        "FeatureName": "MyFeature",
+        "Description": "MyDescription",
+        "HeaderName": "MyHeader"
+      },
+      "Identifier": "1",
+      "Position": "-684,0",
+      "HandleOffsets": {},
+      "InputTrue": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InputFalse": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float3",
+      "__version": 2,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "BlackboardParameterIdentifier": "00000000-0000-0000-0000-000000000000",
+      "ParameterNodeType": "Constant",
+      "Value": "1,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-1140,-108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3",
+      "__version": 2,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "BlackboardParameterIdentifier": "00000000-0000-0000-0000-000000000000",
+      "ParameterNodeType": "Constant",
+      "Value": "1,0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-840,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3",
+      "__version": 2,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "BlackboardParameterIdentifier": "6df8c617-01c2-44ed-903f-996248b303aa",
+      "ParameterNodeType": "Property",
+      "Value": "1.04438,0,0",
+      "Name": "Parameter2",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-1140,48",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "ShaderFeatureBooleanBlackboardParameter",
+      "Value": {
+        "FeatureName": "MyFeature",
+        "Description": "MyDescription",
+        "HeaderName": "MyHeader"
+      },
+      "Identifier": "66b261c4-81f0-4233-87b4-46671b2cf3b0"
+    },
+    {
+      "_class": "Float2BlackboardParameter",
+      "Min": "0,0",
+      "Max": "0,0",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": "0,0",
+      "Name": "Parameter1",
+      "Identifier": "d62b2ab8-05ce-469c-9b7c-f56b8f259c74"
+    },
+    {
+      "_class": "Float3BlackboardParameter",
+      "Min": "0,0,0",
+      "Max": "0,0,0",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Value": "1.04438,0,0",
+      "Name": "Parameter2",
+      "Identifier": "6df8c617-01c2-44ed-903f-996248b303aa"
+    }
+  ]
+}

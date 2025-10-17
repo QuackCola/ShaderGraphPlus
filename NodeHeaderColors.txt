@@ -1,0 +1,11 @@
+LeftColors of PrimaryHeaderTheme's of specific nodes.
+
+Orange #e05b0a - Subgraph related nodes.
+Light Brown #84705e - Main graph result node.
+Greyish Blue #394d62 - Unary and Binary nodes.
+Green #5d9b31 - Constant & Parameter nodes.
+Dark Red #803334 - Engine Globals and Shader Stage inputs.
+Denium Blue #1d53ac - Function nodes. I.e Tex sampler nodes and most generic functions.
+Royal Purple #6c3baa - Transform nodes. I.e nodes that specifically are for transforming their inputs to something else specific.
+Dark green-cyan #006b54 - Logic nodes.
+Dark Desaturated Blue #2e2a60 - Channel nodes.

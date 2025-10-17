@@ -1,4 +1,5 @@
 {
+  "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/tests/customfunctionnode/customfunction_file_oneinstance.sgrph",
   "Model": "models/dev/plane.vmdl",
@@ -12,7 +13,9 @@
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "RenderBackfaces": false,
     "EnableShadows": true,
+    "ShowGround": false,
     "ShowSkybox": true,
     "BackgroundColor": "1,1,1,1",
     "Tint": "1,1,1,1"
@@ -20,6 +23,7 @@
   "nodes": [
     {
       "_class": "Result",
+      "__version": 1,
       "DefaultOpacity": 1,
       "DefaultRoughness": 1,
       "DefaultMetalness": 0,
@@ -35,46 +39,64 @@
     },
     {
       "_class": "Float",
+      "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0,
       "Name": "TestFloat0",
       "IsAttribute": false,
-      "UI": {},
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "1",
       "Position": "-1128,-60",
       "HandleOffsets": {}
     },
     {
       "_class": "CustomFunctionNode",
+      "__version": 1,
       "Name": "Function0",
       "Type": "File",
       "Body": "",
       "Source": "Tests/CustomFunctionNode/Function0.hlsl",
+      "PixelStageOnly": false,
       "CodeComment": "",
       "ExpressionInputs": [
         {
-          "Id": "af37729d-811f-4fb7-a6e0-891b637b4788",
+          "Id": "a89f9f70-348b-4e03-89c5-e78eedf3e596",
           "Name": "In0",
-          "Type": "float"
+          "Type": "float",
+          "Priority": 0
         },
         {
-          "Id": "8c58aa16-0ea0-4904-a4a8-1d1bf8d1463e",
+          "Id": "07d4520f-3679-4d90-a435-9fcde2959dae",
           "Name": "In1",
-          "Type": "Vector2"
+          "Type": "Vector2",
+          "Priority": 0
         }
       ],
       "ExpressionOutputs": [
         {
-          "Id": "cb58c565-33ce-44be-b9e1-2ae59c1f3831",
+          "Id": "db231955-3992-4083-894e-d4d5a732cfef",
           "Name": "Out0",
-          "Type": "Color"
+          "Type": "Color",
+          "Priority": 0
         },
         {
-          "Id": "6dade2ce-523b-4a38-a374-2ea4a21dec6d",
+          "Id": "b237b01e-005b-4f71-ab88-9833fa3371cc",
           "Name": "Out1",
-          "Type": "Color"
+          "Type": "Color",
+          "Priority": 0
         }
       ],
       "Identifier": "2",
@@ -93,6 +115,7 @@
     },
     {
       "_class": "TextureCoord",
+      "__version": 1,
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
       "Identifier": "3",
@@ -101,6 +124,7 @@
     },
     {
       "_class": "Lerp",
+      "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
       "Fraction": 0.2755102,
@@ -125,12 +149,22 @@
     },
     {
       "_class": "Float4",
-      "PortOrder": 0,
+      "__version": 1,
       "Value": "0.31667,0,1,1",
       "Name": "",
       "IsAttribute": false,
       "UI": {
-        "Type": "Color"
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
       },
       "Identifier": "5",
       "Position": "-888,-276",
@@ -138,6 +172,7 @@
     },
     {
       "_class": "VoronoiNoise",
+      "__version": 1,
       "AngleOffset": 3.099682,
       "CellDensity": 61.599304,
       "Worley": false,
@@ -147,6 +182,7 @@
     },
     {
       "_class": "ReroutePlus",
+      "__version": 1,
       "Comment": null,
       "Identifier": "7",
       "Position": "-660,24",
@@ -159,6 +195,7 @@
     },
     {
       "_class": "Lerp",
+      "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
       "Fraction": 0.2755102,

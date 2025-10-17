@@ -1,0 +1,114 @@
+{
+  "__version": 2,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/viewportnode.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-228,-24",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ViewportNode",
+      "__version": 1,
+      "Identifier": "1",
+      "Position": "-696,72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "Value": "1,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-696,-252",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "Value": "0,1,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-696,-96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2",
+      "__version": 1,
+      "Min": "0,0",
+      "Max": "1,1",
+      "Value": "0,0",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-696,240",
+      "HandleOffsets": {}
+    }
+  ]
+}

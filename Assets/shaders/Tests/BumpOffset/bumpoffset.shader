@@ -6,15 +6,15 @@ HEADER
 
 FEATURES
 {
-    #include "common/features.hlsl"
+	#include "common/features.hlsl"
 
 }
 
 MODES
 {
-    Forward();
-    Depth();
-    ToolsShadingComplexity( "tools_shading_complexity.shader" );
+	Forward();
+	Depth();
+	ToolsShadingComplexity( "tools_shading_complexity.shader" );
 }
 
 COMMON
@@ -26,25 +26,23 @@ COMMON
 	#define S_TRANSLUCENT 0
 	#endif
 	
-    #include "common/shared.hlsl"
-    #include "common/gradient.hlsl"
-    #include "procedural.hlsl"
-    
-    #define S_UV2 1
-    #define CUSTOM_MATERIAL_INPUTS
+	#include "common/shared.hlsl"
+	#include "common/gradient.hlsl"
+	#include "procedural.hlsl"
+
+	#define S_UV2 1
 }
 
 struct VertexInput
 {
-    #include "common/vertexinput.hlsl"
+	#include "common/vertexinput.hlsl"
 	float4 vColor : COLOR0 < Semantic( Color ); >;
-	uint vInstanceID : SV_InstanceID;
 	
 };
 
 struct PixelInput
 {
-    #include "common/pixelinput.hlsl"
+	#include "common/pixelinput.hlsl"
 	float3 vPositionOs : TEXCOORD14;
 	float3 vNormalOs : TEXCOORD15;
 	float4 vTangentUOs_flTangentVSign : TANGENT	< Semantic( TangentU_SignV ); >;
@@ -53,39 +51,34 @@ struct PixelInput
 	#if ( PROGRAM == VFX_PROGRAM_PS )
 		bool vFrontFacing : SV_IsFrontFace;
 	#endif
-	uint vInstanceID : SV_InstanceID;
 	
 };
 
 VS
 {
-    #include "common/vertex.hlsl"
+	#include "common/vertex.hlsl"
 
-    PixelInput MainVs( VertexInput v )
-    {
+	PixelInput MainVs( VertexInput v )
+	{
 		
 		PixelInput i = ProcessVertex( v );
 		i.vPositionOs = v.vPositionOs.xyz;
 		
 		i.vColor = v.vColor;
-		i.vInstanceID = v.vInstanceID;
 		
-		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v );
+		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
 		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 				
-		float l_0 = i.vInstanceID;
-		i.vPositionWs.xyz += float3( l_0, l_0, l_0 );
-		i.vPositionPs.xyzw = Position3WsToPs( i.vPositionWs.xyz );
 		return FinalizeVertex( i );
 		
-    }
+	}
 }
 
 PS
 {
-    #include "common/pixel.hlsl"
+	#include "common/pixel.hlsl"
 	
 	SamplerState g_sTestSampler < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
 	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
@@ -101,14 +94,15 @@ PS
 	bool g_bBumpOffset < UiGroup( ",0/,0/0" ); Default( 1 ); >;
 	float g_flRoughness < UiGroup( ",0/,0/0" ); Default1( 0.124 ); Range1( 0, 1 ); >;
 		
+	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{
-	    float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
-	    vNormalWs = normalize( vNormalWs.xyz );
-	   	float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
+		float3 vCameraToPositionDirWs = CalculateCameraToPositionDirWs( vPosition.xyz );
+		vNormalWs = normalize( vNormalWs.xyz );
+		float3 vTangentViewVector = Vec3WsToTs( vCameraToPositionDirWs.xyz, vNormalWs.xyz, vTangentUWs.xyz, vTangentVWs.xyz );
 		
 		// Result
 		return vTangentViewVector.xyz;
@@ -116,20 +110,18 @@ PS
 	
 	float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane, float2 vTextureCoords, float3 vTangentViewVector )
 	{
-		float l_10 = flReferencePlane - flHeightMap;
-		float2 l_11 = vTangentViewVector.xy * float2( l_10, l_10 );
-		
-		float2 l_13 = l_11 * float2( flDepthScale, flDepthScale );
-		float2 l_14 = l_13 * float2( 0.1f, 0.1f );
-		float2 l_15 = vTextureCoords.xy + l_14;
+		float flHeight = flReferencePlane - flHeightMap;
 	
-		return l_15;
+		float2 vUVOffset = vTangentViewVector.xy * float2( flHeight, flHeight ) * float2( flDepthScale, flDepthScale ) * float2( 0.1f, 0.1f );
+		float2 vDistortedUV = vTextureCoords.xy + vUVOffset;
+	
+		return vDistortedUV;
 	}
 	
-    float4 MainPs( PixelInput i ) : SV_Target0
-    {
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
 		
-		Material m = Material::Init();
+		Material m = Material::Init( i );
 		m.Albedo = float3( 1, 1, 1 );
 		m.Normal = float3( 0, 0, 1 );
 		m.Roughness = 1;
@@ -173,6 +165,6 @@ PS
 		m.WorldTangentV = i.vTangentVWs;
 		m.TextureCoords = i.vTextureCoords.xy;
 				
-		return ShadingModelStandard::Shade( i, m );
-    }
+		return ShadingModelStandard::Shade( m );
+	}
 }

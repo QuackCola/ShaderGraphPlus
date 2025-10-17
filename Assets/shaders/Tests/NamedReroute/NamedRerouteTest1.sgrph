@@ -1,0 +1,144 @@
+{
+  "__version": 2,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/namedreroute/namedreroutetest1.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "60,-180",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "NamedRerouteDeclarationNode",
+      "__version": 1,
+      "Name": "Magenta",
+      "Identifier": "1",
+      "Position": "-708,-180",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "NamedRerouteNode",
+      "__version": 1,
+      "Name": "CursedThing",
+      "Identifier": "2",
+      "Position": "-132,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "1,0,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-900,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "1,0,0,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-900,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "NamedRerouteDeclarationNode",
+      "__version": 1,
+      "Name": "Red",
+      "Identifier": "5",
+      "Position": "-708,-348",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "NamedRerouteDeclarationNode",
+      "__version": 1,
+      "Name": "CursedThing",
+      "Identifier": "6",
+      "Position": "-324,-264",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "NamedRerouteNode",
+      "__version": 1,
+      "Name": "Magenta",
+      "Identifier": "7",
+      "Position": "-516,-264",
+      "HandleOffsets": {}
+    }
+  ]
+}

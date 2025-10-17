@@ -1,0 +1,959 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": null,
+  "Model": null,
+  "Title": null,
+  "Description": null,
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "Domain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "ViewMode": "Perspective",
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "1464,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "AppendVector",
+      "__version": 1,
+      "Identifier": "1",
+      "Position": "-1020,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CombineVector",
+      "__version": 1,
+      "DefaultX": 0,
+      "DefaultY": 0,
+      "DefaultZ": 0,
+      "DefaultW": 0,
+      "Identifier": "2",
+      "Position": "-1020,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": true,
+      "Identifier": "3",
+      "Position": "-1020,96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "4",
+      "Position": "-852,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SwizzleVector",
+      "__version": 1,
+      "RedOut": "Red",
+      "GreenOut": "Green",
+      "BlueOut": "Blue",
+      "AlphaOut": "Alpha",
+      "Identifier": "5",
+      "Position": "-852,96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleRoughnessGBufferNode",
+      "__version": 1,
+      "Identifier": "6",
+      "Position": "-564,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleNormalGBufferNode",
+      "__version": 1,
+      "Identifier": "7",
+      "Position": "-564,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "IntConstantNode",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "Value": 1,
+      "Identifier": "8",
+      "Position": "-600,648",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "Name": null,
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "9",
+      "Position": "-564,108",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNormalMapTriplanarNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Name": null,
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0.5,0.5,1,1",
+        "DefaultTexture": null,
+        "Extension": "Normal",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "NormalizeNormals",
+        "ColorSpace": "Linear",
+        "ImageFormat": "DXT5",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "10",
+      "Position": "-396,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DTriplanarNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Name": null,
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "11",
+      "Position": "-228,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTextureCubeNode",
+      "__version": 1,
+      "Texture": "materials/skybox/skybox_workshop.vtex",
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "12",
+      "Position": "-60,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SamplerNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "IsAttribute": false,
+      "Name": null,
+      "Identifier": "13",
+      "Position": "-960,516",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "BoolParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "32883619-d105-4d76-b978-709639daa109",
+      "Value": false,
+      "Name": "Parameter0",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "14",
+      "Position": "-960,588",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "IntParameterNode",
+      "__version": 2,
+      "Min": 0,
+      "Max": 1,
+      "BlackboardParameterIdentifier": "b1300cd4-d8e0-4951-a446-cdc3b978b3f2",
+      "Value": 1,
+      "Name": "Parameter1",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "15",
+      "Position": "-960,648",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "FloatParameterNode",
+      "__version": 2,
+      "Min": 0,
+      "Max": 1,
+      "BlackboardParameterIdentifier": "bb2d41ad-aa6a-4fb1-b56c-ed94d96aef62",
+      "Value": 1,
+      "Name": "Parameter2",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "16",
+      "Position": "-960,708",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2ParameterNode",
+      "__version": 2,
+      "Min": "0,0",
+      "Max": "1,1",
+      "BlackboardParameterIdentifier": "c53b835b-c34b-4318-8229-2bd048ae2f8f",
+      "Value": "1,1",
+      "Name": "Parameter3",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "17",
+      "Position": "-960,768",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3ParameterNode",
+      "__version": 2,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "BlackboardParameterIdentifier": "30ef0be8-08de-48de-ad90-498d3cee50f7",
+      "Value": "1,1,1",
+      "Name": "Parameter4",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "18",
+      "Position": "-792,744",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4ParameterNode",
+      "__version": 2,
+      "Min": "0,0,0,0",
+      "Max": "1,1,1,1",
+      "BlackboardParameterIdentifier": "3cbad72a-a6cd-4863-b7e4-2c5f41fe2f4b",
+      "Value": "1,1,1,1",
+      "Name": "Parameter5",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "19",
+      "Position": "-960,876",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "be5620b9-0867-46bb-b1a2-d277042caa26",
+      "Value": "1,1,1,1",
+      "Name": "Parameter6",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "20",
+      "Position": "-792,876",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2x2Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "21",
+      "Position": "-432,684",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "FloatConstantNode",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "Step": 0,
+      "Value": 1,
+      "Identifier": "22",
+      "Position": "-600,708",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2ConstantNode",
+      "__version": 1,
+      "Min": "0,0",
+      "Max": "1,1",
+      "Step": 0,
+      "Value": "1,1",
+      "Identifier": "23",
+      "Position": "-600,768",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3ConstantNode",
+      "__version": 1,
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "Step": 0,
+      "Value": "1,1,1",
+      "Identifier": "24",
+      "Position": "-432,744",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4ConstantNode",
+      "__version": 1,
+      "Min": "0,0,0,0",
+      "Max": "1,1,1,1",
+      "Step": 0,
+      "Value": "1,1,1,1",
+      "Identifier": "25",
+      "Position": "-600,876",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "1,1,1,1",
+      "Identifier": "26",
+      "Position": "-432,876",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3x3Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "27",
+      "Position": "-432,624",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4x4Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "28",
+      "Position": "-432,564",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "BoolConstantNode",
+      "__version": 1,
+      "Value": false,
+      "Identifier": "29",
+      "Position": "-600,588",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MathConstantsNode",
+      "__version": 1,
+      "Constant": "PI",
+      "Identifier": "30",
+      "Position": "-252,564",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "PiNode",
+      "__version": 1,
+      "DefaultMultiplier": 0,
+      "Identifier": "31",
+      "Position": "-252,624",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Depth",
+      "__version": 1,
+      "SamplingMode": "Linear",
+      "Identifier": "32",
+      "Position": "756,12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "33",
+      "Position": "36,648",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MatrixConstructionode",
+      "__version": 1,
+      "Mode": "Row",
+      "DefaultM0": "0,0,0,0",
+      "DefaultM1": "0,0,0,0",
+      "DefaultM2": "0,0,0,0",
+      "DefaultM3": "0,0,0,0",
+      "Identifier": "34",
+      "Position": "120,648",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "DDX",
+      "__version": 1,
+      "Precision": "Standard",
+      "Identifier": "35",
+      "Position": "0,732",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SmoothStep",
+      "__version": 1,
+      "DefaultInput": 0,
+      "DefaultEdge1": 0,
+      "DefaultEdge2": 0,
+      "Identifier": "36",
+      "Position": "120,780",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "FuzzyNoise",
+      "__version": 1,
+      "Identifier": "37",
+      "Position": "144,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "GetDimensionsNode",
+      "__version": 1,
+      "Identifier": "38",
+      "Position": "-60,228",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ApplyTrs",
+      "__version": 1,
+      "DefaultTranslation": "0,0,0",
+      "DefaultRotation": "0,0,0,1",
+      "DefaultScale": "1,1,1",
+      "Identifier": "39",
+      "Position": "480,720",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Blend",
+      "__version": 1,
+      "DefaultA": "0,0,0,1",
+      "DefaultB": "1,1,1,1",
+      "Fraction": 0.5,
+      "BlendMode": "Mix",
+      "Clamp": true,
+      "Identifier": "40",
+      "Position": "660,840",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MakeGreyscaleNode",
+      "__version": 1,
+      "Identifier": "41",
+      "Position": "660,720",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "TransformNormal",
+      "__version": 1,
+      "InputSpace": "Tangent",
+      "OutputSpace": "Tangent",
+      "DecodeNormal": true,
+      "Identifier": "42",
+      "Position": "660,780",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Reflection",
+      "__version": 1,
+      "DefaultA": "0,0,0",
+      "DefaultB": "1,1,1",
+      "Identifier": "43",
+      "Position": "660,948",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "FlipBookNode",
+      "__version": 1,
+      "DefaultWidth": 1,
+      "DefaultHeight": 1,
+      "DefaultTileIndex": 1,
+      "DefaultInvertX": false,
+      "DefaultInvertY": false,
+      "Identifier": "44",
+      "Position": "300,48",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomFunction0",
+      "Type": "Inline",
+      "Body": "\nOutFloat3_0 = float3( 1, 0, 1 );",
+      "Source": null,
+      "PixelStageOnly": false,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "e6373a3e-8cdc-4499-8688-eae68d8684b1",
+          "Name": "InFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "0dba452d-86fc-4fa7-858a-e683671b56e6",
+          "Name": "OutFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "45",
+      "Position": "312,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComparisonNode",
+      "__version": 1,
+      "Operator": "Equal",
+      "Identifier": "46",
+      "Position": "336,324",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SwitchNode",
+      "__version": 1,
+      "Name": "",
+      "IsAttribute": true,
+      "Enabled": true,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "47",
+      "Position": "1008,1068",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "VertexColor",
+      "__version": 1,
+      "Identifier": "48",
+      "Position": "756,72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldTangent",
+      "__version": 1,
+      "Identifier": "49",
+      "Position": "756,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldToProjectionNode",
+      "__version": 1,
+      "Identifier": "50",
+      "Position": "936,12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleGradientNode",
+      "__version": 1,
+      "Identifier": "51",
+      "Position": "840,516",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "GradientNode",
+      "__version": 1,
+      "Name": null,
+      "Gradient": {
+        "blend": "Linear",
+        "color": [],
+        "alpha": []
+      },
+      "Identifier": "52",
+      "Position": "792,432",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "BoolParameter",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": false,
+      "Identifier": "32883619-d105-4d76-b978-709639daa109",
+      "Name": "Parameter0"
+    },
+    {
+      "_class": "IntParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 1,
+      "Identifier": "b1300cd4-d8e0-4951-a446-cdc3b978b3f2",
+      "Name": "Parameter1"
+    },
+    {
+      "_class": "FloatParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 1,
+      "Identifier": "bb2d41ad-aa6a-4fb1-b56c-ed94d96aef62",
+      "Name": "Parameter2"
+    },
+    {
+      "_class": "Float2Parameter",
+      "Min": "0,0",
+      "Max": "1,1",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "1,1",
+      "Identifier": "c53b835b-c34b-4318-8229-2bd048ae2f8f",
+      "Name": "Parameter3"
+    },
+    {
+      "_class": "Float3Parameter",
+      "Min": "0,0,0",
+      "Max": "1,1,1",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "1,1,1",
+      "Identifier": "30ef0be8-08de-48de-ad90-498d3cee50f7",
+      "Name": "Parameter4"
+    },
+    {
+      "_class": "Float4Parameter",
+      "Min": "0,0,0,0",
+      "Max": "1,1,1,1",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "1,1,1,1",
+      "Identifier": "3cbad72a-a6cd-4863-b7e4-2c5f41fe2f4b",
+      "Name": "Parameter5"
+    },
+    {
+      "_class": "ColorParameter",
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "1,1,1,1",
+      "Identifier": "be5620b9-0867-46bb-b1a2-d277042caa26",
+      "Name": "Parameter6"
+    }
+  ]
+}

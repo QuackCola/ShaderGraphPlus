@@ -1,0 +1,84 @@
+{
+  "IsSubgraph": true,
+  "Path": "shaders/vanilla/subgraph/myfunction.shdrfunc",
+  "Model": null,
+  "Title": "Example",
+  "Description": "",
+  "Category": "Test",
+  "Icon": null,
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "Domain": "Surface",
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "0,0,0,1",
+    "Tint": "1,1,1,1"
+  },
+  "__version": 1,
+  "nodes": [
+    {
+      "_class": "FunctionResult",
+      "FunctionOutputs": [
+        {
+          "Id": "7714ccb5-bb5c-4b78-bca0-d6080a622ebc",
+          "Name": "SomeLongAssOutput",
+          "Type": "Vector3",
+          "Preview": "None",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "0",
+      "Position": "-0,-12",
+      "HandleOffsets": {},
+      "SomeLongAssOutput": {
+        "Identifier": "2",
+        "Output": "XYZ"
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "InputName": "SomeLongAssInput",
+      "InputDescription": "",
+      "InputType": "Float",
+      "DefaultFloat": 0,
+      "DefaultFloat2": "0,0",
+      "DefaultFloat3": "0,0,0",
+      "DefaultColor": "1,1,1,1",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "1",
+      "Position": "-384,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CombineVector",
+      "DefaultX": 0,
+      "DefaultY": 0,
+      "DefaultZ": 0,
+      "DefaultW": 0,
+      "Identifier": "2",
+      "Position": "-180,-12",
+      "HandleOffsets": {},
+      "X": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "Y": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "Z": {
+        "Identifier": "1",
+        "Output": "Result"
+      },
+      "W": {
+        "Identifier": "1",
+        "Output": "Result"
+      }
+    }
+  ]
+}

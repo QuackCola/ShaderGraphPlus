@@ -9,7 +9,7 @@
   "Icon": null,
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
-  "ShadingModel": "Lit",
+  "ShadingModel": "Unlit",
   "MaterialDomain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
@@ -29,7 +29,7 @@
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
-      "Position": "0,0",
+      "Position": "-60,-108",
       "HandleOffsets": {},
       "Albedo": {
         "Identifier": "2",
@@ -48,8 +48,28 @@
       "Identifier": "1",
       "Position": "-504,-36",
       "HandleOffsets": {},
+      "Width": {
+        "Identifier": "5",
+        "Output": "X",
+        "Subgraph": null
+      },
+      "Height": {
+        "Identifier": "5",
+        "Output": "Y",
+        "Subgraph": null
+      },
       "TileIndex": {
-        "Identifier": "3",
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InvertX": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "InvertY": {
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       }
@@ -61,7 +81,7 @@
         "Version": 2,
         "Name": "",
         "IsAttribute": false,
-        "Filter": "Bilinear",
+        "Filter": "Point",
         "AddressModeU": "Wrap",
         "AddressModeV": "Wrap",
         "AddressModeW": "Wrap",
@@ -93,11 +113,16 @@
         }
       },
       "Identifier": "2",
-      "Position": "-312,-36",
+      "Position": "-264,-108",
       "HandleOffsets": {},
       "Coords": {
         "Identifier": "1",
         "Output": "Result",
+        "Subgraph": null
+      },
+      "Sampler": {
+        "Identifier": "8",
+        "Output": "Sampler",
         "Subgraph": null
       }
     },
@@ -106,7 +131,6 @@
       "__version": 1,
       "Min": 0,
       "Max": 15,
-      "PortOrder": 0,
       "Value": 15,
       "Name": "TileIndex",
       "IsAttribute": true,
@@ -124,7 +148,106 @@
         }
       },
       "Identifier": "3",
-      "Position": "-756,36",
+      "Position": "-744,96",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Time",
+      "__version": 1,
+      "Identifier": "4",
+      "Position": "-744,36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2",
+      "__version": 1,
+      "Min": "2,2",
+      "Max": "64,64",
+      "Value": "4,4",
+      "Name": "SheetRowAndColumnAmount",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Slider",
+        "Step": 1,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "5",
+      "Position": "-744,-72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Bool",
+      "__version": 1,
+      "Value": false,
+      "Name": "InvertSheetX",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "6",
+      "Position": "-744,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Bool",
+      "__version": 1,
+      "Value": false,
+      "Name": "InvertSheetY",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "7",
+      "Position": "-744,216",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SamplerNode",
+      "__version": 1,
+      "SamplerState": {
+        "Version": 2,
+        "Name": "IconSheetSampler",
+        "IsAttribute": false,
+        "Filter": "Point",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "IsAttribute": false,
+      "Name": null,
+      "Identifier": "8",
+      "Position": "-504,-108",
       "HandleOffsets": {}
     }
   ]

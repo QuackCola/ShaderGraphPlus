@@ -58,7 +58,7 @@
           "__version": 1,
           "Flags": 0,
           "Name": "Cube",
-          "Position": "-244.862,-1314.003,30.00339",
+          "Position": "-73.08632,178.2457,37.6907",
           "Rotation": "0,0,0,1",
           "Scale": "1,1,1",
           "Tags": "",
@@ -76,7 +76,7 @@
               "CreateAttachments": false,
               "LodOverride": null,
               "MaterialGroup": null,
-              "MaterialOverride": "shaders/tests/bumpoffset/bump_offset.vmat",
+              "MaterialOverride": "shaders/tests/depthfade/depthfade.vmat",
               "Materials": null,
               "Model": "models/dev/box.vmdl",
               "OnComponentDestroy": null,
@@ -230,9 +230,9 @@
         "245c128b-6420-4e5a-823a-b67d3bcbcbe5": "f3650158-324b-49b0-96e1-2c791bb6d96d",
         "fb4d29b2-dddc-448d-954c-0e07f02480b0": "4a156245-f265-4d22-9316-9cf77d851be7",
         "1ec5dce3-e535-4790-9484-d7c7c90bca8e": "9f4da754-5cb7-4c71-9c28-f7d22045ad7b",
-        "261ab341-31cb-4b27-8042-165cc5cf0333": "1a33bcba-2414-4f0e-94ea-a575b3a498e2",
-        "526ca88c-2b6f-4aff-8ce5-6a75f74c62b6": "b8f7147c-8400-46ba-abc8-c8e57e469b36",
-        "cf14d277-667c-4981-b51c-9091701b157b": "f0a12a51-2ae1-4565-9a0e-dae34d504a41"
+        "9c89b885-d602-4657-a7ac-00c6bfe5d077": "932068c5-2c70-4ef1-b98d-ca9ecf720540",
+        "e75a72e2-c101-4082-9069-a97bdd816125": "c95b9a93-a9f6-44c4-a3cc-eaf277ef4477",
+        "e7a49752-6315-4e57-8a66-530f024c9d80": "ff458e22-e3bb-40e5-8e16-d5f309fbfbdb"
       }
     },
     {
@@ -454,7 +454,9 @@
           "__type": "Sandbox.ModelPhysics",
           "__guid": "a8a4bd47-6f48-4871-8be8-ecb68c4e87f7",
           "__enabled": false,
+          "Bodies": [],
           "IgnoreRoot": false,
+          "Joints": [],
           "Locking": {
             "X": false,
             "Y": false,
@@ -471,6 +473,7 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
+          "PhysicsWereCreated": false,
           "Renderer": {
             "_type": "component",
             "component_id": "d8e55651-20e9-4d10-ad59-30b91a9e11d0",

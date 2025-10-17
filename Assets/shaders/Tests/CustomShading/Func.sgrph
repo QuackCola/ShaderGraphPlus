@@ -1,0 +1,298 @@
+{
+  "__version": 2,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/customshading/func.sgrph",
+  "Model": null,
+  "Title": null,
+  "Description": "",
+  "Category": null,
+  "Icon": null,
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": false,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "156,-348",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "OutFloat3_0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomFunction0",
+      "Type": "File",
+      "Body": "\nOutFloat3_0 = float3( 1, 0, 1 );",
+      "Source": "Tests/CustomShading/FuncTest.hlsl",
+      "PixelStageOnly": false,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "ba3f02f9-7fd7-4e18-9625-1f692bdf8433",
+          "Name": "InFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "53e35d16-132b-47fe-bd58-90ea7e3a5f2d",
+          "Name": "InFloat3_1",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "5a69d0f5-b04e-4f36-84bc-751f384d5ead",
+          "Name": "OutFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        },
+        {
+          "Id": "6240239b-8c9f-4d95-a254-630f8c8fa517",
+          "Name": "OutFloat3_1",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "1",
+      "Position": "-108,-288",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CustomFunctionNode",
+      "__version": 1,
+      "Name": "CustomFunction0",
+      "Type": "File",
+      "Body": "\nOutFloat3_0 = float3( 1, 0, 1 );",
+      "Source": "Tests/CustomShading/ass.hlsl",
+      "PixelStageOnly": false,
+      "CodeComment": "",
+      "ExpressionInputs": [
+        {
+          "Id": "8e6fb426-7f7f-4608-ab50-312e966f5924",
+          "Name": "InFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "ExpressionOutputs": [
+        {
+          "Id": "40e82469-0cba-4534-ae13-c33eabdc927c",
+          "Name": "OutFloat3_0",
+          "Type": "Vector3",
+          "Priority": 0
+        }
+      ],
+      "Identifier": "2",
+      "Position": "-108,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Arccos",
+      "__version": 1,
+      "Identifier": "3",
+      "Position": "-288,-588",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 1,
+      "Size": "300,192",
+      "Color": "Green",
+      "Title": "Untitled",
+      "Description": "",
+      "Layer": 1,
+      "Identifier": "4",
+      "Position": "372,-636",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "PiNode",
+      "__version": 1,
+      "DefaultMultiplier": 0,
+      "Identifier": "5",
+      "Position": "-456,-468",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MathConstantsNode",
+      "__version": 1,
+      "Constant": "SQRT2",
+      "Identifier": "6",
+      "Position": "-456,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Time",
+      "__version": 1,
+      "Identifier": "7",
+      "Position": "-456,-408",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "RemapValue",
+      "__version": 1,
+      "In": 0.5,
+      "InMin": 0,
+      "InMax": 1,
+      "OutMin": 0,
+      "OutMax": 1,
+      "Clamp": true,
+      "Identifier": "8",
+      "Position": "-456,-684",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3x3Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "9",
+      "Position": "-276,-528",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4x4Node",
+      "__version": 1,
+      "Name": "",
+      "Value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+      "IsAttribute": false,
+      "Identifier": "10",
+      "Position": "-288,-468",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "WorldToProjectionNode",
+      "__version": 1,
+      "Identifier": "11",
+      "Position": "-288,-408",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "OscillatorNode",
+      "__version": 1,
+      "DefaultFrequency": 1,
+      "DefaultPhase": 0,
+      "DefaultStrength": 10,
+      "Identifier": "12",
+      "Position": "-108,-204",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": true,
+      "Identifier": "13",
+      "Position": "-456,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CombineVector",
+      "__version": 1,
+      "DefaultX": 0,
+      "DefaultY": 0,
+      "DefaultZ": 0,
+      "DefaultW": 0,
+      "Identifier": "14",
+      "Position": "-288,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "15",
+      "Position": "-456,-288",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": false,
+      "G": true,
+      "B": true,
+      "A": true,
+      "Identifier": "16",
+      "Position": "168,-720",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "18",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "PortOrder": 0,
+      "Value": 0,
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "17",
+      "Position": "-240,-768",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4",
+      "__version": 1,
+      "PortOrder": 0,
+      "Value": "1,1,1,1",
+      "Name": "",
+      "IsAttribute": false,
+      "UI": {
+        "Type": "Color",
+        "Step": 0,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "18",
+      "Position": "-96,-672",
+      "HandleOffsets": {}
+    }
+  ]
+}

@@ -12,7 +12,8 @@ Libraries/ShaderGraphPlus/Editor/obj/*
 Libraries/ShaderGraphPlus/Editor/Properties/*
 **/Editor/Properties/*
 *.sln
-
+*.slnx
+ 
 # Auto-generated code editor files
 .vs/*
 .vscode/*
@@ -32,7 +33,6 @@ code/Properties/*
 *.los
 *.vpk
 *launchSettings.json
-*.sln
 
 *idea
 
@@ -55,3 +55,4 @@ thumb_wide.psd
 *.py
 *.graphite
 /Screenshots
+/Libraries/carsonk.editor_all_chat

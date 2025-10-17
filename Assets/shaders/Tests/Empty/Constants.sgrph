@@ -1,0 +1,112 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/empty/constants.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float3ConstantNode",
+      "__version": 1,
+      "Min": "0,0,0",
+      "Max": "2,2,2",
+      "Step": 1,
+      "Value": "1,1,1",
+      "Identifier": "1",
+      "Position": "-516,-12",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4ConstantNode",
+      "__version": 1,
+      "Min": "0,-12,-12,0",
+      "Max": "12,1,1,12",
+      "Step": 4,
+      "Value": "12,12,12,12",
+      "Identifier": "2",
+      "Position": "-516,120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float2ConstantNode",
+      "__version": 1,
+      "Min": "0,0",
+      "Max": "1,1",
+      "Step": 0,
+      "Value": "0,0",
+      "Identifier": "3",
+      "Position": "-516,-120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "FloatConstantNode",
+      "__version": 1,
+      "Min": 0,
+      "Max": 12,
+      "Step": 1,
+      "Value": 12,
+      "Identifier": "4",
+      "Position": "-516,-192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "IntConstantNode",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "Value": 0,
+      "Identifier": "5",
+      "Position": "-516,-264",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "BoolConstantNode",
+      "__version": 1,
+      "Value": false,
+      "Identifier": "6",
+      "Position": "-516,-324",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "1,1,1,1",
+      "Identifier": "7",
+      "Position": "-516,276",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": []
+}

@@ -1,5 +1,5 @@
 {
-  "__version": 1,
+  "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/shaderfunctions/jittertest.sgrph",
   "Model": "models/fauna/hare/hare.vmdl",
@@ -51,7 +51,7 @@
       "GridSize": {
         "Identifier": "2",
         "Output": "Result",
-        "Subgraph": "shaders/shaderfunctions/vertexjitter.sgpfunc"
+        "Subgraph": null
       }
     },
     {
@@ -59,7 +59,6 @@
       "__version": 1,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
       "Value": 0.4,
       "Name": "",
       "IsAttribute": false,

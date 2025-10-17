@@ -1,0 +1,176 @@
+{
+  "__version": 3,
+  "IsSubgraph": true,
+  "Path": "shaders/textureinputtest.sgpfunc",
+  "Model": "",
+  "Title": "TextureInputTest",
+  "Description": "",
+  "Category": "Tests",
+  "Icon": "",
+  "AddToNodeLibrary": true,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "Domain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "ViewMode": "Perspective",
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "SubgraphOutput",
+      "__version": 1,
+      "OutputIdentifier": "a70282f3-7530-4e76-b1c3-0bd6ca700486",
+      "OutputName": "Output0",
+      "OutputDescription": "",
+      "OutputType": "Vector3",
+      "Preview": "Albedo",
+      "PortOrder": 0,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "Output0": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "MySampler",
+        "IsAttribute": false,
+        "Filter": "Point",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": "MyTexture",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "1",
+      "Position": "-432,-48",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ComponentMask",
+      "__version": 1,
+      "R": true,
+      "G": true,
+      "B": true,
+      "A": false,
+      "Identifier": "2",
+      "Position": "-192,0",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphInput",
+      "__version": 1,
+      "BlackboardParameterIdentifier": "b9e0e309-6c96-4137-8119-a0ce7b156841",
+      "InputName": "MyTexture",
+      "InputDescription": null,
+      "InputData": {
+        "__class": "VariantValueTexture2D",
+        "InputType": "Texture2DObject",
+        "Value": {
+          "Name": null,
+          "IsAttribute": false,
+          "DefaultColor": "1,1,1,1",
+          "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+          "Extension": "Color",
+          "CustomExtension": null,
+          "ShowExtension": true,
+          "Processor": "None",
+          "ColorSpace": "Srgb",
+          "ImageFormat": "DXT5",
+          "SrgbRead": true,
+          "Priority": 0,
+          "PrimaryGroup": {
+            "Name": null,
+            "Priority": 0
+          },
+          "SecondaryGroup": {
+            "Name": null,
+            "Priority": 0
+          }
+        }
+      },
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Identifier": "3",
+      "Position": "-672,-60",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "Texture2DSubgraphInputParameter",
+      "Name": "MyTexture",
+      "Description": "",
+      "IsRequired": false,
+      "PortOrder": 0,
+      "Value": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "b9e0e309-6c96-4137-8119-a0ce7b156841"
+    }
+  ]
+}

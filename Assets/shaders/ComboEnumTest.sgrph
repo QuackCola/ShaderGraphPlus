@@ -1,0 +1,128 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": "shaders/comboenumtest.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "MaterialDomain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "-480,72",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "EnumFeatureSwitchNode",
+      "__version": 1,
+      "BlackboardParameterIdentifier": "adcf21ac-e713-4630-a995-3b9cc512a41e",
+      "Feature": {
+        "Options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "Name": "Parameter0",
+        "Description": null,
+        "HeaderName": null
+      },
+      "PreviewIndex": 0,
+      "Identifier": "1",
+      "Position": "-684,72",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "C": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "D": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "1,0,0,1",
+      "Identifier": "2",
+      "Position": "-1044,-180",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "0,0.9897,0,1",
+      "Identifier": "3",
+      "Position": "-1044,-24",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "0,0,1,1",
+      "Identifier": "4",
+      "Position": "-1044,132",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ColorConstantNode",
+      "__version": 1,
+      "Value": "1,1,1,1",
+      "Identifier": "5",
+      "Position": "-1044,300",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "ShaderFeatureEnumParameter",
+      "Name": "Parameter0",
+      "Description": null,
+      "HeaderName": null,
+      "Options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "Identifier": "adcf21ac-e713-4630-a995-3b9cc512a41e"
+    }
+  ]
+}

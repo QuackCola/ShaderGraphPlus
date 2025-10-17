@@ -1,0 +1,131 @@
+﻿
+using Editor;
+
+namespace ShaderGraphPlus;
+
+[CustomEditor( typeof( VariantValueBase ), NamedEditor = "SGP.VariantValue", WithAllAttributes = [typeof( InlineEditorAttribute )] )]
+internal class SubgraphInputVariantValueControlWidget : ControlWidget
+{
+	public override bool SupportsMultiEdit => false;
+
+	SubgraphInput Node;
+
+	private readonly VariantValueWidget VariantProperty;
+	private VariantPropertyCollection InputDefaultCollection;
+
+
+	public SubgraphInputVariantValueControlWidget( SerializedProperty property ) : base( property )
+	{
+		Node = property.Parent.Targets.First() as SubgraphInput;
+
+		Layout = Layout.Column();
+		Layout.Spacing = 2;
+
+		if ( Node == null  )
+		{ 
+			return;
+		}
+
+		if ( Node.InputData == null )
+		{
+			SGPLog.Info( $"Node.DefaultValue is  null setting default to Vector3" );
+			Node.InputData = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
+		}
+
+		property.TryGetAsObject( out var so );
+
+		so.TryGetProperty( nameof( VariantValueBase.InputType ), out var inputType );
+		so.OnPropertyChanged += x =>
+		{
+			OnInputTypeChanged( x.GetValue<SubgraphPortType>() );
+		};
+
+		Layout.Add( Create( inputType ) );
+		Layout.AddSeparator();
+		VariantProperty = new VariantValueWidget( this );
+		Layout.Add( VariantProperty );
+
+		Rebuild();
+	}
+
+	private void OnInputTypeChanged( SubgraphPortType inputType )
+	{
+		switch ( inputType )
+		{
+			case SubgraphPortType.Bool:
+				Node.InputData = new VariantValueBool( false, SubgraphPortType.Bool );
+				break;
+			case SubgraphPortType.Int:
+				Node.InputData = new VariantValueInt( 1, SubgraphPortType.Int );
+				break;
+			case SubgraphPortType.Float:
+				Node.InputData = new VariantValueFloat( 1.0f, SubgraphPortType.Float );
+				break;
+			case SubgraphPortType.Vector2:
+				Node.InputData = new VariantValueVector2( Vector2.One, SubgraphPortType.Vector2 );
+				break;
+			case SubgraphPortType.Vector3:
+				Node.InputData = new VariantValueVector3( Vector3.One, SubgraphPortType.Vector3 );
+				break;
+			case SubgraphPortType.Vector4:
+				Node.InputData = new VariantValueVector4( Vector4.One, SubgraphPortType.Vector4 );
+				break;
+			case SubgraphPortType.Color:
+				Node.InputData = new VariantValueColor( Color.White, SubgraphPortType.Color );
+				break;
+			case SubgraphPortType.SamplerState:
+				Node.InputData = new VariantValueSamplerState( new Sampler(), SubgraphPortType.SamplerState ) ;
+				break;
+			case SubgraphPortType.Texture2DObject:
+				Node.InputData = new VariantValueTexture2D( new TextureInput(), SubgraphPortType.Texture2DObject );
+				break;
+		}
+
+		Rebuild();
+	}
+
+	//protected override void OnPaint()
+	//{
+	//
+	//}
+
+	private void Rebuild()
+	{
+		VariantProperty.SetNode( Node );
+
+		InputDefaultCollection = new VariantPropertyCollection( this, Node );
+		VariantProperty.SetAccessor( InputDefaultCollection );
+		InputDefaultCollection.OnPropertyUpdate += OnDefaultValuePropertyUpdated;
+	}
+
+	private void OnDefaultValuePropertyUpdated()
+	{
+		Node.Update();
+		Node.IsDirty = true;
+	}
+
+	class VariantPropertyCollection : VariantValueWidget.IAccessor
+	{
+		private SubgraphInput Node;
+		private SubgraphInputVariantValueControlWidget Parent;
+		public SerializedProperty ParentProperty => null;
+		public Action OnPropertyUpdate { get; set; }
+	
+		public  VariantPropertyCollection( SubgraphInputVariantValueControlWidget parent, SubgraphInput node )
+		{
+			Parent = parent;
+			Node = node;
+		}
+	
+		public T GetValue<T>( )
+		{
+			return Node.GetDefaultValue<T>();
+		}
+
+		public void SetValue<T>( T value )
+		{
+			Node?.SetDefaultValue<T>( value );
+			OnPropertyUpdate?.Invoke();
+		}
+	}
+}

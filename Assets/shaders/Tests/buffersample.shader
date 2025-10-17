@@ -31,7 +31,6 @@ COMMON
 	#include "procedural.hlsl"
 
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
@@ -65,7 +64,6 @@ VS
 		PixelInput i;
 		
 		i.vColor = v.vColor;
-		
 		
 		i.vPositionPs = float4( v.vPositionOs.xy, 0.0f, 1.0f );
 		i.vPositionWs = float3( v.vTexCoord, 0.0f );

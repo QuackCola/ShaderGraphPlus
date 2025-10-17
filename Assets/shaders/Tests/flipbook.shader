@@ -31,7 +31,6 @@ COMMON
 	#include "procedural.hlsl"
 
 	#define S_UV2 1
-	#define CUSTOM_MATERIAL_INPUTS
 }
 
 struct VertexInput
@@ -67,9 +66,8 @@ VS
 		
 		i.vColor = v.vColor;
 		
-		//ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v ); 
-		//i.vTintColor = extraShaderData.vTint; // TODO : figure out what same replaced this with.
-		i.vTintColor = float4( 0.0f, 0.0f, 0.0f, 1.0f );
+		ExtraShaderData_t extraShaderData = GetExtraPerInstanceShaderData( v.nInstanceTransformID );
+		i.vTintColor = extraShaderData.vTint;
 		
 		VS_DecodeObjectSpaceNormalAndTangent( v, i.vNormalOs, i.vTangentUOs_flTangentVSign );
 				
@@ -82,12 +80,12 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	SamplerState g_sSampler0 < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
+	SamplerState g_sIconSheetSampler < Filter( POINT ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
 	CreateInputTexture2D( IconSheet, Srgb, 8, "None", "_color", ",0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
 	Texture2D g_tIconSheet < Channel( RGBA, Box( IconSheet ), Srgb ); OutputFormat( DXT5 ); SrgbRead( True ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tIconSheet )
-	TextureAttribute( RepresentativeTexture, g_tIconSheet )
-	int g_nTileIndex < Attribute( "TileIndex" ); Default1( 15 ); >;
+	float2 g_vSheetRowAndColumnAmount < UiType( Slider ); UiStep( 1 ); UiGroup( ",0/,0/0" ); Default2( 4,4 ); Range2( 2,2, 64,64 ); >;
+	bool g_bInvertSheetX < UiGroup( ",0/,0/0" ); Default( 0 ); >;
+	bool g_bInvertSheetY < UiGroup( ",0/,0/0" ); Default( 0 ); >;
 		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
@@ -106,42 +104,15 @@ PS
 	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
+
 		
-		Material m = Material::Init();
-		m.Albedo = float3( 1, 1, 1 );
-		m.Normal = float3( 0, 0, 1 );
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		m.TintMask = 1;
-		m.Opacity = 1;
-		m.Emission = float3( 0, 0, 0 );
-		m.Transmission = 0;
+		float2 l_0 = g_vSheetRowAndColumnAmount;
+		bool l_1 = g_bInvertSheetX;
+		bool l_2 = g_bInvertSheetY;
+		float2 l_3 = FlipBook( i.vTextureCoords.xy, l_0.x, l_0.y, g_flTime, l_1, l_2 );
+		float4 l_4 = g_tIconSheet.Sample( g_sIconSheetSampler,l_3 );
 		
-		int l_0 = g_nTileIndex;
-		float2 l_1 = FlipBook( i.vTextureCoords.xy, 4, 4, l_0, false, false );
-		float4 l_2 = g_tIconSheet.Sample( g_sSampler0,l_1 );
-		
-		m.Albedo = l_2.xyz;
-		m.Opacity = 1;
-		m.Roughness = 1;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
-		
-		
-		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
-		m.Roughness = saturate( m.Roughness );
-		m.Metalness = saturate( m.Metalness );
-		m.Opacity = saturate( m.Opacity );
-		
-		// Result node takes normal as tangent space, convert it to world space now
-		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
-		
-		// for some toolvis shit
-		m.WorldTangentU = i.vTangentUWs;
-		m.WorldTangentV = i.vTangentVWs;
-		m.TextureCoords = i.vTextureCoords.xy;
-				
-		return ShadingModelStandard::Shade( i, m );
+
+		return float4( l_4.xyz, 1 );
 	}
 }

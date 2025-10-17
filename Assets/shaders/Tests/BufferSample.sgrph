@@ -1,5 +1,5 @@
 {
-  "__version": 1,
+  "__version": 2,
   "IsSubgraph": false,
   "Path": "shaders/tests/buffersample.sgrph",
   "Model": "models/props/couch/couch.vmdl",
@@ -40,7 +40,6 @@
     {
       "_class": "Float4",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "0.83256,0.0697,0.0697,1",
       "Name": "",
       "IsAttribute": false,
