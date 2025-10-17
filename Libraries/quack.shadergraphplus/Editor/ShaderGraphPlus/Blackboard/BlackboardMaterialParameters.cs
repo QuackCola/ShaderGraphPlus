@@ -325,9 +325,6 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 [Title( "Sampler State" ), Icon( "colorize" ), Order( 8 )]
 public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 {
-	[Hide, JsonIgnore, Browsable( false )]
-	public override int MenuOrder => 8;
-
 	public SamplerStateParameter() : base()
 	{
 		Value = new Sampler();
