@@ -6,7 +6,7 @@ internal class BlackboardParameterList : ListView
 {
 	public BlackboardParameterList( Widget widget) : base( widget )
 	{
-		Margin = 8;
+		Margin = 6;
 		ItemSpacing = 4;
 		ItemSize = new Vector2( 0, 24 );
 		AcceptDrops = false;
@@ -39,7 +39,6 @@ internal class BlackboardParameterList : ListView
 		Paint.ClearPen();
 		Paint.SetBrush( itemColor );
 		Paint.DrawRect( rect, Theme.ControlRadius );
-
 
 		var iconRect = rect.Shrink( 4, 0, 0, 0 );
 		Paint.SetPen( typeColor );
