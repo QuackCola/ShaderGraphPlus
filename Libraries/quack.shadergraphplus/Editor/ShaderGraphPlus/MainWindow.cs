@@ -183,7 +183,7 @@ public class MainWindow : DockWindow
 		var oldTarget = _properties.Target;
 		_properties.Target = node != null ? node : _graph;
 
-		if ( _properties.Target is IBlackboardSyncableNode blackboardSyncableTest )
+		if ( _properties.Target is not BooleanFeatureSwitchNode && _properties.Target is not EnumFeatureSwitchNode && _properties.Target is IBlackboardSyncableNode blackboardSyncableTest )
 		{
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
