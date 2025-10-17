@@ -20,6 +20,9 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 		}
 	}
 
+	[Hide, JsonIgnore, Browsable( false )]
+	public override Color NodeTitleColor { get; set; } = PrimaryNodeHeaderColors.LogicNode;
+
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
 
