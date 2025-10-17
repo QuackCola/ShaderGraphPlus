@@ -11,12 +11,12 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 	public BoolParameter() : base() 
 	{ 
 		Value = false;
-		UI = UI with { ShowStepProperty = false };
+		UI = new ParameterUI { ShowTypeProperty = false, ShowStepProperty = false };
 	}
 
 	public BoolParameter( bool value ) : base( value )
 	{
-		UI = UI with { ShowStepProperty = false };
+		UI = new ParameterUI { ShowTypeProperty = false, ShowStepProperty = false }; 
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -26,8 +26,8 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI with { ShowStepProperty = false },
 			IsAttribute = IsAttribute,
+			UI = UI with { ShowTypeProperty = false, ShowStepProperty = false },
 		};
 	}
 }
@@ -46,14 +46,14 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 		Value = 1;
 		Min = 0;
 		Max = 1;
-		UI = UI with { ShowStepProperty = false };
+		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
 	}
 
 	public IntParameter( int value ) : base( value )
 	{
 		Min = 0;
 		Max = 1;
-		UI = UI with { ShowStepProperty = false };
+		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -83,12 +83,14 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public FloatParameter( float value ) : base( value )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -98,8 +100,8 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI,
 		};
 	}
 }
@@ -118,12 +120,14 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 		Value = Vector2.One;
 		Min = Vector2.Zero;
 		Max = Vector2.One;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public Float2Parameter( Vector2 value ) : base( value )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -133,8 +137,8 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI,
 		};
 	}
 }
@@ -153,12 +157,14 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 		Value = Vector3.One;
 		Min = Vector3.Zero;
 		Max = Vector3.One;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public Float3Parameter( Vector3 value ) : base( value )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
+		UI = new ParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -168,8 +174,8 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI,
 		};
 	}
 }
@@ -205,8 +211,8 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI,
 		};
 	}
 }
