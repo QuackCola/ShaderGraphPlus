@@ -1,7 +1,6 @@
 ﻿using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Utilities;
 using Assert = ShaderGraphPlus.Diagnostics.Assert;
-
 using NodeEditorPlus;
 using GraphView = NodeEditorPlus.GraphView;
 using NodeUI = NodeEditorPlus.NodeUI;
@@ -95,57 +94,4 @@ public abstract class VoidFunctionBase : ShaderNodePlus, IVoidFunctionNode
 
 		Assert.CheckAreNotEqual( functionName, "", $"functionName is empty!" );
 	}
-
-	/*
-	internal static IEnumerable<PropertyInfo> GetNodeInputProperties( Type type )
-	{
-		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-			.Where( property => property.GetSetMethod() != null &&
-			property.PropertyType == typeof( NodeInput ) &&
-			property.IsDefined( typeof( BaseNodePlus.InputAttribute ), false ) &&
-			property.IsDefined( typeof( VoidFunctionInputArgumentAttribute ), false )
-			);
-	}
-
-	internal static IEnumerable<PropertyInfo> GetNodeVoidFunctionOutputProperties( Type type )
-	{
-		return type.GetProperties( BindingFlags.Instance | BindingFlags.Public )
-			.Where( property => property.GetSetMethod() != null &&
-			property.PropertyType == typeof( string ) &&
-			property.IsDefined( typeof( VoidFunctionOutputArgumentAttribute ), false ) );
-	}
-
-	[System.AttributeUsage( AttributeTargets.Property )]
-	public sealed class VoidFunctionInputArgumentAttribute : Attribute
-	{
-		public string HLSLDataType;
-		public string VarName;
-		public string VarDefault;
-
-		public VoidFunctionInputArgumentAttribute( ResultType resultType, string varName, string varDefault ) : this( resultType, varName )
-		{
-			VarDefault = varDefault;
-		}
-
-		public VoidFunctionInputArgumentAttribute( ResultType resultType, string varName )
-		{
-			HLSLDataType = resultType.GetHLSLDataType();
-			VarName = varName;
-		}
-
-	}
-
-	[System.AttributeUsage( AttributeTargets.Property )]
-	public sealed class VoidFunctionOutputArgumentAttribute : Attribute
-	{
-		public string HLSLDataType;
-		public string VarName;
-
-		public VoidFunctionOutputArgumentAttribute( ResultType resultType, string varName )
-		{
-			HLSLDataType = resultType.GetHLSLDataType();
-			VarName = varName;
-		}
-	}
-	*/
 }
