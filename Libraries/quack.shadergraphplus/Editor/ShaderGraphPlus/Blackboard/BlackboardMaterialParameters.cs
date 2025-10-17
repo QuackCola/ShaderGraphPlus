@@ -11,11 +11,12 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 	public BoolParameter() : base() 
 	{ 
 		Value = false;
+		UI = UI with { ShowStepProperty = false };
 	}
 
 	public BoolParameter( bool value ) : base( value )
 	{
-
+		UI = UI with { ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -25,7 +26,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
+			UI = UI with { ShowStepProperty = false },
 			IsAttribute = IsAttribute,
 		};
 	}
@@ -45,12 +46,14 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 		Value = 1;
 		Min = 0;
 		Max = 1;
+		UI = UI with { ShowStepProperty = false };
 	}
 
 	public IntParameter( int value ) : base( value )
 	{
 		Min = 0;
 		Max = 1;
+		UI = UI with { ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -60,7 +63,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
+			UI = UI with { ShowStepProperty = false },
 			IsAttribute = IsAttribute,
 		};
 	}
@@ -217,12 +220,12 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 	public ColorParameter() : base()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false, ShowStepProperty = false };
 	}
 
 	public ColorParameter( Color value ) : base( value )
 	{
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
+		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false, ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
