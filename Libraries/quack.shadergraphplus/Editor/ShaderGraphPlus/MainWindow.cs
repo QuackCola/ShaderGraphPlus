@@ -424,7 +424,7 @@ public class MainWindow : DockWindow
 
 		if ( exitCode == 0 && _shaderCompileErrors.Count == 0 )
 		{
-			Log.Info( $"Compile finished in {_timeSinceCompile}" );
+			SGPLog.Info( $"Compile finished in {_timeSinceCompile}" );
 		
 			var shaderPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
 		
@@ -438,7 +438,7 @@ public class MainWindow : DockWindow
 		}
 		else
 		{
-			Log.Error( $"Compile failed in {_timeSinceCompile}" );
+			SGPLog.Error( $"Compile failed in {_timeSinceCompile}" );
 		
 			//_output.GraphIssues = _shaderCompileErrors.Select( x => new GraphCompiler.Issue { Message = x } );
 			//DockManager.RaiseDock( "Output" );
