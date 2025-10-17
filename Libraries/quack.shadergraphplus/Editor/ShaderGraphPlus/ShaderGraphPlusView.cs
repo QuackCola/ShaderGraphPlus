@@ -312,6 +312,9 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
+	// Stop texture2D parameters from being duplicated upon dropping into the graphView from the blackboard.
+	private bool _preventTexture2DParamDupeDragDropHack = false;
+
 	public override void OnDragLeave()
 	{
 		if ( HasDropped )
@@ -321,10 +324,11 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( NodePreview.IsValid() )
 		{
-			if ( NodePreview.Node is Texture2DParameterNode texture2DParameterNode )
+			if ( _preventTexture2DParamDupeDragDropHack && NodePreview.Node is Texture2DParameterNode texture2DParameterNode )
 			{
 				Graph.RemoveParameter( texture2DParameterNode.BlackboardParameterIdentifier );
 				OnNewParameterNodeCreated?.Invoke();
+				_preventTexture2DParamDupeDragDropHack = false;
 			}
 		}
 
@@ -338,7 +342,7 @@ public class ShaderGraphPlusView : GraphView
 			return;
 		}
 
-		if ( NodePreview.Node is Texture2DParameterNode )
+		if ( _preventTexture2DParamDupeDragDropHack && NodePreview.Node is Texture2DParameterNode )
 		{
 			var node = NodePreview.Node as Texture2DParameterNode;
 
@@ -358,6 +362,8 @@ public class ShaderGraphPlusView : GraphView
 
 			Graph.AddParameter( texture2DParameter );
 			OnNewParameterNodeCreated?.Invoke();
+
+			_preventTexture2DParamDupeDragDropHack = false;
 		}
 		else
 		{
@@ -386,6 +392,8 @@ public class ShaderGraphPlusView : GraphView
 							id++;
 						}
 						var parameterName = $"texture{id}";
+
+						_preventTexture2DParamDupeDragDropHack = true;
 
 						return new Texture2DParameterNodeType( EditorTypeLibrary.GetType<Texture2DParameterNode>(), parameterName, asset.AssetPath );
 					}
