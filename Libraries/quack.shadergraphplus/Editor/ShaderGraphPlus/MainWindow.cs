@@ -365,7 +365,9 @@ public class MainWindow : DockWindow
 					{
 						var lines = status.Message.Split( '\n' );
 						foreach ( var line in lines.Where( x => !string.IsNullOrWhiteSpace( x ) ) )
+						{
 							_shaderCompileErrors.Add( line );
+						}
 					}
 				}
 			}
