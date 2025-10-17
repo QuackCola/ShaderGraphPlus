@@ -152,6 +152,19 @@ public sealed partial class GraphCompiler
 		PixelInputs = ShaderTemplate.PixelInputs;
 	}
 
+	public void SetShaderAttribute<T>( string name, T value )
+	{
+		if ( !ShaderResult.Attributes.ContainsKey( name ) )
+		{
+			OnAttribute?.Invoke( name, value, false );
+			ShaderResult.Attributes[name] = value;
+		}
+		else
+		{
+			//SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
+		}
+	}
+
 	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
 	{
 		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
@@ -603,19 +616,6 @@ public sealed partial class GraphCompiler
 		}
 
 		return globalName;
-	}
-
-	public void SetShaderAttribute<T>( string name, T value )
-	{
-		if ( !ShaderResult.Attributes.ContainsKey( name ) )
-		{
-			OnAttribute?.Invoke( name, value, false );
-			ShaderResult.Attributes[name] = value;
-		}
-		else
-		{
-			//SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
-		}
 	}
 
 	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
