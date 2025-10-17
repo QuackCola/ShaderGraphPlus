@@ -1,3 +1,0 @@
-﻿namespace ShaderGraphPlus.Nodes;
-
-

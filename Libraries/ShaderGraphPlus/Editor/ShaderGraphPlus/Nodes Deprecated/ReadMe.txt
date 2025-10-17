@@ -1,1 +1,0 @@
-Nodes in this folder are subject to deletion in future upates to ShaderGraphPlus.
