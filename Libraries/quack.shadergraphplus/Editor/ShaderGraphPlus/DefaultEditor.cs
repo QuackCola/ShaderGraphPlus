@@ -182,14 +182,14 @@ internal static class PaintHelper
 			case Vector2 vec2:
 				return $"x: {vec2.x:F3}, y: {vec2.y:F3}";
 
-			case Vector2Int vec2int:
-				return $"x: {vec2int.x}, y: {vec2int.y}";
+			case Vector2Int vec2Int:
+				return $"x: {vec2Int.x}, y: {vec2Int.y}";
 
 			case Vector3 vec3:
 				return $"x: {vec3.x:F3}, y: {vec3.y:F3}, z: {vec3.z:F3}";
 
-			case Vector3Int vec3int:
-				return $"x: {vec3int.x}, y: {vec3int.y}, z: {vec3int.z}";
+			case Vector3Int vec3Int:
+				return $"x: {vec3Int.x}, y: {vec3Int.y}, z: {vec3Int.z}";
 
 			case Vector4 vec4:
 				return $"x: {vec4.x:F3}, y: {vec4.y:F3}, z: {vec4.z:F3}, w: {vec4.w:F3}";
