@@ -9,7 +9,7 @@ namespace ShaderGraphPlus.Nodes;
 public abstract class MatrixParameterNode<T> : ShaderNodePlus
 {
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantValueNode;
 
 	public string Name { get; set; } = "";
 

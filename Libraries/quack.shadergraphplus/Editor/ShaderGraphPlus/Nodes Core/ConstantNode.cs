@@ -15,10 +15,10 @@ public interface IRangedConstantNode
 
 public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 {
-	public T Value { get; set; }
-
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantValueNode;
+
+	public T Value { get; set; }
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{

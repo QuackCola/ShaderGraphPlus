@@ -16,7 +16,7 @@ public sealed class MathConstantsNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantNode;
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantValueNode;
 
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} ({Constant})";

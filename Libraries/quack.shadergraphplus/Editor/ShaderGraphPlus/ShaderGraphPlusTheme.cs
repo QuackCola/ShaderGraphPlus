@@ -15,7 +15,7 @@ public static class PrimaryNodeHeaderColors
 	public static Color MathNode => Color.Parse( "#394d62" )!.Value;
 	public static Color UnaryNode => MathNode;
 	public static Color BinaryNode => MathNode;
-	public static Color ConstantNode => Color.Parse( "#736024" )!.Value;
+	public static Color ConstantValueNode => Color.Parse( "#736024" )!.Value;
 	public static Color ParameterNode => Color.Parse( "#5d9b31" )!.Value;
 	public static Color StageInputNode => Color.Parse( "#803334" )!.Value;
 	public static Color GlobalVariableNode => Color.Parse( "#803334" )!.Value;
