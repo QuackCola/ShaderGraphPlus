@@ -54,5 +54,5 @@ thumb_wide.psd
 /tools
 *.py
 *.graphite
-/Screenshots
+# /Screenshots
 /Libraries/carsonk.editor_all_chat
