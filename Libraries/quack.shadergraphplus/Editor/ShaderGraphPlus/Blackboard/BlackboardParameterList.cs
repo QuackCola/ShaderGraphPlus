@@ -16,10 +16,14 @@ internal class BlackboardParameterList : ListView
 	{
 		var variable = item.Object as BaseBlackboardParameter;
 		var rect = item.Rect;
-		var rowRect = rect.Grow( 0, 0, 0, 0 );
-
 		var textColor = Theme.TextControl;
 		var itemColor = Theme.ControlBackground;
+		var typeColor = Color.White;
+
+		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( variable.GetType(), out var blackboardConfig ) )
+		{
+			typeColor = blackboardConfig.Color;
+		}
 
 		if ( item.Hovered )
 		{
@@ -34,29 +38,23 @@ internal class BlackboardParameterList : ListView
 
 		Paint.ClearPen();
 		Paint.SetBrush( itemColor );
-		Paint.DrawRect( rect, 3f );
+		Paint.DrawRect( rect, Theme.ControlRadius );
 
-		var typeColor = Color.White;
-		if ( ShaderGraphPlusTheme.BlackboardConfigs.TryGetValue( variable.GetType(), out var blackboardConfig ) )
-		{
-			typeColor = blackboardConfig.Color;
-		}
 
+		var iconRect = rect.Shrink( 4, 0, 0, 0 );
 		Paint.SetPen( typeColor );
-		Paint.DrawIcon( rect.Shrink( 4f ), "circle", 12f, TextFlag.LeftCenter );
+		Paint.DrawIcon( iconRect, "circle", 12f, TextFlag.LeftCenter );
 		rect.Left += 24f;
-
-		var variableName = variable.Name;
 
 		Paint.SetPen( textColor.WithAlpha( 0.7f ) );
 		Paint.SetBrush( textColor.WithAlpha( 0.7f ) );
 
-		Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variableName}", TextFlag.Left | TextFlag.CenterVertically | TextFlag.SingleLine );
-		Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.Right | TextFlag.CenterVertically | TextFlag.SingleLine );
-
-		//Paint.SetPen( Color.Gray.WithAlpha( 0.77f ) );
-		//Paint.SetBrush( Color.Gray.WithAlpha( 0.77f ) );
-		//Paint.DrawRect( rowRect  );
+		var textRect = Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variable.Name}", TextFlag.LeftCenter );
+		var typeRect = Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.RightCenter );
+		
+		//Paint.SetPen( Color.Gray.WithAlpha( 0.25f ) );
+		//Paint.SetBrush( Color.Gray.WithAlpha( 0.25f ) );
+		//Paint.DrawRect( typeRect.Grow( 2 ), Theme.ControlRadius );
 	}
 
 	protected override void OnPaint()
