@@ -504,7 +504,7 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 /// </summary>
 [Title( "Texture 2D" ), Category( "Parameters" ), Icon( "texture" )]
 [InternalNode]
-public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
+public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncableNode, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 2;
@@ -566,7 +566,7 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 /// </summary>
 [Title( "Texture Cube" ), Category( "Parameters" ), Icon( "view_in_ar" )]
 [InternalNode]
-public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncable, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
+public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncableNode, ITextureParameterNodeNew, IMetaDataNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 2;

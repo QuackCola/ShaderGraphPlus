@@ -4,7 +4,7 @@ namespace ShaderGraphPlus.Nodes;
 
 [Title( "Boolean Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
-public sealed class BooleanFeatureSwitchNode : ShaderNodePlus, IBlackboardSyncable
+public sealed class BooleanFeatureSwitchNode : ShaderNodePlus, IBlackboardSyncableNode
 {
 	[Hide]
 	public override int Version => 1;

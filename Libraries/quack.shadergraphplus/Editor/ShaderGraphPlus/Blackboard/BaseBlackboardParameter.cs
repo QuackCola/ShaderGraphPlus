@@ -14,7 +14,7 @@ internal interface IShaderFeatureParameter
 {
 }
 
-internal interface IBlackboardSyncable
+internal interface IBlackboardSyncableNode
 {
 	Guid BlackboardParameterIdentifier { get; set; }
 	void UpdateFromBlackboard( BaseBlackboardParameter parameter );

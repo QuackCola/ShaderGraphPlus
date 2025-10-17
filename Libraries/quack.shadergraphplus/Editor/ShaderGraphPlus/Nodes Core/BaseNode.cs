@@ -147,7 +147,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		var debugInfoHeading = menu.AddHeading( "Node Debug Info" );
 
 		menu.AddWidget( new Label( $"Node ID : {this.Identifier}" ) );
-		if ( this is IBlackboardSyncable blackboardSyncable )
+		if ( this is IBlackboardSyncableNode blackboardSyncable )
 		{
 			menu.AddWidget( new Label( $"Blackboard ID : {blackboardSyncable.BlackboardParameterIdentifier}" ) ).AdjustSize();
 		}

@@ -6,7 +6,7 @@ namespace ShaderGraphPlus.Nodes;
 
 [Title( "Enum Combo Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
 [InternalNode]
-public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncable, IErroringNode
+public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBlackboardSyncableNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 1;

@@ -183,7 +183,7 @@ public class MainWindow : DockWindow
 
 	private void SelectBlackboardParameter()
 	{
-		if ( _properties.Target is IParameterNode parameterNode && parameterNode is IBlackboardSyncable blackboardSyncable )
+		if ( _properties.Target is IParameterNode parameterNode && parameterNode is IBlackboardSyncableNode blackboardSyncable )
 		{
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
@@ -202,7 +202,7 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
-		if ( _properties.Target is ITextureParameterNodeNew iTextureParameterNode && _properties.Target is IBlackboardSyncable blackboardSyncable2 )
+		if ( _properties.Target is ITextureParameterNodeNew iTextureParameterNode && _properties.Target is IBlackboardSyncableNode blackboardSyncable2 )
 		{
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
@@ -227,7 +227,7 @@ public class MainWindow : DockWindow
 				_properties.Target = _graph;
 			}
 		}
-		if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncable syncable )
+		if ( _properties.Target is SubgraphInput subgraphInputNode && subgraphInputNode is IBlackboardSyncableNode syncable )
 		{	
 			// For now only select a blackboard parameter when _graphView only has 1 selection.
 			if ( _graphView.SelectedItems.Count() == 1 )
@@ -1889,7 +1889,7 @@ public class MainWindow : DockWindow
 
 		foreach ( var node in _graph.Nodes )
 		{
-			if ( node is IBlackboardSyncable blackboardSyncable && blackboardSyncable.BlackboardParameterIdentifier == identifier && blackboardSyncable is BaseNodePlus baseNode )
+			if ( node is IBlackboardSyncableNode blackboardSyncable && blackboardSyncable.BlackboardParameterIdentifier == identifier && blackboardSyncable is BaseNodePlus baseNode )
 			{
 				_graph.RemoveNode( baseNode );
 
