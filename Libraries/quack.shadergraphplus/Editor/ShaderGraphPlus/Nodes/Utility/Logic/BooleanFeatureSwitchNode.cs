@@ -18,6 +18,9 @@ public sealed class BooleanFeatureSwitchNode : ShaderNodePlus, IBlackboardSyncab
 		}
 	}
 
+	[Hide, JsonIgnore, Browsable( false )]
+	public override Color NodeTitleColor { get; set; } = PrimaryNodeHeaderColors.LogicNode;
+
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
 
