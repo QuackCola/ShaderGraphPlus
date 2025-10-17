@@ -1,6 +1,6 @@
 ﻿namespace ShaderGraphPlus;
 
-internal interface ISubgraphBlackboardParameter
+internal interface ISubgraphInputBlackboardParameter
 {
 	public string Name { get; set; }
 	public string Description { get; set; }
@@ -131,7 +131,7 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 	}
 }
 
-public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericParameter<T>, ISubgraphBlackboardParameter
+public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericParameter<T>, ISubgraphInputBlackboardParameter
 {
 	[Title( "Input Name" )]
 	public override string Name { get; set; }
