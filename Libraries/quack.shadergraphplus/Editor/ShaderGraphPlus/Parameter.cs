@@ -12,13 +12,13 @@ public struct ParameterUI
 	/// <summary>
 	/// Control type used in the material editor
 	/// </summary>
-	[HideIf( nameof( ShowTypeProperty ), false )]
+	[ShowIf( nameof( ShowTypeProperty ), true )]
 	public UIType Type { get; set; }
 
 	/// <summary>
 	/// Step amount for sliders
 	/// </summary>
-	//[HideIf( nameof( ShowStepProperty ), false )]
+	[ShowIf( nameof( ShowStepProperty ), true )]
 	public float Step { get; set; }
 
 	/// <summary>
@@ -51,10 +51,5 @@ public struct ParameterUI
 	{
 		ShowTypeProperty = true;
 		ShowStepProperty = true;
-	}
-
-	public void SetOrder( int order )
-	{
-		Priority = order;
 	}
 }
