@@ -12,9 +12,7 @@ internal class ClassParameterType : IBlackboardParameterType
 
 	public virtual IBlackboardParameter CreateParameter( ShaderGraphPlus graph, string name = "" )
 	{
-		var parameterInstance = EditorTypeLibrary.Create( Type.Name, Type.TargetType );
-
-		if ( parameterInstance is BaseBlackboardParameter blackboardParameter )
+		if ( EditorTypeLibrary.Create( Type.Name, Type.TargetType ) is BaseBlackboardParameter blackboardParameter )
 		{
 			blackboardParameter.Name = name;
 
