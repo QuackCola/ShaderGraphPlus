@@ -1,0 +1,103 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": "shaders/textureinputfunctest.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "Domain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "ViewMode": "Perspective",
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "1",
+        "Output": "Output0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SubgraphNode",
+      "__version": 1,
+      "SubgraphPath": "shaders/textureinputtest.sgpfunc",
+      "DefaultValues": {
+        "MyTexture": {
+          "Name": "MyDefaultTexture",
+          "IsAttribute": false,
+          "DefaultColor": "1,1,1,1",
+          "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+          "Extension": "Color",
+          "CustomExtension": null,
+          "ShowExtension": true,
+          "Processor": "None",
+          "ColorSpace": "Srgb",
+          "ImageFormat": "DXT5",
+          "SrgbRead": true,
+          "Priority": 0,
+          "PrimaryGroup": {
+            "Name": null,
+            "Priority": 0
+          },
+          "SecondaryGroup": {
+            "Name": null,
+            "Priority": 0
+          }
+        }
+      },
+      "Identifier": "1",
+      "Position": "-528,0",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "Parameter0",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "9ffb953f-96e1-4ae9-89a9-e7e7b298d7ad",
+      "Name": "Parameter0"
+    }
+  ]
+}
