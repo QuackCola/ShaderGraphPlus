@@ -2,10 +2,9 @@
 
 public interface IConstantNode
 {
-	public object GetValue();
 	public string Identifier { get; set; }
+	public object GetValue();
 }
-
 
 public interface IRangedConstant
 {
