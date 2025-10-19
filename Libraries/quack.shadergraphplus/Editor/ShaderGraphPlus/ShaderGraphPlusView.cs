@@ -351,13 +351,12 @@ public class ShaderGraphPlusView : GraphView
 			var texture2DParameter = new Texture2DParameter()
 			{
 				Identifier = Guid.NewGuid(),
-				Name = node.Name,
 				Value = node.UI
 			};
 
 			// Hack
 			{
-				Graph.SetParameterNodeLinkedBlackboardId( node.Name, texture2DParameter.Identifier );
+				Graph.SetParameterNodeLinkedBlackboardId( node.UI.Name, texture2DParameter.Identifier );
 			}
 
 			Graph.AddParameter( texture2DParameter );

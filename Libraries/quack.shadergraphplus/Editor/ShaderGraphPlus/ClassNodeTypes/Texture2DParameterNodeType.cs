@@ -20,7 +20,6 @@ public sealed class Texture2DParameterNodeType : ClassNodeType
 		var shaderGraph = graph as ShaderGraphPlus;
 		if ( node is Texture2DParameterNode texture2DParameterNode )
 		{
-			texture2DParameterNode.Name = Name;
 			texture2DParameterNode.UI = texture2DParameterNode.UI with { Name = Name, DefaultTexture = ImagePath };
 		}
 

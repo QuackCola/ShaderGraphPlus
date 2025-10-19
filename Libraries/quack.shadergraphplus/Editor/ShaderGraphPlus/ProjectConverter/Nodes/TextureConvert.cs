@@ -130,7 +130,6 @@ file static class TextureSamplerConversionFunctions
 			};
 			tex2DParameterNode.BlackboardParameterIdentifier = tex2DParameter.Identifier;
 			tex2DParameterNode.UI = textureInput;
-			tex2DParameterNode.Name = textureInput.Name;
 
 			converter.AddNewNode( tex2DParameterNode );
 

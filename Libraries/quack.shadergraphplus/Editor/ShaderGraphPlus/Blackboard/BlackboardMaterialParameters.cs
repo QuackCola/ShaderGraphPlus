@@ -284,7 +284,6 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 		return new Texture2DParameterNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
-			Name = Name,
 			UI = Value with { Name = Name, Type = TextureType.Tex2D },
 		};
 	}
@@ -317,7 +316,6 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 		return new TextureCubeParameterNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
-			Name = Name,
 			UI = Value with { Name = Name, Type = TextureType.TexCube },
 		};
 	}

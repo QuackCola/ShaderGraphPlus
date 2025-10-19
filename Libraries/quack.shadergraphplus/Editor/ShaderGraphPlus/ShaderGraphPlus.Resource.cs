@@ -169,7 +169,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		{
 			if ( node is Texture2DParameterNode texture2DParam )
 			{
-				if ( texture2DParam.Name == parameterName )
+				if ( texture2DParam.UI.Name == parameterName )
 				{
 					texture2DParam.BlackboardParameterIdentifier = newParameterGuid;
 					return;

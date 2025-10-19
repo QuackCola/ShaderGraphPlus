@@ -59,7 +59,6 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 	[JsonIgnore, Hide] private Asset Asset => _asset;
 	[JsonIgnore, Hide] protected string TexturePath => _texture;
 	[JsonIgnore, Hide] protected bool _isTextureInputValid = false;
-	[JsonIgnore, Hide] public string Name => UI.Name;
 
 	protected void CompileTexture()
 	{

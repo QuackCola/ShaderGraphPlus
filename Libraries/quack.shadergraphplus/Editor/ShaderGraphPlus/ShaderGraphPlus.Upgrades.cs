@@ -335,7 +335,6 @@ public partial class ShaderGraphPlus
 				var parameterNode = newNode01 as Texture2DParameterNode;
 
 				parameterNode.BlackboardParameterIdentifier = parameter.Identifier;
-				parameterNode.Name = textureUI.Name;
 				parameterNode.UI = textureUI;
 
 				AddNode( parameterNode );
@@ -401,7 +400,7 @@ public partial class ShaderGraphPlus
 					newNode0 = new SubgraphInput()
 					{
 						BlackboardParameterIdentifier = blackboardParameter1.Identifier,
-						InputName = textureInput.Name,
+						InputName = newUI1.Name,
 						InputData = new VariantValueTexture2D( textureInput, SubgraphPortType.Texture2DObject )
 					};
 				}
@@ -410,7 +409,7 @@ public partial class ShaderGraphPlus
 					var tex2DParamNode = new Texture2DParameterNode();
 
 					tex2DParamNode.BlackboardParameterIdentifier = blackboardParameter1.Identifier;
-					tex2DParamNode.Name = textureInput.Name;
+					tex2DParamNode.UI = newUI1;
 					AddParameter( blackboardParameter1 );
 
 					newNode0 = tex2DParamNode;
@@ -435,7 +434,7 @@ public partial class ShaderGraphPlus
 				};
 
 				newNode1.BlackboardParameterIdentifier = blackboardParameter2.Identifier;
-				newNode1.Name = newNode1.UI.Name;
+				newNode1.UI = newUI2;
 
 				AddParameter( blackboardParameter2 );
 

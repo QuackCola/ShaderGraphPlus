@@ -1,4 +1,5 @@
 ﻿using NodeEditorPlus;
+using System.Xml.Linq;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
@@ -8,7 +9,6 @@ namespace ShaderGraphPlus.Nodes;
 
 internal interface ITextureParameterNodeNew
 {
-	string Name { get; }
 	TextureInput UI { get; set; }
 }
 
@@ -513,15 +513,12 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	public override bool CanPreview => false;
 
 	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
+	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
-		$"{DisplayInfo.For( this ).Name} ( {Name} )";
+		$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
-
-	[Hide, Browsable( false )]
-	public string Name { get; set; } = "";
 
 	[Hide, Browsable( false )]
 	public TextureInput UI { get; set; } = new TextureInput();
@@ -530,7 +527,7 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { Name = Name, Type = TextureType.Tex2D };
+		UI = UI with { Type = TextureType.Tex2D };
 		var textureGlobal = compiler.ResultTexture( UI );
 		var result = new NodeResult( ResultType.Texture2DObject, "TextureInput", UI );
 
@@ -543,8 +540,7 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	{
 		if ( parameter is Texture2DParameter texture2dParam )
 		{
-			Name = texture2dParam.Name;
-			UI = texture2dParam.Value;
+			UI = texture2dParam.Value with { Name = texture2dParam.Name };
 		}
 	}
 
@@ -575,15 +571,12 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 	public override bool CanPreview => false;
 
 	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
+	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
 		$"{DisplayInfo.For( this ).Name}" :
-		$"{DisplayInfo.For( this ).Name} ( {Name} )";
+		$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
-
-	[Hide, Browsable( false )]
-	public string Name { get; set; } = "";
 
 	[Hide, Browsable( false )]
 	public TextureInput UI { get; set; } = new TextureInput();
@@ -592,7 +585,7 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { Name = Name, Type = TextureType.TexCube };
+		UI = UI with { Type = TextureType.TexCube };
 		compiler.ResultTexture( UI );
 		return new NodeResult( ResultType.TextureCubeObject, "TextureInput", UI );
 	};
@@ -601,8 +594,7 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 	{
 		if ( parameter is TextureCubeParameter textureCubeParam )
 		{
-			Name = textureCubeParam.Name;
-			UI = textureCubeParam.Value;
+			UI = textureCubeParam.Value with { Name = textureCubeParam.Name };
 		}
 	}
 
