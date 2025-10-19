@@ -114,7 +114,7 @@ file static class TextureSamplerExentions
 
 file static class TextureSamplerConversionFunctions
 {
-	internal static void AddParameterFromNamed( ProjectConverter converter, Texture2DSamplerBase texture2DSamplerNode )
+	internal static void CreateTextureParameter( ProjectConverter converter, Texture2DSamplerBase texture2DSamplerNode )
 	{
 		var textureInput = texture2DSamplerNode.UI;
 
@@ -170,11 +170,11 @@ internal class TextureSamplerNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldTextureSamplerNode.Image;
+		//newNode.InternalImage = oldTextureSamplerNode.Image;
 		newNode.SamplerState = oldTextureSamplerNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureSamplerNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -216,11 +216,11 @@ internal class TextureTriplanarNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DTriplanarNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldTextureTriplanarNode.Image;
+		newNode.InternalImage = oldTextureTriplanarNode.Image;
 		newNode.SamplerState = oldTextureTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureTriplanarNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -240,11 +240,11 @@ internal class NormapMapTriplanarNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DNormalMapTriplanarNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldNormapMapTriplanarNode.Image;
+		newNode.InternalImage = oldNormapMapTriplanarNode.Image;
 		newNode.SamplerState = oldNormapMapTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldNormapMapTriplanarNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 
