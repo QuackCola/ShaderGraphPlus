@@ -17,55 +17,6 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
-	[JsonIgnore, Hide, Browsable( false )]
-	public bool ShowUIProperty
-	{
-		get
-		{
-			if ( IsSubgraph )
-				return false;
-
-			if ( IsTextureInputConnected )
-				return false;
-
-			return true;
-		}
-	}
-	
-	[JsonIgnore, Hide, Browsable( false )]
-	public string SyncIdentifier => Identifier;
-
-	//[HideIf( nameof( IsTextureInputConnected ), true )]
-	//[Title( "Default Texture" )]
-	//[ImageAssetPath]
-	[JsonIgnore, Hide, Browsable( false )]
-	public string Image
-	{
-		get => _image;
-		set
-		{
-			_image = value;
-			_asset = AssetSystem.FindByPath( _image );
-
-			if ( _asset == null )
-				return;
-
-			CompileTexture();
-		}
-	}
-
-	[JsonIgnore, Hide] private Asset _asset;
-	[JsonIgnore, Hide] private string _texture;
-	[JsonIgnore, Hide] private string _image;
-	[JsonIgnore, Hide] private string _resourceText;
-
-	[JsonIgnore, Hide] private Asset Asset => _asset;
-	[JsonIgnore, Hide] protected string TexturePath => _texture;
-	[JsonIgnore, Hide] protected bool AlreadyRegisterd { get; set; } = false;
-	[JsonIgnore, Hide] public bool IsTextureInputConnected { get; private set; } = false;
-
-	[JsonIgnore, Hide] public string Name => UI.Name;
-
 	/// <summary>
 	/// Texture2D Object input
 	/// </summary>
@@ -85,20 +36,45 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 		DefaultColor = Color.White,
 	};
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public string InternalImage
+	{
+		get => _internalImage;
+		set
+		{
+			_internalImage = value;
+			_asset = AssetSystem.FindByPath( _internalImage );
+
+			if ( _asset == null )
+				return;
+
+			CompileTexture();
+		}
+	}
+
+	[JsonIgnore, Hide] private Asset _asset;
+	[JsonIgnore, Hide] private string _texture;
+	[JsonIgnore, Hide] private string _internalImage;
+	[JsonIgnore, Hide] private string _resourceText;
+	[JsonIgnore, Hide] private Asset Asset => _asset;
+	[JsonIgnore, Hide] protected string TexturePath => _texture;
+	[JsonIgnore, Hide] protected bool _isTextureInputValid = false;
+	[JsonIgnore, Hide] public string Name => UI.Name;
+
 	protected void CompileTexture()
 	{
 		if ( _asset == null )
 			return;
 
-		if ( string.IsNullOrWhiteSpace( _image ) )
+		if ( string.IsNullOrWhiteSpace( _internalImage ) )
 			return;
 
 		var ui = UI;
-		ui.DefaultTexture = _image;
+		ui.DefaultTexture = _internalImage;
 		UI = ui;
 
 		var resourceText = string.Format( ShaderTemplate.TextureDefinition,
-			_image,
+			_internalImage,
 			UI.ColorSpace,
 			UI.ImageFormat,
 			UI.Processor );
@@ -108,7 +84,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 
 		_resourceText = resourceText;
 
-		var assetPath = $"shadergraphplus/{_image.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
+		var assetPath = $"shadergraphplus/{_internalImage.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
 		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
 		resourcePath = System.IO.Path.Combine( resourcePath, assetPath );
 
@@ -118,7 +94,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 		}
 		else
 		{
-			Log.Warning( $"Failed to compile {_image}" );
+			Log.Warning( $"Failed to compile {_internalImage}" );
 		}
 	}
 
@@ -140,7 +116,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 
 	protected Texture2DSamplerBase() : base()
 	{
-		Image = "materials/default/default.tga";
+		InternalImage = "materials/default/default.tga";
 		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
 	}
 
@@ -157,14 +133,14 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 		if ( texture2DInputResult.IsValid && texture2DInputResult.IsMetaDataResult )
 		{
 			UI = texture2DInputResult.GetMetadata<TextureInput>( "TextureInput" );
-			Image = UI.DefaultTexture;
-			IsTextureInputConnected = true;
+			InternalImage = UI.DefaultTexture;
+			_isTextureInputValid = true;
 		}
 		else
 		{
 			UI = new();
-			Image = "materials/default/default.tga";
-			IsTextureInputConnected = false;
+			InternalImage = "materials/default/default.tga";
+			_isTextureInputValid = false;
 
 			//if ( IsSubgraph )
 			//if ( string.IsNullOrWhiteSpace( Image ) )
@@ -205,7 +181,7 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 		var errors = new List<string>();
 		var graph = Graph as ShaderGraphPlus;
 
-		if ( !IsTextureInputConnected )
+		if ( !_isTextureInputValid )
 		{
 			//foreach ( var parameter in graph.Parameters )
 			//{
@@ -385,7 +361,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 
 	public SampleTexture2DTriplanarNode() : base()
 	{
-		Image = "materials/default/default.tga";
+		InternalImage = "materials/default/default.tga";
 		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
 	}
 
@@ -503,7 +479,7 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 
 	public SampleTexture2DNormalMapTriplanarNode() : base()
 	{
-		Image = "materials/default/default.tga";
+		InternalImage = "materials/default/default.tga";
 		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
 		UI = new TextureInput
 		{
