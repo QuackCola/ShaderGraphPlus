@@ -103,10 +103,6 @@ public class MainWindow : DockWindow
 
 	private string _defaultDockState;
 
-	private bool _syncLinkedTextureNodes = false;
-	private string _sourceSyncID = "";
-	private string _sourceParameterName = "";
-
 	public bool CanOpenMultipleAssets => true;
 	public bool EnableNodePreview => _preview3D.Preview.EnableNodePreview;
 
@@ -624,24 +620,6 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-			if ( node is ITextureInputNode iTextureInputNode )
-			{
-				if ( string.IsNullOrWhiteSpace( iTextureInputNode.TextureInputName ) )
-				{
-					iTextureInputNode.AlreadyRegisterd = false;
-				}
-				else
-				{
-					// Register ISyncableTextureNode SyncID with the compiler.
-					if ( node is ISyncableTextureNode syncableTextureNode )
-					{
-						compiler.RegisterSyncID( syncableTextureNode.SyncID, iTextureInputNode.TextureInputName );
-					}
-
-					iTextureInputNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( iTextureInputNode.TextureInputName );
-				}
-			}
-
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
@@ -649,11 +627,6 @@ public class MainWindow : DockWindow
 			if ( node is SamplerNode samplerNode )
 			{
 				samplerNode.Processed = true;
-			}
-
-			if ( node is ITextureInputNode iTextureInputNodePost )
-			{
-				iTextureInputNodePost.AlreadyRegisterd = false;
 			}
 
 			var componentType = result.ComponentType;
@@ -684,27 +657,13 @@ public class MainWindow : DockWindow
 			}
 		}
 
+		//foreach ( var node in _graph.Nodes.OfType<Texture2DSamplerBase>() )
+		//{
+		//	node.SyncNode();
+		//}
+
 		//_compiledNodes.Clear();
 		//_compiledNodes.AddRange( compiler.Nodes );
-#region ISyncableTextureNode Region
-		// Sync any texture nodes with the name _sourceParameterName name
-		if ( _syncLinkedTextureNodes )
-		{
-			var sourceSyncableNode = _graph.Nodes.Where( x => x.Identifier == _sourceSyncID ).OfType<ISyncableTextureNode>().FirstOrDefault();
-
-			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
-			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != _sourceSyncID ).Where( x => x.Value == _sourceParameterName );
-
-			foreach ( var targetNodeID in targetNodeIDs )
-			{
-				var targetSyncableNode = _graph.Nodes.Where( x => x.Identifier == targetNodeID.Key ).OfType<ISyncableTextureNode>().FirstOrDefault();
-
-				sourceSyncableNode.Sync( targetSyncableNode );
-			}
-
-			_syncLinkedTextureNodes = false;
-		}
-#endregion ISyncableTextureNode Region
 
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode && targetNode.CanPreview )
 		{
@@ -1814,17 +1773,6 @@ public class MainWindow : DockWindow
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
-			if ( node is ISyncableTextureNode syncableTexturePreview )
-			{
-				// Avoid Syncing when the changed property was the Name property of the TextureInput UI property.
-				if ( serializedProperty.Name != nameof( syncableTexturePreview.UI.Name ) )
-				{
-					_syncLinkedTextureNodes = true;
-					_sourceSyncID = syncableTexturePreview.SyncID;
-					_sourceParameterName = syncableTexturePreview.SourceParameterName;
-				}
-			}
-
 			_graphView.UpdateNode( node );
 		}
 		
