@@ -1,5 +1,5 @@
 {
-  "__version": 3,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "shaders/tests/bumpoffset/bumpoffset.sgrph",
   "Model": "models/dev/box.vmdl",
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": false,
@@ -32,17 +33,17 @@
       "Position": "36,132",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "4",
+        "Identifier": "6",
         "Output": "Result",
         "Subgraph": null
       },
       "Normal": {
-        "Identifier": "8",
+        "Identifier": "11",
         "Output": "Result",
         "Subgraph": null
       },
       "Roughness": {
-        "Identifier": "9",
+        "Identifier": "12",
         "Output": "Result",
         "Subgraph": null
       }
@@ -57,47 +58,35 @@
       "Position": "-1008,12",
       "HandleOffsets": {},
       "InputHeight": {
-        "Identifier": "14",
+        "Identifier": "17",
         "Output": "Result",
         "Subgraph": null
       },
       "InputDepthScale": {
-        "Identifier": "6",
+        "Identifier": "9",
         "Output": "Result",
         "Subgraph": null
       },
       "InputReferencePlane": {
-        "Identifier": "7",
+        "Identifier": "10",
         "Output": "Result",
         "Subgraph": null
       },
       "InputCoords": {
-        "Identifier": "13",
+        "Identifier": "16",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "TextureSampler",
-      "__version": 1,
-      "SamplerState": {
-        "__version": 2,
-        "Name": "",
-        "IsAttribute": false,
-        "Filter": "Bilinear",
-        "AddressModeU": "Wrap",
-        "AddressModeV": "Wrap",
-        "AddressModeW": "Wrap",
-        "MipLodBias": 0,
-        "MaxAnisotropy": 8,
-        "BorderColor": "0,0,0,0"
-      },
-      "Image": "textures/brick_height.png",
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "ffa216fe-a5b2-4e2e-859f-7e30dde9e69c",
       "UI": {
         "Name": "Height",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_height.png",
         "Extension": "Mask",
         "CustomExtension": "_height",
         "ShowExtension": false,
@@ -116,30 +105,11 @@
         }
       },
       "Identifier": "2",
-      "Position": "-1512,-84",
-      "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "3",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "Sampler": {
-        "Identifier": "12",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "TextureCoord",
-      "__version": 1,
-      "UseSecondaryCoord": false,
-      "Tiling": "1,1",
-      "Identifier": "3",
-      "Position": "-1728,120",
+      "Position": "-1704,-84",
       "HandleOffsets": {}
     },
     {
-      "_class": "TextureSampler",
+      "_class": "SampleTexture2DNode",
       "__version": 1,
       "SamplerState": {
         "__version": 2,
@@ -153,12 +123,65 @@
         "MaxAnisotropy": 8,
         "BorderColor": "0,0,0,0"
       },
-      "Image": "textures/brick_color.png",
+      "UI": {
+        "Name": "Height",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_height.png",
+        "Extension": "Mask",
+        "CustomExtension": "_height",
+        "ShowExtension": false,
+        "Processor": "None",
+        "ColorSpace": "Linear",
+        "ImageFormat": "ATI1N",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-1512,-84",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "SamplerInput": {
+        "Identifier": "15",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "TextureCoord",
+      "__version": 1,
+      "UseSecondaryCoord": false,
+      "Tiling": "1,1",
+      "Identifier": "4",
+      "Position": "-1728,120",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "ad47e8e0-62de-42c8-ba9c-c1ecb74f17ae",
       "UI": {
         "Name": "Color",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_color.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -176,22 +199,12 @@
           "Priority": 0
         }
       },
-      "Identifier": "4",
-      "Position": "-456,-48",
-      "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "16",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "Sampler": {
-        "Identifier": "11",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "Identifier": "5",
+      "Position": "-648,-48",
+      "HandleOffsets": {}
     },
     {
-      "_class": "TextureSampler",
+      "_class": "SampleTexture2DNode",
       "__version": 1,
       "SamplerState": {
         "__version": 2,
@@ -205,12 +218,56 @@
         "MaxAnisotropy": 8,
         "BorderColor": "0,0,0,0"
       },
-      "Image": "textures/brick_normal.png",
+      "UI": {
+        "Name": "Color",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_color.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Color",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "6",
+      "Position": "-456,-48",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "19",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "SamplerInput": {
+        "Identifier": "14",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "b983075b-c5d4-4549-ab11-e8ac102d5a0d",
       "UI": {
         "Name": "Normal",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_normal.png",
         "Extension": "Normal",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -228,16 +285,62 @@
           "Priority": 0
         }
       },
-      "Identifier": "5",
+      "Identifier": "7",
+      "Position": "-648,204",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": "Normal",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_normal.png",
+        "Extension": "Normal",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Linear",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Normal",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "8",
       "Position": "-456,204",
       "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "16",
+      "Texture2DInput": {
+        "Identifier": "7",
         "Output": "Result",
         "Subgraph": null
       },
-      "Sampler": {
-        "Identifier": "11",
+      "CoordsInput": {
+        "Identifier": "19",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "SamplerInput": {
+        "Identifier": "14",
         "Output": "Result",
         "Subgraph": null
       }
@@ -247,7 +350,7 @@
       "__version": 2,
       "Min": 0,
       "Max": 1,
-      "BlackboardParameterIdentifier": "8b1988c7-452d-4d80-bb4f-c44fef14b859",
+      "BlackboardParameterIdentifier": "40fb6295-8c2b-44a7-8335-f27449927c43",
       "Value": 0.125,
       "Name": "DepthScale",
       "IsAttribute": false,
@@ -264,7 +367,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "6",
+      "Identifier": "9",
       "Position": "-1260,0",
       "HandleOffsets": {}
     },
@@ -273,7 +376,7 @@
       "__version": 2,
       "Min": 0,
       "Max": 1,
-      "BlackboardParameterIdentifier": "e922e2c2-d152-40d1-a7e7-402b0b5235c7",
+      "BlackboardParameterIdentifier": "6652857e-0b82-4915-b330-026e33d4d780",
       "Value": 0.42,
       "Name": "ReferencePlane",
       "IsAttribute": false,
@@ -290,7 +393,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "7",
+      "Identifier": "10",
       "Position": "-1260,60",
       "HandleOffsets": {}
     },
@@ -301,11 +404,11 @@
       "G": true,
       "B": true,
       "A": false,
-      "Identifier": "8",
+      "Identifier": "11",
       "Position": "-228,204",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "5",
+        "Identifier": "8",
         "Output": "Result",
         "Subgraph": null
       }
@@ -315,7 +418,7 @@
       "__version": 2,
       "Min": 0,
       "Max": 1,
-      "BlackboardParameterIdentifier": "7cf69fcc-39bc-406b-9fa9-1c2dea3cf3d9",
+      "BlackboardParameterIdentifier": "a622e3e9-5b9a-4848-bfba-28a3dce97737",
       "Value": 0.124,
       "Name": "Roughness",
       "IsAttribute": false,
@@ -332,7 +435,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "9",
+      "Identifier": "12",
       "Position": "-228,264",
       "HandleOffsets": {}
     },
@@ -353,7 +456,7 @@
       },
       "IsAttribute": false,
       "Name": null,
-      "Identifier": "10",
+      "Identifier": "13",
       "Position": "-2016,228",
       "HandleOffsets": {}
     },
@@ -361,11 +464,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": null,
-      "Identifier": "11",
+      "Identifier": "14",
       "Position": "-588,264",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "10",
+        "Identifier": "13",
         "Output": "Sampler",
         "Subgraph": null
       }
@@ -374,11 +477,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": null,
-      "Identifier": "12",
+      "Identifier": "15",
       "Position": "-1764,-24",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "10",
+        "Identifier": "13",
         "Output": "Sampler",
         "Subgraph": null
       }
@@ -387,11 +490,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": null,
-      "Identifier": "13",
+      "Identifier": "16",
       "Position": "-1032,156",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "3",
+        "Identifier": "4",
         "Output": "Result",
         "Subgraph": null
       }
@@ -400,11 +503,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": null,
-      "Identifier": "14",
+      "Identifier": "17",
       "Position": "-1092,-24",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "2",
+        "Identifier": "3",
         "Output": "R",
         "Subgraph": null
       }
@@ -412,7 +515,7 @@
     {
       "_class": "BoolParameterNode",
       "__version": 2,
-      "BlackboardParameterIdentifier": "ec336e2b-2547-47db-9cd1-0e8626ba1759",
+      "BlackboardParameterIdentifier": "51bc0946-ed18-44ca-a960-b8322a2d0a40",
       "Value": true,
       "Name": "BumpOffset",
       "IsAttribute": false,
@@ -429,7 +532,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "15",
+      "Identifier": "18",
       "Position": "-1008,-48",
       "HandleOffsets": {}
     },
@@ -452,11 +555,11 @@
           "Priority": 0
         }
       },
-      "Identifier": "16",
+      "Identifier": "19",
       "Position": "-768,72",
       "HandleOffsets": {},
       "InputPredicate": {
-        "Identifier": "15",
+        "Identifier": "18",
         "Output": "Result",
         "Subgraph": null
       },
@@ -466,7 +569,7 @@
         "Subgraph": null
       },
       "False": {
-        "Identifier": "13",
+        "Identifier": "16",
         "Output": "Result",
         "Subgraph": null
       }
@@ -474,7 +577,88 @@
   ],
   "parameters": [
     {
-      "_class": "FloatBlackboardParameter",
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "Height",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_height.png",
+        "Extension": "Mask",
+        "CustomExtension": "_height",
+        "ShowExtension": false,
+        "Processor": "None",
+        "ColorSpace": "Linear",
+        "ImageFormat": "ATI1N",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Height",
+          "Priority": 1
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "ffa216fe-a5b2-4e2e-859f-7e30dde9e69c",
+      "Name": "Height"
+    },
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "Color",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_color.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Color",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "ad47e8e0-62de-42c8-ba9c-c1ecb74f17ae",
+      "Name": "Color"
+    },
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "Normal",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/brick_normal.png",
+        "Extension": "Normal",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Linear",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Normal",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "b983075b-c5d4-4549-ab11-e8ac102d5a0d",
+      "Name": "Normal"
+    },
+    {
+      "_class": "FloatParameter",
       "Min": 0,
       "Max": 1,
       "UI": {
@@ -490,12 +674,13 @@
           "Priority": 0
         }
       },
+      "IsAttribute": false,
       "Value": 0.125,
-      "Identifier": "8b1988c7-452d-4d80-bb4f-c44fef14b859",
+      "Identifier": "40fb6295-8c2b-44a7-8335-f27449927c43",
       "Name": "DepthScale"
     },
     {
-      "_class": "FloatBlackboardParameter",
+      "_class": "FloatParameter",
       "Min": 0,
       "Max": 1,
       "UI": {
@@ -511,12 +696,13 @@
           "Priority": 0
         }
       },
+      "IsAttribute": false,
       "Value": 0.42,
-      "Identifier": "e922e2c2-d152-40d1-a7e7-402b0b5235c7",
+      "Identifier": "6652857e-0b82-4915-b330-026e33d4d780",
       "Name": "ReferencePlane"
     },
     {
-      "_class": "FloatBlackboardParameter",
+      "_class": "FloatParameter",
       "Min": 0,
       "Max": 1,
       "UI": {
@@ -532,12 +718,13 @@
           "Priority": 0
         }
       },
+      "IsAttribute": false,
       "Value": 0.124,
-      "Identifier": "7cf69fcc-39bc-406b-9fa9-1c2dea3cf3d9",
+      "Identifier": "a622e3e9-5b9a-4848-bfba-28a3dce97737",
       "Name": "Roughness"
     },
     {
-      "_class": "BoolBlackboardParameter",
+      "_class": "BoolParameter",
       "UI": {
         "Type": "Default",
         "Step": 0,
@@ -551,8 +738,9 @@
           "Priority": 0
         }
       },
+      "IsAttribute": false,
       "Value": true,
-      "Identifier": "ec336e2b-2547-47db-9cd1-0e8626ba1759",
+      "Identifier": "51bc0946-ed18-44ca-a960-b8322a2d0a40",
       "Name": "BumpOffset"
     }
   ]

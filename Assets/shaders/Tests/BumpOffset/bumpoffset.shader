@@ -81,14 +81,14 @@ PS
 	#include "common/pixel.hlsl"
 	
 	SamplerState g_sTestSampler < Filter( BILINEAR ); AddressU( WRAP ); AddressV( WRAP ); AddressW( WRAP ); MaxAniso( 8 ); >;
-	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", "Color,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	CreateInputTexture2D( Normal, Linear, 8, "None", "_normal", "Normal,0/,0/0", Default4( 1.00, 1.00, 1.00, 1.00 ) );
-	Texture2D g_tHeight < Channel( RGBA, Box( Height ), Linear ); OutputFormat( ATI1N ); SrgbRead( False ); >;
+	CreateInputTexture2D( Color, Srgb, 8, "None", "_color", "Color,0/,0/0", DefaultFile( "textures/brick_color.png" ) );
+	CreateInputTexture2D( Height, Linear, 8, "None", "_height", "Height,1/,0/0", DefaultFile( "textures/brick_height.png" ) );
+	CreateInputTexture2D( Normal, Linear, 8, "None", "_normal", "Normal,0/,0/0", DefaultFile( "textures/brick_normal.png" ) );
 	Texture2D g_tColor < Channel( RGBA, Box( Color ), Srgb ); OutputFormat( DXT1 ); SrgbRead( True ); >;
+	Texture2D g_tHeight < Channel( RGBA, Box( Height ), Linear ); OutputFormat( ATI1N ); SrgbRead( False ); >;
 	Texture2D g_tNormal < Channel( RGBA, Box( Normal ), Linear ); OutputFormat( DXT1 ); SrgbRead( False ); >;
-	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tColor )
-	TextureAttribute( RepresentativeTexture, g_tColor )
+	TextureAttribute( LightSim_DiffuseAlbedoTexture, g_tHeight )
+	TextureAttribute( RepresentativeTexture, g_tHeight )
 	float g_flDepthScale < UiGroup( "Height,1/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
 	float g_flReferencePlane < UiGroup( "Height,1/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
 	bool g_bBumpOffset < UiGroup( ",0/,0/0" ); Default( 1 ); >;
