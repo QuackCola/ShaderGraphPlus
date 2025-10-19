@@ -23,6 +23,8 @@ internal class ProjectConverter
 
 	public bool Errored { get; private set; } = false;
 
+	public List<NodeConnectionFixupData> ConnectionFixupDatas { get; set; } = new();
+
 	internal ProjectConverter( VanillaGraph.ShaderGraph shaderGraph, ShaderGraphPlus shaderGraphPlus, bool isSubgraph = false )
 	{
 		ShaderGraph = shaderGraph;
@@ -50,6 +52,7 @@ internal class ProjectConverter
 		{
 			ConvertNodes();
 			CreateConnections();
+			ConnectNodesTest();
 
 			return ShaderGraphPlus;
 		}
@@ -262,11 +265,42 @@ internal class ProjectConverter
 		ShaderGraphPlus.AddParameter( blackboardParameter );
 	}
 
+	public void AddNewNode( BaseNodePlus node )
+	{
+		ShaderGraphPlus.AddNode( node );
+	}
+
 	internal void AddNewSubgraphOutputID( string outputName )
 	{
 		if ( IsSubgraph )
 		{
 			SubgraphOutputIds.Add( new( FunctionResultID, outputName ) );
+		}
+	}
+
+	internal void ConnectNodesTest()
+	{
+		foreach ( var data in ConnectionFixupDatas )
+		{
+			if ( data.NodeInputs == null )
+				continue;
+
+			foreach ( var mapping in data.NodeInputs )
+			{
+				var nodeFrom = ShaderGraphPlus.FindNode( mapping.Key.Identifier );
+
+				if ( nodeFrom != null )
+				{
+					SGPLog.Warning( $"Trying to connect \"{mapping.Key.Output}\" from node \"{nodeFrom}\" to \"{mapping.Value}\"" );
+
+					data.NodeToConnectTo.Graph = ShaderGraphPlus;
+					data.NodeToConnectTo.ConnectNode( mapping.Value, mapping.Key.Output, mapping.Key.Identifier );
+				}
+				else
+				{
+					SGPLog.Error( $"Could not find node with identifier \"{mapping.Key.Identifier}\"" );
+				}
+			}
 		}
 	}
 
@@ -285,4 +319,21 @@ struct ConnectionData
 	public string OutputName { get; set; }
 	public Type OutputType { get; set; }
 	public string OutputNodeIdentifier { get; set; }
+}
+
+internal struct NodeConnectionDataNew
+{
+	public string ConnectionFrom;
+	public string ConnectionTo;
+	public string SourseIdentifier;
+	public string DestinationIdentifier;
+
+	public NodeConnectionDataNew( string connectionFrom, string connectionTo, string sourceIdentifier, string destinationIdentifier )
+	{
+		ConnectionFrom = connectionFrom;
+		ConnectionTo = connectionTo;
+		SourseIdentifier = sourceIdentifier;
+		DestinationIdentifier = destinationIdentifier;
+	}
+
 }

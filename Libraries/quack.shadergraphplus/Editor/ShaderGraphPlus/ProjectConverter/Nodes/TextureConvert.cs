@@ -52,7 +52,7 @@ file static class TextureSamplerExentions
 
 		return newSampler;
 	}
-
+	
 	internal static TextureInput ConvertVanillaTextureInput( this VanillaGraph.TextureInput textureInput )
 	{
 		var newTextureInput = new TextureInput();
@@ -112,6 +112,52 @@ file static class TextureSamplerExentions
 	}
 }
 
+file static class TextureSamplerFunctions
+{
+	internal static void AddParameterFromNamed( ProjectConverter converter, Texture2DSamplerBase texture2DSamplerNode )
+	{
+		var textureInput = texture2DSamplerNode.UI;
+
+		if ( !string.IsNullOrWhiteSpace( textureInput.Name ) )
+		{
+			var tex2DParameter = new Texture2DParameter();
+			tex2DParameter.Name = textureInput.Name;
+			tex2DParameter.Value = textureInput;
+
+			var tex2DParameterNode = new Texture2DParameterNode()
+			{
+				Position = new Vector2( texture2DSamplerNode.Position.x - 192, texture2DSamplerNode.Position.y )
+			};
+			tex2DParameterNode.BlackboardParameterIdentifier = tex2DParameter.Identifier;
+			tex2DParameterNode.UI = textureInput;
+			tex2DParameterNode.Name = textureInput.Name;
+
+			converter.AddNewNode( tex2DParameterNode );
+
+			//var connections = new Dictionary<string, string>()
+			//{
+			//	{ 
+			//		$"{nameof(Texture2DParameterNode.Result)}", // From
+			//		$"{nameof(Texture2DSamplerBase.Texture2DInput)}" // To
+			//	},
+			//};
+			//
+			//var connectionData = new NodeConnectionDataNew(
+			//	nameof( Texture2DParameterNode.Result ),
+			//	nameof( Texture2DSamplerBase.Texture2DInput ),
+			//	"",
+			//	texture2DSamplerNode.Identifier
+			//);
+
+			converter.AddBlackboardParameter( tex2DParameter );
+		}
+		else
+		{
+
+		}
+	}
+}
+
 internal class TextureSamplerNodeConvert : BaseNodeConvert
 {
 	public override Type NodeTypeToConvert => typeof( VanillaNodes.TextureSampler );
@@ -127,6 +173,8 @@ internal class TextureSamplerNodeConvert : BaseNodeConvert
 		newNode.Image = oldTextureSamplerNode.Image;
 		newNode.SamplerState = oldTextureSamplerNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureSamplerNode.UI.ConvertVanillaTextureInput();
+
+		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -172,6 +220,8 @@ internal class TextureTriplanarNodeConvert : BaseNodeConvert
 		newNode.SamplerState = oldTextureTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureTriplanarNode.UI.ConvertVanillaTextureInput();
 
+		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
+
 		newNodes.Add( newNode );
 
 		return newNodes;
@@ -193,6 +243,8 @@ internal class NormapMapTriplanarNodeConvert : BaseNodeConvert
 		newNode.Image = oldNormapMapTriplanarNode.Image;
 		newNode.SamplerState = oldNormapMapTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldNormapMapTriplanarNode.UI.ConvertVanillaTextureInput();
+
+		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
 
 		newNodes.Add( newNode );
 
