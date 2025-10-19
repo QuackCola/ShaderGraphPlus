@@ -35,10 +35,10 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 	[JsonIgnore, Hide, Browsable( false )]
 	public string SyncIdentifier => Identifier;
 
-	//[JsonIgnore, Hide, Browsable( false )]
-	[HideIf( nameof( IsTextureInputConnected ), true )]
-	[Title( "Default Texture" )]
-	[ImageAssetPath]
+	//[HideIf( nameof( IsTextureInputConnected ), true )]
+	//[Title( "Default Texture" )]
+	//[ImageAssetPath]
+	[JsonIgnore, Hide, Browsable( false )]
 	public string Image
 	{
 		get => _image;
