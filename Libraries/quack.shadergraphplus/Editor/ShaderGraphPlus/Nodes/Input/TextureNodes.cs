@@ -341,7 +341,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	/// Coordinates to sample this texture (Defaults to vertex coordinates)
 	/// </summary>
 	[Title( "Coordinates" )]
-	[Input( typeof( Vector2 ) )]
+	[Input( typeof( Vector2 ), Order = 1 )]
 	[Hide]
 	public NodeInput CoordsInput { get; set; }
 
@@ -349,7 +349,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	/// How the texture is filtered and wrapped when sampled
 	/// </summary>
 	[Title( "Sampler" )]
-	[Input( typeof( Sampler ) )]
+	[Input( typeof( Sampler ), Order = 2 )]
 	[Hide]
 	public NodeInput SamplerInput { get; set; }
 
@@ -357,7 +357,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	/// Normal to use when blending between each sampled direction (Defaults to vertex normal)
 	/// </summary>
 	[Title( "Normal" )]
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ), Order = 3 )]
 	[Hide]
 	public NodeInput NormalInput { get; set; }
 
@@ -365,7 +365,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	/// How many times to file the coordinates.
 	/// </summary>
 	[Title( "Tile" )]
-	[Input( typeof( float ) )]
+	[Input( typeof( float ), Order = 4 )]
 	[Hide]
 	public NodeInput TileInput { get; set; }
 
@@ -373,7 +373,7 @@ public sealed class SampleTexture2DTriplanarNode : Texture2DSamplerBase
 	/// Blend factor between different samples.
 	/// </summary>
 	[Title( "Blend Factor" )]
-	[Input( typeof( float ) )]
+	[Input( typeof( float ), Order = 5 )]
 	[Hide]
 	public NodeInput BlendFactorInput { get; set; }
 
