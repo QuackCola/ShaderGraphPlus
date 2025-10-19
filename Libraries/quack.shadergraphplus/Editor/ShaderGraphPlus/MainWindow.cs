@@ -595,16 +595,16 @@ public class MainWindow : DockWindow
 				var warnings = warningNode.GetWarnings();
 				if ( warnings.Count > 0 )
 				{
-					foreach ( var error in warnings )
+					foreach ( var warning in warnings )
 					{
-						iWarningNodeWarnings.Add( new() { Message = error, Node = node, IsWarning = true } );
+						iWarningNodeWarnings.Add( new() { Message = warning, Node = node, IsWarning = true } );
 					}
 				}
 			}
 
-			if ( node is IErroringNode erroring )
+			if ( node is IErroringNode erroringNode )
 			{
-				var errors = erroring.GetErrors();
+				var errors = erroringNode.GetErrors();
 				if ( errors.Count > 0 )
 				{
 					foreach ( var error in errors )
