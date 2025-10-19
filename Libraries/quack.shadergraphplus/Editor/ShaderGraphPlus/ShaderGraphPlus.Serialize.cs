@@ -333,7 +333,7 @@ partial class ShaderGraphPlus
 			{
 				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
 				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
-				// TODO : Get a similar system setup to how SGPJsonUpgrader works or just make it work with SGPJsonUpgrader somehow? - Quack.
+				// TODO : There has to be a better way to handle node upgrades and replacements.... - Quack
 				if ( IsSubgraph && fileVersion < 1 && ShouldUpgradeToSubgraphInput( typeName, element ) )
 				{
 					node = CreateUpgradedSubgraphInput( typeName, element, options );
