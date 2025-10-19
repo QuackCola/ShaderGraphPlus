@@ -205,7 +205,7 @@ partial class ShaderGraphPlus
 				}
 				else
 				{
-					SGPLog.Info( $"Failed to get graph \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
+					SGPLog.Warning( $"Failed to get graph \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
 				}
 
 				// Dont even bother upgrading if we dont need to.
@@ -240,7 +240,7 @@ partial class ShaderGraphPlus
 				}
 				else
 				{
-					SGPLog.Info( $"Failed to get node \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
+					SGPLog.Warning( $"Failed to get node \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
 				}
 				
 				// Dont even bother upgrading if we dont need to.
