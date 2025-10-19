@@ -273,7 +273,7 @@ public partial class ShaderGraphPlus
 		if ( newSamplerNode is Texture2DSamplerBase samplerBase )
 		{
 			textureUI = samplerBase.UI with { DefaultTexture = imageProperty.GetString() };
-			samplerBase.Image = imageProperty.GetString();
+			samplerBase.InternalImage = imageProperty.GetString();
 		}
 
 		if ( !string.IsNullOrWhiteSpace( textureUI.Name ) )
