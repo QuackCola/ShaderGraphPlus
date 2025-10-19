@@ -144,19 +144,6 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
 	}
 
-	protected bool CheckIfRegisterd( GraphCompiler compiler, TextureInput input, out KeyValuePair<string, TextureInput> existingEntry )
-	{
-		existingEntry = new();
-
-		if ( AlreadyRegisterd && compiler.IsPreview )
-		{
-			existingEntry = compiler.GetExistingTextureInputEntry( input.Name );
-			return true;
-		}
-
-		return false;
-	}
-
 	protected NodeResult Component( string component, GraphCompiler compiler )
 	{
 		var result = compiler.Result( new NodeInput { Identifier = Identifier, Output = nameof( Result ) } );
