@@ -112,7 +112,7 @@ file static class TextureSamplerExentions
 	}
 }
 
-file static class TextureSamplerFunctions
+file static class TextureSamplerConversionFunctions
 {
 	internal static void AddParameterFromNamed( ProjectConverter converter, Texture2DSamplerBase texture2DSamplerNode )
 	{
@@ -174,7 +174,7 @@ internal class TextureSamplerNodeConvert : BaseNodeConvert
 		newNode.SamplerState = oldTextureSamplerNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureSamplerNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -220,7 +220,7 @@ internal class TextureTriplanarNodeConvert : BaseNodeConvert
 		newNode.SamplerState = oldTextureTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureTriplanarNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -244,7 +244,7 @@ internal class NormapMapTriplanarNodeConvert : BaseNodeConvert
 		newNode.SamplerState = oldNormapMapTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldNormapMapTriplanarNode.UI.ConvertVanillaTextureInput();
 
-		TextureSamplerFunctions.AddParameterFromNamed( converter, newNode );
+		TextureSamplerConversionFunctions.AddParameterFromNamed( converter, newNode );
 
 		newNodes.Add( newNode );
 
