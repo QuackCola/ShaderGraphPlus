@@ -50,7 +50,7 @@ public class PreviewSettings
 public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 {
 	[Hide]
-	public int Version => 3;
+	public int Version => 4;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
