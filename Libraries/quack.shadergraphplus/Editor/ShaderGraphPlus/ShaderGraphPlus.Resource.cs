@@ -141,11 +141,11 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
-	internal bool ContainsParameterWithName( string nameToMatch )
+	internal bool ContainsParameterWithName( string name )
 	{
 		foreach ( var parameter in _parameters )
 		{
-			if ( nameToMatch == parameter.Value.Name )
+			if ( name == parameter.Value.Name )
 				return true;
 		}
 
