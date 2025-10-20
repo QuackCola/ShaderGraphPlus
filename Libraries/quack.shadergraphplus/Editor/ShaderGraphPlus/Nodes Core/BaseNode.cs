@@ -32,7 +32,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public string Identifier { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public virtual string Subtitle { get; set; }
+	public virtual string Subtitle { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public virtual DisplayInfo DisplayInfo { get; }
