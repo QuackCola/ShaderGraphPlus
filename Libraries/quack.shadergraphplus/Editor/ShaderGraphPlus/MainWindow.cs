@@ -1778,36 +1778,17 @@ public class MainWindow : DockWindow
 		
 		if ( _properties.Target is BaseBlackboardParameter parameter )
 		{
-
-			if ( string.IsNullOrWhiteSpace( parameter.Name ) )
-			{
-				AddBlackboardIssue( $"Parameter with identifier \"{parameter.Identifier}\" cannot have a blank name!" );
-			}
-
-			if ( parameter is ShaderFeatureEnumParameter featureEnumParameter )
-			{
-				foreach ( var option in featureEnumParameter.Options.Index() )
-				{
-					if ( !string.IsNullOrWhiteSpace( option.Item ) )
-					{
-						continue;
-					}
-
-					if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
-					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature \"{featureEnumParameter.Name}\" is blank!" );
-					}
-					else
-					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature with identifier \"{parameter.Identifier}\" is blank!" );
-					}
-				}
-			}
-
 			// Dont update a node on the graph if we have any blackboard issues.
-			if ( !BlackboardIssues.Any() )
+			if ( parameter.CheckParameter( out var parameterIssues ) )
 			{
 				_graph.UpdateParameterNode( parameter );
+			}
+			else
+			{
+				foreach ( var parameterIssue in parameterIssues )
+				{
+					AddBlackboardIssue( parameterIssue );
+				}
 			}
 		}
 
