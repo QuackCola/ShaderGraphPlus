@@ -43,11 +43,6 @@ public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBl
 		$"{Name}";
 
 	//[JsonIgnore, Hide, Browsable( false )]
-	//public override string Title => string.IsNullOrWhiteSpace( Name ) ?
-	//	$"{DisplayInfo.For( this ).Name}" :
-	//	$"{DisplayInfo.For( this ).Name} ( {Name} )";
-
-	//[JsonIgnore, Hide, Browsable( false )]
 	//public override string Subtitle => !string.IsNullOrWhiteSpace( Name ) ? Name : "";
 
 	public T Value { get; set; }
