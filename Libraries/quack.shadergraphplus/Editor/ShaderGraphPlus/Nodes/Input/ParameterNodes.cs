@@ -522,7 +522,12 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	//	$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
 
 	[JsonIgnore, Hide, Browsable( false )]
-	public override string Subtitle => !string.IsNullOrWhiteSpace( UI.Name ) ? UI.Name : "";
+	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
+	$"{DisplayInfo.For( this ).Name}" :
+	$"{UI.Name}";
+
+	//[JsonIgnore, Hide, Browsable( false )]
+	//public override string Subtitle => !string.IsNullOrWhiteSpace( UI.Name ) ? UI.Name : "";
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
@@ -579,11 +584,18 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 
 	[Hide]
 	public override bool CanPreview => false;
+	//[Hide]
+	//public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
+	//	$"{DisplayInfo.For( this ).Name}" :
+	//	$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
 
-	[Hide]
+	[JsonIgnore, Hide, Browsable( false )]
 	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
-		$"{DisplayInfo.For( this ).Name}" :
-		$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
+	$"{DisplayInfo.For( this ).Name}" :
+	$"{UI.Name}";
+
+	//[JsonIgnore, Hide, Browsable( false )]
+	//public override string Subtitle => !string.IsNullOrWhiteSpace( UI.Name ) ? UI.Name : "";
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
