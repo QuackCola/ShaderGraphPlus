@@ -104,7 +104,7 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 
 		if ( string.IsNullOrWhiteSpace( Name ) )
 		{
-			issues.Add( $"Parameter with identifier \"{Identifier}\" cannot have a blank name!" );
+			issues.Add( $"Parameter with identifier \"{Identifier}\" must have name!" );
 
 			return false;
 		}
