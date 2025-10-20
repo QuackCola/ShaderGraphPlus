@@ -102,7 +102,7 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 	{
 		issues = new List<string>();
 
-		if ( string.IsNullOrWhiteSpace( this.Name ) )
+		if ( string.IsNullOrWhiteSpace( Name ) )
 		{
 			issues.Add( $"Parameter with identifier \"{Identifier}\" cannot have a blank name!" );
 
@@ -127,6 +127,7 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 				else
 				{
 					issues.Add( $"Option at element index \"{option.Index}\" of enum shader feature with identifier \"{Identifier}\" is blank!" );
+
 					return false;
 				}
 			}
