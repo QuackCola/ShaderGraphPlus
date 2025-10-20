@@ -1851,10 +1851,8 @@ public class MainWindow : DockWindow
 		GeneratePreviewCode();
 	}
 
-	private void AddBlackboardIssue( string issueMessage )
+	private void AddBlackboardIssue( string message )
 	{
-		BlackboardIssues.Add(
-			new() { Node = null, Message = issueMessage }
-		);
+		BlackboardIssues.Add( new() { Node = null, Message = message } );
 	}
 }
