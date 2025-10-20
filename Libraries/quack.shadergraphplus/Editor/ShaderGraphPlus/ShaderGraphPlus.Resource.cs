@@ -152,7 +152,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
-	internal void UpdateParameterNodeS( BaseBlackboardParameter parameter )
+	internal void UpdateParameterNodes( BaseBlackboardParameter parameter )
 	{
 		foreach ( var iBlackboardSyncable in Nodes.OfType<IBlackboardSyncableNode>().Where( x => x.BlackboardParameterIdentifier == parameter.Identifier ) )
 		{

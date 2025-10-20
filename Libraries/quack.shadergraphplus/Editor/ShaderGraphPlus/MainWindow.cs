@@ -1296,7 +1296,7 @@ public class MainWindow : DockWindow
 		{
 			if ( parameter.CheckParameter( out var parameterIssues ) )
 			{
-				_graph.UpdateParameterNodeS( parameter );
+				_graph.UpdateParameterNodes( parameter );
 			}
 			else
 			{	
@@ -1789,7 +1789,7 @@ public class MainWindow : DockWindow
 			// Dont update a node on the graph if we have any blackboard issues.
 			if ( parameter.CheckParameter( out var parameterIssues ) )
 			{
-				_graph.UpdateParameterNodeS( parameter );
+				_graph.UpdateParameterNodes( parameter );
 			}
 			else
 			{
