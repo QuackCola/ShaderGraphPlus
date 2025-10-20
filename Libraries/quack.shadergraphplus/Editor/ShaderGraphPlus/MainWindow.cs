@@ -1296,7 +1296,7 @@ public class MainWindow : DockWindow
 		{
 			if ( parameter.CheckParameter( out var parameterIssues ) )
 			{
-				_graph.UpdateParameterNode( parameter );
+				_graph.UpdateParameterNodeS( parameter );
 			}
 			else
 			{	
@@ -1782,7 +1782,6 @@ public class MainWindow : DockWindow
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
 		BlackboardIssues.Clear();
-
 		_preview3D.PostProcessing = _graphView.Graph.Domain == ShaderDomain.PostProcess;
 
 		if ( _properties.Target is BaseBlackboardParameter parameter )
@@ -1790,7 +1789,7 @@ public class MainWindow : DockWindow
 			// Dont update a node on the graph if we have any blackboard issues.
 			if ( parameter.CheckParameter( out var parameterIssues ) )
 			{
-				_graph.UpdateParameterNode( parameter );
+				_graph.UpdateParameterNodeS( parameter );
 			}
 			else
 			{
