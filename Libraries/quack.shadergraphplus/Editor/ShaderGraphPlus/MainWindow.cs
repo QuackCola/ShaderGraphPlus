@@ -1292,6 +1292,20 @@ public class MainWindow : DockWindow
 
 		AddToRecentFiles( path );
 
+		foreach ( var parameter in graph.Parameters )
+		{
+			if ( parameter.CheckParameter( out var parameterIssues ) )
+			{
+				_graph.UpdateParameterNode( parameter );
+			}
+			else
+			{	
+				foreach ( var parameterIssue in parameterIssues )
+				{
+					AddBlackboardIssue( parameterIssue );
+				}
+			}
+		}
 
 		GeneratePreviewCode();
 	}
