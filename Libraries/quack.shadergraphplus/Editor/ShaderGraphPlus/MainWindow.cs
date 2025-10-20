@@ -1785,11 +1785,6 @@ public class MainWindow : DockWindow
 
 		_preview3D.PostProcessing = _graphView.Graph.Domain == ShaderDomain.PostProcess;
 
-		if ( _properties.Target is BaseNodePlus node )
-		{
-			_graphView.UpdateNode( node );
-		}
-		
 		if ( _properties.Target is BaseBlackboardParameter parameter )
 		{
 			// Dont update a node on the graph if we have any blackboard issues.
@@ -1804,6 +1799,11 @@ public class MainWindow : DockWindow
 					AddBlackboardIssue( parameterIssue );
 				}
 			}
+		}
+
+		if ( _properties.Target is BaseNodePlus node )
+		{
+			_graphView.UpdateNode( node );
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
