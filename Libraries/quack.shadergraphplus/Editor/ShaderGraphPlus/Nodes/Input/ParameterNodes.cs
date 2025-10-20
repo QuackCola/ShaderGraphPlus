@@ -516,11 +516,6 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public override bool CanPreview => false;
 
-	//[Hide]
-	//public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
-	//	$"{DisplayInfo.For( this ).Name}" :
-	//	$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
-
 	[JsonIgnore, Hide, Browsable( false )]
 	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
 	$"{DisplayInfo.For( this ).Name}" :
@@ -584,10 +579,6 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 
 	[Hide]
 	public override bool CanPreview => false;
-	//[Hide]
-	//public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
-	//	$"{DisplayInfo.For( this ).Name}" :
-	//	$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
