@@ -1,4 +1,5 @@
 ﻿using NodeEditorPlus;
+using Sandbox;
 using System.Xml.Linq;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
@@ -515,10 +516,13 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public override bool CanPreview => false;
 
-	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
-		$"{DisplayInfo.For( this ).Name}" :
-		$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
+	//[Hide]
+	//public override string Title => string.IsNullOrWhiteSpace( UI.Name ) ?
+	//	$"{DisplayInfo.For( this ).Name}" :
+	//	$"{DisplayInfo.For( this ).Name} ( {UI.Name} )";
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override string Subtitle => !string.IsNullOrWhiteSpace( UI.Name ) ? UI.Name : "";
 
 	[Hide, Browsable( false )]
 	public Guid BlackboardParameterIdentifier { get; set; }
