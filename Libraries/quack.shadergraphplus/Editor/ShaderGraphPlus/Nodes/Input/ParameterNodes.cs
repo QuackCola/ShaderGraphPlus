@@ -509,6 +509,9 @@ public sealed class Texture2DParameterNode : ShaderNodePlus, IBlackboardSyncable
 	[Hide]
 	public override int Version => 2;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ParameterNode;
+
 	[Hide]
 	public override bool CanPreview => false;
 
@@ -566,6 +569,9 @@ public sealed class TextureCubeParameterNode : ShaderNodePlus, IBlackboardSyncab
 {
 	[Hide]
 	public override int Version => 2;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ParameterNode;
 
 	[Hide]
 	public override bool CanPreview => false;
