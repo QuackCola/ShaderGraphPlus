@@ -75,16 +75,17 @@ public class MainWindow : DockWindow
 	private bool _autoCompile = true;
 
 	private string _generatedCode;
-	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
-	private readonly Dictionary<string, Texture> _textureAttributes = new();
-	private readonly Dictionary<string, Color> _float4Attributes = new();
-	private readonly Dictionary<string, Vector3> _float3Attributes = new();
-	private readonly Dictionary<string, Vector2> _float2Attributes = new();
+
+	private readonly Dictionary<string, bool> _boolAttributes = new();
 	private readonly Dictionary<string, int> _intAttributes = new();
 	private readonly Dictionary<string, float> _floatAttributes = new();
-	private readonly Dictionary<string, bool> _boolAttributes = new();
-	private readonly Dictionary<string, int> _comboIntAttributes = new();
-	private readonly Dictionary<string, bool> _comboBoolAttributes = new();
+	private readonly Dictionary<string, Vector2> _float2Attributes = new();
+	private readonly Dictionary<string, Vector3> _float3Attributes = new();
+	private readonly Dictionary<string, Color> _float4Attributes = new();
+	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
+	private readonly Dictionary<string, Texture> _textureAttributes = new();
+	private readonly Dictionary<string, int> _dynamicComboIntAttributes = new();
+	private readonly Dictionary<string, int> _shaderFeatures = new();
 
 	//private readonly List<BaseNodePlus> _compiledNodes = new();
 
@@ -425,23 +426,10 @@ public class MainWindow : DockWindow
 		_shaderCompileErrors.Clear();
 	}
 
-	private void OnAttribute( string name, object value, bool isCombo = false )
+	private void OnAttribute( string name, object value )
 	{
 		if ( value == null )
 			return;
-
-		if ( isCombo )
-		{
-			if ( value is int intValue )
-			{
-				if ( _comboIntAttributes.TryAdd( name, intValue ) )
-				{
-					_preview3D?.SetCombo( name, intValue );
-				}
-			}
-
-			return;
-		}
 
 		switch ( value )
 		{
@@ -481,8 +469,20 @@ public class MainWindow : DockWindow
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview3D?.SetAttribute( name, (SamplerState)v );
 				break;
+			case ShaderFeatureWrapper v:
+				if ( _shaderFeatures.TryAdd( v.FeatureName, v.Value ) )
+				{
+					_preview3D?.SetFeature( v.FeatureName, v.Value );
+				}
+				break;
+			case DynamicComboWrapper v:
+				if ( _dynamicComboIntAttributes.TryAdd( v.ComboName, v.Value ) )
+				{
+					_preview3D?.SetDynamicCombo( v.ComboName, v.Value );
+				}
+				break;
 			default:
-				throw new InvalidOperationException( $"Unsupported attribute type: {value.GetType()}" );
+				throw new InvalidOperationException( $"Unsupported attribute type: \"{value.GetType()}\"" );
 		}
 	}
 
@@ -1198,16 +1198,17 @@ public class MainWindow : DockWindow
 
 	private void ClearAttributes()
 	{
-		_samplerStateAttributes.Clear();
-		_textureAttributes.Clear();
-		_float4Attributes.Clear();
-		_float3Attributes.Clear();
-		_float2Attributes.Clear();
-		_floatAttributes.Clear();
-		_intAttributes.Clear();
 		_boolAttributes.Clear();
-		_comboBoolAttributes.Clear();
-		_comboIntAttributes.Clear();
+		_intAttributes.Clear();
+		_floatAttributes.Clear();
+		_float2Attributes.Clear();
+		_float3Attributes.Clear();
+		_float4Attributes.Clear();
+		_textureAttributes.Clear();
+		_samplerStateAttributes.Clear();
+		_dynamicComboIntAttributes.Clear();
+		_shaderFeatures.Clear();
+
 		//_compiledNodes.Clear();
 
 		_preview3D?.ClearAttributes();
@@ -1624,14 +1625,14 @@ public class MainWindow : DockWindow
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
 
-		foreach ( var value in _comboBoolAttributes )
+		foreach ( var value in _dynamicComboIntAttributes )
 		{
-			_preview3D.SetCombo( value.Key, value.Value );
+			_preview3D.SetDynamicCombo( value.Key, value.Value );
 		}
 
-		foreach ( var value in _comboIntAttributes )
+		foreach ( var value in _shaderFeatures )
 		{
-			_preview3D.SetCombo( value.Key, value.Value );
+			_preview3D.SetFeature( value.Key, value.Value );
 		}
 
 		_properties = new Properties( this );

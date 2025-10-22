@@ -81,10 +81,11 @@ public sealed partial class GraphCompiler
 			SGPLog.Warning( $"{nameof( SetComboPreview )} was called when IsPreview is false!" );
 			return;
 		}
-			
+		
 		if ( comboName.StartsWith( $"D_" ) )
 		{
-			OnAttribute?.Invoke( comboName, preview, true );
+			var comboWrapper = new DynamicComboWrapper( comboName, preview );
+			OnAttribute?.Invoke( comboWrapper.ComboName, comboWrapper );
 		}
 		else
 		{
@@ -170,6 +171,7 @@ public sealed partial class GraphCompiler
 
 		//SGPLog.Info( $"Generated Switch D_{shaderFeature.Name.ToUpper()}: \n {sb.ToString()}" );
 
+		// TODO : Once SceneObject.Attributes.SetFeature is added. Replace SetComboPreview with something like SetFeaturePreview.
 		if ( IsPreview )
 		{
 			SetComboPreview( shaderFeature.GetDynamicComboString(), previewInt );

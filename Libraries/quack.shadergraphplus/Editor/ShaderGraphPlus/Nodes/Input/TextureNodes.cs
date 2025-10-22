@@ -15,6 +15,12 @@ public abstract class Texture2DSamplerBase : ShaderNodePlus, IErroringNode, ITex
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
+	//[JsonIgnore, Hide, Browsable( false )]
+	//public override string Subtitle => SubtitleTestString;
+	//
+	//[JsonIgnore, Browsable( false )]
+	//public string SubtitleTestString { get; set; } = "My Subtitle";
+
 	/// <summary>
 	/// Texture2D Object input
 	/// </summary>
@@ -477,7 +483,7 @@ public sealed class SampleTexture2DNormalMapTriplanarNode : Texture2DSamplerBase
 	public SampleTexture2DNormalMapTriplanarNode() : base()
 	{
 		InternalImage = "materials/default/default.tga";
-		ExpandSize = new Vector2( 0, 8 + Inputs.Count() * 24 );
+		ExpandSize = new Vector2( 56, 12 + Inputs.Count() * 24 );
 		UI = new TextureInput
 		{
 			ImageFormat = TextureFormat.DXT5,
