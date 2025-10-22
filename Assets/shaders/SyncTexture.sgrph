@@ -1,0 +1,210 @@
+{
+  "__version": 3,
+  "IsSubgraph": false,
+  "Path": "shaders/synctexture.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Lit",
+  "Domain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "ViewMode": "Perspective",
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "0,0",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "Image": "materials/default/default.tga",
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "1",
+      "Position": "-900,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "Image": "materials/default/default.tga",
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "2",
+      "Position": "-900,204",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DTriplanarNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Image": "materials/default/default.tga",
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "3",
+      "Position": "-720,-36",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNormalMapTriplanarNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "DefaultTile": 1,
+      "DefaultBlendFactor": 4,
+      "Image": "materials/default/default.tga",
+      "UI": {
+        "Name": null,
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "materials/default/default.tga",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT1",
+        "SrgbRead": false,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": null,
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-552,-36",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": []
+}

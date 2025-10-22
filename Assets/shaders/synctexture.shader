@@ -7,8 +7,7 @@ HEADER
 FEATURES
 {
 	#include "common/features.hlsl"
-	Feature( F_PARAMETER0, 0..3 ( 0="A", 1="B", 2="C", 3="D" ), "" );
-	
+
 }
 
 MODES
@@ -20,13 +19,6 @@ MODES
 
 COMMON
 {
-	#ifndef SWITCH_TRUE
-	#define SWITCH_TRUE 1
-	#endif
-	#ifndef SWITCH_FALSE
-	#define SWITCH_FALSE 0
-	#endif
-	
 	#ifndef S_ALPHA_TEST
 	#define S_ALPHA_TEST 0
 	#endif
@@ -65,10 +57,7 @@ struct PixelInput
 VS
 {
 	#include "common/vertex.hlsl"
-	
-	StaticCombo( S_PARAMETER0, F_PARAMETER0, Sys( ALL ) );
-	
-	
+
 	PixelInput MainVs( VertexInput v )
 	{
 		
@@ -91,51 +80,43 @@ PS
 {
 	#include "common/pixel.hlsl"
 	
-	StaticCombo( S_PARAMETER0, F_PARAMETER0, Sys( ALL ) );
-	
-		
 	
 	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
 	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
 	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
+		
+		Material m = Material::Init( i );
+		m.Albedo = float3( 1, 1, 1 );
+		m.Normal = float3( 0, 0, 1 );
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
+		m.TintMask = 1;
+		m.Opacity = 1;
+		m.Emission = float3( 0, 0, 0 );
+		m.Transmission = 0;
 
+		m.Opacity = 1;
+		m.Roughness = 1;
+		m.Metalness = 0;
+		m.AmbientOcclusion = 1;
 		
-		float4 Parameter0_result0 = float4( 0.0f, 0.0f, 0.0f, 0.0f );
-		#if ( S_PARAMETER0 == 0 )
-		{
-			
-			float4 l_0 = float4( 1, 0, 0, 1 );
-			
-			Parameter0_result0 = l_0;
-		}
-		#elif ( S_PARAMETER0 == 1 )
-		{
-			
-			float4 l_0 = float4( 0, 0.9897, 0, 1 );
-			
-			Parameter0_result0 = l_0;
-		}
-		#elif ( S_PARAMETER0 == 2 )
-		{
-			
-			float4 l_0 = float4( 0, 0, 1, 1 );
-			
-			Parameter0_result0 = l_0;
-		}
-		#elif ( S_PARAMETER0 == 3 )
-		{
-			
-			float4 l_0 = float4( 1, 1, 1, 1 );
-			
-			Parameter0_result0 = l_0;
-		}
-		#endif
 		
-		float4 l_0 = Parameter0_result0;
+		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
+		m.Roughness = saturate( m.Roughness );
+		m.Metalness = saturate( m.Metalness );
+		m.Opacity = saturate( m.Opacity );
 		
-
-		return float4( l_0.xyz, 1 );
+		// Result node takes normal as tangent space, convert it to world space now
+		m.Normal = TransformNormal( m.Normal, i.vNormalWs, i.vTangentUWs, i.vTangentVWs );
+		
+		// for some toolvis shit
+		m.WorldTangentU = i.vTangentUWs;
+		m.WorldTangentV = i.vTangentVWs;
+		m.TextureCoords = i.vTextureCoords.xy;
+				
+		return ShadingModelStandard::Shade( m );
 	}
 }
