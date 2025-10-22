@@ -122,7 +122,7 @@ public sealed partial class GraphCompiler
 	private  CompileResult PixelResult { get; set; } = new();
 	private CompileResult ShaderResult => Stage == ShaderStage.Vertex ? VertexResult : PixelResult;
 
-	public Action<string, object, bool> OnAttribute { get; set; }
+	public Action<string, object> OnAttribute { get; set; }
 
 	// Init to 1, 0 is reserved.
 	public int PreviewID { get; internal set; } = 1;
@@ -159,7 +159,7 @@ public sealed partial class GraphCompiler
 
 		if ( !ShaderResult.Attributes.ContainsKey( name ) )
 		{
-			OnAttribute?.Invoke( name, value, false );
+			OnAttribute?.Invoke( name, value );
 			ShaderResult.Attributes[name] = value;
 		}
 		else

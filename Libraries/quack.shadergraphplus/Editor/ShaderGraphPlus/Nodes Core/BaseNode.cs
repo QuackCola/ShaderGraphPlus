@@ -32,6 +32,9 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	public string Identifier { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
+	public virtual string Subtitle { get; }
+
+	[JsonIgnore, Hide, Browsable( false )]
 	public virtual DisplayInfo DisplayInfo { get; }
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -177,6 +180,9 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool HasTitleBar => true;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool HasSubtitle => !string.IsNullOrWhiteSpace( Subtitle );
 
 	private bool _hasError;
 	[JsonIgnore, Hide, Browsable( false )]

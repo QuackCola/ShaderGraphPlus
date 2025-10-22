@@ -50,7 +50,7 @@ public class PreviewSettings
 public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 {
 	[Hide]
-	public int Version => 3;
+	public int Version => 4;
 
 	[Hide, JsonIgnore]
 	public IEnumerable<BaseNodePlus> Nodes => _nodes.Values;
@@ -141,22 +141,27 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		return false;
 	}
 
-	internal bool ContainsParameterWithName( string nameToMatch )
+	internal bool ContainsParameterWithName( string name )
 	{
 		foreach ( var parameter in _parameters )
 		{
-			if ( nameToMatch == parameter.Value.Name )
+			if ( name == parameter.Value.Name )
 				return true;
 		}
 
 		return false;
 	}
 
-	internal void UpdateParameterNode( BaseBlackboardParameter parameter )
+	internal void UpdateParameterNodes( BaseBlackboardParameter parameter )
 	{
 		foreach ( var iBlackboardSyncable in Nodes.OfType<IBlackboardSyncableNode>().Where( x => x.BlackboardParameterIdentifier == parameter.Identifier ) )
 		{
 			iBlackboardSyncable.UpdateFromBlackboard( parameter );
+
+			if ( iBlackboardSyncable is BaseNodePlus baseNode )
+			{
+				baseNode.Update();
+			}
 		}
 	}
 	
@@ -169,7 +174,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		{
 			if ( node is Texture2DParameterNode texture2DParam )
 			{
-				if ( texture2DParam.Name == parameterName )
+				if ( texture2DParam.UI.Name == parameterName )
 				{
 					texture2DParam.BlackboardParameterIdentifier = newParameterGuid;
 					return;

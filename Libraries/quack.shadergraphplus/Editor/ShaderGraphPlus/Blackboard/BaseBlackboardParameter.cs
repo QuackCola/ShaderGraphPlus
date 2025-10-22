@@ -92,6 +92,49 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 	{
 		return $"{DisplayInfo.Fullname}.{Identifier}";
 	}
+
+	/// <summary>
+	/// Check parameter for any issues.
+	/// </summary>
+	/// <param name="issues">Any issues that are found.</param>
+	/// <returns>False when check has failed otherwise returns true when check has passed.</returns>
+	public bool CheckParameter( out List<string> issues )
+	{
+		issues = new List<string>();
+
+		if ( string.IsNullOrWhiteSpace( Name ) )
+		{
+			issues.Add( $"Parameter with identifier \"{Identifier}\" must have name!" );
+
+			return false;
+		}
+
+		if ( this is ShaderFeatureEnumParameter featureEnumParameter )
+		{
+			foreach ( var option in featureEnumParameter.Options.Index() )
+			{
+				if ( !string.IsNullOrWhiteSpace( option.Item ) )
+				{
+					continue;
+				}
+
+				if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
+				{
+					issues.Add( $"Option at element index \"{option.Index}\" of enum shader feature \"{featureEnumParameter.Name}\" is blank!" );
+
+					return false;
+				}
+				else
+				{
+					issues.Add( $"Option at element index \"{option.Index}\" of enum shader feature with identifier \"{Identifier}\" is blank!" );
+
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 }
 
 public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter

@@ -52,7 +52,7 @@ file static class TextureSamplerExentions
 
 		return newSampler;
 	}
-
+	
 	internal static TextureInput ConvertVanillaTextureInput( this VanillaGraph.TextureInput textureInput )
 	{
 		var newTextureInput = new TextureInput();
@@ -112,6 +112,51 @@ file static class TextureSamplerExentions
 	}
 }
 
+file static class TextureSamplerConversionFunctions
+{
+	internal static void CreateTextureParameter( ProjectConverter converter, Texture2DSamplerBase texture2DSamplerNode )
+	{
+		var textureInput = texture2DSamplerNode.UI;
+
+		if ( !string.IsNullOrWhiteSpace( textureInput.Name ) )
+		{
+			var tex2DParameter = new Texture2DParameter();
+			tex2DParameter.Name = textureInput.Name;
+			tex2DParameter.Value = textureInput;
+
+			var tex2DParameterNode = new Texture2DParameterNode()
+			{
+				Position = new Vector2( texture2DSamplerNode.Position.x - 192, texture2DSamplerNode.Position.y )
+			};
+			tex2DParameterNode.BlackboardParameterIdentifier = tex2DParameter.Identifier;
+			tex2DParameterNode.UI = textureInput;
+
+			converter.AddNewNode( tex2DParameterNode );
+
+			//var connections = new Dictionary<string, string>()
+			//{
+			//	{ 
+			//		$"{nameof(Texture2DParameterNode.Result)}", // From
+			//		$"{nameof(Texture2DSamplerBase.Texture2DInput)}" // To
+			//	},
+			//};
+			//
+			//var connectionData = new NodeConnectionDataNew(
+			//	nameof( Texture2DParameterNode.Result ),
+			//	nameof( Texture2DSamplerBase.Texture2DInput ),
+			//	"",
+			//	texture2DSamplerNode.Identifier
+			//);
+
+			converter.AddBlackboardParameter( tex2DParameter );
+		}
+		else
+		{
+
+		}
+	}
+}
+
 internal class TextureSamplerNodeConvert : BaseNodeConvert
 {
 	public override Type NodeTypeToConvert => typeof( VanillaNodes.TextureSampler );
@@ -124,9 +169,11 @@ internal class TextureSamplerNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldTextureSamplerNode.Image;
+		//newNode.InternalImage = oldTextureSamplerNode.Image;
 		newNode.SamplerState = oldTextureSamplerNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureSamplerNode.UI.ConvertVanillaTextureInput();
+
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -168,9 +215,11 @@ internal class TextureTriplanarNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DTriplanarNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldTextureTriplanarNode.Image;
+		newNode.InternalImage = oldTextureTriplanarNode.Image;
 		newNode.SamplerState = oldTextureTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldTextureTriplanarNode.UI.ConvertVanillaTextureInput();
+
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 
@@ -190,9 +239,11 @@ internal class NormapMapTriplanarNodeConvert : BaseNodeConvert
 		var newNode = new SampleTexture2DNormalMapTriplanarNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.Image = oldNormapMapTriplanarNode.Image;
+		newNode.InternalImage = oldNormapMapTriplanarNode.Image;
 		newNode.SamplerState = oldNormapMapTriplanarNode.Sampler.ConvertVanillaSampler( "" );
 		newNode.UI = oldNormapMapTriplanarNode.UI.ConvertVanillaTextureInput();
+
+		TextureSamplerConversionFunctions.CreateTextureParameter( converter, newNode );
 
 		newNodes.Add( newNode );
 

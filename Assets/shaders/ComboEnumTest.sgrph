@@ -1,5 +1,5 @@
 {
-  "__version": 3,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "shaders/comboenumtest.sgrph",
   "Model": "models/dev/box.vmdl",
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Unlit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": true,

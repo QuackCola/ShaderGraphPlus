@@ -750,7 +750,7 @@ public class Preview2D : SceneRenderingWidget
 
 	}
 
-	public override void PreFrame()
+	protected override void PreFrame()
 	{
 		Scene.EditorTick( RealTime.Now, RealTime.Delta );
 

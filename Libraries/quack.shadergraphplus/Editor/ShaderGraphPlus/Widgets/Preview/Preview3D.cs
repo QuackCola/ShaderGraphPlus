@@ -295,14 +295,14 @@ public sealed class Preview3DPanel : Widget
 		_preview.SetAttribute( id, value );
 	}
 
-	public void SetCombo( string id, bool value )
+	public void SetFeature( string id, int value )
 	{
-		_preview.SetCombo( id, value );
+		_preview.SetFeature( id, value );
 	}
 
-	public void SetCombo( string id, int value )
+	public void SetDynamicCombo( string id, int value )
 	{
-		_preview.SetCombo( id, value );
+		_preview.SetDynamicCombo( id, value );
 	}
 
 	public void SetStage( int value )
@@ -492,19 +492,20 @@ public sealed class Preview3D : SceneRenderingWidget
 	private SceneModel _sceneObject;
 	private Throbber _thobber;
 
-	private Dictionary<string, SamplerState> _samplerStateAttributes = new();
+	private Dictionary<string, bool> _boolAttributes = new();
+	private Dictionary<string, int> _intAttributes = new();
+	private Dictionary<string, float> _floatAttributes = new();
+	private Dictionary<string, Vector2> _float2Attributes = new();
+	private Dictionary<string, Vector3> _float3Attributes = new();
+	private Dictionary<string, Color> _float4Attributes = new();
 	private Dictionary<string, Texture> _textureAttributes = new();
+	private Dictionary<string, SamplerState> _samplerStateAttributes = new();
+	private Dictionary<string, int> _dynamicComboIntAttributes = new();
+	private Dictionary<string, int> _shaderFeatures = new();
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private Dictionary<string, Float3x3> _float3x3Attributes = new();
 	private Dictionary<string, Float4x4> _float4x4Attributes = new();
-	private Dictionary<string, Color> _float4Attributes = new();
-	private Dictionary<string, Vector3> _float3Attributes = new();
-	private Dictionary<string, Vector2> _float2Attributes = new();
-	private Dictionary<string, float> _intAttributes = new();
-	private Dictionary<string, float> _floatAttributes = new();
-	private Dictionary<string, bool> _boolAttributes = new();
-	private Dictionary<string, bool> _comboBoolAttributes = new();
-	private Dictionary<string, int> _comboIntAttributes = new();
+	
 	private int _stageId;
 
 	/// <summary>
@@ -803,11 +804,6 @@ public sealed class Preview3D : SceneRenderingWidget
 				_sceneObject.Attributes.Set( v.Key, v.Value );
 			}
 
-			foreach ( var v in _comboBoolAttributes )
-			{
-				_sceneObject.Attributes.SetCombo( v.Key, v.Value );
-			}
-
 			if ( _enableNodePreview )
 			{
 				_sceneObject.Attributes.Set( "g_iStageId", _stageId );
@@ -882,24 +878,20 @@ public sealed class Preview3D : SceneRenderingWidget
 		_sceneObject.Attributes.Set( id, value );
 	}
 
-	public void SetCombo( string id, bool value )
+	public void SetFeature( string id, int value )
 	{
-		//SGPLog.Info( $"Setting DynamicCombo `{id}` to `{value}`" );
-		
-		if ( !_comboBoolAttributes.ContainsKey( id ) )
-		{
-			_comboBoolAttributes.Add( id, value );
-			_sceneObject.Attributes.SetCombo( id, value );
-		}
+		_shaderFeatures.Add( id, value );
+		//_sceneObject.Attributes.SetFeature( id, value );
+		throw new NotImplementedException( "TODO : Implement when SceneObject.Attributes.SetFeature is added." );
 	}
 
-	public void SetCombo( string id, int value )
+	public void SetDynamicCombo( string id, int value )
 	{
 		//SGPLog.Info( $"Setting DynamicCombo `{id}` to `{value}`" );
 
-		if ( !_comboIntAttributes.ContainsKey( id ) )
+		if ( !_dynamicComboIntAttributes.ContainsKey( id ) )
 		{
-			_comboIntAttributes.Add( id, value );
+			_dynamicComboIntAttributes.Add( id, value );
 			_sceneObject.Attributes.SetCombo( id, value );
 		}
 	}
@@ -927,8 +919,8 @@ public sealed class Preview3D : SceneRenderingWidget
 		_intAttributes.Clear();
 		_floatAttributes.Clear();
 		_boolAttributes.Clear();
-		_comboBoolAttributes.Clear();
-		_comboIntAttributes.Clear();
+		_dynamicComboIntAttributes.Clear();
+		_shaderFeatures.Clear();
 
 		if ( _sceneObject.IsValid() )
 		{
@@ -1069,7 +1061,7 @@ public sealed class Preview3D : SceneRenderingWidget
 	// Application.CursorPosition is fucked for different DPI
 	private static Vector2 CursorPosition => Editor.Application.UnscaledCursorPosition;
 
-	public override void PreFrame()
+	protected override void PreFrame()
 	{
 		Scene.EditorTick( RealTime.Now, RealTime.Delta );
 

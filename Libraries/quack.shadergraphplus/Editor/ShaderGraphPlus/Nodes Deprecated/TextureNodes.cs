@@ -1027,7 +1027,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
 [InternalNode]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, ISyncableTextureNode, IErroringNode
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, IErroringNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -1187,21 +1187,6 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 
 	[Hide, JsonIgnore]
 	ParameterUI IParameterNode.UI { get; set; }
-
-	#region ISyncableTextureNode Region
-	[Hide, JsonIgnore]
-	public string SyncID => Identifier;
-
-	[Hide, JsonIgnore]
-	public string SourceParameterName => UI.Name;
-
-	public void Sync( ISyncableTextureNode targetNode )
-	{
-		targetNode.Image = Image; // Copy the preview image path
-		targetNode.UI = UI;// Copy the Material Editor UI Info
-		targetNode.Update(); // Tell the node to update
-	}
-	#endregion ISyncableTextureNode Region
 
 	/// <summary>
 	/// Texture2D object result.

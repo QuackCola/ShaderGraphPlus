@@ -13,6 +13,9 @@ public abstract class ShaderNodePlus : BaseNodePlus
 	[Hide]
 	public virtual string Title => null;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override string Subtitle => "";
+
 	[Hide]
 	public bool IsDirty = false;
 

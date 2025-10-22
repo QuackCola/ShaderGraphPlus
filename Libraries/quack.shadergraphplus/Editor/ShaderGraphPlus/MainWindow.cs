@@ -75,16 +75,17 @@ public class MainWindow : DockWindow
 	private bool _autoCompile = true;
 
 	private string _generatedCode;
-	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
-	private readonly Dictionary<string, Texture> _textureAttributes = new();
-	private readonly Dictionary<string, Color> _float4Attributes = new();
-	private readonly Dictionary<string, Vector3> _float3Attributes = new();
-	private readonly Dictionary<string, Vector2> _float2Attributes = new();
+
+	private readonly Dictionary<string, bool> _boolAttributes = new();
 	private readonly Dictionary<string, int> _intAttributes = new();
 	private readonly Dictionary<string, float> _floatAttributes = new();
-	private readonly Dictionary<string, bool> _boolAttributes = new();
-	private readonly Dictionary<string, int> _comboIntAttributes = new();
-	private readonly Dictionary<string, bool> _comboBoolAttributes = new();
+	private readonly Dictionary<string, Vector2> _float2Attributes = new();
+	private readonly Dictionary<string, Vector3> _float3Attributes = new();
+	private readonly Dictionary<string, Color> _float4Attributes = new();
+	private readonly Dictionary<string, SamplerState> _samplerStateAttributes = new();
+	private readonly Dictionary<string, Texture> _textureAttributes = new();
+	private readonly Dictionary<string, int> _dynamicComboIntAttributes = new();
+	private readonly Dictionary<string, int> _shaderFeatures = new();
 
 	//private readonly List<BaseNodePlus> _compiledNodes = new();
 
@@ -102,10 +103,6 @@ public class MainWindow : DockWindow
 	private int _fileHistoryPosition = 0;
 
 	private string _defaultDockState;
-
-	private bool _syncLinkedTextureNodes = false;
-	private string _sourceSyncID = "";
-	private string _sourceParameterName = "";
 
 	public bool CanOpenMultipleAssets => true;
 	public bool EnableNodePreview => _preview3D.Preview.EnableNodePreview;
@@ -429,23 +426,10 @@ public class MainWindow : DockWindow
 		_shaderCompileErrors.Clear();
 	}
 
-	private void OnAttribute( string name, object value, bool isCombo = false )
+	private void OnAttribute( string name, object value )
 	{
 		if ( value == null )
 			return;
-
-		if ( isCombo )
-		{
-			if ( value is int intValue )
-			{
-				if ( _comboIntAttributes.TryAdd( name, intValue ) )
-				{
-					_preview3D?.SetCombo( name, intValue );
-				}
-			}
-
-			return;
-		}
 
 		switch ( value )
 		{
@@ -485,8 +469,20 @@ public class MainWindow : DockWindow
 				_samplerStateAttributes.Add( name, (SamplerState)v );
 				_preview3D?.SetAttribute( name, (SamplerState)v );
 				break;
+			case ShaderFeatureWrapper v:
+				if ( _shaderFeatures.TryAdd( v.FeatureName, v.Value ) )
+				{
+					_preview3D?.SetFeature( v.FeatureName, v.Value );
+				}
+				break;
+			case DynamicComboWrapper v:
+				if ( _dynamicComboIntAttributes.TryAdd( v.ComboName, v.Value ) )
+				{
+					_preview3D?.SetDynamicCombo( v.ComboName, v.Value );
+				}
+				break;
 			default:
-				throw new InvalidOperationException( $"Unsupported attribute type: {value.GetType()}" );
+				throw new InvalidOperationException( $"Unsupported attribute type: \"{value.GetType()}\"" );
 		}
 	}
 
@@ -595,16 +591,16 @@ public class MainWindow : DockWindow
 				var warnings = warningNode.GetWarnings();
 				if ( warnings.Count > 0 )
 				{
-					foreach ( var error in warnings )
+					foreach ( var warning in warnings )
 					{
-						iWarningNodeWarnings.Add( new() { Message = error, Node = node, IsWarning = true } );
+						iWarningNodeWarnings.Add( new() { Message = warning, Node = node, IsWarning = true } );
 					}
 				}
 			}
 
-			if ( node is IErroringNode erroring )
+			if ( node is IErroringNode erroringNode )
 			{
-				var errors = erroring.GetErrors();
+				var errors = erroringNode.GetErrors();
 				if ( errors.Count > 0 )
 				{
 					foreach ( var error in errors )
@@ -624,24 +620,6 @@ public class MainWindow : DockWindow
 			if ( output == null )
 				continue;
 
-			if ( node is ITextureInputNode iTextureInputNode )
-			{
-				if ( string.IsNullOrWhiteSpace( iTextureInputNode.TextureInputName ) )
-				{
-					iTextureInputNode.AlreadyRegisterd = false;
-				}
-				else
-				{
-					// Register ISyncableTextureNode SyncID with the compiler.
-					if ( node is ISyncableTextureNode syncableTextureNode )
-					{
-						compiler.RegisterSyncID( syncableTextureNode.SyncID, iTextureInputNode.TextureInputName );
-					}
-
-					iTextureInputNode.AlreadyRegisterd = compiler.CheckTextureInputRegistration( iTextureInputNode.TextureInputName );
-				}
-			}
-
 			var result = compiler.Result( new NodeInput { Identifier = node.Identifier, Output = property.Name } );
 			if ( !result.IsValid() )
 				continue;
@@ -649,11 +627,6 @@ public class MainWindow : DockWindow
 			if ( node is SamplerNode samplerNode )
 			{
 				samplerNode.Processed = true;
-			}
-
-			if ( node is ITextureInputNode iTextureInputNodePost )
-			{
-				iTextureInputNodePost.AlreadyRegisterd = false;
 			}
 
 			var componentType = result.ComponentType;
@@ -684,27 +657,13 @@ public class MainWindow : DockWindow
 			}
 		}
 
+		//foreach ( var node in _graph.Nodes.OfType<Texture2DSamplerBase>() )
+		//{
+		//	node.SyncNode();
+		//}
+
 		//_compiledNodes.Clear();
 		//_compiledNodes.AddRange( compiler.Nodes );
-#region ISyncableTextureNode Region
-		// Sync any texture nodes with the name _sourceParameterName name
-		if ( _syncLinkedTextureNodes )
-		{
-			var sourceSyncableNode = _graph.Nodes.Where( x => x.Identifier == _sourceSyncID ).OfType<ISyncableTextureNode>().FirstOrDefault();
-
-			// No need to target where we are syncing from. But also only target ID's with a matching TextureInput name.
-			var targetNodeIDs = compiler.SyncIDs.Where( x => x.Key != _sourceSyncID ).Where( x => x.Value == _sourceParameterName );
-
-			foreach ( var targetNodeID in targetNodeIDs )
-			{
-				var targetSyncableNode = _graph.Nodes.Where( x => x.Identifier == targetNodeID.Key ).OfType<ISyncableTextureNode>().FirstOrDefault();
-
-				sourceSyncableNode.Sync( targetSyncableNode );
-			}
-
-			_syncLinkedTextureNodes = false;
-		}
-#endregion ISyncableTextureNode Region
 
 		if ( _properties.IsValid() && _properties.Target is BaseNodePlus targetNode && targetNode.CanPreview )
 		{
@@ -1239,16 +1198,17 @@ public class MainWindow : DockWindow
 
 	private void ClearAttributes()
 	{
-		_samplerStateAttributes.Clear();
-		_textureAttributes.Clear();
-		_float4Attributes.Clear();
-		_float3Attributes.Clear();
-		_float2Attributes.Clear();
-		_floatAttributes.Clear();
-		_intAttributes.Clear();
 		_boolAttributes.Clear();
-		_comboBoolAttributes.Clear();
-		_comboIntAttributes.Clear();
+		_intAttributes.Clear();
+		_floatAttributes.Clear();
+		_float2Attributes.Clear();
+		_float3Attributes.Clear();
+		_float4Attributes.Clear();
+		_textureAttributes.Clear();
+		_samplerStateAttributes.Clear();
+		_dynamicComboIntAttributes.Clear();
+		_shaderFeatures.Clear();
+
 		//_compiledNodes.Clear();
 
 		_preview3D?.ClearAttributes();
@@ -1333,6 +1293,20 @@ public class MainWindow : DockWindow
 
 		AddToRecentFiles( path );
 
+		foreach ( var parameter in graph.Parameters )
+		{
+			if ( parameter.CheckParameter( out var parameterIssues ) )
+			{
+				_graph.UpdateParameterNodes( parameter );
+			}
+			else
+			{	
+				foreach ( var parameterIssue in parameterIssues )
+				{
+					AddBlackboardIssue( parameterIssue );
+				}
+			}
+		}
 
 		GeneratePreviewCode();
 	}
@@ -1651,14 +1625,14 @@ public class MainWindow : DockWindow
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
 
-		foreach ( var value in _comboBoolAttributes )
+		foreach ( var value in _dynamicComboIntAttributes )
 		{
-			_preview3D.SetCombo( value.Key, value.Value );
+			_preview3D.SetDynamicCombo( value.Key, value.Value );
 		}
 
-		foreach ( var value in _comboIntAttributes )
+		foreach ( var value in _shaderFeatures )
 		{
-			_preview3D.SetCombo( value.Key, value.Value );
+			_preview3D.SetFeature( value.Key, value.Value );
 		}
 
 		_properties = new Properties( this );
@@ -1809,58 +1783,27 @@ public class MainWindow : DockWindow
 	private void OnPropertyUpdated( SerializedProperty serializedProperty )
 	{
 		BlackboardIssues.Clear();
-
 		_preview3D.PostProcessing = _graphView.Graph.Domain == ShaderDomain.PostProcess;
+
+		if ( _properties.Target is BaseBlackboardParameter parameter )
+		{
+			// Dont update a node on the graph if we have any blackboard issues.
+			if ( parameter.CheckParameter( out var parameterIssues ) )
+			{
+				_graph.UpdateParameterNodes( parameter );
+			}
+			else
+			{
+				foreach ( var parameterIssue in parameterIssues )
+				{
+					AddBlackboardIssue( parameterIssue );
+				}
+			}
+		}
 
 		if ( _properties.Target is BaseNodePlus node )
 		{
-			if ( node is ISyncableTextureNode syncableTexturePreview )
-			{
-				// Avoid Syncing when the changed property was the Name property of the TextureInput UI property.
-				if ( serializedProperty.Name != nameof( syncableTexturePreview.UI.Name ) )
-				{
-					_syncLinkedTextureNodes = true;
-					_sourceSyncID = syncableTexturePreview.SyncID;
-					_sourceParameterName = syncableTexturePreview.SourceParameterName;
-				}
-			}
-
 			_graphView.UpdateNode( node );
-		}
-		
-		if ( _properties.Target is BaseBlackboardParameter parameter )
-		{
-
-			if ( string.IsNullOrWhiteSpace( parameter.Name ) )
-			{
-				AddBlackboardIssue( $"Parameter with identifier \"{parameter.Identifier}\" cannot have a blank name!" );
-			}
-
-			if ( parameter is ShaderFeatureEnumParameter featureEnumParameter )
-			{
-				foreach ( var option in featureEnumParameter.Options.Index() )
-				{
-					if ( !string.IsNullOrWhiteSpace( option.Item ) )
-					{
-						continue;
-					}
-
-					if ( !string.IsNullOrWhiteSpace( featureEnumParameter.Name ) )
-					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature \"{featureEnumParameter.Name}\" is blank!" );
-					}
-					else
-					{
-						AddBlackboardIssue( $"Option at element index \"{option.Index}\" of enum shader feature with identifier \"{parameter.Identifier}\" is blank!" );
-					}
-				}
-			}
-
-			// Dont update a node on the graph if we have any blackboard issues.
-			if ( !BlackboardIssues.Any() )
-			{
-				_graph.UpdateParameterNode( parameter );
-			}
 		}
 
 		var shouldEvaluate = _properties.Target is not CommentNode;
@@ -1922,10 +1865,8 @@ public class MainWindow : DockWindow
 		GeneratePreviewCode();
 	}
 
-	private void AddBlackboardIssue( string issueMessage )
+	private void AddBlackboardIssue( string message )
 	{
-		BlackboardIssues.Add(
-			new() { Node = null, Message = issueMessage }
-		);
+		BlackboardIssues.Add( new() { Node = null, Message = message } );
 	}
 }
