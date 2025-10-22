@@ -1069,7 +1069,7 @@ public sealed class Preview3D : SceneRenderingWidget
 	// Application.CursorPosition is fucked for different DPI
 	private static Vector2 CursorPosition => Editor.Application.UnscaledCursorPosition;
 
-	public override void PreFrame()
+	protected override void PreFrame()
 	{
 		Scene.EditorTick( RealTime.Now, RealTime.Delta );
 
