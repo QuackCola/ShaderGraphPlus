@@ -578,21 +578,10 @@ public class ShaderGraphPlusView : GraphView
 				}
 			}
 		}
-		else if ( targetPlug is not PlugIn )
-		{
-			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
-			{
-				Dialog.AskString( ( string namedRerouteName ) => 
-				{
-					CreateNewNamedRerouteDeclaration( namedRerouteName, clickPos, targetPlug );
-				}, 
-				"Specify a Named Reroute name" );
-			} );
-		}
 		else if ( targetPlug is PlugIn )
 		{
 			var namedRerouteDeclarations = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
-			
+
 			if ( namedRerouteDeclarations.Any() )
 			{
 				var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
@@ -602,11 +591,22 @@ public class ShaderGraphPlusView : GraphView
 					optionsMenu.AddOption( namedRerouteDeclaration.Name, "route", () =>
 					{
 						var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>(), namedRerouteDeclaration.Name );
-						
+
 						CreateNewNode( nodeType, clickPos, targetPlug );
 					} );
 				}
 			}
+		}
+		else if ( targetPlug is not PlugIn )
+		{
+			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
+			{
+				Dialog.AskString( ( string namedRerouteName ) =>
+				{
+					CreateNewNamedRerouteDeclaration( namedRerouteName, clickPos, targetPlug );
+				},
+				"Specify a Named Reroute name" );
+			} );
 		}
 
 		menu.AddSeparator();
