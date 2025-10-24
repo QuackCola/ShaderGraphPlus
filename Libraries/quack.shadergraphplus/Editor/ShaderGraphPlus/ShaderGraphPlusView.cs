@@ -14,6 +14,7 @@ using NodePlug = NodeEditorPlus.NodePlug;
 using NodeQuery = NodeEditorPlus.NodeQuery;
 using NodeUI = NodeEditorPlus.NodeUI;
 using PlugIn = NodeEditorPlus.PlugIn;
+using PlugOut = NodeEditorPlus.PlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -487,22 +488,25 @@ public class ShaderGraphPlusView : GraphView
 		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
 		var isSubgraph = Graph.IsSubgraph;
 
-		var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
-
-		foreach ( var classType in GetRelevantParameters().OrderBy( x => x.Type.GetAttribute<OrderAttribute>().Value ) )
+		if ( targetPlug == null )
 		{
-			var targetType = classType.Type.TargetType;
-			if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )
-				continue;
+			var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
 
-			newParameterMenu.AddOption( classType.Type.Title, classType.Type.Icon, () =>
+			foreach ( var classType in GetRelevantParameters().OrderBy( x => x.Type.GetAttribute<OrderAttribute>().Value ) )
 			{
-				Dialog.AskString( ( string parameterName ) =>
+				var targetType = classType.Type.TargetType;
+				if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )
+					continue;
+
+				newParameterMenu.AddOption( classType.Type.Title, classType.Type.Icon, () =>
 				{
-					CreateNewParameterNode( classType, parameterName, clickPos );
-				},
-				$"Specify a name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
-			} );
+					Dialog.AskString( ( string parameterName ) =>
+					{
+						CreateNewParameterNode( classType, parameterName, clickPos );
+					},
+					$"Specify a name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
+				} );
+			}
 		}
 
 		if ( isSubgraph )
@@ -575,21 +579,10 @@ public class ShaderGraphPlusView : GraphView
 				}
 			}
 		}
-		else if ( targetPlug is not PlugIn )
-		{
-			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
-			{
-				Dialog.AskString( ( string namedRerouteName ) => 
-				{
-					CreateNewNamedRerouteDeclaration( namedRerouteName, clickPos, targetPlug );
-				}, 
-				"Specify a Named Reroute name" );
-			} );
-		}
 		else if ( targetPlug is PlugIn )
 		{
 			var namedRerouteDeclarations = Graph.Nodes.OfType<NamedRerouteDeclarationNode>();
-			
+
 			if ( namedRerouteDeclarations.Any() )
 			{
 				var optionsMenu = menu.AddMenu( "Named Reroutes", "route" );
@@ -599,11 +592,22 @@ public class ShaderGraphPlusView : GraphView
 					optionsMenu.AddOption( namedRerouteDeclaration.Name, "route", () =>
 					{
 						var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>(), namedRerouteDeclaration.Name );
-						
+
 						CreateNewNode( nodeType, clickPos, targetPlug );
 					} );
 				}
 			}
+		}
+		else if ( targetPlug is PlugOut )
+		{
+			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
+			{
+				Dialog.AskString( ( string namedRerouteName ) =>
+				{
+					CreateNewNamedRerouteDeclaration( namedRerouteName, clickPos, targetPlug );
+				},
+				"Specify a Named Reroute name" );
+			} );
 		}
 
 		menu.AddSeparator();
