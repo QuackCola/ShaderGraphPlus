@@ -17,6 +17,7 @@ public static class SubgraphPortTypeExtentions
 			SubgraphPortType.Color => "float4",
 			SubgraphPortType.SamplerState => "SamplerState",
 			SubgraphPortType.Texture2DObject => "Texture2D",
+			SubgraphPortType.TextureCubeObject => "TextureCube",
 			_ => throw new NotImplementedException( $"Unknown PortType \"{subgraphPortType}\"" )
 		};
 	}
