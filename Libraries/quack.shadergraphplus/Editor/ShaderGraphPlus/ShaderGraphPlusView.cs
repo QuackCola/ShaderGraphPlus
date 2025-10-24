@@ -487,22 +487,25 @@ public class ShaderGraphPlusView : GraphView
 		base.OnPopulateNodeMenuSpecialOptions( menu, clickPos, targetPlug, filter );
 		var isSubgraph = Graph.IsSubgraph;
 
-		var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
-
-		foreach ( var classType in GetRelevantParameters().OrderBy( x => x.Type.GetAttribute<OrderAttribute>().Value ) )
+		if ( targetPlug == null )
 		{
-			var targetType = classType.Type.TargetType;
-			if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )
-				continue;
+			var newParameterMenu = menu.AddMenu( $"Create {(isSubgraph ? "Subgraph Input" : "Parameter")}", "add" );
 
-			newParameterMenu.AddOption( classType.Type.Title, classType.Type.Icon, () =>
+			foreach ( var classType in GetRelevantParameters().OrderBy( x => x.Type.GetAttribute<OrderAttribute>().Value ) )
 			{
-				Dialog.AskString( ( string parameterName ) =>
+				var targetType = classType.Type.TargetType;
+				if ( targetType == typeof( ShaderFeatureBooleanParameter ) || targetType == typeof( ShaderFeatureEnumParameter ) )
+					continue;
+
+				newParameterMenu.AddOption( classType.Type.Title, classType.Type.Icon, () =>
 				{
-					CreateNewParameterNode( classType, parameterName, clickPos );
-				},
-				$"Specify a name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
-			} );
+					Dialog.AskString( ( string parameterName ) =>
+					{
+						CreateNewParameterNode( classType, parameterName, clickPos );
+					},
+					$"Specify a name for the {(isSubgraph ? "subgraph input" : "parameter")}" );
+				} );
+			}
 		}
 
 		if ( isSubgraph )
