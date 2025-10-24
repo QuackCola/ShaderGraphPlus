@@ -1,7 +1,7 @@
 ﻿using Editor;
 using NodeEditorPlus;
+using Sandbox;
 using ShaderGraphPlus.Nodes;
-using static Sandbox.Material;
 using GraphView = NodeEditorPlus.GraphView;
 using IPlugIn = NodeEditorPlus.IPlugIn;
 using IPlugOut = NodeEditorPlus.IPlugOut;
@@ -40,7 +40,7 @@ public enum SubgraphPortType
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
 [InternalNode]
-public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncableNode, IMetaDataNode
+public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncableNode, IMetaDataNode, IInitializeNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -56,6 +56,42 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 	[Hide]
 	public Guid BlackboardParameterIdentifier { get; set; }
+
+	[Hide]
+	public override string Title => string.IsNullOrWhiteSpace( InputName ) ?
+	$"Subgraph Input" :
+	$"{InputName}";
+
+	[Input, Title( "Preview" ), Hide]
+	public NodeInput PreviewInput { get; set; }
+
+	[Hide, Browsable( false )]
+	public SubgraphPortType InputType { get; set; } = SubgraphPortType.Invalid;
+
+	/// <summary>
+	/// Name of this input.
+	/// </summary>
+	public string InputName { get; set; } = "In0";
+
+	/// <summary>
+	/// Description of this input.
+	/// </summary>
+	[TextArea]
+	public string InputDescription { get; set; } = "";
+
+	[Hide, Browsable( false )]
+	public object DefaultData { get; set; } = null;
+
+	/// <summary>
+	/// Is this input required to have a valid connection?
+	/// </summary>
+	public bool IsRequired { get; set; } = false;
+
+	public int PortOrder { get; set; }
+
+	public SubgraphInput()
+	{
+	}
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter blackboardParameter )
 	{
@@ -101,64 +137,101 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 	}
 
-	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace( InputName ) ?
-	$"Subgraph Input" :
-	$"{InputName} ({InputData.InputType})";
-
-	/// <summary>
-	/// Name of this input.
-	/// </summary>
-	public string InputName { get; set; } = "In0";
-
-	/// <summary>
-	/// Description of this input.
-	/// </summary>
-	[TextArea]
-	public string InputDescription { get; set; } = "";
-
-	//[global::Editor( "SGP.VariantValue" ), InlineEditor( Label = false )]
-	[Hide]
-	public VariantValueBase InputData { get; set; } = new VariantValueVector3( Vector3.Zero, SubgraphPortType.Vector3 );
-
-	/// <summary>
-	/// Is this input required to have a valid connection?
-	/// </summary>
-	public bool IsRequired { get; set; } = false;
-
-	public int PortOrder { get; set; }
-
-	[Input, Title( "Preview" ), Hide]
-	public NodeInput PreviewInput { get; set; }
-
-	public SubgraphInput()
+	public void InitializeNode()
 	{
+		if ( DefaultData is JsonElement element )
+		{
+			switch ( InputType )
+			{
+				case SubgraphPortType.Bool:
+					DefaultData = JsonSerializer.Deserialize<bool>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Int:
+					DefaultData = JsonSerializer.Deserialize<int>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Float:
+					DefaultData = JsonSerializer.Deserialize<float>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Vector2:
+					DefaultData = JsonSerializer.Deserialize<Vector2>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Vector3:
+					DefaultData = JsonSerializer.Deserialize<Vector3>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Vector4:
+					DefaultData = JsonSerializer.Deserialize<Vector4>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Color:
+					DefaultData = JsonSerializer.Deserialize<Color>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.SamplerState:
+					DefaultData = JsonSerializer.Deserialize<Sampler>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Texture2DObject:
+					DefaultData = JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() ) with { Type = TextureType.Tex2D };
+					break;
+				case SubgraphPortType.TextureCubeObject:
+					DefaultData = JsonSerializer.Deserialize<TextureInput>( element, ShaderGraphPlus.SerializerOptions() ) with { Type = TextureType.TexCube };
+					break;
+				default:
+					throw new InvalidOperationException();
+			}
+		}
 	}
 
-	internal VariantParam<T> GetValueAsVariantParam<T>()
+	internal T GetValue<T>()
 	{
-		return InputData.GetAsVariantParam<T>( InputDescription );
+		if ( DefaultData is T value )
+		{
+			return value;
+		}
+		else
+		{
+			if ( DefaultData == null )
+			{
+				throw new Exception( "DefaultData is null!!!" );
+			}
+
+			throw new InvalidCastException( $"Cannot cast \"{DefaultData.GetType()}\" to \"{typeof( T )}\"" );
+		}
 	}
 
-	internal T GetDefaultValue<T>()
+	internal object GetData()
 	{
-		return InputData.GetValue<T>();
+		if ( DefaultData == null )
+		{
+			throw new Exception( "DefaultData is null!!!" );
+		}
+
+		return DefaultData;
 	}
 
 	internal void SetDefaultValue<T>( T value )
 	{
-		InputData.SetValue<T>( value );
+		InputType = value switch
+		{
+			bool => SubgraphPortType.Bool,
+			int => SubgraphPortType.Int,
+			float => SubgraphPortType.Float,
+			Vector2 => SubgraphPortType.Vector2,
+			Vector3 => SubgraphPortType.Vector3,
+			Vector4 => SubgraphPortType.Vector4,
+			Color => SubgraphPortType.Color,
+			TextureInput v => v.Type == TextureType.Tex2D ? SubgraphPortType.Texture2DObject : SubgraphPortType.TextureCubeObject,
+			_ => throw new NotImplementedException(),
+		};
+		DefaultData = value;
 	}
 
 	[Output, Title( "Value" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		if ( InputData.InputType == SubgraphPortType.Texture2DObject || InputData.InputType == SubgraphPortType.TextureCubeObject )
+		if ( InputType == SubgraphPortType.Texture2DObject || InputType == SubgraphPortType.TextureCubeObject )
 		{
 			var resultType = ResultType.Invalid;
-			var textureInput = InputData.GetValue<TextureInput>();
+			var textureInput = GetValue<TextureInput>();
 			var textureGlobal = "";
-			if ( InputData.InputType == SubgraphPortType.Texture2DObject )
+			if ( InputType == SubgraphPortType.Texture2DObject )
 			{
 				textureInput = textureInput with { Name = InputName, Type = TextureType.Tex2D };
 				textureGlobal = compiler.ResultTexture( textureInput, true );
@@ -181,17 +254,17 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 		else
 		{
-			(ResultType resultType, string defaultCode) defaultResult = InputData.InputType switch
+			(ResultType resultType, string defaultCode) defaultResult = InputType switch
 			{
-				SubgraphPortType.Bool => (ResultType.Bool, $"{compiler.ResultValue( InputData.GetValue<bool>() )}"),
-				SubgraphPortType.Int => (ResultType.Int, $"{compiler.ResultValue( InputData.GetValue<int>() )}"),
-				SubgraphPortType.Float => (ResultType.Float, $"{compiler.ResultValue( InputData.GetValue<float>() )}"),
-				SubgraphPortType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue( InputData.GetValue<Vector2>() )} )"),
-				SubgraphPortType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue( InputData.GetValue<Vector3>() )} )"),
-				SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Vector4>() )} )"),
-				SubgraphPortType.Color => (ResultType.Color, $"float4( {compiler.ResultValue( InputData.GetValue<Color>() )} )"),
-				SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( InputData.GetValue<Sampler>() )}"),
-				_ => throw new Exception( $"Unknown PortType \"{InputData.InputType}\"" )
+				SubgraphPortType.Bool => (ResultType.Bool, $"{compiler.ResultValue( GetValue<bool>() )}"),
+				SubgraphPortType.Int => (ResultType.Int, $"{compiler.ResultValue( GetValue<int>() )}"),
+				SubgraphPortType.Float => (ResultType.Float, $"{compiler.ResultValue( GetValue<float>() )}"),
+				SubgraphPortType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue( GetValue<Vector2>() )} )"),
+				SubgraphPortType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue( GetValue<Vector3>() )} )"),
+				SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Vector4>() )} )"),
+				SubgraphPortType.Color => (ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Color>() )} )"),
+				SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( GetValue<Sampler>() )}"),
+				_ => throw new Exception( $"Unknown PortType \"{InputType}\"" )
 			};
 
 			//SGPLog.Info( $"defaultResult is : {defaultResult.defaultCode}" );
@@ -218,15 +291,10 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 		if ( string.IsNullOrWhiteSpace( InputName ) )
 		{
-			errors.Add( $"SubgraphInput of InputType \"{InputData.InputType}\" must have a name!" );
+			errors.Add( $"SubgraphInput of InputType \"{InputType}\" must have a name!" );
 		}
 
-		//if ( InputName.Contains( ' ' ) )
-		//{
-		//	errors.Add( $"Parameter name \"{InputName}\" cannot contain spaces" );
-		//}
-
-		if ( InputData.InputType == SubgraphPortType.Invalid )
+		if ( InputType == SubgraphPortType.Invalid )
 		{
 			errors.Add( $"SubgraphInput InputType is invalid!" );
 		}

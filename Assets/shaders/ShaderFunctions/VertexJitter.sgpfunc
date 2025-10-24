@@ -1,5 +1,5 @@
 {
-  "__version": 3,
+  "__version": 4,
   "IsSubgraph": true,
   "Path": "shaders/shaderfunctions/vertexjitter.sgpfunc",
   "Model": "models/fauna/hare/hare.vmdl",
@@ -129,13 +129,10 @@
       "_class": "SubgraphInput",
       "__version": 1,
       "BlackboardParameterIdentifier": "4654dcb4-e42b-47f9-8538-63c87af642db",
+      "InputType": "Bool",
       "InputName": "ToggleSnapping",
       "InputDescription": "",
-      "InputData": {
-        "__class": "VariantValueBool",
-        "InputType": "Bool",
-        "Value": true
-      },
+      "DefaultData": true,
       "IsRequired": false,
       "PortOrder": 0,
       "Identifier": "6",
@@ -221,13 +218,10 @@
       "_class": "SubgraphInput",
       "__version": 1,
       "BlackboardParameterIdentifier": "abb2ae9d-d39b-4282-a1ec-419113dd22f9",
+      "InputType": "Float",
       "InputName": "GridSize",
       "InputDescription": "",
-      "InputData": {
-        "__class": "VariantValueFloat",
-        "InputType": "Float",
-        "Value": 0.5
-      },
+      "DefaultData": 0.5,
       "IsRequired": false,
       "PortOrder": 0,
       "Identifier": "12",

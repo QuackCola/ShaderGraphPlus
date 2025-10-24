@@ -1,5 +1,8 @@
 ﻿
+using Editor.ShaderGraph;
 using ShaderGraphPlus.Nodes;
+using System.Numerics;
+using System.Runtime.Intrinsics;
 using System.Text.Json.Nodes;
 
 namespace ShaderGraphPlus;
@@ -39,68 +42,68 @@ public partial class ShaderGraphPlus
 
 				BaseBlackboardParameter blackboardParameter = null;
 
-				if ( subgraphInput.InputData.InputType == SubgraphPortType.Bool )
+				if ( subgraphInput.InputType == SubgraphPortType.Bool )
 				{
 					blackboardParameter = new BoolSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<bool>(),
+						Value = subgraphInput.GetValue<bool>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
 				}
-				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Int )
+				else if ( subgraphInput.InputType == SubgraphPortType.Int )
 				{
 					blackboardParameter = new IntSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<int>(),
+						Value = subgraphInput.GetValue<int>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
 				}
-				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Float )
+				else if ( subgraphInput.InputType == SubgraphPortType.Float )
 				{
 					blackboardParameter = new FloatSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<float>(),
+						Value = subgraphInput.GetValue<float>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
 				}
-				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector2 )
+				else if ( subgraphInput.InputType == SubgraphPortType.Vector2 )
 				{
 					blackboardParameter = new Float2SubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<Vector2>(),
+						Value = subgraphInput.GetValue<Vector2>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
 				}
-				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Vector3 )
+				else if ( subgraphInput.InputType == SubgraphPortType.Vector3 )
 				{
 					blackboardParameter = new Float3SubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<Vector3>(),
+						Value = subgraphInput.GetValue<Vector3>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
 				}
-				else if ( subgraphInput.InputData.InputType == SubgraphPortType.Color )
+				else if ( subgraphInput.InputType == SubgraphPortType.Color )
 				{
 					blackboardParameter = new ColorSubgraphInputParameter()
 					{
 						Name = subgraphInput.InputName,
 						Description = subgraphInput.InputDescription,
-						Value = subgraphInput.InputData.GetValue<Color>(),
+						Value = subgraphInput.GetValue<Color>(),
 						IsRequired = subgraphInput.IsRequired,
 						PortOrder = subgraphInput.PortOrder,
 					};
@@ -401,7 +404,8 @@ public partial class ShaderGraphPlus
 					{
 						BlackboardParameterIdentifier = blackboardParameter1.Identifier,
 						InputName = newUI1.Name,
-						InputData = new VariantValueTexture2D( textureInput, SubgraphPortType.Texture2DObject )
+						InputType = SubgraphPortType.Texture2DObject,
+						DefaultData = textureInput
 					};
 				}
 				else
@@ -614,64 +618,72 @@ public partial class ShaderGraphPlus
 		switch ( typeName )
 		{
 			case "BoolParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Bool;
+				subgraphInput.InputType = SubgraphPortType.Bool;
 				if ( element.TryGetProperty( "Value", out var boolValue ) )
 				{
-					subgraphInput.InputData = new VariantValueBool( boolValue.GetBoolean(), SubgraphPortType.Bool );
+					subgraphInput.InputType = SubgraphPortType.Bool;
+					subgraphInput.DefaultData = boolValue.GetBoolean();
 				}
 				break;
 			case "IntParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Int;
+				subgraphInput.InputType = SubgraphPortType.Int;
 				if ( element.TryGetProperty( "Value", out var intValue ) )
 				{
-					subgraphInput.InputData = new VariantValueInt( intValue.GetInt32(), SubgraphPortType.Int );
+					subgraphInput.InputType = SubgraphPortType.Int;
+					subgraphInput.DefaultData = intValue.GetInt32();
 				}
 				break;
 			case "FloatParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Float;
+				subgraphInput.InputType = SubgraphPortType.Float;
 				if ( element.TryGetProperty( "Value", out var floatValue ) )
 				{
-					subgraphInput.InputData = new VariantValueFloat( floatValue.GetSingle(), SubgraphPortType.Float );
+					subgraphInput.InputType = SubgraphPortType.Float;
+					subgraphInput.DefaultData = floatValue.GetSingle();
 				}
 				break;
 			case "Float2ParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Vector2;
+				subgraphInput.InputType = SubgraphPortType.Vector2;
 				if ( element.TryGetProperty( "Value", out var float2Value ) )
 				{
 					var vector2 = JsonSerializer.Deserialize<Vector2>( float2Value.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueVector2( vector2, SubgraphPortType.Vector2 );
+					subgraphInput.InputType = SubgraphPortType.Vector2;
+					subgraphInput.DefaultData = vector2;
 				}
 				break;
 			case "Float3ParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Vector3;
+				subgraphInput.InputType = SubgraphPortType.Vector3;
 				if ( element.TryGetProperty( "Value", out var float3Value ) )
 				{
 					var vector3 = JsonSerializer.Deserialize<Vector3>( float3Value.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueVector3( vector3, SubgraphPortType.Vector3 );
+					subgraphInput.InputType = SubgraphPortType.Vector3;
+					subgraphInput.DefaultData = vector3;
 				}
 				break;
 			case "ColorParameterNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Color;
+				subgraphInput.InputType = SubgraphPortType.Color;
 				if ( element.TryGetProperty( "Value", out var ColorValue ) )
 				{
 					var color = JsonSerializer.Deserialize<Color>( ColorValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueColor( color, SubgraphPortType.Color );
+					subgraphInput.InputType = SubgraphPortType.Color;
+					subgraphInput.DefaultData = color;
 				}
 				break;
 			case "Texture2DObjectNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.Texture2DObject;
+				subgraphInput.InputType = SubgraphPortType.Texture2DObject;
 				if ( element.TryGetProperty( "UI", out var TextureInputValue ) )
 				{
-					var vector4 = JsonSerializer.Deserialize<Vector4>( TextureInputValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueColor( vector4, SubgraphPortType.Texture2DObject );
+					var textureInput = JsonSerializer.Deserialize<TextureInput>( TextureInputValue.GetRawText(), options );
+					subgraphInput.InputType = SubgraphPortType.Texture2DObject;
+					subgraphInput.DefaultData = textureInput;
 				}
 				break;
 			case "SamplerNode":
-				subgraphInput.InputData.InputType = SubgraphPortType.SamplerState;
+				subgraphInput.InputType = SubgraphPortType.SamplerState;
 				if ( element.TryGetProperty( "SamplerState", out var SamplerStateValue ) )
 				{
 					var samplerState = JsonSerializer.Deserialize<Sampler>( SamplerStateValue.GetRawText(), options );
-					subgraphInput.InputData = new VariantValueSamplerState( samplerState, SubgraphPortType.SamplerState );
+					subgraphInput.InputType = SubgraphPortType.SamplerState;
+					subgraphInput.DefaultData = samplerState;
 				}
 				break;
 		}
