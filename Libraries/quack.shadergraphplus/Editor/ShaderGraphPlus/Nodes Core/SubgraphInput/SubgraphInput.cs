@@ -40,7 +40,7 @@ public enum SubgraphPortType
 /// </summary>
 [Title( "Subgraph Input" ), Icon( "input" ), SubgraphOnly]
 [InternalNode]
-public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IBlackboardSyncableNode, IMetaDataNode, IInitializeNode
+public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode, IInitializeNode, IBlackboardSyncableNode, IMetaDataNode
 {
 	[Hide]
 	public override int Version => 1;
