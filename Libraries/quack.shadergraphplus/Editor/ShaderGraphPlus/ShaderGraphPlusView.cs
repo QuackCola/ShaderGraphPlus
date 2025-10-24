@@ -14,6 +14,7 @@ using NodePlug = NodeEditorPlus.NodePlug;
 using NodeQuery = NodeEditorPlus.NodeQuery;
 using NodeUI = NodeEditorPlus.NodeUI;
 using PlugIn = NodeEditorPlus.PlugIn;
+using PlugOut = NodeEditorPlus.PlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -597,7 +598,7 @@ public class ShaderGraphPlusView : GraphView
 				}
 			}
 		}
-		else if ( targetPlug is not PlugIn )
+		else if ( targetPlug is PlugOut )
 		{
 			menu.AddOption( "Add Named Reroute Declaration", "route", () =>
 			{
