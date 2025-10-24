@@ -24,7 +24,8 @@ public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParamete
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueBool( Value, SubgraphPortType.Bool ),
+			InputType = SubgraphPortType.Bool,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -61,7 +62,8 @@ public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueInt( Value, SubgraphPortType.Int ),
+			InputType = SubgraphPortType.Int,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -98,7 +100,8 @@ public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParamet
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueFloat( Value, SubgraphPortType.Float ),
+			InputType = SubgraphPortType.Float,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -135,7 +138,8 @@ public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector2( Value, SubgraphPortType.Vector2 ),
+			InputType = SubgraphPortType.Vector2,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -172,7 +176,8 @@ public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector3( Value, SubgraphPortType.Vector3 ),
+			InputType = SubgraphPortType.Vector3,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -209,7 +214,8 @@ public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParame
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueVector4( Value, SubgraphPortType.Vector4 ),
+			InputType = SubgraphPortType.Vector4,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -239,7 +245,8 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueColor( Value, SubgraphPortType.Color ),
+			InputType = SubgraphPortType.Color,
+			DefaultData = Value,
 			IsRequired = IsRequired,
 			PortOrder = PortOrder,
 		};
@@ -276,7 +283,8 @@ public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputPar
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueTexture2D( Value with { Name = Name, Type = TextureType.Tex2D }, SubgraphPortType.Texture2DObject )
+			InputType = SubgraphPortType.Texture2DObject,
+			DefaultData = Value with { Name = Name, Type = TextureType.Tex2D },
 		};
 	}
 }
@@ -311,7 +319,8 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueTextureCube( Value with { Name = Name, Type = TextureType.TexCube }, SubgraphPortType.TextureCubeObject )
+			InputType = SubgraphPortType.TextureCubeObject,
+			DefaultData = Value with { Name = Name, Type = TextureType.TexCube },
 		};
 	}
 }
@@ -339,7 +348,8 @@ public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInput
 			BlackboardParameterIdentifier = Identifier,
 			InputName = Name,
 			InputDescription = Description,
-			InputData = new VariantValueSamplerState( Value, SubgraphPortType.SamplerState )
+			InputType = SubgraphPortType.SamplerState,
+			DefaultData = Value,
 		};
 	}
 }

@@ -107,19 +107,7 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			if ( string.IsNullOrWhiteSpace( inputName ) ) continue;
 
-			var type = subgraphInput.InputData.InputType switch
-			{
-				SubgraphPortType.Bool => typeof( bool ),
-				SubgraphPortType.Int => typeof( int ),
-				SubgraphPortType.Float => typeof( float ),
-				SubgraphPortType.Vector2 => typeof( Vector2 ),
-				SubgraphPortType.Vector3 => typeof( Vector3 ),
-				SubgraphPortType.Color => typeof( Color ),
-				SubgraphPortType.SamplerState => typeof( Sampler ),
-				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
-				_ => throw new Exception( $"Unknown PortType \"{subgraphInput.InputData.InputType}\"" )
-			};
-
+			var type = subgraphInput.DefaultData.GetType();
 			var plugInfo = new PlugInfo()
 			{
 				Name = inputName,
@@ -146,12 +134,11 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 
 			InputReferences[plug] = (subgraphInput, type);
 
-			// TODO 
 			if ( !DefaultValues.ContainsKey( plug.Identifier ) )
 			{
-				//if ( parameterNode.GetValue() != null )
+				if ( subgraphInput.DefaultData != null )
 				{
-					DefaultValues[plug.Identifier] = subgraphInput.InputData.GetValueAsObject();//parameterNode.GetValue();
+					DefaultValues[plug.Identifier] = subgraphInput.DefaultData;
 				}
 			}
 		}
@@ -315,7 +302,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 				}
 				else
 				{
-					var val = inputRef.Value.inputNode.InputData.GetValueAsObject();//inputRef.Value.paramNode.GetValue();
+					var val = inputRef.Value.inputNode.DefaultData;
 					if ( val is JsonElement el ) return el.GetDouble();
 					return val;
 				}

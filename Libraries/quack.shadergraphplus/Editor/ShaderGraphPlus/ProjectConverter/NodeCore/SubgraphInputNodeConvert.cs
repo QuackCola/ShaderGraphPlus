@@ -18,18 +18,27 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 		newNode.Position = oldNode.Position;
 		newNode.InputName = oldSubgraphInputNode.InputName;
 		newNode.InputDescription = oldSubgraphInputNode.InputDescription;
-		newNode.InputData = oldSubgraphInputNode.InputType switch
+		newNode.InputType = oldSubgraphInputNode.InputType switch
 		{
-			VanillaGraph.InputType.Float => new VariantValueFloat( oldSubgraphInputNode.DefaultFloat, SubgraphPortType.Float ),
-			VanillaGraph.InputType.Float2 => new VariantValueVector2( oldSubgraphInputNode.DefaultFloat2, SubgraphPortType.Vector2 ),
-			VanillaGraph.InputType.Float3 => new VariantValueVector3( oldSubgraphInputNode.DefaultFloat3, SubgraphPortType.Vector3 ),
-			VanillaGraph.InputType.Color => new VariantValueColor( oldSubgraphInputNode.DefaultColor, SubgraphPortType.Color ),
+			VanillaGraph.InputType.Float => SubgraphPortType.Float,
+			VanillaGraph.InputType.Float2 => SubgraphPortType.Vector2,
+			VanillaGraph.InputType.Float3 => SubgraphPortType.Vector3,
+			VanillaGraph.InputType.Color => SubgraphPortType.Color,
 			_ => throw new NotImplementedException( $"Unknown InputType \"{oldSubgraphInputNode.InputType}\"" ),
 		};
+		newNode.DefaultData = oldSubgraphInputNode.InputType switch
+		{
+			VanillaGraph.InputType.Float => oldSubgraphInputNode.DefaultFloat,
+			VanillaGraph.InputType.Float2 => oldSubgraphInputNode.DefaultFloat2,
+			VanillaGraph.InputType.Float3 => oldSubgraphInputNode.DefaultFloat3,
+			VanillaGraph.InputType.Color => oldSubgraphInputNode.DefaultColor,
+			_ => throw new NotImplementedException( $"Unknown InputType \"{oldSubgraphInputNode.InputType}\"" ),
+		};
+
 		newNode.IsRequired = oldSubgraphInputNode.IsRequired;
 		newNode.PortOrder = oldSubgraphInputNode.PortOrder;
 
-		switch ( newNode.InputData.InputType )
+		switch ( newNode.InputType )
 		{
 			case SubgraphPortType.Float:
 				converter.AddBlackboardParameter( new FloatSubgraphInputParameter()
@@ -37,7 +46,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
 					Description = newNode.InputDescription,
-					Value = newNode.GetDefaultValue<float>(),
+					Value = newNode.GetValue<float>(),
 					IsRequired = newNode.IsRequired,
 					PortOrder = newNode.PortOrder
 				} );
@@ -48,7 +57,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
 					Description = newNode.InputDescription,
-					Value = newNode.GetDefaultValue<Vector2>(),
+					Value = newNode.GetValue<Vector2>(),
 					IsRequired = newNode.IsRequired,
 					PortOrder = newNode.PortOrder
 				} );
@@ -59,7 +68,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
 					Description = newNode.InputDescription,
-					Value = newNode.GetDefaultValue<Vector3>(),
+					Value = newNode.GetValue<Vector3>(),
 					IsRequired = newNode.IsRequired,
 					PortOrder = newNode.PortOrder
 				} );
@@ -70,7 +79,7 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 					Identifier = newNode.BlackboardParameterIdentifier,
 					Name = newNode.InputName,
 					Description = newNode.InputDescription,
-					Value = newNode.GetDefaultValue<Color>(),
+					Value = newNode.GetValue<Color>(),
 					IsRequired = newNode.IsRequired,
 					PortOrder = newNode.PortOrder
 				} );

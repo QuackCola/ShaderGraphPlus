@@ -90,7 +90,7 @@ public class DefaultEditor : ValueEditor
 				type = entry.inputNodeValueType;
 				if ( innerPlugIn.ConnectedOutput is not null )
 				{
-					rawVal = subgraphInput.InputData.GetValueAsObject();
+					rawVal = subgraphInput.DefaultData;
 					val = rawVal.ToString();
 				}
 				else
