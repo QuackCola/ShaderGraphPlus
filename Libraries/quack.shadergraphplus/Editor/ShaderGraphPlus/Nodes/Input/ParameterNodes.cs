@@ -37,6 +37,7 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool>
 		{
 			Name = boolParam.Name;
 			Value = boolParam.Value;
+			IsAttribute = boolParam.IsAttribute;
 			UI = boolParam.UI;
 		}
 	}
@@ -76,6 +77,7 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 			Value = intParam.Value;
 			Min = intParam.Min;
 			Max = intParam.Max;
+			IsAttribute = intParam.IsAttribute;
 			UI = intParam.UI;
 		}
 	}
@@ -118,6 +120,7 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 			Value = floatParam.Value;
 			Min = floatParam.Min;
 			Max = floatParam.Max;
+			IsAttribute = floatParam.IsAttribute;
 			UI = floatParam.UI;
 		}
 	}
@@ -160,6 +163,7 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 			Name = float2Param.Name;
 			Value = float2Param.Value;
 			Min = float2Param.Min;
+			IsAttribute = float2Param.IsAttribute;
 			Max = float2Param.Max;
 			UI = float2Param.UI;
 		}
@@ -235,6 +239,7 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 			Value = float3Param.Value;
 			Min = float3Param.Min;
 			Max = float3Param.Max;
+			IsAttribute = float3Param.IsAttribute;
 			UI = float3Param.UI;
 		}
 	}
@@ -325,6 +330,7 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 			Value = float4Param.Value;
 			Min = float4Param.Min;
 			Max = float4Param.Max;
+			IsAttribute = float4Param.IsAttribute;
 			UI = float4Param.UI;
 		}
 	}
@@ -429,6 +435,7 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 		{
 			Name = colorParam.Name;
 			Value = colorParam.Value;
+			IsAttribute = colorParam.IsAttribute;
 			UI = colorParam.UI;
 		}
 	}
