@@ -13,7 +13,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 		Value = false;
 	}
 
-	public BoolParameter( bool value ) : base( value )
+	public BoolParameter( bool value, bool isAttribute ) : base( value, isAttribute )
 	{
 	}
 
@@ -47,7 +47,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public IntParameter( int value ) : base( value )
+	public IntParameter( int value, bool isAttribute ) : base( value, isAttribute )
 	{
 		Min = 0;
 		Max = 1;
@@ -61,8 +61,8 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI with { ShowStepProperty = false },
 			IsAttribute = IsAttribute,
+			UI = UI with { ShowStepProperty = false }
 		};
 	}
 }
@@ -84,7 +84,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public FloatParameter( float value ) : base( value )
+	public FloatParameter( float value, bool isAttribute ) : base(value, isAttribute)
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -99,7 +99,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -121,7 +121,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float2Parameter( Vector2 value ) : base( value )
+	public Float2Parameter( Vector2 value, bool isAttribute ) : base( value, isAttribute )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -136,7 +136,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -158,7 +158,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float3Parameter( Vector3 value ) : base( value )
+	public Float3Parameter( Vector3 value, bool isAttribute ) : base( value, isAttribute )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -173,7 +173,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -195,7 +195,7 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float4Parameter( Vector4 value ) : base( value )
+	public Float4Parameter( Vector4 value, bool isAttribute ) : base( value, isAttribute )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -210,7 +210,7 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -227,7 +227,7 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 		UI = new ParameterUI { Type = UIType.Color };
 	}
 
-	public ColorParameter( Color value ) : base( value )
+	public ColorParameter( Color value, bool isAttribute ) : base( value, isAttribute )
 	{
 		UI = new ParameterUI { Type = UIType.Color };
 	}
@@ -239,8 +239,8 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI
 		};
 	}
 }
@@ -268,6 +268,7 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 		Value = new TextureInput
 		{
 			Name = Name,
+			IsAttribute = false,
 			ImageFormat = TextureFormat.DXT5,
 			SrgbRead = true,
 			DefaultColor = Color.White,
@@ -300,6 +301,7 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 		Value = new TextureInput
 		{
 			Name = Name,
+			IsAttribute = false,
 			ImageFormat = TextureFormat.DXT5,
 			SrgbRead = true,
 			DefaultColor = Color.White,

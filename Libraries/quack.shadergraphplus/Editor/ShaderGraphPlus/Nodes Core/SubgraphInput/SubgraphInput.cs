@@ -89,8 +89,14 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 
 	public int PortOrder { get; set; }
 
-	public SubgraphInput()
+	public SubgraphInput() : base()
 	{
+
+	}
+
+	public SubgraphInput( bool isRequired ) : this()
+	{
+		IsRequired = isRequired;
 	}
 
 	public void UpdateFromBlackboard( BaseBlackboardParameter blackboardParameter )
@@ -98,42 +104,52 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		if ( blackboardParameter is BoolSubgraphInputParameter boolParameter )
 		{
 			SetDefaultValue( boolParameter.Value );
+			IsRequired = boolParameter.IsRequired;
 		}
 		else if ( blackboardParameter is IntSubgraphInputParameter intParameter )
 		{
 			SetDefaultValue( intParameter.Value );
+			IsRequired = intParameter.IsRequired;
 		}
 		else if ( blackboardParameter is FloatSubgraphInputParameter floatParameter )
 		{
 			SetDefaultValue( floatParameter.Value );
+			IsRequired = floatParameter.IsRequired;
 		}
 		else if ( blackboardParameter is Float2SubgraphInputParameter float2Parameter )
 		{
 			SetDefaultValue( float2Parameter.Value );
+			IsRequired = float2Parameter.IsRequired;
 		}
 		else if ( blackboardParameter is Float3SubgraphInputParameter float3Parameter )
 		{
 			SetDefaultValue( float3Parameter.Value );
+			IsRequired = float3Parameter.IsRequired;
 		}
 		else if ( blackboardParameter is Float4SubgraphInputParameter float4Parameter )
 		{
 			SetDefaultValue( float4Parameter.Value );
+			IsRequired = float4Parameter.IsRequired;
 		}
 		else if ( blackboardParameter is ColorSubgraphInputParameter colorParameter )
 		{
 			SetDefaultValue( colorParameter.Value );
+			IsRequired = colorParameter.IsRequired;
 		}
 		else if ( blackboardParameter is Texture2DSubgraphInputParameter texture2DParameter )
 		{
 			SetDefaultValue( texture2DParameter.Value );
+			IsRequired = true;
 		}
 		else if ( blackboardParameter is TextureCubeSubgraphInputParameter textureCubeParameter )
 		{
 			SetDefaultValue( textureCubeParameter.Value );
+			IsRequired = true;
 		}
 		else if ( blackboardParameter is SamplerStateSubgraphInputParameter samplerStateParameter )
 		{
 			SetDefaultValue( samplerStateParameter.Value );
+			IsRequired = true;
 		}
 	}
 
