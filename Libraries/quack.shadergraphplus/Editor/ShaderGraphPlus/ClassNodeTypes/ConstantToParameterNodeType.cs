@@ -42,14 +42,14 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 			return parameterNodeType switch
 			{
-				Type t when t == typeof( IntParameterNode ) => new IntParameter( (int)iConstantNode.GetValue() )
+				Type t when t == typeof( IntParameterNode ) => new IntParameter( (int)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid,
 					Min = (int)iRangedConstant.GetMinValue(),
 					Max = (int)iRangedConstant.GetMaxValue(),
 				},
-				Type t when t == typeof( FloatParameterNode ) => new FloatParameter( (float)iConstantNode.GetValue() )
+				Type t when t == typeof( FloatParameterNode ) => new FloatParameter( (float)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid,
@@ -57,7 +57,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 					Max = (float)iRangedConstant.GetMaxValue(),
 					UI = new() { Step = stepValue, ShowStepProperty = true },
 				},
-				Type t when t == typeof( Float2ParameterNode ) => new Float2Parameter( (Vector2)iConstantNode.GetValue() )
+				Type t when t == typeof( Float2ParameterNode ) => new Float2Parameter( (Vector2)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid,
@@ -65,7 +65,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 					Max = (Vector2)iRangedConstant.GetMaxValue(),
 					UI = new() { Step = stepValue, ShowStepProperty = true },
 				},
-				Type t when t == typeof( Float3ParameterNode ) => new Float3Parameter( (Vector3)iConstantNode.GetValue() )
+				Type t when t == typeof( Float3ParameterNode ) => new Float3Parameter( (Vector3)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid,
@@ -73,7 +73,7 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 					Max = (Vector3)iRangedConstant.GetMaxValue(),
 					UI = new() { Step = stepValue, ShowStepProperty = true },
 				},
-				Type t when t == typeof( Float4ParameterNode ) => new Float4Parameter( (Vector4)iConstantNode.GetValue() )
+				Type t when t == typeof( Float4ParameterNode ) => new Float4Parameter( (Vector4)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid,
@@ -90,12 +90,12 @@ public sealed class ConstantToParameterNodeType : ClassNodeType
 
 			return parameterNodeType switch
 			{
-				Type t when t == typeof( BoolParameterNode ) => new BoolParameter( (bool)iConstantNode.GetValue() )
+				Type t when t == typeof( BoolParameterNode ) => new BoolParameter( (bool)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid
 				},
-				Type t when t == typeof( ColorParameterNode ) => new ColorParameter( (Color)iConstantNode.GetValue() )
+				Type t when t == typeof( ColorParameterNode ) => new ColorParameter( (Color)iConstantNode.GetValue(), false )
 				{
 					Name = name,
 					Identifier = guid
