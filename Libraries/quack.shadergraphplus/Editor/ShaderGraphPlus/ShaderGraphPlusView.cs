@@ -200,9 +200,9 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( selectedNodes.Length > 1 && selectedNodes.All( x => x.Node is IConstantNode ) )
 		{
-			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes", "swap_horiz", () =>
+			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} Constant nodes to {( Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}", "swap_horiz", () =>
 			{
-				using var undoScope = UndoScope( $"Convert {selectedNodes.Count()} constant nodes to parameter nodes" );
+				using var undoScope = UndoScope( $"Convert {selectedNodes.Count()} Constant nodes to {(Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}" );
 				var lastNode = selectedNodes.First().Node as BaseNodePlus;
 				foreach ( var node in selectedNodes )
 				{
@@ -211,7 +211,7 @@ public class ShaderGraphPlusView : GraphView
 
 					Graph.RemoveNode( baseNode );
 
-					var newName = "Parameter";
+					var newName = $"{(Graph.IsSubgraph ? "SubgraphInput" : "MaterialParameter")}";
 					var id = 0;
 					while ( Graph.ContainsParameterWithName( $"{newName}{id}" ) )
 					{
@@ -245,11 +245,23 @@ public class ShaderGraphPlusView : GraphView
 
 			if ( item.Node is BaseNodePlus baseNode && baseNode is IConstantNode constantNode )
 			{
-				var convertOption = menu.AddOption( $"Convert {baseNode.DisplayInfo.Name} to parameter", "swap_horiz", () =>
+				string nodeTypeTitle = constantNode.GetType() switch
+				{
+					Type t when t == typeof( BoolConstantNode ) => "Bool",
+					Type t when t == typeof( IntConstantNode ) => "Int",
+					Type t when t == typeof( FloatConstantNode ) => "Float",
+					Type t when t == typeof( Float2ConstantNode ) => "Float2",
+					Type t when t == typeof( Float3ConstantNode ) => "Float3",
+					Type t when t == typeof( Float4ConstantNode ) => "Float4",
+					Type t when t == typeof( ColorConstantNode ) => "Color",
+					_ => throw new NotImplementedException( $"Unknown type \"{constantNode.GetType()}\"" ),
+				};
+
+				var convertOption = menu.AddOption( $"Convert {baseNode.DisplayInfo.Name} node to {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}", "swap_horiz", () =>
 				{ 
 					Dialog.AskString( ( string parameterName ) =>
 					{
-						using var undoScope = UndoScope( $"Convert {baseNode.DisplayInfo.Name} to parameter" );
+						using var undoScope = UndoScope( $"Convert {baseNode.DisplayInfo.Name} node to {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}" );
 
 						Graph.RemoveNode( baseNode );
 
@@ -260,7 +272,7 @@ public class ShaderGraphPlusView : GraphView
 						_window.OnNodeSelected( newNode );
 						SelectNode( newNode );
 					},
-					"Specify a name for the new parameter node." );
+					$"Specify {(Graph.IsSubgraph ? "input" : "parameter" )} name for the new {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}." );
 				} );
 			}
 		}
@@ -304,12 +316,30 @@ public class ShaderGraphPlusView : GraphView
 				return node;
 			}
 
-			throw new Exception();
+			throw new Exception( $"Unable to convert constant node \"{constantNode.GetType()}\" to material parameter." );
 		}
 		else
 		{
-			// TODO
-			throw new NotImplementedException();
+			if ( AvailableNodes.TryGetValue( DisplayInfo.ForType( typeof( SubgraphInput ) ).Fullname, out var nodeType ) )
+			{
+				var parameterNodeType = new ConstantToParameterNodeType( ((ClassNodeType)nodeType).Type, constantNode, parameterName );
+
+				node = CreateNewNode( parameterNodeType, nodePosition ).Node as BaseNodePlus;
+
+				if ( parameterNodeType.BlackboardParameter != null )
+				{
+					Graph.AddParameter( parameterNodeType.BlackboardParameter );
+
+					OnConstantNodeConvertedToParameter?.Invoke();
+				}
+			}
+
+			if ( node != null )
+			{
+				return node;
+			}
+
+			throw new Exception( $"Unable to convert constant node \"{constantNode.GetType()}\" to subgraph input parameter." );
 		}
 	}
 
