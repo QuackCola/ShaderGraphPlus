@@ -61,8 +61,8 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI with { ShowStepProperty = false },
 			IsAttribute = IsAttribute,
+			UI = UI with { ShowStepProperty = false }
 		};
 	}
 }
@@ -99,7 +99,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -173,7 +173,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -210,7 +210,7 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -239,8 +239,8 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 			BlackboardParameterIdentifier = Identifier,
 			Name = Name,
 			Value = Value,
-			UI = UI,
 			IsAttribute = IsAttribute,
+			UI = UI
 		};
 	}
 }
