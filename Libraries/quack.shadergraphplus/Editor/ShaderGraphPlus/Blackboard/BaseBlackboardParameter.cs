@@ -171,6 +171,7 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 	public BlackboardMaterialParameter() : base() 
 	{
 		UI = new ParameterUI();
+		IsAttribute = false;
 	}
 
 	public BlackboardMaterialParameter( T value, bool isAttribute ) : base( value )

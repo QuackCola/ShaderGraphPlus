@@ -136,7 +136,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI,
+			UI = UI
 		};
 	}
 }
@@ -268,6 +268,7 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 		Value = new TextureInput
 		{
 			Name = Name,
+			IsAttribute = false,
 			ImageFormat = TextureFormat.DXT5,
 			SrgbRead = true,
 			DefaultColor = Color.White,
@@ -300,6 +301,7 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 		Value = new TextureInput
 		{
 			Name = Name,
+			IsAttribute = false,
 			ImageFormat = TextureFormat.DXT5,
 			SrgbRead = true,
 			DefaultColor = Color.White,
