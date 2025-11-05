@@ -1,4 +1,5 @@
-﻿using ShaderGraphPlus.Nodes;
+﻿using Editor.ShaderGraph.Nodes;
+using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
@@ -9,12 +10,14 @@ namespace ShaderGraphPlus;
 public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 {
 	public BoolParameter() : base() 
-	{ 
+	{
+		UI = new ParameterUI() { ShowStepProperty = false, ShowTypeProperty = false };
 		Value = false;
 	}
 
-	public BoolParameter( bool value, bool isAttribute ) : base( value, isAttribute )
+	public BoolParameter( string name, bool value, bool isAttribute ) : base( name, value, isAttribute )
 	{
+		UI = new ParameterUI() { ShowStepProperty = false, ShowTypeProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -44,14 +47,14 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 		Value = 1;
 		Min = 0;
 		Max = 1;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
 	}
 
-	public IntParameter( int value, bool isAttribute ) : base( value, isAttribute )
+	public IntParameter( string name, int value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = 0;
 		Max = 1;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -84,7 +87,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public FloatParameter( float value, bool isAttribute ) : base(value, isAttribute)
+	public FloatParameter( string name, float value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -121,7 +124,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float2Parameter( Vector2 value, bool isAttribute ) : base( value, isAttribute )
+	public Float2Parameter( string name, Vector2 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -158,7 +161,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float3Parameter( Vector3 value, bool isAttribute ) : base( value, isAttribute )
+	public Float3Parameter( string name, Vector3 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -195,7 +198,7 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 		UI = new ParameterUI { Type = UIType.Default };
 	}
 
-	public Float4Parameter( Vector4 value, bool isAttribute ) : base( value, isAttribute )
+	public Float4Parameter( string name, Vector4 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -224,12 +227,12 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color>
 	public ColorParameter() : base()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color };
+		UI = new ParameterUI { Type = UIType.Color, ShowStepProperty = false };
 	}
 
-	public ColorParameter( Color value, bool isAttribute ) : base( value, isAttribute )
+	public ColorParameter( string name, Color value, bool isAttribute ) : base( name, value, isAttribute )
 	{
-		UI = new ParameterUI { Type = UIType.Color };
+		UI = new ParameterUI { Type = UIType.Color, ShowStepProperty = false };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -263,20 +266,7 @@ public sealed class Texture2DParameter : BlackboardGenericParameter<TextureInput
 		};
 	}
 
-	public Texture2DParameter( Guid identifier ) : base( identifier )
-	{
-		Value = new TextureInput
-		{
-			Name = Name,
-			IsAttribute = false,
-			ImageFormat = TextureFormat.DXT5,
-			SrgbRead = true,
-			DefaultColor = Color.White,
-			Type = TextureType.Tex2D,
-		};
-	}
-
-	public Texture2DParameter( TextureInput value ) : base( value )
+	public Texture2DParameter( string name, TextureInput value ) : base( name, value )
 	{
 	}
 
@@ -309,7 +299,7 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 		};
 	}
 
-	public TextureCubeParameter( TextureInput value ) : base( value )
+	public TextureCubeParameter( string name, TextureInput value ) : base( name, value )
 	{
 	}
 

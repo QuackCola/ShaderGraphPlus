@@ -6,7 +6,7 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-public abstract class MatrixParameterNode<T> : ShaderNodePlus
+public abstract class MatrixConstantNode<T> : ShaderNodePlus, IConstantNode, IConstantMatrixNode
 {
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ConstantValueNode;
@@ -27,4 +27,24 @@ public abstract class MatrixParameterNode<T> : ShaderNodePlus
 	/// </summary>
 	[Hide]
 	public bool IsAttribute { get; set; } = false;
+
+	public object GetValue()
+	{
+		return Value;
+	}
+
+	public BaseNodePlus InitializeMaterialParameterNode()
+	{
+		throw new NotImplementedException();
+	}
+
+	public virtual BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		throw new NotImplementedException();
+	}
+
+	public virtual BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		throw new NotImplementedException();
+	}
 }

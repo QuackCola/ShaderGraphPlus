@@ -29,6 +29,20 @@ public sealed class BoolConstantNode : ConstantNode<bool>
 	{
 		return compiler.ResultParameter( "", Value, default, default, false, false, default );
 	};
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new BoolParameter( name, Value, false )
+		{
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new BoolSubgraphInputParameter( name, Value )
+		{
+		};
+	}
 }
 
 ///<summary>
@@ -72,6 +86,25 @@ public sealed class IntConstantNode : ConstantNode<int>, IRangedConstantNode
 	{
 		return 0.0f;
 	}
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new IntParameter( name, Value, false )
+		{
+			Min = Min,
+			Max = Max
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new IntSubgraphInputParameter( name, Value )
+		{
+			Min = Min,
+			Max = Max,
+			IsRequired = false,
+		};
+	}
 }
 
 /// <summary>
@@ -114,6 +147,26 @@ public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstantNode
 	public object GetStepValue()
 	{
 		return Step;
+	}
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new FloatParameter( name, Value, false )
+		{
+			Min = Min,
+			Max = Max,
+			UI = new() { Step = Step, ShowStepProperty = true }
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new FloatSubgraphInputParameter( name, Value )
+		{
+			Min = Min,
+			Max = Max,
+			IsRequired = false,
+		};
 	}
 }
 
@@ -190,6 +243,26 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstantN
 	public object GetStepValue()
 	{
 		return Step;
+	}
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new Float2Parameter( name, Value, false )
+		{
+			Min = Min,
+			Max = Max,
+			UI = new() { Step = Step, ShowStepProperty = true }
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new Float2SubgraphInputParameter( name, Value )
+		{
+			Min = Min,
+			Max = Max,
+			IsRequired = false,
+		};
 	}
 }
 
@@ -282,6 +355,26 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstantN
 	public object GetStepValue()
 	{
 		return Step;
+	}
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new Float3Parameter( name, Value, false )
+		{
+			Min = Min,
+			Max = Max,
+			UI = new() { Step = Step, ShowStepProperty = true }
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new Float3SubgraphInputParameter( name, Value )
+		{
+			Min = Min,
+			Max = Max,
+			IsRequired = false,
+		};
 	}
 }
 
@@ -391,6 +484,26 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>, IRangedConstantN
 	{
 		return Step;
 	}
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new Float4Parameter( name, Value, false )
+		{
+			Min = Min,
+			Max = Max,
+			UI = new() { Step = Step, ShowStepProperty = true }
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new Float4SubgraphInputParameter( name, Value )
+		{
+			Min = Min,
+			Max = Max,
+			IsRequired = false,
+		};
+	}
 }
 
 /// <summary>
@@ -465,4 +578,19 @@ public sealed class ColorConstantNode : ConstantNode<Color>
 	/// </summary>
 	[Output( typeof( float ) ), Hide, NodeValueEditor( nameof( ValueA ) ), Title( "Alpha" )]
 	public NodeResult.Func A => ( GraphCompiler compiler ) => Component( "a", ValueA, compiler );
+
+	public override BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		return new ColorParameter( name, Value, false )
+		{
+		};
+	}
+
+	public override BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new ColorSubgraphInputParameter( name, Value )
+		{
+			IsRequired = false,
+		};
+	}
 }

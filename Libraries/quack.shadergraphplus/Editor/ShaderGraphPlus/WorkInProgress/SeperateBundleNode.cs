@@ -14,7 +14,6 @@ public sealed class SeperateBundleNode : ShaderNodePlus, IInitializeNode
 	[Hide]
 	public NodeInput Input { get; set; }
 
-
 	public void InitializeNode()
 	{
 		throw new NotImplementedException();

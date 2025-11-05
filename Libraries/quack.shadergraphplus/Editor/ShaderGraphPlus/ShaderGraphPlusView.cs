@@ -161,6 +161,10 @@ public class ShaderGraphPlusView : GraphView
 				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float2x2SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float3x3SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float4x4SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( GradientSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Texture2DSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( TextureCubeSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( SamplerStateSubgraphInputParameter ) ) return false;
@@ -198,7 +202,7 @@ public class ShaderGraphPlusView : GraphView
 			} );
 		}
 
-		if ( selectedNodes.Length > 1 && selectedNodes.All( x => x.Node is IConstantNode ) )
+		if ( selectedNodes.Length > 1 && selectedNodes.All( x => x.Node is IConstantNode && x.Node is not IConstantMatrixNode ) )
 		{
 			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} Constant nodes to {( Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}", "swap_horiz", () =>
 			{
@@ -254,8 +258,22 @@ public class ShaderGraphPlusView : GraphView
 					Type t when t == typeof( Float3ConstantNode ) => "Float3",
 					Type t when t == typeof( Float4ConstantNode ) => "Float4",
 					Type t when t == typeof( ColorConstantNode ) => "Color",
+					Type t when t == typeof( Float2x2ConstantNode ) => "Float2x2",
+					Type t when t == typeof( Float3x3ConstantNode ) => "Float3x3",
+					Type t when t == typeof( Float4x4ConstantNode ) => "Float4x4",
+					Type t when t == typeof( GradientConstantNode ) => "Gradient",
 					_ => throw new NotImplementedException( $"Unknown type \"{constantNode.GetType()}\"" ),
 				};
+
+				if ( !Graph.IsSubgraph && baseNode is IConstantMatrixNode )
+				{
+					return;
+				}
+
+				if ( !Graph.IsSubgraph && baseNode is GradientConstantNode )
+				{
+					return;
+				}
 
 				var convertOption = menu.AddOption( $"Convert {baseNode.DisplayInfo.Name} node to {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}", "swap_horiz", () =>
 				{ 
@@ -571,6 +589,22 @@ public class ShaderGraphPlusView : GraphView
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Color );
 			} );
+			newSubgraphOutputMenu.AddOption( "Float2x2", "apps", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float2x2 );
+			} );
+			newSubgraphOutputMenu.AddOption( "Float3x3", "apps", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float3x3 );
+			} );
+			newSubgraphOutputMenu.AddOption( "Float4x4", "apps", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float4x4 );
+			} );
+			newSubgraphOutputMenu.AddOption( "Gradient", "gradient", () =>
+			{
+				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Gradient );
+			} );
 			newSubgraphOutputMenu.AddOption( "Texture2D", "texture", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Texture2DObject );
@@ -826,9 +860,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( Float2x2 ) )
 					{
-						var float2x2Input = FindNodeType( typeof( Float2x2Node ) ).CreateNode( subgraph );
+						var float2x2Input = FindNodeType( typeof( Float2x2ConstantNode ) ).CreateNode( subgraph );
 						float2x2Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( float2x2Input is Float2x2Node float2x2Node )
+						if ( float2x2Input is Float2x2ConstantNode float2x2Node )
 						{
 							float2x2Node.Name = inputName;
 							input.ConnectedOutput = float2x2Node.Outputs.FirstOrDefault();
@@ -837,9 +871,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( Float3x3 ) )
 					{
-						var float3x3Input = FindNodeType( typeof( Float3x3Node ) ).CreateNode( subgraph );
+						var float3x3Input = FindNodeType( typeof( Float3x3ConstantNode ) ).CreateNode( subgraph );
 						float3x3Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( float3x3Input is Float3x3Node float3x3Node )
+						if ( float3x3Input is Float3x3ConstantNode float3x3Node )
 						{
 							float3x3Node.Name = inputName;
 							input.ConnectedOutput = float3x3Node.Outputs.FirstOrDefault();
@@ -848,9 +882,9 @@ public class ShaderGraphPlusView : GraphView
 					}
 					else if ( input.Type == typeof( Float4x4 ) )
 					{
-						var float4x4Input = FindNodeType( typeof( Float4x4Node ) ).CreateNode( subgraph );
+						var float4x4Input = FindNodeType( typeof( Float4x4ConstantNode ) ).CreateNode( subgraph );
 						float4x4Input.Position = node.Position - new Vector2( 240, 0 );
-						if ( float4x4Input is Float4x4Node float4x4Node )
+						if ( float4x4Input is Float4x4ConstantNode float4x4Node )
 						{
 							float4x4Node.Name = inputName;
 							input.ConnectedOutput = float4x4Node.Outputs.FirstOrDefault();

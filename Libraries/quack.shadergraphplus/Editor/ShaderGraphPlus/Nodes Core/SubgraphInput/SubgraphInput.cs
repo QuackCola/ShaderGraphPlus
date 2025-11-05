@@ -25,6 +25,14 @@ public enum SubgraphPortType
 	Vector4,
 	[Title( "Color" ), Icon( "palette" )]
 	Color,
+	[Title( "Float2x2" ), Icon( "apps" )]
+	Float2x2,
+	[Title( "Float3x3" ), Icon( "apps" )]
+	Float3x3,
+	[Title( "Float4x4" ), Icon( "apps" )]
+	Float4x4,
+	[Title( "Gradient" ), Icon( "gradient" )]
+	Gradient,
 	[Title( "Sampler State" ), Icon( "colorize" )]
 	SamplerState,
 	[Title( "Texture2D" ), Icon( "texture" )]
@@ -103,53 +111,115 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 	{
 		if ( blackboardParameter is BoolSubgraphInputParameter boolParameter )
 		{
+			InputName = boolParameter.Name;
+			InputDescription = boolParameter.Description;
 			SetDefaultValue( boolParameter.Value );
 			IsRequired = boolParameter.IsRequired;
+			PortOrder = boolParameter.PortOrder;
 		}
 		else if ( blackboardParameter is IntSubgraphInputParameter intParameter )
 		{
+			InputName = intParameter.Name;
+			InputDescription = intParameter.Description;
 			SetDefaultValue( intParameter.Value );
 			IsRequired = intParameter.IsRequired;
+			PortOrder = intParameter.PortOrder;
 		}
 		else if ( blackboardParameter is FloatSubgraphInputParameter floatParameter )
 		{
+			InputName = floatParameter.Name;
+			InputDescription = floatParameter.Description;
 			SetDefaultValue( floatParameter.Value );
 			IsRequired = floatParameter.IsRequired;
+			PortOrder = floatParameter.PortOrder;
 		}
 		else if ( blackboardParameter is Float2SubgraphInputParameter float2Parameter )
 		{
+			InputName = float2Parameter.Name;
+			InputDescription = float2Parameter.Description;
 			SetDefaultValue( float2Parameter.Value );
 			IsRequired = float2Parameter.IsRequired;
+			PortOrder = float2Parameter.PortOrder;
 		}
 		else if ( blackboardParameter is Float3SubgraphInputParameter float3Parameter )
 		{
+			InputName = float3Parameter.Name;
+			InputDescription = float3Parameter.Description;
 			SetDefaultValue( float3Parameter.Value );
 			IsRequired = float3Parameter.IsRequired;
+			PortOrder = float3Parameter.PortOrder;
 		}
 		else if ( blackboardParameter is Float4SubgraphInputParameter float4Parameter )
 		{
+			InputName = float4Parameter.Name;
+			InputDescription = float4Parameter.Description;
 			SetDefaultValue( float4Parameter.Value );
 			IsRequired = float4Parameter.IsRequired;
+			PortOrder = float4Parameter.PortOrder;
 		}
 		else if ( blackboardParameter is ColorSubgraphInputParameter colorParameter )
 		{
+			InputName = colorParameter.Name;
+			InputDescription = colorParameter.Description;
 			SetDefaultValue( colorParameter.Value );
 			IsRequired = colorParameter.IsRequired;
+			PortOrder = colorParameter.PortOrder;
+		}
+		else if ( blackboardParameter is Float2x2SubgraphInputParameter float2x2Parameter )
+		{
+			InputName = float2x2Parameter.Name;
+			InputDescription = float2x2Parameter.Description;
+			SetDefaultValue( float2x2Parameter.Value );
+			IsRequired = float2x2Parameter.IsRequired;
+			PortOrder = float2x2Parameter.PortOrder;
+		}
+		else if ( blackboardParameter is Float3x3SubgraphInputParameter float3x3Parameter )
+		{
+			InputName = float3x3Parameter.Name;
+			InputDescription = float3x3Parameter.Description;
+			SetDefaultValue( float3x3Parameter.Value );
+			IsRequired = float3x3Parameter.IsRequired;
+			PortOrder = float3x3Parameter.PortOrder;
+		}
+		else if ( blackboardParameter is Float4x4SubgraphInputParameter float4x4Parameter )
+		{
+			InputName = float4x4Parameter.Name;
+			InputDescription = float4x4Parameter.Description;
+			SetDefaultValue( float4x4Parameter.Value );
+			IsRequired = float4x4Parameter.IsRequired;
+			PortOrder = float4x4Parameter.PortOrder;
+		}
+		else if ( blackboardParameter is GradientSubgraphInputParameter gradientParameter )
+		{
+			InputName = gradientParameter.Name;
+			InputDescription = gradientParameter.Description;
+			SetDefaultValue( gradientParameter.Value );
+			IsRequired = gradientParameter.IsRequired;
+			PortOrder = gradientParameter.PortOrder;
 		}
 		else if ( blackboardParameter is Texture2DSubgraphInputParameter texture2DParameter )
 		{
+			InputName = texture2DParameter.Name;
+			InputDescription = texture2DParameter.Description;
 			SetDefaultValue( texture2DParameter.Value );
 			IsRequired = true;
+			PortOrder = texture2DParameter.PortOrder;
 		}
 		else if ( blackboardParameter is TextureCubeSubgraphInputParameter textureCubeParameter )
 		{
+			InputName = textureCubeParameter.Name;
+			InputDescription = textureCubeParameter.Description;
 			SetDefaultValue( textureCubeParameter.Value );
 			IsRequired = true;
+			PortOrder = textureCubeParameter.PortOrder;
 		}
 		else if ( blackboardParameter is SamplerStateSubgraphInputParameter samplerStateParameter )
 		{
+			InputName = samplerStateParameter.Name;
+			InputDescription = samplerStateParameter.Description;
 			SetDefaultValue( samplerStateParameter.Value );
 			IsRequired = true;
+			PortOrder = samplerStateParameter.PortOrder;
 		}
 	}
 
@@ -179,6 +249,18 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 					break;
 				case SubgraphPortType.Color:
 					DefaultData = JsonSerializer.Deserialize<Color>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Float2x2:
+					DefaultData = JsonSerializer.Deserialize<Float2x2>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Float3x3:
+					DefaultData = JsonSerializer.Deserialize<Float3x3>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Float4x4:
+					DefaultData = JsonSerializer.Deserialize<Float4x4>( element, ShaderGraphPlus.SerializerOptions() );
+					break;
+				case SubgraphPortType.Gradient:
+					DefaultData = JsonSerializer.Deserialize<Gradient>( element, ShaderGraphPlus.SerializerOptions() );
 					break;
 				case SubgraphPortType.SamplerState:
 					DefaultData = JsonSerializer.Deserialize<Sampler>( element, ShaderGraphPlus.SerializerOptions() );
@@ -233,6 +315,10 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			Vector3 => SubgraphPortType.Vector3,
 			Vector4 => SubgraphPortType.Vector4,
 			Color => SubgraphPortType.Color,
+			Float2x2 => SubgraphPortType.Float2x2,
+			Float3x3 => SubgraphPortType.Float3x3,
+			Float4x4 => SubgraphPortType.Float4x4,
+			Gradient => SubgraphPortType.Gradient,
 			TextureInput v => v.Type == TextureType.Tex2D ? SubgraphPortType.Texture2DObject : SubgraphPortType.TextureCubeObject,
 			_ => throw new NotImplementedException(),
 		};
@@ -270,16 +356,20 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 		else
 		{
-			(ResultType resultType, string defaultCode) defaultResult = InputType switch
+			( ResultType resultType, string defaultCode ) defaultResult = InputType switch
 			{
-				SubgraphPortType.Bool => (ResultType.Bool, $"{compiler.ResultValue( GetValue<bool>() )}"),
-				SubgraphPortType.Int => (ResultType.Int, $"{compiler.ResultValue( GetValue<int>() )}"),
-				SubgraphPortType.Float => (ResultType.Float, $"{compiler.ResultValue( GetValue<float>() )}"),
-				SubgraphPortType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue( GetValue<Vector2>() )} )"),
-				SubgraphPortType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue( GetValue<Vector3>() )} )"),
-				SubgraphPortType.Vector4 => (ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Vector4>() )} )"),
-				SubgraphPortType.Color => (ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Color>() )} )"),
-				SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( GetValue<Sampler>() )}"),
+				SubgraphPortType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( GetValue<bool>() )}" ),
+				SubgraphPortType.Int => ( ResultType.Int, $"{compiler.ResultValue( GetValue<int>() )}" ),
+				SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( GetValue<float>() )}" ),
+				SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( GetValue<Vector2>() )} )" ),
+				SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( GetValue<Vector3>() )} )" ),
+				SubgraphPortType.Vector4 => ( ResultType.Vector4, $"float4( {compiler.ResultValue( GetValue<Vector4>() )} )" ),
+				SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Color>() )} )" ),
+				SubgraphPortType.Float2x2 => ( ResultType.Float2x2, $"float2x2( {compiler.ResultValue( GetValue<Float2x2>() )} )" ),
+				SubgraphPortType.Float3x3 => ( ResultType.Float3x3, $"float3x3( {compiler.ResultValue( GetValue<Float3x3>() )} )" ),
+				SubgraphPortType.Float4x4 => ( ResultType.Float4x4, $"float4x4( {compiler.ResultValue( GetValue<Float4x4>() )} )" ),
+				SubgraphPortType.Gradient => ( ResultType.Gradient, compiler.RegisterGradient( GetValue<Gradient>(), "" ) ),
+				SubgraphPortType.SamplerState => ( ResultType.Sampler, $"{compiler.ResultSampler( GetValue<Sampler>() )}" ),
 				_ => throw new Exception( $"Unknown PortType \"{InputType}\"" )
 			};
 

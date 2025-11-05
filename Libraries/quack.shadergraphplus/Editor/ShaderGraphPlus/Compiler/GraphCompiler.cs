@@ -2051,7 +2051,14 @@ public sealed partial class GraphCompiler
 					 || result.funcResult.ResultType == ResultType.Float3x3
 					 || result.funcResult.ResultType == ResultType.Float4x4 )
 					{
-						sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.TypeName}( {result.funcResult.Code} );", indentLevel ) );
+						if ( IsPreview )
+						{
+							sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.TypeName}( {result.funcResult.Code} );", indentLevel ) );
+						}
+						else
+						{
+							sb.AppendLine( IndentString( $"{result.funcResult.TypeName} {result.localResult} = {result.funcResult.Code};", indentLevel ) );
+						}
 					}
 					else
 					{

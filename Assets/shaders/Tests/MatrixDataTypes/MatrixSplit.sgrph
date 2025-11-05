@@ -1,0 +1,172 @@
+{
+  "__version": 4,
+  "IsSubgraph": false,
+  "Path": "shaders/tests/matrixdatatypes/matrixsplit.sgrph",
+  "Model": "models/dev/box.vmdl",
+  "Title": "",
+  "Description": null,
+  "Category": "",
+  "Icon": "",
+  "AddToNodeLibrary": false,
+  "BlendMode": "Opaque",
+  "ShadingModel": "Unlit",
+  "Domain": "Surface",
+  "Metadata": {},
+  "PreviewSettings": {
+    "ViewMode": "Perspective",
+    "RenderBackfaces": false,
+    "EnableShadows": true,
+    "ShowGround": true,
+    "ShowSkybox": true,
+    "BackgroundColor": "1,1,1,1",
+    "Tint": "1,1,1,1"
+  },
+  "nodes": [
+    {
+      "_class": "Result",
+      "__version": 1,
+      "DefaultOpacity": 1,
+      "DefaultRoughness": 1,
+      "DefaultMetalness": 0,
+      "DefaultAmbientOcclusion": 1,
+      "Identifier": "0",
+      "Position": "588,336",
+      "HandleOffsets": {},
+      "Albedo": {
+        "Identifier": "2",
+        "Output": "Result0",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4x4ConstantNode",
+      "__version": 1,
+      "Name": "Test",
+      "Value": "1,0,0,1,0,1,0,1,0,0,1,1,1,1,1,1",
+      "IsAttribute": false,
+      "Identifier": "1",
+      "Position": "-528,324",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MatrixSplitNode",
+      "__version": 1,
+      "Mode": "RowMajor",
+      "Identifier": "2",
+      "Position": "-348,324",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "1",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4ConstantNode",
+      "__version": 1,
+      "Min": "0,0,0,0",
+      "Max": "1,1,1,1",
+      "Step": 0,
+      "Value": "1,1,0,1",
+      "Identifier": "3",
+      "Position": "-336,-312",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float4ConstantNode",
+      "__version": 1,
+      "Min": "0,0,0,0",
+      "Max": "1,1,1,1",
+      "Step": 0,
+      "Value": "1,0,0,1",
+      "Identifier": "4",
+      "Position": "-336,-156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MatrixSplitNode",
+      "__version": 1,
+      "Mode": "ColumnMajor",
+      "Identifier": "5",
+      "Position": "-336,132",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Float4x4ConstantNode",
+      "__version": 1,
+      "Name": "Test2",
+      "Value": "1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1",
+      "IsAttribute": false,
+      "Identifier": "6",
+      "Position": "-552,72",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Float3x3ConstantNode",
+      "__version": 1,
+      "Name": "",
+      "Value": "1,0,0,0,1,0,1,0,0",
+      "IsAttribute": false,
+      "Identifier": "7",
+      "Position": "-552,132",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "MatrixConstructionNode",
+      "__version": 1,
+      "Mode": "RowMajor",
+      "DefaultVectorA": "0,0,0,0",
+      "DefaultVectorB": "0,0,0,0",
+      "DefaultVectorC": "0,0,0,0",
+      "DefaultVectorD": "0,0,0,0",
+      "Identifier": "8",
+      "Position": "324,204",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "300,64",
+      "Color": "1,0,0,1",
+      "Title": "Untitled",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 1,
+      "Identifier": "9",
+      "Position": "-60,60",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "300,64",
+      "Color": "0.33333,1,0,1",
+      "Title": "Untitled",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 1,
+      "Identifier": "10",
+      "Position": "-60,132",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "300,64",
+      "Color": "0.16667,0,1,1",
+      "Title": "Untitled",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 1,
+      "Identifier": "11",
+      "Position": "-60,204",
+      "HandleOffsets": {}
+    }
+  ],
+  "parameters": []
+}

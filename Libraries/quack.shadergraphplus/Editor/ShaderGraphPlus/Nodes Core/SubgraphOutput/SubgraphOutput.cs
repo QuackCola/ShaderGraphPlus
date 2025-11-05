@@ -46,7 +46,24 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override bool CanRemove => true;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public bool CannotPreviewOutputType
+	{ 
+		get
+		{
+			return ( OutputType == SubgraphPortType.Bool ||
+				OutputType == SubgraphPortType.Float2x2 ||
+				OutputType == SubgraphPortType.Float3x3 ||
+				OutputType == SubgraphPortType.Float4x4 ||
+				OutputType == SubgraphPortType.Gradient ||
+				OutputType == SubgraphPortType.Texture2DObject ||
+				OutputType == SubgraphPortType.TextureCubeObject ||
+				OutputType == SubgraphPortType.SamplerState );
+		}
 	
+	}
+
 	[Hide, Browsable( false )]
 	public Guid OutputIdentifier { get; set; }
 
@@ -57,6 +74,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	public SubgraphPortType OutputType { get; set; } = SubgraphPortType.Vector3;
 
+	[HideIf( nameof( CannotPreviewOutputType ), true )]
 	public SubgraphOutputPreviewType Preview { get; set; } = SubgraphOutputPreviewType.None;
 
 	public int PortOrder { get; set; } = 0;
@@ -110,6 +128,10 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 			SubgraphPortType.Vector3 => typeof( Vector3 ),
 			SubgraphPortType.Vector4 => typeof( Color ),
 			SubgraphPortType.Color => typeof( Color ),
+			SubgraphPortType.Float2x2 => typeof( Float2x2 ),
+			SubgraphPortType.Float3x3 => typeof( Float3x3 ),
+			SubgraphPortType.Float4x4 => typeof( Float4x4 ),
+			SubgraphPortType.Gradient => typeof( Gradient ),
 			SubgraphPortType.SamplerState => typeof( Sampler ),
 			SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 			SubgraphPortType.TextureCubeObject => typeof( TextureCubeObject ),
@@ -179,15 +201,18 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 			case Type t when t == typeof( ColorTextureGenerator ):
 				OutputType = SubgraphPortType.Color;
 				break;
-			//case Type t when t == typeof( Float2x2 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float3x3 ):
-			//
-			//	break;
-			//case Type t when t == typeof( Float4x4 ):
-			//
-			//	break;
+			case Type t when t == typeof( Float2x2 ):
+				OutputType = SubgraphPortType.Float2x2;
+				break;
+			case Type t when t == typeof( Float3x3 ):
+				OutputType = SubgraphPortType.Float3x3;
+				break;
+			case Type t when t == typeof( Float4x4 ):
+				OutputType = SubgraphPortType.Float4x4;
+				break;
+			case Type t when t == typeof( Gradient ):
+				OutputType = SubgraphPortType.Gradient;
+				break;
 			case Type t when t == typeof( Sampler ):
 				OutputType = SubgraphPortType.SamplerState;
 				break;
@@ -206,12 +231,9 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	{
 		errors = new List<string>();
 
-		if ( OutputType == SubgraphPortType.SamplerState ||
-			 OutputType == SubgraphPortType.Texture2DObject ||
-			 OutputType == SubgraphPortType.TextureCubeObject
-		)
+		// Make sure we dont try to preview outputs that we cant.
+		if ( CannotPreviewOutputType )
 		{
-			SGPLog.Warning( $"Cannot preveiw Output type \"{OutputType}\"" );
 			Preview = SubgraphOutputPreviewType.None;
 			return;
 		}
@@ -283,6 +305,12 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	public NodeInput? GetInputFromPreview( SubgraphOutputPreviewType previewType )
 	{
+		// Make sure we dont try to preview outputs that we cant.
+		if ( CannotPreviewOutputType )
+		{
+			Preview = SubgraphOutputPreviewType.None;
+		}
+
 		if ( Preview == previewType )
 		{
 			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == OutputIdentifier );

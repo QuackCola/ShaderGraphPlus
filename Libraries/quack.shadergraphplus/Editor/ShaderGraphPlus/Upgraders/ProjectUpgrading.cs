@@ -30,6 +30,7 @@ public static class ProjectUpgrading
 		{ "Float2", "Float2ParameterNode" },
 		{ "Float3", "Float3ParameterNode" },
 		{ "Float4", "ColorParameterNode" },
+		{ "GradientNode", "GradientConstantNode" }
 	};
 
 	/*

@@ -12,7 +12,7 @@ public sealed class BoolSubgraphInputParameter : BlackboardSubgraphInputParamete
 		Value = false;
 	}
 
-	public BoolSubgraphInputParameter( bool value ) : base( value )
+	public BoolSubgraphInputParameter( string name, bool value ) : base( name, value )
 	{
 
 	}
@@ -49,7 +49,7 @@ public sealed class IntSubgraphInputParameter : BlackboardSubgraphInputParameter
 		Max = 1;
 	}
 
-	public IntSubgraphInputParameter( int value ) : base( value )
+	public IntSubgraphInputParameter( string name, int value ) : base( name, value )
 	{
 		Min = 0;
 		Max = 1;
@@ -87,7 +87,7 @@ public sealed class FloatSubgraphInputParameter : BlackboardSubgraphInputParamet
 		Max = 1.0f;
 	}
 
-	public FloatSubgraphInputParameter( float value ) : base( value )
+	public FloatSubgraphInputParameter( string name, float value ) : base( name, value )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -125,7 +125,7 @@ public sealed class Float2SubgraphInputParameter : BlackboardSubgraphInputParame
 		Max = Vector2.One;
 	}
 
-	public Float2SubgraphInputParameter( Vector2 value ) : base( value )
+	public Float2SubgraphInputParameter( string name, Vector2 value ) : base( name, value )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -163,7 +163,7 @@ public sealed class Float3SubgraphInputParameter : BlackboardSubgraphInputParame
 		Max = Vector3.One;
 	}
 
-	public Float3SubgraphInputParameter( Vector3 value ) : base( value )
+	public Float3SubgraphInputParameter( string name, Vector3 value ) : base( name, value )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -201,7 +201,7 @@ public sealed class Float4SubgraphInputParameter : BlackboardSubgraphInputParame
 		Max = Vector4.One;
 	}
 
-	public Float4SubgraphInputParameter( Vector4 value ) : base( value )
+	public Float4SubgraphInputParameter( string name, Vector4 value ) : base( name, value )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -234,7 +234,7 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 		Value = Color.White;
 	}
 
-	public ColorSubgraphInputParameter( Color value ) : base( value )
+	public ColorSubgraphInputParameter( string name, Color value ) : base( name, value )
 	{
 	}
 
@@ -253,10 +253,114 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 	}
 }
 
+[Title( "Float2x2" ), Icon( "apps" ), Order( 7 )]
+[SubgraphOnly]
+public sealed class Float2x2SubgraphInputParameter : BlackboardSubgraphInputParameter<Float2x2>
+{
+	public Float2x2SubgraphInputParameter() : base()
+	{
+		Value = new Float2x2();
+	}
+
+	public Float2x2SubgraphInputParameter( string name, Float2x2 value ) : base( name, value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputType = SubgraphPortType.Float2x2,
+			DefaultData = Value,
+		};
+	}
+}
+
+[Title( "Float3x3" ), Icon( "apps" ), Order( 8 )]
+[SubgraphOnly]
+public sealed class Float3x3SubgraphInputParameter : BlackboardSubgraphInputParameter<Float3x3>
+{
+	public Float3x3SubgraphInputParameter() : base()
+	{
+		Value = new Float3x3();
+	}
+
+	public Float3x3SubgraphInputParameter( string name, Float3x3 value ) : base( name, value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputType = SubgraphPortType.Float3x3,
+			DefaultData = Value,
+		};
+	}
+}
+
+[Title( "Float4x4" ), Icon( "apps" ), Order( 9 )]
+[SubgraphOnly]
+public sealed class Float4x4SubgraphInputParameter : BlackboardSubgraphInputParameter<Float4x4>
+{
+	public Float4x4SubgraphInputParameter() : base()
+	{
+		Value = new Float4x4();
+	}
+
+	public Float4x4SubgraphInputParameter( string name, Float4x4 value ) : base( name, value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputType = SubgraphPortType.Float4x4,
+			DefaultData = Value,
+		};
+	}
+}
+
+[Title( "Gradient" ), Icon( "gradient" ), Order( 10 )]
+[SubgraphOnly]
+public sealed class GradientSubgraphInputParameter : BlackboardSubgraphInputParameter<Gradient>
+{
+	public GradientSubgraphInputParameter() : base()
+	{
+		Value = new Gradient();
+	}
+
+	public GradientSubgraphInputParameter( string name, Gradient value ) : base( name, value )
+	{
+	}
+
+	public override BaseNodePlus InitializeNode()
+	{
+		return new SubgraphInput()
+		{
+			BlackboardParameterIdentifier = Identifier,
+			InputName = Name,
+			InputDescription = Description,
+			InputType = SubgraphPortType.Gradient,
+			DefaultData = Value,
+		};
+	}
+}
+
 /// <summary>
 /// Texture2D subgraph input
 /// </summary>
-[Title( "Texture2D" ), Icon( "texture" ), Order( 7 )]
+[Title( "Texture2D" ), Icon( "texture" ), Order( 11 )]
 [SubgraphOnly]
 public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
 {
@@ -272,7 +376,7 @@ public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputPar
 		};
 	}
 
-	public Texture2DSubgraphInputParameter( TextureInput value ) : base( value )
+	public Texture2DSubgraphInputParameter( string name, TextureInput value ) : base( name, value )
 	{
 	}
 
@@ -292,7 +396,7 @@ public sealed class Texture2DSubgraphInputParameter : BlackboardSubgraphInputPar
 /// <summary>
 /// TextureCube subgraph input
 /// </summary>
-[Title( "TextureCube" ), Icon( "view_in_ar" ), Order( 8 )]
+[Title( "TextureCube" ), Icon( "view_in_ar" ), Order( 12 )]
 [SubgraphOnly]
 public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputParameter<TextureInput>
 {
@@ -308,7 +412,7 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 		};
 	}
 
-	public TextureCubeSubgraphInputParameter( TextureInput value ) : base( value )
+	public TextureCubeSubgraphInputParameter( string name, TextureInput value ) : base( name, value )
 	{
 	}
 
@@ -328,7 +432,7 @@ public sealed class TextureCubeSubgraphInputParameter : BlackboardSubgraphInputP
 /// <summary>
 /// SamplerState subgraph input
 /// </summary>
-[Title( "Sampler State" ), Icon( "colorize" ), Order( 9 )]
+[Title( "Sampler State" ), Icon( "colorize" ), Order( 13 )]
 [SubgraphOnly]
 public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInputParameter<Sampler>
 {
@@ -337,7 +441,7 @@ public sealed class SamplerStateSubgraphInputParameter : BlackboardSubgraphInput
 		Value = new Sampler();
 	}
 
-	public SamplerStateSubgraphInputParameter( Sampler value ) : base( value )
+	public SamplerStateSubgraphInputParameter( string name, Sampler value ) : base( name, value )
 	{
 	}
 

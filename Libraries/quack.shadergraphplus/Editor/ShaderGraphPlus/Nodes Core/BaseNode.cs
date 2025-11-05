@@ -608,11 +608,13 @@ public class PlugInfo
 				return slider;
 			}
 
-			// TODO :
-			//if ( type == typeof( Gradient ) )
-			//{
-			//
-			//}
+			if ( type == typeof( Gradient ) )
+			{
+				var slider = new GradientValueEditor( plug ) { Title = DisplayInfo.Name, Node = node };
+				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
+
+				return slider;
+			}
 		}
 		return null;
 	}

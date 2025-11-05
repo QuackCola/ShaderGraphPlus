@@ -4,6 +4,9 @@ public interface IConstantNode
 {
 	public string Identifier { get; set; }
 	public object GetValue();
+	public BaseNodePlus InitializeMaterialParameterNode();
+	public BaseBlackboardParameter InitializeMaterialParameter( string name );
+	public BaseBlackboardParameter InitializeSubgraphInputParameter( string name );
 }
 
 public interface IRangedConstantNode
@@ -35,6 +38,21 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 	public object GetValue() 
 	{ 
 		return Value; 
+	}
+
+	public virtual BaseNodePlus InitializeMaterialParameterNode()
+	{
+		throw new NotImplementedException();
+	}
+
+	public virtual BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		throw new NotImplementedException();
+	}
+
+	public virtual BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		throw new NotImplementedException();
 	}
 }
 

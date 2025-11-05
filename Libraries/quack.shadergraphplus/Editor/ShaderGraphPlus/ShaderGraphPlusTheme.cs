@@ -17,6 +17,7 @@ public static class PrimaryNodeHeaderColors
 	public static Color BinaryNode => MathNode;
 	public static Color ConstantValueNode => Color.Parse( "#736024" )!.Value;
 	public static Color ParameterNode => Color.Parse( "#5d9b31" )!.Value;
+	public static Color MatrixNode => Color.Parse( "#5d9b31" )!.Value;
 	public static Color StageInputNode => Color.Parse( "#803334" )!.Value;
 	public static Color GlobalVariableNode => Color.Parse( "#803334" )!.Value;
 	public static Color FunctionNode => Color.Parse( "#1d53ac" )!.Value;
@@ -49,9 +50,9 @@ internal static class ShaderGraphPlusTheme
 			{ typeof( Vector3 ), new NodeHandleConfig( "Vector3", Color.Parse( "#7177e1" )!.Value ) },
 			{ typeof( Vector4 ), new NodeHandleConfig( "Vector4", Color.Parse( "#c7ae32" )!.Value ) },
 			{ typeof( Color ), new NodeHandleConfig( "Color", Color.Parse( "#c7ae32" )!.Value ) },
-			{ typeof( Float2x2 ), new NodeHandleConfig( "Float2x2", Color.Parse( "#a3b3c9" )!.Value ) },
-			{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#a3b3c9" )!.Value ) },
-			{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#a3b3c9" )!.Value ) },
+			{ typeof( Float2x2 ), new NodeHandleConfig( "Float2x2", Color.Parse( "#b83385" )!.Value ) },
+			{ typeof( Float3x3 ), new NodeHandleConfig( "Float3x3", Color.Parse( "#b83385" )!.Value ) },
+			{ typeof( Float4x4 ), new NodeHandleConfig( "Float4x4", Color.Parse( "#b83385" )!.Value ) },
 			{ typeof( Texture2DObject ), new NodeHandleConfig( "Texture2D", Color.Parse( "#ffb3a7" )!.Value ) },
 			{ typeof( TextureCubeObject ), new NodeHandleConfig( "TextureCube", Color.Parse( "#ffb3a7" )!.Value ) },
 			{ typeof( Sampler ), new NodeHandleConfig( "Sampler", Color.Parse( "#dddddd" )!.Value ) },
@@ -68,6 +69,9 @@ internal static class ShaderGraphPlusTheme
 			{ typeof( Float3SubgraphInputParameter ), new BlackboardConfig( "float3", NodeHandleConfigs[typeof( Vector3 )].Color ) },
 			{ typeof( Float4SubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Vector4 )].Color ) },
 			{ typeof( ColorSubgraphInputParameter ), new BlackboardConfig( "float4", NodeHandleConfigs[typeof( Color )].Color ) },
+			{ typeof( Float2x2SubgraphInputParameter ), new BlackboardConfig( "float2x2", NodeHandleConfigs[typeof( Float2x2 )].Color ) },
+			{ typeof( Float3x3SubgraphInputParameter ), new BlackboardConfig( "float3x3", NodeHandleConfigs[typeof( Float3x3 )].Color ) },
+			{ typeof( Float4x4SubgraphInputParameter ), new BlackboardConfig( "float4x4", NodeHandleConfigs[typeof( Float4x4 )].Color ) },
 			{ typeof( Texture2DSubgraphInputParameter ), new BlackboardConfig( "Texture2D", NodeHandleConfigs[typeof( Texture2DObject )].Color ) },
 			{ typeof( TextureCubeSubgraphInputParameter ), new BlackboardConfig( "TextureCube", NodeHandleConfigs[typeof( TextureCubeObject )].Color ) },
 			{ typeof( BoolParameter ), new BlackboardConfig( "bool", NodeHandleConfigs[typeof( bool )].Color ) },
@@ -82,3 +86,4 @@ internal static class ShaderGraphPlusTheme
 		};
 	}
 }
+

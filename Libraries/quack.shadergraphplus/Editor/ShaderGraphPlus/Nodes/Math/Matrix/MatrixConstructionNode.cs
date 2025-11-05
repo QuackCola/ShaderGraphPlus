@@ -8,68 +8,97 @@ namespace ShaderGraphPlus.Nodes;
 
 public enum MatrixNodeMode
 {
-	Row,
-	Column
+	/// <summary>
+	/// Input vectors specify matrix rows from Left to Right.
+	/// </summary>
+	[Title( "Row Major" )]
+	RowMajor,
+	/// <summary>
+	/// Input vectors specify matrix columns from Top to Bottom.
+	/// </summary>
+	[Title( "Column Major" )]
+	ColumnMajor
 }
 
 /// <summary>
-/// Constructs square matrices from the four input vectors.
+/// Constructs square matrix values from the four input vectors.
 /// </summary>
 [Title( "Matrix Construction" ), Category( "Math/Matrix" ), Icon( "construction" )]
-public sealed class MatrixConstructionode : ShaderNodePlus
+public sealed class MatrixConstructionNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
 
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.MatrixNode;
 
-	[Title( "M0" )]
-	[Input( typeof( Color ) )]
 	[Hide]
-	public NodeInput M0 { get; set; }
-
-	[Title( "M1" )]
-	[Input( typeof( Color ) )]
-	[Hide]
-	public NodeInput M1 { get; set; }
-
-	[Title( "M2" )]
-	[Input( typeof( Color ) )]
-	[Hide]
-	public NodeInput M2 { get; set; }
-
-	[Title( "M3" )]
-	[Input( typeof( Color ) )]
-	[Hide]
-	public NodeInput M3 { get; set; }
+	public override string Title => $"{DisplayInfo.For( this ).Name} ( {Mode} )";
 
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
-	public MatrixNodeMode Mode { get; set; } = MatrixNodeMode.Row;
+	[Title( "M0" )]
+	[Input( typeof( Vector4 ) )]
+	[Hide]
+	public NodeInput InputVectorA { get; set; }
 
-	public Vector4 DefaultM0 { get; set; } = Vector4.Zero;
-	public Vector4 DefaultM1 { get; set; } = Vector4.Zero;
-	public Vector4 DefaultM2 { get; set; } = Vector4.Zero;
-	public Vector4 DefaultM3 { get; set; } = Vector4.Zero;
+	[Title( "M1" )]
+	[Input( typeof( Vector4 ) )]
+	[Hide]
+	public NodeInput InputVectorB { get; set; }
+
+	[Title( "M2" )]
+	[Input( typeof( Vector4 ) )]
+	[Hide]
+	public NodeInput InputVectorC { get; set; }
+
+	[Title( "M3" )]
+	[Input( typeof( Vector4 ) )]
+	[Hide]
+	public NodeInput InputVectorD { get; set; }
+
+	public MatrixNodeMode Mode { get; set; } = MatrixNodeMode.RowMajor;
+
+	public Vector4 DefaultVectorA { get; set; } = Vector4.Zero;
+	public Vector4 DefaultVectorB { get; set; } = Vector4.Zero;
+	public Vector4 DefaultVectorC { get; set; } = Vector4.Zero;
+	public Vector4 DefaultVectorD { get; set; } = Vector4.Zero;
+
+
+	public MatrixConstructionNode() : base()
+	{
+		ExpandSize = new Vector2( 32, 0 );
+	}
 
 	[Output( typeof( Float4x4 ) ), Title( "4x4" )]
 	[Hide]
 	public NodeResult.Func ResultA => ( GraphCompiler compiler ) =>
 	{
-		var inM0 = compiler.ResultOrDefault( M0, DefaultM0 );
-		var inM1 = compiler.ResultOrDefault( M1, DefaultM1 );
-		var inM2 = compiler.ResultOrDefault( M2, DefaultM2 );
-		var inM3 = compiler.ResultOrDefault( M3, DefaultM3 );
-		
+		var resultVector0 = compiler.ResultOrDefault( InputVectorA, DefaultVectorA ).Cast( 4 );
+		var resultVector1 = compiler.ResultOrDefault( InputVectorB, DefaultVectorB ).Cast( 4 );
+		var resultVector2 = compiler.ResultOrDefault( InputVectorC, DefaultVectorC ).Cast( 4 );
+		var resultVector3 = compiler.ResultOrDefault( InputVectorD, DefaultVectorD ).Cast( 4 );
+
 		var result = $"";
-		
-		if ( Mode == MatrixNodeMode.Row )
+
+		if ( Mode == MatrixNodeMode.RowMajor )
 		{
-			result = $"{inM0}.x, {inM0}.y, {inM0}.z, {inM0}.w, {inM1}.x, {inM1}.y, {inM1}.z, {inM1}.w, {inM2}.x, {inM2}.y, {inM2}.z, {inM2}.w, {inM3}.x, {inM3}.y, {inM3}.z, {inM3}.w";
+			var row0 = $"{resultVector0}.x, {resultVector0}.y, {resultVector0}.z, {resultVector0}.w";
+			var row1 = $"{resultVector1}.x, {resultVector1}.y, {resultVector1}.z, {resultVector1}.w";
+			var row2 = $"{resultVector2}.x, {resultVector2}.y, {resultVector2}.z, {resultVector2}.w";
+			var row3 = $"{resultVector3}.x, {resultVector3}.y, {resultVector3}.z, {resultVector3}.w";
+
+			result = $"{row0}, {row1}, {row2}, {row3}";
 		}
 		else
 		{
-			result = $"{inM0}.x, {inM1}.x, {inM2}.x, {inM3}.x, {inM0}.y, {inM1}.y, {inM2}.y, {inM3}.y, {inM0}.z, {inM1}.z, {inM2}.z, {inM3}.z, {inM0}.w, {inM1}.w, {inM2}.w, {inM3}.w";
+			var row0 = $"{resultVector0}.x, {resultVector1}.x, {resultVector2}.x, {resultVector3}.x";
+			var row1 = $"{resultVector0}.y, {resultVector1}.y, {resultVector2}.y, {resultVector3}.y";
+			var row2 = $"{resultVector0}.z, {resultVector1}.z, {resultVector2}.z, {resultVector3}.z";
+			var row3 = $"{resultVector0}.w, {resultVector1}.w, {resultVector2}.w, {resultVector3}.w";
+
+			result = $"{row0}, {row1}, {row2}, {row3}";
 		}
 
 		return new NodeResult( ResultType.Float4x4, result );
@@ -80,19 +109,27 @@ public sealed class MatrixConstructionode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func ResultB => ( GraphCompiler compiler ) =>
 	{
-		var inM0 = compiler.ResultOrDefault( M0, DefaultM0 );
-		var inM1 = compiler.ResultOrDefault( M1, DefaultM1 );
-		var inM2 = compiler.ResultOrDefault( M2, DefaultM2 );
+		var resultVector0 = compiler.ResultOrDefault( InputVectorA, DefaultVectorA ).Cast( 3 );
+		var resultVector1 = compiler.ResultOrDefault( InputVectorB, DefaultVectorB ).Cast( 3 );
+		var resultVector2 = compiler.ResultOrDefault( InputVectorC, DefaultVectorC ).Cast( 3 );
 
 		var result = $"";
 
-		if ( Mode == MatrixNodeMode.Row )
+		if ( Mode == MatrixNodeMode.RowMajor )
 		{
-			result = $"{inM0}.x, {inM0}.y, {inM0}.z, {inM1}.x, {inM1}.y, {inM1}.z, {inM2}.x, {inM2}.y, {inM2}.z";
+			var row0 = $"{resultVector0}.x, {resultVector0}.y, {resultVector0}.z";
+			var row1 = $"{resultVector1}.x, {resultVector1}.y, {resultVector1}.z";
+			var row2 = $"{resultVector2}.x, {resultVector2}.y, {resultVector2}.z";
+
+			result = $"{row0}, {row1}, {row2}";
 		}
 		else
 		{
-			result = $"{inM0}.x, {inM1}.x, {inM2}.x, {inM0}.y, {inM1}.y, {inM2}.y, {inM0}.z, {inM1}.z, {inM2}.z";
+			var row0 = $"{resultVector0}.x, {resultVector1}.x, {resultVector2}.x";
+			var row1 = $"{resultVector0}.y, {resultVector1}.y, {resultVector2}.y";
+			var row2 = $"{resultVector0}.z, {resultVector1}.z, {resultVector2}.z";
+
+			result = $"{row0}, {row1}, {row2}";
 		}
 
 		return new NodeResult( ResultType.Float3x3, result );
@@ -102,18 +139,24 @@ public sealed class MatrixConstructionode : ShaderNodePlus
 	[Hide]
 	public NodeResult.Func ResultC => ( GraphCompiler compiler ) =>
 	{
-		var inM0 = compiler.ResultOrDefault( M0, DefaultM0 );
-		var inM1 = compiler.ResultOrDefault( M1, DefaultM1 );
+		var resultVector0 = compiler.ResultOrDefault( InputVectorA, DefaultVectorA ).Cast( 2 );
+		var resultVector1 = compiler.ResultOrDefault( InputVectorB, DefaultVectorB ).Cast( 2 );
 
 		var result = $"";
 
-		if ( Mode == MatrixNodeMode.Row )
+		if ( Mode == MatrixNodeMode.RowMajor )
 		{
-			result = $"{inM0}.x, {inM0}.y, {inM1}.x, {inM1}.y";
+			var row0 = $"{resultVector0}.x, {resultVector0}.y";
+			var row1 = $"{resultVector1}.x, {resultVector1}.y";
+
+			result = $"{row0}, {row1}";
 		}
 		else
 		{
-			result = $"{inM0}.x, {inM1}.x, {inM0}.y, {inM1}.y";
+			var row0 = $"{resultVector0}.x, {resultVector1}.x";
+			var row1 = $"{resultVector0}.y, {resultVector1}.y";
+
+			result = $"{row0}, {row1}";
 		}
 
 		return new NodeResult( ResultType.Float2x2, result );

@@ -325,9 +325,14 @@ partial class ShaderGraphPlus
 			BaseNodePlus node;
 			if ( typeDesc is null )
 			{
+				SGPLog.Error( $"Missing Node : \"{typeName}\"" );
 				var missingNode = new MissingNode( typeName, element );
 				node = missingNode;
 				DeserializeObject( node, element, options );
+
+				nodes.Add( node.Identifier, node );
+
+				AddNode( node );
 			}
 			else
 			{

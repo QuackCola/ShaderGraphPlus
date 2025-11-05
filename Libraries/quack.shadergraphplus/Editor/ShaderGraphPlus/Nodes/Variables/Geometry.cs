@@ -44,6 +44,7 @@ public sealed class WorldTangent : ShaderNodePlus
 	public static NodeResult.Func V => ( GraphCompiler compiler ) => new( ResultType.Vector3, "i.vTangentVWs", compiler.IsNotPreview );
 }
 
+///
 /// Whether or not the current pixel is a front-facing pixel.
 /// </summary>
 [Title( "Is Front Face" ), Category( "Variables" ), Icon( "start" )]

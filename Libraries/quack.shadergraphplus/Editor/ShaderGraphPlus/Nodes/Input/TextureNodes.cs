@@ -820,23 +820,23 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	{
 		get
 		{
-			string name = $"{DisplayInfo.For( this ).Name}";
+			var typeName = $"{DisplayInfo.For( this ).Name}";
 
 			if ( !IsSubgraph && !string.IsNullOrWhiteSpace( SamplerState.Name ) )
 			{
-				return $"{name} ( {SamplerState.Name} )";
+				return $"{SamplerState.Name}";
 			}
 			else if ( !IsSubgraph )
 			{
-				return name;
+				return typeName;
 			}
 			else if ( IsSubgraph && !string.IsNullOrWhiteSpace( Name ) )
 			{
-				return $"{name} ( {Name} )";
+				return $"{Name}";
 			}
 			else
 			{
-				return name;
+				return typeName;
 			}
 		}
 	}

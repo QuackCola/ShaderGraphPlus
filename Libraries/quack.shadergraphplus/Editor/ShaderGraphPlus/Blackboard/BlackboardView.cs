@@ -199,6 +199,10 @@ internal class BlackboardView : Widget
 				if ( !Graph.IsSubgraph && targetType == typeof( Float3SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Float4SubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( ColorSubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float2x2SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float3x3SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( Float4x4SubgraphInputParameter ) ) return false;
+				if ( !Graph.IsSubgraph && targetType == typeof( GradientSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( Texture2DSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( TextureCubeSubgraphInputParameter ) ) return false;
 				if ( !Graph.IsSubgraph && targetType == typeof( SamplerStateSubgraphInputParameter ) ) return false;

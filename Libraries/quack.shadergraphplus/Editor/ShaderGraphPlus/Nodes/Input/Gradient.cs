@@ -10,7 +10,7 @@ namespace ShaderGraphPlus.Nodes;
 /// Constant gradient value.
 /// </summary>
 [Title( "Gradient" ), Category( "Constants/Gradient" ), Icon( "gradient" ), Order( 6 )]
-public sealed class GradientNode : ShaderNodePlus
+public sealed class GradientConstantNode : ShaderNodePlus, IConstantNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -34,7 +34,7 @@ public sealed class GradientNode : ShaderNodePlus
 	//public Gradient.BlendMode blendMode { get; set; } 
 
 	[Output( typeof( Gradient ) )]
-	[Hide]
+	[Hide, NodeValueEditor( nameof( Gradient ) )]
 	public NodeResult.Func Result => (GraphCompiler compiler) =>
 	{
 		if ( Gradient.Colors.Count > 8 )
@@ -44,10 +44,32 @@ public sealed class GradientNode : ShaderNodePlus
 		else
 		{
 			// Register gradient with the compiler.
-			var result = compiler.RegisterGradient(Gradient, Name);
+			var result = compiler.RegisterGradient( Gradient, Name );
 		
 			// Return the gradent name that will only be used to search for it in a dictonary.
 			return new NodeResult( ResultType.Gradient, result, constant: true );
 		}
 	};
+
+	public object GetValue()
+	{
+		return Gradient;
+	}
+
+	public BaseBlackboardParameter InitializeMaterialParameter( string name )
+	{
+		throw new NotImplementedException();
+	}
+
+	public BaseNodePlus InitializeMaterialParameterNode()
+	{
+		throw new NotImplementedException();
+	}
+
+	public BaseBlackboardParameter InitializeSubgraphInputParameter( string name )
+	{
+		return new GradientSubgraphInputParameter( name, Gradient )
+		{
+		};
+	}
 }

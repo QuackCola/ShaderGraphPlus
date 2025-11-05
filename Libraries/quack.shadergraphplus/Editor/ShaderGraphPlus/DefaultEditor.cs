@@ -100,6 +100,7 @@ public class DefaultEditor : ValueEditor
 				}
 			}
 		}
+
 		if ( string.IsNullOrEmpty( val ) ) return;
 
 		Paint.Antialiasing = true;
@@ -109,6 +110,9 @@ public class DefaultEditor : ValueEditor
 		var shrink = 10f;
 		var extraWidth = 0f;
 		val = PaintHelper.FormatValue( type, rawVal, out extraWidth, out rawVal );
+		
+		if ( string.IsNullOrWhiteSpace( val ) ) return;
+		
 		var textSize = Paint.MeasureText( val ) + extraWidth;
 
 		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2,
@@ -200,6 +204,10 @@ internal static class PaintHelper
 				return color.a >= 0.995f
 					? color.WithAlpha( 1f ).Hex
 					: $"{color.WithAlpha( 1f ).Hex}, {color.a * 100:F0}%";
+
+			// Nothing for Gradient type for now...
+			case Gradient gradient:
+				return $"";
 
 			case Rotation rot:
 				rawValue = (Angles)rot;

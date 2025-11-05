@@ -46,18 +46,18 @@ public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 	[Hide, JsonIgnore, Browsable( false )]
 	public virtual bool IsValid => true;
 
-	public virtual string Name { get; set; } = "";
+	public virtual string Name { get; set; }
 
 	public BaseBlackboardParameter()
 	{
 		DisplayInfo = DisplayInfo.For( this );
 		NewIdentifier();
+		Name = "";
 	}
 
-	public BaseBlackboardParameter( Guid identifier )
+	public BaseBlackboardParameter( string name ) : this()
 	{
-		DisplayInfo = DisplayInfo.For( this );
-		Identifier = identifier;
+		Name = name;
 	}
 
 	public virtual object GetValue()
@@ -142,15 +142,11 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	[InlineEditor( Label = false ), Group( "Value" )]
 	public T Value { get; set; }
 
-	public BlackboardGenericParameter() : base() 
-	{ 
-	}
-
-	public BlackboardGenericParameter( Guid identifier ) : base( identifier )
+	public BlackboardGenericParameter() : base()
 	{
 	}
 
-	public BlackboardGenericParameter( T value ) : this() 
+	public BlackboardGenericParameter( string name, T value ) : base( name ) 
 	{ 
 		Value = value;
 	}
@@ -174,9 +170,10 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 		IsAttribute = false;
 	}
 
-	public BlackboardMaterialParameter( T value, bool isAttribute ) : base( value )
+	public BlackboardMaterialParameter( string name, T value, bool isAttribute ) : this()
 	{
-		UI = new ParameterUI(){};
+		Name = name;
+		Value = value;
 		IsAttribute = isAttribute;
 	}
 }
@@ -186,6 +183,9 @@ public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericPar
 	[Title( "Input Name" )]
 	public override string Name { get; set; }
 
+	/// <summary>
+	/// Tooltip description of the input when hovering over with the mouse.
+	/// </summary>
 	[Title( "Input Description" )]
 	[TextArea]
 	public string Description { get; set; }
@@ -193,16 +193,24 @@ public abstract class BlackboardSubgraphInputParameter<T> : BlackboardGenericPar
 	/// <summary>
 	/// Is this input required to have a valid connection?
 	/// </summary>
-	public bool IsRequired { get; set; } = false;
+	public bool IsRequired { get; set; }
 
+	/// <summary>
+	/// In what order will this input port on an instanced subgraph node.
+	/// </summary>
 	public int PortOrder { get; set; }
 
 	public BlackboardSubgraphInputParameter() : base()
 	{
+		Name = "";
+		Description = "";
+		IsRequired = false;
+		PortOrder = 0;
 	}
 
-	public BlackboardSubgraphInputParameter( T value ) : this()
+	public BlackboardSubgraphInputParameter( string name, T value ) : this()
 	{
+		Name = name;
 		Value = value;
 	}
 

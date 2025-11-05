@@ -6,7 +6,7 @@ using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
 
-[Title( "World To Projection" ), Category( "Variables/Matrix" ), Icon( "dataset" )]
+[Title( "World To Projection" ), Category( "Variables/Matrix" ), Icon( "apps" )]
 public sealed class WorldToProjectionNode : ShaderNodePlus
 {
 	[Hide]
@@ -18,7 +18,7 @@ public sealed class WorldToProjectionNode : ShaderNodePlus
 	[Hide, JsonIgnore]
 	public override bool CanPreview => false;
 
-	[Output( typeof( Float4x4 ) ), Title( "Value" )]
+	[Output( typeof( Float4x4 ) ), Title( "Matrix" )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{

@@ -161,7 +161,12 @@ public sealed class SubgraphNode : ShaderNodePlus, IErroringNode, IWarningNode
 				SubgraphPortType.Float => typeof( float ),
 				SubgraphPortType.Vector2 => typeof( Vector2 ),
 				SubgraphPortType.Vector3 => typeof( Vector3 ),
+				SubgraphPortType.Vector4 => typeof( Vector4 ),
 				SubgraphPortType.Color => typeof( Color ),
+				SubgraphPortType.Float2x2 => typeof( Float2x2 ),
+				SubgraphPortType.Float3x3 => typeof( Float3x3 ),
+				SubgraphPortType.Float4x4 => typeof( Float4x4 ),
+				SubgraphPortType.Gradient => typeof( Gradient ),
 				SubgraphPortType.SamplerState => typeof( Sampler ),
 				SubgraphPortType.Texture2DObject => typeof( Texture2DObject ),
 				_ => throw new Exception( $"Unknown PortType \"{subgraphOutput.OutputType}\"" )
@@ -398,6 +403,23 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					attributes.ToArray()
 				) );
 			}
+			else if ( type == typeof( Vector4 ) )
+			{
+				Sheet.AddRow( TypeLibrary.CreateProperty<Vector4>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return Vector4.Parse( el.GetString() );
+						}
+
+						return (Vector4)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
 			else if ( type == typeof( Color ) )
 			{
 				Sheet.AddRow( TypeLibrary.CreateProperty<Color>(
@@ -411,6 +433,75 @@ internal class SubgraphNodeControlWidget : ControlWidget
 						}
 
 						return (Color)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			else if ( type == typeof( Float2x2 ) )
+			{
+				Sheet.AddRow( EditorTypeLibrary.CreateProperty<Float2x2>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return JsonSerializer.Deserialize<Float2x2>( el, ShaderGraphPlus.SerializerOptions() )!;
+						}
+
+						return (Float2x2)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			else if ( type == typeof( Float3x3 ) )
+			{
+				Sheet.AddRow( EditorTypeLibrary.CreateProperty<Float3x3>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return JsonSerializer.Deserialize<Float3x3>( el, ShaderGraphPlus.SerializerOptions() )!;
+						}
+
+						return (Float3x3)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			else if ( type == typeof( Float4x4 ) )
+			{
+				Sheet.AddRow( EditorTypeLibrary.CreateProperty<Float4x4>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return JsonSerializer.Deserialize<Float4x4>( el, ShaderGraphPlus.SerializerOptions() )!;
+						}
+
+						return (Float4x4)val;
+					}, x => SetDefaultValue( name, x ),
+					attributes.ToArray()
+				) );
+			}
+			//else if ( !Node.IsSubgraph && type == typeof( Gradient ) )
+			else if ( type == typeof( Gradient ) )
+			{
+				Sheet.AddRow( EditorTypeLibrary.CreateProperty<Gradient>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return JsonSerializer.Deserialize<Gradient>( el, ShaderGraphPlus.SerializerOptions() )!;
+						}
+
+						return (Gradient)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
 				) );
@@ -445,10 +536,10 @@ internal class SubgraphNodeControlWidget : ControlWidget
 
 						if ( val is JsonElement el )
 						{
-							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )! with { ShowNameProperty = true };
+							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )! with { ShowNameProperty = true, Type = TextureType.Tex2D };
 						}
 
-						return ((TextureInput)val) with { ShowNameProperty = true };
+						return ((TextureInput)val) with { ShowNameProperty = true, Type = TextureType.Tex2D };
 					}, x =>
 					{
 						SetDefaultValue( name, x );
@@ -456,6 +547,29 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					attributes.ToArray()
 				) );
 			
+				Sheet.AddGroup( displayName, properties.ToArray() );
+			}
+			else if ( !Node.IsSubgraph && type == typeof( TextureCubeObject ) )
+			{
+				attributes.Add( new InlineEditorAttribute() { Label = false } );
+				properties.Add( EditorTypeLibrary.CreateProperty<TextureInput>(
+					displayName, () =>
+					{
+						var val = getter();
+
+						if ( val is JsonElement el )
+						{
+							return JsonSerializer.Deserialize<TextureInput>( el, ShaderGraphPlus.SerializerOptions() )! with { ShowNameProperty = true, Type = TextureType.TexCube };
+						}
+
+						return ((TextureInput)val) with { ShowNameProperty = true, Type = TextureType.TexCube };
+					}, x =>
+					{
+						SetDefaultValue( name, x );
+					},
+					attributes.ToArray()
+				) );
+
 				Sheet.AddGroup( displayName, properties.ToArray() );
 			}
 		}
