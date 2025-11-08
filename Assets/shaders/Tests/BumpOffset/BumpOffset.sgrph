@@ -27,13 +27,13 @@
       "__version": 1,
       "DefaultOpacity": 1,
       "DefaultRoughness": 0.124,
-      "DefaultMetalness": 0,
-      "DefaultAmbientOcclusion": 1,
+      "DefaultMetalness": 1,
+      "DefaultAmbientOcclusion": 0.28,
       "Identifier": "0",
-      "Position": "36,132",
+      "Position": "120,144",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "6",
+        "Identifier": "20",
         "Output": "Result",
         "Subgraph": null
       },
@@ -200,7 +200,7 @@
         }
       },
       "Identifier": "5",
-      "Position": "-648,-48",
+      "Position": "-648,-60",
       "HandleOffsets": {}
     },
     {
@@ -571,6 +571,108 @@
       "False": {
         "Identifier": "16",
         "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Lerp",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Fraction": 0.50861925,
+      "Identifier": "20",
+      "Position": "144,-72",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "22",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "6",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "GradientConstantNode",
+      "__version": 1,
+      "Name": null,
+      "Gradient": {
+        "blend": "Linear",
+        "color": [
+          {
+            "t": 0,
+            "c": "1,0,0,1"
+          },
+          {
+            "t": 0.17,
+            "c": "1,0.49804,0,1"
+          },
+          {
+            "t": 0.33,
+            "c": "1,1,0,1"
+          },
+          {
+            "t": 0.5,
+            "c": "0,1,0,1"
+          },
+          {
+            "t": 0.67,
+            "c": "0,0,1,1"
+          },
+          {
+            "t": 0.83,
+            "c": "0.29412,0,0.5098,1"
+          },
+          {
+            "t": 1,
+            "c": "0.5451,0,1,1"
+          }
+        ],
+        "alpha": [
+          {
+            "t": 0,
+            "a": 1
+          },
+          {
+            "t": 1,
+            "a": 1
+          }
+        ]
+      },
+      "Identifier": "21",
+      "Position": "-312,-216",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleGradientNode",
+      "__version": 1,
+      "Identifier": "22",
+      "Position": "-48,-216",
+      "HandleOffsets": {},
+      "Gradient": {
+        "Identifier": "21",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "Time": {
+        "Identifier": "23",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Multiply",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 3.5,
+      "Identifier": "23",
+      "Position": "-240,-156",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "6",
+        "Output": "R",
         "Subgraph": null
       }
     }

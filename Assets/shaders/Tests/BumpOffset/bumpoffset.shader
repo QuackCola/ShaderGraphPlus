@@ -132,6 +132,20 @@ PS
 		m.Emission = float3( 0, 0, 0 );
 		m.Transmission = 0;
 		
+		Gradient Gradient0 = Gradient::Init();
+		
+		Gradient0.colorsLength = 7;
+		Gradient0.alphasLength = 2;
+		Gradient0.colors[0] = float4( 1, 0, 0, 0 );
+		Gradient0.colors[1] = float4( 1, 0.49804, 0, 0.17 );
+		Gradient0.colors[2] = float4( 1, 1, 0, 0.33 );
+		Gradient0.colors[3] = float4( 0, 1, 0, 0.5 );
+		Gradient0.colors[4] = float4( 0, 0, 1, 0.67 );
+		Gradient0.colors[5] = float4( 0.29412, 0, 0.5098, 0.83 );
+		Gradient0.colors[6] = float4( 0.5451, 0, 1, 1 );
+		Gradient0.alphas[0] = float( 1 );
+		Gradient0.alphas[1] = float( 1 );
+		
 		float2 l_0 = i.vTextureCoords.xy * float2( 1, 1 );
 		float4 l_1 = g_tHeight.Sample( g_sTestSampler,l_0 );
 		float l_2 = g_flDepthScale;
@@ -140,16 +154,19 @@ PS
 		bool l_5 = g_bBumpOffset;
 		float2 l_6 = l_5 ? l_4 : l_0;
 		float4 l_7 = g_tColor.Sample( g_sTestSampler,l_6 );
-		float4 l_8 = g_tNormal.Sample( g_sTestSampler,l_6 );
-		float3 l_9 = l_8.xyz;
-		float l_10 = g_flRoughness;
+		float l_8 = l_7.r * 3.5;
+		float4 l_9 = Gradient::SampleGradient( Gradient0, l_8 );
+		float4 l_10 = lerp( l_9, l_7, 0.50861925 );
+		float4 l_11 = g_tNormal.Sample( g_sTestSampler,l_6 );
+		float3 l_12 = l_11.xyz;
+		float l_13 = g_flRoughness;
 		
-		m.Albedo = l_7.xyz;
+		m.Albedo = l_10.xyz;
 		m.Opacity = 1;
-		m.Normal = l_9;
-		m.Roughness = l_10;
-		m.Metalness = 0;
-		m.AmbientOcclusion = 1;
+		m.Normal = l_12;
+		m.Roughness = l_13;
+		m.Metalness = 1;
+		m.AmbientOcclusion = 0.28;
 		
 		
 		m.AmbientOcclusion = saturate( m.AmbientOcclusion );
