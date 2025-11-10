@@ -578,6 +578,27 @@ public sealed class RGBtoHSV : ShaderNodePlus
 	};
 }
 
+[Title( "Srgb Gamma To Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
+public sealed class SrgbGammaToLinearNode : ShaderNodePlus
+{
+	[Hide]
+	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+
+	[Output( typeof( Vector3 ) )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, $"SrgbGammaToLinear( {compiler.ResultOrDefault( In, Vector3.One )} )" );
+	};
+}
+
 [Title( "HSV to RGB" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class HSVtoRGB : ShaderNodePlus
 {
