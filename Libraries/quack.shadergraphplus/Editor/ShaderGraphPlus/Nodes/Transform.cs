@@ -565,15 +565,15 @@ public sealed class SrgbGammaToLinearNode : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
-	public NodeInput In { get; set; }
+	public NodeInput Input { get; set; }
 
 	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
-	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult( ResultType.Vector3, $"SrgbGammaToLinear( {compiler.ResultOrDefault( In, Vector3.One )} )" );
+		return new NodeResult( ResultType.Vector3, $"SrgbGammaToLinear( {compiler.ResultOrDefault( Input, Vector3.One )} )" );
 	};
 }
 
@@ -586,7 +586,7 @@ public sealed class RGBtoHSV : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 
@@ -607,7 +607,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 
@@ -628,7 +628,7 @@ public sealed class RGBtoLinear : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 
@@ -649,7 +649,7 @@ public sealed class LineartoRGB : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 
@@ -670,7 +670,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 	
@@ -691,7 +691,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
 
-	[Input( typeof( Vector3 ) )]
+	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
 	
