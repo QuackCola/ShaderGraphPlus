@@ -465,7 +465,6 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 }
 ";
 
-
 	public enum BlendMode
 	{
 		Default,
@@ -557,27 +556,6 @@ float3 ReflectVector( float3 a, float3 b)
 	};
 }
 
-[Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
-public sealed class RGBtoHSV : ShaderNodePlus
-{
-	[Hide]
-	public override int Version => 1;
-
-	[JsonIgnore, Hide, Browsable( false )]
-	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
-
-	[Input( typeof( Vector3 ) )]
-	[Hide]
-	public NodeInput In { get; set; }
-
-	[Output( typeof( Vector3 ) )]
-	[Hide]
-	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
-	{
-		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
-	};
-}
-
 [Title( "Srgb Gamma To Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class SrgbGammaToLinearNode : ShaderNodePlus
 {
@@ -591,11 +569,32 @@ public sealed class SrgbGammaToLinearNode : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
 		return new NodeResult( ResultType.Vector3, $"SrgbGammaToLinear( {compiler.ResultOrDefault( In, Vector3.One )} )" );
+	};
+}
+
+[Title( "RGB to HSV" ), Category( "Transform" ), Icon( "invert_colors" )]
+public sealed class RGBtoHSV : ShaderNodePlus
+{
+	[Hide]
+	public override int Version => 1;
+
+	[JsonIgnore, Hide, Browsable( false )]
+	public override Color NodeTitleColor => PrimaryNodeHeaderColors.TransformNode;
+
+	[Input( typeof( Vector3 ) )]
+	[Hide]
+	public NodeInput In { get; set; }
+
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
+	[Hide]
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
+	{
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2HSV", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -612,7 +611,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
@@ -633,7 +632,7 @@ public sealed class RGBtoLinear : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => (GraphCompiler compiler) =>
 	{
@@ -654,7 +653,7 @@ public sealed class LineartoRGB : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
@@ -675,7 +674,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 	
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
@@ -696,7 +695,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 	[Hide]
 	public NodeInput In { get; set; }
 	
-	[Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
