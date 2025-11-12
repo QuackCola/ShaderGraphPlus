@@ -563,11 +563,12 @@ public partial class ShaderGraphPlus
 	/// <param name="graphFileVersion"></param>
 	/// <param name="options"></param>
 	/// <param name="upgradedNode"></param>
+	/// <param name="connectionFixupDatas"></param>
 	/// <returns></returns>
-	private bool HandleGraphNodeUpgrade( string typeName, JsonElement nodeElement, int graphFileVersion, JsonSerializerOptions options, out BaseNodePlus upgradedNode )
+	private bool HandleGraphNodeUpgrade( string typeName, JsonElement nodeElement, int graphFileVersion, JsonSerializerOptions options, out BaseNodePlus upgradedNode, out List<NodeConnectionFixupData> connectionFixupDatas )
 	{
 		upgradedNode = null;
-
+		connectionFixupDatas = new();
 		/*
 		if ( graphFileVersion < 5 )
 		{
@@ -586,6 +587,12 @@ public partial class ShaderGraphPlus
 			SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node." );
 
 			upgradedNode = ConvertToConstantNode( typeName, nodeElement, options );
+		}
+		else if ( graphFileVersion < 3 && ShouldConvertTextureNodes( typeName, nodeElement ) )
+		{
+			upgradedNode = ConvertToNewTextureSampleNode( typeName, nodeElement, options, out var connectionFixupDataNew );
+
+			connectionFixupDatas.Add( connectionFixupDataNew );
 		}
 
 		return false;

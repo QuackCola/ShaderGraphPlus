@@ -297,7 +297,6 @@ partial class ShaderGraphPlus
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 		var connectionFixupData = new List<NodeConnectionFixupData>();
-		//var replacedNodes = new Dictionary<string, BaseNodePlus>();
 
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
@@ -327,9 +326,14 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				if ( HandleGraphNodeUpgrade( typeName, element, graphFileVersion, options, out var upgradedNode ) )
+				if ( HandleGraphNodeUpgrade( typeName, element, graphFileVersion, options, out var upgradedNode, out var newConnectionFixupData ) )
 				{
 					node = upgradedNode;
+
+					if ( newConnectionFixupData.Any() )
+					{
+						connectionFixupData.AddRange( newConnectionFixupData );
+					}
 				}
 				else // Nothing to upgrade
 				{
