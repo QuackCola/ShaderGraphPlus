@@ -604,7 +604,7 @@ public partial class ShaderGraphPlus
 		return false;
 	}
 
-	private int GetVersion( JsonElement element )
+	private static int GetVersion( JsonElement element )
 	{
 		if ( element.TryGetProperty( VersioningInfo.JsonPropertyName, out var versionElement ) )
 		{
