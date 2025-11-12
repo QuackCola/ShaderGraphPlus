@@ -588,12 +588,12 @@ public partial class ShaderGraphPlus
 		}
 
 		/*
-		if ( graphFileVersion < 5 )
+		if ( graphFileVersion < 4 )
 		{
 
 			return true;
 		}
-		else if ( IsSubgraph && graphFileVersion < 5 )
+		else if ( IsSubgraph && graphFileVersion < 4 )
 		{
 
 			return true;
