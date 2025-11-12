@@ -80,7 +80,7 @@ partial class ShaderGraphPlus
 		// Check for the version so we can handle upgrades
 		var graphFileVersion = GetVersion( root );
 
-		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"" , ConCommands.VerboseSerialization );
+		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"", ConCommands.VerboseSerialization );
 
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath, graphFileVersion );
