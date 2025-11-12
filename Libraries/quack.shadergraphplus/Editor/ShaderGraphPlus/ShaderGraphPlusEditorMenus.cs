@@ -23,7 +23,7 @@ internal static class ShaderGraphPlusEditorMenus
 				var file = System.IO.File.ReadAllText( projectPath );
 				
 				var currentVersion = 0;
-				if ( JsonDocument.Parse( file ).RootElement.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
+				if ( JsonDocument.Parse( file ).RootElement.TryGetProperty( VersioningInfo.JsonPropertyName, out var ver ) )
 				{
 					currentVersion = ver.GetInt32();
 				}

@@ -60,7 +60,7 @@ internal static class SGPJsonUpgrader
 			}
 			finally
 			{
-				json[VersioningInfo.VersionJsonPropertyName] = item2.Attribute.Version;
+				json[VersioningInfo.JsonPropertyName] = item2.Attribute.Version;
 			}
 		}
 

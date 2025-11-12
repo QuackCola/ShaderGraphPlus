@@ -7,7 +7,7 @@ namespace ShaderGraphPlus;
 
 public struct Sampler : ISGPJsonUpgradeable
 {
-	[Hide, JsonPropertyName( VersioningInfo.VersionJsonPropertyName )]
+	[Hide, JsonPropertyName( VersioningInfo.JsonPropertyName )]
 	public readonly int Version => 2;
 
 	/// <summary>

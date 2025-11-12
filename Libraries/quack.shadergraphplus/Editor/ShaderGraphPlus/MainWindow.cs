@@ -1249,7 +1249,7 @@ public class MainWindow : DockWindow
 		}
 
 		var graph = new ShaderGraphPlus();
-		graph.Deserialize( System.IO.File.ReadAllText( path ) );
+		graph.Deserialize( System.IO.File.ReadAllText( path ), null, Path.GetFileName( path ) );
 		graph.Path = asset.RelativePath;
 		graph.IsSubgraph = IsSubgraph;
 

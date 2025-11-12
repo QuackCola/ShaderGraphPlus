@@ -1,9 +1,11 @@
 ﻿
 using Editor.ShaderGraph;
+using Facepunch.ActionGraphs;
 using ShaderGraphPlus.Nodes;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Text.Json.Nodes;
+using static Sandbox.Resources.ResourceGenerator;
 
 namespace ShaderGraphPlus;
 
@@ -200,11 +202,6 @@ public partial class ShaderGraphPlus
 				AddParameter( blackboardParameter );
 			}
 		}
-	}
-
-	private void GraphV4Upgrade()
-	{
-
 	}
 
 	private bool ShouldConvertParameterNodeToConstant( string typeName, JsonElement element )
@@ -558,175 +555,42 @@ public partial class ShaderGraphPlus
 		throw new Exception( "Couldnt convert nameless Parameter node to Constant node" );
 	}
 
-#region OldStuffToRemove
 	/// <summary>
-	/// Check if a legacy parameter node should be upgraded to SubgraphInput.
+	/// Handle any potential node upgrades from one graph version to another.
 	/// </summary>
-	private static bool ShouldUpgradeToSubgraphInput( string typeName, JsonElement element )
+	/// <param name="typeName"></param>
+	/// <param name="nodeElement"></param>
+	/// <param name="graphFileVersion"></param>
+	/// <param name="options"></param>
+	/// <param name="upgradedNode"></param>
+	/// <returns></returns>
+	private bool HandleGraphNodeUpgrade( string typeName, JsonElement nodeElement, int graphFileVersion, JsonSerializerOptions options, out BaseNodePlus upgradedNode )
 	{
-		// Only upgrade if it's a parameter node type
-		if ( !IsParameterNodeType( typeName ) )
-			return false;
+		upgradedNode = null;
 
-		// Only upgrade if it has a name (indicating it's meant to be an input)
-		if ( element.TryGetProperty( "Name", out var nameProperty ) )
+		/*
+		if ( graphFileVersion < 5 )
 		{
-			var name = nameProperty.GetString();
-			return !string.IsNullOrWhiteSpace( name );
+
+			return true;
 		}
+		else if ( IsSubgraph && graphFileVersion < 5 )
+		{
+
+			return true;
+		}
+		*/
 
 		return false;
 	}
 
-	/// <summary>
-	/// Check if the type name represents a parameter node
-	/// </summary>
-	private static bool IsParameterNodeType( string typeName )
+	private int GetVersion( JsonElement element )
 	{
-		return typeName switch
+		if ( element.TryGetProperty( VersioningInfo.JsonPropertyName, out var versionElement ) )
 		{
-			"BoolParameterNode" => true,
-			"IntParameterNode" => true,
-			"FloatParameterNode" => true,
-			"Float2ParameterNode" => true,
-			"Float3ParameterNode" => true,
-			"ColorParameterNode" => true,
-			"TextureSampler" => true,
-			"Texture2DObjectNode" => true,
-			"SamplerNode" => true,
-			_ => false
-		};
-	}
-
-	/// <summary>
-	/// Create a new SubgraphInput node from a legacy parameter node
-	/// </summary>
-	private SubgraphInput CreateUpgradedSubgraphInput( string typeName, JsonElement element, JsonSerializerOptions options )
-	{
-		var subgraphInput = new SubgraphInput();
-
-		// Copy basic node properties
-		DeserializeObject( subgraphInput, element, options );
-
-		// Set input name from the parameter's Name property
-		if ( element.TryGetProperty( "Name", out var nameProperty ) )
-		{
-			subgraphInput.InputName = nameProperty.GetString();
+			return versionElement.GetInt32();
 		}
-
-		// Map the parameter type to InputType and set default values
-		switch ( typeName )
-		{
-			case "BoolParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Bool;
-				if ( element.TryGetProperty( "Value", out var boolValue ) )
-				{
-					subgraphInput.InputType = SubgraphPortType.Bool;
-					subgraphInput.DefaultData = boolValue.GetBoolean();
-				}
-				break;
-			case "IntParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Int;
-				if ( element.TryGetProperty( "Value", out var intValue ) )
-				{
-					subgraphInput.InputType = SubgraphPortType.Int;
-					subgraphInput.DefaultData = intValue.GetInt32();
-				}
-				break;
-			case "FloatParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Float;
-				if ( element.TryGetProperty( "Value", out var floatValue ) )
-				{
-					subgraphInput.InputType = SubgraphPortType.Float;
-					subgraphInput.DefaultData = floatValue.GetSingle();
-				}
-				break;
-			case "Float2ParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Vector2;
-				if ( element.TryGetProperty( "Value", out var float2Value ) )
-				{
-					var vector2 = JsonSerializer.Deserialize<Vector2>( float2Value.GetRawText(), options );
-					subgraphInput.InputType = SubgraphPortType.Vector2;
-					subgraphInput.DefaultData = vector2;
-				}
-				break;
-			case "Float3ParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Vector3;
-				if ( element.TryGetProperty( "Value", out var float3Value ) )
-				{
-					var vector3 = JsonSerializer.Deserialize<Vector3>( float3Value.GetRawText(), options );
-					subgraphInput.InputType = SubgraphPortType.Vector3;
-					subgraphInput.DefaultData = vector3;
-				}
-				break;
-			case "ColorParameterNode":
-				subgraphInput.InputType = SubgraphPortType.Color;
-				if ( element.TryGetProperty( "Value", out var ColorValue ) )
-				{
-					var color = JsonSerializer.Deserialize<Color>( ColorValue.GetRawText(), options );
-					subgraphInput.InputType = SubgraphPortType.Color;
-					subgraphInput.DefaultData = color;
-				}
-				break;
-			case "Texture2DObjectNode":
-				subgraphInput.InputType = SubgraphPortType.Texture2DObject;
-				if ( element.TryGetProperty( "UI", out var TextureInputValue ) )
-				{
-					var textureInput = JsonSerializer.Deserialize<TextureInput>( TextureInputValue.GetRawText(), options );
-					subgraphInput.InputType = SubgraphPortType.Texture2DObject;
-					subgraphInput.DefaultData = textureInput;
-				}
-				break;
-			case "SamplerNode":
-				subgraphInput.InputType = SubgraphPortType.SamplerState;
-				if ( element.TryGetProperty( "SamplerState", out var SamplerStateValue ) )
-				{
-					var samplerState = JsonSerializer.Deserialize<Sampler>( SamplerStateValue.GetRawText(), options );
-					subgraphInput.InputType = SubgraphPortType.SamplerState;
-					subgraphInput.DefaultData = samplerState;
-				}
-				break;
-		}
-
-		return subgraphInput;
+		
+		return 0;
 	}
-
-	private SubgraphOutput UpdateSubgraphOutput( JsonElement element, JsonSerializerOptions options )
-	{
-		var subgraphOutput = new SubgraphOutput();
-
-		// Copy basic node properties
-		DeserializeObject( subgraphOutput, element, options );
-
-		if ( element.TryGetProperty( "SubgraphFunctionOutput", out var subgraphFunctionOutputProperty ) )
-		{
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "Id", out var id ) )
-			{
-				subgraphOutput.OutputIdentifier = id.GetGuid();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputName", out var outputName ) )
-			{
-				subgraphOutput.OutputName = outputName.GetString();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputDescription", out var outputDescription ) )
-			{
-				subgraphOutput.OutputDescription = outputDescription.GetString();
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "OutputType", out var outputType ) )
-			{
-				subgraphOutput.OutputType = JsonSerializer.Deserialize<SubgraphPortType>( outputType, options );
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "Preview", out var preview ) )
-			{
-				subgraphOutput.Preview = JsonSerializer.Deserialize<SubgraphOutputPreviewType>( preview, options );
-			}
-			if ( subgraphFunctionOutputProperty.TryGetProperty( "PortOrder", out var portOrder ) )
-			{
-				subgraphOutput.PortOrder = portOrder.GetInt32();
-			}
-		}
-
-		return subgraphOutput;
-	}
-	#endregion OldStuffToRemove
 }

@@ -1,5 +1,6 @@
 ﻿using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
+using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
 
 using IPlugIn = NodeEditorPlus.IPlugIn;
@@ -35,7 +36,7 @@ partial class ShaderGraphPlus
 		/// <summary>
 		/// Json Property name of the version number.
 		/// </summary>
-		internal const string VersionJsonPropertyName = "__version";
+		internal const string JsonPropertyName = "__version";
 
 		internal const string VersionClassPropertyName = "Version";
 
@@ -70,24 +71,22 @@ partial class ShaderGraphPlus
 		return doc.ToJsonString( options );
 	}
 
-	public void Deserialize( string json, string subgraphPath = null )
+	public void Deserialize( string json, string subgraphPath = null, string fileName = "" )
 	{
 		using var doc = JsonDocument.Parse( json );
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 
 		// Check for the version so we can handle upgrades
-		var currentVersion = 0; // Assume 0 for files that don't have the Version property
-		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
-		{
-			currentVersion = ver.GetInt32();
-		}
+		var graphFileVersion = GetVersion( root );
+
+		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"" );
 
 		DeserializeObject( this, root, options );
-		DeserializeNodes( root, options, subgraphPath, currentVersion );
+		DeserializeNodes( root, options, subgraphPath, graphFileVersion );
 		DeserializeParameters( root, options );
 
-		if ( currentVersion < 3 )
+		if ( graphFileVersion < 3 )
 		{
 			GraphV3Upgrade();
 		}
@@ -99,17 +98,9 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		
 		// Check for version in the JSON
-		var fileVersion = 1; // Default to current version
-		if ( root.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var ver ) )
-		{
-			fileVersion = ver.GetInt32();
-		}
-		else
-		{
-			fileVersion = 0; // Old file without version
-		}
+		var graphFileVersion = GetVersion( root );
 
-		return DeserializeNodes( root, SerializerOptions(), null, fileVersion );
+		return DeserializeNodes( root, SerializerOptions(), null, graphFileVersion );
 	}
 
 	public IEnumerable<BaseBlackboardParameter> DeserializeParameters( string json )
@@ -176,7 +167,7 @@ partial class ShaderGraphPlus
 				int oldVersionNumber = 0;
 
 				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
-				if ( doc.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
+				if ( doc.TryGetProperty( VersioningInfo.JsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
 					SGPLog.Info( $"Got graph \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
@@ -211,7 +202,7 @@ partial class ShaderGraphPlus
 				int oldVersionNumber = 0;
 
 				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
-				if ( doc.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
+				if ( doc.TryGetProperty( VersioningInfo.JsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
 					SGPLog.Info( $"Got node \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
@@ -268,7 +259,7 @@ partial class ShaderGraphPlus
 				int oldVersionNumber = 0;
 
 				// if we have a valid version then set oldVersionNumber otherwise just use a version of 0.
-				if ( jsonProperty.Value.TryGetProperty( VersioningInfo.VersionJsonPropertyName, out var versionElement ) )
+				if ( jsonProperty.Value.TryGetProperty( VersioningInfo.JsonPropertyName, out var versionElement ) )
 				{
 					oldVersionNumber = versionElement.GetInt32();
 					SGPLog.Info( $"Got property \"{type}\" upgradeable version \"{oldVersionNumber}\"", ConCommands.VerboseJsonUpgrader );
@@ -300,7 +291,7 @@ partial class ShaderGraphPlus
 		}
 	}
 
-	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, int fileVersion = -1 )
+	private IEnumerable<BaseNodePlus> DeserializeNodes( JsonElement doc, JsonSerializerOptions options, string subgraphPath = null, int graphFileVersion = -1 )
 	{
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
@@ -336,41 +327,18 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				// Check if this is a legacy parameter node that should be upgraded to SubgraphInput
-				// Only upgrade for old subgraph files (files without Version property aka. 0 -> 1)
-				// TODO : There has to be a better way to handle node upgrades and replacements.... - Quack
-				if ( IsSubgraph && fileVersion < 1 && ShouldUpgradeToSubgraphInput( typeName, element ) )
+				if ( HandleGraphNodeUpgrade( typeName, element, graphFileVersion, options, out var upgradedNode ) )
 				{
-					node = CreateUpgradedSubgraphInput( typeName, element, options );
-					fileVersion = 1; // We've upgraded now, useful if there are future upgraders.
+					node = upgradedNode;
 				}
-				else if ( IsSubgraph && fileVersion < 2 && typeName == "SubgraphOutput" )
+				else // Nothing to upgrade
 				{
-					node = UpdateSubgraphOutput( element, options );
-					fileVersion = 2;
-				}
-				else if ( fileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, element ) )
-				{
-					SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node." );
-
-					node = ConvertToConstantNode( typeName, element, options );
-				}
-				else if ( fileVersion < 3 && ShouldConvertTextureNodes( typeName, element ) )
-				{
-					node = ConvertToNewTextureSampleNode( typeName, element, options, out var connectionFixupDataNew );
-
-					connectionFixupData.AddRange( connectionFixupDataNew );
-				}
-				//else if ( fileVersion < 4 )
-				//{
-				//
-				//}
-				else // Nothing to upgrade.
-				{
+					SGPLog.Info( $"Deserializing node \"{typeName}\" version \"{GetVersion( element )}\"" );
+					
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 					DeserializeObject( node, element, options );
 				}
-				
+
 				if ( identifiers != null && _nodes.ContainsKey( node.Identifier ) )
 				{
 					identifiers.Add( node.Identifier, node.NewIdentifier() );
@@ -535,7 +503,7 @@ partial class ShaderGraphPlus
 
 		if ( obj is ShaderGraphPlus sgp && sgp is ISGPJsonUpgradeable iupgradeable )
 		{
-			doc.Add( VersioningInfo.VersionJsonPropertyName, JsonSerializer.SerializeToNode( iupgradeable.Version, options ) );
+			doc.Add( VersioningInfo.JsonPropertyName, JsonSerializer.SerializeToNode( iupgradeable.Version, options ) );
 		}
 
 		foreach ( var property in properties )
@@ -605,7 +573,7 @@ partial class ShaderGraphPlus
 				continue;
 
 			var type = node.GetType();
-			var nodeObject = new JsonObject { { "_class", type.Name }, { VersioningInfo.VersionJsonPropertyName, node.Version } };
+			var nodeObject = new JsonObject { { "_class", type.Name }, { VersioningInfo.JsonPropertyName, node.Version } };
 
 			//if ( node is ISGPJsonUpgradeable upgradeable )
 			//{
