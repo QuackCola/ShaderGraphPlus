@@ -581,6 +581,13 @@ public partial class ShaderGraphPlus
 		}
 		*/
 
+		if ( graphFileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, nodeElement ) )
+		{
+			SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node." );
+
+			upgradedNode = ConvertToConstantNode( typeName, nodeElement, options );
+		}
+
 		return false;
 	}
 
