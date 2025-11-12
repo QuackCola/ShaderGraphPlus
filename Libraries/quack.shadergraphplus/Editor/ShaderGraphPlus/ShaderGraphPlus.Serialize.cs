@@ -80,7 +80,7 @@ partial class ShaderGraphPlus
 		// Check for the version so we can handle upgrades
 		var graphFileVersion = GetVersion( root );
 
-		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"" );
+		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"" , ConCommands.VerboseSerialization );
 
 		DeserializeObject( this, root, options );
 		DeserializeNodes( root, options, subgraphPath, graphFileVersion );
@@ -337,7 +337,7 @@ partial class ShaderGraphPlus
 				}
 				else // Nothing to upgrade
 				{
-					SGPLog.Info( $"Deserializing node \"{typeName}\" version \"{GetVersion( element )}\"" );
+					SGPLog.Info( $"Deserializing node \"{typeName}\" version \"{GetVersion( element )}\"", ConCommands.VerboseSerialization );
 					
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 					DeserializeObject( node, element, options );

@@ -6,6 +6,8 @@ internal static class ConCommands
 
 	public static bool VerboseJsonUpgrader { get; internal set; } = false;
 
+	public static bool VerboseSerialization { get; internal set; } = false;
+
 	public static bool NodeDebugInfo { get; internal set; } = false;
 
 	public static bool OnPropertyUpdatedDebug { get; internal set; } = false;
@@ -25,10 +27,16 @@ internal static class ConCommands
 		VerboseDebgging = value;
 	}
 
-	[ConCmd( "sgp_verbosejsonupgrader" )]
+	[ConCmd( "sgp_verbosejson_upgrader" )]
 	public static void CC_VerboseJsonUpgrader( bool value )
 	{
 		VerboseJsonUpgrader = value;
+	}
+
+	[ConCmd( "sgp_verbose_serialization" )]
+	public static void CC_VerboseSerialization( bool value )
+	{
+		VerboseSerialization = value;
 	}
 
 	[ConCmd( "sgp_debugnodeinfo" )]
