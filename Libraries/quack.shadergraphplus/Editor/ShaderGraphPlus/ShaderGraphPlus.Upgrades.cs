@@ -569,6 +569,24 @@ public partial class ShaderGraphPlus
 	{
 		upgradedNode = null;
 		connectionFixups = new();
+
+		if ( graphFileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, nodeElement ) )
+		{
+			SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node.", ConCommands.VerboseSerialization );
+
+			upgradedNode = ConvertToConstantNode( typeName, nodeElement, options );
+		
+			return true;
+		}
+		else if ( graphFileVersion < 3 && ShouldConvertTextureNodes( typeName, nodeElement ) )
+		{
+			upgradedNode = ConvertToNewTextureSampleNode( typeName, nodeElement, options, out var connectionFixupDataNew );
+
+			connectionFixups.Add( connectionFixupDataNew );
+		
+			return true;
+		}
+
 		/*
 		if ( graphFileVersion < 5 )
 		{
@@ -582,18 +600,6 @@ public partial class ShaderGraphPlus
 		}
 		*/
 
-		if ( graphFileVersion < 3 && ShouldConvertParameterNodeToConstant( typeName, nodeElement ) )
-		{
-			SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node.", ConCommands.VerboseSerialization );
-
-			upgradedNode = ConvertToConstantNode( typeName, nodeElement, options );
-		}
-		else if ( graphFileVersion < 3 && ShouldConvertTextureNodes( typeName, nodeElement ) )
-		{
-			upgradedNode = ConvertToNewTextureSampleNode( typeName, nodeElement, options, out var connectionFixupDataNew );
-
-			connectionFixups.Add( connectionFixupDataNew );
-		}
 
 		return false;
 	}
