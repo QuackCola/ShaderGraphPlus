@@ -563,12 +563,12 @@ public partial class ShaderGraphPlus
 	/// <param name="graphFileVersion"></param>
 	/// <param name="options"></param>
 	/// <param name="upgradedNode"></param>
-	/// <param name="connectionFixupDatas"></param>
+	/// <param name="connectionFixups"></param>
 	/// <returns></returns>
-	private bool HandleGraphNodeUpgrade( string typeName, JsonElement nodeElement, int graphFileVersion, JsonSerializerOptions options, out BaseNodePlus upgradedNode, out List<NodeConnectionFixupData> connectionFixupDatas )
+	private bool HandleGraphNodeUpgrade( string typeName, JsonElement nodeElement, int graphFileVersion, JsonSerializerOptions options, out BaseNodePlus upgradedNode, out List<NodeConnectionFixupData> connectionFixups )
 	{
 		upgradedNode = null;
-		connectionFixupDatas = new();
+		connectionFixups = new();
 		/*
 		if ( graphFileVersion < 5 )
 		{
@@ -592,7 +592,7 @@ public partial class ShaderGraphPlus
 		{
 			upgradedNode = ConvertToNewTextureSampleNode( typeName, nodeElement, options, out var connectionFixupDataNew );
 
-			connectionFixupDatas.Add( connectionFixupDataNew );
+			connectionFixups.Add( connectionFixupDataNew );
 		}
 
 		return false;

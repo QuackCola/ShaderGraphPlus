@@ -296,7 +296,7 @@ partial class ShaderGraphPlus
 		var nodes = new Dictionary<string, BaseNodePlus>();
 		var identifiers = _nodes.Count > 0 ? new Dictionary<string, string>() : null;
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
-		var connectionFixupData = new List<NodeConnectionFixupData>();
+		var connectionFixups = new List<NodeConnectionFixupData>();
 
 		var arrayProperty = doc.GetProperty("nodes");
 		foreach (var element in arrayProperty.EnumerateArray())
@@ -326,13 +326,13 @@ partial class ShaderGraphPlus
 			}
 			else
 			{
-				if ( HandleGraphNodeUpgrade( typeName, element, graphFileVersion, options, out var upgradedNode, out var newConnectionFixupData ) )
+				if ( HandleGraphNodeUpgrade( typeName, element, graphFileVersion, options, out var upgradedNode, out var newConnectionFixups ) )
 				{
 					node = upgradedNode;
 
-					if ( newConnectionFixupData.Any() )
+					if ( newConnectionFixups.Any() )
 					{
-						connectionFixupData.AddRange( newConnectionFixupData );
+						connectionFixups.AddRange( newConnectionFixups );
 					}
 				}
 				else // Nothing to upgrade
@@ -439,7 +439,7 @@ partial class ShaderGraphPlus
 		// Fixup any broken connections for any node that was "upgraded".
 		// Though in some cases it may not work when the node we are
 		// connecting from has itself been "upgraded".
-		foreach ( var data in connectionFixupData )
+		foreach ( var data in connectionFixups )
 		{
 			if ( data.NodeInputs == null )
 				continue;
