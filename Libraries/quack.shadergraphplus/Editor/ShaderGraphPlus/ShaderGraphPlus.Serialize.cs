@@ -77,7 +77,7 @@ partial class ShaderGraphPlus
 		var root = doc.RootElement;
 		var options = SerializerOptions();
 
-		// Check for the version so we can handle upgrades
+		// Get the version so we can handle upgrades
 		var graphFileVersion = GetVersion( root );
 
 		SGPLog.Info( $"Deserializing graph \"{fileName}\" version \"{graphFileVersion}\"", ConCommands.VerboseSerialization );
