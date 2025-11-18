@@ -611,6 +611,8 @@ public partial class ShaderGraphPlus
 			return versionElement.GetInt32();
 		}
 		
+		SGPLog.Error( $"JsonElement has no property named \"{VersioningInfo.JsonPropertyName}\". Defaulting to 0...." );
+
 		return 0;
 	}
 }
