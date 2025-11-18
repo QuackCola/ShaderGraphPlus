@@ -253,6 +253,9 @@ public sealed class ColorSubgraphInputParameter : BlackboardSubgraphInputParamet
 	}
 }
 
+/// <summary>
+/// Float2x2 value subgraph input
+/// </summary>
 [Title( "Float2x2" ), Icon( "apps" ), Order( 7 )]
 [SubgraphOnly]
 public sealed class Float2x2SubgraphInputParameter : BlackboardSubgraphInputParameter<Float2x2>
@@ -279,6 +282,9 @@ public sealed class Float2x2SubgraphInputParameter : BlackboardSubgraphInputPara
 	}
 }
 
+/// <summary>
+/// Float3x3 value subgraph input
+/// </summary>
 [Title( "Float3x3" ), Icon( "apps" ), Order( 8 )]
 [SubgraphOnly]
 public sealed class Float3x3SubgraphInputParameter : BlackboardSubgraphInputParameter<Float3x3>
@@ -305,6 +311,9 @@ public sealed class Float3x3SubgraphInputParameter : BlackboardSubgraphInputPara
 	}
 }
 
+/// <summary>
+/// Float4x4 value subgraph input
+/// </summary>
 [Title( "Float4x4" ), Icon( "apps" ), Order( 9 )]
 [SubgraphOnly]
 public sealed class Float4x4SubgraphInputParameter : BlackboardSubgraphInputParameter<Float4x4>
@@ -331,6 +340,9 @@ public sealed class Float4x4SubgraphInputParameter : BlackboardSubgraphInputPara
 	}
 }
 
+/// <summary>
+/// Gradient value subgraph input
+/// </summary>
 [Title( "Gradient" ), Icon( "gradient" ), Order( 10 )]
 [SubgraphOnly]
 public sealed class GradientSubgraphInputParameter : BlackboardSubgraphInputParameter<Gradient>
