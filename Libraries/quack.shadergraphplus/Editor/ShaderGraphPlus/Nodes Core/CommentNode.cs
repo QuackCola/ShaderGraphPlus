@@ -1,10 +1,4 @@
 ﻿using System.Text.Json.Nodes;
-using CommentUI = NodeEditorPlus.CommentUI;
-using GraphView = NodeEditorPlus.GraphView;
-using ICommentNode = NodeEditorPlus.ICommentNode;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 

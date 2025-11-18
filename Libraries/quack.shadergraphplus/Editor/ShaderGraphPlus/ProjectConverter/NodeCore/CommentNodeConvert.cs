@@ -22,13 +22,13 @@ internal class CommentNodeConvert : BaseNodeConvert
 		newNode.Size = oldCommentNode.Size;
 		newNode.Color = oldCommentNode.Color switch
 		{
-			CommentColor.White => Color.Parse( "#c2b5b5" )!.Value,
-			CommentColor.Red => Color.Parse( "#d60000" )!.Value,
-			CommentColor.Green => Color.Parse( "#33b679" )!.Value,
-			CommentColor.Blue => Color.Parse( "#039be5" )!.Value,
-			CommentColor.Yellow => Color.Parse( "#f6c026" )!.Value,
-			CommentColor.Purple => Color.Parse( "#8e24aa" )!.Value,
-			CommentColor.Orange => Color.Parse( "#f5511d" )!.Value,
+			Editor.NodeEditor.CommentColor.White => Color.Parse( "#c2b5b5" )!.Value,
+			Editor.NodeEditor.CommentColor.Red => Color.Parse( "#d60000" )!.Value,
+			Editor.NodeEditor.CommentColor.Green => Color.Parse( "#33b679" )!.Value,
+			Editor.NodeEditor.CommentColor.Blue => Color.Parse( "#039be5" )!.Value,
+			Editor.NodeEditor.CommentColor.Yellow => Color.Parse( "#f6c026" )!.Value,
+			Editor.NodeEditor.CommentColor.Purple => Color.Parse( "#8e24aa" )!.Value,
+			Editor.NodeEditor.CommentColor.Orange => Color.Parse( "#f5511d" )!.Value,
 			_ => Color.Parse( "#c2b5b5" )!.Value,
 		}; //(NodeEditorPlus.CommentColor)oldCommentNode.Color;
 		newNode.Title = oldCommentNode.Title;

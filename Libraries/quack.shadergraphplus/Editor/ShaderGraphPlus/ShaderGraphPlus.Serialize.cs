@@ -1,9 +1,6 @@
-﻿using NodeEditorPlus;
-using ShaderGraphPlus.Nodes;
+﻿using ShaderGraphPlus.Nodes;
 using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
-
-using IPlugIn = NodeEditorPlus.IPlugIn;
 
 namespace ShaderGraphPlus;
 

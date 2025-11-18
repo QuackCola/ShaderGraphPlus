@@ -1,9 +1,5 @@
 using Editor;
 
-using NodeEditorPlus;
-using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
-
 namespace ShaderGraphPlus.Nodes;
 
 [Title( "Custom Function UI Test" ), Category( "Dev" ), Icon( "code" )]

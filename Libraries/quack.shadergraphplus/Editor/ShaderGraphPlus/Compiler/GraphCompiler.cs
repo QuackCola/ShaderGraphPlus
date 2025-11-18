@@ -5,11 +5,6 @@ using ShaderGraphPlus.Nodes;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using IRerouteNode = NodeEditorPlus.IRerouteNode;
-using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 

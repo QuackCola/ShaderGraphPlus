@@ -3,7 +3,7 @@ using NodeEditorPlus;
 
 namespace ShaderGraphPlus;
 
-public class ClassNodeType : NodeEditorPlus.INodeType
+public class ClassNodeType : INodeType
 {
 	public virtual string Identifier => Type.FullName;
 

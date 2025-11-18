@@ -1,10 +1,5 @@
-﻿using NodeEditorPlus;
-using Sandbox;
+﻿using Sandbox;
 using System.Xml.Linq;
-using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 

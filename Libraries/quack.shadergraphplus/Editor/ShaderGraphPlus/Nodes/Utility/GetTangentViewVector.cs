@@ -1,11 +1,5 @@
-using NodeEditorPlus;
-using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
 
 namespace ShaderGraphPlus.Nodes;
-
 
 /// <summary>
 /// Returns the tangent view vector, which is the direction from the camera to the position in tangent space.

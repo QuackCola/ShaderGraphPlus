@@ -3,18 +3,6 @@ using Editor.ShaderGraph;
 using NodeEditorPlus;
 using ShaderGraphPlus.Nodes;
 using static Sandbox.VertexLayout;
-using CommentUI = NodeEditorPlus.CommentUI;
-using ConnectionStyle = NodeEditorPlus.ConnectionStyle;
-using GraphView = NodeEditorPlus.GraphView;
-using GridConnectionStyle = NodeEditorPlus.GridConnectionStyle;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeHandleConfig = NodeEditorPlus.NodeHandleConfig;
-using NodePlug = NodeEditorPlus.NodePlug;
-using NodeQuery = NodeEditorPlus.NodeQuery;
-using NodeUI = NodeEditorPlus.NodeUI;
-using PlugIn = NodeEditorPlus.PlugIn;
-using PlugOut = NodeEditorPlus.PlugOut;
 
 namespace ShaderGraphPlus;
 
@@ -90,8 +78,8 @@ public class ShaderGraphPlusView : GraphView
 	}
 	*/
 
-	protected override NodeEditorPlus.INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
-	protected override NodeEditorPlus.INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
+	protected override INodeType RerouteNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<ReroutePlus>() );
+	protected override INodeType CommentNodeType { get; } = new ClassNodeType( EditorTypeLibrary.GetType<CommentNode>() );
 
 	public void AddNodeType<T>()
 		where T : BaseNodePlus
@@ -494,7 +482,7 @@ public class ShaderGraphPlusView : GraphView
 			: null;
 	}
 
-	protected override IEnumerable<NodeEditorPlus.INodeType> GetRelevantNodes( NodeQuery query )
+	protected override IEnumerable<INodeType> GetRelevantNodes( NodeQuery query )
 	{
 		return AvailableNodes.Values.Filter( query ).Where( x =>
 		{

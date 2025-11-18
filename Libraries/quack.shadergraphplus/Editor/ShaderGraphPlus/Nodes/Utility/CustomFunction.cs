@@ -1,12 +1,6 @@
-
-using NodeEditorPlus;
 using System;
 using System.Text;
 using static ShaderGraphPlus.ShaderGraphPlusGlobals;
-using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus.Nodes;
 

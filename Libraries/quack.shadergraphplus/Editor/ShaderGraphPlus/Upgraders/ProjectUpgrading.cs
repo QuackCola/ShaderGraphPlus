@@ -1,7 +1,4 @@
 ﻿
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-
 namespace ShaderGraphPlus;
 
 public static class ProjectUpgrading

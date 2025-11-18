@@ -1,9 +1,4 @@
 ﻿using Sandbox.Resources;
-using NodeEditorPlus;
-using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
 using System.Text;
 using ShaderGraphPlus.Nodes;
 

@@ -1,13 +1,5 @@
 ﻿using Editor;
 
-using NodeEditorPlus;
-using GraphView = NodeEditorPlus.GraphView;
-using NodeUI = NodeEditorPlus.NodeUI;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using IRerouteNode = NodeEditorPlus.IRerouteNode;
-using RerouteUI = NodeEditorPlus.RerouteUI;
-
 namespace ShaderGraphPlus.Nodes;
 
 public abstract class RerouteNode : BaseNodePlus, IRerouteNode

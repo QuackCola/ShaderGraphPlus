@@ -1,6 +1,4 @@
-using NodeEditorPlus;
 using static ShaderGraphPlus.ShaderGraphPlusGlobals;
-using IPlugIn = NodeEditorPlus.IPlugIn;
 
 namespace ShaderGraphPlus.Nodes;
 

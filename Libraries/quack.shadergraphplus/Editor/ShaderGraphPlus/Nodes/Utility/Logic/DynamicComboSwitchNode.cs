@@ -1,6 +1,4 @@
-﻿using NodeEditorPlus;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-
+﻿
 namespace ShaderGraphPlus.Nodes;
 
 // TODO

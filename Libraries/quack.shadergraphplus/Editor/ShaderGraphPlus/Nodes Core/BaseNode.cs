@@ -1,12 +1,4 @@
 ﻿using Editor;
-using NodeEditorPlus;
-using GraphView = NodeEditorPlus.GraphView;
-using IPlug = NodeEditorPlus.IPlug;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodePlug = NodeEditorPlus.NodePlug;
-using NodeUI = NodeEditorPlus.NodeUI;
-using ValueEditor = NodeEditorPlus.ValueEditor;
 
 namespace ShaderGraphPlus;
 

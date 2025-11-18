@@ -1,11 +1,5 @@
 ﻿using Editor;
-using NodeEditorPlus;
-using Sandbox;
 using ShaderGraphPlus.Nodes;
-using GraphView = NodeEditorPlus.GraphView;
-using IPlugIn = NodeEditorPlus.IPlugIn;
-using IPlugOut = NodeEditorPlus.IPlugOut;
-using NodeUI = NodeEditorPlus.NodeUI;
 
 namespace ShaderGraphPlus;
 
