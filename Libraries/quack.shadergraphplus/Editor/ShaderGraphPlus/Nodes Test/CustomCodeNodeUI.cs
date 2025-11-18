@@ -35,21 +35,7 @@ public sealed class CustomCodeNodeUI : NodeUI
 		HoverEvents = true;
 		Selectable = true;
 		Movable = true;
-
-
-
 	}
-
-	private static Color GetColor( CommentColor color ) => color switch
-	{
-		CommentColor.Red => "#d60000",
-		CommentColor.Green => "#33b679",
-		CommentColor.Blue => "#039be5",
-		CommentColor.Yellow => "#f6c026",
-		CommentColor.Purple => "#8e24aa",
-		CommentColor.Orange => "#f5511d",
-		_ => "#C2B5B5"
-	};
 
 	protected override void OnPaint()
 	{
