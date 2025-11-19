@@ -340,7 +340,7 @@ public class ProjectCreator : Dialog
     private ShaderGraphPlus ReadTemplate( string templatePath )
     {
         var shaderGraphPlusTemplate = new ShaderGraphPlus();
-        shaderGraphPlusTemplate.Deserialize( System.IO.File.ReadAllText( ShaderGraphPlusFileSystem.Root.GetFullPath( $"{templatePath}/$name.sgrph" ) ) );
+        shaderGraphPlusTemplate.Deserialize( System.IO.File.ReadAllText( ShaderGraphPlusFileSystem.Root.GetFullPath( $"{templatePath}/$name.{ShaderGraphPlusGlobals.AssetTypeExtension}" ) ) );
 
         // configure the template.
         ConfigureTemplate(shaderGraphPlusTemplate);
@@ -363,18 +363,18 @@ public class ProjectCreator : Dialog
 
         //Log.Info($"Chosen Template is : {Templates.ListView.ChosenTemplate.TemplatePath}");
 
-        string OutputPath = Path.Combine(shaderGraphProjectPath, TitleEdit.Text + ".sgrph").Replace('\\', '/');
-        string txt = ReadTemplate($"{Templates.ListView.ChosenTemplate.TemplatePath}").Serialize();
-        File.WriteAllText(OutputPath, txt);
+        string OutputPath = Path.Combine(shaderGraphProjectPath, $"{TitleEdit.Text}.{ShaderGraphPlusGlobals.AssetTypeExtension}" ).Replace( '\\', '/' );
+        string txt = ReadTemplate( $"{Templates.ListView.ChosenTemplate.TemplatePath}" ).Serialize();
+        File.WriteAllText( OutputPath, txt );
 
         // Register the generated project with the assetsystem.
-        AssetSystem.RegisterFile(OutputPath); 
+        AssetSystem.RegisterFile( OutputPath ); 
 
         //Log.Info($"Creating ShaderGraphPlus project from : {Templates.ListView.ChosenTemplate.TemplatePath}");
         Utilities.EdtiorSound.Success();
         Close();
 
-        OnProjectCreated?.Invoke(OutputPath);
+        OnProjectCreated?.Invoke( OutputPath );
     }
 
 

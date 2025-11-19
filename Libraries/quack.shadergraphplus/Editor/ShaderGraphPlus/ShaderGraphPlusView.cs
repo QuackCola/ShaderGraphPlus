@@ -174,16 +174,14 @@ public class ShaderGraphPlusView : GraphView
 		{
 			menu.AddOption( "Create Custom Node...", "add_box", () =>
 			{
-				const string extension = "sgpfunc";
-
 				var fd = new FileDialog( null );
 				fd.Title = "Create Shader Graph Function";
 				fd.Directory = Project.Current.RootDirectory.FullName;
-				fd.DefaultSuffix = $".{extension}";
-				fd.SelectFile( $"untitled.{extension}" );
+				fd.DefaultSuffix = $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}";
+				fd.SelectFile( $"untitled.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}" );
 				fd.SetFindFile();
 				fd.SetModeSave();
-				fd.SetNameFilter( $"ShaderGraph Function (*.{extension})" );
+				fd.SetNameFilter( $"ShaderGraph Function (*.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension})" );
 				if ( !fd.Execute() ) return;
 
 				CreateSubgraphFromSelection( fd.SelectedFile );
@@ -413,7 +411,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			if ( asset.IsInstalled )
 			{
-				if ( string.Equals( Path.GetExtension( asset.AssetPath ), ".sgpfunc", StringComparison.OrdinalIgnoreCase ) )
+				if ( string.Equals( Path.GetExtension( asset.AssetPath ), $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}", StringComparison.OrdinalIgnoreCase ) )
 				{
 					return new SubgraphNodeType( asset.AssetPath, EditorTypeLibrary.GetType<SubgraphNode>() );
 				}

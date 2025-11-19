@@ -46,7 +46,7 @@ public class PreviewSettings
 	public Color Tint { get; set; } = Color.White;
 }
 
-[AssetType( Name = "Shader Graph Plus", Extension = "sgrph", Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
+[AssetType( Name = ShaderGraphPlusGlobals.AssetTypeName, Extension = ShaderGraphPlusGlobals.AssetTypeExtension, Flags = AssetTypeFlags.NoEmbedding ), Icon( "account_tree" )]
 public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 {
 	[Hide]
@@ -346,7 +346,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 
 }
 
-[AssetType( Name = "Shader Graph Plus Function", Extension = "sgpfunc", Flags = AssetTypeFlags.NoEmbedding )]
+[AssetType( Name = ShaderGraphPlusGlobals.SubgraphAssetTypeName, Extension = ShaderGraphPlusGlobals.SubgraphAssetTypeExtension, Flags = AssetTypeFlags.NoEmbedding )]
 public sealed partial class ShaderGraphPlusSubgraph : ShaderGraphPlus
 {
 

@@ -17,7 +17,7 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 		var newNode = new SubgraphNode();
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
-		newNode.SubgraphPath = oldSubgraphNode.SubgraphPath.Replace( ".shdrfunc", ".sgpfunc" );
+		newNode.SubgraphPath = oldSubgraphNode.SubgraphPath.Replace( ".shdrfunc", $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}" );
 
 		var fullPath = Editor.FileSystem.Content.GetFullPath( oldSubgraphNode.SubgraphPath );
 
@@ -32,7 +32,7 @@ internal class SubgraphNodeConvert : BaseNodeConvert
 
 		if ( !projectConverter.Errored )
 		{
-			fullPath = fullPath.Replace( ".shdrfunc", ".sgpfunc" );
+			fullPath = fullPath.Replace( ".shdrfunc", $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}" );
 
 			System.IO.File.WriteAllText( fullPath, conversionResult.Serialize() );
 

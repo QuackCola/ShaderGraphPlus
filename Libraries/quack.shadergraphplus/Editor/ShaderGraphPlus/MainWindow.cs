@@ -8,12 +8,12 @@ using System.Collections.Generic;
 
 namespace ShaderGraphPlus;
 
-[EditorForAssetType( "sgpfunc" )]
+[EditorForAssetType( ShaderGraphPlusGlobals.SubgraphAssetTypeExtension )]
 public class MainWindowFunc : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => true;
-	public override string FileType => "Shader Graph Plus Sub-Graph";
-	public override string FileExtension => "sgpfunc";
+	public override string FileType => $"{ShaderGraphPlusGlobals.AssetTypeName} Sub-Graph";
+	public override string FileExtension => ShaderGraphPlusGlobals.SubgraphAssetTypeExtension;
 
 	void IAssetEditor.SelectMember( string memberName )
 	{
@@ -21,13 +21,13 @@ public class MainWindowFunc : MainWindow, IAssetEditor
 	}
 }
 
-[EditorForAssetType( "sgrph" )]
-[EditorApp("Shader Graph Plus", "gradient", "edit shaders")]
+[EditorForAssetType( ShaderGraphPlusGlobals.AssetTypeExtension )]
+[EditorApp( ShaderGraphPlusGlobals.AssetTypeName, "gradient", "edit shaders")]
 public class MainWindowShader : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => false;
-	public override string FileType => "Shader Graph Plus";
-	public override string FileExtension => "sgrph";
+	public override string FileType => ShaderGraphPlusGlobals.AssetTypeName;
+	public override string FileExtension => ShaderGraphPlusGlobals.AssetTypeExtension;
 
 	void IAssetEditor.SelectMember( string memberName )
 	{
@@ -38,8 +38,8 @@ public class MainWindowShader : MainWindow, IAssetEditor
 public class MainWindow : DockWindow
 {
 	public virtual bool IsSubgraph => false;
-	public virtual string FileType => "Shader Graph Plus";
-	public virtual string FileExtension => "sgrph";
+	public virtual string FileType => ShaderGraphPlusGlobals.AssetTypeName;
+	public virtual string FileExtension => ShaderGraphPlusGlobals.AssetTypeExtension;
 
 	private ShaderGraphPlus _graph;
 	private ShaderGraphPlusView _graphView;
@@ -124,8 +124,8 @@ public class MainWindow : DockWindow
 
 		CreateToolBar();
 		
-		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault("shadergraphplus_recentfiles.json", _recentFiles)
-			.Where(x => System.IO.File.Exists(x)).ToList();
+		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault( "shadergraphplus_recentfiles.json", _recentFiles )
+			.Where( x => System.IO.File.Exists( x ) ).ToList();
 		
 		CreateUI();
 		Show();
@@ -1558,7 +1558,7 @@ public class MainWindow : DockWindow
 			_graphView.AddParameterType( type );
 		}
 
-		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( ".sgpfunc", StringComparison.OrdinalIgnoreCase ) );
+		var subgraphs = AssetSystem.All.Where( x => x.Path.EndsWith( $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}", StringComparison.OrdinalIgnoreCase ) );
 		foreach ( var subgraph in subgraphs )
 		{
 			// Skip any _c compiled subgraph files.

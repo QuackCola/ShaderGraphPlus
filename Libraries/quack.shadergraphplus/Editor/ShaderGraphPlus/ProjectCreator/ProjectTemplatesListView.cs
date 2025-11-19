@@ -55,8 +55,8 @@ internal class ProjectTemplatesListView : ListView
 		
 		foreach ( string template_folder in ShaderGraphPlusFileSystem.Root.FindDirectory( $"/{TemplatesRootFolderName}", "*", false ) )
 		{
-			string templateRoot = $"/{TemplatesRootFolderName}/" + template_folder;
-			string addonPath = templateRoot + "/$name.sgrph";
+			string templateRoot = $"/{TemplatesRootFolderName}/{template_folder}";
+			string addonPath = $"{templateRoot}/$name.{ShaderGraphPlusGlobals.AssetTypeExtension}";
 		
 			if ( ShaderGraphPlusFileSystem.Root.FileExists( addonPath ) )
 			{

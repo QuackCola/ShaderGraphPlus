@@ -22,4 +22,10 @@ internal static class ShaderGraphPlusGlobals
 		public const string NamedRerouteReferenceEditor = "shadergraphplus_NamedRerouteReferenceEditor";
 		public const string PortTypeChoiceEditor = "shadergraphplus_PortTypeChoiceEditor";
 	}
+
+	internal const string AssetTypeName = "Shader Graph Plus";
+	internal const string AssetTypeExtension = "sgrph";
+
+	internal const string SubgraphAssetTypeName = "Shader Graph Plus Function";
+	internal const string SubgraphAssetTypeExtension = "sgpfunc";
 }

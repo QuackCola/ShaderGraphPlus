@@ -10,7 +10,7 @@ internal static class ShaderGraphPlusEditorMenus
 	[Menu( "Editor", "Shader Graph Plus/Upgrade Subgraph Projects" )]
 	public static void UpgradeSubgraphProjects()
 	{
-		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.sgpfunc", SearchOption.AllDirectories );
+		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", $"*.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}", SearchOption.AllDirectories );
 		int projectsUpgraded = 0;
 
 		if ( projectPaths.Any() )
@@ -81,7 +81,7 @@ internal static class ShaderGraphPlusEditorMenus
 	[Menu( "Editor", "Shader Graph Plus/Update Subgraphs internal Path String" )]
 	public static void UpdateSubgraphsInternalPath()
 	{
-		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.sgpfunc", SearchOption.AllDirectories );
+		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", $"*.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}", SearchOption.AllDirectories );
 
 		if ( projectPaths.Any() )
 		{
@@ -231,8 +231,8 @@ file class ProjectConverterDialog : Dialog
 				var extension = Path.GetExtension( project.Path );
 				var targetExtension = extension switch
 				{
-					".shdrgrph" => ".sgrph",
-					".shdrfunc" => ".sgpfunc",
+					".shdrgrph" => $".{ShaderGraphPlusGlobals.AssetTypeExtension}",
+					".shdrfunc" => $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}",
 					_ => throw new NotImplementedException()
 				};
 

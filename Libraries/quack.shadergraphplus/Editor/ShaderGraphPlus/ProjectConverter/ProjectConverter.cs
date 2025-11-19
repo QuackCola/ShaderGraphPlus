@@ -85,7 +85,7 @@ internal class ProjectConverter
 		}
 
 		ShaderGraphPlus.IsSubgraph = ShaderGraph.IsSubgraph;
-		ShaderGraphPlus.Path = ShaderGraph.Path.Replace( !IsSubgraph ? ".shdrgrph" : ".shdrfunc", !IsSubgraph ? ".sgrph" : ".sgpfunc" );
+		ShaderGraphPlus.Path = ShaderGraph.Path.Replace( !IsSubgraph ? ".shdrgrph" : ".shdrfunc", !IsSubgraph ? $".{ShaderGraphPlusGlobals.AssetTypeExtension}" : $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}" );
 		ShaderGraphPlus.Model = ShaderGraph.Model;
 		ShaderGraphPlus.Description = ShaderGraph.Description;
 

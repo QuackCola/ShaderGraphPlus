@@ -6,7 +6,7 @@ internal static class CreateShaderGraphPlusAsset
 {
 	internal static void AddShaderGraphPlusOption( Menu parent, DirectoryInfo folder )
 	{
-		parent.AddOption( $"New Shader Graph Plus", "account_tree", () =>
+		parent.AddOption( $"New {ShaderGraphPlusGlobals.AssetTypeName}", "account_tree", () =>
 		{
 			var ProjectCreator = new ProjectCreator();
 			ProjectCreator.DeleteOnClose = true;
@@ -20,7 +20,7 @@ internal static class CreateShaderGraphPlusAsset
 	{
 		// Remove broken option
 		var otherMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Other" );
-		otherMenu.RemoveOption( "Shader Graph Plus" );
+		otherMenu.RemoveOption( ShaderGraphPlusGlobals.AssetTypeName );
 
 		if ( e.Target != null )
 		{
@@ -34,16 +34,14 @@ internal static class CreateShaderGraphPlusSubgraphAsset
 {
 	internal static void Create( string targetPath )
 	{
-		var extension = System.IO.Path.GetExtension( "$name.sgpfunc" );
 		var template_path = ShaderGraphPlusFileSystem.Root.GetFullPath( "templates" );
-
-		var sourceFile = template_path + "/$name.sgpfunc";
+		var sourceFile =  $"{template_path}/$name.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}";
 		
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
 
 		// assure extension
-		targetPath = System.IO.Path.ChangeExtension( targetPath, extension );
+		targetPath = System.IO.Path.ChangeExtension( targetPath, ShaderGraphPlusGlobals.SubgraphAssetTypeExtension );
 
 		System.IO.File.Copy( sourceFile, targetPath );
 		var asset = AssetSystem.RegisterFile( targetPath );
@@ -53,18 +51,16 @@ internal static class CreateShaderGraphPlusSubgraphAsset
 
 	internal static void AddShaderGraphPlusOption( Menu parent, DirectoryInfo folder )
 	{
-		parent.AddOption( $"New Shader Graph Plus Function", "account_tree", () =>
+		parent.AddOption( $"New {ShaderGraphPlusGlobals.SubgraphAssetTypeName}", "account_tree", () =>
 		{
-			var extension = System.IO.Path.GetExtension( "$name.sgpfunc" ).Trim( '.' );
-
 			var fd = new FileDialog( null );
-			fd.Title = $"Create Shader Graph Plus Subgraph";
+			fd.Title = $"Create {ShaderGraphPlusGlobals.SubgraphAssetTypeName}";
 			fd.Directory = folder.FullName;
-			fd.DefaultSuffix = $".{extension}";
-			fd.SelectFile( $"untitled.{extension}" );
+			fd.DefaultSuffix = $".{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}";
+			fd.SelectFile( $"untitled.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}" );
 			fd.SetFindFile();
 			fd.SetModeSave();
-			fd.SetNameFilter( $"Shader Graph Plus Subgraph (*.{extension})" );
+			fd.SetNameFilter( $"{ShaderGraphPlusGlobals.SubgraphAssetTypeName} (*.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension})" );
 
 			if ( !fd.Execute() )
 				return;
@@ -78,7 +74,7 @@ internal static class CreateShaderGraphPlusSubgraphAsset
 	{
 		// Remove broken option
 		var otherMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Other" );
-		otherMenu.RemoveOption( "Shader Graph Plus Function" );
+		otherMenu.RemoveOption( ShaderGraphPlusGlobals.SubgraphAssetTypeName );
 
 		if ( e.Target != null )
 		{
