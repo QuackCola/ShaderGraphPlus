@@ -18,6 +18,10 @@ internal static class CreateShaderGraphPlusAsset
 	[Event("folder.contextmenu", Priority = 101)]
 	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
+		// Remove broken option
+		var otherMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Other" );
+		otherMenu.RemoveOption( "Shader Graph Plus" );
+
 		if ( e.Target != null )
 		{
 			var menu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
@@ -72,6 +76,10 @@ internal static class CreateShaderGraphPlusSubgraphAsset
 	[Event( "folder.contextmenu", Priority = 101 )]
 	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
+		// Remove broken option
+		var otherMenu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Other" );
+		otherMenu.RemoveOption( "Shader Graph Plus Function" );
+
 		if ( e.Target != null )
 		{
 			var menu = e.Menu.FindOrCreateMenu( "New" ).FindOrCreateMenu( "Shader" );
