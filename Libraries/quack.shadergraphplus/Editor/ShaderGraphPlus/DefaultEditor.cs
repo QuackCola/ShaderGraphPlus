@@ -235,9 +235,17 @@ internal static class PaintHelper
 		{
 			return Vector2.Parse( element.GetRawText() );
 		}
+		else if ( type == typeof( Vector2Int ) )
+		{
+			return Vector2Int.Parse( element.GetRawText() );
+		}
 		else if ( type == typeof( Vector3 ) )
 		{
 			return Vector3.Parse( element.GetRawText() );
+		}
+		else if ( type == typeof( Vector3Int ) )
+		{
+			return Vector3Int.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector4 ) )
 		{
