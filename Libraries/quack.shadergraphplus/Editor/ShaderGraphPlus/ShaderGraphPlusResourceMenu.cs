@@ -15,7 +15,7 @@ internal static class CreateShaderGraphPlusAsset
 		});
 	}
 	
-	[Event("folder.contextmenu", Priority = 101)]
+	[Event("folder.contextmenu", Priority = 100)]
 	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
 		// Remove broken option
