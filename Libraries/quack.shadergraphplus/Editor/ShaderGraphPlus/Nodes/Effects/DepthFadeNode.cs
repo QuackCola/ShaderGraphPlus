@@ -42,13 +42,13 @@ float DepthFade( float3 vWorldPos, float3 vCameraPositionWs, float3 vCameraDirWs
 
 	[Output( typeof( float ) )]
 	[Hide]
-	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var coords = "i.vPositionSs.xy";
 		var worldPosition = $"i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";
 		var cameraPosition = "g_vCameraPositionWs";
 		var cameraDirection = "g_vCameraDirWs";
-		
+
 		var depthoffset = compiler.ResultOrDefault( DepthOffset, DefaultDepthOffset );
 		var falloff = compiler.ResultOrDefault( Falloff, DefaultFalloff );
 

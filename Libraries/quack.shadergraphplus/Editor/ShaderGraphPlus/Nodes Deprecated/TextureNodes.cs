@@ -239,7 +239,7 @@ public sealed class TextureSampler : TextureSamplerBase
 		input.BoundNodeId = $"{Identifier}";
 
 		var textureObject = compiler.Result( TextureObject );
-		
+
 		var coords = compiler.Result( Coords );
 
 		//SGPLog.Info( $"IsSubgraph? : {IsSubgraph}" , compiler.IsPreview);
@@ -272,7 +272,7 @@ public sealed class TextureSampler : TextureSamplerBase
 			//	return NodeResult.Error( $"`{input.Name}` was already registerd by node `{existingEntry.Value.BoundNode}`" );
 			//}
 			var samplerGlobal = compiler.ResultSamplerOrDefault( Sampler, SamplerState );
-			var resultTextureGlobal = compiler.ResultTexture(  input, texture );
+			var resultTextureGlobal = compiler.ResultTexture( input, texture );
 
 			if ( compiler.Stage == GraphCompiler.ShaderStage.Vertex )
 			{
@@ -295,7 +295,7 @@ public sealed class TextureSampler : TextureSamplerBase
 
 		// If TextureObject input is valid then use the registerd Texture2D from the connected Texture Object node.
 		// Either if the textureObject input is valid or we are in a Subgraph.
-		if ( textureObject.IsValid || ( IsSubgraph && textureObject.IsValid ) )
+		if ( textureObject.IsValid || (IsSubgraph && textureObject.IsValid) )
 		{
 			SGPLog.Info( $"Using Texture 2D Object `{textureObject.Code}` from TextureObject input on the `{nameof( TextureSampler )}` node `{Identifier}`.", compiler.IsPreview && ConCommands.TextureNodeDebug );
 			var sampler = compiler.ResultSamplerOrDefault( Sampler, SamplerState );

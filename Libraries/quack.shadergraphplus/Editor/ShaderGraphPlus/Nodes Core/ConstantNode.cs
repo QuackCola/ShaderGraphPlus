@@ -35,9 +35,9 @@ public abstract class ConstantNode<T> : ShaderNodePlus, IConstantNode
 		return new( ResultType.Float, $"{result}.{component}", true );
 	}
 
-	public object GetValue() 
-	{ 
-		return Value; 
+	public object GetValue()
+	{
+		return Value;
 	}
 
 	public virtual BaseNodePlus InitializeMaterialParameterNode()

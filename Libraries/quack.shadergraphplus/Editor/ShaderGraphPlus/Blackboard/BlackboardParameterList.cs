@@ -4,7 +4,7 @@ namespace ShaderGraphPlus;
 
 internal class BlackboardParameterList : ListView
 {
-	public BlackboardParameterList( Widget widget) : base( widget )
+	public BlackboardParameterList( Widget widget ) : base( widget )
 	{
 		Margin = 6;
 		ItemSpacing = 4;
@@ -50,7 +50,7 @@ internal class BlackboardParameterList : ListView
 
 		var textRect = Paint.DrawText( rect.Shrink( 4, 0, 0, 0 ), $"{variable.Name}", TextFlag.LeftCenter );
 		var typeRect = Paint.DrawText( rect.Shrink( 0, 0, 4, 0 ), $"{DisplayInfo.ForType( variable.GetType() ).Name}", TextFlag.RightCenter );
-		
+
 		//Paint.SetPen( Color.Gray.WithAlpha( 0.25f ) );
 		//Paint.SetBrush( Color.Gray.WithAlpha( 0.25f ) );
 		//Paint.DrawRect( typeRect.Grow( 2 ), Theme.ControlRadius );

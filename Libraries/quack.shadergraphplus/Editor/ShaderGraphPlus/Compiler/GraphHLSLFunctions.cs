@@ -343,7 +343,7 @@ float3 HSV2RGB( float3 c )
 ";
 
 	[Function( "RGB2Linear" )]
-    public static string RGB2Linear => @"
+	public static string RGB2Linear => @"
 float3 RGB2Linear( float3 c )
 {
     float3 vlinearRGBLo = c / 12.92;;
@@ -365,7 +365,7 @@ float3 Linear2RGB( float3 c )
 ";
 
 	[Function( "Linear2HSV" )]
-    public static string Linear2HSV => @"
+	public static string Linear2HSV => @"
 float3 Linear2HSV( float3 c )
 {
     float3 vSRGBLo = c * 12.92;
@@ -384,7 +384,7 @@ float3 Linear2HSV( float3 c )
 ";
 
 	[Function( "HSV2Linear" )]
-    public static string HSV2Linear => @"
+	public static string HSV2Linear => @"
 float3 HSV2Linear( float3 c )
 {
     float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -399,7 +399,7 @@ float3 HSV2Linear( float3 c )
 ";
 
 	[Function( "Height2Normal" )]
-    public static string Height2Normal => @"
+	public static string Height2Normal => @"
 float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float3 vNormal )
 {
     float3 worldDerivativeX = ddx(vPosition);
@@ -423,7 +423,7 @@ float3 Height2Normal( float flHeight , float flStrength, float3 vPosition, float
 ";
 
 	[Function( "ToGreyscale" )]
-    public static string ToGreyscale => @"
+	public static string ToGreyscale => @"
 float ToGreyscale( float3 vColor )
 {
 	return dot( vColor, float3( .299, .587, .114 ) );
@@ -431,14 +431,14 @@ float ToGreyscale( float3 vColor )
 ";
 
 	[Function( "InvertColors" )]
-    public static string InvertColors => @"
+	public static string InvertColors => @"
 float3 InvertColors( float3 vColor )
 {
 	return float3( 1.0 - vColor.r, 1.0 - vColor.g, 1.0 - vColor.b );
 }
 ";
 
-    [Function( "TexTriplanar_Color" )]
+	[Function( "TexTriplanar_Color" )]
 	public static string TexTriplanar_Color => @"
 float4 TexTriplanar_Color( in Texture2D tTex, in SamplerState sSampler, float3 vPosition, float3 vNormal, float BlendFactor )
 {
@@ -727,7 +727,7 @@ float RoundGradient( float2 vUV, float2 flCenter, float flRadius, float flDensit
 }
 ";
 
-    [AttributeUsage( AttributeTargets.Property )]
+	[AttributeUsage( AttributeTargets.Property )]
 	private class FunctionAttribute : Attribute
 	{
 		public string Name { get; set; }

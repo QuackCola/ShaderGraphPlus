@@ -33,10 +33,10 @@ public class ClassNodeType : INodeType
 		return name is not null;
 	}
 
-	public bool TryGetOutput(Type valueType, out string name)
+	public bool TryGetOutput( Type valueType, out string name )
 	{
 		var property = Type.Properties
-			.Select( x => ( Property: x, Attrib: x.GetCustomAttribute<BaseNodePlus.OutputAttribute>() ) )
+			.Select( x => (Property: x, Attrib: x.GetCustomAttribute<BaseNodePlus.OutputAttribute>()) )
 			.Where( x => x.Attrib != null )
 			.FirstOrDefault( x => x.Attrib.Type?.IsAssignableTo( valueType ) ?? true )
 			.Property;
@@ -45,7 +45,7 @@ public class ClassNodeType : INodeType
 		return name is not null;
 	}
 
-	public virtual IGraphNode CreateNode(INodeGraph graph)
+	public virtual IGraphNode CreateNode( INodeGraph graph )
 	{
 		var node = Type.Create<BaseNodePlus>();
 

@@ -34,24 +34,24 @@ public sealed class SampleGradientNode : ShaderNodePlus
 
 	[Hide]
 	[Output( typeof( Color ) ), Title( "RGBA" )]
-	public NodeResult.Func Result => (GraphCompiler compiler) =>
+	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var gradient = compiler.Result(Gradient);
-	
+		var gradient = compiler.Result( Gradient );
+
 		if ( !gradient.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( Gradient ) );
 		}
-	
+
 		if ( gradient.ResultType != ResultType.Gradient )
 		{
 			return NodeResult.Error( $"Gradient input is not a gradient!" );
 		}
-	
+
 		var time = compiler.ResultOrDefault( Time, 0.0f );
-	
+
 		return new NodeResult( ResultType.Color, $"Gradient::SampleGradient( {gradient.Code}, {time.Code} )", constant: false );
-	
+
 	};
 
 	/// <summary>

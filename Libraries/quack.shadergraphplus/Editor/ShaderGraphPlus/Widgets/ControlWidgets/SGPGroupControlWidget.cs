@@ -43,7 +43,7 @@ internal class SGPGroupControlWidget : ControlWidget
 		else // Blackboard
 		{
 			var graph = GetBlackboardParameter( property ).Graph;
-			
+
 			if ( graph is not null )
 			{
 				foreach ( var parameter in graph.Parameters )

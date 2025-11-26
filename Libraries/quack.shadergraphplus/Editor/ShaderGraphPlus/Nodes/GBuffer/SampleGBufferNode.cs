@@ -9,7 +9,7 @@ public abstract class GBufferSampleNode : ShaderNodePlus
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
-	[Input( typeof( Vector2 ) ), Title( "ScreenPos" ) , Hide]
+	[Input( typeof( Vector2 ) ), Title( "ScreenPos" ), Hide]
 	public NodeInput ScreenPosition { get; set; }
 
 	[Hide, JsonIgnore]
@@ -42,7 +42,7 @@ public abstract class GBufferSampleNode : ShaderNodePlus
 [Title( "Sample Normal GBuffer" ), Category( "GBuffer" ), Icon( "colorize" )]
 public sealed class SampleNormalGBufferNode : GBufferSampleNode
 {
-	[Hide,JsonIgnore]
+	[Hide, JsonIgnore]
 	public override string Buffer => "Normals";
 }
 

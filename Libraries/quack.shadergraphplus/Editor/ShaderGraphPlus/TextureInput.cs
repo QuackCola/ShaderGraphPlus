@@ -76,7 +76,7 @@ public enum TextureFormat
 	/// RGB color and alpha (8 bits each).
 	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
 	/// </summary>
-	RGBA8888 ,
+	RGBA8888,
 	/// <summary>
 	/// Three-channel HDR color and alpha (16 bits each).
 	///  You should only really use this in situations where block compression causes artifacting - because they have higher storage requirements.
@@ -106,7 +106,7 @@ public struct UIGroup
 
 public struct TextureInput
 {
-	[Hide,JsonIgnore]
+	[Hide, JsonIgnore]
 	public bool ShowNameProperty { get; set; }
 
 	/// <summary>
@@ -234,13 +234,13 @@ public struct TextureInput
 		}
 	}
 
-#region Graph Editor Only
+	#region Graph Editor Only
 	[JsonIgnore, Hide]
 	public string BoundNode { get; set; }
 
 	[JsonIgnore, Hide]
 	public string BoundNodeId { get; set; }
-#endregion Graph Editor Only
+	#endregion Graph Editor Only
 
 	public void SetOrder( int order )
 	{

@@ -2,7 +2,7 @@
 
 public static class PostProcessingClassTemplate
 {
-    public static string Class => @"
+	public static string Class => @"
 
 using Sandbox;
 using System;

@@ -21,13 +21,13 @@ internal static class ShaderGraphPlusEditorMenus
 			{
 				var graph = new ShaderGraphPlus();
 				var file = System.IO.File.ReadAllText( projectPath );
-				
+
 				var currentVersion = 0;
 				if ( JsonDocument.Parse( file ).RootElement.TryGetProperty( VersioningInfo.JsonPropertyName, out var ver ) )
 				{
 					currentVersion = ver.GetInt32();
 				}
-				
+
 				if ( currentVersion == 0 )
 				{
 					graph.Deserialize( file );
@@ -59,7 +59,7 @@ internal static class ShaderGraphPlusEditorMenus
 	{
 		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrgrph", SearchOption.AllDirectories ).ToList();
 		var subgraphProjectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", "*.shdrfunc", SearchOption.AllDirectories ).ToList();
-		
+
 		if ( subgraphProjectPaths != null )
 		{
 			projectPaths.AddRange( subgraphProjectPaths );
@@ -114,11 +114,11 @@ internal static class ShaderGraphPlusEditorMenus
 
 file class ProjectConverterDialog : Dialog
 {
-	private ProjectList _projectList; 
-	
+	private ProjectList _projectList;
+
 	private Layout ListLayout;
 	private Layout ButtonLayout;
-	
+
 	private Button ConvertButton;
 	private Button CloseButton;
 
@@ -158,7 +158,7 @@ file class ProjectConverterDialog : Dialog
 		ButtonLayout.Spacing = 8f;
 		ButtonLayout.Margin = 16f;
 
-		ConvertButton = ButtonLayout.Add ( new Button.Primary( "Convert Projects" )
+		ConvertButton = ButtonLayout.Add( new Button.Primary( "Convert Projects" )
 		{
 			Clicked = delegate
 			{
@@ -342,7 +342,7 @@ class ProjectList : Widget
 
 		private void OpenItemContextMenu( object item )
 		{
-		
+
 		}
 
 		protected override void OnPaint()
@@ -350,7 +350,7 @@ class ProjectList : Widget
 			Paint.ClearPen();
 			Paint.SetBrush( Theme.WindowBackground );
 			Paint.DrawRect( LocalRect );
-		
+
 			base.OnPaint();
 		}
 
@@ -359,12 +359,12 @@ class ProjectList : Widget
 			if ( item.Object is ProjectItem projectItem )
 			{
 				var color = Theme.Text;
-				
+
 				if ( projectItem.Converted )
 				{
 					color = Theme.Green;
 				}
-	
+
 				Paint.SetBrush( color.WithAlpha( Paint.HasMouseOver ? 0.1f : 0.03f ) );
 				Paint.ClearPen();
 				Paint.DrawRect( item.Rect.Shrink( 0, -1 ) );
@@ -379,7 +379,7 @@ class ProjectList : Widget
 				Paint.DrawIcon( iconRect, "account_tree", 24 );
 
 				var rect = item.Rect.Shrink( 48, 8, 0, 8 );
-	
+
 				Paint.SetPen( Color.White.WithAlpha( Paint.HasMouseOver ? 1 : 0.8f ), 3.0f );
 				Paint.DrawText( rect, $"{projectItem.Path} - {projectItem.NodeCount} nodes", TextFlag.LeftCenter | TextFlag.SingleLine );
 

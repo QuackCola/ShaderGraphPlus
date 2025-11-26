@@ -80,7 +80,7 @@ public static class ResultTypeExtentions
 			case ResultType.Float:
 				return typeof( float );
 			case ResultType.Vector2:
-				return typeof ( Vector2 );
+				return typeof( Vector2 );
 			case ResultType.Vector3:
 				return typeof( Vector3 );
 			case ResultType.Vector4:

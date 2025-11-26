@@ -3,7 +3,7 @@
 namespace ShaderGraphPlus;
 
 public enum ResultType
-{ 
+{
 	/// <summary>
 	/// No Components, just True or False.
 	/// </summary>
@@ -98,8 +98,8 @@ public struct NodeResult : IValid
 
 	public readonly bool IsValid
 	{
-		get 
-		{ 
+		get
+		{
 			if ( IsMetaDataResult )
 			{
 				return ResultType != ResultType.Invalid && Metadata.Any();
@@ -112,7 +112,7 @@ public struct NodeResult : IValid
 	}
 
 	public readonly string TypeName => ResultType.GetHLSLDataType();
-	
+
 	public readonly Type ComponentType
 	{
 		get
@@ -229,7 +229,7 @@ public struct NodeResult : IValid
 					return true;
 				case ResultType.Color:
 					return true;
-				default: 
+				default:
 					return false;
 			}
 		}
@@ -292,12 +292,12 @@ public struct NodeResult : IValid
 	public static NodeResult Error( params string[] errors ) => new() { Errors = errors };
 	public static NodeResult Warning( params string[] warnings ) => new() { Warnings = warnings };
 	public static NodeResult MissingInput( string name ) => Error( $"Missing required input '{name}'." );
-	public static NodeResult Depreciated( (string,string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
+	public static NodeResult Depreciated( (string, string) name ) => Error( $"'{name.Item1}' is depreciated please use '{name.Item2} instead'." );
 
 	public void SetPreviewID( int previewid ) { PreviewID = previewid; }
 	public void SetVoidLocalTargetID( string voidLocalTargetID ) { VoidLocalTargetID = voidLocalTargetID; }
 
-#region Metdata
+	#region Metdata
 	internal T GetMetadata<T>( string metaName, bool ignoreException = false )
 	{
 		if ( Metadata.TryGetValue( metaName, out var actualData ) )
@@ -370,7 +370,7 @@ public struct NodeResult : IValid
 			AddMetadataEntry( metaName, actualData );
 		}
 	}
-#endregion Metdata
+	#endregion Metdata
 
 	/// <summary>
 	/// "Cast" this result to different float types

@@ -25,7 +25,7 @@ internal struct VoidData : IValid
 	internal ResultType ResultType;
 	internal string FunctionCall;
 	internal bool AlreadyDefined;
-	internal bool AlreadyPostProcessed { get; set ;}
+	internal bool AlreadyPostProcessed { get; set; }
 	/// <summary>
 	/// Is this void data ment for a void function call or inline code?
 	/// </summary>
@@ -34,7 +34,7 @@ internal struct VoidData : IValid
 	/// The Identifier of the node that this data is bound to.
 	/// </summary>
 	internal string BoundNodeIdentifier;
-	
+
 	public bool IsValid
 	{
 		get

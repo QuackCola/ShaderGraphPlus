@@ -49,7 +49,7 @@ internal class SubtractNodeConvert : BaseNodeConvert
 		newNode.DefaultA = oldSubtractNode.DefaultA;
 		newNode.DefaultB = oldSubtractNode.DefaultB;
 
-		newNodes.Add( newNode ) ;
+		newNodes.Add( newNode );
 
 		return newNodes;
 	}
@@ -72,7 +72,7 @@ internal class MultiplyNodeConvert : BaseNodeConvert
 		newNode.DefaultA = oldMultiplyNode.DefaultA;
 		newNode.DefaultB = oldMultiplyNode.DefaultB;
 
-		newNodes .Add( newNode );
+		newNodes.Add( newNode );
 
 		return newNodes;
 	}

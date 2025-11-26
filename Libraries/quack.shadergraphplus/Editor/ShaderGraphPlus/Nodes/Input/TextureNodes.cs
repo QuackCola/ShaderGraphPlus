@@ -837,7 +837,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	}
 
 	[Hide]
-	private bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
+	private bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[Hide]
 	public string Name { get; set; }

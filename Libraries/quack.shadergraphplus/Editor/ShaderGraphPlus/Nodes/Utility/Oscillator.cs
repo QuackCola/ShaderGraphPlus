@@ -11,7 +11,7 @@ public sealed class OscillatorNode : ShaderNodePlus
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
-public string Oscillator => @"
+	public string Oscillator => @"
 float Oscillator( float flTime, float flFrequency, float flPhase, float flStrength )
 {
 	float period, amplitude, currentPhase;
@@ -33,8 +33,8 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 
 	[Input( typeof( float ) )]
 	[Hide]
-	public NodeInput Time { get; set;  }
-	
+	public NodeInput Time { get; set; }
+
 	[Input( typeof( float ) )]
 	[Hide]
 	public NodeInput Frequency { get; set; }
@@ -56,11 +56,11 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var frequency = compiler.ResultOrDefault( Frequency, DefaultFrequency );
-		var phase  = compiler.ResultOrDefault( Phase, DefaultPhase );
+		var phase = compiler.ResultOrDefault( Phase, DefaultPhase );
 		var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
 		var result_time = compiler.Result( Time );
 		var time = "";
-		
+
 		if ( Time.IsValid() )
 		{
 			time = result_time.Code;
@@ -69,10 +69,10 @@ float Oscillator( float flTime, float flFrequency, float flPhase, float flStreng
 		{
 			time = "g_flTime";
 		}
-		
+
 		string func = compiler.RegisterHLSLFunction( Oscillator, "Oscillator" );
 		string funcCall = compiler.ResultHLSLFunction( func, $"{time}, {frequency}, {phase}, {strength}" );
-		
+
 		return new NodeResult( ResultType.Float, funcCall );
 	};
 }

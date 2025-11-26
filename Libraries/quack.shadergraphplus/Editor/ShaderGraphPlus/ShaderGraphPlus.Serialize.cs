@@ -50,9 +50,9 @@ partial class ShaderGraphPlus
 			DefaultIgnoreCondition = JsonIgnoreCondition.Never,
 			ReadCommentHandling = JsonCommentHandling.Skip,
 		};
-	
+
 		options.Converters.Add( new JsonStringEnumConverter( null, true ) );
-	
+
 		return options;
 	}
 
@@ -93,7 +93,7 @@ partial class ShaderGraphPlus
 	{
 		using var doc = JsonDocument.Parse( json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip } );
 		var root = doc.RootElement;
-		
+
 		// Check for version in the JSON
 		var graphFileVersion = GetVersion( root );
 
@@ -111,7 +111,7 @@ partial class ShaderGraphPlus
 	private IEnumerable<BaseBlackboardParameter> DeserializeParameters( JsonElement doc, JsonSerializerOptions options )
 	{
 		var parameters = new Dictionary<string, BaseBlackboardParameter>();
-	
+
 		if ( doc.TryGetProperty( "parameters", out var arrayProperty ) )
 		{
 			foreach ( var element in arrayProperty.EnumerateArray() )
@@ -126,7 +126,7 @@ partial class ShaderGraphPlus
 				{
 					parameter = EditorTypeLibrary.Create<BaseBlackboardParameter>( typeName );
 					DeserializeObject( parameter, element, options );
-					
+
 					//SGPLog.Info( $"parameter.Name == {parameter.Name}" );
 
 					if ( string.IsNullOrWhiteSpace( parameter.Name ) )
@@ -208,12 +208,12 @@ partial class ShaderGraphPlus
 				{
 					SGPLog.Warning( $"Failed to get node \"{type}\" upgradeable version. defaulting to \"0\"", ConCommands.VerboseJsonUpgrader );
 				}
-				
+
 				// Dont even bother upgrading if we dont need to.
 				if ( propertyTypeInstance is ISGPJsonUpgradeable upgradeable && oldVersionNumber < upgradeable.Version )
 				{
 					SGPLog.Info( $"Upgrading node \"{type}\" from version \"{oldVersionNumber}\" to \"{upgradeable.Version}\"", ConCommands.VerboseJsonUpgrader );
-					
+
 					var upgradedElement = UpgradeJsonUpgradeable( oldVersionNumber, upgradeable, type, doc, options );
 
 					doc = upgradedElement;
@@ -232,11 +232,11 @@ partial class ShaderGraphPlus
 			var propertyInfo = properties.FirstOrDefault( x =>
 			{
 				var propName = x.Name;
-			
-			
+
+
 				if ( x.GetCustomAttribute<JsonPropertyNameAttribute>() is JsonPropertyNameAttribute jpna )
 					propName = jpna.Name;
-			
+
 				return string.Equals( propName, jsonProperty.Name, StringComparison.OrdinalIgnoreCase );
 			} );
 
@@ -245,7 +245,7 @@ partial class ShaderGraphPlus
 
 			if ( propertyInfo.CanWrite == false )
 				continue;
-			
+
 			if ( propertyInfo.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
 
@@ -295,8 +295,8 @@ partial class ShaderGraphPlus
 		var connections = new List<(IPlugIn Plug, NodeInput Value)>();
 		var connectionFixups = new List<NodeConnectionFixupData>();
 
-		var arrayProperty = doc.GetProperty("nodes");
-		foreach (var element in arrayProperty.EnumerateArray())
+		var arrayProperty = doc.GetProperty( "nodes" );
+		foreach ( var element in arrayProperty.EnumerateArray() )
 		{
 			var typeName = element.GetProperty( "_class" ).GetString();
 
@@ -335,7 +335,7 @@ partial class ShaderGraphPlus
 				else // Nothing to upgrade
 				{
 					SGPLog.Info( $"Deserializing node \"{typeName}\" version \"{GetVersion( element )}\"", ConCommands.VerboseSerialization );
-					
+
 					node = EditorTypeLibrary.Create<BaseNodePlus>( typeName );
 					DeserializeObject( node, element, options );
 				}
@@ -388,7 +388,7 @@ partial class ShaderGraphPlus
 						connections.Add( (input, connection) );
 					}
 				}
-	
+
 				if ( !node.UpgradedToNewNode )
 				{
 					nodes.Add( node.Identifier, node );
@@ -432,7 +432,7 @@ partial class ShaderGraphPlus
 				input.ConnectedOutput = output;
 			}
 		}
-		
+
 		// Fixup any broken connections for any node that was "upgraded".
 		// Though in some cases it may not work when the node we are
 		// connecting from has itself been "upgraded".
@@ -514,18 +514,18 @@ partial class ShaderGraphPlus
 
 			if ( property.PropertyType == typeof( NodeInput ) )
 				continue;
-	
+
 			if ( property.IsDefined( typeof( JsonIgnoreAttribute ) ) )
 				continue;
-	
+
 			var propertyName = property.Name;
 			if ( property.GetCustomAttribute<JsonPropertyNameAttribute>() is { } jpna )
 				propertyName = jpna.Name;
-	
+
 			var propertyValue = property.GetValue( obj );
 			if ( propertyName == "Identifier" && propertyValue is string identifier )
 			{
-				if ( identifiers.TryGetValue(identifier, out var newIdentifier ) )
+				if ( identifiers.TryGetValue( identifier, out var newIdentifier ) )
 				{
 					propertyValue = newIdentifier;
 				}

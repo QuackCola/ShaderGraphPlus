@@ -25,7 +25,7 @@ public class SGPJsonUpgraderAttribute : Attribute
 
 internal static class SGPJsonUpgrader
 {
-	private static ( MethodDescription Method, SGPJsonUpgraderAttribute Attribute )[] _methods;
+	private static (MethodDescription Method, SGPJsonUpgraderAttribute Attribute)[] _methods;
 
 	public static void UpdateUpgraders( TypeLibrary typeLibrary )
 	{

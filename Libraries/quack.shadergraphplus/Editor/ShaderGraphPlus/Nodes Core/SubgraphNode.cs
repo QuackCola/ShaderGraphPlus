@@ -288,7 +288,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 		Sheet.Clear( true );
 
 		// TODO
-		
+
 		foreach ( var inputRef in Node.InputReferences )
 		{
 			//if ( inputRef.Value.paramNode.IsAttribute ) continue;
@@ -306,7 +306,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					if ( val is JsonElement el ) return el.GetDouble();
 					return val;
 				}
-				
+
 			};
 
 			var attributes = new List<Attribute>();
@@ -508,17 +508,17 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					displayName, () =>
 					{
 						var val = getter();
-			
+
 						if ( val is JsonElement el )
 						{
 							return JsonSerializer.Deserialize<Sampler>( el, ShaderGraphPlus.SerializerOptions() )!;
 						}
-			
+
 						return (Sampler)val;
 					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
 				) );
-			
+
 				Sheet.AddGroup( displayName, properties.ToArray() );
 			}
 			else if ( !Node.IsSubgraph && type == typeof( Texture2DObject ) )
@@ -541,7 +541,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 					},
 					attributes.ToArray()
 				) );
-			
+
 				Sheet.AddGroup( displayName, properties.ToArray() );
 			}
 			else if ( !Node.IsSubgraph && type == typeof( TextureCubeObject ) )
@@ -568,7 +568,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 				Sheet.AddGroup( displayName, properties.ToArray() );
 			}
 		}
-		
+
 	}
 
 	private void SetDefaultValue( string name, object value )

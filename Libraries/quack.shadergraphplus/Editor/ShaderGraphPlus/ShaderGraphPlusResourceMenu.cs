@@ -12,10 +12,10 @@ internal static class CreateShaderGraphPlusAsset
 			ProjectCreator.DeleteOnClose = true;
 			ProjectCreator.FolderEditPath = folder.FullName;
 			ProjectCreator.Show();
-		});
+		} );
 	}
-	
-	[Event("folder.contextmenu", Priority = 100)]
+
+	[Event( "folder.contextmenu", Priority = 100 )]
 	internal static void OnShaderGraphPlusAssetFolderContext( FolderContextMenu e )
 	{
 		// Remove broken option
@@ -35,8 +35,8 @@ internal static class CreateShaderGraphPlusSubgraphAsset
 	internal static void Create( string targetPath )
 	{
 		var template_path = ShaderGraphPlusFileSystem.Root.GetFullPath( "templates" );
-		var sourceFile =  $"{template_path}/$name.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}";
-		
+		var sourceFile = $"{template_path}/$name.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}";
+
 		if ( !System.IO.File.Exists( sourceFile ) )
 			return;
 

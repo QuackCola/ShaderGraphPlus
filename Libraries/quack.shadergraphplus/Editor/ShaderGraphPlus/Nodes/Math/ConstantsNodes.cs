@@ -41,17 +41,17 @@ public sealed class MathConstantsNode : ShaderNodePlus
 		{
 			return Constant switch
 			{
-				ConstantValues.PI      => "3.14159265359",
-				ConstantValues.TWOPI   => "6.28318530718",
-				ConstantValues.FOURPI  => "0.78539816339",
-				ConstantValues.TAU     => "6.28318530717",
-				ConstantValues.PHI     => "1.6180339887",
-				ConstantValues.E       => "2.718282",
-				ConstantValues.LOG2E   => "1.44269504088",
-				ConstantValues.LOG10E  => "0.43429448190",
-				ConstantValues.LN2     => "0.69314718055",
-				ConstantValues.LN10    => "2.30258509299",
-				ConstantValues.SQRT2   => "1.41421356237",
+				ConstantValues.PI => "3.14159265359",
+				ConstantValues.TWOPI => "6.28318530718",
+				ConstantValues.FOURPI => "0.78539816339",
+				ConstantValues.TAU => "6.28318530717",
+				ConstantValues.PHI => "1.6180339887",
+				ConstantValues.E => "2.718282",
+				ConstantValues.LOG2E => "1.44269504088",
+				ConstantValues.LOG10E => "0.43429448190",
+				ConstantValues.LN2 => "0.69314718055",
+				ConstantValues.LN10 => "2.30258509299",
+				ConstantValues.SQRT2 => "1.41421356237",
 				ConstantValues.SQRT1_2 => "0.70710678118",
 				_ => throw new System.NotImplementedException(),
 			};

@@ -84,7 +84,8 @@ internal class SubgraphInputNodeConvert : BaseNodeConvert
 					PortOrder = newNode.PortOrder
 				} );
 				break;
-		};
+		}
+		;
 
 		newNodes.Add( newNode );
 

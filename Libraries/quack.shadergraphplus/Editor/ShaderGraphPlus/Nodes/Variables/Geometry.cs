@@ -67,7 +67,7 @@ public sealed class ObjectSpaceNormal : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-	
+
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.StageInputNode;
 
@@ -84,7 +84,7 @@ public sealed class ScreenPosition : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-	
+
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.StageInputNode;
 
@@ -92,46 +92,46 @@ public sealed class ScreenPosition : ShaderNodePlus
 	// "i.vPositionSs.xy.xy" when casting.. even though that should be valid.
 
 	public enum ScreenPositionMode
-    {
-        Raw,
-        Center,
-        //Tiled,
-        //Pixel
-    }
+	{
+		Raw,
+		Center,
+		//Tiled,
+		//Pixel
+	}
 
-    [Hide]
-    public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
+	[Hide]
+	public ScreenPositionMode Mode { get; set; } = ScreenPositionMode.Raw;
 
 	private string GetMode( string components, GraphCompiler compiler )
 	{
-        string returnCall = string.Empty;
+		string returnCall = string.Empty;
 
-        switch ( Mode )
-        {
-            case ScreenPositionMode.Raw:
-                returnCall = $"{( compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}" )}";
-                break;
-            case ScreenPositionMode.Center:
-                returnCall = $"{( compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1" )}";
-                break;
-        }
+		switch ( Mode )
+		{
+			case ScreenPositionMode.Raw:
+				returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components}" : $"i.vPositionSs.{components}")}";
+				break;
+			case ScreenPositionMode.Center:
+				returnCall = $"{(compiler.IsVs ? $"i.vPositionPs.{components} * 2 - 1" : $"i.vPositionSs.{components} * 2 - 1")}";
+				break;
+		}
 
-        return returnCall;
-    }
+		return returnCall;
+	}
 
-    [Output( typeof( Vector3 ) )]
+	[Output( typeof( Vector3 ) )]
 	[Hide]
-	public NodeResult.Func XYZ => ( GraphCompiler compiler ) => new ( ResultType.Vector3, GetMode( "xyz", compiler ) );
- 
+	public NodeResult.Func XYZ => ( GraphCompiler compiler ) => new( ResultType.Vector3, GetMode( "xyz", compiler ) );
+
 	[Output( typeof( Vector2 ) )]
 	[Hide]
 	public NodeResult.Func XY => ( GraphCompiler compiler ) => new( ResultType.Vector2, GetMode( "xy", compiler ) );
 
-    [Output( typeof( float ) )]
+	[Output( typeof( float ) )]
 	[Hide]
 	public NodeResult.Func Z => ( GraphCompiler compiler ) => new( ResultType.Vector3, GetMode( "z", compiler ) );
 
-    [Output( typeof( float ) )]
+	[Output( typeof( float ) )]
 	[Hide]
 	public NodeResult.Func W => ( GraphCompiler compiler ) => new( ResultType.Float, GetMode( "w", compiler ) );
 }
@@ -164,7 +164,7 @@ public sealed class ProjectedScreenCoordinate : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
-	
+
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.StageInputNode;
 

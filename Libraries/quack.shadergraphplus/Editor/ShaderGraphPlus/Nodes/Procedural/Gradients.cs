@@ -59,7 +59,7 @@ public sealed class RoundGradientNode : ShaderNodePlus
 		var density = compiler.ResultOrDefault( Density, DefaultDensity );
 		var invert = compiler.ResultOrDefault( Invert, DefaultInvert );
 
-	
+
 		var coords = "";
 
 		if ( compiler.Graph.Domain is ShaderDomain.PostProcess )
@@ -71,9 +71,9 @@ public sealed class RoundGradientNode : ShaderNodePlus
 			coords = incoords.IsValid ? $"{incoords.Cast( 2 )}" : "i.vTextureCoords.xy";
 		}
 
-		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "RoundGradient", $"{coords}", 
-			$"{center}", $"{radius}", $"{density}", $"{invert}" 
-		));
+		return new NodeResult( ResultType.Float, compiler.ResultHLSLFunction( "RoundGradient", $"{coords}",
+			$"{center}", $"{radius}", $"{density}", $"{invert}"
+		) );
 	};
 
 }

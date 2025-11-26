@@ -196,7 +196,7 @@ public sealed class CrossProduct : ShaderNodePlus
 	/// <summary>
 	/// Default value for when A input is missing
 	/// </summary>
-	[InputDefault (nameof( A ) )]
+	[InputDefault( nameof( A ) )]
 	public Vector3 DefaultA { get; set; }
 
 	/// <summary>

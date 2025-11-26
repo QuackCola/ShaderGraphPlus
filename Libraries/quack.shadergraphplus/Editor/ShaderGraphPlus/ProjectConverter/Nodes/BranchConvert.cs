@@ -15,7 +15,7 @@ internal class BranchNodeConvert : BaseNodeConvert
 		var oldBranchNode = oldNode as VanillaNodes.Branch;
 
 		//SGPLog.Info( "Convert branch node" );
-		
+
 		if ( !string.IsNullOrWhiteSpace( oldBranchNode.Name ) )
 		{
 			var newNode = new SwitchNode();

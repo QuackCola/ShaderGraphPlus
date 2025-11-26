@@ -7,7 +7,7 @@ namespace ShaderGraphPlus;
 /// <summary>
 /// 
 /// </summary>
-[CustomEditor(typeof(string), NamedEditor = ControlWidgetCustomEditors.PortTypeChoiceEditor )]
+[CustomEditor( typeof( string ), NamedEditor = ControlWidgetCustomEditors.PortTypeChoiceEditor )]
 sealed class PortTypeControlWidget : DropdownControlWidget<string>
 {
 	public PortTypeControlWidget( SerializedProperty property ) : base( property )
@@ -19,9 +19,9 @@ sealed class PortTypeControlWidget : DropdownControlWidget<string>
 		List<object> list = new();
 		foreach ( var type in GraphCompiler.ValueTypes )
 		{
-			if ( type.Key == typeof( float ) ) list.Add("float");
-			else if ( type.Key == typeof( int ) ) list.Add("int");
-			else if ( type.Key == typeof( bool ) ) list.Add("bool");
+			if ( type.Key == typeof( float ) ) list.Add( "float" );
+			else if ( type.Key == typeof( int ) ) list.Add( "int" );
+			else if ( type.Key == typeof( bool ) ) list.Add( "bool" );
 			else if ( type.Key == typeof( Texture2DObject ) ) list.Add( "Texture2D" );
 			else if ( type.Key == typeof( TextureCubeObject ) ) list.Add( "TextureCube" );
 			else if ( type.Key == typeof( Sampler ) ) list.Add( "SamplerState" );

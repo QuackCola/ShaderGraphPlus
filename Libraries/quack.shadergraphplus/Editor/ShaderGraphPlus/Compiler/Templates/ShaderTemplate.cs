@@ -2,7 +2,7 @@
 
 public static class ShaderTemplate
 {
-public static string Code => @"
+	public static string Code => @"
 HEADER
 {{
     Description = ""{0}"";
@@ -70,7 +70,7 @@ PS
 
 
 	// Included by common/vertexinput.hlsl
-	internal static Dictionary<string,string> InternalVertexInputs => new()
+	internal static Dictionary<string, string> InternalVertexInputs => new()
 	{
 		//{ "vColor", "float4 vColor : COLOR0 < Semantic( Color ); >;" },
 		{ "vTexCoord", "float2 vTexCoord : TEXCOORD0 < Semantic( LowPrecisionUv ); >;" },

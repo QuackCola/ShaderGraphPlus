@@ -11,7 +11,7 @@ public class WarpNode : ShaderNodePlus
 	public override int Version => 1;
 
 	[Hide]
-public static string Warp => @"
+	public static string Warp => @"
 float2 Warp(float2 vUv , float flWarp_amount)
 {
 	float2 delta = vUv - 0.5;
@@ -40,11 +40,11 @@ float2 Warp(float2 vUv , float flWarp_amount)
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var coords = compiler.Result( ScreenUVs );
-		var warpamount = compiler.ResultOrDefault( WarpAmount , DefaultWarpAmount );
-		
+		var warpamount = compiler.ResultOrDefault( WarpAmount, DefaultWarpAmount );
+
 		string func = compiler.RegisterHLSLFunction( Warp, "Warp" );
 		string funcCall = compiler.ResultHLSLFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount}" );
-		
+
 		return new NodeResult( ResultType.Vector2, funcCall );
 	};
 }
@@ -58,8 +58,8 @@ public class VignetteNode : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-[Hide]
-public static string Vignette => @"
+	[Hide]
+	public static string Vignette => @"
 float Vignette(float2 vUv , float flVignette_intensity, float flVignette_opacity)
 {
 	vUv *= 1.0 - vUv.xy;
@@ -91,10 +91,10 @@ float Vignette(float2 vUv , float flVignette_intensity, float flVignette_opacity
 		var coords = compiler.Result( ScreenUVs );
 		var vignetteintensity = compiler.ResultOrDefault( VignetteIntensity, DefaultVignetteIntensity );
 		var vignetteopacity = compiler.ResultOrDefault( VignetteOpacity, DefaultVignetteOpacity );
-		
+
 		string func = compiler.RegisterHLSLFunction( Vignette, "Vignette" );
 		string funcCall = compiler.ResultHLSLFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {vignetteintensity}, {vignetteopacity}" );
-		
+
 		return new NodeResult( ResultType.Float, funcCall );
 	};
 }
@@ -137,10 +137,10 @@ float Border(float2 vUv , float flWarp_amount)
 	{
 		var coords = compiler.Result( ScreenUVs );
 		var warpamount = compiler.ResultOrDefault( WarpAmount, DefaultWarpAmount );
-		
+
 		string func = compiler.RegisterHLSLFunction( Border, "Border" );
 		string funcCall = compiler.ResultHLSLFunction( func, $"{(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vPositionSs.xy / g_vRenderTargetSize")}, {warpamount}" );
-		
+
 		return new NodeResult( ResultType.Float, funcCall );
 	};
 }

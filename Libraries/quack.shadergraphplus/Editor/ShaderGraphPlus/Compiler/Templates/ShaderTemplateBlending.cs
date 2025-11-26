@@ -3,7 +3,7 @@
 // TODO : Probably dont need sperate templates anymore. So remove this file if thats the case.
 public static class ShaderTemplateBlending
 {
-    public static string Code => @"
+	public static string Code => @"
 HEADER
 {{
 	Description = ""{0}"";

@@ -5,7 +5,7 @@ namespace ShaderGraphPlus;
 [CustomEditor( typeof( Float2x2 ) )]
 sealed class Float2x2ControlWidget : ControlObjectWidget
 {
-	public Float2x2ControlWidget( SerializedProperty property ) : base(property, true)
+	public Float2x2ControlWidget( SerializedProperty property ) : base( property, true )
 	{
 		//property.TryGetAsObject( out SerializedObject so );
 
@@ -13,22 +13,22 @@ sealed class Float2x2ControlWidget : ControlObjectWidget
 
 		Layout = Layout.Column();
 		Layout.Spacing = 2;
-	
+
 		var Row1Layout = Layout.AddRow();
 		Row1Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row1Layout, "M11" );
-			Row1Layout.AddStretchCell(0);
-	
+			Row1Layout.AddStretchCell( 0 );
+
 			AddField( SerializedObject, Row1Layout, "M12" );
 		}
-	
+
 		var Row2Layout = Layout.AddRow();
 		Row2Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row2Layout, "M21" );
-			Row2Layout.AddStretchCell(0);
-	
+			Row2Layout.AddStretchCell( 0 );
+
 			AddField( SerializedObject, Row2Layout, "M22" );
 		}
 	}
@@ -43,14 +43,14 @@ sealed class Float2x2ControlWidget : ControlObjectWidget
 
 	}
 
-	void AddField(SerializedObject serializedObject, Layout layout, string propertyName)
+	void AddField( SerializedObject serializedObject, Layout layout, string propertyName )
 	{
-		var property = serializedObject.GetProperty(propertyName);
-		var controlWidget = ControlWidget.Create(property);
+		var property = serializedObject.GetProperty( propertyName );
+		var controlWidget = ControlWidget.Create( property );
 
-		layout.Add(controlWidget);
-		layout.Add(new Label(propertyName) { MinimumHeight = Theme.RowHeight, FixedWidth = 25 });
-		layout.AddSpacingCell(4);
+		layout.Add( controlWidget );
+		layout.Add( new Label( propertyName ) { MinimumHeight = Theme.RowHeight, FixedWidth = 25 } );
+		layout.AddSpacingCell( 4 );
 	}
 
 }

@@ -17,17 +17,17 @@ internal class ProjectTemplatesListView : ListView
 		ItemSelected = OnItemClicked;
 		ItemSize = new Vector2( 0f, 48f );
 		ItemSpacing = new Vector2( 4.0f, 4.0f );
-		
+
 		FindLocalTemplates();
-		
+
 		List<ProjectTemplate> orderedTemplates = Templates.OrderBy( x => x.Order ).ToList();
-		
+
 		SetItems( orderedTemplates );
 		ChosenTemplate = orderedTemplates.FirstOrDefault();
-		
+
 		if ( ChosenTemplate != null )
 		{
-			SelectItem( ChosenTemplate, false, false) ;
+			SelectItem( ChosenTemplate, false, false );
 		}
 		else
 		{
@@ -52,12 +52,12 @@ internal class ProjectTemplatesListView : ListView
 		{
 			return;
 		}
-		
+
 		foreach ( string template_folder in ShaderGraphPlusFileSystem.Root.FindDirectory( $"/{TemplatesRootFolderName}", "*", false ) )
 		{
 			string templateRoot = $"/{TemplatesRootFolderName}/{template_folder}";
 			string addonPath = $"{templateRoot}/$name.{ShaderGraphPlusGlobals.AssetTypeExtension}";
-		
+
 			if ( ShaderGraphPlusFileSystem.Root.FileExists( addonPath ) )
 			{
 				ShaderGraphPlus shadergraphplusproject = Json.Deserialize<ShaderGraphPlus>( ShaderGraphPlusFileSystem.Root.ReadAllText( addonPath ) );
@@ -111,7 +111,7 @@ internal class ProjectTemplatesListView : ListView
 			Paint.Antialiasing = false;
 
 			r = r.Shrink( 8f );
-	
+
 			Paint.SetPen( fg.WithAlpha( 0.7f ), 0f, PenStyle.Solid );
 			Paint.DrawIcon( r.Align( rect.Height - 16f, TextFlag.LeftCenter ), template.Icon, 24f );
 			Paint.SetDefaultFont();

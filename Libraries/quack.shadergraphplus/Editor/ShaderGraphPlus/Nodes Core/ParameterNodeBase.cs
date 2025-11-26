@@ -4,9 +4,9 @@ namespace ShaderGraphPlus;
 public interface IParameterNode
 {
 	string Name { get; set; }
-	
+
 	bool IsAttribute { get; set; }
-	
+
 	ParameterUI UI { get; set; }
 }
 
@@ -24,7 +24,7 @@ public interface ITextureParameterNode
 public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncableNode, IErroringNode//, IReplaceNode
 {
 	[Hide]
-	protected bool IsSubgraph => ( Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph );
+	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.ParameterNode;

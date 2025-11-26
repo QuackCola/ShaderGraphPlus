@@ -30,7 +30,7 @@ public struct VoidFunctionArgument
 	public VoidFunctionArgument( string targetProperty, string defaultTargetProperty, string varName, VoidFunctionArgumentType argumentType, ResultType resultType )
 	: this( targetProperty, varName, argumentType, resultType )
 	{
-		if ( ArgumentType != VoidFunctionArgumentType.Input && !string.IsNullOrWhiteSpace( defaultTargetProperty )  )
+		if ( ArgumentType != VoidFunctionArgumentType.Input && !string.IsNullOrWhiteSpace( defaultTargetProperty ) )
 		{
 			EdtiorSound.OhFiddleSticks();
 			throw new Exception( $"`defaultTargetProperty` should not be set if the argument type is not an `{VoidFunctionArgumentType.Input}`" );

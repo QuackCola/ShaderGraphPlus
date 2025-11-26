@@ -3,9 +3,9 @@ using ShaderGraphPlus.Nodes;
 
 namespace ShaderGraphPlus;
 
-[CustomEditor( typeof( string ) , WithAllAttributes = new[] { typeof( ShaderFeatureReferenceAttribute ) } )]
+[CustomEditor( typeof( string ), WithAllAttributes = new[] { typeof( ShaderFeatureReferenceAttribute ) } )]
 internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<ShaderFeatureBase>
-{ 
+{
 	ShaderGraphPlus Graph;
 
 	// TODO : Get this ControlWidget working again.
@@ -13,9 +13,9 @@ internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<Shad
 	{
 		//var target = property.Parent.Targets.OfType<ShaderGraphPlus>().FirstOrDefault();
 		var target = property.Parent.Targets.FirstOrDefault();
-			
+
 		SGPLog.Info( $"SerializedProperty parent target is \"{target}\"" );
-		
+
 		Graph = null; // Shut up the engine saying this valu is unused.
 		if ( Graph is null ) return;
 
@@ -27,7 +27,7 @@ internal sealed class FeatureReferenceControlWidget : DropdownControlWidget<Shad
 		//		SerializedProperty.SetValue<ShaderFeatureInfo>( Graph.Features[name] );
 		//	}
 		//}
-		if ( string.IsNullOrWhiteSpace( SerializedProperty.GetValue<string>()  ))
+		if ( string.IsNullOrWhiteSpace( SerializedProperty.GetValue<string>() ) )
 		{
 			SerializedProperty.SetValue<string>( "None" );
 		}

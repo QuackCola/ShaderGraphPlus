@@ -19,8 +19,8 @@ public class ShaderGraphPlusView : GraphView
 
 	public static bool EnableGridAlignedWires
 	{
-		get => _cachedConnectionStyle ??= EditorCookie.Get("shadergraphplus.gridwires", false);
-		set => EditorCookie.Set("shadergraphplus.gridwires", _cachedConnectionStyle = value);
+		get => _cachedConnectionStyle ??= EditorCookie.Get( "shadergraphplus.gridwires", false );
+		set => EditorCookie.Set( "shadergraphplus.gridwires", _cachedConnectionStyle = value );
 	}
 
 	private ConnectionStyle _oldConnectionStyle;
@@ -190,7 +190,7 @@ public class ShaderGraphPlusView : GraphView
 
 		if ( selectedNodes.Length > 1 && selectedNodes.All( x => x.Node is IConstantNode && x.Node is not IConstantMatrixNode ) )
 		{
-			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} Constant nodes to {( Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}", "swap_horiz", () =>
+			var convertOption = menu.AddOption( $"Convert {selectedNodes.Count()} Constant nodes to {(Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}", "swap_horiz", () =>
 			{
 				using var undoScope = UndoScope( $"Convert {selectedNodes.Count()} Constant nodes to {(Graph.IsSubgraph ? "Subgraph Input nodes" : "Material Parameter nodes")}" );
 				var lastNode = selectedNodes.First().Node as BaseNodePlus;
@@ -209,7 +209,7 @@ public class ShaderGraphPlusView : GraphView
 					}
 
 					lastNode = ConvertConstantNodeToParameter( constantNode, $"{newName}{id}", node.Position );
-				}	
+				}
 
 				RebuildFromGraph();
 
@@ -225,7 +225,7 @@ public class ShaderGraphPlusView : GraphView
 
 			if ( item is null )
 				return;
-			
+
 			if ( item.Node is BaseNodePlus node && ConCommands.NodeDebugInfo )
 			{
 				menu.AddSeparator();
@@ -262,7 +262,7 @@ public class ShaderGraphPlusView : GraphView
 				}
 
 				var convertOption = menu.AddOption( $"Convert {baseNode.DisplayInfo.Name} node to {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}", "swap_horiz", () =>
-				{ 
+				{
 					Dialog.AskString( ( string parameterName ) =>
 					{
 						using var undoScope = UndoScope( $"Convert {baseNode.DisplayInfo.Name} node to {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}" );
@@ -270,13 +270,13 @@ public class ShaderGraphPlusView : GraphView
 						Graph.RemoveNode( baseNode );
 
 						var newNode = ConvertConstantNodeToParameter( constantNode, parameterName, item.Node.Position );
-					
+
 						RebuildFromGraph();
 
 						_window.OnNodeSelected( newNode );
 						SelectNode( newNode );
 					},
-					$"Specify {(Graph.IsSubgraph ? "input" : "parameter" )} name for the new {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}." );
+					$"Specify {(Graph.IsSubgraph ? "input" : "parameter")} name for the new {nodeTypeTitle} {(Graph.IsSubgraph ? "Subgraph Input node" : "Material Parameter node")}." );
 				} );
 			}
 		}
@@ -548,9 +548,9 @@ public class ShaderGraphPlusView : GraphView
 			var newSubgraphOutputMenu = menu.AddMenu( $"Create Subgraph Output", "add" );
 
 			newSubgraphOutputMenu.AddOption( "Bool", "check_box", () =>
-			{ 
+			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Bool );
-			});
+			} );
 			newSubgraphOutputMenu.AddOption( "Int", "looks_one", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Int );
@@ -558,7 +558,7 @@ public class ShaderGraphPlusView : GraphView
 			newSubgraphOutputMenu.AddOption( "Float", "looks_one", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Float );
-			});
+			} );
 			newSubgraphOutputMenu.AddOption( "Float2", "looks_two", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector2 );
@@ -570,7 +570,7 @@ public class ShaderGraphPlusView : GraphView
 			newSubgraphOutputMenu.AddOption( "Float4", "looks_4", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Vector4 );
-			});
+			} );
 			newSubgraphOutputMenu.AddOption( "Color", "palette", () =>
 			{
 				CreateNewSubgraphOutputNode( clickPos, SubgraphPortType.Color );
@@ -704,9 +704,9 @@ public class ShaderGraphPlusView : GraphView
 		var node = blackboardParameter.InitializeNode();
 		node.Graph = Graph;
 		node.Position = position.SnapToGrid( GridSize );
-		
+
 		Graph?.AddNode( node );
-		
+
 		OnNodeCreated( node );
 
 		var nodeUI = node.CreateUI( this );
@@ -721,7 +721,7 @@ public class ShaderGraphPlusView : GraphView
 	private void CreateNewNamedReroute( string name, Vector2 position )
 	{
 		using var undoScope = UndoScope( "Add Named Reroute" );
-		
+
 		var nodeType = new NamedRerouteNodeType( EditorTypeLibrary.GetType<NamedRerouteNode>(), name );
 
 		CreateNewNode( nodeType, position );
@@ -941,7 +941,7 @@ public class ShaderGraphPlusView : GraphView
 		{
 			foreach ( var output in node.Outputs )
 			{
-				
+
 				var iNode = FindNodeType( typeof( SubgraphOutput ) ).CreateNode( subgraph );
 
 				if ( iNode is SubgraphOutput subgraphOutput )
@@ -1072,7 +1072,7 @@ public class ShaderGraphPlusView : GraphView
 
 		// Delete all previously selected nodes
 		UpdateConnections( Graph.Nodes );
-		
+
 	}
 
 	private void SelectionChanged()

@@ -9,7 +9,7 @@ public record NodeVersionRegistryEntry( Type type, int version );
 /// TODO : See if is even a good idea to store the current node versions here.
 /// </summary>
 internal class NodeVersions
-{ 
+{
 	internal static List<NodeVersionRegistryEntry> NodeVersionRegistry { get; private set; }
 
 	static NodeVersions()

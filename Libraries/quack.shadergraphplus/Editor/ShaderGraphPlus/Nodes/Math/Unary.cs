@@ -51,7 +51,7 @@ public abstract class Unary : ShaderNodePlus
 		var result = compiler.ResultOrDefault( Input, 0.0f );
 
 		ResultType resulttype = result.ResultType;
-		
+
 		if ( Components is not null )
 		{
 			switch ( Components )
@@ -62,9 +62,9 @@ public abstract class Unary : ShaderNodePlus
 				case 4: resulttype = ResultType.Color; break;
 			}
 		}
-		
-		
-		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )") : default;
+
+
+		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )" ) : default;
 	};
 }
 
@@ -140,7 +140,7 @@ public sealed class Clamp : ShaderNodePlus
 	{
 		var resultA = compiler.ResultOrDefault( InputA, 0.0f );
 		var resultB = compiler.ResultOrDefault( InputB, DefaultMin );
-		var resultC = compiler.ResultOrDefault( InputC, DefaultMax ).Cast(resultB.Components );
+		var resultC = compiler.ResultOrDefault( InputC, DefaultMax ).Cast( resultB.Components );
 
 		return new NodeResult( ResultType.Float, $"clamp( {resultA}, {resultB}, {resultC} )" );
 	};
@@ -152,11 +152,11 @@ public sealed class Clamp : ShaderNodePlus
 [Title( "Cosine" ), Category( "Math/Unary" )]
 public sealed class Cosine : UnaryCurve
 {
-	protected override float Evaluate(float x)
+	protected override float Evaluate( float x )
 	{
-		return MathF.Cos(x * MathF.PI * 2) / 2 + 0.5f;
+		return MathF.Cos( x * MathF.PI * 2 ) / 2 + 0.5f;
 	}
-	
+
 	[Hide]
 	protected override string Op => "cos";
 }
@@ -369,8 +369,8 @@ public sealed class Exponential : Unary
 [Title( "Frac" ), Category( "Math/Unary" )]
 public sealed class Frac : Unary
 {
-    [Hide]
-    protected override string Op => "frac";
+	[Hide]
+	protected override string Op => "frac";
 }
 
 /// <summary>
@@ -379,8 +379,8 @@ public sealed class Frac : Unary
 [Title( "Floor" ), Category( "Math/Unary" )]
 public sealed class Floor : Unary
 {
-    [Hide]
-    protected override string Op => "floor";
+	[Hide]
+	protected override string Op => "floor";
 }
 
 /// <summary>
@@ -389,11 +389,11 @@ public sealed class Floor : Unary
 [Title( "Length" ), Category( "Math/Unary" )]
 public sealed class Length : Unary
 {
-    [Hide]
-    protected override int? Components => 1;
+	[Hide]
+	protected override int? Components => 1;
 
-    [Hide]
-    protected override string Op => "length";
+	[Hide]
+	protected override string Op => "length";
 }
 
 
@@ -516,9 +516,9 @@ public sealed class Saturate : Unary
 [Title( "Sine" ), Category( "Math/Unary" )]
 public sealed class Sine : UnaryCurve
 {
-	protected override float Evaluate(float x)
+	protected override float Evaluate( float x )
 	{
-		return MathF.Sin(x * MathF.PI * 2) / 2 + 0.5f;
+		return MathF.Sin( x * MathF.PI * 2 ) / 2 + 0.5f;
 	}
 
 	[Hide]

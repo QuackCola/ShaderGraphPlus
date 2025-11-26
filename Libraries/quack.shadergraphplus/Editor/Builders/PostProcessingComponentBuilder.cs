@@ -15,7 +15,7 @@ internal sealed class PostProcessingComponentBuilder
 	private StringBuilder m_StringBuilderAttributes;
 	private PostProcessingComponentInfo m_PostProcessingComponentInfo;
 
-	public PostProcessingComponentBuilder( string parmName, string parmStringVal ) 
+	public PostProcessingComponentBuilder( string parmName, string parmStringVal )
 	{
 		m_ParamName = parmName;
 		m_ParamStringValue = parmStringVal;
@@ -32,7 +32,7 @@ internal sealed class PostProcessingComponentBuilder
 	{
 		Match match = Regex.Match( paramStringValue, m_RegExPattern );
 
-		AppendProperty(paramName);
+		AppendProperty( paramName );
 		var property = $"public bool {paramName.Remove( 0, 2 )} {{ get; set; }} = {(match.Groups[1].Value == "0" ? "false" : "true")};";
 
 		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove( 0, 3 )}\", {paramName.Remove( 0, 2 )} );" );
@@ -43,10 +43,10 @@ internal sealed class PostProcessingComponentBuilder
 	public StringBuilder AddFloatProperty( string type, string paramName, string paramStringValue )
 	{
 		Match match = Regex.Match( paramStringValue, m_RegExPattern );
-	
+
 		AppendProperty( paramName );
 		var property = $"public {type} {paramName.Remove( 0, 2 )} {{ get; set; }} = {match.Groups[1].Value}f;";
-	
+
 		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove( 0, 3 )}\", {paramName.Remove( 0, 2 )} );" );
 
 		return m_StringBuilderProps.AppendLine( property );
@@ -54,17 +54,17 @@ internal sealed class PostProcessingComponentBuilder
 
 	public StringBuilder AddVector2Property( string type, string paramName, string paramStringValue )
 	{
-	Match match = Regex.Match( paramStringValue, m_RegExPattern );
+		Match match = Regex.Match( paramStringValue, m_RegExPattern );
 
-	Vector2 vec2 = (Vector2)Utilities.Parse.ParseVector( match.Groups[1].Value );
-	var result = $"Vector2({vec2.x}f,{vec2.y}f)";
+		Vector2 vec2 = (Vector2)Utilities.Parse.ParseVector( match.Groups[1].Value );
+		var result = $"Vector2({vec2.x}f,{vec2.y}f)";
 
-	AppendProperty(paramName);
-	var property = $"public {type} {paramName.Remove( 0, 2 )} {{ get; set; }} = new {result};";
+		AppendProperty( paramName );
+		var property = $"public {type} {paramName.Remove( 0, 2 )} {{ get; set; }} = new {result};";
 
-	m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove(0, 3)}\", {paramName.Remove(0, 2)} );" );
+		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove( 0, 3 )}\", {paramName.Remove( 0, 2 )} );" );
 
-	return m_StringBuilderProps.AppendLine( property );
+		return m_StringBuilderProps.AppendLine( property );
 	}
 
 	public StringBuilder AddVector3Property( string type, string paramName, string paramStringValue )
@@ -74,10 +74,10 @@ internal sealed class PostProcessingComponentBuilder
 		Vector3 vec3 = (Vector3)Utilities.Parse.ParseVector( match.Groups[1].Value );
 		var result = $"Vector3({vec3.x}f,{vec3.y}f,{vec3.z}f)";
 
-		AppendProperty (paramName );
+		AppendProperty( paramName );
 		var property = $"public {type} {paramName.Remove( 0, 2 )} {{ get; set; }} = new {result};";
 
-		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove(0, 3)}\", {paramName.Remove(0, 2)} );" );
+		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove( 0, 3 )}\", {paramName.Remove( 0, 2 )} );" );
 
 		return m_StringBuilderProps.AppendLine( property );
 	}
@@ -89,7 +89,7 @@ internal sealed class PostProcessingComponentBuilder
 		Vector4 vec4 = (Vector4)Utilities.Parse.ParseVector( match.Groups[1].Value );
 		var result = $"Vector4({vec4.x}f,{vec4.y}f,{vec4.z}f,{vec4.w}f)";
 
-		AppendProperty(paramName);
+		AppendProperty( paramName );
 		var property = $"public Vector4 {paramName.Remove( 0, 2 )} {{ get; set; }} = new {result};";
 
 		m_StringBuilderAttributes.AppendLine( $"attributes.Set( \"{paramName.Remove( 0, 3 )}\", {paramName.Remove( 0, 2 )} );" );
@@ -102,7 +102,7 @@ internal sealed class PostProcessingComponentBuilder
 	/// </summary>
 	public string Finish( string className, string shaderPath )
 	{
-		return string.Format(m_ppComponentTemplate,
+		return string.Format( m_ppComponentTemplate,
 			m_PostProcessingComponentInfo.ComponentTitle,  //  Title
 			m_PostProcessingComponentInfo.ComponentCategory, // Catagory
 			string.IsNullOrWhiteSpace( m_PostProcessingComponentInfo.Icon ) ? nameof( MaterialDesign.MaterialIcons.Camera ) : m_PostProcessingComponentInfo.Icon, // Icon
@@ -118,7 +118,7 @@ internal sealed class PostProcessingComponentBuilder
 	{
 		m_StringBuilderProps.AppendLine();
 		m_StringBuilderProps.AppendLine( "[Property]" );
-		m_StringBuilderProps.AppendLine( $"[Title(\"{paramName.Remove(0, 3)}\")]" );
+		m_StringBuilderProps.AppendLine( $"[Title(\"{paramName.Remove( 0, 3 )}\")]" );
 	}
 
 	private string PropsToString()
@@ -135,15 +135,15 @@ internal sealed class PostProcessingComponentBuilder
 	{
 		if ( string.IsNullOrWhiteSpace( input ) )
 			return input;
-		
+
 		var tabs = new string( '\t', tabCount );
 		var lines = input.Split( '\n' );
-		
+
 		for ( int i = 0; i < lines.Length; i++ )
 		{
 			lines[i] = tabs + lines[i];
 		}
-		
+
 		return string.Join( "\n", lines );
 	}
 }

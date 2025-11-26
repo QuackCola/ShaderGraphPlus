@@ -13,7 +13,7 @@ public struct FeatureRule : IValid
 	/// <summary>
 	/// Text hint when hovering over features
 	/// </summary>
-	public string HoverHint { get;  set; }
+	public string HoverHint { get; set; }
 
 	[Hide, JsonIgnore]
 	public bool IsValid
@@ -81,7 +81,7 @@ public sealed partial class GraphCompiler
 			SGPLog.Warning( $"{nameof( SetComboPreview )} was called when IsPreview is false!" );
 			return;
 		}
-		
+
 		if ( comboName.StartsWith( $"D_" ) )
 		{
 			var comboWrapper = new DynamicComboWrapper( comboName, preview );
@@ -115,7 +115,7 @@ public sealed partial class GraphCompiler
 
 		var resultType = blockResults.Select( x => x.Result.ResultType ).Where( x => !((int)x > 6) ).Max();
 		var id = 0;
-		
+
 		while ( ShaderResult.ShaderFeatureResultStrings.Contains( $"{shaderFeature.Name}_result{id}" ) )
 		{
 			id++;
@@ -130,8 +130,8 @@ public sealed partial class GraphCompiler
 
 			if ( index == 0 )
 			{
-				sb.AppendLine( LocalResultInitialize( resultType, resultAssignmentLocal ) ) ; //$"{resultDataType} {resultLocal};" );
-				
+				sb.AppendLine( LocalResultInitialize( resultType, resultAssignmentLocal ) ); //$"{resultDataType} {resultLocal};" );
+
 				if ( shaderFeature is ShaderFeatureBoolean boolFeature )
 				{
 					sb.AppendLine( $"#if ( {(IsPreview ? "D" : "S")}_{shaderFeature.Name.ToUpper()} == SWITCH_TRUE )" );

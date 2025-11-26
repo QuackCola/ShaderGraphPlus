@@ -11,7 +11,7 @@ public sealed class BumpOffsetNode : ShaderNodePlus
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[JsonIgnore, Hide, Browsable( false )]
-	private const float HeightScale = 0.1f; 
+	private const float HeightScale = 0.1f;
 
 	[Hide]
 	public static string BumpOffset => $@"
@@ -70,7 +70,7 @@ float2 BumpOffset( float flHeightMap, float flDepthScale, float flReferencePlane
 		var inputCoords = compiler.Result( InputCoords );
 
 		string func = compiler.RegisterHLSLFunction( BumpOffset, "BumpOffset" );
-		string funcCall = compiler.ResultHLSLFunction( func, 
+		string funcCall = compiler.ResultHLSLFunction( func,
 			$"{inputHeight}, " +
 			$"{inputDepthScale}, " +
 			$"{inputReferencePlane}, " +

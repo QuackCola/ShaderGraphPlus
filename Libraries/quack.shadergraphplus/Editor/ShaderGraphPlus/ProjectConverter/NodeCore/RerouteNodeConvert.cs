@@ -20,7 +20,7 @@ internal class RerouteNodeConvert : BaseNodeConvert
 		newNode.Identifier = oldNode.Identifier;
 		newNode.Position = oldNode.Position;
 		newNode.Comment = oldReroute.Comment;
-	
+
 
 		newNodes.Add( newNode );
 

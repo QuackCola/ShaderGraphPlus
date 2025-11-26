@@ -56,12 +56,12 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	[Title( "Inputs" )]
 	public List<CustomCodeNodePorts> ExpressionInputs { get; set; } = new List<CustomCodeNodePorts>()
 	{
-		{ 
+		{
 			new CustomCodeNodePorts
 			{
 				Name = "InFloat3_0",
 				TypeName = "Vector3"
-			} 
+			}
 		},
 	};
 
@@ -85,7 +85,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 	[Hide]
 	private List<IPlugOut> InternalOutputs = new();
-	
+
 	[Hide]
 	public override IEnumerable<IPlugOut> Outputs => InternalOutputs;
 
@@ -293,7 +293,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			*/
 
 			string funcCall = compiler.CustomCodeRegister( Name, functionInputs, Identifier, null, outputResults, false );
-	
+
 			metadata.Add( metadataKey, metadataValue );
 
 			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata );//, ResultType.Invalid );// 0 );
@@ -302,7 +302,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		{
 			StringBuilder inlineCodeSb = new StringBuilder();
 			var inlineInputs = GetInputResultsInline( compiler, out string inputsError );
-			
+
 			if ( !string.IsNullOrWhiteSpace( inputsError ) )
 			{
 				return NodeResult.Error( inputsError );
@@ -345,9 +345,9 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		error = "";
 
 		foreach ( IPlugIn input in Inputs )
-		{	
+		{
 			NodeResult result = new NodeResult();
-			
+
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
 			{
 				if ( input.Type == typeof( Texture2DObject ) || input.Type == typeof( Sampler ) )
@@ -363,22 +363,22 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			else
 			{
 				NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
-			
+
 				result = compiler.Result( nodeInput );
 			}
-			
+
 			if ( index < Inputs.Count() - 1 )
 			{
-				sb.Append($"{result}, ");
+				sb.Append( $"{result}, " );
 			}
 			else
 			{
-				sb.Append($"{result}");
+				sb.Append( $"{result}" );
 			}
-			
+
 			index++;
 		}
-		
+
 		return sb.ToString();
 	}
 
@@ -387,12 +387,12 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
 		error = "";
-		List<(string, string)> inputResults = new List<(string,string)>();
-		
+		List<(string, string)> inputResults = new List<(string, string)>();
+
 		foreach ( IPlugIn input in Inputs )
 		{
 			NodeResult result = new NodeResult();
-			
+
 			if ( input.ConnectedOutput is null ) // TODO : Should the user be able to define a default or should it just be 0.0f?
 			{
 				if ( input.Type == typeof( Texture2DObject ) || input.Type == typeof( Sampler ) )
@@ -405,17 +405,17 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			else
 			{
 				NodeInput nodeInput = new NodeInput { Identifier = input.ConnectedOutput.Node.Identifier, Output = input.ConnectedOutput.Identifier };
-			
+
 				result = compiler.Result( nodeInput );
 			}
-			
+
 			//Log.Info($" Result : {result.Code}");
-			
-			inputResults.Add( ( input.DisplayInfo.Name, result.Code )  );
-			
+
+			inputResults.Add( (input.DisplayInfo.Name, result.Code) );
+
 			index++;
 		}
-		
+
 		return inputResults;
 	}
 
@@ -465,11 +465,11 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 	{
 		OnNodeCreated();
 		var errors = new List<string>();
-		
+
 		if ( !ExpressionOutputs.Any() )
 		{
 			HasError = true;
-			return [ $"`{DisplayInfo.Name}` must have atleast 1 output." ];
+			return [$"`{DisplayInfo.Name}` must have atleast 1 output."];
 		}
 
 		foreach ( var output in ExpressionOutputs )
@@ -477,7 +477,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			if ( string.IsNullOrWhiteSpace( output.Name ) )
 			{
 				HasError = true;
-				return [ $"An output is not allowed to have an empty name!" ];
+				return [$"An output is not allowed to have an empty name!"];
 			}
 		}
 
@@ -486,29 +486,29 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 			if ( Type is CustomCodeNodeMode.File )
 			{
 				HasError = true;
-				return [ $"`{DisplayInfo.Name}` Cannot call function with no name!" ];
+				return [$"`{DisplayInfo.Name}` Cannot call function with no name!"];
 			}
 			else
 			{
 				HasError = true;
-				return [ $"`{DisplayInfo.Name}` Cannot generate a function with no name!" ];
+				return [$"`{DisplayInfo.Name}` Cannot generate a function with no name!"];
 			}
 
-			
+
 		}
-		
+
 		if ( Type is CustomCodeNodeMode.File )
 		{
 			if ( string.IsNullOrWhiteSpace( Source ) )
 			{
 				HasError = true;
-				return [ $"`{DisplayInfo.Name}` Source path is empty!" ];
+				return [$"`{DisplayInfo.Name}` Source path is empty!"];
 			}
-			
+
 			if ( !Editor.FileSystem.Content.FileExists( $"shaders/{Source}" ) )
 			{
 				HasError = true;
-				return [ $"Include file `shaders/{Source}` does not exist." ];
+				return [$"Include file `shaders/{Source}` does not exist."];
 			}
 		}
 
@@ -580,7 +580,7 @@ public class CustomCodeNodePorts
 			var typeName = TypeName;
 
 			// Try getting type from EditorTypeLibrary.
-			if ( GraphCompiler.ValueTypes.ContainsValue( new ( typeName, true ) ) )
+			if ( GraphCompiler.ValueTypes.ContainsValue( new( typeName, true ) ) )
 			{
 				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
 				if ( typeName == "TextureCube" ) typeName = typeof( TextureCubeObject ).FullName;
@@ -603,7 +603,7 @@ public class CustomCodeNodePorts
 			return type;
 		}
 	}
-	
+
 	[KeyProperty, Editor( ControlWidgetCustomEditors.PortTypeChoiceEditor ), JsonPropertyName( "Type" )]
 	public string TypeName { get; set; }
 
@@ -644,7 +644,7 @@ public class CustomCodeNodePorts
 					return "Sampler";
 			}
 
-			throw new ArgumentException("Unsupported value type", TypeName );
+			throw new ArgumentException( "Unsupported value type", TypeName );
 		}
 	}
 

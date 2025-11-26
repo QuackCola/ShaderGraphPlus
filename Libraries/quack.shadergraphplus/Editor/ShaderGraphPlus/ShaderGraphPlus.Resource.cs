@@ -7,11 +7,11 @@ namespace ShaderGraphPlus;
 
 public enum BlendMode
 {
-	[Icon("circle")]
+	[Icon( "circle" )]
 	Opaque,
-	[Icon("radio_button_unchecked")]
+	[Icon( "radio_button_unchecked" )]
 	Masked,
-	[Icon("blur_on")]
+	[Icon( "blur_on" )]
 	Translucent,
 }
 
@@ -27,11 +27,11 @@ public enum ShadingModel
 
 public enum ShaderDomain
 {
-	[Icon("view_in_ar")]
+	[Icon( "view_in_ar" )]
 	Surface,
-	[Icon("brush")]
+	[Icon( "brush" )]
 	BlendingSurface,
-	[Icon("desktop_windows")]
+	[Icon( "desktop_windows" )]
 	PostProcess,
 }
 
@@ -164,7 +164,7 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 			}
 		}
 	}
-	
+
 	/// <summary>
 	/// Bit of a hack that is only used when dragging in a image asset onto the GraphView.
 	/// </summary>
@@ -294,31 +294,31 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 		{
 			return false;
 		}
-	
+
 		if ( !Metadata.TryGetValue( keyname, out var value ) )
 		{
 			return false;
 		}
-	
+
 		if ( value is T val )
 		{
 			outvalue = val;
 			return true;
 		}
-	
+
 		if ( value is JsonElement element )
 		{
 			try
 			{
 				T val2 = element.Deserialize<T>( new JsonSerializerOptions() );
-				outvalue = ( ( val2 != null ) ? val2 : default( T ) );
+				outvalue = ((val2 != null) ? val2 : default( T ));
 			}
 			catch ( Exception )
 			{
 				return false;
 			}
 		}
-	
+
 		return true;
 	}
 
@@ -332,9 +332,9 @@ public partial class ShaderGraphPlus : INodeGraph, ISGPJsonUpgradeable
 	{
 		if ( Metadata == null )
 		{
-			Dictionary<string, object> dictionary2 = ( Metadata = new Dictionary<string, object>() );
+			Dictionary<string, object> dictionary2 = (Metadata = new Dictionary<string, object>());
 		}
-	
+
 		if ( outvalue == null )
 		{
 			return Metadata.Remove( keyname );

@@ -39,7 +39,7 @@ public sealed class EnumFeatureSwitchNode : ShaderNodePlus, IInitializeNode, IBl
 
 	[Hide, JsonIgnore]
 	int _lastHashCodeInputs = 0;
-	
+
 	//[Hide, JsonIgnore]
 	//bool _hasFeatureError = false;
 

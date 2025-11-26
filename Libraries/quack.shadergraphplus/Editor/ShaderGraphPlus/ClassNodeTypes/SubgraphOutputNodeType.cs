@@ -8,7 +8,7 @@ public sealed class SubgraphOutputNodeType : ClassNodeType
 	private string Name;
 	private SubgraphPortType OutputType;
 
-	public SubgraphOutputNodeType( TypeDescription type, SubgraphPortType outputType, string name = ""  ) : base( type )
+	public SubgraphOutputNodeType( TypeDescription type, SubgraphPortType outputType, string name = "" ) : base( type )
 	{
 		Name = name;
 		OutputType = outputType;

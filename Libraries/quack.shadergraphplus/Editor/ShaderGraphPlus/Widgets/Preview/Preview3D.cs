@@ -390,7 +390,7 @@ public sealed class Preview3DPanel : Widget
 
 		toolBar.AddSeparator();
 
-		option = toolBar.AddOption(null, "lightbulb", OpenLightSettings);
+		option = toolBar.AddOption( null, "lightbulb", OpenLightSettings );
 		option.ToolTip = "Light Settings";
 		option.StatusTip = "Light Settings";
 
@@ -406,18 +406,18 @@ public sealed class Preview3DPanel : Widget
 
 	public void OpenLightSettings()
 	{
-		var popup = new PopupWidget(this);
+		var popup = new PopupWidget( this );
 		popup.IsPopup = true;
 		popup.Layout = Layout.Column();
 		popup.Layout.Margin = 16;
-	
+
 		var cs = new ControlSheet();
-		cs.AddProperty(_preview, x => x.SunAngle);
-		cs.AddProperty(_preview, x => x.SunColor);
-		cs.AddProperty(_preview, x => x.EnablePointLights);
-		cs.AddProperty(_preview, x => x.EnableShadows);
-	
-		popup.Layout.Add(cs);
+		cs.AddProperty( _preview, x => x.SunAngle );
+		cs.AddProperty( _preview, x => x.SunColor );
+		cs.AddProperty( _preview, x => x.EnablePointLights );
+		cs.AddProperty( _preview, x => x.EnableShadows );
+
+		popup.Layout.Add( cs );
 		popup.MaximumWidth = 300;
 		popup.OpenAtCursor();
 	}
@@ -432,10 +432,10 @@ public sealed class Preview3DPanel : Widget
 		var cs = new ControlSheet();
 
 		// Scene Properies
-		cs.AddProperty(_preview, x => x.EnableShadows );
-		cs.AddProperty(_preview, x => x.ShowGround );
-		cs.AddProperty(_preview, x => x.ShowSkybox );
-		cs.AddProperty(_preview, x => x.BackgroundColor );
+		cs.AddProperty( _preview, x => x.EnableShadows );
+		cs.AddProperty( _preview, x => x.ShowGround );
+		cs.AddProperty( _preview, x => x.ShowSkybox );
+		cs.AddProperty( _preview, x => x.BackgroundColor );
 
 		// Preview Model Properties	
 		cs.AddProperty( _preview, x => x.Tint );
@@ -478,7 +478,7 @@ public sealed class Preview3D : SceneRenderingWidget
 {
 	private const int NoPreviewID = 0;
 	private SceneWorld _world => Scene.SceneWorld;
-	
+
 	private Vector2 _lastCursorPos;
 	private Vector2 _cursorDelta;
 	private Vector2 _angles;
@@ -488,7 +488,7 @@ public sealed class Preview3D : SceneRenderingWidget
 	private bool _orbitLights;
 	private bool _zoomControl;
 	private bool _panControl;
-	
+
 	private SceneModel _sceneObject;
 	private Throbber _thobber;
 
@@ -505,7 +505,7 @@ public sealed class Preview3D : SceneRenderingWidget
 	private Dictionary<string, Float2x2> _float2x2Attributes = new();
 	private Dictionary<string, Float3x3> _float3x3Attributes = new();
 	private Dictionary<string, Float4x4> _float4x4Attributes = new();
-	
+
 	private int _stageId;
 
 	/// <summary>
@@ -519,13 +519,13 @@ public sealed class Preview3D : SceneRenderingWidget
 	private ViewMode _mode;
 
 	private bool _enablePostProcessing;
-    public bool EnablePostProcessing
-    {
-        get { return _enablePostProcessing; }
-        set { _enablePostProcessing = value; }
-    }
+	public bool EnablePostProcessing
+	{
+		get { return _enablePostProcessing; }
+		set { _enablePostProcessing = value; }
+	}
 
-    private bool _enableNodePreview;
+	private bool _enableNodePreview;
 	public bool EnableNodePreview
 	{
 		get => _enableNodePreview;
@@ -562,7 +562,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		{
 			if ( !_sky.IsValid() )
 				return;
-		
+
 			_sky.Enabled = value;
 		}
 	}
@@ -580,7 +580,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		set
 		{
 			_renderBackfaces = value;
-	
+
 			if ( _sceneObject.IsValid() )
 			{
 				_sceneObject.Attributes.SetCombo( "D_RENDER_BACKFACES", _renderBackfaces );
@@ -593,9 +593,9 @@ public sealed class Preview3D : SceneRenderingWidget
 		get => Scene.Camera.IsValid() ? Scene.Camera.BackgroundColor : default;
 		set
 		{
-			if (!Scene.Camera.IsValid())
-			return;
-	
+			if ( !Scene.Camera.IsValid() )
+				return;
+
 			Scene.Camera.BackgroundColor = value;
 		}
 	}
@@ -705,7 +705,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		set
 		{
 			_tint = value;
-			if (_sceneObject.IsValid())
+			if ( _sceneObject.IsValid() )
 				_sceneObject.ColorTint = _tint;
 		}
 	}
@@ -717,7 +717,7 @@ public sealed class Preview3D : SceneRenderingWidget
 		set
 		{
 			_modelHeightOffset = value;
-			
+
 			if ( _sceneObject.IsValid() )
 			{
 				_sceneObject.Position = new Vector3( 0, 0, _modelHeightOffset );
@@ -1028,8 +1028,8 @@ public sealed class Preview3D : SceneRenderingWidget
 
 		// FIXME
 		SphereModel = Model.Sphere;//Model.Builder
-			//.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
-			//.Create();
+								   //.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
+								   //.Create();
 
 		GroundModel = Model.Builder
 			.AddMesh( CreatePlane() )
@@ -1174,7 +1174,7 @@ public sealed class Preview3D : SceneRenderingWidget
 			_zoomControl = true;
 			_lastCursorPos = CursorPosition;
 		}
-		else if ( e.MiddleMouseButton)
+		else if ( e.MiddleMouseButton )
 		{
 			_panControl = true;
 			_lastCursorPos = CursorPosition;

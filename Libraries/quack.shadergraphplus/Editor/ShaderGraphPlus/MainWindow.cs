@@ -22,7 +22,7 @@ public class MainWindowFunc : MainWindow, IAssetEditor
 }
 
 [EditorForAssetType( ShaderGraphPlusGlobals.AssetTypeExtension )]
-[EditorApp( ShaderGraphPlusGlobals.AssetTypeName, "gradient", "edit shaders")]
+[EditorApp( ShaderGraphPlusGlobals.AssetTypeName, "gradient", "edit shaders" )]
 public class MainWindowShader : MainWindow, IAssetEditor
 {
 	public override bool IsSubgraph => false;
@@ -53,7 +53,7 @@ public class MainWindow : DockWindow
 	private Properties _properties;
 	private Preview3DPanel _preview3D;
 	private Output _output;
-	private UndoHistory _undoHistory;	
+	private UndoHistory _undoHistory;
 	private PaletteWidget _palette;
 	private TextView _generatedCodeTextView;
 
@@ -109,7 +109,7 @@ public class MainWindow : DockWindow
 
 	private ProjectCreator ProjectCreator { get; set; }
 
-	private Dictionary<string,ShaderFeatureBase> ShaderFeatures = new();
+	private Dictionary<string, ShaderFeatureBase> ShaderFeatures = new();
 	private List<GraphCompiler.GraphIssue> BlackboardIssues { get; set; } = new();
 
 	public MainWindow()
@@ -123,10 +123,10 @@ public class MainWindow : DockWindow
 		_graph.IsSubgraph = IsSubgraph;
 
 		CreateToolBar();
-		
+
 		_recentFiles = Editor.FileSystem.Temporary.ReadJsonOrDefault( "shadergraphplus_recentfiles.json", _recentFiles )
 			.Where( x => System.IO.File.Exists( x ) ).ToList();
-		
+
 		CreateUI();
 		Show();
 		CreateNew();
@@ -149,13 +149,13 @@ public class MainWindow : DockWindow
 		ProjectCreator.Show();
 		ProjectCreator.OnProjectCreated += OpenProject;
 
-    }
+	}
 
 	public void AssetOpen( Asset asset )
 	{
 		if ( asset == null || string.IsNullOrWhiteSpace( asset.AbsolutePath ) )
 			return;
-		
+
 		if ( ProjectCreator != null )
 		{
 			// We dont need the project creator when opening an existing asset. So lets forceably close it.
@@ -253,28 +253,28 @@ public class MainWindow : DockWindow
 
 	private void OpenShaderGraphProjectTxt()
 	{
-		if (_asset is null)
+		if ( _asset is null )
 		{
 			Save();
 		}
 		else
 		{
 			var path = _asset.AbsolutePath;
-			Utilities.Path.OpenInNotepad(path);
+			Utilities.Path.OpenInNotepad( path );
 		}
 	}
 
 	private void Screenshot()
 	{
-		if (_asset is null)
+		if ( _asset is null )
 			return;
-	
-		var path = Editor.FileSystem.Root.GetFullPath($"/screenshots/shadergraphplus/{_asset.Name}.png");
-		System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
-	
-		_graphView.Capture($"screenshots/shadergraphplus/{_asset.Name}.png");
-	
-		EditorUtility.OpenFileFolder(path);
+
+		var path = Editor.FileSystem.Root.GetFullPath( $"/screenshots/shadergraphplus/{_asset.Name}.png" );
+		System.IO.Directory.CreateDirectory( System.IO.Path.GetDirectoryName( path ) );
+
+		_graphView.Capture( $"screenshots/shadergraphplus/{_asset.Name}.png" );
+
+		EditorUtility.OpenFileFolder( path );
 	}
 
 	protected virtual void Compile()
@@ -296,10 +296,10 @@ public class MainWindow : DockWindow
 		}
 
 		var assetPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-		var resourcePath = System.IO.Path.Combine(".source2/temp", assetPath);
+		var resourcePath = System.IO.Path.Combine( ".source2/temp", assetPath );
 
-		Editor.FileSystem.Root.CreateDirectory(".source2/temp/shadergraphplus");
-		Editor.FileSystem.Root.WriteAllText(resourcePath, _generatedCode);
+		Editor.FileSystem.Root.CreateDirectory( ".source2/temp/shadergraphplus" );
+		Editor.FileSystem.Root.WriteAllText( resourcePath, _generatedCode );
 
 		_isCompiling = true;
 		_preview3D.IsCompiling = _isCompiling;
@@ -317,19 +317,19 @@ public class MainWindow : DockWindow
 		{
 			ConsoleOutput = true
 		};
-		
+
 		var result = await EditorUtility.CompileShader( Editor.FileSystem.Root, path, options );
-		
+
 		if ( result.Success )
 		{
 			var asset = AssetSystem.RegisterFile( Editor.FileSystem.Root.GetFullPath( path ) );
-		
+
 			while ( !asset.IsCompiledAndUpToDate )
 			{
 				await Task.Yield();
 			}
 		}
-		
+
 		MainThread.Queue( () => OnCompileFinished( result.Success ? 0 : 1 ) );
 	}
 
@@ -384,26 +384,26 @@ public class MainWindow : DockWindow
 	private void OnCompileFinished( int exitCode )
 	{
 		_isCompiling = false;
-		
+
 		if ( _isPendingCompile )
 		{
 			_isPendingCompile = false;
-		
+
 			Compile();
-		
+
 			return;
 		}
 
 		if ( exitCode == 0 && _shaderCompileErrors.Count == 0 )
 		{
 			SGPLog.Info( $"Compile finished in {_timeSinceCompile}" );
-		
+
 			var shaderPath = $"shadergraphplus/{_asset?.Name ?? "untitled"}_shadergraphplus.generated.shader";
-		
+
 			// Reload the shader otherwise it's gonna be the old wank
 			// Alternatively Material.Create could be made to force reload the shader
 			Editor.ConsoleSystem.Run( $"mat_reloadshaders {shaderPath}" );
-		
+
 			var material = Material.Create( $"{_asset?.Name ?? "untitled"}_shadergraphplus_generated", shaderPath );
 
 			_preview3D.Material = material;
@@ -415,11 +415,11 @@ public class MainWindow : DockWindow
 			_output.GraphIssues = _shaderCompileErrors.Select( x => new GraphCompiler.GraphIssue { Message = x } ).ToList();
 
 			DockManager.RaiseDock( "Output" );
-		
+
 			RestoreShader();
 			ClearAttributes();
 		}
-		
+
 		_preview3D.IsCompiling = _isCompiling;
 		_preview3D.PostProcessing = _graph.Domain == ShaderDomain.PostProcess;
 
@@ -549,14 +549,14 @@ public class MainWindow : DockWindow
 		if ( registrationIssues.Any() )
 		{
 			_output.GraphIssues = registrationIssues;
-		
+
 			DockManager.RaiseDock( "Output" );
-		
+
 			_generatedCode = null;
 			_generatedCodeTextView.SetTextContents( "" );
-		
+
 			RestoreShader();
-		
+
 			return null;
 		}
 
@@ -689,7 +689,7 @@ public class MainWindow : DockWindow
 
 		var code = compiler.Generate();
 
-#region Errors & Warnings
+		#region Errors & Warnings
 		iErroringNodeErrors.AddRange( compiler.Issues );
 
 		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
@@ -738,13 +738,13 @@ public class MainWindow : DockWindow
 		{
 			_output.ClearErrors();
 		}
-#endregion Errors & Warnings
+		#endregion Errors & Warnings
 
 		if ( _generatedCode != code )
 		{
 			_generatedCode = code;
 			//_generatedCodeTextView.SetTextContents( code );
-	
+
 			if ( _autoCompile )
 			{
 				Compile();
@@ -969,14 +969,14 @@ public class MainWindow : DockWindow
 		AutoCompileOption = toolBar.AddOption( "Toggle Auto Compile", "model_editor/auto_recompile.png", () =>
 		{
 			_autoCompile = !_autoCompile;
-			
+
 			if ( _autoCompile )
 			{
 				Compile();
 				//SetDirty();
 			}
 
-			AutoCompileOption.Icon = $"{( _autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png" )}";
+			AutoCompileOption.Icon = $"{(_autoCompile ? "model_editor/auto_recompile.png" : "model_editor/supress_auto_recompile.png")}";
 		} );
 		AutoCompileOption.StatusTip = "Enable or Disable graph auto compile.";
 
@@ -1020,10 +1020,10 @@ public class MainWindow : DockWindow
 		debug.AddOption( "Open Temp Shader", "common/edit.png", OpenTempGeneratedShader );
 		debug.AddOption( "Open ShaderGraph Project in text editor", "common/edit.png", OpenShaderGraphProjectTxt );
 		debug.AddSeparator();
-		_nodeDebugInfoOption = debug.AddOption( "Toggle Node Debug Info", "common/setting.png", () => 
-		{ 
-			ConCommands.NodeDebugInfo = !ConCommands.NodeDebugInfo; 
-		
+		_nodeDebugInfoOption = debug.AddOption( "Toggle Node Debug Info", "common/setting.png", () =>
+		{
+			ConCommands.NodeDebugInfo = !ConCommands.NodeDebugInfo;
+
 			if ( ConCommands.NodeDebugInfo )
 			{
 				_nodeDebugInfoOption.Icon = "common/widgetdebugger_focus.png";
@@ -1032,7 +1032,7 @@ public class MainWindow : DockWindow
 			{
 				_nodeDebugInfoOption.Icon = "common/widgetdebugger_none.png";
 			}
-		});
+		} );
 
 		RefreshRecentFiles();
 
@@ -1181,10 +1181,10 @@ public class MainWindow : DockWindow
 		else
 		{
 			var result = _graphView.CreateNewNode( _graphView.FindNodeType( typeof( SubgraphOutput ) ), 0 );
-			
+
 			var subgraphOutput = result.Node as SubgraphOutput;
 			subgraphOutput.OutputName = "Out0";
-			subgraphOutput.OutputType =  SubgraphPortType.Vector3;
+			subgraphOutput.OutputType = SubgraphPortType.Vector3;
 			subgraphOutput.Preview = SubgraphOutputPreviewType.Albedo;
 
 			_graphView.Scale = 1;
@@ -1300,7 +1300,7 @@ public class MainWindow : DockWindow
 				_graph.UpdateParameterNodes( parameter );
 			}
 			else
-			{	
+			{
 				foreach ( var parameterIssue in parameterIssues )
 				{
 					AddBlackboardIssue( parameterIssue );
@@ -1386,25 +1386,25 @@ public class MainWindow : DockWindow
 		var savePath = _asset == null || saveAs ? GetSavePath() : _asset.AbsolutePath;
 		if ( string.IsNullOrWhiteSpace( savePath ) )
 			return false;
-		
+
 		_preview3D.SaveSettings( _graph.PreviewSettings );
-		
+
 		// Write serialized graph to asset file
 		System.IO.File.WriteAllText( savePath, _graph.Serialize() );
-		
+
 		if ( saveAs )
 		{
 			// If we're saving as, we want to register the new asset
 			_asset = null;
 		}
-		
+
 		// Register asset if we haven't already
 		_asset ??= AssetSystem.RegisterFile( savePath );
-		
+
 		if ( _asset == null )
 		{
 			SGPLog.Warning( $"Unable to register asset {savePath}" );
-		
+
 			return false;
 		}
 
@@ -1412,7 +1412,7 @@ public class MainWindow : DockWindow
 
 		_dirty = false;
 		_graphCanvas.WindowTitle = _asset.Name;
-		
+
 		if ( IsSubgraph )
 		{
 			Compile();
@@ -1422,7 +1422,7 @@ public class MainWindow : DockWindow
 		else
 		{
 			var shaderPath = System.IO.Path.ChangeExtension( savePath, ".shader" );
-		
+
 			var code = GenerateShaderCode();
 
 			if ( string.IsNullOrWhiteSpace( code ) )
@@ -1450,8 +1450,8 @@ public class MainWindow : DockWindow
 			}
 
 		}
-		
-		
+
+
 		// Write generated post processing class to file within the current projects code folder.
 		//if (_graph.MaterialDomain is MaterialDomain.PostProcess)
 		//{
@@ -1463,19 +1463,19 @@ public class MainWindow : DockWindow
 		//	
 		//}
 		//
-		
+
 		AddToRecentFiles( savePath );
-		
+
 		EditorEvent.Run( "shadergraphplus.update.subgraph", _asset.RelativePath );
-		
+
 		return true;
 	}
 
 	private void WritePostProcessingShaderClass( string classCode )
 	{
-		var path = System.IO.Directory.CreateDirectory($"{Utilities.Path.GetProjectCodePath()}/Components/PostProcessing");
-		
-		File.WriteAllText( Path.Combine( path.FullName , $"{_asset.Name}_PostProcessing.cs"), classCode );
+		var path = System.IO.Directory.CreateDirectory( $"{Utilities.Path.GetProjectCodePath()}/Components/PostProcessing" );
+
+		File.WriteAllText( Path.Combine( path.FullName, $"{_asset.Name}_PostProcessing.cs" ), classCode );
 	}
 
 	private string GetSavePath()
@@ -1485,21 +1485,21 @@ public class MainWindow : DockWindow
 			Title = $"Save {FileType}",
 			DefaultSuffix = $".{FileExtension}"
 		};
-		
+
 		fd.SelectFile( $"untitled.{FileExtension}" );
 		fd.SetFindFile();
 		fd.SetModeSave();
 		fd.SetNameFilter( $"{FileType} (*.{FileExtension})" );
 		if ( !fd.Execute() )
 			return null;
-		
+
 		return fd.SelectedFile;
 	}
 
 	public void CreateUI()
 	{
 		BuildMenuBar();
-		
+
 		DockManager.RegisterDockType( "Graph", "account_tree", null, false );
 		DockManager.RegisterDockType( "Preview", "photo", null, false );
 		DockManager.RegisterDockType( "Properties", "edit", null, false );
@@ -1527,18 +1527,18 @@ public class MainWindow : DockWindow
 		_fileHistoryBack.Enabled = false;
 		_fileHistoryForward.Enabled = false;
 		_fileHistoryHome.Enabled = false;
-		
+
 		var stretcher = new Widget( graphToolBar );
 		stretcher.Layout = Layout.Row();
 		stretcher.Layout.AddStretchCell( 1 );
 		graphToolBar.AddWidget( stretcher );
-		
+
 		graphToolBar.AddWidget( new GamePerformanceBar( () => (1000.0f / PerformanceStats.LastSecond.FrameAvg).ToString( "n0" ) + "fps" ) { ToolTip = "Frames Per Second Average" } );
 		graphToolBar.AddWidget( new GamePerformanceBar( () => PerformanceStats.LastSecond.FrameAvg.ToString( "0.00" ) + "ms" ) { ToolTip = "Frame Time Average (milliseconds)" } );
 		graphToolBar.AddWidget( new GamePerformanceBar( () => PerformanceStats.ApproximateProcessMemoryUsage.FormatBytes() ) { ToolTip = "Approximate Memory Usage" } );
-		
+
 		_graphCanvas.Layout.Add( graphToolBar );
-		
+
 		_graphView = new ShaderGraphPlusView( _graphCanvas, this );
 		_graphView.BilinearFiltering = false;
 
@@ -1567,19 +1567,19 @@ public class MainWindow : DockWindow
 				_graphView.AddNodeType( subgraph.Path );
 			}
 		}
-		
+
 		_graphView.Graph = _graph;
 		_graphView.OnChildValuesChanged += ( w ) => SetDirty();
 		_graphView.OnNewParameterNodeCreated += () => OnNewParameterNodeCreated();
 		_graphView.OnConstantNodeConvertedToParameter += () => OnConstantNodeConvertedToParamerter();
 		_graphView.OnNodeRemoved += ( node ) => OnNodeRemoved( node );
 		_graphCanvas.Layout.Add( _graphView, 1 );
-		
+
 		_output = new Output( this );
 		_output.OnNodeSelected += ( node ) =>
 		{
 			var nodeUI = _graphView.SelectNode( node );
-		
+
 			_graphView.Scale = 1;
 			_graphView.CenterOn( nodeUI.Center );
 		};
@@ -1598,28 +1598,28 @@ public class MainWindow : DockWindow
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-	
-		
+
+
 		foreach ( var value in _float4Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-		
+
 		foreach ( var value in _float3Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-		
+
 		foreach ( var value in _float2Attributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-		
+
 		foreach ( var value in _floatAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
 		}
-		
+
 		foreach ( var value in _boolAttributes )
 		{
 			_preview3D.SetAttribute( value.Key, value.Value );
@@ -1665,7 +1665,7 @@ public class MainWindow : DockWindow
 		_undoHistory.OnUndo = Undo;
 		_undoHistory.OnRedo = Redo;
 		_undoHistory.OnHistorySelected = SetUndoLevel;
-		
+
 		_palette = new PaletteWidget( this, IsSubgraph );
 		_generatedCodeTextView = new TextView( this, "Generated Code", "" );
 
@@ -1685,9 +1685,9 @@ public class MainWindow : DockWindow
 
 		DockManager.RaiseDock( "Output" );
 		DockManager.Update();
-		
+
 		_defaultDockState = DockManager.State;
-		
+
 		if ( StateCookie != "ShaderGraphPlus" )
 		{
 			StateCookie = "ShaderGraphPlus";
@@ -1813,7 +1813,7 @@ public class MainWindow : DockWindow
 	protected override void RestoreDefaultDockLayout()
 	{
 		DockManager.State = _defaultDockState;
-		
+
 		SaveToStateCookie();
 	}
 
@@ -1843,7 +1843,7 @@ public class MainWindow : DockWindow
 	{
 		DockManager.Clear();
 		MenuBar.Clear();
-	
+
 		CreateUI();
 		Compile(); // Testing ONLY!
 

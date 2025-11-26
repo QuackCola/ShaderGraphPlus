@@ -1,4 +1,5 @@
 ﻿namespace ShaderGraphPlus.Internal;
+
 using VanillaGraph = Editor.ShaderGraph;
 using VanillaNodes = Editor.ShaderGraph.Nodes;
 using ShaderGraphBaseNode = Editor.ShaderGraph.BaseNode;

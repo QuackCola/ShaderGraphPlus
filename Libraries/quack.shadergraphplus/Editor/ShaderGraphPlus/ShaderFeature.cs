@@ -59,7 +59,7 @@ public class ShaderFeatureBoolean : ShaderFeatureBase
 	public override bool IsValid => !string.IsNullOrWhiteSpace( Name );
 
 	public ShaderFeatureBoolean() : base()
-	{ 
+	{
 
 	}
 

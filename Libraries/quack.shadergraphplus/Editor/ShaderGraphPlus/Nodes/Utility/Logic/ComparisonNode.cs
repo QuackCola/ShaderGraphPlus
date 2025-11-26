@@ -13,7 +13,7 @@ public sealed class ComparisonNode : ShaderNodePlus, IWarningNode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.LogicNode;
-	
+
 	[Hide]
 	public override string Title => $"{DisplayInfo.For( this ).Name} (A {Op} B)";
 

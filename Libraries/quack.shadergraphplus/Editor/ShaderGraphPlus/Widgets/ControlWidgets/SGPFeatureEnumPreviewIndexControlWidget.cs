@@ -8,7 +8,7 @@ namespace ShaderGraphPlus;
 internal sealed class SGPFeatureEnumPreviewIndexControlWidget : DropdownControlWidgetPlus<int>
 {
 	EnumFeatureSwitchNode Node;
-	
+
 	Entry SelectedEntry;
 	int SelectedIndex;
 
@@ -19,7 +19,7 @@ internal sealed class SGPFeatureEnumPreviewIndexControlWidget : DropdownControlW
 		if ( Node is null ) return;
 
 		var currentSelctedIndex = SerializedProperty.GetValue<int>();
-		if ( TryGetEntryFromIndex ( currentSelctedIndex, out var entry ) )
+		if ( TryGetEntryFromIndex( currentSelctedIndex, out var entry ) )
 		{
 			SelectedEntry = entry;
 			SelectedIndex = currentSelctedIndex;
@@ -39,7 +39,7 @@ internal sealed class SGPFeatureEnumPreviewIndexControlWidget : DropdownControlW
 			if ( entry.Index == selectedIndex )
 			{
 				foundEntry = entry.Item;
-			
+
 				return true;
 			}
 		}

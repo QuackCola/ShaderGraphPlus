@@ -7,7 +7,7 @@ namespace ShaderGraphPlus;
 public class TextView : Widget
 {
 	public Action TextChanged;
-	
+
 	private string Text = "";
 	private TextEdit TextEdit;
 

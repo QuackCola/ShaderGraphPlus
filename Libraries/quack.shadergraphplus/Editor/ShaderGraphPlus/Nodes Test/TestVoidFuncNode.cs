@@ -20,8 +20,8 @@ public sealed class TestVoidFuncNode : VoidFunctionBase
 	public NodeInput InputA { get; set; }
 
 	[JsonIgnore, Hide]
-	public string OutA { get; set;} = "";
-	
+	public string OutA { get; set; } = "";
+
 	[JsonIgnore, Hide]
 	public string OutB { get; set; } = "";
 

@@ -30,7 +30,7 @@ internal class ProjectConverter
 		ShaderGraph = shaderGraph;
 		ShaderGraphPlus = shaderGraphPlus;
 		IsSubgraph = isSubgraph;
-		
+
 		if ( IsSubgraph )
 		{
 			FunctionResultID = ShaderGraph.Nodes.OfType<VanillaGraph.FunctionResult>().FirstOrDefault().Identifier;
@@ -140,8 +140,8 @@ internal class ProjectConverter
 	{
 		var convertedNodes = new Dictionary<string, BaseNodePlus>();
 		var subgraphOutputNames = new List<string>();
-		
-		
+
+
 		foreach ( var vanillaNode in ShaderGraph.Nodes )
 		{
 			if ( RegisterdNodes.TryGetValue( vanillaNode.GetType(), out var nodeConvert ) )
@@ -248,7 +248,7 @@ internal class ProjectConverter
 
 				// Change the InputName in the case where the input.Identifier is differnt from ShaderGraph to ShaderGraphPlus.
 				if ( mappings.TryGetValue( connectionData.InputName, out var newInputName ) )
-				{ 
+				{
 					//SGPLog.Info( $"Changing InputName from \"{connectionData.InputName}\" to \"{newInputName}\"" );
 					connectionData.InputName = newInputName;
 				}
@@ -315,7 +315,7 @@ struct ConnectionData
 	public string InputName { get; set; }
 	public Type InputType { get; set; }
 	public string InputNodeIdentifier { get; set; }
-	
+
 	public string OutputName { get; set; }
 	public Type OutputType { get; set; }
 	public string OutputNodeIdentifier { get; set; }

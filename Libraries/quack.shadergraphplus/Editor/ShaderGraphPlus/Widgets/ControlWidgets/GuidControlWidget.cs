@@ -9,7 +9,7 @@ public sealed class GuidControlWidget : ControlObjectWidget
 	Widget Widget;
 	Guid Guid;
 
-	public GuidControlWidget( SerializedProperty property) : base( property, true )
+	public GuidControlWidget( SerializedProperty property ) : base( property, true )
 	{
 		//PaintBackground = false;
 		Layout = Layout.Row();

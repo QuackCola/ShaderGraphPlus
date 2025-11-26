@@ -26,7 +26,7 @@ public sealed class ReroutePlus : RerouteNode
 	[Hide]
 	public override int Version => 1;
 
-	[Output, Hide,Title( "" )]
+	[Output, Hide, Title( "" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var result = compiler.ResultOrDefault( Input, 0.0f );

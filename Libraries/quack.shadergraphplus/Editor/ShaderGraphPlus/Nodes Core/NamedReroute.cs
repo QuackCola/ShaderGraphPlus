@@ -27,7 +27,7 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	private string _name;
-	public string Name 
+	public string Name
 	{
 		get => _name;
 		set
@@ -60,7 +60,7 @@ public sealed class NamedRerouteDeclarationNode : ShaderNodePlus, IErroringNode
 	private void UpdateNameReferences( string lastName, string newName )
 	{
 		var graph = Graph as ShaderGraphPlus;
-		
+
 		if ( !string.IsNullOrWhiteSpace( lastName ) )
 		{
 			foreach ( var namedReroute in graph.Nodes.OfType<NamedRerouteNode>() )
@@ -190,7 +190,7 @@ public sealed class NamedRerouteNode : ShaderNodePlus
 
 		if ( !result.IsValid )
 		{
-			return new NodeResult( ResultType.Float, "0.0f", constant : true );
+			return new NodeResult( ResultType.Float, "0.0f", constant: true );
 		}
 
 		return new NodeResult( result.ResultType, result.Code, constant: true );

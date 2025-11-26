@@ -211,12 +211,12 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		}
 	}
 
-	[System.AttributeUsage(AttributeTargets.Property)]
+	[System.AttributeUsage( AttributeTargets.Property )]
 	public class InputDefaultAttribute : Attribute
 	{
 		public string Input;
 
-		public InputDefaultAttribute(string input)
+		public InputDefaultAttribute( string input )
 		{
 			Input = input;
 		}
@@ -264,14 +264,14 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		}
 	}
 
-	[System.AttributeUsage(AttributeTargets.Property)]
+	[System.AttributeUsage( AttributeTargets.Property )]
 	public class RangeAttribute : Attribute
 	{
 		public string Min;
 		public string Max;
 		public string Step;
-		 
-		public RangeAttribute(string min, string max, string step)
+
+		public RangeAttribute( string min, string max, string step )
 		{
 			Min = min;
 			Max = max;
@@ -329,7 +329,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		var outputs = new List<BasePlugOut>();
 
 		var inputProperties = type.GetProperties().OrderBy( x =>
-			( x.GetCustomAttribute<InputAttribute>() is InputAttribute input ) ? input.Order : 0 );
+			(x.GetCustomAttribute<InputAttribute>() is InputAttribute input) ? input.Order : 0 );
 
 		foreach ( var propertyInfo in inputProperties )
 		{
@@ -340,7 +340,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 		}
 
 		var outputProperties = type.GetProperties().OrderBy( x =>
-			( x.GetCustomAttribute<OutputAttribute>() is OutputAttribute output ) ? output.Order : 0 );
+			(x.GetCustomAttribute<OutputAttribute>() is OutputAttribute output) ? output.Order : 0 );
 
 		foreach ( var propertyInfo in outputProperties )
 		{
@@ -375,7 +375,7 @@ public record BasePlug( BaseNodePlus Node, PlugInfo Info, Type Type ) : IPlug
 	public string Identifier => Info.Name;
 	public DisplayInfo DisplayInfo => Info.DisplayInfo;
 
-	public ValueEditor CreateEditor(NodeUI node, NodePlug plug)
+	public ValueEditor CreateEditor( NodeUI node, NodePlug plug )
 	{
 		var editor = Info.CreateEditor( node, plug, Type );
 		if ( editor is not null ) return editor;
@@ -450,7 +450,7 @@ public record BasePlugIn( BaseNodePlus Node, PlugInfo Info, Type Type ) : BasePl
 			}
 
 
-			var node = ((ShaderGraphPlus) Node.Graph).FindNode( value.Identifier );
+			var node = ((ShaderGraphPlus)Node.Graph).FindNode( value.Identifier );
 			var output = node?.Outputs
 				.FirstOrDefault( x => x.Identifier == value.Output );
 
@@ -596,7 +596,7 @@ public class PlugInfo
 			{
 				var slider = new ColorValueEditor( plug ) { Title = DisplayInfo.Name, Node = node };
 				slider.Bind( "Value" ).From( node.Node, editor.ValueName );
-			
+
 				return slider;
 			}
 

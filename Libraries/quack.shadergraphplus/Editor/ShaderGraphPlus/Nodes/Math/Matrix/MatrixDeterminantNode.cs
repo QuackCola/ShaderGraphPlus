@@ -23,7 +23,7 @@ public sealed class MatrixDeterminantNode : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var inputResult = compiler.Result( Input );
-	
+
 		if ( !inputResult.IsValid )
 		{
 			return new NodeResult( ResultType.Float2x2, $"determinant( float4x4( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f ) )" );

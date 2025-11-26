@@ -64,7 +64,7 @@ public sealed class CustomCodeNodeUI : NodeUI
 		var boarderSize = 8.0f;
 		var codeViewRect = new Rect( 0f, TitleHeight, rect.Width - 1, rect.Height - TitleHeight ).Shrink( boarderSize );
 		var codeViewMarginRect = codeViewRect.Shrink( 4 );
-		
+
 		Paint.ClearPen();
 		Paint.SetBrush( Theme.ControlBackground );
 		Paint.DrawRect( codeViewRect, 5f );
@@ -110,7 +110,7 @@ public sealed class CustomCodeNodeUI : NodeUI
 			{
 				rect.Left = 0f;
 				rect.Top += TitleHeight + 8f;
-			
+
 				var trimmedDesc = comment.Body;
 				Paint.SetPen( Color.White );
 				Paint.SetFont( "Cascadia Code", 8 );
@@ -171,7 +171,7 @@ public sealed class CustomCodeNodeUI : NodeUI
 
 		if ( _dragging )
 		{
-	
+
 		}
 
 		base.OnMouseMove( e );

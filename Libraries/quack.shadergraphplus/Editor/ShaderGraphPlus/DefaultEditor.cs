@@ -25,17 +25,17 @@ public class DefaultEditor : ValueEditor
 		ZIndex = -1;
 	}
 
-	protected override void OnMousePressed(GraphicsMouseEvent e)
+	protected override void OnMousePressed( GraphicsMouseEvent e )
 	{
 		Plug.MousePressed( e );
 	}
 
-	protected override void OnMouseReleased(GraphicsMouseEvent e)
+	protected override void OnMouseReleased( GraphicsMouseEvent e )
 	{
 		Plug.MouseReleased( e );
 	}
 
-	protected override void OnMouseMove(GraphicsMouseEvent e)
+	protected override void OnMouseMove( GraphicsMouseEvent e )
 	{
 		Plug.MouseMove( e );
 	}
@@ -100,9 +100,9 @@ public class DefaultEditor : ValueEditor
 		var shrink = 10f;
 		var extraWidth = 0f;
 		val = PaintHelper.FormatValue( type, rawVal, out extraWidth, out rawVal );
-		
+
 		if ( string.IsNullOrWhiteSpace( val ) ) return;
-		
+
 		var textSize = Paint.MeasureText( val ) + extraWidth;
 
 		var valueRect = new Rect( rect.Left - textSize.x - shrink * 2 - 8f, rect.Top, textSize.x + shrink * 2,
@@ -159,7 +159,7 @@ internal static class PaintHelper
 
 				return color32.a >= 255
 					? color32.Hex
-					: $"{( color32 with { a = 255 } ).Hex}, {color32.a * 100f / 255f:F0}%";
+					: $"{(color32 with { a = 255 }).Hex}, {color32.a * 100f / 255f:F0}%";
 
 			case bool boolVal:
 				return $"{boolVal}";

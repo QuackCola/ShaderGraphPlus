@@ -41,17 +41,17 @@ public sealed class ComponentMask : ShaderNodePlus
 
 	[ShowIf( nameof( _showR ), true )]
 	public bool R { get; set; } = true;
-	
+
 	[ShowIf( nameof( _showG ), true )]
 	public bool G { get; set; } = true;
-	
+
 	[ShowIf( nameof( _showB ), true )]
 	public bool B { get; set; } = true;
-	
+
 	[ShowIf( nameof( _showA ), true )]
 	public bool A { get; set; } = true;
 
-	[Hide,JsonIgnore]
+	[Hide, JsonIgnore]
 	private bool _showR = false;
 	[Hide, JsonIgnore]
 	private bool _showG = false;
@@ -67,7 +67,7 @@ public sealed class ComponentMask : ShaderNodePlus
 
 		if ( !result.IsValid )
 		{
-			( _showR, _showG, _showB, _showA ) = ( true, true, true, true );
+			(_showR, _showG, _showB, _showA) = (true, true, true, true);
 
 			return new NodeResult( ResultType.Float, "0.0f" );
 		}
@@ -93,14 +93,14 @@ public sealed class ComponentMask : ShaderNodePlus
 
 					break;
 				case 2:
-					( _showR, _showG, _showB, _showA ) = ( true, true, false, false );
+					(_showR, _showG, _showB, _showA) = (true, true, false, false);
 
 					if ( R ) components += "x";
 					if ( G ) components += "y";
 					break;
 
 				case 3:
-					( _showR, _showG, _showB, _showA ) = ( true, true, true, false );
+					(_showR, _showG, _showB, _showA) = (true, true, true, false);
 
 					if ( R ) components += "x";
 					if ( G ) components += "y";
@@ -108,7 +108,7 @@ public sealed class ComponentMask : ShaderNodePlus
 					break;
 
 				case 4:
-					( _showR, _showG, _showB, _showA ) = ( true, true, true, true );
+					(_showR, _showG, _showB, _showA) = (true, true, true, true);
 
 					if ( R ) components += "x";
 					if ( G ) components += "y";
@@ -127,7 +127,7 @@ public sealed class ComponentMask : ShaderNodePlus
 			//{
 			//	return new NodeResult( ResultType.Float, "0.0f" );
 			//}
-			
+
 			if ( components.Length == 1 ) resultType = ResultType.Float;
 			if ( components.Length == 2 ) resultType = ResultType.Vector2;
 			if ( components.Length == 3 ) resultType = ResultType.Vector3;

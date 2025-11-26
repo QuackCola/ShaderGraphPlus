@@ -18,7 +18,7 @@ public class CommentNode : BaseNodePlus, ICommentNode
 	[TextArea]
 	public string Description { get; set; } = "";
 
-	[Sandbox.Range(8, 64)]
+	[Sandbox.Range( 8, 64 )]
 	public int DescriptionFontSize { get; set; } = 11;
 
 	[Hide, Browsable( false )]
@@ -43,7 +43,7 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		return new CommentUI( view, this );
 	}
 
-#region Upgraders
+	#region Upgraders
 
 	[SGPJsonUpgrader( typeof( CommentNode ), 2 )]
 	public static void Upgrader_v2( JsonObject json )
@@ -52,7 +52,7 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		{
 			return;
 		}
-	
+
 		try
 		{
 			var color = Color.Parse( $"#c2b5b5" )!.Value;
@@ -61,28 +61,28 @@ public class CommentNode : BaseNodePlus, ICommentNode
 			{
 				case "White":
 					color = Color.Parse( $"#c2b5b5" )!.Value;
-				break;
+					break;
 				case "Red":
 					color = Color.Parse( $"#d60000" )!.Value;
-				break;
+					break;
 				case "Green":
 					color = Color.Parse( $"#33b679" )!.Value;
-				break;
+					break;
 				case "Blue":
 					color = Color.Parse( $"#039be5" )!.Value;
-				break;
+					break;
 				case "Yellow":
 					color = Color.Parse( $"#f6c026" )!.Value;
-				break;
+					break;
 				case "Purple":
 					color = Color.Parse( $"#8e24aa" )!.Value;
-				break;
+					break;
 				case "Orange":
 					color = Color.Parse( $"#f5511d" )!.Value;
-				break;
+					break;
 				default:
 					color = Color.Parse( $"#c2b5b5" )!.Value;
-				break;
+					break;
 			}
 
 			json["Color"] = JsonSerializer.SerializeToNode( color, ShaderGraphPlus.SerializerOptions() );
@@ -92,5 +92,5 @@ public class CommentNode : BaseNodePlus, ICommentNode
 		}
 	}
 
-#endregion Upgraders
+	#endregion Upgraders
 }

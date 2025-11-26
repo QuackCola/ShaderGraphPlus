@@ -130,7 +130,7 @@ public sealed class MatrixSplitNode : ShaderNodePlus
 
 	[Output, Title( "M2" )]
 	[Hide]
-	public NodeResult.Func ResultC => ( GraphCompiler compiler ) =>	
+	public NodeResult.Func ResultC => ( GraphCompiler compiler ) =>
 	{
 		var inputResult = compiler.Result( Input );
 

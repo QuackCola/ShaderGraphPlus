@@ -18,13 +18,13 @@ sealed class Float4x4ControlWidget : ControlObjectWidget
 		Row1Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row1Layout, "M11" );
-			Row1Layout.AddStretchCell(0);
+			Row1Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row1Layout, "M12" );
-			Row1Layout.AddStretchCell(0);
+			Row1Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row1Layout, "M13" );
-			Row1Layout.AddStretchCell(0);
+			Row1Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row1Layout, "M14" );
 		}
@@ -33,13 +33,13 @@ sealed class Float4x4ControlWidget : ControlObjectWidget
 		Row2Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row2Layout, "M21" );
-			Row2Layout.AddStretchCell(0);
+			Row2Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row2Layout, "M22" );
-			Row2Layout.AddStretchCell(0);
+			Row2Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row2Layout, "M23" );
-			Row2Layout.AddStretchCell(0);
+			Row2Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row2Layout, "M24" );
 		}
@@ -48,13 +48,13 @@ sealed class Float4x4ControlWidget : ControlObjectWidget
 		Row3Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row3Layout, "M31" );
-			Row3Layout.AddStretchCell(0);
+			Row3Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row3Layout, "M32" );
-			Row3Layout.AddStretchCell(0);
+			Row3Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row3Layout, "M33" );
-			Row3Layout.AddStretchCell(0);
+			Row3Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row3Layout, "M34" );
 		}
@@ -63,13 +63,13 @@ sealed class Float4x4ControlWidget : ControlObjectWidget
 		Row4Layout.Spacing = 4;
 		{
 			AddField( SerializedObject, Row4Layout, "M41" );
-			Row4Layout.AddStretchCell(0);
+			Row4Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row4Layout, "M42" );
-			Row4Layout.AddStretchCell(0);
+			Row4Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row4Layout, "M43" );
-			Row4Layout.AddStretchCell(0);
+			Row4Layout.AddStretchCell( 0 );
 
 			AddField( SerializedObject, Row4Layout, "M44" );
 		}

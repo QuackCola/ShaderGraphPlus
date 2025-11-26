@@ -59,7 +59,7 @@ public class InvertColorsNode : ShaderNodePlus
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput Input { get; set; }
-	
+
 	[Output( typeof( Vector3 ) )]
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
@@ -483,7 +483,7 @@ float3 ReorientedNormalBlendVector( float3 a, float3 b )
 		var b = compiler.Result( B );
 
 		string func = compiler.RegisterHLSLFunction( NormalBlendVector, "NormalBlendVector" );
-		
+
 		if ( Mode == BlendMode.Reoriented )
 		{
 			func = compiler.RegisterHLSLFunction( ReorientedNormalBlendVector, "ReorientedNormalBlendVector" );
@@ -634,7 +634,7 @@ public sealed class HSVtoRGB : ShaderNodePlus
 	};
 }
 
-[Title("RGB to Linear"), Category("Transform"), Icon( "invert_colors" )]
+[Title( "RGB to Linear" ), Category( "Transform" ), Icon( "invert_colors" )]
 public sealed class RGBtoLinear : ShaderNodePlus
 {
 	[Hide]
@@ -649,9 +649,9 @@ public sealed class RGBtoLinear : ShaderNodePlus
 
 	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
-	public NodeResult.Func Out => (GraphCompiler compiler) =>
+	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
 	{
-		return new NodeResult(ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
+		return new NodeResult( ResultType.Vector3, compiler.ResultHLSLFunction( "RGB2Linear", $"{compiler.ResultOrDefault( In, Vector3.One )}" ) );
 	};
 }
 
@@ -688,7 +688,7 @@ public sealed class LineartoHSV : ShaderNodePlus
 	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
-	
+
 	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -709,7 +709,7 @@ public sealed class HSVtoLinear : ShaderNodePlus
 	[Input( typeof( Vector3 ) ), Title( "Input" )]
 	[Hide]
 	public NodeInput In { get; set; }
-	
+
 	[Output( typeof( Vector3 ) ), Title( "Result" )]
 	[Hide]
 	public NodeResult.Func Out => ( GraphCompiler compiler ) =>
@@ -768,28 +768,28 @@ public sealed class HeightToNormal : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 
-	var height = compiler.Result( Height );
-	var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
-	var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
-	var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
+		var height = compiler.Result( Height );
+		var strength = compiler.ResultOrDefault( Strength, DefaultStrength );
+		var worldpos = "i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz";//compiler.Result(WorldPos);
+		var worldnormal = "i.vNormalWs";//compiler.Result(Normal);
 
-	if ( !height.IsValid() )
-	{
-		return NodeResult.MissingInput( nameof( Height ) );
-	}
-	//if (!worldpos.IsValid())
-	//{
-	//	return NodeResult.MissingInput(nameof(WorldPos));
-	//}
-	//if (!worldnormal.IsValid())
-	//{
-	//	return NodeResult.MissingInput(nameof(Normal));
-	//}
+		if ( !height.IsValid() )
+		{
+			return NodeResult.MissingInput( nameof( Height ) );
+		}
+		//if (!worldpos.IsValid())
+		//{
+		//	return NodeResult.MissingInput(nameof(WorldPos));
+		//}
+		//if (!worldnormal.IsValid())
+		//{
+		//	return NodeResult.MissingInput(nameof(Normal));
+		//}
 
 		var result = compiler.ResultHLSLFunction( "Height2Normal",
-			$"{height}", 
-			$"{strength}", 
-			$"{worldpos}", 
+			$"{height}",
+			$"{strength}",
+			$"{worldpos}",
 			$"{worldnormal}"
 		);
 

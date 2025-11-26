@@ -8,8 +8,8 @@ namespace ShaderGraphPlus;
 [JsonConverter( typeof( Matrix2x2Converter ) )]
 public struct Float2x2
 {
-    [Hide]
-    internal System.Numerics.Matrix3x2 _mat3x2;
+	[Hide]
+	internal System.Numerics.Matrix3x2 _mat3x2;
 
 	public static readonly Float2x2 Identity = new Float2x2(
 		1f, 0f,
@@ -65,9 +65,9 @@ public struct Float2x2
 	}
 
 	public Float2x2
-	(	
+	(
 		float m11, float m12,
-		float m21, float m22 
+		float m21, float m22
 	)
 	{
 		M11 = m11;
@@ -117,7 +117,7 @@ public struct Float2x2
 		!float.TryParse( array[0], NumberStyles.Float, provider, out var m11 ) ||
 		!float.TryParse( array[1], NumberStyles.Float, provider, out var m12 ) ||
 		!float.TryParse( array[2], NumberStyles.Float, provider, out var m21 ) ||
-		!float.TryParse( array[3], NumberStyles.Float, provider, out var m22 ) 
+		!float.TryParse( array[3], NumberStyles.Float, provider, out var m22 )
 		)
 		{
 			return false;
@@ -135,7 +135,7 @@ public struct Float2x2
 
 	public override readonly string ToString()
 	{
-		return 
+		return
 			$"{M11:0.#####}," +
 			$"{M12:0.#####}," +
 			$"{M21:0.#####}," +

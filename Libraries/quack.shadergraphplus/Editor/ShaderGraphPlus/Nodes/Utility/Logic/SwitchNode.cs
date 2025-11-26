@@ -5,7 +5,7 @@ namespace ShaderGraphPlus.Nodes;
 /// If True, do this, if False, do that.
 /// </summary>
 [Title( "Switch" ), Category( "Utility/Logic" ), Icon( "alt_route" )]
-public sealed class SwitchNode : ShaderNodePlus 
+public sealed class SwitchNode : ShaderNodePlus
 {
 	[Hide]
 	public override int Version => 1;
@@ -27,9 +27,9 @@ public sealed class SwitchNode : ShaderNodePlus
 	public NodeInput False { get; set; }
 
 	public string Name { get; set; } = "";
-	
+
 	public bool IsAttribute { get; set; } = true;
-	
+
 	public bool Enabled { get; set; } = true;
 
 	[InlineEditor( Label = false ), Group( "UI" )]

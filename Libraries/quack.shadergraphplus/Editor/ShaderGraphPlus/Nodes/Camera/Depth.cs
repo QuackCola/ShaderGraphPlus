@@ -29,7 +29,7 @@ public sealed class Depth : ShaderNodePlus
 	}
 
 	[Hide]
-	public override string Title => $"{DisplayInfo.For(this).Name} ({SamplingMode})";
+	public override string Title => $"{DisplayInfo.For( this ).Name} ({SamplingMode})";
 
 	[Input( typeof( Vector2 ) ), Title( "Screen Pos" ), Hide]
 	public NodeInput ScreenPosition { get; set; }

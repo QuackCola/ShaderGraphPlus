@@ -12,7 +12,7 @@ internal class BlackboardPopupParameterTypeSelector : PopupWidget
 
 	public TypeSelectorWidget Widget { get; set; }
 
-	public BlackboardPopupParameterTypeSelector( Widget parent ,IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
+	public BlackboardPopupParameterTypeSelector( Widget parent, IEnumerable<IBlackboardParameterType> availableTypes ) : base( parent )
 	{
 		Widget = new TypeSelectorWidget( this, availableTypes )
 		{
@@ -227,7 +227,7 @@ internal partial class TypeSelectorWidget : Widget
 	{
 		selection.Clear();
 
-		var types = AvailableTypes.Where( x => !x.Type.IsAbstract 
+		var types = AvailableTypes.Where( x => !x.Type.IsAbstract
 		&& !x.Type.HasAttribute<HideAttribute>() ).OrderBy( x => x.Type.Order );
 
 		if ( !string.IsNullOrWhiteSpace( searchString ) )

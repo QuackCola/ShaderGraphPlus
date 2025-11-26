@@ -51,7 +51,7 @@ internal class SimplexNoiseNodeConvert : BaseNodeConvert
 	public override IEnumerable<BaseNodePlus> Convert( ProjectConverter converter, ShaderGraphBaseNode oldNode )
 	{
 		var newNodes = new List<BaseNodePlus>();
-		var oldSimplexNoiseNode = oldNode as VanillaNodes.SimplexNoise;;
+		var oldSimplexNoiseNode = oldNode as VanillaNodes.SimplexNoise; ;
 
 		var newNode = new Nodes.SimplexNoise();
 		newNode.Identifier = oldNode.Identifier;

@@ -331,7 +331,7 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 			{
 				textureInput = textureInput with { Name = InputName, Type = TextureType.Tex2D };
 				textureGlobal = compiler.ResultTexture( textureInput, true );
-				resultType =  ResultType.Texture2DObject;
+				resultType = ResultType.Texture2DObject;
 			}
 			else
 			{
@@ -350,20 +350,20 @@ public sealed class SubgraphInput : ShaderNodePlus, IErroringNode, IWarningNode,
 		}
 		else
 		{
-			( ResultType resultType, string defaultCode ) defaultResult = InputType switch
+			(ResultType resultType, string defaultCode) defaultResult = InputType switch
 			{
-				SubgraphPortType.Bool => ( ResultType.Bool, $"{compiler.ResultValue( GetValue<bool>() )}" ),
-				SubgraphPortType.Int => ( ResultType.Int, $"{compiler.ResultValue( GetValue<int>() )}" ),
-				SubgraphPortType.Float => ( ResultType.Float, $"{compiler.ResultValue( GetValue<float>() )}" ),
-				SubgraphPortType.Vector2 => ( ResultType.Vector2, $"float2( {compiler.ResultValue( GetValue<Vector2>() )} )" ),
-				SubgraphPortType.Vector3 => ( ResultType.Vector3, $"float3( {compiler.ResultValue( GetValue<Vector3>() )} )" ),
-				SubgraphPortType.Vector4 => ( ResultType.Vector4, $"float4( {compiler.ResultValue( GetValue<Vector4>() )} )" ),
-				SubgraphPortType.Color => ( ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Color>() )} )" ),
-				SubgraphPortType.Float2x2 => ( ResultType.Float2x2, $"float2x2( {compiler.ResultValue( GetValue<Float2x2>() )} )" ),
-				SubgraphPortType.Float3x3 => ( ResultType.Float3x3, $"float3x3( {compiler.ResultValue( GetValue<Float3x3>() )} )" ),
-				SubgraphPortType.Float4x4 => ( ResultType.Float4x4, $"float4x4( {compiler.ResultValue( GetValue<Float4x4>() )} )" ),
-				SubgraphPortType.Gradient => ( ResultType.Gradient, compiler.RegisterGradient( GetValue<Gradient>(), "" ) ),
-				SubgraphPortType.SamplerState => ( ResultType.Sampler, $"{compiler.ResultSampler( GetValue<Sampler>() )}" ),
+				SubgraphPortType.Bool => (ResultType.Bool, $"{compiler.ResultValue( GetValue<bool>() )}"),
+				SubgraphPortType.Int => (ResultType.Int, $"{compiler.ResultValue( GetValue<int>() )}"),
+				SubgraphPortType.Float => (ResultType.Float, $"{compiler.ResultValue( GetValue<float>() )}"),
+				SubgraphPortType.Vector2 => (ResultType.Vector2, $"float2( {compiler.ResultValue( GetValue<Vector2>() )} )"),
+				SubgraphPortType.Vector3 => (ResultType.Vector3, $"float3( {compiler.ResultValue( GetValue<Vector3>() )} )"),
+				SubgraphPortType.Vector4 => (ResultType.Vector4, $"float4( {compiler.ResultValue( GetValue<Vector4>() )} )"),
+				SubgraphPortType.Color => (ResultType.Color, $"float4( {compiler.ResultValue( GetValue<Color>() )} )"),
+				SubgraphPortType.Float2x2 => (ResultType.Float2x2, $"float2x2( {compiler.ResultValue( GetValue<Float2x2>() )} )"),
+				SubgraphPortType.Float3x3 => (ResultType.Float3x3, $"float3x3( {compiler.ResultValue( GetValue<Float3x3>() )} )"),
+				SubgraphPortType.Float4x4 => (ResultType.Float4x4, $"float4x4( {compiler.ResultValue( GetValue<Float4x4>() )} )"),
+				SubgraphPortType.Gradient => (ResultType.Gradient, compiler.RegisterGradient( GetValue<Gradient>(), "" )),
+				SubgraphPortType.SamplerState => (ResultType.Sampler, $"{compiler.ResultSampler( GetValue<Sampler>() )}"),
 				_ => throw new Exception( $"Unknown PortType \"{InputType}\"" )
 			};
 

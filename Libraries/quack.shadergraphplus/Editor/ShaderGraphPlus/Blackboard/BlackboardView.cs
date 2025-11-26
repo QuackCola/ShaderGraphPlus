@@ -21,7 +21,7 @@ internal class BlackboardView : Widget
 		{
 			if ( value == null ) return;
 			if ( _graph == value ) return;
-			
+
 			_graph = value;
 
 			RebuildBuildFromGraph();
@@ -148,7 +148,7 @@ internal class BlackboardView : Widget
 		_window.OnUndoPushed();
 	}
 
-	public  void PushRedo()
+	public void PushRedo()
 	{
 		SGPLog.Info( "Push Redo" );
 		_undoStack.PushRedo( Graph.UndoStackSerialize() );
@@ -267,7 +267,7 @@ internal class BlackboardView : Widget
 	{
 		_parameterListView.SetItems( parameters.Cast<object>() );
 
-		if ( _selectedParameter != null  )
+		if ( _selectedParameter != null )
 		{
 			var selection = Graph.FindParameterByGuid( _selectedParameter.Identifier );
 

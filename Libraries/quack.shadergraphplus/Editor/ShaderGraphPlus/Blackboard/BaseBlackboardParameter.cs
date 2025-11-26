@@ -22,7 +22,7 @@ internal interface IBlackboardSyncableNode
 
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
-	[Hide,Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
+	[Hide, Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
 	public Guid Identifier { get; set; }
 
 	[JsonIgnore, Hide, Browsable( false )]
@@ -146,8 +146,8 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	{
 	}
 
-	public BlackboardGenericParameter( string name, T value ) : base( name ) 
-	{ 
+	public BlackboardGenericParameter( string name, T value ) : base( name )
+	{
 		Value = value;
 	}
 
@@ -164,7 +164,7 @@ public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParamete
 
 	public bool IsAttribute { get; set; }
 
-	public BlackboardMaterialParameter() : base() 
+	public BlackboardMaterialParameter() : base()
 	{
 		UI = new ParameterUI();
 		IsAttribute = false;

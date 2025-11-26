@@ -9,9 +9,9 @@ public abstract class MatrixConstantNode<T> : ShaderNodePlus, IConstantNode, ICo
 	public string Name { get; set; } = "";
 
 	[Hide]
-	public override string Title => string.IsNullOrWhiteSpace(Name) ?
-		$"{DisplayInfo.For(this).Name}" :
-		$"{DisplayInfo.For(this).Name} ( {Name} )";
+	public override string Title => string.IsNullOrWhiteSpace( Name ) ?
+		$"{DisplayInfo.For( this ).Name}" :
+		$"{DisplayInfo.For( this ).Name} ( {Name} )";
 
 	[InlineEditor]
 	public T Value { get; set; }

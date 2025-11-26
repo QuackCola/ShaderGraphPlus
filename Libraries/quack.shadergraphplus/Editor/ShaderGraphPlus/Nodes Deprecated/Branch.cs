@@ -62,7 +62,7 @@ public sealed class Branch : ShaderNodePlus, IWarningNode
 	[HideIf( nameof( UseCondition ), true )]
 	public bool Enabled { get; set; }
 
-	[InlineEditor(Label = false ), Group( "UI" )  ]
+	[InlineEditor( Label = false ), Group( "UI" )]
 	public ParameterUI UI { get; set; }
 
 	[Hide]
@@ -100,7 +100,7 @@ public sealed class Branch : ShaderNodePlus, IWarningNode
 		else
 		{
 			return new NodeResult( results.Item1.ResultType, $"{(useCondition ?
-				$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI ) )} ?" +
+				$"{resultA.Cast( 1 )} {Op} {resultB.Cast( 1 )}" : compiler.ResultParameter( Name, Enabled, default, default, false, IsAttribute, UI ))} ?" +
 				$" {results.Item1} :" +
 				$" {results.Item2}" );
 		}

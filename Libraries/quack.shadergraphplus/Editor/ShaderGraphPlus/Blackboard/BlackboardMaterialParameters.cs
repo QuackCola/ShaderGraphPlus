@@ -9,7 +9,7 @@ namespace ShaderGraphPlus;
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
 public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 {
-	public BoolParameter() : base() 
+	public BoolParameter() : base()
 	{
 		UI = new ParameterUI() { ShowStepProperty = false, ShowTypeProperty = false };
 		Value = false;
@@ -43,7 +43,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 	[Group( "Range" )] public int Max { get; set; }
 
 	public IntParameter() : base()
-	{	
+	{
 		Value = 1;
 		Min = 0;
 		Max = 1;
@@ -364,8 +364,8 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 	/// </summary>
 	public string HeaderName { get; set; }
 
-	public ShaderFeatureBooleanParameter() : base() 
-	{ 
+	public ShaderFeatureBooleanParameter() : base()
+	{
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -373,8 +373,8 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 		return new BooleanFeatureSwitchNode()
 		{
 			BlackboardParameterIdentifier = Identifier,
-			Feature = new ShaderFeatureBoolean() 
-			{ 
+			Feature = new ShaderFeatureBoolean()
+			{
 				Name = Name,
 				Description = Description,
 				HeaderName = HeaderName,

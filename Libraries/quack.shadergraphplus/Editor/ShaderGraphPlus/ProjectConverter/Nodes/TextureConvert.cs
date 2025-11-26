@@ -39,10 +39,11 @@ file static class TextureSamplerExentions
 			_ => throw new NotImplementedException(),
 		};
 
-		var newSampler = new Sampler() { 
-			Name = name, 
-			Filter = filter, 
-			AddressModeU = addressModeU, 
+		var newSampler = new Sampler()
+		{
+			Name = name,
+			Filter = filter,
+			AddressModeU = addressModeU,
 			AddressModeV = addressModeV,
 			AddressModeW = TextureAddressMode.Wrap,
 			MipLodBias = 0f,
@@ -52,7 +53,7 @@ file static class TextureSamplerExentions
 
 		return newSampler;
 	}
-	
+
 	internal static TextureInput ConvertVanillaTextureInput( this VanillaGraph.TextureInput textureInput )
 	{
 		var newTextureInput = new TextureInput();
@@ -106,7 +107,7 @@ file static class TextureSamplerExentions
 
 		newTextureInput.PrimaryGroup = new() { Name = textureInput.PrimaryGroup.Name, Priority = textureInput.PrimaryGroup.Priority };
 		newTextureInput.SecondaryGroup = new() { Name = textureInput.SecondaryGroup.Name, Priority = textureInput.SecondaryGroup.Priority };
-		newTextureInput.Type = textureInput.Type == VanillaGraph.TextureType.Tex2D ? TextureType.Tex2D :  TextureType.TexCube;
+		newTextureInput.Type = textureInput.Type == VanillaGraph.TextureType.Tex2D ? TextureType.Tex2D : TextureType.TexCube;
 
 		return newTextureInput;
 	}

@@ -27,5 +27,5 @@ public sealed class Camera : ShaderNodePlus
 
 	[Output( typeof( float ) )]
 	[Hide]
-	public static NodeResult.Func FarPlane => ( GraphCompiler compiler ) => new( ResultType.Float, "g_flFarPlane");
+	public static NodeResult.Func FarPlane => ( GraphCompiler compiler ) => new( ResultType.Float, "g_flFarPlane" );
 }

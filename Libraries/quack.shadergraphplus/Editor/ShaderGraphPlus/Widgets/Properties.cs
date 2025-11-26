@@ -4,11 +4,11 @@ namespace ShaderGraphPlus;
 
 public class Properties : Widget
 {
-    private ScrollArea scroller;
-    private ControlSheet sheet;
-    private string filterText;
+	private ScrollArea scroller;
+	private ControlSheet sheet;
+	private string filterText;
 
-    private object _target;
+	private object _target;
 	public object Target
 	{
 		get => _target;

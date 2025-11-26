@@ -12,7 +12,7 @@ public struct NodeInput : IValid
 	[Hide, Browsable( false )]
 	public string Subgraph { get; set; }
 
-	
+
 	[Hide, Browsable( false )]
 	[JsonIgnore]
 	public string SubgraphNode { get; set; }

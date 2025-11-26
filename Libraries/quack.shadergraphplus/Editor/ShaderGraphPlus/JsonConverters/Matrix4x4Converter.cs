@@ -16,8 +16,8 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 			reader.Read();
 			Float4x4 result = default( Float4x4 );
 
-            // Row 1
-            if ( reader.TokenType == JsonTokenType.Number )
+			// Row 1
+			if ( reader.TokenType == JsonTokenType.Number )
 			{
 				result.M11 = reader.GetSingle();
 				reader.Read();
@@ -38,8 +38,8 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 				reader.Read();
 			}
 
-            // Row 2
-            if ( reader.TokenType == JsonTokenType.Number )
+			// Row 2
+			if ( reader.TokenType == JsonTokenType.Number )
 			{
 				result.M21 = reader.GetSingle();
 				reader.Read();
@@ -60,8 +60,8 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 				reader.Read();
 			}
 
-            // Row 3
-            if ( reader.TokenType == JsonTokenType.Number )
+			// Row 3
+			if ( reader.TokenType == JsonTokenType.Number )
 			{
 				result.M31 = reader.GetSingle();
 				reader.Read();
@@ -82,8 +82,8 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 				reader.Read();
 			}
 
-            // Row 4
-            if ( reader.TokenType == JsonTokenType.Number )
+			// Row 4
+			if ( reader.TokenType == JsonTokenType.Number )
 			{
 				result.M41 = reader.GetSingle();
 				reader.Read();
@@ -119,7 +119,7 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 
 	public override void Write( Utf8JsonWriter writer, Float4x4 val, JsonSerializerOptions options )
 	{
-		writer.WriteStringValue( 
+		writer.WriteStringValue(
 			$"{val.M11:0.#################################}," +
 			$"{val.M12:0.#################################}," +
 			$"{val.M13:0.#################################}," +
@@ -138,7 +138,7 @@ internal class Matrix4x4Converter : JsonConverter<Float4x4>
 			$"{val.M41:0.#################################}," +
 			$"{val.M42:0.#################################}," +
 			$"{val.M43:0.#################################}," +
-			$"{val.M44:0.#################################}" 
+			$"{val.M44:0.#################################}"
 		);
 	}
 }

@@ -8,10 +8,10 @@ public sealed class IntCastTest : ShaderNodePlus
 	[Hide]
 	public override int Version => 1;
 
-	[Input( typeof( int ) ) , Hide]
+	[Input( typeof( int ) ), Hide]
 	public NodeInput Input { get; set; }
 
-	[Sandbox.Range( 1 , 4 )]
+	[Sandbox.Range( 1, 4 )]
 	public int CastType { get; set; } = 1;
 
 	[Output]
@@ -19,7 +19,7 @@ public sealed class IntCastTest : ShaderNodePlus
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
 		var input = compiler.ResultOrDefault( Input, 1 );
-	
+
 		var castResult = input.Cast( CastType );
 
 		SGPLog.Info( $"Casted int to \"{castResult}\"", compiler.IsPreview );

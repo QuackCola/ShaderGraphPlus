@@ -66,9 +66,9 @@ public static class Assert
 	/// </summary>
 	public static bool Check<T>( T a, T b )
 	{
-		if ( object.Equals( a, b ))
+		if ( object.Equals( a, b ) )
 		{
-			EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath(m_AssertSound));
+			EditorUtility.PlayRawSound( Editor.FileSystem.Content.GetFullPath( m_AssertSound ) );
 			return true;
 		}
 		else

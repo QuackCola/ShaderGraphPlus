@@ -14,7 +14,7 @@ public sealed class GerstnerWavesNode : ShaderNodePlus
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
-public static string GerstnerWaves => @"
+	public static string GerstnerWaves => @"
 float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWaveLength, float flSpeed, float flAmplitude, float flSteepness, float flNumWaves, float flGravityConstant )
 {
 		//static const float flGravityConstant = 385.827;
@@ -33,7 +33,7 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 ";
 
 	[Title( "World Pos" )]
-	[Description("")]
+	[Description( "" )]
 	[Input( typeof( Vector3 ) )]
 	[Hide]
 	public NodeInput WorldSpacePosition { get; set; }
@@ -104,10 +104,10 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 	public float DefaultSteepness { get; set; } = 0.420f;
 	public float DefaultNumWaves { get; set; } = 1.0f;
 
-    /// <summary>
-    /// Gravitational constant to be used. Default is 385.827
-    /// </summary>
-    public float DefaultGravityConstant { get; set; } = 385.827f;
+	/// <summary>
+	/// Gravitational constant to be used. Default is 385.827
+	/// </summary>
+	public float DefaultGravityConstant { get; set; } = 385.827f;
 
 	[Output( typeof( Vector3 ) )]
 	[Hide]
@@ -117,26 +117,26 @@ float3 GerstnerWaves(float3 vWorldSpacePosition, float2 vDirection, float flWave
 		{
 			return NodeResult.Error( $"{DisplayInfo.Name} Is not ment for postprocessing shaders!" );
 		}
-		
+
 		var worldspaceposition = compiler.Result( WorldSpacePosition );
-		
+
 		if ( !worldspaceposition.IsValid() )
 		{
 			return NodeResult.MissingInput( nameof( WorldSpacePosition ) );
 		}
-		
-		var	direction = compiler.ResultOrDefault( Direction, DefaultDirection );
+
+		var direction = compiler.ResultOrDefault( Direction, DefaultDirection );
 		var wavelength = compiler.ResultOrDefault( WaveLength, DefaultWaveLength );
 		var speed = compiler.ResultOrDefault( Speed, DefaultSpeed );
 		var amplitude = compiler.ResultOrDefault( Amplitude, DefaultAmplitude );
 		var steepness = compiler.ResultOrDefault( Steepness, DefaultSteepness );
 		var numwaves = compiler.ResultOrDefault( NumWaves, DefaultNumWaves );
 		var gravityconstant = compiler.ResultOrDefault( GravityConstant, DefaultGravityConstant );
-		
-		
+
+
 		string func = compiler.RegisterHLSLFunction( GerstnerWaves, "GerstnerWaves" );
 		string funcCall = compiler.ResultHLSLFunction( func, $" {worldspaceposition}, {direction}, {wavelength}, {speed}, {amplitude}, {steepness}, {numwaves}, {gravityconstant}" );
-		
+
 		return new NodeResult( ResultType.Vector3, funcCall );
-    };
+	};
 }

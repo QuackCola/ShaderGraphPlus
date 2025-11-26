@@ -7,8 +7,8 @@ namespace ShaderGraphPlus;
 [JsonConverter( typeof( Matrix4x4Converter ) )]
 public struct Float4x4
 {
-    [Hide]
-    internal System.Numerics.Matrix4x4 _mat4x4;
+	[Hide]
+	internal System.Numerics.Matrix4x4 _mat4x4;
 
 	//
 	// Summary:
@@ -262,10 +262,10 @@ public struct Float4x4
 					float m41, float m42, float m43, float m44 )
 	{
 		_mat4x4 = new System.Numerics.Matrix4x4(
-			m11,m12,m13,m14,
-			m21,m22,m23,m24,
-			m31,m32,m33,m34,
-			m41,m42,m43,m44
+			m11, m12, m13, m14,
+			m21, m22, m23, m24,
+			m31, m32, m33, m34,
+			m41, m42, m43, m44
 		);
 	}
 
@@ -275,10 +275,10 @@ public struct Float4x4
 	public Float4x4( Matrix3x2 value )
 	{
 		_mat4x4 = new System.Numerics.Matrix4x4(
-			value.M11,value.M12,0f,0f,
-			value.M21,value.M22,0f,0f,
-			0f,0f,1f,0f,
-			value.M31,value.M32,0f,1f
+			value.M11, value.M12, 0f, 0f,
+			value.M21, value.M22, 0f, 0f,
+			0f, 0f, 1f, 0f,
+			value.M31, value.M32, 0f, 1f
 		);
 	}
 
@@ -320,24 +320,24 @@ public struct Float4x4
 		string[] array = str.Split( new char[5] { ' ', ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries );
 
 		if (
-		!float.TryParse( array[0],	NumberStyles.Float, provider, out var m11 ) ||
-		!float.TryParse( array[1],	NumberStyles.Float, provider, out var m12 ) ||
-		!float.TryParse( array[2],	NumberStyles.Float, provider, out var m13 ) ||
-		!float.TryParse( array[3],	NumberStyles.Float, provider, out var m14 ) ||
+		!float.TryParse( array[0], NumberStyles.Float, provider, out var m11 ) ||
+		!float.TryParse( array[1], NumberStyles.Float, provider, out var m12 ) ||
+		!float.TryParse( array[2], NumberStyles.Float, provider, out var m13 ) ||
+		!float.TryParse( array[3], NumberStyles.Float, provider, out var m14 ) ||
 
-		!float.TryParse( array[4],	NumberStyles.Float, provider, out var m21 ) ||
-		!float.TryParse( array[5],	NumberStyles.Float, provider, out var m22 ) ||
-		!float.TryParse( array[6],	NumberStyles.Float, provider, out var m23 ) ||
-		!float.TryParse( array[7],	NumberStyles.Float, provider, out var m24 ) ||
+		!float.TryParse( array[4], NumberStyles.Float, provider, out var m21 ) ||
+		!float.TryParse( array[5], NumberStyles.Float, provider, out var m22 ) ||
+		!float.TryParse( array[6], NumberStyles.Float, provider, out var m23 ) ||
+		!float.TryParse( array[7], NumberStyles.Float, provider, out var m24 ) ||
 
-		!float.TryParse( array[8],	NumberStyles.Float, provider, out var m31 ) ||
-		!float.TryParse( array[9],	NumberStyles.Float, provider, out var m32 ) ||
+		!float.TryParse( array[8], NumberStyles.Float, provider, out var m31 ) ||
+		!float.TryParse( array[9], NumberStyles.Float, provider, out var m32 ) ||
 		!float.TryParse( array[10], NumberStyles.Float, provider, out var m33 ) ||
 		!float.TryParse( array[11], NumberStyles.Float, provider, out var m34 ) ||
 
 		!float.TryParse( array[12], NumberStyles.Float, provider, out var m41 ) ||
 		!float.TryParse( array[13], NumberStyles.Float, provider, out var m42 ) ||
-		!float.TryParse( array[14],	NumberStyles.Float, provider, out var m43 ) ||
+		!float.TryParse( array[14], NumberStyles.Float, provider, out var m43 ) ||
 		!float.TryParse( array[15], NumberStyles.Float, provider, out var m44 )
 		)
 		{
@@ -369,7 +369,7 @@ public struct Float4x4
 
 	public override readonly string ToString()
 	{
-		return 
+		return
 			$"{M11:0.#####}," +
 			$"{M12:0.#####}," +
 			$"{M13:0.#####}," +

@@ -45,7 +45,7 @@ internal class FunctionResultConvert : BaseNodeConvert
 
 			newNodes.Add( newSubgraphOutput );
 		}
-		
+
 		return newNodes;
 	}
 }

@@ -575,7 +575,7 @@ public partial class ShaderGraphPlus
 			SGPLog.Info( $"Converting Unnamed Parameter node {typeName} to a constant node.", ConCommands.VerboseSerialization );
 
 			upgradedNode = ConvertToConstantNode( typeName, nodeElement, options );
-		
+
 			return true;
 		}
 		else if ( graphFileVersion < 3 && ShouldConvertTextureNodes( typeName, nodeElement ) )
@@ -583,7 +583,7 @@ public partial class ShaderGraphPlus
 			upgradedNode = ConvertToNewTextureSampleNode( typeName, nodeElement, options, out var connectionFixupDataNew );
 
 			connectionFixups.Add( connectionFixupDataNew );
-		
+
 			return true;
 		}
 
@@ -610,7 +610,7 @@ public partial class ShaderGraphPlus
 		{
 			return versionElement.GetInt32();
 		}
-		
+
 		SGPLog.Error( $"JsonElement has no property named \"{VersioningInfo.JsonPropertyName}\". Defaulting to 0...." );
 
 		return 0;

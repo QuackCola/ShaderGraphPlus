@@ -44,19 +44,19 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 
 	[JsonIgnore, Hide, Browsable( false )]
 	public bool CannotPreviewOutputType
-	{ 
+	{
 		get
 		{
-			return ( OutputType == SubgraphPortType.Bool ||
+			return (OutputType == SubgraphPortType.Bool ||
 				OutputType == SubgraphPortType.Float2x2 ||
 				OutputType == SubgraphPortType.Float3x3 ||
 				OutputType == SubgraphPortType.Float4x4 ||
 				OutputType == SubgraphPortType.Gradient ||
 				OutputType == SubgraphPortType.Texture2DObject ||
 				OutputType == SubgraphPortType.TextureCubeObject ||
-				OutputType == SubgraphPortType.SamplerState );
+				OutputType == SubgraphPortType.SamplerState);
 		}
-	
+
 	}
 
 	[Hide, Browsable( false )]
@@ -92,12 +92,12 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 	{
 		var hashCodeInput = 0;
 		hashCodeInput = System.HashCode.Combine( OutputIdentifier, OutputName, OutputDescription, OutputType, PortOrder );
-		
+
 		if ( hashCodeInput != _lastHashCode )
 		{
 			//var oldhashCode = _lastHashCode;
 			_lastHashCode = hashCodeInput;
-			
+
 			//SGPLog.Info( $"SubgraphFunctionOutput hashcode changed from \"{oldhashCode}\" to \"{_lastHashCode}\"" );
 
 			InitializeNode();
@@ -311,7 +311,7 @@ public sealed class SubgraphOutput : BaseResult, IInitializeNode, IErroringNode
 			var input = Inputs.FirstOrDefault( x => x is BasePlugIn plugIn && plugIn.Info.Id == OutputIdentifier );
 			if ( input is BasePlugIn plugIn )
 			{
-				
+
 				if ( plugIn.Info.ConnectedPlug is not null )
 				{
 					return new NodeInput

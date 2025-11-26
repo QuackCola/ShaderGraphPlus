@@ -7,8 +7,8 @@ namespace ShaderGraphPlus;
 [JsonConverter( typeof( Matrix3x3Converter ) )]
 public struct Float3x3
 {
-    [Hide]
-    internal System.Numerics.Matrix4x4 _mat4x4;
+	[Hide]
+	internal System.Numerics.Matrix4x4 _mat4x4;
 
 	public static readonly Float3x3 Identity = new Float3x3
 	(
@@ -126,17 +126,17 @@ public struct Float3x3
 	}
 
 	public Float3x3
-	( 
+	(
 		float m11, float m12, float m13,
 		float m21, float m22, float m23,
 		float m31, float m32, float m33
 	)
 	{
 		_mat4x4 = new System.Numerics.Matrix4x4(
-			m11,m12,m13,0f,
-			m21,m22,m23,0f,
-			m31,m32,m33,0f,
-			0f,0f,0f,1f
+			m11, m12, m13, 0f,
+			m21, m22, m23, 0f,
+			m31, m32, m33, 0f,
+			0f, 0f, 0f, 1f
 		);
 	}
 
@@ -215,7 +215,7 @@ public struct Float3x3
 
 	public override readonly string ToString()
 	{
-		return 
+		return
 			$"{M11:0.#####}," +
 			$"{M12:0.#####}," +
 			$"{M13:0.#####}," +

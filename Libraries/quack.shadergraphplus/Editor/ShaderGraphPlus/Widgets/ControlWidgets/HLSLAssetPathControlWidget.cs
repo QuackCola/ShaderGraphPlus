@@ -26,7 +26,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 		Node = property.Parent.Targets.FirstOrDefault() as CustomFunctionNode;
 
 		FunctionNameProperty = Node.GetSerialized().GetProperty( nameof( CustomFunctionNode.Name ) );
-	
+
 		if ( Node is null )
 			return;
 
@@ -44,7 +44,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 		if ( PreviewButton.IsValid() )
 		{
 			PreviewButton.FixedSize = Height - 2;
-			PreviewButton.Position = new Vector2(Width - Height + 1, 1);
+			PreviewButton.Position = new Vector2( Width - Height + 1, 1 );
 		}
 	}
 
@@ -62,7 +62,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 		Paint.SetPen( Color.White.WithAlpha( 0.9f * alpha ) );
 		Paint.SetFont( "Poppins", 8, 450 );
 		var t = Paint.DrawText( textRect, title, multiline ? TextFlag.LeftCenter : TextFlag.LeftCenter );
-		
+
 		if ( multiline )
 		{
 			textRect.Position += new Vector2( 0, textRect.Height );
@@ -98,9 +98,10 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 	public void GenerateHLSLIncludeBase()
 	{
-		if ( string.IsNullOrWhiteSpace( Node.Name ))
+		if ( string.IsNullOrWhiteSpace( Node.Name ) )
 		{
-			Dialog.AskString( ( string name ) => {
+			Dialog.AskString( ( string name ) =>
+			{
 				FunctionNameProperty.SetValue( name );
 				Generate( name );
 			}, "What would you like to call your function?", title: "Function Name" );
@@ -113,9 +114,9 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 
 	private void Generate( string functionName )
 	{
-		string functionHeader = $"void {functionName}({Node.ConstructArguments( Node.ExpressionInputs,  false)}{( Node.ExpressionInputs.Any() ? "," : "" )}{Node.ConstructArguments( Node.ExpressionOutputs, true )})";
+		string functionHeader = $"void {functionName}({Node.ConstructArguments( Node.ExpressionInputs, false )}{(Node.ExpressionInputs.Any() ? "," : "")}{Node.ConstructArguments( Node.ExpressionOutputs, true )})";
 		StringBuilder functionBody = new StringBuilder();
-		
+
 		foreach ( var output in Node.ExpressionOutputs )
 		{
 			var initialValue = "";
@@ -161,14 +162,14 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 			functionHeader,
 			GraphCompiler.IndentString( functionBody.ToString(), 2 )
 		);
-		
+
 		string absolutePath = SaveFile( result );
-		
-		if ( absolutePath is null ) 
+
+		if ( absolutePath is null )
 			return;
-		
+
 		FilePathAbsolute = absolutePath;
-		
+
 		OpenFile();
 	}
 
@@ -182,7 +183,7 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 		}
 		else
 		{
-			if ( e.RightMouseButton ) 
+			if ( e.RightMouseButton )
 			{
 				if ( !string.IsNullOrWhiteSpace( Node.Source ) )
 				{
@@ -215,13 +216,13 @@ internal sealed class HLSLAssetPathControlWidget : ControlWidget
 	{
 		FilePathAbsolute = "";
 		FilePath = "";
-	
+
 		UpdateProperty();
 	}
 
 	private string SaveFile( string generatedFile )
 	{
-		var fd = new FileDialog(null)
+		var fd = new FileDialog( null )
 		{
 			Title = $"Select Path To Save HLSL File",
 			DefaultSuffix = $".hlsl"

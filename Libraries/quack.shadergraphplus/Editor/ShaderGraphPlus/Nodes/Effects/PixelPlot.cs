@@ -14,7 +14,7 @@ public sealed class PixelPlotNode : ShaderNodePlus
 	public override Color NodeTitleColor => PrimaryNodeHeaderColors.FunctionNode;
 
 	[Hide]
-public string PixelPlot => @"	
+	public string PixelPlot => @"	
 float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , float2 vGridSize , float flBoarderThickness)
 {
 
@@ -39,18 +39,18 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Hide]
 	public NodeInput Coords { get; set; }
 
-    /// <summary>
-    /// Texture object to apply the effect to.
-    /// </summary>
-    [Title("TexObject")]
-    [Input( typeof( Texture2DObject ) )]
-    [Hide]
-    public NodeInput TexObject { get; set; }
+	/// <summary>
+	/// Texture object to apply the effect to.
+	/// </summary>
+	[Title( "TexObject" )]
+	[Input( typeof( Texture2DObject ) )]
+	[Hide]
+	public NodeInput TexObject { get; set; }
 
-    /// <summary>
-    /// How the effect is filtered and wrapped when sampled
-    /// </summary>
-    [Title( "Sampler" )]
+	/// <summary>
+	/// How the effect is filtered and wrapped when sampled
+	/// </summary>
+	[Title( "Sampler" )]
 	[Input( typeof( Sampler ) )]
 	[Hide]
 	public NodeInput Sampler { get; set; }
@@ -83,23 +83,23 @@ float4 PixelPlot( in Texture2D vColor, in SamplerState sSampler, float2 vUv , fl
 	[Output( typeof( Color ) ), Title( "Result" )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		var textureobject = compiler.Result(TexObject);
+		var textureobject = compiler.Result( TexObject );
 		var coords = compiler.Result( Coords );
 		var Grid = compiler.ResultOrDefault( GridSize, DefaultGridSize );
 		var Boarder = compiler.ResultOrDefault( BoarderThickness, DefaultBoarderThickness );
-		
+
 		if ( !textureobject.IsValid )
 		{
-		    return NodeResult.MissingInput( nameof( Texture2DObject ) );
+			return NodeResult.MissingInput( nameof( Texture2DObject ) );
 		}
 		else if ( textureobject.ResultType is not ResultType.Texture2DObject )
 		{
-		    return NodeResult.Error($"Input to TexObject is not a texture object!");
+			return NodeResult.Error( $"Input to TexObject is not a texture object!" );
 		}
-		
+
 		string func = compiler.RegisterHLSLFunction( PixelPlot, "PixelPlot" );
-		string funcCall = compiler.ResultHLSLFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, SamplerState )}, {(coords.IsValid ? $"{coords.Cast(2)}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
-		
+		string funcCall = compiler.ResultHLSLFunction( func, $"{textureobject}, {compiler.ResultSamplerOrDefault( Sampler, SamplerState )}, {(coords.IsValid ? $"{coords.Cast( 2 )}" : "i.vTextureCoords.xy")}, {Grid}, {Boarder}" );
+
 		return new NodeResult( ResultType.Color, funcCall );
-    };
+	};
 }

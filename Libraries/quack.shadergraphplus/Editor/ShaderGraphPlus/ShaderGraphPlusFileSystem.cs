@@ -13,13 +13,13 @@ internal static class ShaderGraphPlusFileSystem
 		var stagingName = "quack.shadergraphplus_staging";
 		var releaseName = "quack.shadergraphplus";
 		var staging_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/{stagingName}";
-		var release_path = $"{Project.Current.GetRootPath().Replace('\\', '/')}/Libraries/{releaseName}";
+		var release_path = $"{Project.Current.GetRootPath().Replace( '\\', '/' )}/Libraries/{releaseName}";
 
 		if ( Directory.Exists( staging_path ) )
 		{
 			return stagingName;
 		}
-		else if ( Directory.Exists( release_path ))
+		else if ( Directory.Exists( release_path ) )
 		{
 			return releaseName;
 		}

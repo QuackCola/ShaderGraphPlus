@@ -27,7 +27,7 @@ public class Output : Widget
 
 	public void ClearErrors()
 	{
-		foreach ( var error in _issueListView.Items.Where ( x=> x is GraphIssue issue && issue.IsWarning == false ) )
+		foreach ( var error in _issueListView.Items.Where( x => x is GraphIssue issue && issue.IsWarning == false ) )
 		{
 			_issueListView.RemoveItem( error );
 		}
@@ -46,7 +46,7 @@ public class Output : Widget
 		Name = "Output";
 		WindowTitle = "Output";
 		SetWindowIcon( "notes" );
-		
+
 		Layout = Layout.Column();
 
 		_issueListView = new( this );
@@ -65,7 +65,7 @@ public class IssueListView : ListView
 		{
 			if ( a is not GraphCompiler.GraphIssue issueInfo )
 				return;
-			
+
 			if ( issueInfo.Node != null && issueInfo.Node is not DummyNode )
 			{
 				_output.OnNodeSelected?.Invoke( issueInfo.Node );
@@ -90,7 +90,7 @@ public class IssueListView : ListView
 
 	}
 
-	private void OnOpenItemContextMenuError( object item , GraphIssue error )
+	private void OnOpenItemContextMenuError( object item, GraphIssue error )
 	{
 		var m = new Menu();
 
