@@ -7,53 +7,6 @@ namespace ShaderGraphPlus;
 
 internal static class ShaderGraphPlusEditorMenus
 {
-	[Menu( "Editor", "Shader Graph Plus/Upgrade Subgraph Projects" )]
-	public static void UpgradeSubgraphProjects()
-	{
-		var projectPaths = Directory.GetFiles( $"{Project.Current.GetAssetsPath()}/shaders", $"*.{ShaderGraphPlusGlobals.SubgraphAssetTypeExtension}", SearchOption.AllDirectories );
-		int projectsUpgraded = 0;
-
-		if ( projectPaths.Any() )
-		{
-			SGPLog.Info( $"Found \"{projectPaths.Count()}\" subgraphs" );
-
-			foreach ( var projectPath in projectPaths )
-			{
-				var graph = new ShaderGraphPlus();
-				var file = System.IO.File.ReadAllText( projectPath );
-
-				var currentVersion = 0;
-				if ( JsonDocument.Parse( file ).RootElement.TryGetProperty( VersioningInfo.JsonPropertyName, out var ver ) )
-				{
-					currentVersion = ver.GetInt32();
-				}
-
-				if ( currentVersion == 0 )
-				{
-					graph.Deserialize( file );
-
-					var asset = AssetSystem.FindByPath( projectPath );
-
-					graph.Path = asset.RelativePath;
-					graph.IsSubgraph = true;
-
-					SGPLog.Info( $"Upgraded project at path \"{projectPath}\"" );
-
-					System.IO.File.WriteAllText( asset.AbsolutePath, graph.Serialize() );
-					asset ??= AssetSystem.RegisterFile( asset.AbsolutePath );
-					projectsUpgraded++;
-				}
-				else
-				{
-					SGPLog.Info( $"Project at path \"{projectPath}\" has already been upgraded." );
-				}
-			}
-
-		}
-
-		EditorUtility.DisplayDialog( "", $"Upgraded \"{projectsUpgraded}\" subgraphs." );
-	}
-
 	[Menu( "Editor", "Shader Graph Plus/Convert ShaderGraph projects to ShaderGraphPlus projects ( Experimental )" )]
 	public static void ConvertShaderGraphToShaderGraphPlus()
 	{
