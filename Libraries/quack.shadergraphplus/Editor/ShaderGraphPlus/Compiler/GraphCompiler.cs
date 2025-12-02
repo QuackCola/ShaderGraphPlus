@@ -124,12 +124,12 @@ public sealed partial class GraphCompiler
 
 	private List<NodeInput> InputStack = new();
 
-	private readonly Dictionary<BaseNodePlus, List<string>> NodeIssues = new();
+	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
 
 	/// <summary>
-	/// Error list, doesn't give you much information currently
+	/// Error list.
 	/// </summary>
-	public IEnumerable<GraphIssue> Issues => NodeIssues
+	public IEnumerable<GraphIssue> Issues => NodeErrors
 		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
@@ -249,7 +249,7 @@ public sealed partial class GraphCompiler
 						baseNode.HasError = true;
 					}
 
-					NodeIssues.Add( node, [$"Missing required input \"{title}\"."] );
+					NodeErrors.Add( node, [$"Missing required input \"{title}\"."] );
 				}
 				else
 				{
@@ -750,7 +750,7 @@ public sealed partial class GraphCompiler
 
 		if ( node is not IRerouteNode && node is not CustomFunctionNode && InputStack.Contains( input ) )
 		{
-			NodeIssues[node] = new List<string> { "Circular reference detected" };
+			NodeErrors[node] = new List<string> { "Circular reference detected" };
 			return default;
 		}
 
@@ -819,10 +819,10 @@ public sealed partial class GraphCompiler
 
 			if ( !funcResult.IsValid )
 			{
-				if ( !NodeIssues.TryGetValue( node, out var errors ) )
+				if ( !NodeErrors.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
-					NodeIssues.Add( node, errors );
+					NodeErrors.Add( node, errors );
 				}
 
 				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
@@ -847,7 +847,7 @@ public sealed partial class GraphCompiler
 			{
 				SGPLog.Error( $"Couldnt find VoidData in dictionary!", IsPreview );
 
-				NodeIssues[node] = new List<string> { $"Failed to get result!", };
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
 
 				return default;
 			}
@@ -878,7 +878,7 @@ public sealed partial class GraphCompiler
 			else
 			{
 				SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
-				NodeIssues[node] = new List<string> { $"Failed to get result!", };
+				NodeErrors[node] = new List<string> { $"Failed to get result!", };
 
 				return default;
 			}
@@ -912,7 +912,7 @@ public sealed partial class GraphCompiler
 				};
 				var newResult = Result( newConnection );
 
-				if ( NodeIssues.Any() )
+				if ( NodeErrors.Any() )
 				{
 					InputStack.Remove( input );
 					return default;
@@ -944,7 +944,7 @@ public sealed partial class GraphCompiler
 
 					if ( !string.IsNullOrWhiteSpace( error.ErrorString ) )
 					{
-						NodeIssues.Add( error.Node, new List<string> { error.ErrorString } );
+						NodeErrors.Add( error.Node, new List<string> { error.ErrorString } );
 
 						InputStack.Remove( input );
 						return default;
@@ -1015,10 +1015,10 @@ public sealed partial class GraphCompiler
 
 			if ( !funcResult.IsValid )
 			{
-				if ( !NodeIssues.TryGetValue( node, out var errors ) )
+				if ( !NodeErrors.TryGetValue( node, out var errors ) )
 				{
 					errors = new();
-					NodeIssues.Add( node, errors );
+					NodeErrors.Add( node, errors );
 				}
 
 				if ( funcResult.Errors is null || funcResult.Errors.Length == 0 )
@@ -1622,7 +1622,7 @@ public sealed partial class GraphCompiler
 		{
 			if ( !Graph.Nodes.OfType<SubgraphOutput>().Any() )
 			{
-				NodeIssues.Add( new DummyNode(), [$"There must be atleast one Subgraph Output node!"] );
+				NodeErrors.Add( new DummyNode(), [$"There must be atleast one Subgraph Output node!"] );
 			}
 		}
 
@@ -2215,7 +2215,7 @@ public sealed partial class GraphCompiler
 			{
 				if ( reservedPreview.ContainsKey( $"{subgraphOutput.Preview}" ) )
 				{
-					NodeIssues.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
+					NodeErrors.Add( subgraphOutput, [$"Node with id \"{reservedPreview[$"{subgraphOutput.Preview}"].Identifier}\" has already set \"{subgraphOutput.Preview}\" as its preview type"] );
 					continue;
 				}
 
@@ -2228,7 +2228,7 @@ public sealed partial class GraphCompiler
 
 				if ( errors.Any() )
 				{
-					NodeIssues.Add( new DummyNode(), errors );
+					NodeErrors.Add( new DummyNode(), errors );
 
 					return "";
 				}
