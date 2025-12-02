@@ -129,8 +129,8 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Error list.
 	/// </summary>
-	public IEnumerable<GraphIssue> Issues => NodeErrors
-		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault() } );
+	public IEnumerable<GraphIssue> Errors => NodeErrors
+		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault(), IsWarning = false } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
 	{
@@ -1627,7 +1627,7 @@ public sealed partial class GraphCompiler
 		}
 
 		// May have already evaluated and there's errors
-		if ( Issues.Any() )
+		if ( Errors.Any() )
 			return null;
 
 		/*
@@ -1651,7 +1651,7 @@ public sealed partial class GraphCompiler
 		var pixelOutput = GeneratePixelOutput();
 
 		// If we have any errors after evaluating, no point going further
-		if ( Issues.Any() )
+		if ( Errors.Any() )
 			return null;
 
 		string template = ShaderTemplate.Code;
@@ -2191,7 +2191,7 @@ public sealed partial class GraphCompiler
 
 			}
 
-			if ( Issues.Any() )
+			if ( Errors.Any() )
 				return null;
 
 			if ( !result.IsValid() )
@@ -2301,7 +2301,7 @@ i.vPositionWs = float3( v.vTexCoord, 0.0f );
 		{
 			result = Result( connection );
 
-			if ( !Issues.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
+			if ( !Errors.Any() && result.IsValid() && !string.IsNullOrWhiteSpace( result.Code ) )
 			{
 				var componentCount = GetComponentCount( typeof( Vector3 ) );
 
