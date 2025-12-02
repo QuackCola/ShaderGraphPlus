@@ -690,7 +690,9 @@ public class MainWindow : DockWindow
 		var code = compiler.Generate();
 
 		#region Errors & Warnings
+
 		iErroringNodeErrors.AddRange( compiler.Errors );
+		iWarningNodeWarnings.AddRange( compiler.Warnings );
 
 		if ( iWarningNodeWarnings.Any() ) //&& iErroringNodeErrors.Any() )
 		{
@@ -709,7 +711,7 @@ public class MainWindow : DockWindow
 
 				return null;
 			}
-			else // No Errors to add :) not great not terrible
+			else // No Errors to add :) not great not terrible...
 			{
 				_output.GraphIssues = iWarningNodeWarnings;
 

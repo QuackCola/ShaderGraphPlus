@@ -125,12 +125,19 @@ public sealed partial class GraphCompiler
 	private List<NodeInput> InputStack = new();
 
 	private readonly Dictionary<BaseNodePlus, List<string>> NodeErrors = new();
+	private readonly Dictionary<BaseNodePlus, List<string>> NodeWarnings = new();
 
 	/// <summary>
 	/// Error list.
 	/// </summary>
 	public IEnumerable<GraphIssue> Errors => NodeErrors
 		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault(), IsWarning = false } );
+
+	/// <summary>
+	/// Warning list.
+	/// </summary>
+	public IEnumerable<GraphIssue> Warnings => NodeWarnings
+		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault(), IsWarning = true } );
 
 	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
 	{
