@@ -32,7 +32,7 @@ public sealed class AllNode : ShaderNodePlus
 }
 
 /// <summary>
-/// Returns true if both inputs A or B are true.
+/// Returns true if both boolean inputs A and B are true.
 /// </summary>
 [Title( "And" ), Category( "Utility/Logic" ), Icon( "question_mark" )]
 public sealed class AndNode : ShaderNodePlus
@@ -166,7 +166,7 @@ public sealed class IsNanNode : ShaderNodePlus
 }
 
 /// <summary>
-/// Returns true if both inputs A and B are false.
+/// Returns true if both boolean inputs A and B are false.
 /// </summary>
 [Title( "Nand" ), Category( "Utility/Logic" ), Icon( "question_mark" )]
 public sealed class NandNode : ShaderNodePlus
@@ -207,7 +207,7 @@ public sealed class NandNode : ShaderNodePlus
 }
 
 /// <summary>
-/// Returns the opposite of the input.
+/// Returns the opposite of the boolean input.
 /// </summary>
 [Title( "Not" ), Category( "Utility/Logic" ), Icon( "question_mark" )]
 public sealed class NotNode : ShaderNodePlus
@@ -238,7 +238,7 @@ public sealed class NotNode : ShaderNodePlus
 }
 
 /// <summary>
-/// Returns true if inputs A or B are true. 
+/// Return true if either of the boolean inputs A and B are true.
 /// </summary>
 [Title( "Or" ), Category( "Utility/Logic" ), Icon( "question_mark" )]
 public sealed class OrNode : ShaderNodePlus
