@@ -231,7 +231,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 		}
 	}
 
-	public NodeResult GetResult( GraphCompiler compiler, string metadataKey, object metadataValue )
+	public NodeResult GetResult( GraphCompiler compiler )
 	{
 		foreach ( var input in ExpressionInputs )
 		{
@@ -294,9 +294,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 			string funcCall = compiler.CustomCodeRegister( Name, functionInputs, Identifier, null, outputResults, false );
 
-			metadata.Add( metadataKey, metadataValue );
-
-			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata );//, ResultType.Invalid );// 0 );
+			return new NodeResult( ResultType.Void, $"{funcCall}", true );
 		}
 		else if ( Type is CustomCodeNodeMode.Inline )
 		{
@@ -327,9 +325,7 @@ public class CustomFunctionNode : ShaderNodePlus, IErroringNode, IWarningNode, I
 
 			string funcCall = compiler.CustomCodeRegister( null, null, Identifier, inlineCodeSb, outputResults, true );
 
-			metadata.Add( metadataKey, metadataValue );
-
-			return new NodeResult( ResultType.Void, $"{funcCall}", true, metadata );//, ResultType.Invalid ); //0 );
+			return new NodeResult( ResultType.Void, $"{funcCall}", true );//, ResultType.Invalid ); //0 );
 		}
 
 		return NodeResult.Error( $"Failed to evaluate!" );

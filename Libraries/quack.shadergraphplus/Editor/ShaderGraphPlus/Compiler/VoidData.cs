@@ -16,6 +16,11 @@ internal struct TargetResultData : IValid
 			return false;
 		}
 	}
+
+	public override int GetHashCode()
+	{
+		return HashCode.Combine( UserAssignedName, CompilerAssignedName, ResultType );
+	}
 }
 
 internal struct VoidData : IValid
@@ -93,5 +98,16 @@ internal struct VoidData : IValid
 			return result.CompilerAssignedName;
 
 		throw new Exception( "Shits fucked..." );
+	}
+
+	public override int GetHashCode()
+	{
+		var hashCodeTargetResults = 0;
+		foreach ( var item in TargetResults )
+		{
+			hashCodeTargetResults += item.GetHashCode();
+		}
+
+		return HashCode.Combine( FunctionCall, hashCodeTargetResults );
 	}
 }

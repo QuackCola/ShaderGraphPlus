@@ -1,8 +1,8 @@
 using Editor;
 using Microsoft.CodeAnalysis;
+using Sandbox;
 using ShaderGraphPlus.Diagnostics;
 using ShaderGraphPlus.Nodes;
-using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -65,8 +65,7 @@ public sealed partial class GraphCompiler
 	public HashSet<string> VertexIncludes { get; private set; } = new();
 	public Dictionary<string, string> VertexInputs { get; private set; } = new();
 	public Dictionary<string, string> PixelInputs { get; private set; } = new();
-
-
+	public int VoidLocalCount { get; set; } = 0;
 	public Dictionary<string, string> SyncIDs = new();
 
 	public Asset _Asset { get; private set; }
@@ -91,8 +90,9 @@ public sealed partial class GraphCompiler
 		public Dictionary<string, string> Globals { get; private set; } = new();
 		public Dictionary<string, VoidData> VoidLocals { get; private set; } = new();
 		public List<VoidData> CustomCodeResults { get; private set; } = new();
+		internal List<int> CustomFunctionHashCodes { get; private set; } = new();
 
-		public int VoidLocalCount { get; set; } = 0;
+		//public int VoidLocalCount { get; set; } = 0;
 		public string RepresentativeTexture { get; set; }
 
 		public void SetAttributes( Dictionary<string, object> attributes )
@@ -358,7 +358,7 @@ public sealed partial class GraphCompiler
 
 				var userAssignedname = outputArg.Item.TargetProperty;
 				var hlslType = outputArg.Item.ResultType.GetHLSLDataType();
-				var id = ShaderResult.VoidLocalCount++;
+				var id = VoidLocalCount++;
 				var varName = $"ol_{id}";
 				TargetResultData data = new();
 
@@ -393,12 +393,11 @@ public sealed partial class GraphCompiler
 	{
 		var functionOutputsSb = new StringBuilder();
 		List<TargetResultData> targetResults = new();
-		//int count = 0;
 
 		foreach ( var output in outputResults.Index() )
 		{
 			var userAssignedname = output.Item.Key;
-			var id = ShaderResult.VoidLocalCount++; // name;
+			var id = VoidLocalCount++; // name;
 			var varName = $"ol_{id}";
 			TargetResultData data = new();
 
@@ -420,7 +419,6 @@ public sealed partial class GraphCompiler
 
 		// Assemble the function call
 		var funcCall = "";
-
 		if ( !isInlineCode )
 		{
 			funcCall = $"{functionName}( {functionInputs},{functionOutputsSb.ToString()} )";
@@ -430,6 +428,8 @@ public sealed partial class GraphCompiler
 			funcCall = $"{inlineCodeSb.ToString()}";
 		}
 
+		//SGPLog.Info( $"Generated FunctionCall \"{funcCall}\"", IsNotPreview );
+
 		var voidData = new VoidData()
 		{
 			TargetResults = targetResults,
@@ -437,7 +437,7 @@ public sealed partial class GraphCompiler
 			FunctionCall = funcCall,
 			AlreadyDefined = false,
 			InlineCode = isInlineCode,//false,
-			BoundNodeIdentifier = nodeID
+			BoundNodeIdentifier = SubgraphNode == null ? nodeID : SubgraphNode.Identifier,
 		};
 
 		//if ( !ShaderResult.VoidLocalsNew.Contains(  ) );
@@ -803,26 +803,11 @@ public sealed partial class GraphCompiler
 				return metaDataResult;
 			}
 		}
-		else if ( node is SubgraphInput subin )
-		{
-			//SGPLog.Error( $"Getting result of subgraph input! {subin.InputName} " );
-		}
-		//if ( node is SubgraphInput subInput )
-		//{
-		//	if ( subInput.InputData.InputType == SubgraphPortType.Texture2DObject || subInput.InputData.InputType == SubgraphPortType.TextureCubeObject )
-		//	{
-		//		var metaDataResult = subInput.GetResult( this );
-		//
-		//		if ( metaDataResult.IsValid )
-		//		{
-		//			return metaDataResult;
-		//		}
-		//	}
-		//}
 
 		if ( node is CustomFunctionNode customFunctionNode )
 		{
-			var funcResult = customFunctionNode.GetResult( this, nameof( MetadataType.VoidResultUserDefinedName ), input.Output );
+			var funcResult = customFunctionNode.GetResult( this );
+			funcResult.AddMetadataEntry( nameof( MetadataType.VoidResultUserDefinedName ), input.Output );
 
 			if ( !funcResult.IsValid )
 			{
@@ -846,7 +831,16 @@ public sealed partial class GraphCompiler
 				return default;
 			}
 
-			var voidData = ShaderResult.CustomCodeResults.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
+			VoidData voidData;
+			if ( SubgraphNode != null )
+			{
+				voidData = ShaderResult.CustomCodeResults.Where( x => x.BoundNodeIdentifier == SubgraphNode.Identifier ).FirstOrDefault();
+			}
+			else
+			{
+				voidData = ShaderResult.CustomCodeResults.Where( x => x.BoundNodeIdentifier == customFunctionNode.Identifier ).FirstOrDefault();
+			}
+
 			var userAssignedVariableName = input.Output;
 			var compilerAssignedVariableName = voidData.GetCompilerAssignedName( userAssignedVariableName );
 
@@ -858,36 +852,39 @@ public sealed partial class GraphCompiler
 
 				return default;
 			}
-
-			if ( voidData.IsValid )
+			else
 			{
 				var resultType = voidData.GetResultResultType( compilerAssignedVariableName );
-
 				var localResult = new NodeResult( resultType, $"{compilerAssignedVariableName}", false, funcResult.Metadata );
 
-				// return the localResult if we are getting a result from a node that we have already evaluated. 
-				foreach ( var inputResult in ShaderResult.InputResults )
+				if ( Subgraph != null )
 				{
-					if ( inputResult.Key.Identifier == input.Identifier )
+					if ( ShaderResult.CustomFunctionHashCodes.Contains( voidData.GetHashCode() ) )
 					{
 						InputStack.Remove( input );
 						return localResult;
 					}
 				}
+				else
+				{
+					// return the localResult if we are getting a result from a node that we have already evaluated. 
+					foreach ( var inputResult in ShaderResult.InputResults )
+					{
+						if ( inputResult.Key.Identifier == input.Identifier )
+						{
+							InputStack.Remove( input );
+							return localResult;
+						}
+					}
+				}
 
 				ShaderResult.InputResults.Add( input, localResult );
 				ShaderResult.Results.Add( (localResult, funcResult) );
+				ShaderResult.CustomFunctionHashCodes.Add( voidData.GetHashCode() );
 
 				InputStack.Remove( input );
 
 				return localResult;
-			}
-			else
-			{
-				SGPLog.Error( $"Fetched VoidData is not valid!", IsPreview );
-				NodeErrors[node] = new List<string> { $"Failed to get result!", };
-
-				return default;
 			}
 		}
 
@@ -2034,8 +2031,7 @@ public sealed partial class GraphCompiler
 
 					if ( voidData.IsValid )
 					{
-						if ( voidData.InlineCode )
-							sb.AppendLine();
+						sb.AppendLine();
 
 						// Init all the output results.
 						foreach ( var outResult in voidData.TargetResults )
@@ -2052,6 +2048,7 @@ public sealed partial class GraphCompiler
 							sb.AppendLine( IndentString( $"{voidData.FunctionCall}", indentLevel ) );
 						}
 
+						sb.AppendLine();
 					}
 				}
 
