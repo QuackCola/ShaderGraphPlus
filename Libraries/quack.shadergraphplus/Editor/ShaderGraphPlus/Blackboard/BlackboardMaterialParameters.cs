@@ -7,17 +7,17 @@ namespace ShaderGraphPlus;
 /// Bool value material parameter
 /// </summary>
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
-public sealed class BoolParameter : BlackboardMaterialParameter<bool>
+public sealed class BoolParameter : BlackboardMaterialParameter<bool,BoolParameterUI>
 {
 	public BoolParameter() : base()
 	{
-		UI = new ParameterUI() { ShowStepProperty = false, ShowTypeProperty = false };
+		UI = new BoolParameterUI();
 		Value = false;
 	}
 
 	public BoolParameter( string name, bool value, bool isAttribute ) : base( name, value, isAttribute )
 	{
-		UI = new ParameterUI() { ShowStepProperty = false, ShowTypeProperty = false };
+		UI = new BoolParameterUI();
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -28,7 +28,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI with { ShowTypeProperty = false, ShowStepProperty = false },
+			UI = UI
 		};
 	}
 }
@@ -37,7 +37,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool>
 /// Int value material parameter
 /// </summary>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
-public sealed class IntParameter : BlackboardMaterialParameter<int>
+public sealed class IntParameter : BlackboardMaterialParameter<int,IntParameterUI>
 {
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
@@ -47,14 +47,14 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 		Value = 1;
 		Min = 0;
 		Max = 1;
-		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
+		UI = new IntParameterUI();
 	}
 
 	public IntParameter( string name, int value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = 0;
 		Max = 1;
-		UI = new ParameterUI { Type = UIType.Default, ShowStepProperty = false };
+		UI = new IntParameterUI();
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -65,7 +65,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 			Name = Name,
 			Value = Value,
 			IsAttribute = IsAttribute,
-			UI = UI with { ShowStepProperty = false }
+			UI = UI
 		};
 	}
 }
@@ -74,7 +74,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int>
 /// Float value material parameter
 /// </summary>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
-public sealed class FloatParameter : BlackboardMaterialParameter<float>
+public sealed class FloatParameter : BlackboardMaterialParameter<float,FloatParameterUI>
 {
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
@@ -84,14 +84,14 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 		Value = 1.0f;
 		Min = 0.0f;
 		Max = 1.0f;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public FloatParameter( string name, float value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -111,7 +111,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float>
 /// Float2 value material parameter
 /// </summary>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
-public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
+public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2,FloatParameterUI>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
@@ -121,14 +121,14 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 		Value = Vector2.One;
 		Min = Vector2.Zero;
 		Max = Vector2.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public Float2Parameter( string name, Vector2 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -148,7 +148,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2>
 /// Float3 value material parameter
 /// </summary>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
-public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
+public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3,FloatParameterUI>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
@@ -158,14 +158,14 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 		Value = Vector3.One;
 		Min = Vector3.Zero;
 		Max = Vector3.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public Float3Parameter( string name, Vector3 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -185,7 +185,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3>
 /// Float4 value material parameter
 /// </summary>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
-public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
+public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4,FloatParameterUI>
 {
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
@@ -195,14 +195,14 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 		Value = Vector4.One;
 		Min = Vector4.Zero;
 		Max = Vector4.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public Float4Parameter( string name, Vector4 value, bool isAttribute ) : base( name, value, isAttribute )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
-		UI = new ParameterUI { Type = UIType.Default };
+		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
 	public override BaseNodePlus InitializeNode()
@@ -222,17 +222,17 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4>
 /// Color value material parameter
 /// </summary>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
-public sealed class ColorParameter : BlackboardMaterialParameter<Color>
+public sealed class ColorParameter : BlackboardMaterialParameter<Color,ColorParameterUI>
 {
 	public ColorParameter() : base()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color, ShowStepProperty = false };
+		UI = new ColorParameterUI();
 	}
 
 	public ColorParameter( string name, Color value, bool isAttribute ) : base( name, value, isAttribute )
 	{
-		UI = new ParameterUI { Type = UIType.Color, ShowStepProperty = false };
+		UI = new ColorParameterUI();
 	}
 
 	public override BaseNodePlus InitializeNode()

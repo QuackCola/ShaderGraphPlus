@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Editor.ShaderGraph;
 using NodeEditorPlus;
 
 namespace ShaderGraphPlus.Nodes;
@@ -899,7 +900,7 @@ public sealed class TextureCube : ShaderNodePlus, ITextureInputNode
 /// </summary>
 [Title( "Texture Cube Object" ), Category( "Textures" ), Icon( "image" )]
 [InternalNode]
-public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITextureInputNode
+public sealed class TextureCubeObjectNode : ShaderNodePlus, ITextureInputNode//, IParameterNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -987,8 +988,8 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 	[Hide, JsonIgnore]
 	public bool IsAttribute { get; set; }
 
-	[Hide, JsonIgnore]
-	ParameterUI IParameterNode.UI { get; set; }
+	//[Hide, JsonIgnore]
+	//ParameterUI IParameterNode.UI { get; set; }
 
 	/// <summary>
 	/// TextureCube object result.
@@ -1027,7 +1028,7 @@ public sealed class TextureCubeObjectNode : ShaderNodePlus, IParameterNode, ITex
 /// </summary>
 [Title( "Texture 2D Object" ), Category( "Textures" ), Icon( "image" )]
 [InternalNode]
-public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IParameterNode, IErroringNode
+public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITextureParameterNode, IErroringNode//, IParameterNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -1185,8 +1186,8 @@ public sealed class Texture2DObjectNode : ShaderNodePlus, ITextureInputNode, ITe
 	[Hide, JsonIgnore]
 	public bool IsAttribute { get; set; }
 
-	[Hide, JsonIgnore]
-	ParameterUI IParameterNode.UI { get; set; }
+	//[Hide, JsonIgnore]
+	//ParameterUI IParameterNode.UI { get; set; }
 
 	/// <summary>
 	/// Texture2D object result.

@@ -786,7 +786,7 @@ public sealed class TextureCoord : ShaderNodePlus
 /// How a texture is filtered and wrapped when sampled.
 /// </summary>
 [Title( "Sampler State" ), Category( "Textures" ), Icon( "colorize" )]
-public sealed class SamplerNode : ShaderNodePlus, IParameterNode
+public sealed class SamplerNode : ShaderNodePlus//, IParameterNode
 {
 	[Hide]
 	public override int Version => 1;
@@ -843,7 +843,7 @@ public sealed class SamplerNode : ShaderNodePlus, IParameterNode
 	public string Name { get; set; }
 
 	[Hide, JsonIgnore]
-	public ParameterUI UI { get; set; }
+	public FloatParameterUI UI { get; set; }
 
 	[Output( typeof( Sampler ) ), Hide]
 	public NodeResult.Func Sampler => ( GraphCompiler compiler ) =>

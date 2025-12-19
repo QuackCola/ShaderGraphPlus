@@ -8,19 +8,30 @@ namespace ShaderGraphPlus.Internal;
 
 file static class VanillaParameterUIExentions
 {
-	internal static ParameterUI ConvertVanillaUI( this VanillaGraph.ParameterUI parameterUI )
+	internal static FloatParameterUI ConvertVanillaUI( this VanillaGraph.ParameterUI parameterUI )
 	{
-		var newUi = new ParameterUI();
+		var newUi = new FloatParameterUI();
 
 		newUi.Type = parameterUI.Type switch
 		{
 			VanillaGraph.UIType.Default => UIType.Default,
 			VanillaGraph.UIType.Slider => UIType.Slider,
-			VanillaGraph.UIType.Color => UIType.Color,
+			VanillaGraph.UIType.Color => UIType.Default,
 			_ => throw new NotImplementedException(),
 		};
 
 		newUi.Step = parameterUI.Step;
+		newUi.Priority = parameterUI.Priority;
+		newUi.PrimaryGroup = new() { Name = parameterUI.PrimaryGroup.Name, Priority = parameterUI.PrimaryGroup.Priority };
+		newUi.SecondaryGroup = new() { Name = parameterUI.SecondaryGroup.Name, Priority = parameterUI.SecondaryGroup.Priority };
+
+		return newUi;
+	}
+
+	internal static ColorParameterUI ConvertToColorParameterUI( this VanillaGraph.ParameterUI parameterUI )
+	{
+		var newUi = new ColorParameterUI();
+
 		newUi.Priority = parameterUI.Priority;
 		newUi.PrimaryGroup = new() { Name = parameterUI.PrimaryGroup.Name, Priority = parameterUI.PrimaryGroup.Priority };
 		newUi.SecondaryGroup = new() { Name = parameterUI.SecondaryGroup.Name, Priority = parameterUI.SecondaryGroup.Priority };
@@ -214,28 +225,58 @@ internal class Float4NodeConvert : BaseNodeConvert
 		}
 		else
 		{
-			var newNode = new ColorParameterNode
+			var parameterType = oldFloat4Node.UI.Type;
+
+			if ( parameterType == VanillaGraph.UIType.Color )
 			{
-				BlackboardParameterIdentifier = Guid.NewGuid(),
-				Identifier = oldNode.Identifier,
-				Position = oldNode.Position,
-				Value = oldFloat4Node.Value,
-				Name = oldFloat4Node.Name,
-				IsAttribute = oldFloat4Node.IsAttribute,
-				UI = oldFloat4Node.UI.ConvertVanillaUI()
-			};
+				var newNode = new ColorParameterNode
+				{
+					BlackboardParameterIdentifier = Guid.NewGuid(),
+					Identifier = oldNode.Identifier,
+					Position = oldNode.Position,
+					Value = oldFloat4Node.Value,
+					Name = oldFloat4Node.Name,
+					IsAttribute = oldFloat4Node.IsAttribute,
+					UI = oldFloat4Node.UI.ConvertToColorParameterUI()
+				};
 
-			BaseBlackboardParameter blackboardParameter = new ColorParameter()
+				BaseBlackboardParameter blackboardParameter = new ColorParameter()
+				{
+					Identifier = newNode.BlackboardParameterIdentifier,
+					Name = newNode.Name,
+					Value = newNode.Value,
+					UI = newNode.UI,
+				};
+
+				converter.AddBlackboardParameter( blackboardParameter );
+
+				newNodes.Add( newNode );
+			}
+			else
 			{
-				Identifier = newNode.BlackboardParameterIdentifier,
-				Name = newNode.Name,
-				Value = newNode.Value,
-				UI = newNode.UI,
-			};
+				var newNode = new Float4ParameterNode
+				{
+					BlackboardParameterIdentifier = Guid.NewGuid(),
+					Identifier = oldNode.Identifier,
+					Position = oldNode.Position,
+					Value = oldFloat4Node.Value,
+					Name = oldFloat4Node.Name,
+					IsAttribute = oldFloat4Node.IsAttribute,
+					UI = oldFloat4Node.UI.ConvertVanillaUI()
+				};
 
-			converter.AddBlackboardParameter( blackboardParameter );
+				BaseBlackboardParameter blackboardParameter = new Float4Parameter()
+				{
+					Identifier = newNode.BlackboardParameterIdentifier,
+					Name = newNode.Name,
+					Value = newNode.Value,
+					UI = newNode.UI,
+				};
 
-			newNodes.Add( newNode );
+				converter.AddBlackboardParameter( blackboardParameter );
+
+				newNodes.Add( newNode );
+			}
 		}
 
 		return newNodes;

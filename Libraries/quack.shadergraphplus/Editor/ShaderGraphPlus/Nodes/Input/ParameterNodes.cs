@@ -21,7 +21,7 @@ internal interface IMetaDataNode
 /// </summary>
 [Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
 [InternalNode]
-public sealed class BoolParameterNode : ParameterNodeBase<bool>
+public sealed class BoolParameterNode : ParameterNodeBase<bool,BoolParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -39,7 +39,7 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool>
 
 	public BoolParameterNode() : base()
 	{
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
+		UI = new BoolParameterUI();
 	}
 
 	[Hide, JsonIgnore]
@@ -49,7 +49,6 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool>
 	[Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 }
@@ -59,7 +58,7 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool>
 ///</summary>
 [Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class IntParameterNode : ParameterNodeBase<int>
+public sealed class IntParameterNode : ParameterNodeBase<int,IntParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -85,14 +84,13 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 	{
 		Min = 0;
 		Max = 1;
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
+		UI = new IntParameterUI();
 	}
 
 	[Output( typeof( int ) ), Title( "Value" )]
 	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = false, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 }
@@ -102,7 +100,7 @@ public sealed class IntParameterNode : ParameterNodeBase<int>
 /// </summary>
 [Title( "Float" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class FloatParameterNode : ParameterNodeBase<float>
+public sealed class FloatParameterNode : ParameterNodeBase<float,FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -129,14 +127,13 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 	{
 		Min = 0.0f;
 		Max = 1.0f;
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		UI = new FloatParameterUI();
 	}
 
 	[Output( typeof( float ) ), Title( "Value" )]
 	[Hide, NodeValueEditor( nameof( Value ) ), Range( nameof( Min ), nameof( Max ), nameof( Step ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 }
@@ -146,7 +143,7 @@ public sealed class FloatParameterNode : ParameterNodeBase<float>
 /// </summary>
 [Title( "Float2" ), Category( "Parameters" ), Icon( "looks_two" )]
 [InternalNode]
-public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
+public sealed class Float2ParameterNode : ParameterNodeBase<Vector2,FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -171,7 +168,7 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		UI = new FloatParameterUI();
 	}
 
 	[JsonIgnore, Hide]
@@ -197,7 +194,6 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 	[Output( typeof( Vector2 ) ), Title( "XY" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -221,7 +217,7 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2>
 /// </summary>
 [Title( "Float3" ), Category( "Parameters" ), Icon( "looks_3" )]
 [InternalNode]
-public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
+public sealed class Float3ParameterNode : ParameterNodeBase<Vector3,FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -246,7 +242,7 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		UI = new FloatParameterUI();
 	}
 
 	[JsonIgnore, Hide]
@@ -281,7 +277,6 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 	[Output( typeof( Vector3 ) ), Title( "XYZ" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -312,7 +307,7 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3>
 /// </summary>
 [Title( "Float4" ), Category( "Parameters" ), Icon( "looks_4" )]
 [InternalNode]
-public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
+public sealed class Float4ParameterNode : ParameterNodeBase<Vector4,FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -333,7 +328,6 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 	[Output( typeof( Vector4 ) ), Title( "XYZW" ), Hide]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
 		return compiler.ResultParameter( Name, Value, Min, Max, Min != Max, IsAttribute, UI );
 	};
 
@@ -344,7 +338,7 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = true };
+		UI = new FloatParameterUI();
 	}
 
 	[JsonIgnore, Hide]
@@ -419,7 +413,7 @@ public sealed class Float4ParameterNode : ParameterNodeBase<Vector4>
 /// </summary>
 [Title( "Color" ), Category( "Parameters" ), Icon( "palette" )]
 [InternalNode]
-public sealed class ColorParameterNode : ParameterNodeBase<Color>
+public sealed class ColorParameterNode : ParameterNodeBase<Color, ColorParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -439,14 +433,13 @@ public sealed class ColorParameterNode : ParameterNodeBase<Color>
 	[Hide, NodeValueEditor( nameof( Value ) )]
 	public NodeResult.Func Result => ( GraphCompiler compiler ) =>
 	{
-		UI = UI with { ShowStepProperty = true, ShowTypeProperty = false };
 		return compiler.ResultParameter( Name, Value, default, default, false, IsAttribute, UI );
 	};
 
 	public ColorParameterNode()
 	{
 		Value = Color.White;
-		UI = new ParameterUI { Type = UIType.Color, ShowTypeProperty = false };
+		UI = new ColorParameterUI();
 	}
 
 	[JsonIgnore, Hide]

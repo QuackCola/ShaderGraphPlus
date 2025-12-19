@@ -150,7 +150,7 @@ public sealed class FloatConstantNode : ConstantNode<float>, IRangedConstantNode
 		{
 			Min = Min,
 			Max = Max,
-			UI = new() { Step = Step, ShowStepProperty = true }
+			UI = new() { Step = Step }
 		};
 	}
 
@@ -246,7 +246,7 @@ public sealed class Float2ConstantNode : ConstantNode<Vector2>, IRangedConstantN
 		{
 			Min = Min,
 			Max = Max,
-			UI = new() { Step = Step, ShowStepProperty = true }
+			UI = new() { Step = Step }
 		};
 	}
 
@@ -358,7 +358,7 @@ public sealed class Float3ConstantNode : ConstantNode<Vector3>, IRangedConstantN
 		{
 			Min = Min,
 			Max = Max,
-			UI = new() { Step = Step, ShowStepProperty = true }
+			UI = new() { Step = Step }
 		};
 	}
 
@@ -486,7 +486,7 @@ public sealed class Float4ConstantNode : ConstantNode<Vector4>, IRangedConstantN
 		{
 			Min = Min,
 			Max = Max,
-			UI = new() { Step = Step, ShowStepProperty = true }
+			UI = new() { Step = Step }
 		};
 	}
 

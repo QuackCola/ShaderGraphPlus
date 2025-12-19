@@ -1,7 +1,4 @@
-﻿
-using Editor.ShaderGraph;
-using Facepunch.ActionGraphs;
-using ShaderGraphPlus.Nodes;
+﻿using ShaderGraphPlus.Nodes;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Text.Json.Nodes;
@@ -118,7 +115,7 @@ public partial class ShaderGraphPlus
 		}
 		else
 		{
-			foreach ( var parameterNode in Nodes.OfType<IParameterNode>() )
+			foreach ( var parameterNode in Nodes.OfType<IParameterNodeBase>() )
 			{
 				if ( string.IsNullOrWhiteSpace( parameterNode.Name ) )
 					continue;

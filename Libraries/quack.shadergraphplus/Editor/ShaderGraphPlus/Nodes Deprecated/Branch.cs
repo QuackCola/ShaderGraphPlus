@@ -63,7 +63,7 @@ public sealed class Branch : ShaderNodePlus, IWarningNode
 	public bool Enabled { get; set; }
 
 	[InlineEditor( Label = false ), Group( "UI" )]
-	public ParameterUI UI { get; set; }
+	public FloatParameterUI UI { get; set; }
 
 	[Hide]
 	private string Op

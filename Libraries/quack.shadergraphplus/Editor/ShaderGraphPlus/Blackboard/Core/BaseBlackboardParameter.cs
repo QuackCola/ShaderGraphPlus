@@ -157,16 +157,16 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	}
 }
 
-public abstract class BlackboardMaterialParameter<T> : BlackboardGenericParameter<T>
+public abstract class BlackboardMaterialParameter<T,Y> : BlackboardGenericParameter<T> where Y :  IParameterUI
 {
 	[InlineEditor( Label = false ), Group( "UI" )]
-	public ParameterUI UI { get; set; }
+	public Y UI { get; set; }
 
 	public bool IsAttribute { get; set; }
 
 	public BlackboardMaterialParameter() : base()
 	{
-		UI = new ParameterUI();
+		//UI = new ParameterUI();
 		IsAttribute = false;
 	}
 

@@ -282,33 +282,6 @@ internal class BlackboardView : Widget
 
 	public void SetSelectedItem( BaseBlackboardParameter parameter )
 	{
-		switch ( parameter )
-		{
-			case BoolParameter boolParameter:
-				boolParameter.UI = boolParameter.UI with { ShowTypeProperty = false, ShowStepProperty = false };
-				break;
-			case IntParameter intParameter:
-				intParameter.UI = intParameter.UI with { ShowTypeProperty = true, ShowStepProperty = false };
-				break;
-			case FloatParameter floatParameter:
-				floatParameter.UI = floatParameter.UI with { ShowTypeProperty = true, ShowStepProperty = true };
-				break;
-			case Float2Parameter float2Parameter:
-				float2Parameter.UI = float2Parameter.UI with { ShowTypeProperty = true, ShowStepProperty = true };
-				parameter = float2Parameter;
-				break;
-			case Float3Parameter float3Parameter:
-				float3Parameter.UI = float3Parameter.UI with { ShowTypeProperty = true, ShowStepProperty = true };
-				parameter = float3Parameter;
-				break;
-			case Float4Parameter float4Parameter:
-				float4Parameter.UI = float4Parameter.UI with { ShowTypeProperty = true, ShowStepProperty = true };
-				break;
-			case ColorParameter colorParameter:
-				colorParameter.UI = colorParameter.UI with { ShowTypeProperty = false, ShowStepProperty = false };
-				break;
-		}
-
 		_selectedParameter = parameter;
 
 		_parameterListView.SelectItem( parameter );

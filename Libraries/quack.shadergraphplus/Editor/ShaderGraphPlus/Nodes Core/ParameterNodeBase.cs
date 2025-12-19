@@ -1,13 +1,18 @@
 ﻿
 namespace ShaderGraphPlus;
 
-public interface IParameterNode
+public interface IParameterNodeBase
+{
+	string Name { get; set; }
+}
+
+public interface IParameterNode<Y> where Y : IParameterUI
 {
 	string Name { get; set; }
 
 	bool IsAttribute { get; set; }
 
-	ParameterUI UI { get; set; }
+	Y UI { get; set; }
 }
 
 public interface ITextureParameterNode
@@ -21,7 +26,7 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBlackboardSyncableNode, IErroringNode//, IReplaceNode
+public abstract class ParameterNodeBase<T, Y> : ShaderNodePlus, IParameterNode<Y>, IParameterNodeBase, IBlackboardSyncableNode, IErroringNode where Y :  IParameterUI
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);
@@ -52,7 +57,7 @@ public abstract class ParameterNodeBase<T> : ShaderNodePlus, IParameterNode, IBl
 	public bool IsAttribute { get; set; }
 
 	[InlineEditor( Label = false ), Group( "UI" )]
-	public ParameterUI UI { get; set; }
+	public Y UI { get; set; }
 
 	protected NodeResult Component( string component, float value, GraphCompiler compiler )
 	{

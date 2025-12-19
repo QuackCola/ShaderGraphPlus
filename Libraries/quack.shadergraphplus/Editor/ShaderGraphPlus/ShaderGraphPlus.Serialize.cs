@@ -134,11 +134,6 @@ partial class ShaderGraphPlus
 						parameter.Name = $"parameter{parameters.Count}";
 					}
 
-					if ( parameter is ColorParameter bp )
-					{
-						bp.UI = bp.UI with { ShowTypeProperty = false };
-					}
-
 					parameters.Add( parameter.Name, parameter );
 
 					AddParameter( parameter );
