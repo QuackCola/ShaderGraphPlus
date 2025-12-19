@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "shaders/vanilla/matrix/matrixrainingcode.sgrph",
   "Model": null,
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": true,
@@ -32,28 +33,29 @@
       "Position": "5880,-432",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "84",
+        "Identifier": "89",
         "Output": "Result",
         "Subgraph": null
       },
       "Emission": {
-        "Identifier": "84",
+        "Identifier": "89",
         "Output": "Result",
         "Subgraph": null
       },
       "Opacity": {
-        "Identifier": "100",
+        "Identifier": "105",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "395,226",
-      "Color": "Red",
+      "Color": "0.83922,0,0,1",
       "Title": "Rain speed control",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 2,
       "Identifier": "1",
       "Position": "-144,-480",
@@ -67,11 +69,11 @@
       "HandleOffsets": {}
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
-      "Max": 64,
-      "PortOrder": 0,
+      "Max": 16,
+      "BlackboardParameterIdentifier": "5eb0fb9e-19f3-4ef7-b9d0-2d58948bbf67",
       "Value": 8,
       "Name": "Rain Speed",
       "IsAttribute": false,
@@ -137,17 +139,17 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "111",
+        "Identifier": "116",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
+      "BlackboardParameterIdentifier": "6432564c-a493-4f5a-b5e0-99238af969ed",
       "Value": 0.015625,
       "Name": "Step In Characters",
       "IsAttribute": false,
@@ -170,11 +172,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,162",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Step in characters",
       "Description": "0.015625",
+      "DescriptionFontSize": 11,
       "Layer": 1,
       "Identifier": "8",
       "Position": "588,-576",
@@ -182,11 +185,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "299,191",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "CeiledTime",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 2,
       "Identifier": "9",
       "Position": "924,-660",
@@ -200,7 +204,7 @@
       "Position": "540,-768",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "96",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
@@ -225,11 +229,11 @@
       }
     },
     {
-      "_class": "Float",
-      "__version": 1,
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
       "Max": 1,
-      "PortOrder": 0,
+      "BlackboardParameterIdentifier": "170cc2f7-6d95-4bfd-9dfc-79605e71d1c0",
       "Value": 0.2,
       "Name": "Double Speed Value",
       "IsAttribute": false,
@@ -252,11 +256,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "315,226",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Double Speed",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 3,
       "Identifier": "13",
       "Position": "516,-372",
@@ -270,18 +275,19 @@
       "Position": "468,-240",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "96",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "299,207",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "CeiledTimeFaster",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 2,
       "Identifier": "15",
       "Position": "924,-444",
@@ -326,7 +332,7 @@
       "Position": "1056,-372",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "110",
+        "Identifier": "115",
         "Output": "Result",
         "Subgraph": null
       }
@@ -339,7 +345,7 @@
       "Position": "1056,-132",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "109",
+        "Identifier": "114",
         "Output": "Result",
         "Subgraph": null
       }
@@ -365,11 +371,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "299,207",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Double Time*Step",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 2,
       "Identifier": "21",
       "Position": "924,-204",
@@ -382,7 +389,7 @@
       "Position": "1476,-564",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "93",
+        "Identifier": "98",
         "Output": "Result",
         "Subgraph": null
       }
@@ -555,18 +562,19 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "112",
+        "Identifier": "117",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "304,191",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Time*Step",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 4,
       "Identifier": "34",
       "Position": "996,-900",
@@ -595,11 +603,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,234",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "UV Pan",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
       "Identifier": "36",
       "Position": "2064,-708",
@@ -607,11 +616,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,234",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Ceiled UVs Pan",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
       "Identifier": "37",
       "Position": "2064,-468",
@@ -640,11 +650,12 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,234",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Ceiled UVs Pan Fast",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
       "Identifier": "39",
       "Position": "2064,-228",
@@ -707,37 +718,26 @@
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,234",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "UV Pan Fast",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 4,
       "Identifier": "43",
       "Position": "2064,12",
       "HandleOffsets": {}
     },
     {
-      "_class": "TextureSampler",
-      "__version": 1,
-      "SamplerState": {
-        "__version": 2,
-        "Name": "",
-        "IsAttribute": false,
-        "Filter": "Anisotropic",
-        "AddressModeU": "Wrap",
-        "AddressModeV": "Wrap",
-        "AddressModeW": "Wrap",
-        "MipLodBias": 0,
-        "MaxAnisotropy": 8,
-        "BorderColor": "0,0,0,0"
-      },
-      "Image": "textures/matrixrain/1k/moving_textures.png",
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "8bd26edd-f3e0-474e-babd-0a7c80098743",
       "UI": {
         "Name": "MovingTextures",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -756,21 +756,11 @@
         }
       },
       "Identifier": "44",
-      "Position": "2496,-816",
-      "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "35",
-        "Output": "XY",
-        "Subgraph": null
-      },
-      "TextureObject": {
-        "Identifier": "115",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "Position": "2304,-816",
+      "HandleOffsets": {}
     },
     {
-      "_class": "TextureSampler",
+      "_class": "SampleTexture2DNode",
       "__version": 1,
       "SamplerState": {
         "__version": 2,
@@ -784,12 +774,11 @@
         "MaxAnisotropy": 8,
         "BorderColor": "0,0,0,0"
       },
-      "Image": "textures/matrixrain/1k/moving_textures.png",
       "UI": {
         "Name": "MovingTextures",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -803,45 +792,33 @@
           "Priority": 0
         },
         "SecondaryGroup": {
-          "Name": null,
+          "Name": "",
           "Priority": 0
         }
       },
       "Identifier": "45",
-      "Position": "2496,-324",
+      "Position": "2496,-816",
       "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "40",
-        "Output": "XY",
+      "Texture2DInput": {
+        "Identifier": "44",
+        "Output": "Result",
         "Subgraph": null
       },
-      "TextureObject": {
-        "Identifier": "117",
-        "Output": "Result",
+      "CoordsInput": {
+        "Identifier": "35",
+        "Output": "XY",
         "Subgraph": null
       }
     },
     {
-      "_class": "TextureSampler",
-      "__version": 1,
-      "SamplerState": {
-        "__version": 2,
-        "Name": "",
-        "IsAttribute": false,
-        "Filter": "Anisotropic",
-        "AddressModeU": "Wrap",
-        "AddressModeV": "Wrap",
-        "AddressModeW": "Wrap",
-        "MipLodBias": 0,
-        "MaxAnisotropy": 8,
-        "BorderColor": "0,0,0,0"
-      },
-      "Image": "textures/matrixrain/1k/moving_textures.png",
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "8bd26edd-f3e0-474e-babd-0a7c80098743",
       "UI": {
         "Name": "MovingTextures",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -855,26 +832,16 @@
           "Priority": 0
         },
         "SecondaryGroup": {
-          "Name": null,
+          "Name": "",
           "Priority": 0
         }
       },
       "Identifier": "46",
-      "Position": "2496,-564",
-      "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "38",
-        "Output": "XY",
-        "Subgraph": null
-      },
-      "TextureObject": {
-        "Identifier": "118",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "Position": "2304,-324",
+      "HandleOffsets": {}
     },
     {
-      "_class": "TextureSampler",
+      "_class": "SampleTexture2DNode",
       "__version": 1,
       "SamplerState": {
         "__version": 2,
@@ -888,12 +855,11 @@
         "MaxAnisotropy": 8,
         "BorderColor": "0,0,0,0"
       },
-      "Image": "textures/matrixrain/1k/moving_textures.png",
       "UI": {
         "Name": "MovingTextures",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -907,26 +873,56 @@
           "Priority": 0
         },
         "SecondaryGroup": {
-          "Name": null,
+          "Name": "",
           "Priority": 0
         }
       },
       "Identifier": "47",
-      "Position": "2496,-84",
+      "Position": "2496,-324",
       "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "42",
-        "Output": "XY",
+      "Texture2DInput": {
+        "Identifier": "46",
+        "Output": "Result",
         "Subgraph": null
       },
-      "TextureObject": {
-        "Identifier": "116",
-        "Output": "Result",
+      "CoordsInput": {
+        "Identifier": "40",
+        "Output": "XY",
         "Subgraph": null
       }
     },
     {
-      "_class": "TextureSampler",
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "8bd26edd-f3e0-474e-babd-0a7c80098743",
+      "UI": {
+        "Name": "MovingTextures",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Textures",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "Identifier": "48",
+      "Position": "2304,-564",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
       "__version": 1,
       "SamplerState": {
         "__version": 2,
@@ -940,12 +936,132 @@
         "MaxAnisotropy": 8,
         "BorderColor": "0,0,0,0"
       },
-      "Image": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+      "UI": {
+        "Name": "MovingTextures",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Textures",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "Identifier": "49",
+      "Position": "2496,-564",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "48",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "38",
+        "Output": "XY",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "8bd26edd-f3e0-474e-babd-0a7c80098743",
+      "UI": {
+        "Name": "MovingTextures",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Textures",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "Identifier": "50",
+      "Position": "2304,-84",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Anisotropic",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": "MovingTextures",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Textures",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "Identifier": "51",
+      "Position": "2496,-84",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "50",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "42",
+        "Output": "XY",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "a3489fcb-08f0-4162-9fb0-bb07db7239d0",
       "UI": {
         "Name": "Not Moving Mask",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -963,92 +1079,40 @@
           "Priority": 0
         }
       },
-      "Identifier": "48",
-      "Position": "2496,240",
-      "HandleOffsets": {},
-      "Coords": {
-        "Identifier": "91",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "CommentNode",
-      "_version": 1,
-      "Size": "224,288",
-      "Color": "Green",
-      "Title": "Not Moving Mask",
-      "Description": "",
-      "Layer": 5,
-      "Identifier": "49",
-      "Position": "2460,156",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "Multiply",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "50",
-      "Position": "3420,-540",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "60",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "56",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "CommentNode",
-      "__version": 1,
-      "Size": "480,191",
-      "Color": "Green",
-      "Title": "One-Minus",
-      "Description": "Invert Values",
-      "Layer": 1,
-      "Identifier": "51",
-      "Position": "2820,-516",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "Multiply",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
       "Identifier": "52",
-      "Position": "3420,-432",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "56",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "62",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "Position": "2304,240",
+      "HandleOffsets": {}
     },
     {
-      "_class": "Float",
+      "_class": "SampleTexture2DNode",
       "__version": 1,
-      "Min": 0,
-      "Max": 1,
-      "PortOrder": 0,
-      "Value": 1,
-      "Name": "",
-      "IsAttribute": false,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Anisotropic",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
       "UI": {
-        "Type": "Default",
-        "Step": 0,
+        "Name": "Not Moving Mask",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
         "Priority": 0,
         "PrimaryGroup": {
-          "Name": null,
+          "Name": "Textures",
           "Priority": 0
         },
         "SecondaryGroup": {
@@ -1057,6 +1121,91 @@
         }
       },
       "Identifier": "53",
+      "Position": "2496,240",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "52",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "96",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "224,288",
+      "Color": "0.2,0.71373,0.47451,1",
+      "Title": "Not Moving Mask",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 5,
+      "Identifier": "54",
+      "Position": "2460,156",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "55",
+      "Position": "3420,-540",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "65",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "61",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "480,191",
+      "Color": "0.2,0.71373,0.47451,1",
+      "Title": "One-Minus",
+      "Description": "Invert Values",
+      "DescriptionFontSize": 11,
+      "Layer": 1,
+      "Identifier": "56",
+      "Position": "2820,-516",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Multiply",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "57",
+      "Position": "3420,-432",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "61",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "67",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "FloatConstantNode",
+      "__version": 1,
+      "Min": 0,
+      "Max": 1,
+      "Step": 0,
+      "Value": 1,
+      "Identifier": "58",
       "Position": "2868,-432",
       "HandleOffsets": {}
     },
@@ -1064,11 +1213,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "54",
+      "Identifier": "59",
       "Position": "2832,-300",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "46",
+        "Identifier": "49",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1078,16 +1227,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "55",
+      "Identifier": "60",
       "Position": "3108,-444",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "53",
+        "Identifier": "58",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "64",
+        "Identifier": "69",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1096,24 +1245,25 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Output",
-      "Identifier": "56",
+      "Identifier": "61",
       "Position": "3252,-396",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "55",
+        "Identifier": "60",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "139,288",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Slow Lanes",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "57",
+      "Identifier": "62",
       "Position": "3396,-612",
       "HandleOffsets": {}
     },
@@ -1122,30 +1272,11 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "58",
+      "Identifier": "63",
       "Position": "3420,-132",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "113",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "45",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "Multiply",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "59",
-      "Position": "3420,-12",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "113",
+        "Identifier": "118",
         "Output": "Result",
         "Subgraph": null
       },
@@ -1156,174 +1287,69 @@
       }
     },
     {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "60",
-      "Position": "3264,-528",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "61",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "61",
-      "Position": "2796,-528",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "44",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "62",
-      "Position": "3276,-300",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "54",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "63",
-      "Position": "2784,-336",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "65",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "64",
-      "Position": "3024,-336",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "63",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "65",
-      "Position": "2784,288",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "48",
-        "Output": "R",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "CommentNode",
-      "__version": 1,
-      "Size": "139,304",
-      "Color": "Green",
-      "Title": "Fast Lanes",
-      "Description": "",
-      "Layer": 5,
-      "Identifier": "66",
-      "Position": "3396,-192",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "Add",
+      "_class": "Multiply",
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "67",
-      "Position": "3792,-564",
+      "Identifier": "64",
+      "Position": "3420,-12",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "50",
+        "Identifier": "118",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
+        "Identifier": "51",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "",
+      "Identifier": "65",
+      "Position": "3264,-528",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "66",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "",
+      "Identifier": "66",
+      "Position": "2796,-528",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "45",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "",
+      "Identifier": "67",
+      "Position": "3276,-300",
+      "HandleOffsets": {},
+      "Input": {
         "Identifier": "59",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "CommentNode",
+      "_class": "ReroutePlus",
       "__version": 1,
-      "Size": "256,160",
-      "Color": "Green",
-      "Title": "Fast and slow pan combined",
-      "Description": "",
-      "Layer": 4,
+      "Comment": "R Channel (Not Moving Mask)",
       "Identifier": "68",
-      "Position": "3696,-612",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "CommentNode",
-      "__version": 1,
-      "Size": "256,176",
-      "Color": "Green",
-      "Title": "Fast and slow pan combined",
-      "Description": "",
-      "Layer": 5,
-      "Identifier": "69",
-      "Position": "3696,-192",
-      "HandleOffsets": {}
-    },
-    {
-      "_class": "Add",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "70",
-      "Position": "3792,-132",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "58",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "52",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "SplitVector",
-      "__version": 1,
-      "Identifier": "71",
-      "Position": "3984,-588",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "67",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "SplitVector",
-      "__version": 1,
-      "Identifier": "72",
-      "Position": "3984,-180",
+      "Position": "2784,-336",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "70",
@@ -1332,20 +1358,147 @@
       }
     },
     {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "",
+      "Identifier": "69",
+      "Position": "3024,-336",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "68",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "R Channel (Not Moving Mask)",
+      "Identifier": "70",
+      "Position": "2784,288",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "53",
+        "Output": "R",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "139,304",
+      "Color": "0.2,0.71373,0.47451,1",
+      "Title": "Fast Lanes",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 5,
+      "Identifier": "71",
+      "Position": "3396,-192",
+      "HandleOffsets": {}
+    },
+    {
       "_class": "Add",
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
+      "Identifier": "72",
+      "Position": "3792,-564",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "55",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "64",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "256,160",
+      "Color": "0.2,0.71373,0.47451,1",
+      "Title": "Fast and slow pan combined",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 4,
       "Identifier": "73",
+      "Position": "3696,-612",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "CommentNode",
+      "__version": 2,
+      "Size": "256,176",
+      "Color": "0.2,0.71373,0.47451,1",
+      "Title": "Fast and slow pan combined",
+      "Description": "",
+      "DescriptionFontSize": 11,
+      "Layer": 5,
+      "Identifier": "74",
+      "Position": "3696,-192",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "75",
+      "Position": "3792,-132",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "63",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "57",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "76",
+      "Position": "3984,-588",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "72",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "SplitVector",
+      "__version": 1,
+      "Identifier": "77",
+      "Position": "3984,-180",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "75",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "78",
       "Position": "4548,-444",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "71",
+        "Identifier": "76",
         "Output": "X",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "72",
+        "Identifier": "77",
         "Output": "Y",
         "Subgraph": null
       }
@@ -1355,29 +1508,30 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 0.7,
-      "Identifier": "74",
+      "Identifier": "79",
       "Position": "4752,-444",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "73",
+        "Identifier": "78",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "77",
+        "Identifier": "82",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "139,191",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Rain Opacity",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "75",
+      "Identifier": "80",
       "Position": "4716,-516",
       "HandleOffsets": {}
     },
@@ -1385,11 +1539,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "G Channel ( Letters )",
-      "Identifier": "76",
+      "Identifier": "81",
       "Position": "4320,336",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "48",
+        "Identifier": "53",
         "Output": "G",
         "Subgraph": null
       }
@@ -1399,29 +1553,30 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "77",
+      "Identifier": "82",
       "Position": "4512,-36",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "76",
+        "Identifier": "81",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "89",
+        "Identifier": "94",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "139,191",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Rain Emission",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "78",
+      "Identifier": "83",
       "Position": "4716,-288",
       "HandleOffsets": {}
     },
@@ -1430,16 +1585,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "79",
+      "Identifier": "84",
       "Position": "4752,-228",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "72",
+        "Identifier": "77",
         "Output": "Y",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "77",
+        "Identifier": "82",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1449,30 +1604,28 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "80",
+      "Identifier": "85",
       "Position": "5316,-432",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "87",
+        "Identifier": "92",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "81",
+        "Identifier": "86",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "Float4",
-      "__version": 1,
-      "PortOrder": 0,
+      "_class": "ColorParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "5653dc23-0998-401c-affa-f122df063ffe",
       "Value": "0.39608,1,0.21569,1",
       "Name": "Letters Color",
       "IsAttribute": false,
       "UI": {
-        "Type": "Color",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": "Parameters",
@@ -1483,20 +1636,18 @@
           "Priority": 0
         }
       },
-      "Identifier": "81",
+      "Identifier": "86",
       "Position": "5004,-516",
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
-      "__version": 1,
-      "PortOrder": 0,
+      "_class": "ColorParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "d4be9135-da24-4f46-a920-d9e6832140ea",
       "Value": "0.832,1,0.788,1",
       "Name": "Letters Color Emission",
       "IsAttribute": false,
       "UI": {
-        "Type": "Color",
-        "Step": 0,
         "Priority": 1,
         "PrimaryGroup": {
           "Name": "Parameters",
@@ -1507,7 +1658,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "82",
+      "Identifier": "87",
       "Position": "5004,-12",
       "HandleOffsets": {}
     },
@@ -1516,11 +1667,30 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "83",
+      "Identifier": "88",
       "Position": "5328,-108",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "82",
+        "Identifier": "87",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "B": {
+        "Identifier": "93",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Add",
+      "__version": 1,
+      "DefaultA": 0,
+      "DefaultB": 1,
+      "Identifier": "89",
+      "Position": "5460,-432",
+      "HandleOffsets": {},
+      "A": {
+        "Identifier": "85",
         "Output": "Result",
         "Subgraph": null
       },
@@ -1531,33 +1701,15 @@
       }
     },
     {
-      "_class": "Add",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "84",
-      "Position": "5460,-432",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "80",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "83",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,754",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Rain Color",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "85",
+      "Identifier": "90",
       "Position": "4980,-576",
       "HandleOffsets": {}
     },
@@ -1565,34 +1717,8 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "86",
+      "Identifier": "91",
       "Position": "4956,-300",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "74",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "87",
-      "Position": "5232,-300",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "86",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "88",
-      "Position": "4944,-48",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "79",
@@ -1601,11 +1727,37 @@
       }
     },
     {
-      "_class": "Float",
+      "_class": "ReroutePlus",
       "__version": 1,
+      "Comment": "",
+      "Identifier": "92",
+      "Position": "5232,-300",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "91",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": "",
+      "Identifier": "93",
+      "Position": "4944,-48",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "84",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "FloatParameterNode",
+      "__version": 2,
       "Min": 0,
-      "Max": 8,
-      "PortOrder": 0,
+      "Max": 1,
+      "BlackboardParameterIdentifier": "b0201f2d-b8ca-44a4-a972-318936e59999",
       "Value": 1,
       "Name": "Rain Brightness",
       "IsAttribute": false,
@@ -1622,19 +1774,20 @@
           "Priority": 0
         }
       },
-      "Identifier": "89",
+      "Identifier": "94",
       "Position": "4284,-12",
       "HandleOffsets": {}
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "139,223",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Rain",
       "Description": "Finished matrix rain effect",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "90",
+      "Identifier": "95",
       "Position": "5424,-528",
       "HandleOffsets": {}
     },
@@ -1642,11 +1795,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "91",
+      "Identifier": "96",
       "Position": "2028,288",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "94",
+        "Identifier": "99",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1655,11 +1808,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "92",
+      "Identifier": "97",
       "Position": "396,-948",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "95",
+        "Identifier": "100",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1668,11 +1821,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "93",
+      "Identifier": "98",
       "Position": "1344,-924",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "92",
+        "Identifier": "97",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1681,11 +1834,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "94",
+      "Identifier": "99",
       "Position": "396,276",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "95",
+        "Identifier": "100",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1694,11 +1847,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "95",
+      "Identifier": "100",
       "Position": "396,-816",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "107",
+        "Identifier": "112",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1707,7 +1860,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "96",
+      "Identifier": "101",
       "Position": "300,-372",
       "HandleOffsets": {},
       "Input": {
@@ -1720,36 +1873,38 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "G Channel ( Letters )",
-      "Identifier": "97",
+      "Identifier": "102",
       "Position": "5340,336",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "76",
+        "Identifier": "81",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "363,207",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Brightness Control",
       "Description": "How bright the rain should be",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "98",
+      "Identifier": "103",
       "Position": "4260,-96",
       "HandleOffsets": {}
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "224,266",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "",
       "Description": "Whether we should use transparency or not",
+      "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "99",
+      "Identifier": "104",
       "Position": "5460,180",
       "HandleOffsets": {}
     },
@@ -1757,11 +1912,9 @@
       "_class": "SwitchNode",
       "__version": 1,
       "Name": "Enable Transparency",
-      "IsAttribute": true,
+      "IsAttribute": false,
       "Enabled": false,
       "UI": {
-        "Type": "Default",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": null,
@@ -1772,16 +1925,16 @@
           "Priority": 0
         }
       },
-      "Identifier": "100",
+      "Identifier": "105",
       "Position": "5472,276",
       "HandleOffsets": {},
       "True": {
-        "Identifier": "97",
+        "Identifier": "102",
         "Output": "Result",
         "Subgraph": null
       },
       "False": {
-        "Identifier": "102",
+        "Identifier": "107",
         "Output": "R",
         "Subgraph": null
       }
@@ -1790,7 +1943,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "101",
+      "Identifier": "106",
       "Position": "876,-468",
       "HandleOffsets": {},
       "Input": {
@@ -1800,45 +1953,30 @@
       }
     },
     {
-      "_class": "Float4",
+      "_class": "ColorConstantNode",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "1,1,1,1",
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": "",
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
-      "Identifier": "102",
+      "Identifier": "107",
       "Position": "5244,384",
       "HandleOffsets": {}
     },
     {
       "_class": "ScreenCoordinate",
       "__version": 1,
-      "Identifier": "103",
+      "Identifier": "108",
       "Position": "-480,-876",
       "HandleOffsets": {}
     },
     {
       "_class": "CommentNode",
-      "__version": 1,
+      "__version": 2,
       "Size": "768,416",
-      "Color": "Green",
+      "Color": "0.2,0.71373,0.47451,1",
       "Title": "Coords",
       "Description": "",
+      "DescriptionFontSize": 11,
       "Layer": 4,
-      "Identifier": "104",
+      "Identifier": "109",
       "Position": "-516,-1008",
       "HandleOffsets": {}
     },
@@ -1847,7 +1985,7 @@
       "__version": 1,
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "105",
+      "Identifier": "110",
       "Position": "-480,-816",
       "HandleOffsets": {}
     },
@@ -1855,11 +1993,9 @@
       "_class": "SwitchNode",
       "__version": 1,
       "Name": "Use Screen Coordinates",
-      "IsAttribute": true,
+      "IsAttribute": false,
       "Enabled": false,
       "UI": {
-        "Type": "Default",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": null,
@@ -1870,16 +2006,16 @@
           "Priority": 0
         }
       },
-      "Identifier": "106",
+      "Identifier": "111",
       "Position": "-240,-864",
       "HandleOffsets": {},
       "True": {
-        "Identifier": "103",
+        "Identifier": "108",
         "Output": "Result",
         "Subgraph": null
       },
       "False": {
-        "Identifier": "105",
+        "Identifier": "110",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1890,26 +2026,26 @@
       "DefaultTile": "1,1",
       "DefaultOffset": "0,0",
       "WrapTo01": false,
-      "Identifier": "107",
+      "Identifier": "112",
       "Position": "48,-864",
       "HandleOffsets": {},
       "UV": {
-        "Identifier": "106",
+        "Identifier": "111",
         "Output": "Result",
         "Subgraph": null
       },
       "Tile": {
-        "Identifier": "108",
+        "Identifier": "113",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "Float2",
-      "__version": 1,
+      "_class": "Float2ParameterNode",
+      "__version": 2,
       "Min": "0,0",
       "Max": "1,1",
-      "PortOrder": 0,
+      "BlackboardParameterIdentifier": "89cdf335-6512-46fb-813e-87331b8e9e94",
       "Value": "1,1",
       "Name": "Tile X,Y Amount",
       "IsAttribute": false,
@@ -1926,7 +2062,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "108",
+      "Identifier": "113",
       "Position": "-240,-720",
       "HandleOffsets": {}
     },
@@ -1934,11 +2070,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "109",
+      "Identifier": "114",
       "Position": "900,-144",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "106",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1947,11 +2083,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "110",
+      "Identifier": "115",
       "Position": "960,-372",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "106",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1960,11 +2096,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "111",
+      "Identifier": "116",
       "Position": "948,-516",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "106",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1973,11 +2109,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "112",
+      "Identifier": "117",
       "Position": "876,-756",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "106",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1986,24 +2122,98 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "113",
+      "Identifier": "118",
       "Position": "3276,288",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "65",
+        "Identifier": "70",
         "Output": "Result",
         "Subgraph": null
       }
     },
     {
-      "_class": "Texture2DObjectNode",
+      "_class": "ReroutePlus",
       "__version": 1,
-      "Image": "textures/matrixrain/1k/moving_textures.png",
-      "UI": {
+      "Comment": null,
+      "Identifier": "119",
+      "Position": "2364,-864",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": null,
+      "Identifier": "120",
+      "Position": "2364,0",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "121",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": null,
+      "Identifier": "121",
+      "Position": "2364,-240",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "122",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "ReroutePlus",
+      "__version": 1,
+      "Comment": null,
+      "Identifier": "122",
+      "Position": "2364,-480",
+      "HandleOffsets": {},
+      "Input": {
+        "Identifier": "119",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
         "Name": "MovingTextures",
-        "PreviewImage": null,
         "IsAttribute": false,
-        "Default": "1,1,1,1",
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/moving_textures.png",
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "BC7",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Textures",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "Identifier": "8bd26edd-f3e0-474e-babd-0a7c80098743",
+      "Name": "MovingTextures"
+    },
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "Not Moving Mask",
+        "IsAttribute": false,
+        "DefaultColor": "0,0,0,0",
+        "DefaultTexture": "textures/matrixrain/1k/letters_lanes_pixel_variations.png",
         "Extension": "Color",
         "CustomExtension": null,
         "ShowExtension": true,
@@ -2021,63 +2231,154 @@
           "Priority": 0
         }
       },
-      "PortOrder": 0,
-      "Name": null,
-      "Identifier": "114",
-      "Position": "2100,-900",
-      "HandleOffsets": {}
+      "Identifier": "a3489fcb-08f0-4162-9fb0-bb07db7239d0",
+      "Name": "Not Moving Mask"
     },
     {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": null,
-      "Identifier": "115",
-      "Position": "2364,-864",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "114",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "_class": "FloatParameter",
+      "Min": 0,
+      "Max": 16,
+      "UI": {
+        "Type": "Slider",
+        "Step": 0,
+        "Priority": 4,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 8,
+      "Identifier": "5eb0fb9e-19f3-4ef7-b9d0-2d58948bbf67",
+      "Name": "Rain Speed"
     },
     {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": null,
-      "Identifier": "116",
-      "Position": "2364,0",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "117",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "_class": "FloatParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 6,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 0.015625,
+      "Identifier": "6432564c-a493-4f5a-b5e0-99238af969ed",
+      "Name": "Step In Characters"
     },
     {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": null,
-      "Identifier": "117",
-      "Position": "2364,-240",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "118",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "_class": "FloatParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 6,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 0.2,
+      "Identifier": "170cc2f7-6d95-4bfd-9dfc-79605e71d1c0",
+      "Name": "Double Speed Value"
     },
     {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": null,
-      "Identifier": "118",
-      "Position": "2364,-480",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "115",
-        "Output": "Result",
-        "Subgraph": null
-      }
+      "_class": "ColorParameter",
+      "UI": {
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "0.39608,1,0.21569,1",
+      "Identifier": "5653dc23-0998-401c-affa-f122df063ffe",
+      "Name": "Letters Color"
+    },
+    {
+      "_class": "ColorParameter",
+      "UI": {
+        "Priority": 1,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "0.832,1,0.788,1",
+      "Identifier": "d4be9135-da24-4f46-a920-d9e6832140ea",
+      "Name": "Letters Color Emission"
+    },
+    {
+      "_class": "FloatParameter",
+      "Min": 0,
+      "Max": 1,
+      "UI": {
+        "Type": "Slider",
+        "Step": 0,
+        "Priority": 4,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": "",
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": 1,
+      "Identifier": "b0201f2d-b8ca-44a4-a972-318936e59999",
+      "Name": "Rain Brightness"
+    },
+    {
+      "_class": "Float2Parameter",
+      "Min": "0,0",
+      "Max": "1,1",
+      "UI": {
+        "Type": "Default",
+        "Step": 0,
+        "Priority": 3,
+        "PrimaryGroup": {
+          "Name": "Parameters",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "IsAttribute": false,
+      "Value": "1,1",
+      "Identifier": "89cdf335-6512-46fb-813e-87331b8e9e94",
+      "Name": "Tile X,Y Amount"
     }
   ]
 }
