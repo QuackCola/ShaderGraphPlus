@@ -33,7 +33,7 @@ public sealed class SwitchNode : ShaderNodePlus
 	public bool Enabled { get; set; } = true;
 
 	[InlineEditor( Label = false ), Group( "UI" )]
-	public FloatParameterUI UI { get; set; }
+	public BoolParameterUI UI { get; set; }
 
 	[Output]
 	[Hide]
