@@ -157,7 +157,7 @@ public abstract class BlackboardGenericParameter<T> : BaseBlackboardParameter
 	}
 }
 
-public abstract class BlackboardMaterialParameter<T,Y> : BlackboardGenericParameter<T> where Y :  IParameterUI
+public abstract class BlackboardMaterialParameter<T, Y> : BlackboardGenericParameter<T> where Y : IParameterUI
 {
 	[InlineEditor( Label = false ), Group( "UI" )]
 	public Y UI { get; set; }

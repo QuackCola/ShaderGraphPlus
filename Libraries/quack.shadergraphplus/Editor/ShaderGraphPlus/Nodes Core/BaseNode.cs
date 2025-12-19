@@ -357,7 +357,7 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	{
 		if ( _graph is not null )
 		{
-			SGPLog.Info("FIXME!!!");
+			SGPLog.Info( "FIXME!!!" );
 			//if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
 			//{
 			//	Inputs = new List<IPlugIn>();

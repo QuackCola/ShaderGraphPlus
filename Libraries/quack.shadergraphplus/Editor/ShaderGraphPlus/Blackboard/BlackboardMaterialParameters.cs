@@ -7,7 +7,7 @@ namespace ShaderGraphPlus;
 /// Bool value material parameter
 /// </summary>
 [Title( "Bool" ), Icon( "check_box" ), Order( 0 )]
-public sealed class BoolParameter : BlackboardMaterialParameter<bool,BoolParameterUI>
+public sealed class BoolParameter : BlackboardMaterialParameter<bool, BoolParameterUI>
 {
 	public BoolParameter() : base()
 	{
@@ -37,7 +37,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool,BoolParamet
 /// Int value material parameter
 /// </summary>
 [Title( "Int" ), Icon( "looks_one" ), Order( 1 )]
-public sealed class IntParameter : BlackboardMaterialParameter<int,IntParameterUI>
+public sealed class IntParameter : BlackboardMaterialParameter<int, IntParameterUI>
 {
 	[Group( "Range" )] public int Min { get; set; }
 	[Group( "Range" )] public int Max { get; set; }
@@ -74,7 +74,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int,IntParameterU
 /// Float value material parameter
 /// </summary>
 [Title( "Float" ), Icon( "looks_one" ), Order( 2 )]
-public sealed class FloatParameter : BlackboardMaterialParameter<float,FloatParameterUI>
+public sealed class FloatParameter : BlackboardMaterialParameter<float, FloatParameterUI>
 {
 	[Group( "Range" )] public float Min { get; set; }
 	[Group( "Range" )] public float Max { get; set; }
@@ -111,7 +111,7 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float,FloatPara
 /// Float2 value material parameter
 /// </summary>
 [Title( "Float2" ), Icon( "looks_two" ), Order( 3 )]
-public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2,FloatParameterUI>
+public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2, FloatParameterUI>
 {
 	[Group( "Range" )] public Vector2 Min { get; set; }
 	[Group( "Range" )] public Vector2 Max { get; set; }
@@ -148,7 +148,7 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2,FloatP
 /// Float3 value material parameter
 /// </summary>
 [Title( "Float3" ), Icon( "looks_3" ), Order( 4 )]
-public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3,FloatParameterUI>
+public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3, FloatParameterUI>
 {
 	[Group( "Range" )] public Vector3 Min { get; set; }
 	[Group( "Range" )] public Vector3 Max { get; set; }
@@ -185,7 +185,7 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3,FloatP
 /// Float4 value material parameter
 /// </summary>
 [Title( "Float4" ), Icon( "looks_4" ), Order( 5 )]
-public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4,FloatParameterUI>
+public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4, FloatParameterUI>
 {
 	[Group( "Range" )] public Vector4 Min { get; set; }
 	[Group( "Range" )] public Vector4 Max { get; set; }
@@ -222,7 +222,7 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4,FloatP
 /// Color value material parameter
 /// </summary>
 [Title( "Color" ), Icon( "palette" ), Order( 6 )]
-public sealed class ColorParameter : BlackboardMaterialParameter<Color,ColorParameterUI>
+public sealed class ColorParameter : BlackboardMaterialParameter<Color, ColorParameterUI>
 {
 	public ColorParameter() : base()
 	{

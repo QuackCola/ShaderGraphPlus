@@ -26,7 +26,7 @@ public interface ITextureParameterNode
 	bool AlreadyRegisterd { get; set; }
 }
 
-public abstract class ParameterNodeBase<T, Y> : ShaderNodePlus, IParameterNode<Y>, IParameterNodeBase, IBlackboardSyncableNode, IErroringNode where Y :  IParameterUI
+public abstract class ParameterNodeBase<T, Y> : ShaderNodePlus, IParameterNode<Y>, IParameterNodeBase, IBlackboardSyncableNode, IErroringNode where Y : IParameterUI
 {
 	[Hide]
 	protected bool IsSubgraph => (Graph is ShaderGraphPlus shaderGraph && shaderGraph.IsSubgraph);

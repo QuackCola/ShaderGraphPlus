@@ -21,7 +21,7 @@ internal interface IMetaDataNode
 /// </summary>
 [Title( "Bool" ), Category( "Parameters" ), Icon( "check_box" )]
 [InternalNode]
-public sealed class BoolParameterNode : ParameterNodeBase<bool,BoolParameterUI>
+public sealed class BoolParameterNode : ParameterNodeBase<bool, BoolParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -58,7 +58,7 @@ public sealed class BoolParameterNode : ParameterNodeBase<bool,BoolParameterUI>
 ///</summary>
 [Title( "Int" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class IntParameterNode : ParameterNodeBase<int,IntParameterUI>
+public sealed class IntParameterNode : ParameterNodeBase<int, IntParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -100,7 +100,7 @@ public sealed class IntParameterNode : ParameterNodeBase<int,IntParameterUI>
 /// </summary>
 [Title( "Float" ), Category( "Parameters" ), Icon( "looks_one" )]
 [InternalNode]
-public sealed class FloatParameterNode : ParameterNodeBase<float,FloatParameterUI>
+public sealed class FloatParameterNode : ParameterNodeBase<float, FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -143,7 +143,7 @@ public sealed class FloatParameterNode : ParameterNodeBase<float,FloatParameterU
 /// </summary>
 [Title( "Float2" ), Category( "Parameters" ), Icon( "looks_two" )]
 [InternalNode]
-public sealed class Float2ParameterNode : ParameterNodeBase<Vector2,FloatParameterUI>
+public sealed class Float2ParameterNode : ParameterNodeBase<Vector2, FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -217,7 +217,7 @@ public sealed class Float2ParameterNode : ParameterNodeBase<Vector2,FloatParamet
 /// </summary>
 [Title( "Float3" ), Category( "Parameters" ), Icon( "looks_3" )]
 [InternalNode]
-public sealed class Float3ParameterNode : ParameterNodeBase<Vector3,FloatParameterUI>
+public sealed class Float3ParameterNode : ParameterNodeBase<Vector3, FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
@@ -307,7 +307,7 @@ public sealed class Float3ParameterNode : ParameterNodeBase<Vector3,FloatParamet
 /// </summary>
 [Title( "Float4" ), Category( "Parameters" ), Icon( "looks_4" )]
 [InternalNode]
-public sealed class Float4ParameterNode : ParameterNodeBase<Vector4,FloatParameterUI>
+public sealed class Float4ParameterNode : ParameterNodeBase<Vector4, FloatParameterUI>
 {
 	[Hide]
 	public override int Version => 2;
