@@ -1,5 +1,4 @@
 ﻿using Editor;
-using Editor.ShaderGraph;
 using NodeEditorPlus;
 
 namespace ShaderGraphPlus.Nodes;

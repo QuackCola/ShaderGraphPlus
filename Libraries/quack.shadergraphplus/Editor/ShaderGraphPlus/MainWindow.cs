@@ -1,5 +1,4 @@
 ﻿using Editor;
-using Editor.ShaderGraph;
 using NodeEditorPlus;
 using Sandbox.Rendering;
 using ShaderGraphPlus.Diagnostics;
