@@ -1176,7 +1176,7 @@ public sealed partial class GraphCompiler
 			}
 			else if ( ui is BoolParameterUI )
 			{
-
+				options.Write( $"UiType( CheckBox ); " );
 			}
 			else if ( ui is ColorParameterUI )
 			{
