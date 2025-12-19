@@ -1,0 +1,25 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/vanilla/matrix/matrixrainingcode.shader"
+
+	g_bEnableTransparency "0"
+	g_bUseScreenCoordinates "0"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Parameters ----
+	g_flDoubleSpeedValue "0.200"
+	g_flRainBrightness "1.000"
+	g_flRainSpeed "8.000"
+	g_flStepInCharacters "0.016"
+	g_vLettersColor "[0.400000 1.000000 0.219608 1.000000]"
+	g_vLettersColorEmission "[0.831373 1.000000 0.788235 1.000000]"
+	g_vTileXYAmount "[1.000 1.000]"
+
+	//---- Textures ----
+	MovingTextures "textures/matrixrain/1k/moving_textures.png"
+	NotMovingMask "textures/matrixrain/1k/letters_lanes_pixel_variations.png"
+}
