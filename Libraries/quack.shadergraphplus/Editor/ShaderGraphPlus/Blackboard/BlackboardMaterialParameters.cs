@@ -339,7 +339,7 @@ public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 */
 
 /// <summary>
-/// Bool material feature
+///
 /// </summary>
 [Title( "Shader Feature Boolean" ), Order( 9 )]
 public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, IShaderFeatureParameter
@@ -384,7 +384,7 @@ public sealed class ShaderFeatureBooleanParameter : BaseBlackboardParameter, ISh
 }
 
 /// <summary>
-/// TODO : 
+///
 /// </summary>
 [Title( "Shader Feature Enum" ), Order( 10 )]
 public sealed class ShaderFeatureEnumParameter : BaseBlackboardParameter, IShaderFeatureParameter
