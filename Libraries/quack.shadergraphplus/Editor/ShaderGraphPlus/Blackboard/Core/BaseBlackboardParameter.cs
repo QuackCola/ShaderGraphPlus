@@ -1,25 +1,5 @@
 ﻿namespace ShaderGraphPlus;
 
-internal interface ISubgraphInputBlackboardParameter
-{
-	public string Name { get; set; }
-	public string Description { get; set; }
-	public bool IsRequired { get; set; }
-	public int PortOrder { get; set; }
-
-	public object GetValue();
-}
-
-internal interface IShaderFeatureParameter
-{
-}
-
-internal interface IBlackboardSyncableNode
-{
-	Guid BlackboardParameterIdentifier { get; set; }
-	void UpdateFromBlackboard( BaseBlackboardParameter parameter );
-}
-
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
 	[Hide, Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
@@ -166,7 +146,6 @@ public abstract class BlackboardMaterialParameter<T, Y> : BlackboardGenericParam
 
 	public BlackboardMaterialParameter() : base()
 	{
-		//UI = new ParameterUI();
 		IsAttribute = false;
 	}
 

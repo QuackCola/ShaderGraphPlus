@@ -14,7 +14,8 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool, BoolParame
 		Value = false;
 	}
 
-	public BoolParameter( string name, bool value, bool isAttribute ) : base( name, value, isAttribute )
+	public BoolParameter( string name, bool value, bool isAttribute ) 
+		: base( name, value, isAttribute )
 	{
 		UI = new BoolParameterUI();
 	}
@@ -49,7 +50,8 @@ public sealed class IntParameter : BlackboardMaterialParameter<int, IntParameter
 		UI = new IntParameterUI();
 	}
 
-	public IntParameter( string name, int value, bool isAttribute ) : base( name, value, isAttribute )
+	public IntParameter( string name, int value, bool isAttribute ) 
+		: base( name, value, isAttribute )
 	{
 		Min = 0;
 		Max = 1;
@@ -86,7 +88,8 @@ public sealed class FloatParameter : BlackboardMaterialParameter<float, FloatPar
 		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
-	public FloatParameter( string name, float value, bool isAttribute ) : base( name, value, isAttribute )
+	public FloatParameter( string name, float value, bool isAttribute )
+		: base( name, value, isAttribute )
 	{
 		Min = 0.0f;
 		Max = 1.0f;
@@ -123,7 +126,8 @@ public sealed class Float2Parameter : BlackboardMaterialParameter<Vector2, Float
 		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
-	public Float2Parameter( string name, Vector2 value, bool isAttribute ) : base( name, value, isAttribute )
+	public Float2Parameter( string name, Vector2 value, bool isAttribute )
+		: base( name, value, isAttribute )
 	{
 		Min = Vector2.Zero;
 		Max = Vector2.One;
@@ -160,7 +164,8 @@ public sealed class Float3Parameter : BlackboardMaterialParameter<Vector3, Float
 		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
-	public Float3Parameter( string name, Vector3 value, bool isAttribute ) : base( name, value, isAttribute )
+	public Float3Parameter( string name, Vector3 value, bool isAttribute )
+		: base( name, value, isAttribute )
 	{
 		Min = Vector3.Zero;
 		Max = Vector3.One;
@@ -197,7 +202,8 @@ public sealed class Float4Parameter : BlackboardMaterialParameter<Vector4, Float
 		UI = new FloatParameterUI { Type = UIType.Default };
 	}
 
-	public Float4Parameter( string name, Vector4 value, bool isAttribute ) : base( name, value, isAttribute )
+	public Float4Parameter( string name, Vector4 value, bool isAttribute )
+		: base( name, value, isAttribute )
 	{
 		Min = Vector4.Zero;
 		Max = Vector4.One;
@@ -229,7 +235,8 @@ public sealed class ColorParameter : BlackboardMaterialParameter<Color, ColorPar
 		UI = new ColorParameterUI();
 	}
 
-	public ColorParameter( string name, Color value, bool isAttribute ) : base( name, value, isAttribute )
+	public ColorParameter( string name, Color value, bool isAttribute )
+		: base( name, value, isAttribute )
 	{
 		UI = new ColorParameterUI();
 	}
@@ -298,7 +305,8 @@ public sealed class TextureCubeParameter : BlackboardGenericParameter<TextureInp
 		};
 	}
 
-	public TextureCubeParameter( string name, TextureInput value ) : base( name, value )
+	public TextureCubeParameter( string name, TextureInput value )
+		: base( name, value )
 	{
 	}
 
@@ -326,7 +334,8 @@ public sealed class SamplerStateParameter : BlackboardGenericParameter<Sampler>
 		Value = new Sampler();
 	}
 
-	public SamplerStateParameter( Sampler value ) : base( value )
+	public SamplerStateParameter( Sampler value )
+		: base( value )
 	{
 	}
 
