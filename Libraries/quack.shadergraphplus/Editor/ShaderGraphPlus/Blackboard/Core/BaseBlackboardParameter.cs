@@ -1,5 +1,19 @@
 ﻿namespace ShaderGraphPlus;
 
+internal interface IBlackboardParameter
+{
+	Guid Identifier { get; }
+
+	string Name { get; set; }
+}
+
+internal interface IBlackboardParameterType
+{
+	public TypeDescription Type { get; }
+
+	IBlackboardParameter CreateParameter( ShaderGraphPlus graph, string name = "" );
+}
+
 public abstract class BaseBlackboardParameter : IValid, IBlackboardParameter
 {
 	[Hide, Editor( "sgp_guidreadonly" ), Sandbox.ReadOnly, Browsable( false )]
