@@ -14,7 +14,7 @@ public sealed class BoolParameter : BlackboardMaterialParameter<bool, BoolParame
 		Value = false;
 	}
 
-	public BoolParameter( string name, bool value, bool isAttribute ) 
+	public BoolParameter( string name, bool value, bool isAttribute )
 		: base( name, value, isAttribute )
 	{
 		UI = new BoolParameterUI();
@@ -50,7 +50,7 @@ public sealed class IntParameter : BlackboardMaterialParameter<int, IntParameter
 		UI = new IntParameterUI();
 	}
 
-	public IntParameter( string name, int value, bool isAttribute ) 
+	public IntParameter( string name, int value, bool isAttribute )
 		: base( name, value, isAttribute )
 	{
 		Min = 0;
