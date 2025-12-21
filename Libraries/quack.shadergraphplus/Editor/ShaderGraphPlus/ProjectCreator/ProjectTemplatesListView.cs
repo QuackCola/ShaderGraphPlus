@@ -8,8 +8,6 @@ internal class ProjectTemplatesListView : ListView
 
 	private List<ProjectTemplate> Templates = new List<ProjectTemplate>();
 
-	public ProjectTemplate Template { get; set; }
-
 	public ProjectTemplate ChosenTemplate { get; set; }
 
 	public ProjectTemplatesListView( Widget parent ) : base( parent )
