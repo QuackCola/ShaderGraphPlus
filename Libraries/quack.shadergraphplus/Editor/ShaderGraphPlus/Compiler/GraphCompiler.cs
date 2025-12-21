@@ -1739,7 +1739,7 @@ public sealed partial class GraphCompiler
 		// If we have any errors after evaluating, no point going further
 		if ( Errors.Any() )
 			return null;
-		
+
 		var shaderTemplate = ShaderTemplate.Code;
 
 		if ( Graph.Domain is ShaderDomain.BlendingSurface )
@@ -1947,7 +1947,7 @@ public sealed partial class GraphCompiler
 
 			foreach ( var result in ShaderResult.Attributes )
 			{
-				if ( result.Value is Texture || !ValidShaderAttributeTypes.Contains( result.Value.GetType() )  )
+				if ( result.Value is Texture || !ValidShaderAttributeTypes.Contains( result.Value.GetType() ) )
 					continue;
 
 				var typeName = result.Value switch
