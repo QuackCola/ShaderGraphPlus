@@ -1,5 +1,5 @@
 {
-  "__version": 3,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "",
   "Model": "models/dev/box.vmdl",
@@ -10,7 +10,7 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "PostProcess",
+  "Domain": "PostProcess",
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "camera",
@@ -19,6 +19,7 @@
     }
   },
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": true,

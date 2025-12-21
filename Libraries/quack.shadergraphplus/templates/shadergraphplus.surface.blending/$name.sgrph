@@ -1,5 +1,5 @@
 {
-  "__version": 3,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "",
   "Model": "models/dev/box.vmdl",
@@ -10,7 +10,7 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "BlendingSurface",
+  "Domain": "BlendingSurface",
   "Metadata": {
     "ProjectTemplate": {
       "Icon": "texture",
@@ -19,6 +19,7 @@
     }
   },
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": true,
@@ -29,103 +30,311 @@
   "nodes": [
     {
       "_class": "Result",
+      "__version": 1,
       "DefaultOpacity": 1,
       "DefaultRoughness": 1,
       "DefaultMetalness": 0,
       "DefaultAmbientOcclusion": 1,
       "Identifier": "0",
       "Position": "216,-144",
+      "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "3",
-        "Output": "Result"
+        "Identifier": "2",
+        "Output": "Result",
+        "Subgraph": null
       }
     },
     {
       "_class": "VertexBlend",
+      "__version": 1,
       "Identifier": "1",
-      "Position": "-240,-24"
-    },
-    {
-      "_class": "TextureSampler",
-      "Image": null,
-      "DefaultSampler": {},
-      "UI": {
-        "Name": "Color",
-        "Default": "1,1,1,1",
-        "ShowExtension": true,
-        "SrgbRead": true,
-        "PrimaryGroup": {
-          "Name": "Texture A"
-        }
-      },
-      "Identifier": "2",
-      "Position": "-420,-348",
-      "Coords": {
-        "Identifier": "5",
-        "Output": "Result"
-      },
-      "Sampler": {
-        "Identifier": "6",
-        "Output": "Sampler"
-      }
+      "Position": "-228,-0",
+      "HandleOffsets": {}
     },
     {
       "_class": "Blend",
+      "__version": 1,
+      "DefaultA": "0,0,0,1",
+      "DefaultB": "1,1,1,1",
       "Fraction": 0.5,
       "BlendMode": "Mix",
       "Clamp": true,
-      "Identifier": "3",
+      "Identifier": "2",
       "Position": "0,-144",
+      "HandleOffsets": {},
       "A": {
-        "Identifier": "2",
-        "Output": "Result"
+        "Identifier": "4",
+        "Output": "Result",
+        "Subgraph": null
       },
       "B": {
-        "Identifier": "4",
-        "Output": "Result"
+        "Identifier": "7",
+        "Output": "Result",
+        "Subgraph": null
       },
       "C": {
         "Identifier": "1",
-        "Output": "R"
-      }
-    },
-    {
-      "_class": "TextureSampler",
-      "Image": null,
-      "DefaultSampler": {},
-      "UI": {
-        "Name": "Color",
-        "Default": "1,1,1,1",
-        "ShowExtension": true,
-        "SrgbRead": true,
-        "PrimaryGroup": {
-          "Name": "Texture B"
-        }
-      },
-      "Identifier": "4",
-      "Position": "-420,-120",
-      "Coords": {
-        "Identifier": "5",
-        "Output": "Result"
-      },
-      "Sampler": {
-        "Identifier": "6",
-        "Output": "Sampler"
+        "Output": "R",
+        "Subgraph": null
       }
     },
     {
       "_class": "TextureCoord",
+      "__version": 1,
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
+      "Identifier": "3",
+      "Position": "-672,-348",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": "Color A",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture A",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "4",
+      "Position": "-408,-336",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "5",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "SamplerInput": {
+        "Identifier": "6",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "cfa0a204-c556-4e14-9b75-9b9a73421131",
+      "UI": {
+        "Name": "Color A",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture A",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
       "Identifier": "5",
-      "Position": "-672,-348"
+      "Position": "-672,-288",
+      "HandleOffsets": {}
     },
     {
       "_class": "SamplerNode",
-      "SamplerState": {},
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "MySampler",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "IsAttribute": false,
+      "Name": null,
       "Identifier": "6",
-      "Position": "-672,-96"
+      "Position": "-672,-144",
+      "HandleOffsets": {}
+    },
+    {
+      "_class": "SampleTexture2DNode",
+      "__version": 1,
+      "SamplerState": {
+        "__version": 2,
+        "Name": "",
+        "IsAttribute": false,
+        "Filter": "Bilinear",
+        "AddressModeU": "Wrap",
+        "AddressModeV": "Wrap",
+        "AddressModeW": "Wrap",
+        "MipLodBias": 0,
+        "MaxAnisotropy": 8,
+        "BorderColor": "0,0,0,0"
+      },
+      "UI": {
+        "Name": "Color B",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture B",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "7",
+      "Position": "-420,-60",
+      "HandleOffsets": {},
+      "Texture2DInput": {
+        "Identifier": "8",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "CoordsInput": {
+        "Identifier": "3",
+        "Output": "Result",
+        "Subgraph": null
+      },
+      "SamplerInput": {
+        "Identifier": "6",
+        "Output": "Sampler",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "Texture2DParameterNode",
+      "__version": 2,
+      "BlackboardParameterIdentifier": "84c939d5-aad2-4f8e-81d6-fb12d94e8cea",
+      "UI": {
+        "Name": "Color B",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture B",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "8",
+      "Position": "-672,-12",
+      "HandleOffsets": {}
     }
   ],
-  "parameters": []
+  "parameters": [
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture A",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "cfa0a204-c556-4e14-9b75-9b9a73421131",
+      "Name": "Color A"
+    },
+    {
+      "_class": "Texture2DParameter",
+      "Value": {
+        "Name": "",
+        "IsAttribute": false,
+        "DefaultColor": "1,1,1,1",
+        "DefaultTexture": null,
+        "Extension": "Color",
+        "CustomExtension": null,
+        "ShowExtension": true,
+        "Processor": "None",
+        "ColorSpace": "Srgb",
+        "ImageFormat": "DXT5",
+        "SrgbRead": true,
+        "Priority": 0,
+        "PrimaryGroup": {
+          "Name": "Texture B",
+          "Priority": 0
+        },
+        "SecondaryGroup": {
+          "Name": null,
+          "Priority": 0
+        }
+      },
+      "Identifier": "84c939d5-aad2-4f8e-81d6-fb12d94e8cea",
+      "Name": "Color B"
+    }
+  ]
 }
