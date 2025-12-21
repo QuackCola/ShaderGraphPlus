@@ -520,8 +520,6 @@
       "Name": "BumpOffset",
       "IsAttribute": false,
       "UI": {
-        "Type": "Default",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": null,
@@ -543,8 +541,6 @@
       "IsAttribute": true,
       "Enabled": true,
       "UI": {
-        "Type": "Default",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": null,
@@ -828,8 +824,6 @@
     {
       "_class": "BoolParameter",
       "UI": {
-        "Type": "Default",
-        "Step": 0,
         "Priority": 0,
         "PrimaryGroup": {
           "Name": null,

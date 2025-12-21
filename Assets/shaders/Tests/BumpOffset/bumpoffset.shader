@@ -91,12 +91,11 @@ PS
 	TextureAttribute( RepresentativeTexture, g_tHeight )
 	float g_flDepthScale < UiGroup( "Height,1/,0/1" ); Default1( 0.125 ); Range1( 0, 1 ); >;
 	float g_flReferencePlane < UiGroup( "Height,1/,0/2" ); Default1( 0.42 ); Range1( 0, 1 ); >;
-	bool g_bBumpOffset < UiGroup( ",0/,0/0" ); Default( 1 ); >;
+	bool g_bBumpOffset < UiType( CheckBox ); UiGroup( ",0/,0/0" ); Default( 1 ); >;
 	float g_flRoughness < UiGroup( ",0/,0/0" ); Default1( 0.124 ); Range1( 0, 1 ); >;
 		
 	
-	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
-	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+	RenderState( CullMode, F_RENDER_BACKFACES ? NONE : DEFAULT );
 		
 	float3 GetTangentViewVector( float3 vPosition, float3 vNormalWs, float3 vTangentUWs, float3 vTangentVWs )
 	{

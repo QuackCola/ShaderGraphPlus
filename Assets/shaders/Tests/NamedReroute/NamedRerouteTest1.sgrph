@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "shaders/tests/namedreroute/namedreroutetest1.sgrph",
   "Model": "models/dev/box.vmdl",
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": true,
@@ -41,6 +42,7 @@
       "_class": "NamedRerouteDeclarationNode",
       "__version": 1,
       "Name": "Magenta",
+      "NamedRerouteTitleColor": "0.61569,0,1,1",
       "Identifier": "1",
       "Position": "-708,-180",
       "HandleOffsets": {},
@@ -54,54 +56,23 @@
       "_class": "NamedRerouteNode",
       "__version": 1,
       "Name": "CursedThing",
+      "NamedReouteTitleColor": "0.61569,0,1,1",
       "Identifier": "2",
       "Position": "-132,-180",
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
+      "_class": "ColorConstantNode",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "1,0,1,1",
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
       "Identifier": "3",
       "Position": "-900,-180",
       "HandleOffsets": {}
     },
     {
-      "_class": "Float4",
+      "_class": "ColorConstantNode",
       "__version": 1,
-      "PortOrder": 0,
       "Value": "1,0,0,1",
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Color",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
       "Identifier": "4",
       "Position": "-900,-348",
       "HandleOffsets": {}
@@ -110,6 +81,7 @@
       "_class": "NamedRerouteDeclarationNode",
       "__version": 1,
       "Name": "Red",
+      "NamedRerouteTitleColor": "0.61569,0,1,1",
       "Identifier": "5",
       "Position": "-708,-348",
       "HandleOffsets": {},
@@ -123,6 +95,7 @@
       "_class": "NamedRerouteDeclarationNode",
       "__version": 1,
       "Name": "CursedThing",
+      "NamedRerouteTitleColor": "0.61569,0,1,1",
       "Identifier": "6",
       "Position": "-324,-264",
       "HandleOffsets": {},
@@ -136,9 +109,11 @@
       "_class": "NamedRerouteNode",
       "__version": 1,
       "Name": "Magenta",
+      "NamedReouteTitleColor": "0.61569,0,1,1",
       "Identifier": "7",
       "Position": "-516,-264",
       "HandleOffsets": {}
     }
-  ]
+  ],
+  "parameters": []
 }

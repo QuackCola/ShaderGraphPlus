@@ -81,8 +81,7 @@ PS
 	#include "common/pixel.hlsl"
 	
 	
-	DynamicCombo( D_RENDER_BACKFACES, 0..1, Sys( ALL ) );
-	RenderState( CullMode, D_RENDER_BACKFACES ? NONE : BACK );
+	RenderState( CullMode, F_RENDER_BACKFACES ? NONE : DEFAULT );
 	
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{

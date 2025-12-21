@@ -1,5 +1,5 @@
 {
-  "__version": 2,
+  "__version": 4,
   "IsSubgraph": false,
   "Path": "shaders/shaderfunctions/jittertest.sgrph",
   "Model": "models/fauna/hare/hare.vmdl",
@@ -10,9 +10,10 @@
   "AddToNodeLibrary": false,
   "BlendMode": "Opaque",
   "ShadingModel": "Lit",
-  "MaterialDomain": "Surface",
+  "Domain": "Surface",
   "Metadata": {},
   "PreviewSettings": {
+    "ViewMode": "Perspective",
     "RenderBackfaces": false,
     "EnableShadows": true,
     "ShowGround": false,
@@ -55,29 +56,16 @@
       }
     },
     {
-      "_class": "Float",
+      "_class": "FloatConstantNode",
       "__version": 1,
       "Min": 0,
       "Max": 1,
+      "Step": 0,
       "Value": 0.4,
-      "Name": "",
-      "IsAttribute": false,
-      "UI": {
-        "Type": "Default",
-        "Step": 0,
-        "Priority": 0,
-        "PrimaryGroup": {
-          "Name": null,
-          "Priority": 0
-        },
-        "SecondaryGroup": {
-          "Name": null,
-          "Priority": 0
-        }
-      },
       "Identifier": "2",
       "Position": "-708,-72",
       "HandleOffsets": {}
     }
-  ]
+  ],
+  "parameters": []
 }
