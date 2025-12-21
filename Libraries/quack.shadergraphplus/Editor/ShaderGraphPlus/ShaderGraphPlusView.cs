@@ -756,6 +756,9 @@ public class ShaderGraphPlusView : GraphView
 		_window.SetDirty();
 	}
 
+	/// <summary>
+	/// TODO : Need to redo this function becuase its likely that it will not work correctly.
+	/// </summary>
 	private void CreateSubgraphFromSelection( string filePath )
 	{
 		if ( string.IsNullOrWhiteSpace( filePath ) ) return;
@@ -809,7 +812,8 @@ public class ShaderGraphPlusView : GraphView
 						input.ConnectedOutput = (existingParameterNode as BaseNodePlus).Outputs.FirstOrDefault();
 						continue;
 					}
-
+					// TODO FIXME!!!
+					/*
 					if ( input.Type == typeof( Texture2DObject ) )
 					{
 						var texture2DObjectNodeInput = FindNodeType( typeof( Texture2DObjectNode ) ).CreateNode( subgraph );
@@ -832,6 +836,7 @@ public class ShaderGraphPlusView : GraphView
 							nodesToAdd.Add( textureCubeObjectNode );
 						}
 					}
+					*/
 					else if ( input.Type == typeof( Sampler ) )
 					{
 						var samplerNodeInput = FindNodeType( typeof( SamplerNode ) ).CreateNode( subgraph );
