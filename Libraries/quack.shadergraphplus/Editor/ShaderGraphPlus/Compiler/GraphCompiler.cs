@@ -17,10 +17,10 @@ public sealed partial class GraphCompiler
 		public bool IsWarning;
 	}
 
-	internal static Dictionary<Type, (string type, bool isEditorType)> ValueTypes => new()
+	internal static Dictionary<Type, (string hlslType, bool isEditorType)> ValueTypes => new()
 	{
-		{ typeof( int ), ( "int", false ) },
 		{ typeof( bool ), ( "bool", false ) },
+		{ typeof( int ), ( "int", false ) },
 		{ typeof( float ), ( "float", false ) },
 		{ typeof( Vector2 ),( "float2", false ) },
 		{ typeof( Vector3 ),( "float3", false ) },
@@ -34,14 +34,38 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), ( "SamplerState", true ) },
 	};
 
+	internal static List<Type> ValidMaterialParameterTypes => new()
+	{
+		{ typeof( bool ) },
+		{ typeof( int ) },
+		{ typeof( float ) },
+		{ typeof( Vector2 ) },
+		{ typeof( Vector3 ) },
+		{ typeof( Vector4 ) },
+		{ typeof( Color ) },
+		{ typeof( Texture ) },
+		//{ typeof( Sampler ) },
+	};
+
+	internal static List<Type> ValidShaderAttributeTypes => new()
+	{
+		{ typeof( bool ) },
+		{ typeof( int ) },
+		{ typeof( float ) },
+		{ typeof( Vector2 ) },
+		{ typeof( Vector3 ) },
+		{ typeof( Vector4 ) },
+		{ typeof( Color ) },
+		{ typeof( Texture ) },
+		{ typeof( Sampler ) },
+	};
+
 	internal static HashSet<Type> ValueTypesNoDefault => new()
 	{
 		{ typeof( Sampler ) },
 		{ typeof( Texture2DObject ) },
 		{ typeof( TextureCubeObject ) },
 	};
-
-	public bool Debug { get; private set; } = false;
 
 	/// <summary>
 	/// Current graph we're compiling
@@ -52,28 +76,52 @@ public sealed partial class GraphCompiler
 	/// Current SubGraph
 	/// </summary>
 	private ShaderGraphPlus Subgraph = null;
-	private SubgraphNode SubgraphNode = null;
-	private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
 
-	public Dictionary<string, string> CompiledTextures { get; private set; } = new();
+	/// <summary>
+	/// Current SubGraph node that we are in
+	/// </summary>
+	private SubgraphNode SubgraphNode = null;
 
 	/// <summary>
 	/// The loaded sub-graphs
 	/// </summary>
 	public List<ShaderGraphPlus> Subgraphs { get; private set; }
+
+	private List<(SubgraphNode, ShaderGraphPlus)> SubgraphStack = new();
+
+	public Dictionary<string, string> CompiledTextures { get; private set; } = new();
+
+	/// <summary>
+	/// Pixel Shader Stage Includes
+	/// </summary>
 	public HashSet<string> PixelIncludes { get; private set; } = new();
+
+	/// <summary>
+	/// Vertex Shader Stage Includes
+	/// </summary>
 	public HashSet<string> VertexIncludes { get; private set; } = new();
+
+	/// <summary>
+	/// Vertex Shader stage inputs
+	/// </summary>
 	public Dictionary<string, string> VertexInputs { get; private set; } = new();
+
+	/// <summary>
+	/// Pixel Shader stage inputs
+	/// </summary>
 	public Dictionary<string, string> PixelInputs { get; private set; } = new();
+
 	public int VoidLocalCount { get; set; } = 0;
 	public Dictionary<string, string> SyncIDs = new();
-
-	public Asset _Asset { get; private set; }
 
 	/// <summary>
 	/// Is this compile for just the preview or not, preview uses attributes for constant values
 	/// </summary>
 	public bool IsPreview { get; private set; }
+
+	/// <summary>
+	/// Is this compile for the final generated result
+	/// </summary>
 	public bool IsNotPreview => !IsPreview;
 
 	private partial class CompileResult
@@ -107,7 +155,11 @@ public sealed partial class GraphCompiler
 		Pixel,
 	}
 
+	/// <summary>
+	/// Current shader stage being evaluated.
+	/// </summary>
 	public ShaderStage Stage { get; private set; }
+
 	public bool IsVs => Stage == ShaderStage.Vertex;
 	public bool IsPs => Stage == ShaderStage.Pixel;
 	private string StageName => Stage == ShaderStage.Vertex ? "vs" : "ps";
@@ -139,10 +191,9 @@ public sealed partial class GraphCompiler
 	public IEnumerable<GraphIssue> Warnings => NodeWarnings
 		.Select( x => new GraphIssue { Node = x.Key, Message = x.Value.FirstOrDefault(), IsWarning = true } );
 
-	public GraphCompiler( Asset asset, ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
+	public GraphCompiler( ShaderGraphPlus graph, Dictionary<string, ShaderFeatureBase> shaderFeatures, bool preview )
 	{
 		Graph = graph;
-		_Asset = asset;
 		IsPreview = preview;
 		Stage = ShaderStage.Pixel;
 		Subgraphs = new();
@@ -156,8 +207,12 @@ public sealed partial class GraphCompiler
 
 	public void SetShaderAttribute<T>( string name, T value )
 	{
-		if ( value is Float2x2 || value is Float3x3 || value is Float4x4 )
+		// Dont even try to set an attribute of the type if it
+		// isnt able to be set in the first place.
+		if ( !ValidShaderAttributeTypes.Contains( value.GetType() ) )
+		{
 			return;
+		}
 
 		if ( !ShaderResult.Attributes.ContainsKey( name ) )
 		{
@@ -170,9 +225,22 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	internal KeyValuePair<string, TextureInput> GetExistingTextureInputEntry( string key )
+	public static string IndentString( string input, int tabCount )
 	{
-		return ShaderResult.TextureInputs.Where( x => x.Key == key ).FirstOrDefault();
+		if ( tabCount == 0 ) return input;
+
+		if ( string.IsNullOrWhiteSpace( input ) )
+			return input;
+
+		var tabs = new string( '\t', tabCount );
+		var lines = input.Split( '\n' );
+
+		for ( int i = 0; i < lines.Length; i++ )
+		{
+			lines[i] = tabs + lines[i];
+		}
+
+		return string.Join( "\n", lines );
 	}
 
 	public static string CleanName( string name )
@@ -184,6 +252,25 @@ public sealed partial class GraphCompiler
 		name = new string( name.Where( x => char.IsLetter( x ) || char.IsNumber( x ) || x == '_' ).ToArray() );
 
 		return name;
+	}
+
+	private void AddSubgraphs( ShaderGraphPlus graph )
+	{
+		if ( graph != Graph )
+		{
+			if ( Subgraphs.Contains( graph ) )
+				return;
+
+			Subgraphs.Add( graph );
+		}
+
+		foreach ( var node in graph.Nodes )
+		{
+			if ( node is SubgraphNode subgraphNode )
+			{
+				AddSubgraphs( subgraphNode.Subgraph );
+			}
+		}
 	}
 
 	internal void PostProcessVoidFunctionResult( VoidFunctionBase node, string funcName = "" )
@@ -273,23 +360,6 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	private void AddSubgraphs( ShaderGraphPlus graph )
-	{
-		if ( graph != Graph )
-		{
-			if ( Subgraphs.Contains( graph ) )
-				return;
-			Subgraphs.Add( graph );
-		}
-		foreach ( var node in graph.Nodes )
-		{
-			if ( node is SubgraphNode subgraphNode )
-			{
-				AddSubgraphs( subgraphNode.Subgraph );
-			}
-		}
-	}
-
 	public void RegisterVertexInput( string type, string name, string semantic )
 	{
 		name = CleanName( name );
@@ -303,11 +373,7 @@ public sealed partial class GraphCompiler
 
 		var vertexInput = $"{type} {name} : {semantic};";
 
-		if ( !VertexInputs.ContainsKey( name ) )
-		{
-			VertexInputs.Add( name, vertexInput );
-		}
-		else
+		if ( !VertexInputs.TryAdd( name, vertexInput ) )
 		{
 			SGPLog.Warning( $"VertexInputs already contains key \"{name}\"", IsNotPreview );
 		}
@@ -326,11 +392,7 @@ public sealed partial class GraphCompiler
 
 		var pixelInput = $"{type} {name} : {semantic};";
 
-		if ( !PixelInputs.ContainsKey( name ) )
-		{
-			PixelInputs.Add( name, pixelInput );
-		}
-		else
+		if ( !PixelInputs.TryAdd( name, pixelInput ) )
 		{
 			SGPLog.Warning( $"PixelInputs already contains key \"{name}\"", IsNotPreview );
 		}
@@ -495,7 +557,7 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Loops through ShaderResult.Gradients to find the matching key then returns the corresponding Gradient.
 	/// </summary>
-	public Gradient GetGradient( string gradient_name )
+	public Gradient GetGradient( string gradientName )
 	{
 		var result = ShaderResult;
 
@@ -503,7 +565,7 @@ public sealed partial class GraphCompiler
 
 		foreach ( var gradient in result.Gradients )
 		{
-			if ( gradient.Key == gradient_name )
+			if ( gradient.Key == gradientName )
 			{
 				searchResult = gradient.Value;
 			}
@@ -515,11 +577,11 @@ public sealed partial class GraphCompiler
 	/// <summary>
 	/// Register a gradient and return the name of the graident. A generic name is returned instead if the gradient name is empty.
 	/// </summary>
-	public string RegisterGradient( Gradient gradient, string gradient_name )
+	public string RegisterGradient( Gradient gradient, string gradientName )
 	{
 		var result = ShaderResult;
 
-		var name = CleanName( gradient_name );
+		var name = CleanName( gradientName );
 
 		name = string.IsNullOrWhiteSpace( name ) ? $"Gradient{result.Gradients.Count}" : name;
 
@@ -533,39 +595,22 @@ public sealed partial class GraphCompiler
 		return name;
 	}
 
-	internal void RegisterSyncID( string syncID, string name )
-	{
-		if ( !SyncIDs.ContainsKey( syncID ) )
-		{
-			SyncIDs.Add( syncID, name );
-		}
-	}
-
-	internal bool CheckTextureInputRegistration( string name )
-	{
-		return ShaderResult.TextureInputs.ContainsKey( name );
-	}
-
-	private string SetResultTextureName( string name, bool useProvidedName )
-	{
-		var cleanedName = CleanName( name );
-
-		if ( useProvidedName )
-		{
-			return string.IsNullOrWhiteSpace( cleanedName ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : cleanedName;
-		}
-		else
-		{
-			return string.IsNullOrWhiteSpace( cleanedName ) || IsPreview ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : cleanedName;
-		}
-	}
-
 	/// <summary>
 	/// Register a texture and return the name of it
 	/// </summary>
 	public string ResultTexture( TextureInput input, bool useProvidedName = false )
 	{
-		var name = SetResultTextureName( input.Name, useProvidedName );
+		var name = CleanName( input.Name );
+
+		if ( useProvidedName )
+		{
+			name = string.IsNullOrWhiteSpace( name ) ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		}
+		else
+		{
+			name = string.IsNullOrWhiteSpace( name ) || IsPreview ? $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}" : name;
+		}
+
 		var result = ShaderResult;
 
 		if ( !result.TextureInputs.TryGetValue( name, out var existingValue ) )
@@ -588,7 +633,13 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	public string ResultTexture( TextureInput input, Texture texture, bool isTex2DParameterConnected = false )
 	{
-		var name = SetResultTextureName( input.Name, false );
+		var name = CleanName( input.Name );
+
+		if ( string.IsNullOrWhiteSpace( name ) || IsPreview )
+		{
+			name = $"Texture_{StageName}_{ShaderResult.TextureInputs.Count}";
+		}
+
 		var result = ShaderResult;
 
 		if ( !isTex2DParameterConnected )
@@ -623,13 +674,16 @@ public sealed partial class GraphCompiler
 		return globalName;
 	}
 
+	/// <summary>
+	/// Register a sampler and return the name of it
+	/// </summary>
 	public string ResultSampler( Sampler sampler, bool alreadyProcessed = false )
 	{
 		var name = CleanName( sampler.Name );
 		name = string.IsNullOrWhiteSpace( name ) ? $"Sampler{ShaderResult.SamplerStates.Count}" : name;
 		var id = name;
 
-		if ( IsPreview )//|| string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
+		if ( IsPreview )
 		{
 			return ResultValue( sampler ).Code;
 		}
@@ -642,7 +696,7 @@ public sealed partial class GraphCompiler
 			}
 			else
 			{
-				SGPLog.Warning( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
+				//SGPLog.Warning( $"ShaderResult.SamplerStates already contains id \"{id}\"" );
 			}
 
 			return $"g_s{id}";
@@ -651,6 +705,9 @@ public sealed partial class GraphCompiler
 		return $"g_s{id}";
 	}
 
+	/// <summary>
+	/// Get result of a sampler input with an optional default sampelr value if it failed to resolve
+	/// </summary>
 	public string ResultSamplerOrDefault( NodeInput samplerInput, Sampler defaultSampler )
 	{
 		var resultSampler = Result( samplerInput );
@@ -680,7 +737,7 @@ public sealed partial class GraphCompiler
 			return result;
 		}
 
-		return default;
+		throw new Exception( $"Could not find named reroute with name \"{name}\"" );
 	}
 
 	/// <summary>
@@ -1117,10 +1174,26 @@ public sealed partial class GraphCompiler
 		if ( IsPreview || string.IsNullOrWhiteSpace( name ) || Subgraph is not null )
 			return ResultValue( value );
 
-
 		var attribName = name;
 		name = CleanName( name );
-		var prefix = GetLocalPrefix( value );
+
+		var prefix = value switch
+		{
+			bool _ => "g_b",
+			int _ => "g_n",
+			float _ => "g_fl",
+			Vector2 _ => "g_v",
+			Vector3 _ => "g_v",
+			Vector4 _ => "g_v",
+			Color _ => "g_v",
+			Float2x2 _ => "g_m",
+			Float3x3 _ => "g_m",
+			Float4x4 _ => "g_m",
+			Texture2DObject _ => "g_t",
+			TextureCubeObject _ => "g_t",
+			Sampler _ => "g_s",
+			_ => throw new Exception( $"Unknown value type \"{value.GetType()}\"" )
+		};
 
 		// Make sure the type T is can have a Default();
 		bool canHaveDefualt = typeof( T ) switch
@@ -1155,7 +1228,7 @@ public sealed partial class GraphCompiler
 				options.Write( $"Default{parameter.Result.Components}( {value} );" );
 			}
 		}
-		else if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
+		else if ( ValidMaterialParameterTypes.Contains( value.GetType() ) )
 		{
 			if ( ui is FloatParameterUI floatParameterUI )
 			{
@@ -1202,8 +1275,8 @@ public sealed partial class GraphCompiler
 
 		parameter.Options = options.ToString().Trim();
 
-		// Avoid adding a matrix parameter to the graph if isAttribute is false. Which would make it code to the shader code and unable to be set externally via C#.
-		if ( value is not Float2x2 || value is not Float3x3 || value is not Float4x4 )
+		// Avoid adding types that arnt valid material parameter types.
+		if ( ValidMaterialParameterTypes.Contains( value.GetType() ) )
 		{
 			ShaderResult.Parameters.Add( name, parameter );
 		}
@@ -1223,15 +1296,15 @@ public sealed partial class GraphCompiler
 			textureInput.Processor
 		);
 
-		var assetPath = $"shadergraphplus/{path.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
+		var assetPath = $"shadergraphplus/textures/{path.Replace( ".", "_" )}_shadergraphplus.generated.vtex";
 
-		if ( !CompiledTextures.ContainsKey( resourceText ) )
+		if ( !CompiledTextures.TryGetValue( resourceText, out string precompiledTexturePath ) )
 		{
 			CompiledTextures.Add( resourceText, assetPath );
 		}
 		else
 		{
-			return CompiledTextures[resourceText];
+			return precompiledTexturePath;
 		}
 
 		var resourcePath = Editor.FileSystem.Root.GetFullPath( "/.source2/temp" );
@@ -1250,7 +1323,6 @@ public sealed partial class GraphCompiler
 
 	/// <summary>
 	/// Get result of a value, in preview mode an attribute will be registered and returned
-	/// Only supports float, Vector2, Vector3, Vector4, Color.
 	/// </summary>
 	public NodeResult ResultValue<T>( T value, string name = null, bool previewOverride = false )
 	{
@@ -1283,29 +1355,6 @@ public sealed partial class GraphCompiler
 		};
 	}
 
-	private static string GetLocalPrefix<T>( T value )
-	{
-		var prefix = value switch
-		{
-			bool _ => "g_b",
-			int _ => "g_n",
-			float _ => "g_fl",
-			Vector2 _ => "g_v",
-			Vector3 _ => "g_v",
-			Vector4 _ => "g_v",
-			Color _ => "g_v",
-			Float2x2 _ => "g_m",
-			Float3x3 _ => "g_m",
-			Float4x4 _ => "g_m",
-			Texture2DObject _ => "g_t",
-			TextureCubeObject _ => "g_t",
-			Sampler _ => "g_s",
-			_ => throw new Exception( $"Unknown value type \"{value.GetType()}\"" )
-		};
-
-		return prefix;
-	}
-
 	private static object GetDefaultValue( SubgraphNode node, string name, Type type )
 	{
 		if ( !node.DefaultValues.TryGetValue( name, out var value ) )
@@ -1326,6 +1375,12 @@ public sealed partial class GraphCompiler
 					return Vector4.One;
 				case Type t when t == typeof( Color ):
 					return Color.White;
+				case Type t when t == typeof( Float2x2 ):
+					return new Float2x2();
+				case Type t when t == typeof( Float3x3 ):
+					return new Float3x3();
+				case Type t when t == typeof( Float4x4 ):
+					return new Float4x4();
 				case Type t when t == typeof( Sampler ):
 					return new Sampler();
 				case Type t when t == typeof( Texture2DObject ):
@@ -1367,6 +1422,18 @@ public sealed partial class GraphCompiler
 			else if ( type == typeof( Color ) )
 			{
 				value = Color.Parse( el.GetString() ) ?? Color.White;
+			}
+			else if ( type == typeof( Float2x2 ) )
+			{
+				value = JsonSerializer.Deserialize<Float2x2>( el, ShaderGraphPlus.SerializerOptions() );
+			}
+			else if ( type == typeof( Float3x3 ) )
+			{
+				value = JsonSerializer.Deserialize<Float3x3>( el, ShaderGraphPlus.SerializerOptions() );
+			}
+			else if ( type == typeof( Float4x4 ) )
+			{
+				value = JsonSerializer.Deserialize<Float4x4>( el, ShaderGraphPlus.SerializerOptions() );
 			}
 			else if ( type == typeof( Sampler ) )
 			{
@@ -1476,8 +1543,6 @@ public sealed partial class GraphCompiler
 		return new();
 	}
 
-
-
 	private static int GetComponentCount( Type inputType )
 	{
 		return inputType switch
@@ -1487,9 +1552,9 @@ public sealed partial class GraphCompiler
 			Type t when t == typeof( Vector2 ) => 2,
 			Type t when t == typeof( Vector3 ) => 3,
 			Type t when t == typeof( Vector4 ) || t == typeof( Color ) => 4,
-			Type t when t == typeof( Float4x4 ) => 16,
-			Type t when t == typeof( Float3x3 ) => 6,
 			Type t when t == typeof( Float2x2 ) => 4,
+			Type t when t == typeof( Float3x3 ) => 6,
+			Type t when t == typeof( Float4x4 ) => 16,
 			_ => 0
 		};
 	}
@@ -1548,6 +1613,7 @@ public sealed partial class GraphCompiler
 			}
 		}
 
+		// TODO :
 		//if ( Graph.FeatureRules.Any() )
 		//{
 		//	foreach ( var rule in Graph.FeatureRules )
@@ -1673,15 +1739,15 @@ public sealed partial class GraphCompiler
 		// If we have any errors after evaluating, no point going further
 		if ( Errors.Any() )
 			return null;
-
-		string template = ShaderTemplate.Code;
+		
+		var shaderTemplate = ShaderTemplate.Code;
 
 		if ( Graph.Domain is ShaderDomain.BlendingSurface )
 		{
-			template = ShaderTemplateBlending.Code;
+			shaderTemplate = ShaderTemplateBlending.Code;
 		}
 
-		return string.Format( template,
+		return string.Format( shaderTemplate,
 			Graph.Description, // {0}
 			IndentString( GenerateFeatures(), 1 ), // {1}
 			IndentString( GenerateCommon(), 1 ), // {2}
@@ -1744,24 +1810,6 @@ public sealed partial class GraphCompiler
 		}
 
 		return sb.ToString();
-	}
-
-	public static string IndentString( string input, int tabCount )
-	{
-		if ( tabCount == 0 ) return input;
-
-		if ( string.IsNullOrWhiteSpace( input ) )
-			return input;
-
-		var tabs = new string( '\t', tabCount );
-		var lines = input.Split( '\n' );
-
-		for ( int i = 0; i < lines.Length; i++ )
-		{
-			lines[i] = tabs + lines[i];
-		}
-
-		return string.Join( "\n", lines );
 	}
 
 	private string GenerateVertexComboRules()
@@ -1899,7 +1947,7 @@ public sealed partial class GraphCompiler
 
 			foreach ( var result in ShaderResult.Attributes )
 			{
-				if ( result.Value is Float2x2 || result.Value is Float3x3 || result.Value is Float4x4 || result.Value is Texture )
+				if ( result.Value is Texture || !ValidShaderAttributeTypes.Contains( result.Value.GetType() )  )
 					continue;
 
 				var typeName = result.Value switch
@@ -2117,7 +2165,7 @@ public sealed partial class GraphCompiler
 			sb.AppendLine();
 		}
 
-		if ( Debug )
+		if ( ConCommands.VerboseDebgging )
 		{
 			if ( IsPreview )
 			{
@@ -2145,7 +2193,7 @@ public sealed partial class GraphCompiler
 
 			foreach ( var color in gradient.Value.Colors )
 			{
-				if ( Debug )
+				if ( ConCommands.VerboseDebgging )
 				{
 					Log.Info( $"{gradient.Key} Gradient Color {colorindex} : {color.Value} Time : {color.Time}" );
 				}

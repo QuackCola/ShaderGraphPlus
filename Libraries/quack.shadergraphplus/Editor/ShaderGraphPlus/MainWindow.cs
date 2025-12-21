@@ -560,7 +560,7 @@ public class MainWindow : DockWindow
 		}
 
 		var resultNode = _graph.Nodes.OfType<BaseResult>().FirstOrDefault();
-		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, true );
+		var compiler = new GraphCompiler( _graph, ShaderFeatures, true );
 		var iErroringNodeErrors = new List<GraphCompiler.GraphIssue>();
 		var iWarningNodeWarnings = new List<GraphCompiler.GraphIssue>();
 
@@ -778,7 +778,7 @@ public class MainWindow : DockWindow
 		// Go ahead preregister anything before iterating over all the nodes in the graph.
 		RegisterShaderFeatures( out _ );
 
-		var compiler = new GraphCompiler( _asset, _graph, ShaderFeatures, false );
+		var compiler = new GraphCompiler( _graph, ShaderFeatures, false );
 		return compiler.Generate();
 	}
 
