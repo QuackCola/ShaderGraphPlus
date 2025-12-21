@@ -15,7 +15,8 @@
     "ProjectTemplate": {
       "Icon": "texture",
       "Order": 1,
-      "Description": "You want to make a Unlit Standard Material Shader"
+      "Description": "You want to make a Unlit Standard Material Shader",
+	  "Hidden": false
 	}
   },
   "PreviewSettings": {

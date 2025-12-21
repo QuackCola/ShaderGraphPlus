@@ -22,6 +22,7 @@ internal class ProjectTemplate
 		public BlendMode BlendMode { get; set; }
 
 		public ShadingModel ShadingModel { get; set; }
+		public bool Hidden { get; set; }
 	}
 
 	//private class ConfigData
@@ -43,6 +44,7 @@ internal class ProjectTemplate
 	public string Icon { get; set; } = "question_mark";
 	public int Order { get; set; }
 	public string Description { get; set; } = "No description provided.";
+	public bool Hidden { get; set; } = false;
 
 	// Config Data
 	//public BlendMode BlendMode { get; set; }
@@ -60,6 +62,7 @@ internal class ProjectTemplate
 			Icon = display.Icon;
 			Order = display.Order.GetValueOrDefault();
 			Description = display.Description ?? "No description provided.";
+			Hidden = display.Hidden;
 		}
 
 	}

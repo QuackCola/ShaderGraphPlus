@@ -15,7 +15,8 @@
     "ProjectTemplate": {
       "Icon": "camera",
       "Order": 4,
-      "Description": "You want to make a Post Processing Shader"
+      "Description": "You want to make a Post Processing Shader",
+	  "Hidden": false
     }
   },
   "PreviewSettings": {

@@ -20,7 +20,7 @@ internal class ProjectTemplatesListView : ListView
 
 		FindLocalTemplates();
 
-		List<ProjectTemplate> orderedTemplates = Templates.OrderBy( x => x.Order ).ToList();
+		List<ProjectTemplate> orderedTemplates = Templates.OrderBy( x => x.Order ).Where( x => x.Hidden == false ).ToList();
 
 		SetItems( orderedTemplates );
 		ChosenTemplate = orderedTemplates.FirstOrDefault();
