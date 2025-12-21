@@ -301,11 +301,11 @@ partial class ShaderGraphPlus
 				typeName = newTypeName;
 			}
 
-			var typeDesc = EditorTypeLibrary.GetType( typeName );
+			var typeDesc = EditorTypeLibrary.GetType<BaseNodePlus>( typeName );
 			var type = new ClassNodeType( typeDesc );
 
 			BaseNodePlus node;
-			if ( typeDesc is null || typeDesc.Namespace.Contains( "Editor.ShaderGraph.Nodes" ) )
+			if ( typeDesc is null )
 			{
 				SGPLog.Error( $"Missing Node : \"{typeName}\"" );
 				var missingNode = new MissingNode( typeName, element );
