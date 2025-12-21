@@ -305,7 +305,7 @@ partial class ShaderGraphPlus
 			var type = new ClassNodeType( typeDesc );
 
 			BaseNodePlus node;
-			if ( typeDesc is null )
+			if ( typeDesc is null || typeDesc.Namespace.Contains( "Editor.ShaderGraph.Nodes" ) )
 			{
 				SGPLog.Error( $"Missing Node : \"{typeName}\"" );
 				var missingNode = new MissingNode( typeName, element );
