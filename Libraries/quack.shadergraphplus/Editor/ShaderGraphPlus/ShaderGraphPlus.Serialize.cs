@@ -308,6 +308,7 @@ partial class ShaderGraphPlus
 			if ( typeDesc is null )
 			{
 				SGPLog.Error( $"Missing Node : \"{typeName}\"" );
+
 				var missingNode = new MissingNode( typeName, element );
 				node = missingNode;
 				DeserializeObject( node, element, options );
