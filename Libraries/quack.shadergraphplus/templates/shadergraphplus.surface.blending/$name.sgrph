@@ -13,10 +13,10 @@
   "Domain": "BlendingSurface",
   "Metadata": {
     "ProjectTemplate": {
-      "Icon": "texture",
-      "Order": 2,
-      "Description": "You want to make a Vertex Blending Shader",
-	  "Hidden": true
+		"Icon": "texture",
+		"Order": 2,
+		"Description": "You want to make a Vertex Blending Shader",
+		"Hidden": true
     }
   },
   "PreviewSettings": {

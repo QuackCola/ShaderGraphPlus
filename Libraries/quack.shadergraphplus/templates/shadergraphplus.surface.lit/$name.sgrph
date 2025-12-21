@@ -13,10 +13,10 @@
   "Domain": "Surface",
   "Metadata": {
     "ProjectTemplate": {
-      "Icon": "texture",
-      "Order": 0,
-      "Description": "You want to make a Lit Standard Material Shader",
-	  "Hidden": false
+		"Icon": "texture",
+		"Order": 0,
+		"Description": "You want to make a Lit Standard Material Shader",
+		"Hidden": false
     }
   },
   "PreviewSettings": {
