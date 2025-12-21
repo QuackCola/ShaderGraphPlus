@@ -5,8 +5,6 @@ public class TemplateUserConfig
 	[TextArea]
 	[Title( "Shader Description" )]
 	public string Description { get; set; }
-	public BlendMode BlendMode { get; set; }
-	public ShadingModel ShadingModel { get; set; }
 }
 
 internal class ProjectTemplate
@@ -19,9 +17,6 @@ internal class ProjectTemplate
 
 		public string Description { get; set; }
 
-		public BlendMode BlendMode { get; set; }
-
-		public ShadingModel ShadingModel { get; set; }
 		public bool Hidden { get; set; }
 	}
 
@@ -42,7 +37,7 @@ internal class ProjectTemplate
 
 	// Display Data
 	public string Icon { get; set; } = "question_mark";
-	public int Order { get; set; }
+	public int Order { get; set; } = 0;
 	public string Description { get; set; } = "No description provided.";
 	public bool Hidden { get; set; } = false;
 
