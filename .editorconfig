@@ -376,3 +376,6 @@ dotnet_naming_style.s_camelcase.capitalization = camel_case
 
 # RS2008: Enable analyzer release tracking
 dotnet_diagnostic.RS2008.severity = suggestion
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = silent
