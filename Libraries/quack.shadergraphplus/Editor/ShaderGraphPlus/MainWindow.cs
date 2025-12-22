@@ -1046,6 +1046,7 @@ public class MainWindow : DockWindow
 	{
 		Close();
 	}
+
 	void RefreshRecentFiles()
 	{
 		_recentFilesMenu.Enabled = _recentFiles.Count > 0;
