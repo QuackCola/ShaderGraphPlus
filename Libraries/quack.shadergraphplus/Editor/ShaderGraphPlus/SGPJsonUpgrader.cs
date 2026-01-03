@@ -9,12 +9,12 @@ public class SGPJsonUpgraderAttribute : Attribute
 	/// <summary>
 	/// The version of this upgrade.
 	/// </summary>
-	public int Version { get; set; }
+	public int Version { get; }
 
 	/// <summary>
 	/// The type we're targeting for this upgrade.
 	/// </summary>
-	public Type Type { get; set; }
+	public Type Type { get; }
 
 	public SGPJsonUpgraderAttribute( Type type, int version )
 	{
