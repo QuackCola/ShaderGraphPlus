@@ -1632,6 +1632,13 @@ public sealed partial class GraphCompiler
 	{
 		var sb = new StringBuilder();
 
+		if ( IsPreview )
+		{
+			sb.AppendLine( $"#ifndef SHADERGRAPHPLUS_PREVIEW" );
+			sb.AppendLine( $"#define SHADERGRAPHPLUS_PREVIEW" );
+			sb.AppendLine( $"#endif" );
+		}
+
 		if ( ShaderFeatures.Any() )
 		{
 			sb.AppendLine( $"#ifndef SWITCH_TRUE" );
