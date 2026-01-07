@@ -60,6 +60,7 @@ public sealed partial class GraphCompiler
 	{
 		{ typeof( bool ) },
 		{ typeof( int ) },
+		{ typeof( Vector2Int ) },
 		{ typeof( float ) },
 		{ typeof( Vector2 ) },
 		{ typeof( Vector3 ) },
