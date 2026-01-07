@@ -369,7 +369,7 @@ public sealed partial class GraphCompiler
 
 		if ( ShaderTemplate.InternalVertexInputs.ContainsKey( name ) )
 		{
-			SGPLog.Error( $"InternalVertexInputs already contains VetexInput \"{name}\"" );
+			SGPLog.Error( $"VetexInput \"{name}\" is reserved by the GraphCompiler" );
 
 			return;
 		}
