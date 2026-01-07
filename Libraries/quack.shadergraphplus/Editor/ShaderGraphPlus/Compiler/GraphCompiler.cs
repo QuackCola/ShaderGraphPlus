@@ -64,6 +64,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Vector3Int ) },
 		{ typeof( float ) },
 		{ typeof( Double ) },
+		{ typeof( Angles ) },
 		{ typeof( Vector2 ) },
 		{ typeof( Vector3 ) },
 		{ typeof( Vector4 ) },
