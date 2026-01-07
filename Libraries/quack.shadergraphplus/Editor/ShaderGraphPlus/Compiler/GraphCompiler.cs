@@ -513,6 +513,10 @@ public sealed partial class GraphCompiler
 		}
 	}
 
+	/// <summary>
+	/// Register a hlsl shader include.
+	/// </summary>
+	/// <param name="path"></param>
 	public void RegisterInclude( string path )
 	{
 		var list = IsVs ? VertexIncludes : PixelIncludes;
