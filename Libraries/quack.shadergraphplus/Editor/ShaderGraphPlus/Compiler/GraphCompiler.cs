@@ -388,7 +388,7 @@ public sealed partial class GraphCompiler
 
 		if ( ShaderTemplate.InternalPixelInputs.ContainsKey( name ) )
 		{
-			SGPLog.Error( $"InternalPixelInputs already contains PixelInput \"{name}\"" );
+			SGPLog.Error( $"PixelInput \"{name}\" is reserved by the GraphCompiler" );
 
 			return;
 		}
