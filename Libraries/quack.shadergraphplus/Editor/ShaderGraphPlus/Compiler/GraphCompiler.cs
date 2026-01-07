@@ -37,7 +37,10 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), ( "SamplerState", true ) },
 	};
 
-	internal static List<Type> ValidMaterialParameterTypes => new()
+	/// <summary>
+	/// Data types that are exposed to the material editor.
+	/// </summary>
+	internal static List<Type> MaterialParameterTypes => new()
 	{
 		{ typeof( bool ) },
 		{ typeof( int ) },
@@ -50,7 +53,10 @@ public sealed partial class GraphCompiler
 		//{ typeof( Sampler ) },
 	};
 
-	internal static List<Type> ValidShaderAttributeTypes => new()
+	/// <summary>
+	/// Data types that can be set via <seealso cref="RenderAttributes"/>
+	/// </summary>
+	internal static List<Type> ShaderAttributeTypes => new()
 	{
 		{ typeof( bool ) },
 		{ typeof( int ) },
