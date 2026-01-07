@@ -208,26 +208,6 @@ public sealed partial class GraphCompiler
 		PixelInputs = ShaderTemplate.PixelInputs;
 	}
 
-	public void SetShaderAttribute<T>( string name, T value )
-	{
-		// Dont even try to set an attribute of the type if it
-		// isnt able to be set in the first place.
-		if ( !ValidShaderAttributeTypes.Contains( value.GetType() ) )
-		{
-			return;
-		}
-
-		if ( !ShaderResult.Attributes.ContainsKey( name ) )
-		{
-			OnAttribute?.Invoke( name, value );
-			ShaderResult.Attributes[name] = value;
-		}
-		else
-		{
-			//SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
-		}
-	}
-
 	public static string IndentString( string input, int tabCount )
 	{
 		if ( tabCount == 0 ) return input;
@@ -255,6 +235,26 @@ public sealed partial class GraphCompiler
 		name = new string( name.Where( x => char.IsLetter( x ) || char.IsNumber( x ) || x == '_' ).ToArray() );
 
 		return name;
+	}
+
+	public void SetShaderAttribute<T>( string name, T value )
+	{
+		// Dont even try to set an attribute of the type if it
+		// isnt able to be set in the first place.
+		if ( !ShaderAttributeTypes.Contains( value.GetType() ) )
+		{
+			return;
+		}
+
+		if ( !ShaderResult.Attributes.ContainsKey( name ) )
+		{
+			OnAttribute?.Invoke( name, value );
+			ShaderResult.Attributes[name] = value;
+		}
+		else
+		{
+			//SGPLog.Warning( $"ShaderResult.Attributes already contains key \"{name}\"" );
+		}
 	}
 
 	private void AddSubgraphs( ShaderGraphPlus graph )
