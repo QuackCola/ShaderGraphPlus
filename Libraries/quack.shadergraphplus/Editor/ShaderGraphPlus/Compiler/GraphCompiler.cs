@@ -1244,7 +1244,7 @@ public sealed partial class GraphCompiler
 				options.Write( $"Default{parameter.Result.Components}( {value} );" );
 			}
 		}
-		else if ( ValidMaterialParameterTypes.Contains( value.GetType() ) )
+		else if ( MaterialParameterTypes.Contains( value.GetType() ) )
 		{
 			if ( ui is FloatParameterUI floatParameterUI )
 			{
@@ -1291,8 +1291,8 @@ public sealed partial class GraphCompiler
 
 		parameter.Options = options.ToString().Trim();
 
-		// Avoid adding types that arnt valid material parameter types.
-		if ( ValidMaterialParameterTypes.Contains( value.GetType() ) )
+		// Avoid adding types that arnt exposed to the material editor.
+		if ( MaterialParameterTypes.Contains( value.GetType() ) )
 		{
 			ShaderResult.Parameters.Add( name, parameter );
 		}
@@ -1970,7 +1970,7 @@ public sealed partial class GraphCompiler
 
 			foreach ( var result in ShaderResult.Attributes )
 			{
-				if ( result.Value is Texture || !ValidShaderAttributeTypes.Contains( result.Value.GetType() ) )
+				if ( result.Value is Texture || !ShaderAttributeTypes.Contains( result.Value.GetType() ) )
 					continue;
 
 				var typeName = result.Value switch
