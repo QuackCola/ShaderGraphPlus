@@ -404,7 +404,6 @@ public sealed partial class GraphCompiler
 	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> arguments, out List<(string userAssigned, string compilerAssigned)> functionOutputs )
 	{
 		List<TargetResultData> targetResults = new();
-		Outputs = new();
 		functionOutputs = new();
 
 		if ( !ShaderResult.VoidLocals.ContainsKey( nodeID ) )
