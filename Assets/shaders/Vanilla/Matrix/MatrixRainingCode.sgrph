@@ -33,17 +33,17 @@
       "Position": "5880,-432",
       "HandleOffsets": {},
       "Albedo": {
-        "Identifier": "89",
+        "Identifier": "84",
         "Output": "Result",
         "Subgraph": null
       },
       "Emission": {
-        "Identifier": "89",
+        "Identifier": "84",
         "Output": "Result",
         "Subgraph": null
       },
       "Opacity": {
-        "Identifier": "105",
+        "Identifier": "100",
         "Output": "Result",
         "Subgraph": null
       }
@@ -139,7 +139,7 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "116",
+        "Identifier": "111",
         "Output": "Result",
         "Subgraph": null
       }
@@ -204,7 +204,7 @@
       "Position": "540,-768",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "96",
         "Output": "Result",
         "Subgraph": null
       }
@@ -275,7 +275,7 @@
       "Position": "468,-240",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "101",
+        "Identifier": "96",
         "Output": "Result",
         "Subgraph": null
       }
@@ -332,7 +332,7 @@
       "Position": "1056,-372",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "115",
+        "Identifier": "110",
         "Output": "Result",
         "Subgraph": null
       }
@@ -345,7 +345,7 @@
       "Position": "1056,-132",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "114",
+        "Identifier": "109",
         "Output": "Result",
         "Subgraph": null
       }
@@ -389,7 +389,7 @@
       "Position": "1476,-564",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "98",
+        "Identifier": "93",
         "Output": "Result",
         "Subgraph": null
       }
@@ -562,7 +562,7 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "117",
+        "Identifier": "112",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1129,7 +1129,7 @@
         "Subgraph": null
       },
       "CoordsInput": {
-        "Identifier": "96",
+        "Identifier": "91",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1156,100 +1156,44 @@
       "Position": "3420,-540",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "65",
+        "Identifier": "61",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "61",
-        "Output": "Result",
+        "Identifier": "114",
+        "Output": "Out",
         "Subgraph": null
       }
-    },
-    {
-      "_class": "CommentNode",
-      "__version": 2,
-      "Size": "480,191",
-      "Color": "0.2,0.71373,0.47451,1",
-      "Title": "One-Minus",
-      "Description": "Invert Values",
-      "DescriptionFontSize": 11,
-      "Layer": 1,
-      "Identifier": "56",
-      "Position": "2820,-516",
-      "HandleOffsets": {}
     },
     {
       "_class": "Multiply",
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "57",
+      "Identifier": "56",
       "Position": "3420,-432",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "61",
-        "Output": "Result",
+        "Identifier": "114",
+        "Output": "Out",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "67",
+        "Identifier": "63",
         "Output": "Result",
         "Subgraph": null
       }
-    },
-    {
-      "_class": "FloatConstantNode",
-      "__version": 1,
-      "Min": 0,
-      "Max": 1,
-      "Step": 0,
-      "Value": 1,
-      "Identifier": "58",
-      "Position": "2868,-432",
-      "HandleOffsets": {}
     },
     {
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "59",
+      "Identifier": "57",
       "Position": "2832,-300",
       "HandleOffsets": {},
       "Input": {
         "Identifier": "49",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "Subtract",
-      "__version": 1,
-      "DefaultA": 0,
-      "DefaultB": 1,
-      "Identifier": "60",
-      "Position": "3108,-444",
-      "HandleOffsets": {},
-      "A": {
-        "Identifier": "58",
-        "Output": "Result",
-        "Subgraph": null
-      },
-      "B": {
-        "Identifier": "69",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "Output",
-      "Identifier": "61",
-      "Position": "3252,-396",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "60",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1263,7 +1207,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "62",
+      "Identifier": "58",
       "Position": "3396,-612",
       "HandleOffsets": {}
     },
@@ -1272,11 +1216,11 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "63",
+      "Identifier": "59",
       "Position": "3420,-132",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "118",
+        "Identifier": "113",
         "Output": "Result",
         "Subgraph": null
       },
@@ -1291,11 +1235,11 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "64",
+      "Identifier": "60",
       "Position": "3420,-12",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "118",
+        "Identifier": "113",
         "Output": "Result",
         "Subgraph": null
       },
@@ -1309,11 +1253,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "65",
+      "Identifier": "61",
       "Position": "3264,-528",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "66",
+        "Identifier": "62",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1322,7 +1266,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "66",
+      "Identifier": "62",
       "Position": "2796,-528",
       "HandleOffsets": {},
       "Input": {
@@ -1335,11 +1279,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "67",
+      "Identifier": "63",
       "Position": "3276,-300",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "59",
+        "Identifier": "57",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1348,24 +1292,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "68",
+      "Identifier": "64",
       "Position": "2784,-336",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "70",
-        "Output": "Result",
-        "Subgraph": null
-      }
-    },
-    {
-      "_class": "ReroutePlus",
-      "__version": 1,
-      "Comment": "",
-      "Identifier": "69",
-      "Position": "3024,-336",
-      "HandleOffsets": {},
-      "Input": {
-        "Identifier": "68",
+        "Identifier": "65",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1374,7 +1305,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "70",
+      "Identifier": "65",
       "Position": "2784,288",
       "HandleOffsets": {},
       "Input": {
@@ -1392,7 +1323,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "71",
+      "Identifier": "66",
       "Position": "3396,-192",
       "HandleOffsets": {}
     },
@@ -1401,7 +1332,7 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "72",
+      "Identifier": "67",
       "Position": "3792,-564",
       "HandleOffsets": {},
       "A": {
@@ -1410,7 +1341,7 @@
         "Subgraph": null
       },
       "B": {
-        "Identifier": "64",
+        "Identifier": "60",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1424,7 +1355,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 4,
-      "Identifier": "73",
+      "Identifier": "68",
       "Position": "3696,-612",
       "HandleOffsets": {}
     },
@@ -1437,7 +1368,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "74",
+      "Identifier": "69",
       "Position": "3696,-192",
       "HandleOffsets": {}
     },
@@ -1446,16 +1377,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "75",
+      "Identifier": "70",
       "Position": "3792,-132",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "63",
+        "Identifier": "59",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "57",
+        "Identifier": "56",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1463,11 +1394,11 @@
     {
       "_class": "SplitVector",
       "__version": 1,
-      "Identifier": "76",
+      "Identifier": "71",
       "Position": "3984,-588",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "72",
+        "Identifier": "67",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1475,11 +1406,11 @@
     {
       "_class": "SplitVector",
       "__version": 1,
-      "Identifier": "77",
+      "Identifier": "72",
       "Position": "3984,-180",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "75",
+        "Identifier": "70",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1489,16 +1420,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "78",
+      "Identifier": "73",
       "Position": "4548,-444",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "76",
+        "Identifier": "71",
         "Output": "X",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "77",
+        "Identifier": "72",
         "Output": "Y",
         "Subgraph": null
       }
@@ -1508,16 +1439,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 0.7,
-      "Identifier": "79",
+      "Identifier": "74",
       "Position": "4752,-444",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "78",
+        "Identifier": "73",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "82",
+        "Identifier": "77",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1531,7 +1462,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "80",
+      "Identifier": "75",
       "Position": "4716,-516",
       "HandleOffsets": {}
     },
@@ -1539,7 +1470,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "G Channel ( Letters )",
-      "Identifier": "81",
+      "Identifier": "76",
       "Position": "4320,336",
       "HandleOffsets": {},
       "Input": {
@@ -1553,16 +1484,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "82",
+      "Identifier": "77",
       "Position": "4512,-36",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "81",
+        "Identifier": "76",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "94",
+        "Identifier": "89",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1576,7 +1507,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "83",
+      "Identifier": "78",
       "Position": "4716,-288",
       "HandleOffsets": {}
     },
@@ -1585,16 +1516,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "84",
+      "Identifier": "79",
       "Position": "4752,-228",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "77",
+        "Identifier": "72",
         "Output": "Y",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "82",
+        "Identifier": "77",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1604,16 +1535,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "85",
+      "Identifier": "80",
       "Position": "5316,-432",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "92",
+        "Identifier": "87",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "86",
+        "Identifier": "81",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1636,7 +1567,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "86",
+      "Identifier": "81",
       "Position": "5004,-516",
       "HandleOffsets": {}
     },
@@ -1658,7 +1589,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "87",
+      "Identifier": "82",
       "Position": "5004,-12",
       "HandleOffsets": {}
     },
@@ -1667,16 +1598,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "88",
+      "Identifier": "83",
       "Position": "5328,-108",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "87",
+        "Identifier": "82",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "93",
+        "Identifier": "88",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1686,16 +1617,16 @@
       "__version": 1,
       "DefaultA": 0,
       "DefaultB": 1,
-      "Identifier": "89",
+      "Identifier": "84",
       "Position": "5460,-432",
       "HandleOffsets": {},
       "A": {
-        "Identifier": "85",
+        "Identifier": "80",
         "Output": "Result",
         "Subgraph": null
       },
       "B": {
-        "Identifier": "88",
+        "Identifier": "83",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1709,7 +1640,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "90",
+      "Identifier": "85",
       "Position": "4980,-576",
       "HandleOffsets": {}
     },
@@ -1717,11 +1648,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "91",
+      "Identifier": "86",
       "Position": "4956,-300",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "79",
+        "Identifier": "74",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1730,11 +1661,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "92",
+      "Identifier": "87",
       "Position": "5232,-300",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "91",
+        "Identifier": "86",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1743,11 +1674,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "93",
+      "Identifier": "88",
       "Position": "4944,-48",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "84",
+        "Identifier": "79",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1774,7 +1705,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "94",
+      "Identifier": "89",
       "Position": "4284,-12",
       "HandleOffsets": {}
     },
@@ -1787,7 +1718,7 @@
       "Description": "Finished matrix rain effect",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "95",
+      "Identifier": "90",
       "Position": "5424,-528",
       "HandleOffsets": {}
     },
@@ -1795,11 +1726,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "96",
+      "Identifier": "91",
       "Position": "2028,288",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "99",
+        "Identifier": "94",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1808,11 +1739,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "97",
+      "Identifier": "92",
       "Position": "396,-948",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "100",
+        "Identifier": "95",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1821,11 +1752,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "98",
+      "Identifier": "93",
       "Position": "1344,-924",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "97",
+        "Identifier": "92",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1834,11 +1765,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "99",
+      "Identifier": "94",
       "Position": "396,276",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "100",
+        "Identifier": "95",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1847,11 +1778,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "Texture Coord Highway",
-      "Identifier": "100",
+      "Identifier": "95",
       "Position": "396,-816",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "112",
+        "Identifier": "107",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1860,7 +1791,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "101",
+      "Identifier": "96",
       "Position": "300,-372",
       "HandleOffsets": {},
       "Input": {
@@ -1873,11 +1804,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "G Channel ( Letters )",
-      "Identifier": "102",
+      "Identifier": "97",
       "Position": "5340,336",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "81",
+        "Identifier": "76",
         "Output": "Result",
         "Subgraph": null
       }
@@ -1891,7 +1822,7 @@
       "Description": "How bright the rain should be",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "103",
+      "Identifier": "98",
       "Position": "4260,-96",
       "HandleOffsets": {}
     },
@@ -1904,7 +1835,7 @@
       "Description": "Whether we should use transparency or not",
       "DescriptionFontSize": 11,
       "Layer": 5,
-      "Identifier": "104",
+      "Identifier": "99",
       "Position": "5460,180",
       "HandleOffsets": {}
     },
@@ -1925,16 +1856,16 @@
           "Priority": 0
         }
       },
-      "Identifier": "105",
+      "Identifier": "100",
       "Position": "5472,276",
       "HandleOffsets": {},
       "True": {
-        "Identifier": "102",
+        "Identifier": "97",
         "Output": "Result",
         "Subgraph": null
       },
       "False": {
-        "Identifier": "107",
+        "Identifier": "102",
         "Output": "R",
         "Subgraph": null
       }
@@ -1943,7 +1874,7 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "106",
+      "Identifier": "101",
       "Position": "876,-468",
       "HandleOffsets": {},
       "Input": {
@@ -1956,14 +1887,14 @@
       "_class": "ColorConstantNode",
       "__version": 1,
       "Value": "1,1,1,1",
-      "Identifier": "107",
+      "Identifier": "102",
       "Position": "5244,384",
       "HandleOffsets": {}
     },
     {
       "_class": "ScreenCoordinate",
       "__version": 1,
-      "Identifier": "108",
+      "Identifier": "103",
       "Position": "-480,-876",
       "HandleOffsets": {}
     },
@@ -1976,7 +1907,7 @@
       "Description": "",
       "DescriptionFontSize": 11,
       "Layer": 4,
-      "Identifier": "109",
+      "Identifier": "104",
       "Position": "-516,-1008",
       "HandleOffsets": {}
     },
@@ -1985,7 +1916,7 @@
       "__version": 1,
       "UseSecondaryCoord": false,
       "Tiling": "1,1",
-      "Identifier": "110",
+      "Identifier": "105",
       "Position": "-480,-816",
       "HandleOffsets": {}
     },
@@ -2006,16 +1937,16 @@
           "Priority": 0
         }
       },
-      "Identifier": "111",
+      "Identifier": "106",
       "Position": "-240,-864",
       "HandleOffsets": {},
       "True": {
-        "Identifier": "108",
+        "Identifier": "103",
         "Output": "Result",
         "Subgraph": null
       },
       "False": {
-        "Identifier": "110",
+        "Identifier": "105",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2026,16 +1957,16 @@
       "DefaultTile": "1,1",
       "DefaultOffset": "0,0",
       "WrapTo01": false,
-      "Identifier": "112",
+      "Identifier": "107",
       "Position": "48,-864",
       "HandleOffsets": {},
       "UV": {
-        "Identifier": "111",
+        "Identifier": "106",
         "Output": "Result",
         "Subgraph": null
       },
       "Tile": {
-        "Identifier": "113",
+        "Identifier": "108",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2062,7 +1993,7 @@
           "Priority": 0
         }
       },
-      "Identifier": "113",
+      "Identifier": "108",
       "Position": "-240,-720",
       "HandleOffsets": {}
     },
@@ -2070,11 +2001,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "114",
+      "Identifier": "109",
       "Position": "900,-144",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "106",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2083,11 +2014,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "115",
+      "Identifier": "110",
       "Position": "960,-372",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "106",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2096,11 +2027,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "116",
+      "Identifier": "111",
       "Position": "948,-516",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "106",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2109,11 +2040,11 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "",
-      "Identifier": "117",
+      "Identifier": "112",
       "Position": "876,-756",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "106",
+        "Identifier": "101",
         "Output": "Result",
         "Subgraph": null
       }
@@ -2122,11 +2053,23 @@
       "_class": "ReroutePlus",
       "__version": 1,
       "Comment": "R Channel (Not Moving Mask)",
-      "Identifier": "118",
+      "Identifier": "113",
       "Position": "3276,288",
       "HandleOffsets": {},
       "Input": {
-        "Identifier": "70",
+        "Identifier": "65",
+        "Output": "Result",
+        "Subgraph": null
+      }
+    },
+    {
+      "_class": "OneMinus",
+      "__version": 1,
+      "Identifier": "114",
+      "Position": "3060,-432",
+      "HandleOffsets": {},
+      "In": {
+        "Identifier": "64",
         "Output": "Result",
         "Subgraph": null
       }
