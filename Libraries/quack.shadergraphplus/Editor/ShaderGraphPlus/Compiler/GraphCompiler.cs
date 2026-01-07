@@ -401,23 +401,23 @@ public sealed partial class GraphCompiler
 		}
 	}
 
-	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> args, out List<(string userAssigned, string compilerAssigned)> Outputs )
+	public void RegisterVoidFunction( string functionCall, string nodeID, List<VoidFunctionArgument> arguments, out List<(string userAssigned, string compilerAssigned)> functionOutputs )
 	{
 		List<TargetResultData> targetResults = new();
 		Outputs = new();
+		functionOutputs = new();
 
 		if ( !ShaderResult.VoidLocals.ContainsKey( nodeID ) )
 		{
 			var funcCall = functionCall;
-			Dictionary<string, string> functionOutputs = new();
 			Dictionary<(string, string), string> targetProperties = new();
 
-			foreach ( var inputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Input ).Index() )
+			foreach ( var inputArg in arguments.Where( x => x.ArgumentType == VoidFunctionArgumentType.Input ).Index() )
 			{
 				targetProperties.Add( (inputArg.Item.TargetProperty, inputArg.Item.VarName), inputArg.Item.DefaultTargetProperty );
 			}
 
-			foreach ( var outputArg in args.Where( x => x.ArgumentType == VoidFunctionArgumentType.Output ).Index() )
+			foreach ( var outputArg in arguments.Where( x => x.ArgumentType == VoidFunctionArgumentType.Output ).Index() )
 			{
 				funcCall = funcCall.Replace( outputArg.Item.VarName, outputArg.Item.TargetProperty );
 
@@ -433,7 +433,7 @@ public sealed partial class GraphCompiler
 				data.UserAssignedName = userAssignedname;
 				data.ResultType = GetResultTypeFromHLSLDataType( hlslType );
 
-				Outputs.Add( new( userAssignedname, varName ) );
+				functionOutputs.Add( new( userAssignedname, varName ) );
 
 				targetResults.Add( data );
 			}
