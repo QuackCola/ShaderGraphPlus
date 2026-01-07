@@ -17,6 +17,9 @@ public sealed partial class GraphCompiler
 		public bool IsWarning;
 	}
 
+	/// <summary>
+	/// Avalible data value types that are passed between <seealso cref="ShaderNodePlus"/> nodes.
+	/// </summary>
 	internal static Dictionary<Type, (string hlslType, bool isEditorType)> ValueTypes => new()
 	{
 		{ typeof( bool ), ( "bool", false ) },
