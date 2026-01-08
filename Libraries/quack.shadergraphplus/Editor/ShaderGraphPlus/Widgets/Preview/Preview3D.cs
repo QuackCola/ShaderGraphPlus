@@ -1026,10 +1026,9 @@ public sealed class Preview3D : SceneRenderingWidget
 		Scene.Camera.WorldPosition = Scene.Camera.WorldRotation.Backward * _distance;
 		Scene.Camera.FieldOfView = 45;
 
-		// FIXME
-		SphereModel = Model.Sphere;//Model.Builder
-								   //.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
-								   //.Create();
+		SphereModel = Model.Builder
+			.AddMesh( CreateTessellatedSphere( 64, 64, 4.0f, 4.0f, 32.0f ) )
+			.Create();
 
 		GroundModel = Model.Builder
 			.AddMesh( CreatePlane() )
@@ -1225,7 +1224,7 @@ public sealed class Preview3D : SceneRenderingWidget
 	{
 		var material = Material.Load( "materials/dev/gray_grid_8.vmat" );
 		var mesh = new Mesh( material );
-		mesh.CreateVertexBuffer<Vertex>( 4, Vertex.Layout, new[]
+		mesh.CreateVertexBuffer( 4, new[]
 		{
 			new Vertex( new Vector3( -200, -200, 0 ), Vector3.Up, Vector3.Forward, new Vector4( 0, 0, 0, 0 ) ),
 			new Vertex( new Vector3( 200, -200, 0 ), Vector3.Up, Vector3.Forward, new Vector4( 2, 0, 0, 0 ) ),
@@ -1246,7 +1245,7 @@ public sealed class Preview3D : SceneRenderingWidget
 
 		var material = Material.Load( "materials/core/shader_editor.vmat" );
 		var mesh = new Mesh( material );
-		mesh.CreateVertexBuffer<Vertex>( (uFacets + 1) * (vFacets + 1), Vertex.Layout );
+		mesh.CreateVertexBuffer<Vertex>( (uFacets + 1) * (vFacets + 1) );
 		mesh.CreateIndexBuffer( 2 * 3 * uFacets * vFacets );
 		mesh.Bounds = BBox.FromPositionAndSize( 0, radius * 2 );
 

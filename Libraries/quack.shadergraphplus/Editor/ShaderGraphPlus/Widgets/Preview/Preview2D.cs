@@ -306,9 +306,6 @@ public class Preview2D : SceneRenderingWidget
 	private Dictionary<string, int> _comboIntAttributes = new();
 	private int _stageId;
 
-	private readonly Model _previewPlane = Model.Builder
-	.AddMesh( CreateTessellatedPlane( 4, 0, 128 ) )
-	.Create();
 
 	private const int NoPreviewID = 0;
 	private bool _enableNodePreview;
@@ -770,69 +767,6 @@ public class Preview2D : SceneRenderingWidget
 
 		_sceneObject.Update( RealTime.Delta );
 		_sceneObject.Attributes.Set( "g_flPreviewTime", RealTime.Now );
-	}
-
-	static Mesh CreateTessellatedPlane( int facetsPerAxis, Vector3 center, Vector2 size )
-	{
-		var material = Material.Load( "materials/dev/gray_grid_8.vmat" );
-		var mesh = new Mesh( material );
-
-		var vertexCount = (facetsPerAxis + 1) * (facetsPerAxis + 1);
-		var indexCount = facetsPerAxis * facetsPerAxis * 6;
-
-		var vertices = new MaterialVertex[vertexCount];
-		var indices = new int[indexCount];
-
-		var stepU = 1.0f / facetsPerAxis;
-		var stepV = 1.0f / facetsPerAxis;
-		var stepX = size.x / facetsPerAxis;
-		var stepY = size.y / facetsPerAxis;
-
-		var vertexIndex = 0;
-		for ( var i = 0; i <= facetsPerAxis; i++ )
-		{
-			for ( var j = 0; j <= facetsPerAxis; j++ )
-			{
-				var u = j * stepU;
-				var v = i * stepV;
-
-				var texcoord = new Vector2( v, u );
-				var position = new Vector3(
-					center.x + (j * stepX - size.x / 2),
-					center.y + (i * stepY - size.y / 2),
-					center.z );
-
-				vertices[vertexIndex] = new MaterialVertex( position, new Vector4( 0, 0, 1, 1 ), new Vector4( 1, 0, 0, -1 ), texcoord );
-				vertexIndex++;
-			}
-		}
-
-		var index = 0;
-		for ( var i = 0; i < facetsPerAxis; i++ )
-		{
-			for ( var j = 0; j < facetsPerAxis; j++ )
-			{
-				var topLeft = i * (facetsPerAxis + 1) + j;
-				var topRight = topLeft + 1;
-				var bottomLeft = topLeft + (facetsPerAxis + 1);
-				var bottomRight = bottomLeft + 1;
-
-				indices[index++] = topRight;
-				indices[index++] = bottomRight;
-				indices[index++] = topLeft;
-
-				indices[index++] = bottomLeft;
-				indices[index++] = topLeft;
-				indices[index++] = bottomRight;
-			}
-		}
-
-		mesh.CreateVertexBuffer<MaterialVertex>( vertices.Length, MaterialVertex.Layout, vertices );
-		mesh.CreateIndexBuffer( indices.Length, indices );
-
-		mesh.Bounds = BBox.FromPositionAndSize( center, new Vector3( size.x, size.y, 0 ) );
-
-		return mesh;
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
