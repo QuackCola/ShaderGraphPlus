@@ -1,4 +1,5 @@
 ﻿using Editor;
+using Editor.ShaderGraph;
 
 namespace ShaderGraphPlus;
 
@@ -357,11 +358,10 @@ public abstract class BaseNodePlus : IGraphNode, ISGPJsonUpgradeable
 	{
 		if ( _graph is not null )
 		{
-			SGPLog.Info( "FIXME!!!" );
-			//if ( Graph is ShaderGraphPlus sg && !sg.IsSubgraph && this is IParameterNode pn )
-			//{
-			//	Inputs = new List<IPlugIn>();
-			//}
+			if ( Graph is ShaderGraphPlus sgp && !sgp.IsSubgraph && this is IParameterNodeBase )
+			{
+				Inputs = new List<IPlugIn>();
+			}
 		}
 	}
 
