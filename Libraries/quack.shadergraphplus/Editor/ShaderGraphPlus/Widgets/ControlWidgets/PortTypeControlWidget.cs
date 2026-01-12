@@ -17,7 +17,8 @@ sealed class PortTypeControlWidget : DropdownControlWidget<string>
 	protected override IEnumerable<object> GetDropdownValues()
 	{
 		List<object> list = new();
-		foreach ( var type in GraphCompiler.ValueTypes )
+
+		foreach ( var type in ValueTypeRegistry.ValueTypes )
 		{
 			if ( type.Key == typeof( float ) ) list.Add( "float" );
 			else if ( type.Key == typeof( int ) ) list.Add( "int" );
@@ -30,6 +31,7 @@ sealed class PortTypeControlWidget : DropdownControlWidget<string>
 			else if ( type.Key == typeof( Float4x4 ) ) list.Add( "float4x4" );
 			else list.Add( type.Key );
 		}
+
 		return list;
 	}
 }
