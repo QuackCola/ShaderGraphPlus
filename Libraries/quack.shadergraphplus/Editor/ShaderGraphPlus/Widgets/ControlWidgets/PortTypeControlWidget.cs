@@ -18,7 +18,7 @@ sealed class PortTypeControlWidget : DropdownControlWidget<string>
 	{
 		List<object> list = new();
 
-		foreach ( var type in ValueTypeRegistry.ValueTypes )
+		foreach ( var type in GraphCompiler.ValueTypes )
 		{
 			if ( type.Key == typeof( float ) ) list.Add( "float" );
 			else if ( type.Key == typeof( int ) ) list.Add( "int" );

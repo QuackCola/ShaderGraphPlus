@@ -24,12 +24,12 @@ public sealed partial class GraphCompiler
 	/// </summary>
 	internal static Dictionary<Type, bool> ValueTypes => new()
 	{
-		{ typeof( bool ),  false  },
+		{ typeof( bool ), false },
 		{ typeof( int ), false },
 		{ typeof( float ), false },
 		{ typeof( Vector2 ),false },
-		{ typeof( Vector3 ), false  },
-		{ typeof( Vector4 ), false  },
+		{ typeof( Vector3 ), false },
+		{ typeof( Vector4 ), false },
 		{ typeof( Color ), false },
 		{ typeof( Float2x2 ), true },
 		{ typeof( Float3x3 ), true },
