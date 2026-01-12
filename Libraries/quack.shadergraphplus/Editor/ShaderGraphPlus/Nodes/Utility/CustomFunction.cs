@@ -584,7 +584,7 @@ public class CustomCodeNodePorts
 			if ( typeName == "float4x4" ) type = typeof( Float4x4 );
 
 			// Try getting type from EditorTypeLibrary.
-			if ( type != null && GraphCompiler.ValueTypes.ContainsKey( type ) )
+			if ( type != null && GraphCompiler.ValueTypes.TryGetValue( type, out var isEditorType ) && isEditorType )
 			{
 				var editorType = EditorTypeLibrary.GetType( typeName ).TargetType;
 
