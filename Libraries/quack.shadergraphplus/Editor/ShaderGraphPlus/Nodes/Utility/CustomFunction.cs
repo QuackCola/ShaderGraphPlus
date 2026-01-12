@@ -575,16 +575,17 @@ public class CustomCodeNodePorts
 			if ( string.IsNullOrEmpty( TypeName ) ) return null;
 			var typeName = TypeName;
 
-			// Try getting type from EditorTypeLibrary.
-			if ( GraphCompiler.ValueTypes.ContainsValue( true ) )
-			{
-				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
-				if ( typeName == "TextureCube" ) typeName = typeof( TextureCubeObject ).FullName;
-				if ( typeName == "Sampler" ) typeName = typeof( Sampler ).FullName;
-				if ( typeName == "float2x2" ) typeName = typeof( Float2x2 ).FullName;
-				if ( typeName == "float3x3" ) typeName = typeof( Float3x3 ).FullName;
-				if ( typeName == "float4x4" ) typeName = typeof( Float4x4 ).FullName;
+			Type type = null;
+			if ( typeName == "Texture2D" ) type = typeof( Texture2DObject );
+			if ( typeName == "TextureCube" ) type = typeof( TextureCubeObject );
+			if ( typeName == "Sampler" ) type = typeof( Sampler );
+			if ( typeName == "float2x2" ) type = typeof( Float2x2 );
+			if ( typeName == "float3x3" ) type = typeof( Float3x3 );
+			if ( typeName == "float4x4" ) type = typeof( Float4x4 );
 
+			// Try getting type from EditorTypeLibrary.
+			if ( type != null && GraphCompiler.ValueTypes.ContainsKey( type ) )
+			{
 				var editorType = EditorTypeLibrary.GetType( typeName ).TargetType;
 
 				return editorType;
@@ -594,7 +595,7 @@ public class CustomCodeNodePorts
 			if ( typeName == "int" ) typeName = typeof( int ).FullName;
 			if ( typeName == "bool" ) typeName = typeof( bool ).FullName;
 
-			var type = TypeLibrary.GetType( typeName ).TargetType;
+			type = TypeLibrary.GetType( typeName ).TargetType;
 
 			return type;
 		}
