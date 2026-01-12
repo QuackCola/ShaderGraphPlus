@@ -56,7 +56,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), "SamplerState" },
 	};
 
-	internal static Dictionary<Type, string> ValueTypeGlobalPrefixes => new() 
+	internal static Dictionary<Type, string> ValueTypeGlobalPrefixes => new()
 	{
 		{ typeof( bool ), "g_b" },
 		{ typeof( int ), "g_n" },
