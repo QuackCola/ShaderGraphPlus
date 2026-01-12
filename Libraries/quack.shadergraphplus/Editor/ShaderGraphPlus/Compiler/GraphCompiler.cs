@@ -17,24 +17,60 @@ public sealed partial class GraphCompiler
 		public bool IsWarning;
 	}
 
+
 	/// <summary>
 	/// Avalible data value types that are passed between <seealso cref="ShaderNodePlus"/> nodes.
+	/// Value represents if the key type is defined in editor code or not.
 	/// </summary>
-	internal static Dictionary<Type, (string hlslType, bool isEditorType)> ValueTypes => new()
+	internal static Dictionary<Type, bool> ValueTypes => new()
 	{
-		{ typeof( bool ), ( "bool", false ) },
-		{ typeof( int ), ( "int", false ) },
-		{ typeof( float ), ( "float", false ) },
-		{ typeof( Vector2 ),( "float2", false ) },
-		{ typeof( Vector3 ),( "float3", false ) },
-		{ typeof( Vector4 ),( "float4", false ) },
-		{ typeof( Color ), ( "float4", false ) },
-		{ typeof( Float2x2 ), ( "float2x2", true ) },
-		{ typeof( Float3x3 ), ( "float3x3", true ) },
-		{ typeof( Float4x4 ), ( "float4x4", true ) },
-		{ typeof( Texture2DObject ), ( "Texture2D", true ) },
-		{ typeof( TextureCubeObject ), ( "TextureCube", true ) },
-		{ typeof( Sampler ), ( "SamplerState", true ) },
+		{ typeof( bool ),  false  },
+		{ typeof( int ), false },
+		{ typeof( float ), false },
+		{ typeof( Vector2 ),false },
+		{ typeof( Vector3 ), false  },
+		{ typeof( Vector4 ), false  },
+		{ typeof( Color ), false },
+		{ typeof( Float2x2 ), true },
+		{ typeof( Float3x3 ), true },
+		{ typeof( Float4x4 ), true },
+		{ typeof( Texture2DObject ), true },
+		{ typeof( TextureCubeObject ), true },
+		{ typeof( Sampler ), true },
+	};
+
+	internal static Dictionary<Type, string> HlslTypes => new()
+	{
+		{ typeof( bool ), "bool" },
+		{ typeof( int ), "int" },
+		{ typeof( float ), "float" },
+		{ typeof( Vector2 ), "float2" },
+		{ typeof( Vector3 ), "float3" },
+		{ typeof( Vector4 ), "float4" },
+		{ typeof( Color ), "float4" },
+		{ typeof( Float2x2 ), "float2x2" },
+		{ typeof( Float3x3 ), "float3x3" },
+		{ typeof( Float4x4 ), "float4x4"},
+		{ typeof( Texture2DObject ), "Texture2D" },
+		{ typeof( TextureCubeObject ), "TextureCube" },
+		{ typeof( Sampler ), "SamplerState" },
+	};
+
+	internal static Dictionary<Type, string> ValueTypeGlobalPrefixes => new() 
+	{
+		{ typeof( bool ), "g_b" },
+		{ typeof( int ), "g_n" },
+		{ typeof( float ), "g_fl"},
+		{ typeof( Vector2 ), "g_v" },
+		{ typeof( Vector3 ), "g_v" },
+		{ typeof( Vector4 ), "g_v" },
+		{ typeof( Color ), "g_v" },
+		{ typeof( Float2x2 ), "g_m" },
+		{ typeof( Float3x3 ), "g_m" },
+		{ typeof( Float4x4 ), "g_m" },
+		{ typeof( Texture2DObject ), "g_t" },
+		{ typeof( TextureCubeObject ), "g_t" },
+		{ typeof( Sampler  ), "g_s" }
 	};
 
 	/// <summary>
@@ -1193,23 +1229,10 @@ public sealed partial class GraphCompiler
 		var attribName = name;
 		name = CleanName( name );
 
-		var prefix = value switch
+		if ( !ValueTypeGlobalPrefixes.TryGetValue( value.GetType(), out var prefix ) )
 		{
-			bool _ => "g_b",
-			int _ => "g_n",
-			float _ => "g_fl",
-			Vector2 _ => "g_v",
-			Vector3 _ => "g_v",
-			Vector4 _ => "g_v",
-			Color _ => "g_v",
-			Float2x2 _ => "g_m",
-			Float3x3 _ => "g_m",
-			Float4x4 _ => "g_m",
-			Texture2DObject _ => "g_t",
-			TextureCubeObject _ => "g_t",
-			Sampler _ => "g_s",
-			_ => throw new Exception( $"Unknown value type \"{value.GetType()}\"" )
-		};
+			throw new Exception( $"Unknow Type \"{value.GetType()}\"" );
+		}
 
 		// Make sure the type T is can have a Default();
 		bool canHaveDefualt = typeof( T ) switch
@@ -1973,18 +1996,9 @@ public sealed partial class GraphCompiler
 				if ( result.Value is Texture || !ShaderAttributeTypes.Contains( result.Value.GetType() ) )
 					continue;
 
-				var typeName = result.Value switch
+				if ( !HlslTypes.TryGetValue( result.Value.GetType(), out var typeName ) )
 				{
-					bool _ => "bool",
-					int _ => "int",
-					float _ => "float",
-					Vector2 _ => "float2",
-					Vector3 _ => "float3",
-					Vector4 _ => "float4",
-					Color _ => "float4",
-					Sampler _ => "SamplerState",
-					_ => null
-				};
+				}
 
 				sb.AppendLine( $"{typeName} {result.Key} < Attribute( \"{result.Key}\" ); >;" );
 			}
