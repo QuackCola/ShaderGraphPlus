@@ -576,7 +576,7 @@ public class CustomCodeNodePorts
 			var typeName = TypeName;
 
 			// Try getting type from EditorTypeLibrary.
-			if ( GraphCompiler.ValueTypes.ContainsValue( new( typeName, true ) ) )
+			if ( GraphCompiler.ValueTypes.ContainsValue( true ) )
 			{
 				if ( typeName == "Texture2D" ) typeName = typeof( Texture2DObject ).FullName;
 				if ( typeName == "TextureCube" ) typeName = typeof( TextureCubeObject ).FullName;
