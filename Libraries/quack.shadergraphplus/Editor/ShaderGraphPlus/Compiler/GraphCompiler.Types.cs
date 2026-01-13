@@ -40,23 +40,6 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), "SamplerState" },
 	};
 
-	internal static Dictionary<Type, string> HlslTypeGlobalPrefixes => new()
-	{
-		{ typeof( bool ), "g_b" },
-		{ typeof( int ), "g_n" },
-		{ typeof( float ), "g_fl"},
-		{ typeof( Vector2 ), "g_v" },
-		{ typeof( Vector3 ), "g_v" },
-		{ typeof( Vector4 ), "g_v" },
-		{ typeof( Color ), "g_v" },
-		{ typeof( Float2x2 ), "g_m" },
-		{ typeof( Float3x3 ), "g_m" },
-		{ typeof( Float4x4 ), "g_m" },
-		{ typeof( Texture2DObject ), "g_t" },
-		{ typeof( TextureCubeObject ), "g_t" },
-		{ typeof( Sampler  ), "g_s" }
-	};
-
 	/// <summary>
 	/// Data types that are exposed to the material editor.
 	/// </summary>

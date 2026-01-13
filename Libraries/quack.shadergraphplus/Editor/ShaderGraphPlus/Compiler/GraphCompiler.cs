@@ -1130,10 +1130,25 @@ public sealed partial class GraphCompiler
 		var attribName = name;
 		name = CleanName( name );
 
-		if ( !HlslTypeGlobalPrefixes.TryGetValue( value.GetType(), out var prefix ) )
+		var prefix = value switch
 		{
-			throw new Exception( $"Unknown Type \"{value.GetType()}\"" );
-		}
+			bool _ => "g_b",
+			int _ => "g_n",
+			float _ => "g_fl",
+			Vector2 _ => "g_v",
+			Vector2Int _ => "g_v",
+			Vector3 _ => "g_v",
+			Vector3Int _ => "g_v",
+			Vector4 _ => "g_v",
+			Color _ => "g_v",
+			Float2x2 _ => "g_m",
+			Float3x3 _ => "g_m",
+			Float4x4 _ => "g_m",
+			Texture2DObject _ => "g_t",
+			TextureCubeObject _ => "g_t",
+			Sampler _ => "g_s",
+			_ => throw new Exception( $"Unknown type \"{value.GetType()}\"" )
+		};
 
 		// Make sure the type T is can have a Default();
 		bool canHaveDefualt = typeof( T ) switch
