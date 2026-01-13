@@ -23,7 +23,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), true },
 	};
 
-	internal static Dictionary<Type, string> HlslTypes => new()
+	internal static Dictionary<Type, string> HlslValueTypes => new()
 	{
 		{ typeof( bool ), "bool" },
 		{ typeof( int ), "int" },
