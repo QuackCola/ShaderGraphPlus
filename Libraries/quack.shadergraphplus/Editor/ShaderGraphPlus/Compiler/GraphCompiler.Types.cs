@@ -40,7 +40,7 @@ public sealed partial class GraphCompiler
 		{ typeof( Sampler ), "SamplerState" },
 	};
 
-	internal static Dictionary<Type, string> ValueTypeGlobalPrefixes => new()
+	internal static Dictionary<Type, string> HlslTypeGlobalPrefixes => new()
 	{
 		{ typeof( bool ), "g_b" },
 		{ typeof( int ), "g_n" },
@@ -74,7 +74,7 @@ public sealed partial class GraphCompiler
 	};
 
 	/// <summary>
-	/// Data types that can be set via <seealso cref="RenderAttributes"/>
+	/// Data types that can be set on <seealso cref="RenderAttributes"/>
 	/// </summary>
 	internal static List<Type> ShaderAttributeTypes => new()
 	{
