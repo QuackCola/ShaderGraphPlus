@@ -1130,9 +1130,9 @@ public sealed partial class GraphCompiler
 		var attribName = name;
 		name = CleanName( name );
 
-		if ( !ValueTypeGlobalPrefixes.TryGetValue( value.GetType(), out var prefix ) )
+		if ( !HlslTypeGlobalPrefixes.TryGetValue( value.GetType(), out var prefix ) )
 		{
-			throw new Exception( $"Unknow Type \"{value.GetType()}\"" );
+			throw new Exception( $"Unknown Type \"{value.GetType()}\"" );
 		}
 
 		// Make sure the type T is can have a Default();
@@ -1897,7 +1897,7 @@ public sealed partial class GraphCompiler
 				if ( result.Value is Texture || !ShaderAttributeTypes.Contains( result.Value.GetType() ) )
 					continue;
 
-				if ( !HlslTypes.TryGetValue( result.Value.GetType(), out var typeName ) )
+				if ( !HlslValueTypes.TryGetValue( result.Value.GetType(), out var typeName ) )
 				{
 				}
 
