@@ -67,7 +67,7 @@ internal class SGPGroupControlWidget : ControlWidget
 	{
 		foreach ( var prop in serialized )
 		{
-			if ( prop.PropertyType == typeof( FloatParameterUI ) || prop.PropertyType == typeof( TextureInput ) )
+			if ( prop.PropertyType == typeof( IParameterUI ) || prop.PropertyType == typeof( TextureInput ) )
 			{
 				if ( prop.TryGetAsObject( out var propObj ) )
 				{
