@@ -50,21 +50,21 @@ public abstract class Unary : ShaderNodePlus
 	{
 		var result = compiler.ResultOrDefault( Input, 0.0f );
 
-		ResultType resulttype = result.ResultType;
+		ResultType resultType = result.ResultType;
 
 		if ( Components is not null )
 		{
 			switch ( Components )
 			{
-				case 1: resulttype = ResultType.Float; break;
-				case 2: resulttype = ResultType.Vector2; break;
-				case 3: resulttype = ResultType.Vector3; break;
-				case 4: resulttype = ResultType.Color; break;
+				case 1: resultType = ResultType.Float; break;
+				case 2: resultType = ResultType.Vector2; break;
+				case 3: resultType = ResultType.Vector3; break;
+				case 4: resultType = ResultType.Color; break;
 			}
 		}
 
 
-		return result.IsValid ? new NodeResult( resulttype, $"{Op}( {result} )" ) : default;
+		return result.IsValid ? new NodeResult( resultType, $"{Op}( {result} )" ) : default;
 	};
 }
 
