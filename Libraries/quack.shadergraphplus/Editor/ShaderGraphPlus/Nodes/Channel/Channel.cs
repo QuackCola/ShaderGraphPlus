@@ -1,5 +1,4 @@
-﻿
-namespace ShaderGraphPlus.Nodes;
+﻿namespace ShaderGraphPlus.Nodes;
 
 public enum SwizzleChannel
 {
@@ -330,6 +329,14 @@ public sealed class AppendVector : ShaderNodePlus
 		if ( components < 1 || components > 4 )
 			return NodeResult.Error( $"Can't append {resultB.TypeName} to {resultA.TypeName}" );
 
-		return new NodeResult( (ResultType)components, $"float{components}( {resultA}, {resultB} )" );
+		ResultType resultType = components switch
+		{
+			2 => ResultType.Vector2,
+			3 => ResultType.Vector3,
+			4 => ResultType.Vector4,
+			_ => throw new NotImplementedException(),
+		};
+
+		return new NodeResult( resultType, $"float{components}( {resultA}, {resultB} )" );
 	};
 }
