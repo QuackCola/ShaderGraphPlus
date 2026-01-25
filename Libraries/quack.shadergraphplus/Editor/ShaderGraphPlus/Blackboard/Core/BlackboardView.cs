@@ -60,15 +60,12 @@ internal class BlackboardView : Widget
 
 		var canvas = new Widget( null );
 		canvas.Layout = Layout.Row();
-		canvas.Layout.Spacing = 8;
 		canvas.Layout.Spacing = 4;
 
 		var leftColumn = canvas.Layout.AddColumn( 1, false );
-		leftColumn.Spacing = 8;
 		leftColumn.Spacing = 4;
 
 		var leftColumnTopLayout = leftColumn.AddRow( 1, false );
-		leftColumnTopLayout.Spacing = 8;
 		leftColumnTopLayout.Spacing = 4;
 
 		leftColumnTopLayout.AddStretchCell();
