@@ -404,7 +404,7 @@ public class ShaderGraphPlusView : GraphView
 		}
 	}
 
-	protected override NodeEditorPlus.INodeType NodeTypeFromDragEvent( DragEvent ev )
+	protected override INodeType NodeTypeFromDragEvent( DragEvent ev )
 	{
 		if ( ev.Data.Assets.FirstOrDefault() is { } asset )
 		{
@@ -458,7 +458,7 @@ public class ShaderGraphPlusView : GraphView
 
 				if ( AvailableNodes.TryGetValue( nodeFullName, out var nodeType ) )
 				{
-					var parameterNodeType = new ParameterNodeTypeDragDrop( ((ClassNodeType)nodeType).Type, blackboardParameter );
+					var parameterNodeType = new ParameterNodeType( ((ClassNodeType)nodeType).Type, blackboardParameter );
 
 					return parameterNodeType;
 				}

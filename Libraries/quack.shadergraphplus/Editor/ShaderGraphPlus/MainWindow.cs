@@ -838,7 +838,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	[Shortcut( "editor.undo", "CTRL+Z" )]
+	[Shortcut( "editor.undo", "CTRL+Z", ShortcutType.Window )]
 	private void Undo()
 	{
 		if ( _undoStack.Undo() is UndoOp op )
@@ -860,7 +860,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	[Shortcut( "editor.redo", "CTRL+Y" )]
+	[Shortcut( "editor.redo", "CTRL+Y", ShortcutType.Window )]
 	private void Redo()
 	{
 		if ( _undoStack.Redo() is UndoOp op )
@@ -901,19 +901,19 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	[Shortcut( "editor.cut", "CTRL+X" )]
+	[Shortcut( "editor.cut", "CTRL+X", ShortcutType.Window )]
 	private void CutSelection()
 	{
 		_graphView.CutSelection();
 	}
 
-	[Shortcut( "editor.copy", "CTRL+C" )]
+	[Shortcut( "editor.copy", "CTRL+C", ShortcutType.Window)]
 	private void CopySelection()
 	{
 		_graphView.CopySelection();
 	}
 
-	[Shortcut( "editor.paste", "CTRL+V" )]
+	[Shortcut( "editor.paste", "CTRL+V", ShortcutType.Window)]
 	private void PasteSelection()
 	{
 		_graphView.PasteSelection();
@@ -925,7 +925,7 @@ public class MainWindow : DockWindow
 		_graphView.DuplicateSelection();
 	}
 
-	[Shortcut( "editor.select-all", "CTRL+A" )]
+	[Shortcut( "editor.select-all", "CTRL+A", ShortcutType.Window)]
 	private void SelectAll()
 	{
 		_graphView.SelectAll();
@@ -1161,6 +1161,7 @@ public class MainWindow : DockWindow
 		_graph = new();
 		_dirty = false;
 		_graphView.Graph = _graph;
+		_blackboardView.Graph = _graph;
 		_graphCanvas.WindowTitle = "untitled";
 		_preview3D.Model = null;
 		_preview3D.Tint = Color.White;
@@ -1169,7 +1170,6 @@ public class MainWindow : DockWindow
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
-		_blackboardView.Graph = _graph;
 
 		_output.ClearErrors();
 		_output.ClearWarnings();
@@ -1262,13 +1262,13 @@ public class MainWindow : DockWindow
 		_graph = graph;
 		_dirty = false;
 		_graphView.Graph = _graph;
+		_blackboardView.Graph = _graph;
 		_graphCanvas.WindowTitle = _asset.Name;
 		_undoStack.Clear();
 		_undoHistory.History = _undoStack.Names;
 		_generatedCode = "";
 		_generatedCodeTextView.SetTextContents( "" );
 		_properties.Target = _graph;
-		_blackboardView.Graph = _graph;
 
 		if ( addToPath )
 			AddFileHistory( path );
@@ -1657,10 +1657,9 @@ public class MainWindow : DockWindow
 
 		_blackboardView.Graph = _graph;
 		_blackboardView.OnDirty += () => { SetDirty(); };
-		_blackboardView.OnParameterSelected += ( p ) => { OnParameterSelected( p ); };
-		//_blackboardView.OnParameterChanged += ( p ) => { OnParameterPropertyUpdated( p ); };
-		_blackboardView.OnParameterCreated += ( p ) => { OnParameterPropertyCreated( p ); };
-		_blackboardView.OnParameterDeleted += ( p ) => { OnParameterDeleted( p ); };
+		_blackboardView.OnParameterSelected += OnBlackboardParameterSelected;
+		_blackboardView.OnParameterCreated += OnBlackboardParameterCreated;
+		_blackboardView.OnParameterDeleted += OnBlackboardParameterDeleted;
 		_blackboardCanvas.Layout.Add( _blackboardView, 1 );
 
 		_undoHistory = new UndoHistory( this, _undoStack );
@@ -1703,7 +1702,7 @@ public class MainWindow : DockWindow
 	/// <summary>
 	/// Called when a blackboard parameter is selected.
 	/// </summary>
-	private void OnParameterSelected( BaseBlackboardParameter parameter )
+	private void OnBlackboardParameterSelected( BaseBlackboardParameter parameter )
 	{
 		_graphView.ClearSelection();
 
@@ -1733,7 +1732,7 @@ public class MainWindow : DockWindow
 		//}
 	}
 
-	private void OnParameterPropertyCreated( BaseBlackboardParameter blackboardParameter )
+	private void OnBlackboardParameterCreated( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target != blackboardParameter )
 		{
@@ -1741,7 +1740,7 @@ public class MainWindow : DockWindow
 		}
 	}
 
-	private void OnParameterDeleted( BaseBlackboardParameter blackboardParameter )
+	private void OnBlackboardParameterDeleted( BaseBlackboardParameter blackboardParameter )
 	{
 		if ( _properties.Target == blackboardParameter )
 		{

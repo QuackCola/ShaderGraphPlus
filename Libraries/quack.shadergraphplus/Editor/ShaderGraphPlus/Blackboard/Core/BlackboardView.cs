@@ -31,22 +31,22 @@ internal class BlackboardView : Widget
 	public Action OnDirty { get; set; }
 
 	/// <summary>
-	/// Invoked when a blackboard parameter is selected in the BlackboardView.
+	/// Called when a blackboard parameter is selected.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterSelected { get; set; }
 
 	/// <summary>
-	/// Invoked when a blackboard parameter changes.
+	/// Called when a blackboard parameter changes.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterChanged { get; set; }
 
 	/// <summary>
-	/// Invoked when a blackboard parameter is created.
+	/// Called when a blackboard parameter is created.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterCreated { get; set; }
 
 	/// <summary>
-	/// Invoked when a blackboard parameter is deleated.
+	/// Called when a blackboard parameter is deleated.
 	/// </summary>
 	public Action<BaseBlackboardParameter> OnParameterDeleted { get; set; }
 
@@ -88,7 +88,7 @@ internal class BlackboardView : Widget
 			var popup = new BlackboardPopupParameterTypeSelector( this, GetRelevantParameters() );
 			popup.OnSelect += ( t ) =>
 			{
-				OnAddParameter( t );
+				OnAddBlackboardParameter( t );
 			};
 			popup.OpenAtCursor();
 		};
@@ -100,10 +100,10 @@ internal class BlackboardView : Widget
 		{
 			OnItemClicked( (BaseBlackboardParameter)item );
 		};
-		_parameterListView.ItemSelected = ( item ) =>
-		{
-			OnItemSelected( (BaseBlackboardParameter)item );
-		};
+		//_parameterListView.ItemSelected = ( item ) =>
+		//{
+		//	OnItemSelected( (BaseBlackboardParameter)item );
+		//};
 		_parameterListView.ItemDrag = ( a ) =>
 		{
 			var parameter = a as BaseBlackboardParameter;
@@ -212,21 +212,14 @@ internal class BlackboardView : Widget
 		} );
 	}
 
-	private void OnItemSelected( BaseBlackboardParameter parameter )
-	{
-		//SGPLog.Info( $"Selected item : {variable}" );
-	}
-
 	private void OnItemClicked( BaseBlackboardParameter parameter )
 	{
-		//SGPLog.Info( $"Clicked item : {variable}" );
-
 		SetSelectedItem( parameter );
 
 		OnParameterSelected?.Invoke( parameter );
 	}
 
-	private void OnAddParameter( IBlackboardParameterType type )
+	private void OnAddBlackboardParameter( IBlackboardParameterType type )
 	{
 		int id = Graph._parameters.Count;
 		string name = $"Parameter{id}";
