@@ -565,8 +565,7 @@ public sealed partial class GraphCompiler
 		}
 
 		var result = ShaderResult;
-
-		if ( !result.TextureInputs.TryGetValue( name, out var existingValue ) )
+		if ( !result.TextureInputs.ContainsKey( name ) )
 		{
 			result.TextureInputs.Add( name, input );
 		}
@@ -597,8 +596,6 @@ public sealed partial class GraphCompiler
 
 		if ( !isTex2DParameterConnected )
 		{
-			SGPLog.Info( $"ResultTextureNew Path 1 // g_t{name}" );
-
 			if ( !result.TextureInputs.TryGetValue( name, out var existingValue ) )
 			{
 				result.TextureInputs.Add( name, input );
