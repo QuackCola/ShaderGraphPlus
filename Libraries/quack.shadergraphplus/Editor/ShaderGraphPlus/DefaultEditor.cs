@@ -221,43 +221,43 @@ internal static class PaintHelper
 	{
 		if ( type == typeof( bool ) )
 		{
-			return bool.Parse( element.GetRawText() );
+			return bool.Parse( element.GetString() );
 		}
 		else if ( type == typeof( int ) )
 		{
-			return int.Parse( element.GetRawText() );
+			return int.Parse( element.GetString() );
 		}
 		else if ( type == typeof( float ) )
 		{
-			return float.Parse( element.GetRawText() );
+			return float.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Vector2 ) )
 		{
-			return Vector2.Parse( element.GetRawText() );
+			return Vector2.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Vector2Int ) )
 		{
-			return Vector2Int.Parse( element.GetRawText() );
+			return Vector2Int.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Vector3 ) )
 		{
-			return Vector3.Parse( element.GetRawText() );
+			return Vector3.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Vector3Int ) )
 		{
-			return Vector3Int.Parse( element.GetRawText() );
+			return Vector3Int.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Vector4 ) )
 		{
-			return Vector4.Parse( element.GetRawText() );
+			return Vector4.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Color ) )
 		{
-			return Color.Parse( element.GetRawText() );
+			return Color.Parse( element.GetString() );
 		}
 		else if ( type == typeof( Sampler ) )
 		{
-			return JsonSerializer.Deserialize<Sampler>( element, ShaderGraphPlus.SerializerOptions() )!;
+			return JsonSerializer.Deserialize<Sampler>( element )!;
 		}
 		else if ( type == typeof( Texture2DObject ) )
 		{
