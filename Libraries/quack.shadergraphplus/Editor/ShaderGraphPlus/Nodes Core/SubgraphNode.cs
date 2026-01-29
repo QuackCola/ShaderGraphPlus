@@ -535,10 +535,7 @@ internal class SubgraphNodeControlWidget : ControlWidget
 						}
 
 						return ((TextureInput)val) with { ShowNameProperty = true, Type = TextureType.Tex2D };
-					}, x =>
-					{
-						SetDefaultValue( name, x );
-					},
+					}, x => SetDefaultValue( name, x ),
 					attributes.ToArray()
 				) );
 

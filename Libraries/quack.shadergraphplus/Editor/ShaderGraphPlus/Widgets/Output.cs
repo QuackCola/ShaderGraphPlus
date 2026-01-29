@@ -9,8 +9,6 @@ public class Output : Widget
 {
 	private IssueListView _issueListView;
 
-	public IEnumerable<GraphCompiler.GraphIssue> Errors { set { _issueListView.SetItems( value.Cast<object>() ); } }
-
 	private List<GraphCompiler.GraphIssue> _graphIssues;
 	public List<GraphCompiler.GraphIssue> GraphIssues
 	{
@@ -63,12 +61,12 @@ public class IssueListView : ListView
 		_output = parent;
 		ItemActivated = ( a ) =>
 		{
-			if ( a is not GraphCompiler.GraphIssue issueInfo )
+			if ( a is not GraphCompiler.GraphIssue issue )
 				return;
 
-			if ( issueInfo.Node != null && issueInfo.Node is not DummyNode )
+			if ( issue.Node != null && issue.Node is not DummyNode )
 			{
-				_output.OnNodeSelected?.Invoke( issueInfo.Node );
+				_output.OnNodeSelected?.Invoke( issue.Node );
 			}
 		};
 
@@ -80,14 +78,10 @@ public class IssueListView : ListView
 
 	private void OpenItemContextMenu( object item )
 	{
-		if ( item is not GraphCompiler.GraphIssue )
-			return;
-
 		if ( item is GraphCompiler.GraphIssue issue )
 		{
 			OnOpenItemContextMenuError( item, issue );
 		}
-
 	}
 
 	private void OnOpenItemContextMenuError( object item, GraphIssue error )
@@ -181,9 +175,6 @@ public class IssueListView : ListView
 
 	protected override void PaintItem( VirtualWidget item )
 	{
-		if ( item.Object is not GraphCompiler.GraphIssue )
-			return;
-
 		if ( item.Object is GraphCompiler.GraphIssue issue )
 		{
 			if ( issue.IsWarning )

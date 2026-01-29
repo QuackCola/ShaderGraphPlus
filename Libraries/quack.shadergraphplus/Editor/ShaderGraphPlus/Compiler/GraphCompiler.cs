@@ -972,8 +972,6 @@ public sealed partial class GraphCompiler
 			{
 				if ( node is SubgraphInput subgraphInput )
 				{
-					//SGPLog.Info( $"Resolving subgraph input : {subgraphInput.InputName} " );
-
 					if ( subgraphInput.PreviewInput.IsValid )
 					{
 						var subgraphInputResult = Result( subgraphInput.PreviewInput );
@@ -1449,20 +1447,20 @@ public sealed partial class GraphCompiler
 						{
 							error = new( lastNode, $"Texture2DObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
 							value = null;
-							return new();
+							return default;
 						}
 						else if ( parentInput.Value.inputNodeValueType == typeof( TextureCubeObject ) )
 						{
 							error = new( lastNode, $"TextureCubeObject Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
 							value = null;
-							return new();
+							return default;
 						}
 						else if ( parentInput.Value.inputNodeValueType == typeof( Sampler ) )
 						{
 
 							error = new( lastNode, $"SamplerState Input \"{parentInput.Value.inputNode.InputName}\" is required when in a subgraph" );
 							value = null;
-							return new();
+							return default;
 						}
 					}
 
