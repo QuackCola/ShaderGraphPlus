@@ -221,39 +221,39 @@ internal static class PaintHelper
 	{
 		if ( type == typeof( bool ) )
 		{
-			return bool.Parse( element.GetString() );
+			return element.GetBoolean();
 		}
 		else if ( type == typeof( int ) )
 		{
-			return int.Parse( element.GetString() );
+			return element.GetInt32();
 		}
 		else if ( type == typeof( float ) )
 		{
-			return float.Parse( element.GetString() );
+			return float.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector2 ) )
 		{
-			return Vector2.Parse( element.GetString() );
+			return Vector2.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector2Int ) )
 		{
-			return Vector2Int.Parse( element.GetString() );
+			return Vector2Int.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector3 ) )
 		{
-			return Vector3.Parse( element.GetString() );
+			return Vector3.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector3Int ) )
 		{
-			return Vector3Int.Parse( element.GetString() );
+			return Vector3Int.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Vector4 ) )
 		{
-			return Vector4.Parse( element.GetString() );
+			return Vector4.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Color ) )
 		{
-			return Color.Parse( element.GetString() );
+			return Color.Parse( element.GetRawText() );
 		}
 		else if ( type == typeof( Sampler ) )
 		{
